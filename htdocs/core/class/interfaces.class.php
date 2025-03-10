@@ -363,7 +363,7 @@ class Interfaces
 					}
 
 					// We set info of modules
-					$triggers[$j]['picto'] = (!empty($objMod->picto)) ? img_object('', $objMod->picto, 'class="valignmiddle pictomodule "') : img_object('', 'generic', 'class="valignmiddle pictomodule "');
+					$triggers[$j]['picto'] = (!empty($objMod->picto)) ? img_object('', $objMod->picto, 'class="valignmiddle pictomodule pictofixedwidth"') : img_object('', 'generic', 'class="valignmiddle pictomodule pictofixedwidth"');
 					$triggers[$j]['file'] = $files[$key];
 					$triggers[$j]['fullpath'] = $fullpath[$key];
 					$triggers[$j]['relpath'] = $relpath[$key];

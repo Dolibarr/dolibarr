@@ -149,7 +149,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueWidth;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $width_units;
 	/**
@@ -157,7 +157,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueHeight;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $height_units;
 	/**
@@ -165,7 +165,7 @@ class Expedition extends CommonObject
 	 */
 	public $trueDepth;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $depth_units;
 	/**
@@ -612,11 +612,11 @@ class Expedition extends CommonObject
 		$tab = $line_ext->detail_batch;
 		// create stockLocation Qty array
 		foreach ($tab as $detbatch) {
-			if (!empty($detbatch->entrepot_id)) {
-				if (empty($stockLocationQty[$detbatch->entrepot_id])) {
-					$stockLocationQty[$detbatch->entrepot_id] = 0;
+			if (!empty($detbatch->fk_warehouse)) {
+				if (empty($stockLocationQty[$detbatch->fk_warehouse])) {
+					$stockLocationQty[$detbatch->fk_warehouse] = 0;
 				}
-				$stockLocationQty[$detbatch->entrepot_id] += $detbatch->qty;
+				$stockLocationQty[$detbatch->fk_warehouse] += $detbatch->qty;
 			}
 		}
 		// create shipment lines
@@ -627,7 +627,7 @@ class Expedition extends CommonObject
 			} else {
 				// create shipment batch lines for stockLocation
 				foreach ($tab as $detbatch) {
-					if ($detbatch->entrepot_id == $stockLocation) {
+					if ($detbatch->fk_warehouse == $stockLocation) {
 						if (!($detbatch->create($line_id) > 0)) {		// Create an ExpeditionLineBatch
 							$this->errors = $detbatch->errors;
 							$error++;
@@ -1108,7 +1108,7 @@ class Expedition extends CommonObject
 				}
 			}
 			if (is_object($linebatch)) {
-				$line->entrepot_id = $linebatch->entrepot_id;
+				$line->entrepot_id = $linebatch->fk_warehouse;
 			}
 			$line->origin_line_id = $dbatch['ix_l']; // deprecated
 			$line->fk_elementdet = $dbatch['ix_l'];
@@ -1320,8 +1320,8 @@ class Expedition extends CommonObject
 
 			// Loop on each product line to add a stock movement and delete features
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql .= " FROM ".$this->db->prefix()."commandedet as cd,";
+			$sql .= " ".$this->db->prefix()."expeditiondet as ed";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_elementdet";
 
@@ -1392,7 +1392,7 @@ class Expedition extends CommonObject
 
 
 		if (!$error) {
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql = "DELETE FROM ".$this->db->prefix()."expeditiondet";
 			$sql .= " WHERE fk_expedition = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -1404,7 +1404,7 @@ class Expedition extends CommonObject
 
 				// No delete expedition
 				if (!$error) {
-					$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition";
+					$sql = "SELECT rowid FROM ".$this->db->prefix()."expedition";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 
 					if ($this->db->query($sql)) {
@@ -1522,8 +1522,8 @@ class Expedition extends CommonObject
 
 			// Loop on each product line to add a stock movement
 			$sql = "SELECT cd.fk_product, cd.subprice, ed.qty, ed.fk_entrepot, ed.rowid as expeditiondet_id";
-			$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd,";
-			$sql .= " ".MAIN_DB_PREFIX."expeditiondet as ed";
+			$sql .= " FROM ".$this->db->prefix()."commandedet as cd,";
+			$sql .= " ".$this->db->prefix()."expeditiondet as ed";
 			$sql .= " WHERE ed.fk_expedition = ".((int) $this->id);
 			$sql .= " AND cd.rowid = ed.fk_elementdet";
 
@@ -1586,11 +1586,11 @@ class Expedition extends CommonObject
 		}
 
 		if (!$error) {
-			$main = MAIN_DB_PREFIX.'expeditiondet';
+			$main = $this->db->prefix().'expeditiondet';
 			$ef = $main."_extrafields";
 			$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_expedition = ".((int) $this->id).")";
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet";
+			$sql = "DELETE FROM ".$this->db->prefix()."expeditiondet";
 			$sql .= " WHERE fk_expedition = ".((int) $this->id);
 
 			if ($this->db->query($sqlef) && $this->db->query($sql)) {
@@ -1614,7 +1614,7 @@ class Expedition extends CommonObject
 					}
 				}
 				if (!$error) {
-					$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition";
+					$sql = "DELETE FROM ".$this->db->prefix()."expedition";
 					$sql .= " WHERE rowid = ".((int) $this->id);
 
 					if ($this->db->query($sql)) {
@@ -1704,7 +1704,7 @@ class Expedition extends CommonObject
 		$sql .= ", cd.fk_remise_except, cd.fk_product_fournisseur_price as fk_fournprice";
 		$sql .= ", cd.vat_src_code, cd.tva_tx, cd.localtax1_tx, cd.localtax2_tx, cd.localtax1_type, cd.localtax2_type, cd.info_bits, cd.price, cd.subprice, cd.remise_percent,cd.buy_price_ht as pa_ht";
 		$sql .= ", cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc, cd.rang, cd.date_start, cd.date_end";
-		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot";
+		$sql .= ", ed.rowid as line_id, ed.qty as qty_shipped, ed.fk_element, ed.fk_elementdet, ed.element_type, ed.fk_entrepot, ed.extraparams";
 		$sql .= ", p.ref as product_ref, p.label as product_label, p.fk_product_type, p.barcode as product_barcode";
 		$sql .= ", p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units";
 		$sql .= ", p.surface, p.surface_units, p.volume, p.volume_units, p.tosell as product_tosell, p.tobuy as product_tobuy";
@@ -1803,6 +1803,8 @@ class Expedition extends CommonObject
 				$line->volume_units         = $obj->volume_units;
 				$line->stockable_product    = $obj->stockable_product;
 				$line->fk_unit              = $obj->fk_unit;
+
+				$line->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				$line->pa_ht = $obj->pa_ht;
 
@@ -2462,10 +2464,10 @@ class Expedition extends CommonObject
 		$sql .= " e.ref,";
 		$sql .= " edb.rowid as edbrowid, edb.eatby, edb.sellby, edb.batch, edb.qty as edbqty, edb.fk_origin_stock,";
 		$sql .= " cd.rowid as cdid, ed.rowid as edid";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "commandedet as cd,";
-		$sql .= " " . MAIN_DB_PREFIX . "expeditiondet as ed";
-		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
-		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "expedition as e ON ed.fk_expedition = e.rowid";
+		$sql .= " FROM " . $this->db->prefix() . "commandedet as cd,";
+		$sql .= " " . $this->db->prefix() . "expeditiondet as ed";
+		$sql .= " LEFT JOIN " . $this->db->prefix() . "expeditiondet_batch as edb on edb.fk_expeditiondet = ed.rowid";
+		$sql .= " INNER JOIN " . $this->db->prefix() . "expedition as e ON ed.fk_expedition = e.rowid";
 		$sql .= " WHERE ed.fk_expedition = " . ((int) $this->id);
 		$sql .= " AND cd.rowid = ed.fk_elementdet";
 
@@ -2515,7 +2517,7 @@ class Expedition extends CommonObject
 
 				// If some stock lines are now 0, we can remove entry into llx_product_stock, but only if there is no child lines into llx_product_batch (detail of batch, because we can imagine
 				// having a lot1/qty=X and lot2/qty=-X, so 0 but we must not loose repartition of different lot.
-				$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".MAIN_DB_PREFIX."product_batch as pb)";
+				$sqldelete = "DELETE FROM ".$this->db->prefix()."product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM ".$this->db->prefix()."product_batch as pb)";
 				$resqldelete = $this->db->query($sqldelete);
 				// We do not test error, it can fails if there is child in batch details
 			}

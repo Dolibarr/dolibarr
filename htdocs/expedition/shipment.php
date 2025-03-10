@@ -94,7 +94,7 @@ $result = restrictedArea($user, 'expedition', 0, '');	// We use 0 for id, becaus
 
 $permissiontoread = $user->hasRight('expedition', 'lire');
 $permissiontoadd = $user->hasRight('expedition', 'creer'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-$permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+$permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && ((int) $object->status == $object::STATUS_DRAFT));
 $permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the include of actions_dellink.inc.php
 

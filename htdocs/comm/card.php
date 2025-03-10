@@ -949,7 +949,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
 					$project->fetch($propal_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1068,7 +1068,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
 					$project->fetch($commande_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1169,7 +1169,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $sendingstatic->table_element, $relativepath, 0, $param);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
 					$project->fetch($sendingstatic->fk_project);
 					print $project->getNomUrl(1);
@@ -1222,7 +1222,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td colspan="6"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				//print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/contract/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
@@ -1289,7 +1289,7 @@ if ($object->id > 0) {
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
-				print '</td><td class="tdoverflowmax100">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($contrat->fk_project > 0) {
 					$project->fetch($contrat->fk_project);
 					print $project->getNomUrl(1);
@@ -1383,7 +1383,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
 					$project->fetch($fichinter_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1474,7 +1474,7 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
 				print $invoicetemplate->getNomUrl(1);
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($invoicetemplate->fk_project > 0) {
 					$project->fetch($invoicetemplate->fk_project);
 					print $project->getNomUrl(1);
@@ -1612,7 +1612,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
 					$project->fetch($facturestatic->fk_project);
 					print $project->getNomUrl(1);
@@ -1623,8 +1623,8 @@ if ($object->id > 0) {
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if (getDolGlobalString('MAIN_SHOW_REF_CUSTOMER_INVOICES')) {
-					print '<td class="left nowraponall">';
-					print $objp->ref_client;
+					print '<td class="nowraponall">';
+					print dolPrintHTML($objp->ref_client);
 					print '</td>';
 				}
 				if ($objp->df > 0) {

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -172,25 +172,25 @@ if (GETPOSTISSET('planned_workloadhour') || GETPOSTISSET('planned_workloadmin'))
 
 // Definition of fields for list
 $arrayfields = array(
-	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 1),
-	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 2),
-	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 3),
-	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 4),
-	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 5),
-	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 6),
-	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 7),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => 1, 'position' => 8),
-	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 9),
-	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 10),
-	't.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 11),
-	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 12),
-	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => 1, 'position' => 13),
+	't.ref' => array('label' => "RefTask", 'checked' => '1', 'position' => 1),
+	't.label' => array('label' => "LabelTask", 'checked' => '1', 'position' => 2),
+	't.description' => array('label' => "Description", 'checked' => '0', 'position' => 3),
+	't.dateo' => array('label' => "DateStart", 'checked' => '1', 'position' => 4),
+	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 5),
+	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => '1', 'position' => 6),
+	't.duration_effective' => array('label' => "TimeSpent", 'checked' => '1', 'position' => 7),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '1', 'position' => 8),
+	't.progress' => array('label' => "ProgressDeclared", 'checked' => '1', 'position' => 9),
+	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => '1', 'position' => 10),
+	't.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 11),
+	't.budget_amount' => array('label' => "Budget", 'checked' => '0', 'position' => 12),
+	'c.assigned' => array('label' => "TaskRessourceLinks", 'checked' => '1', 'position' => 13),
 
 );
 if ($object->usage_bill_time) {
-	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => 0, 'position' => 11);
-	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => 0, 'position' => 12);
-	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => 1, 'position' => 13);
+	$arrayfields['t.tobill'] = array('label' => $langs->trans("TimeToBill"), 'checked' => '0', 'position' => 11);
+	$arrayfields['t.billed'] = array('label' => $langs->trans("TimeBilled"), 'checked' => '0', 'position' => 12);
+	$arrayfields['t.billable'] = array('label' => $langs->trans("Billable"), 'checked' => '1', 'position' => 13);
 }
 
 // Extra fields
@@ -199,7 +199,7 @@ $extrafieldsobjectprefix = 'efpt.';
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 
@@ -336,7 +336,7 @@ if ($search_status > -1 && $search_status != '') {
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
-if ($search_task_billable) {
+if ($search_task_billable && $search_task_billable != '-1') {
 	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
 }
 //var_dump($morewherefilterarray);
@@ -456,6 +456,7 @@ llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_ta
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $param = '';
+$userWrite = 0;
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -810,9 +811,9 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
 	print img_picto('', 'project', 'class="pictofixedwidth"');
 	if ($projectoktoentertime) {
-		$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
+		$formother->selectProjectTasks(GETPOSTINT('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500 widthcentpercentminusxx');
 	} else {
-		$formother->selectProjectTasks(GETPOST('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '', 'maxwidth500 widthcentpercentminusxx');
+		$formother->selectProjectTasks(GETPOSTINT('task_parent'), empty($projectid) ? $object->id : $projectid, 'task_parent', 0, 0, 1, 1, 0, '', 'maxwidth500 widthcentpercentminusxx');
 	}
 	print '</td></tr>';
 
@@ -822,12 +823,12 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';
 	print img_picto('', 'user', 'class="pictofixedwidth"');
 	if (is_array($contactsofproject) && count($contactsofproject)) {
-		print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', $contactsofproject, 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+		print $form->select_dolusers($user->id, 'userid', 0, null, 0, '', $contactsofproject, '0', 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 	} else {
 		if ((isset($projectid) && $projectid > 0) || $object->id > 0) {
 			print '<span class="opacitymedium">'.$langs->trans("NoUserAssignedToTheProject").'</span>';
 		} else {
-			print $form->select_dolusers($user->id, 'userid', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
+			print $form->select_dolusers($user->id, 'userid', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth500 widthcentpercentminusx');
 		}
 	}
 	print '</td></tr>';
@@ -942,7 +943,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	// Get list of tasks in tasksarray and taskarrayfiltered
 	// We need all tasks (even not limited to a user because a task to user can have a parent that is not affected to him).
 	$filteronthirdpartyid = $socid;
-	$tasksarray = $taskstatic->getTasksArray(0, 0, $object->id, $filteronthirdpartyid, 0, '', -1, $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
+	$tasksarray = $taskstatic->getTasksArray(null, null, $object->id, $filteronthirdpartyid, 0, '', '-1', $morewherefilter, 0, 0, $extrafields, 1, $search_array_options, 1, 1, $sortfield, $sortorder);
 
 	// We load also tasks limited to a particular user
 	$tmpuser = new User($db);
@@ -950,7 +951,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 		$tmpuser->fetch($search_user_id);
 	}
 
-	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(null, $tmpuser, $object->id, 0) : '');
+	$tasksrole = ($tmpuser->id > 0 ? $taskstatic->getUserRolesForProjectsOrTasks(null, $tmpuser, (string) $object->id, 0) : '');
 	//var_dump($tasksarray);
 	//var_dump($tasksrole);
 

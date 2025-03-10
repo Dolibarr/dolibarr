@@ -66,7 +66,7 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];   // For backward compatibility
+	$type = array_search($type, $object->MAP_ID);	// For backward compatibility
 }
 
 // Security check
@@ -124,6 +124,8 @@ if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $permissiontoadd)
 			if ($forcelangprod == $current_lang) {
 				$object->label = $libelle;
 				$object->description = dol_htmlcleanlastbr($desc);
+
+				$object->update($user);
 			} else {
 				$object->multilangs[$forcelangprod]["label"] = $libelle;
 				$object->multilangs[$forcelangprod]["description"] = dol_htmlcleanlastbr($desc);

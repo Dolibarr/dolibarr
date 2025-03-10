@@ -15,26 +15,23 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
- *
- * Need to have the following variables defined:
- * $conf
- * $formmail
- * $formwebsite (optional)
- * $showlinktolayout='emailing', 'email', 'websitepage', ...
- * $showlinktolayoutlabel='...'
- * $showlinktoai ('' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...)
- * $showlinktoailabel='...'
- * $htmlname
  */
-/**
+
+ /**
  * @var Conf $conf
- * @var ?FormMail $formmail
- * @var ?FormWebsite $formwebsite
- * @var string $htmlname
- * @var string $showlinktolayout
- * @var string $showlinktolayoutlabel
+ * @var ?FormMail 		$formmail
+ * @var ?FormWebsite 	$formwebsite
+ * @var ?FormAI 		$formai
+ * @var string 			$htmlname
+ * @var string 			$showlinktolayout		'emailing', 'email', 'websitepage', ...
+ * @var string 			$showlinktolayoutlabel	'...'
+ * @var string 			$showlinktoai			'' or 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', ...
+ * @var string 			$showlinktoailabel		'...'
+ * @var	string			$htmlname
+ * @var ?string			$out
  */
-// Protection to avoid direct call of template
+
+//Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
@@ -52,6 +49,7 @@ if (empty($htmlname)) {
 '
 @phan-var-force ?FormWebSite 	$formwebsite
 @phan-var-force ?FormMail 		$formmail
+@phan-var-force ?FormAI 		$formai
 @phan-var-force string 			$showlinktolayout
 @phan-var-force string			$showlinktolayoutlabel
 @phan-var-force string          $showlinktoai
@@ -59,11 +57,12 @@ if (empty($htmlname)) {
 @phan-var-force ?string         $out
 ';
 
-if (!isset($out)) {
+if (!isset($out)) {	// Init to empty string if not defined
 	$out = '';
 }
+
 // Add link to add layout
-if ($showlinktolayout) {
+if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktolayoutlabel, 'layout', 'class="paddingrightonly"');
 	$out .= $showlinktolayoutlabel.'...';
@@ -72,10 +71,10 @@ if ($showlinktolayout) {
 	$out .= '<script>
 						$(document).ready(function() {
   							$("#linkforlayouttemplates").click(function() {
-								console.log("We click on linkforlayouttemplates");
+								console.log("We click on linkforlayouttemplates, we toggle .template-selector");
 								event.preventDefault();
-								jQuery("#template-selector").toggle();
-								jQuery("#ai_input'.$htmlname.'").hide();
+								jQuery(".template-selector").toggle();
+								jQuery(".ai_input'.$htmlname.'").hide();
 								jQuery("#pageContent").show();	// May exists for website page only
 							});
 						});
@@ -92,10 +91,10 @@ if ($showlinktoai) {
 	$out .= '<script>
 						$(document).ready(function() {
   							$("#linkforaiprompt'.$showlinktoai.'").click(function() {
-								console.log("formlayoutai.tpl: We click on linkforaiprompt'.$showlinktoai.', we toggle #ai_input'.$showlinktoai.'");
+								console.log("formlayoutai.tpl: We click on linkforaiprompt'.$showlinktoai.', we toggle .ai_input'.$showlinktoai.'");
 								event.preventDefault();
-								jQuery("#ai_input'.$htmlname.'").toggle();
-								jQuery("#template-selector").hide();
+								jQuery(".ai_input'.$htmlname.'").toggle();
+								jQuery(".template-selector").hide();
 								jQuery(".email-layout-container").hide();
 								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
 									console.log("Set focus on input field #ai_instructions'.$htmlname.'");
@@ -119,7 +118,8 @@ if ($showlinktolayout) {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
-	$out .= $formmail->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+	$out .= $formai->getAjaxAICallFunction();
+	$out .= $formai->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }

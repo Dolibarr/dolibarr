@@ -333,6 +333,15 @@ if (empty($reshook)) {
 		$object->setProject($projectid);
 	}
 
+	if ($action == 'set_validate' && $permissiontoadd) {
+		$object->fetch($id);
+		if ($object->reopen($user) >= 0) {
+			$action = '';
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	}
+
 	if ($action == 'update_extras' && $permissiontoadd) {
 		$object->oldcopy = dol_clone($object, 2);
 
@@ -915,6 +924,9 @@ if (!empty($id) && $action != 'edit') {
 		// Classify 'paid'
 		if ($object->status == $object::STATUS_VALIDATED && round($remaintopay) == 0 && $object->paid == 0 && $user->hasRight('don', 'creer')) {
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_paid&token='.newToken().'">'.$langs->trans("ClassifyPaid")."</a></div>";
+		}
+		if ($object->status == $object::STATUS_PAID && $object->paid == 1 && $user->hasRight('don', 'creer')) {
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'&action=set_validate&token='.newToken().'">'.$langs->trans("ReOpen")."</a></div>";
 		}
 
 		// Delete

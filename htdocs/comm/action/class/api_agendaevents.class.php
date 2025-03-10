@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +31,13 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 class AgendaEvents extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 	);
 
 	/**
-	 * @var ActionComm $actioncomm {@type ActionComm}
+	 * @var ActionComm {@type ActionActionCom}
 	 */
 	public $actioncomm;
 
@@ -104,6 +104,8 @@ class AgendaEvents extends DolibarrApi
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array						Array of order objects
+	 * @phan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -197,7 +199,7 @@ class AgendaEvents extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => (int) ceil((int) $total / $limit),
 				'limit' => $limit
 			];
 		}
@@ -209,6 +211,8 @@ class AgendaEvents extends DolibarrApi
 	 * Create Agenda Event object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int                     ID of Agenda Event
 	 */
 	public function post($request_data = null)
@@ -252,7 +256,9 @@ class AgendaEvents extends DolibarrApi
 	 * Update Agenda Event general fields
 	 *
 	 * @param 	int   		$id             Id of Agenda Event to update
-	 * @param 	array 		$request_data   Datas
+	 * @param 	array 		$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object|false				Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -268,7 +274,7 @@ class AgendaEvents extends DolibarrApi
 		if ($result) {
 			$this->actioncomm->fetch_optionals();
 			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;
+			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 		}
 		if (!$result) {
 			throw new RestException(404, 'actioncomm not found');
@@ -309,6 +315,8 @@ class AgendaEvents extends DolibarrApi
 	 * @param   int     $id         Agenda Event ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -320,7 +328,7 @@ class AgendaEvents extends DolibarrApi
 		if ($result) {
 			$this->actioncomm->fetch_optionals();
 			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;
+			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {
@@ -350,12 +358,15 @@ class AgendaEvents extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$event = array();
 		foreach (AgendaEvents::$FIELDS as $field) {
 			if (!isset($data[$field])) {

@@ -27,7 +27,8 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/ai.lib.php';
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 /**
  * @var Conf $conf
@@ -38,6 +39,9 @@ require_once '../lib/ai.lib.php';
  */
 
 $langs->loadLangs(array("admin", "website", "other"));
+
+$arrayofaifeatures = getListOfAIFeatures();
+$arrayofia = getListOfAIServices();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -72,26 +76,19 @@ if (!class_exists('FormSetup')) {
 }
 
 $formSetup = new FormSetup($db);
+$aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
-// Setup conf AI_PROMPT
-$item = $formSetup->newItem('AI_CONFIGURATIONS_PROMPT');
-$item->defaultFieldValue = '';
+// Setup conf for AI model
+$formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
+foreach ($arrayofaifeatures as $key => $val) {
+	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$val["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item->nameText = $langs->trans("AI_API_MODEL_".$val["function"]);
+	$item->cssClass = 'minwidth500 input';
+}
 
 $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-// List of AI features
-$arrayofaifeatures = array(
-	'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'development'),
-	'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'development'),
-	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
-	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
-	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
-	'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
-	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
-);
 
 
 /*
@@ -102,6 +99,11 @@ $arrayofaifeatures = array(
 
 $currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
+
+if ($action == 'updatefeaturemodel' && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
+	$action = 'edit';
+}
 
 if ($action == 'update' && $cancel) {
 	$action = 'edit';
@@ -200,6 +202,7 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  */
 
 $form = new Form($db);
+$formai = new FormAI($db);
 
 $help_url = '';
 $title = "AiSetup";
@@ -213,7 +216,7 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = aiAdminPrepareHead();
-print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "fa-microchip");
+print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "ai");
 
 //$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("New").'</a>';
 $newbutton = '';
@@ -279,6 +282,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= '</td>';
 	$out .= '</tr>';
+
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
 	$out .= '<span id="prePrompt" class="spanforparamtooltip">';
@@ -314,6 +318,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
+
 	$out .= '<br><br><br>';
 
 	print $out;
@@ -374,7 +379,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<tr>';
 			$out .= '<td></td>';
 			$out .= '<td>';
-			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
+			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/>';
 			$out .= ' &nbsp; ';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -382,6 +387,8 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
 			$htmlname = $key;
+
+			$out .= '<br><br>';
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -402,6 +409,13 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 
 	print '<br>';
 }
+
+
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofia[$aiservice]), $newbutton, '');
+	print $formSetup->generateOutput(true);
+}
+
 
 if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");

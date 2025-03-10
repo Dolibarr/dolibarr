@@ -540,7 +540,7 @@ print $form->selectyesno('ADHERENT_LOGIN_NOT_REQUIRED', (getDolGlobalString('ADH
 print "</td></tr>\n";
 
 // Create an external user login after an online payment of a membership subscription
-// TODO Move this into the validate() method of the member.
+// TODO Move this into a checkbox into the validate process of the memberinstead of a global option.
 print '<tr class="oddeven"><td>'.$langs->trans("MemberCreateAnExternalUserForSubscriptionValidated").'</td><td>';
 print $form->selectyesno('ADHERENT_CREATE_EXTERNAL_USER_LOGIN', getDolGlobalInt('ADHERENT_CREATE_EXTERNAL_USER_LOGIN'), 1, false, 0, 1);
 print "</td></tr>\n";

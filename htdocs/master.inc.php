@@ -186,16 +186,14 @@ unset($conf->db->pass); // This is to avoid password to be shown in memory/swap 
 /*
  * Object $user
  */
-if (!defined('NOREQUIREUSER') && $db !== null) {
+if (!defined('NOREQUIREUSER')) {
 	$user = new User($db);
 }
 
 /*
  * Create the global $hookmanager object
  */
-if ($db !== null) {
-	$hookmanager = new HookManager($db);
-}
+$hookmanager = new HookManager($db);
 
 
 /*
@@ -224,6 +222,15 @@ if (!is_numeric($conf->entity)) {
 //print "We work with data into entity instance number '".$conf->entity."'";
 if ($db !== null) {
 	$conf->setValues($db);
+}
+
+// Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
+if (!defined('NOREQUIRETRAN')) {
+	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
+	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
+		$langcode = constant('MAIN_LANG_DEFAULT');
+	}
+	$langs->setDefaultLang($langcode);
 }
 
 // Create object $mysoc (A thirdparty object that contains properties of companies managed by Dolibarr.
@@ -271,14 +278,4 @@ if (!defined('NOREQUIREDB') && !defined('NOREQUIRESOC') && $db != null) {
 		// Work In Progress to support all taxes into unit price entry when MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES is set.
 		$conf->global->MAIN_NO_INPUT_PRICE_WITH_TAX = 1;
 	}
-}
-
-
-// Set default language (must be after the setValues setting global conf 'MAIN_LANG_DEFAULT'. Page main.inc.php will overwrite langs->defaultlang with user value later)
-if (!defined('NOREQUIRETRAN')) {
-	$langcode = (GETPOST('lang', 'aZ09') ? GETPOST('lang', 'aZ09', 1) : getDolGlobalString('MAIN_LANG_DEFAULT', 'auto'));
-	if (defined('MAIN_LANG_DEFAULT')) {	// So a page can force the language whatever is setup and parameters in URL
-		$langcode = constant('MAIN_LANG_DEFAULT');
-	}
-	$langs->setDefaultLang($langcode);
 }

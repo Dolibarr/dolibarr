@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022   Open-Dsi		<support@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +41,12 @@
  * @var int $i
  * @var int $num
  */
+
+'
+@phan-var-force string $action
+@phan-var-force int $i
+@phan-var-force int $num
+';
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {

@@ -824,7 +824,7 @@ function getFormeJuridiqueLabel($code)
  *  Return list of countries that are inside the EEC (European Economic Community)
  *  Note: Try to keep this function as a "memory only" function for performance reasons.
  *
- *  @return     string[]				Array of countries code in EEC
+ *  @return     string[]				Array of country codes in EEC
  */
 function getCountriesInEEC()
 {
@@ -873,6 +873,61 @@ function isInEEC($object)
 
 	//print "dd".$object->country_code;
 	return in_array($object->country_code, $country_code_in_EEC);
+}
+
+/**
+ *  Return list of countries that are inside the SEPA zone (Single Euro Payment Area)
+ *  Note: Try to keep this function as a "memory only" function for performance reasons.
+ *
+ *  @return     string[]			Array of country codes in SEPA
+ */
+function getCountriesInSEPA()
+{
+	// List of all country codes that are in Europe agreement for bank transferts
+	// List found on https://www.ecb.europa.eu/paym/integration/retail/sepa/html/index.en.html
+	global $conf, $db;
+	$country_code_in_SEPA = array();
+
+	if (!empty($conf->cache['country_code_in_SEPA'])) {
+		// Use of cache to reduce number of database requests
+		$country_code_in_SEPA = $conf->cache['country_code_in_SEPA'];
+	} else {
+		$sql = "SELECT cc.code FROM ".MAIN_DB_PREFIX."c_country as cc";
+		$sql .= " WHERE cc.sepa = 1";
+
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$objp = $db->fetch_object($resql);
+				$country_code_in_SEPA[] = $objp->code;
+				$i++;
+			}
+		} else {
+			dol_print_error($db);
+		}
+		$conf->cache['country_code_in_SEPA'] = $country_code_in_SEPA;
+	}
+	return $country_code_in_SEPA;
+}
+
+/**
+ *  Return if a country of an object is inside the SEPA zone (Single Euro Payment Area)
+ *
+ *  @param      Object      $object    Object
+ *  @return     boolean		           true = ccountry inside SEPA, false = country outside SEPA
+ */
+function isInSEPA($object)
+{
+	if (empty($object->country_code)) {
+		return false;
+	}
+
+	$country_code_in_SEPA = getCountriesInSEPA();		// This make a database call but there is a cache done into $conf->cache['country_code_in_SEPA']
+
+	//print "dd".$object->country_code;
+	return in_array($object->country_code, $country_code_in_SEPA);
 }
 
 
@@ -2061,7 +2116,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
-		if ($limit) {
+		if ($limit) {	// @phpstan-ignore-line
 			$sql .= $db->plimit($limit + 1, $offset);
 		}
 
@@ -2683,9 +2738,52 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 }
 
 
+/**
+ * Show header of company in HTML public pages
+ *
+ * @param   Societe		$mysoc			Third party
+ * @param   Translate	$langs			Output language
+ * @return	void
+ */
+function htmlPrintOnlineHeader($mysoc, $langs)
+{
+	global $conf;
+
+	// Define urllogo
+	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+
+	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
+	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+	}
+
+	print '<header class="center">';
+
+	// Output html code for logo
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	print '</div>';
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+	}
+	print '</div>';
+
+	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
+		print '<div class="backimagepublicregistration">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
+		print '</div>';
+	}
+
+	print '</header>';
+}
+
 
 /**
- * Show footer of company in HTML pages
+ * Show footer of company in HTML public pages
  *
  * @param   Societe		$fromcompany	Third party
  * @param   Translate	$langs			Output language

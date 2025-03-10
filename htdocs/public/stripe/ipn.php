@@ -2,7 +2,7 @@
 /* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
  * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ if (empty($endpoint_secret)) {
 if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
-	$user->fetch(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
+	$user->fetch(getDolGlobalInt('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
 	$user->loadRights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
@@ -252,13 +252,13 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$db->begin();
 
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', '', $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', 0, $user);
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
 			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), '', 0, $user);
 			}
 			if (!($bank_line_id_to > 0)) {
 				$error++;
@@ -367,12 +367,12 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$obj = $db->fetch_object($result);
 		if ($obj) {
 			if ($obj->type == 'ban') {
+				$pdid = $obj->rowid;
+				$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 				if ($obj->traite == 1) {
 					// This is a direct-debit with an order (llx_bon_prelevement) ALREADY generated, so
 					// it means we received here the confirmation that payment request is finished.
-					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
-					$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 					$payment_amountInDolibarr = $obj->amount;
 					$paymentTypeCodeInDolibarr = $obj->type;
 
@@ -382,9 +382,9 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				}
 			}
 			if ($obj->type == 'card' || empty($obj->type)) {
+				$pdid = $obj->rowid;
 				if ($obj->traite == 0) {
 					// This is a card payment not already flagged as sent to Stripe.
-					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
 					$payment_amountInDolibarr = $obj->amount;
 					$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
@@ -827,7 +827,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$amountdisputestripe = $object->amoutndispute;	// In stripe format
 	$amountdispute = $amountdisputestripe;			// In real currency format
 
-	$invoice_id = "";
+	$invoice_id = 0;
 	$paymentTypeCode = "";			// payment type according to Stripe
 	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
 	$payment_amount = 0;
@@ -861,7 +861,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				$payment_amountInDolibarr = $obj->amount;
 				$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
-				dol_syslog("Found the payment intent for card in database (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
+				dol_syslog("Found the payment intent for card in database (pdid = ".$pdid.")");
 			}
 		} else {
 			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.");

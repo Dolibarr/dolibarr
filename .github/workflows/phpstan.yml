@@ -43,7 +43,7 @@ jobs:
         with:
           php-version: ${{ matrix.php-version }}
           coverage: none # disable xdebug, pcov
-          tools: phpstan:2.0, cs2pr
+          tools: phpstan, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
 

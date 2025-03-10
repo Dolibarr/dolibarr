@@ -53,10 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 
 $boxid = GETPOSTINT('boxid');
 $boxorder = GETPOST('boxorder');
-$zone = GETPOST('zone');		// Can be key for zone
-if ($zone !== '') {
-	$zone = (int) $zone;
-}
+$zone = GETPOST('zone');		// Can be '0' or '1' or 'pagename'...
 $userid = GETPOSTINT('userid');
 
 // Security check
@@ -91,7 +88,7 @@ if ($boxorder && $zone != '' && $userid > 0) {
 	// boxorder value is the target order: "A:idboxA1,idboxA2,A-B:idboxB1,idboxB2,B"
 	dol_syslog("AjaxBox boxorder=".$boxorder." zone=".$zone." userid=".$userid, LOG_DEBUG);
 
-	$result = InfoBox::saveboxorder($db, (int) $zone, $boxorder, $userid);
+	$result = InfoBox::saveboxorder($db, $zone, $boxorder, $userid);
 	if ($result > 0) {
 		$langs->load("boxes");
 		if (!GETPOST('closing')) {

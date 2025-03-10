@@ -1039,7 +1039,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							}
 							$qtyhourforline = 0;
 							if ($line->fk_unit) {
-								$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
+								$unitforline = measuringUnitString($line->fk_unit, '', null, 1);
 								$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
 							}
 
@@ -1096,7 +1096,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', null, 2);
 						}
 						print '</td>';
 
@@ -1186,7 +1186,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						print '<td class="right nowraponall">';
 						$useunit = (($tmpproduct->type == Product::TYPE_PRODUCT && getDolGlobalInt('PRODUCT_USE_UNITS')) || (($tmpproduct->type == Product::TYPE_SERVICE) && ($line->fk_unit)));
 						if ($useunit) {
-							print measuringUnitString($line->fk_unit, '', '', 2);
+							print measuringUnitString($line->fk_unit, '', null, 2);
 						}
 						print '</td>';
 
@@ -1671,7 +1671,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					print '<td class="right">'.$line->qty.'</td>';
 					// Unit
 					if (getDolGlobalInt('PRODUCT_USE_UNITS')) {
-						print '<td class="right">'.measuringUnitString($line->fk_unit, '', '', 1).'</td>';
+						print '<td class="right">'.measuringUnitString($line->fk_unit, '', null, 1).'</td>';
 					}
 					// Cost price
 					if ($permissiontoupdatecost) {

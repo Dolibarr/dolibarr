@@ -74,7 +74,7 @@ class FormFile
 	 * @param	string	$htmlname				HTML name
 	 * @param 	string 	$modulepart				Module part
 	 * @param 	string 	$dirformainimage		Main directory of module
-	 * @param 	string 	$subdirformainimage		Subdirectory into main directory. Often ''.
+	 * @param 	string 	$subdirformainimage		Subdirectory into main directory. Often '', can be 'logos/'.
 	 * @param 	string 	$fileformainimage		File name of image to show
 	 * @return	string							HTML code to show and edit image
 	 */
@@ -104,8 +104,8 @@ class FormFile
 
 		$maxfilesizearray = getMaxFileSizeArray();
 		$maxmin = $maxfilesizearray['maxmin'];
-		$fileformainimagesmall = getImageFileNameForSize($fileformainimage, '_small');
-		$fileformainimagemini = getImageFileNameForSize($fileformainimage, '_mini');
+		$fileformainimagesmall = getImageFileNameForSize($fileformainimage, '_small');	// This include the "thumbs/..." in path
+		$fileformainimagemini = getImageFileNameForSize($fileformainimage, '_mini');	// This include the "thumbs/..." in path
 
 		$out = '';
 
@@ -119,16 +119,16 @@ class FormFile
 			$out .= '<div class="inline-block valignmiddle marginrightonly">';
 			$out .= '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=remove'.$htmlname.'&token='.newToken().'">'.img_delete($langs->trans("Delete"), '', 'marginleftonly').'</a>';
 			$out .= '</div>';
-			if (file_exists($dirformainimage.'/'.$subdirformainimage.'thumbs/'.$fileformainimagesmall)) {
+			if (file_exists($dirformainimage.'/'.$subdirformainimage.$fileformainimagesmall)) {
 				$out .= '<div class="inline-block valignmiddle marginrightonly">';
-				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.'thumbs/'.$fileformainimagesmall).'">';
+				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.$fileformainimagesmall).'">';
 				$out .= '</div>';
 			} elseif (!empty($fileformainimage)) {
 				// Regenerate the thumbs
-				if (!file_exists($dirformainimage.'/'.$subdirformainimage.'thumbs/'.$fileformainimagemini)) {
+				if (!file_exists($dirformainimage.'/'.$subdirformainimage.$fileformainimagemini)) {
 					$imgThumbMini = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthmini, $maxheightmini, '_mini', $quality);
 				}
-				$imgThumbSmall = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthmini, $maxheightmini, '_small', $quality);
+				$imgThumbSmall = vignette($dirformainimage.'/'.$subdirformainimage.$fileformainimage, $maxwidthsmall, $maxheightsmall, '_small', $quality);
 				$out .= '<div class="inline-block valignmiddle">';
 				$out .= '<img id="'.$htmlname.'" style="'.$max.'height: '.$imgheight.'px; '.$max.'width: '.$imgwidth.'px;" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&file='.urlencode($subdirformainimage.'thumbs/'.basename($imgThumbSmall)).'">';
 				$out .= '</div>';
@@ -396,8 +396,8 @@ class FormFile
 	 *      @param      string				$modulesubdir       Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
 	 *      @param      string				$filedir            Directory to scan
 	 *      @param      string				$urlsource          Url of origin page (for return)
-	 *      @param      int					$genallowed         Generation is allowed (1/0 or array of formats)
-	 *      @param      int					$delallowed         Remove is allowed (1/0)
+	 *      @param      int<0,1>			$genallowed         Generation is allowed (1/0 or array of formats)
+	 *      @param      int<0,1>			$delallowed         Remove is allowed (1/0)
 	 *      @param      string				$modelselected      Model to preselect by default
 	 *      @param      integer				$allowgenifempty	Show warning if no model activated
 	 *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
@@ -427,24 +427,24 @@ class FormFile
 	 *      @param      string				$modulesubdir       Existing (so sanitized) sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into a subdir of module.
 	 *      @param      string				$filedir            Directory to scan (must not end with a /). Example: '/mydolibarrdocuments/facture/FAYYMM-1234'
 	 *      @param      string				$urlsource          Url of origin page (for return)
-	 *      @param      int|string[]        $genallowed         Generation is allowed (1/0 or array list of templates)
-	 *      @param      int					$delallowed         Remove is allowed (1/0)
+	 *      @param      int<0,1>|string[]	$genallowed         Generation is allowed (1/0 or array list of templates)
+	 *      @param      int<0,1>			$delallowed         Remove is allowed (1/0)
 	 *      @param      string				$modelselected      Model to preselect by default
-	 *      @param      integer				$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
-	 *      @param      integer				$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
+	 *      @param      int<0,1>			$allowgenifempty	Allow generation even if list of template ($genallowed) is empty (show however a warning)
+	 *      @param      int<0,1>			$forcenomultilang	Do not show language option (even if MAIN_MULTILANGS defined)
 	 *      @param      int					$iconPDF            Deprecated, see getDocumentsLink
 	 * 		@param		int					$notused	        Not used
-	 * 		@param		integer				$noform				Do not output html form tags
+	 * 		@param		int<0,1>			$noform				Do not output html form tags
 	 * 		@param		string				$param				More param on http links
 	 * 		@param		string				$title				Title to show on top of form. Example: '' (Default to "Documents") or 'none'
 	 * 		@param		string				$buttonlabel		Label on submit button
 	 * 		@param		string				$codelang			Default language code to use on lang combo box if multilang is enabled
 	 * 		@param		string				$morepicto			Add more HTML content into cell with picto
 	 *      @param      Object|null         $object             Object when method is called from an object card.
-	 *      @param		int					$hideifempty		Hide section of generated files if there is no file
+	 *      @param		int<0,1>			$hideifempty		Hide section of generated files if there is no file
 	 *      @param      string              $removeaction       (optional) The action to remove a file
 	 *      @param		string				$tooltipontemplatecombo		Text to show on a tooltip after the combo list of templates
-	 * 		@return		string|int             					Output string with HTML array of documents (might be empty string)
+	 * 		@return		string|int<-1,-1>           					Output string with HTML array of documents (might be empty string)
 	 */
 	public function showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file', $tooltipontemplatecombo = '')
 	{
@@ -947,6 +947,8 @@ class FormFile
 					}
 				}
 
+				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
+
 				require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 
 				$i = 0;
@@ -971,10 +973,7 @@ class FormFile
 
 					$out .= '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
 
-					$documenturl = DOL_URL_ROOT.'/document.php';
-					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-						$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'); // To use another wrapper
-					}
+					$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php'); // DOL_URL_ROOT_DOCUMENT_PHP can be used to set another wrapper
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
@@ -1145,13 +1144,13 @@ class FormFile
 	 *  You may want to call this into a div like this:
 	 *  print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
 	 *
-	 *	@param	string	$modulepart		'propal', 'facture', 'facture_fourn', ...
-	 *	@param	string	$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
-	 *	@param	string	$filedir		Full path to directory to scan
-	 *  @param	string	$filter			Filter filenames on this regex string (Example: '\.pdf$')
-	 *  @param	string	$morecss		Add more css to the download picto
-	 *  @param	int 	$allfiles		0=Only generated docs, 1=All files
-	 *	@return	string              	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
+	 *	@param	string		$modulepart		'propal', 'facture', 'facture_fourn', ...
+	 *	@param	string		$modulesubdir	Sub-directory to scan (Example: '0/1/10', 'FA/DD/MM/YY/9999'). Use '' if file is not into subdir of module.
+	 *	@param	string		$filedir		Full path to directory to scan
+	 *  @param	string		$filter			Filter filenames on this regex string (Example: '\.pdf$')
+	 *  @param	string		$morecss		Add more css to the download picto
+	 *  @param	int<0,1>	$allfiles		0=Only generated docs, 1=All files
+	 *	@return	string				   	Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = 'valignmiddle', $allfiles = 0)
 	{
@@ -1373,6 +1372,7 @@ class FormFile
 			if ($permtoeditline < 0) {  // Old behaviour for backward compatibility. New feature should call method with value 0 or 1
 				$permtoeditline = 0;
 				if (in_array($modulepart, array('product', 'produit', 'service'))) {
+					'@phan-var-force Product $object';
 					if ($user->hasRight('produit', 'creer') && $object->type == Product::TYPE_PRODUCT) {
 						$permtoeditline = 1;
 					}
@@ -1511,7 +1511,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwidth200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1544,7 +1544,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1616,7 +1616,7 @@ class FormFile
 					}
 
 					// Shared or not - Hash of file
-					print '<td class="center">';
+					print '<td class="center minwidth100 nowraponsmartphone">';
 					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
 						if ($editline) {
 							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
@@ -1641,7 +1641,7 @@ class FormFile
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="quatrevingtpercent minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
@@ -2352,9 +2352,9 @@ class FormFile
 	 * Show detail icon with link for preview
 	 *
 	 * @param   array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}     $file           Array with data of file. Example: array('name'=>...)
-	 * @param   string    $modulepart     propal, facture, facture_fourn, ...
-	 * @param   string    $relativepath   Relative path of docs
-	 * @param   integer   $ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
+	 * @param   string		$modulepart     propal, facture, facture_fourn, ...
+	 * @param   string		$relativepath   Relative path of docs
+	 * @param   int<min,1>	$ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.
 	 * @param	string	  $param		  More param on http links
 	 * @return  string    $out            Output string with HTML
 	 */

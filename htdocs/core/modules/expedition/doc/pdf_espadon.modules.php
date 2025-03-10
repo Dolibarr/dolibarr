@@ -705,7 +705,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					if ($this->getColumnStatus('unit_order')) {
-						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString($object->lines[$i]->fk_unit));
+						$this->printStdColumnContent($pdf, $curY, 'unit_order', measuringUnitString((int) $object->lines[$i]->fk_unit));
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -729,6 +729,17 @@ class pdf_espadon extends ModelePdfExpedition
 							}
 						}
 					}
+
+					$parameters = array(
+						'object' => $object,
+						'i' => $i,
+						'pdf' => & $pdf,
+						'curY' => & $curY,
+						'nexY' => & $nexY,
+						'outputlangs' => $outputlangs,
+						'hidedetails' => $hidedetails
+					);
+					$reshook = $hookmanager->executeHooks('printPDFline', $parameters, $this);
 
 					// Add line
 					if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES') && $i < ($nblines - 1)) {

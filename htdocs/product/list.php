@@ -14,7 +14,7 @@
  * Copyright (C) 2020-2021	Open-DSI                <support@open-dsi.fr>
  * Copyright (C) 2022		Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2020-2023	Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -326,7 +326,7 @@ if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		} else {
 			$labelp = $langs->transnoentitiesnoconv("SellingPrice")." ".$i;
 		}
-		$arrayfields['p.sellprice'.$i] = array('label' => $labelp, 'checked' => ($i == 1 ? 1 : 0), 'enabled' => getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => (float) ('40.'.sprintf('%03d', $i)));
+		$arrayfields['p.sellprice'.$i] = array('label' => $labelp, 'checked' => ($i == 1 ? '1' : '0'), 'enabled' => getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => (float) ('40.'.sprintf('%03d', $i)));
 		$arraypricelevel[$i] = array($i);
 	}
 }
@@ -336,7 +336,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// Note: forcing int for position, but in reality it is a float here.
+'@phan-var-force array<string,array{label:string,checked?:string,position?:int,enabled?:string,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 if ($search_type == '0') {
@@ -454,6 +455,7 @@ if (empty($reshook)) {
  */
 
 $product_static = new Product($db);
+$workstation_static = null;
 if (isModEnabled('workstation')) {
 	$workstation_static = new Workstation($db);
 }
@@ -675,7 +677,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-$sql .= " GROUP BY p.rowid, p.ref, p.description, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
+$sql .= " GROUP BY p.rowid, p.ref, p.ref_ext, p.description, p.label, p.barcode, p.price, p.tva_tx, p.price_ttc, p.price_base_type,";
 $sql .= " p.fk_product_type, p.duration, p.finished, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
 $sql .= ' p.datec, p.tms, p.entity, p.tobatch, p.pmp, p.cost_price, p.stock,';
 if (!getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
@@ -918,6 +920,7 @@ $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
 $newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 
+$perm = false;
 if ($type === "") {
 	$perm = ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'));
 } elseif ($type == Product::TYPE_SERVICE) {
@@ -933,11 +936,11 @@ if ($type === "") {
 $newcardbutton .= dolGetButtonTitleSeparator();
 if ((isModEnabled('product') && $type === "") || $type == Product::TYPE_PRODUCT) {
 	$label = 'NewProduct';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=0', '', (int) $perm, $params);
 }
 if ((isModEnabled('service') && $type === "") || $type == Product::TYPE_SERVICE) {
 	$label = 'NewService';
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', $perm, $params);
+	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/product/card.php?action=create&type=1', '', (int) $perm, $params);
 }
 
 print '<form id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" method="POST" name="formulaire">';
@@ -1267,7 +1270,7 @@ if (!empty($arrayfields['p.fk_country']['checked'])) {
 // State
 if (!empty($arrayfields['p.fk_state']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formcompany->select_state($search_state, $search_country);
+	print $formcompany->select_state((int) $search_state, $search_country);
 	print '</td>';
 }
 // Accountancy code sell
@@ -1657,6 +1660,7 @@ while ($i < $imaxinloop) {
 	}
 
 	$product_static->price = $obj->price;
+	$product_static->price_ttc = $obj->price_ttc; // Allows to use price_ttc in calculated extra fields (ex : price per kilo)
 
 	$object = $product_static;
 
@@ -1990,7 +1994,7 @@ while ($i < $imaxinloop) {
 		// Default Workstation
 		if (!empty($arrayfields['p.fk_default_workstation']['checked'])) {
 			print '<td align="left">';
-			if (isModEnabled('workstation') && !empty($obj->fk_default_workstation)) {
+			if (isModEnabled('workstation') && !empty($obj->fk_default_workstation) && $workstation_static !== null) {
 				$workstation_static->id = $obj->fk_default_workstation;
 				$workstation_static->ref = $obj->ref_workstation;
 				$workstation_static->status = $obj->status_workstation;
@@ -2019,14 +2023,10 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		$productpricescache = array();
 		// Multiprices
 		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-			if (! isset($productpricescache)) {
-				$productpricescache = array();
-			}
-			if (! isset($productpricescache[$obj->rowid])) {
-				$productpricescache[$obj->rowid] = array();
-			}
+			$productpricescache[$obj->rowid] = array();
 
 			if ($product_static->status && $usercancreadprice) {
 				// Make 1 request for all price levels (without filter on price_level) and saved result into an cache array
@@ -2056,6 +2056,7 @@ while ($i < $imaxinloop) {
 					dol_print_error($db);
 				}
 			}
+			'@phan-var-force array<int,array<int,array{price:string,price_ttc:string,price_base_type:string}>> $productpricescache';
 
 			foreach ($arraypricelevel as $key => $value) {
 				if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
@@ -2102,7 +2103,7 @@ while ($i < $imaxinloop) {
 			if ($product_static->status_buy && $usercancreadprice) {
 				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
 					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
-					print $form->textwithpicto(count($productFournList), $htmltext);
+					print $form->textwithpicto((string) count($productFournList), $htmltext);
 				}
 			}
 			print '</td>';
@@ -2312,7 +2313,7 @@ while ($i < $imaxinloop) {
 		// Import ID
 		if (!empty($arrayfields['p.import_key']['checked'])) {
 			print '<td class="center nowrap">';
-			print dol_escape_htmltag($product_static->import_key);
+			print dol_escape_htmltag((string) $product_static->import_key);
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

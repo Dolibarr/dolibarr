@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2017  Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +82,7 @@ if (GETPOST('action', 'alpha') == 'set') {
 
 if (getDolGlobalInt('TAKEPOS_ORDER_NOTES') == 1) {
 	$extrafields = new ExtraFields($db);
-	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, 255, 'facturedet', 0, 0, '', '', 0, '', 0, 1);
+	$extrafields->addExtraField('order_notes', 'Order notes', 'varchar', 0, '255', 'facturedet', 0, 0, '', '', 0, '', '0', '1');
 }
 
 /*

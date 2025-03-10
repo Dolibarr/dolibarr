@@ -3,7 +3,7 @@
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -577,7 +577,6 @@ class ProductCombination
 						} else {
 							$new_price += $variation_price;
 						}
-
 						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
 
 						if ($ret < 0) {
@@ -607,7 +606,7 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq, 0, [], $parent->default_vat_code);
 
 				if ($ret < 0) {
 					$this->db->rollback();
@@ -632,7 +631,7 @@ class ProductCombination
 	 * Retrieves the combination that matches the given features.
 	 *
 	 * @param 	int 						$prodid 	Id of parent product
-	 * @param 	array<string,string> 		$features 	Format: [$attr] => $attr_val
+	 * @param 	array<int|string,int|string> 		$features 	Format: [$attr] => $attr_val
 	 * @return 	false|ProductCombination 				False if not found
 	 */
 	public function fetchByProductCombination2ValuePairs($prodid, array $features)
@@ -985,23 +984,23 @@ class ProductCombination
 		$prodcomb2val = new ProductCombination2ValuePair($this->db);
 
 		//Retrieve all product combinations
-		$combinations = $this->fetchAllByFkProductParent($origProductId);
+		$combinationObjects = $this->fetchAllByFkProductParent($origProductId);
 
-		foreach ($combinations as $combination) {
-			$variations = array();
+		foreach ($combinationObjects as $combinationObject) {
+			$combinations = array();
 
-			foreach ($prodcomb2val->fetchByFkCombination($combination->id) as $tmp_pc2v) {
-				$variations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
+			foreach ($prodcomb2val->fetchByFkCombination($combinationObject->id) as $tmp_pc2v) {
+				$combinations[$tmp_pc2v->fk_prod_attr] = $tmp_pc2v->fk_prod_attr_val;
 			}
 
-			$variation_price_percentage = $combination->variation_price_percentage;
-			$variation_price = $combination->variation_price;
+			$variation_price_percentage = $combinationObject->variation_price_percentage;
+			$variation_price = $combinationObject->variation_price;
 
 			if (getDolGlobalInt('PRODUIT_MULTIPRICES') && getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') > 1) {
 				$variation_price_percentage = [ ];
 				$variation_price = [ ];
 
-				foreach ($combination->combination_price_levels as $productCombinationLevel) {
+				foreach ($combinationObject->combination_price_levels as $productCombinationLevel) {
 					$variation_price_percentage[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price_percentage;
 					$variation_price[$productCombinationLevel->fk_price_level] = $productCombinationLevel->variation_price;
 				}
@@ -1010,11 +1009,11 @@ class ProductCombination
 			if ($this->createProductCombination(
 				$user,
 				$destProduct,
-				$variations,
+				$combinations,
 				array(),
 				$variation_price_percentage,
 				$variation_price,
-				$combination->variation_weight
+				$combinationObject->variation_weight
 			) < 0) {
 				return -1;
 			}

@@ -8,13 +8,12 @@ Shipments=Livrări
 ShowSending=Arată Livrări
 Receivings=Documente de livrare
 SendingsArea=Livrări
-ListOfSendings=Listă livrări
 SendingMethod=Metodă de livrare
 LastSendings=Ultimele %s livrări
 StatisticsOfSendings=Statistici livrări
 NbOfSendings=Număr livrări
 NumberOfShipmentsByMonth=Număr de livrări pe lună
-SendingCard=Fişă livrare
+SendingCard=Livrare
 NewSending=Livrare nouă
 CreateShipment=Creare livrare
 QtyShipped=Cant. livrată
@@ -44,6 +43,7 @@ ConfirmCancelSending=Sigur doriți să anulați livrarea?
 DocumentModelMerou=Model Merou A5
 WarningNoQtyLeftToSend=Atenţie, nu sunt produse care aşteaptă să fie livrate.
 StatsOnShipmentsOnlyValidated=Statisticile sunt numai pentru livrările validate. Data utilizată este data validării (data de livrare planificată nu este întotdeauna cunoscută)
+DateShipping=Dată trimitere
 DateDeliveryPlanned=Data planificată a livrării
 RefDeliveryReceipt=Ref. document de livrare
 StatusReceipt=Stare document de livrare
@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=Nicio linie/articol, mergi în fila "%s" pentru adăugare
 CreateInvoiceForThisCustomerFromSendings=Creare Facturi
 IfValidateInvoiceIsNoSendingStayUnbilled=Dacă validarea facturii este 'Nu', expedierea/livrarea va rămâne în starea 'Nefacturată' până când factura este validată.
 OptionToSetSendingBilledNotEnabled= Opțiunea din modulul Flux de lucru, pentru a seta automat trimiterea la 'Facturat' atunci când factura este validată, nu este activată, așa că va trebui să setezi manual starea trimiterilor la 'Facturat' după generarea facturii.
+ShipmentUpdated=Livrarea a fost actualizată cu succes
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Expediere distribuție
 ErrorTooManyCombinationBatchcode=Nicio expediere pentru linia %s, deoarece au fost găsite prea multe combinații de cod de depozit, produs, lot (%s).
 ErrorNoCombinationBatchcode=Nu s-a putut salva linia %s deoarece combinația depozit-produs-lot/serial (%s, %s, %s) nu a fost găsită în stoc.
 ErrorTooMuchShipped=Cantitatea livrată nu ar trebui să fie mai mare decât cea comandată pentru linia/articolul %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Responsabil recepţie comandă furnizor
+TypeContact_shipping_external_BILLING=Contact client facturare comandă
+TypeContact_shipping_external_CUSTOMER=Contact client urmărire livrare
+TypeContact_shipping_external_SHIPPING=Contact client pentru livrare
+TypeContact_shipping_external_DELIVERY=Contact client pentru livrare
+CloseShipment=Închidere livrare
+ConfirmCloseShipment=Confirmare închidere livrare

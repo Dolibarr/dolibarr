@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -887,7 +887,7 @@ class Holiday extends CommonObject
 	 *
 	 *  @param	User		$user        	User that approve
 	 *  @param  int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
-	 *  @return int         			Return integer <0 if KO, >0 if OK
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
 	public function approve($user = null, $notrigger = 0)
 	{
@@ -1151,9 +1151,9 @@ class Holiday extends CommonObject
 	/**
 	 *   Delete object in database
 	 *
-	 *	 @param		User	$user        	User that delete
-	 *   @param     int		$notrigger	    0=launch triggers after, 1=disable triggers
-	 *	 @return	int						Return integer <0 if KO, >0 if OK
+	 *	 @param		User		$user        	User that delete
+	 *   @param     int<0,1>	$notrigger	    0=launch triggers after, 1=disable triggers
+	 *	 @return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -1202,12 +1202,12 @@ class Holiday extends CommonObject
 	 *  This function can be used to avoid to have 2 leave requests on same period for example.
 	 *  Warning: It consumes a lot of memory because it load in ->holiday all holiday of a dedicated user at each call.
 	 *
-	 *  @param 	int		$fk_user		Id user
-	 *  @param 	integer	$dateStart		Start date of period to check
-	 *  @param 	integer	$dateEnd		End date of period to check
-	 *  @param  int     $halfday        Tag to define how start and end the period to check:
+	 *  @param 	int			$fk_user	Id user
+	 *  @param 	int			$dateStart	Start date of period to check
+	 *  @param 	int			$dateEnd	End date of period to check
+	 *  @param  int<-1,2>	$halfday    Tag to define how start and end the period to check:
 	 *                                  0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
-	 * 	@return boolean					False = New range overlap an existing holiday, True = no overlapping (is never on holiday during checked period).
+	 * 	@return bool					False = New range overlap an existing holiday, True = no overlapping (is never on holiday during checked period).
 	 *  @see verifDateHolidayForTimestamp()
 	 */
 	public function verifDateHolidayCP($fk_user, $dateStart, $dateEnd, $halfday = 0)
@@ -1287,9 +1287,9 @@ class Holiday extends CommonObject
 	 *	Check that a user is not on holiday for a particular timestamp. Can check approved leave requests and not into public holidays of company.
 	 *
 	 * 	@param 	int			$fk_user				Id user
-	 *  @param	integer	    $timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
+	 *  @param	int		    $timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
 	 *  @param	string		$status					Filter on holiday status. '-1' = no filter.
-	 * 	@return array{morning_reason?:string,afternoon_reason?:string}		array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
+	 * 	@return array{morning:int<0,1>,afternoon:int<0,1>,morning_reason?:string,afternoon_reason?:string}		array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
 	 *  @see verifDateHolidayCP()
 	 */
 	public function verifDateHolidayForTimestamp($fk_user, $timestamp, $status = '-1')
@@ -1349,7 +1349,7 @@ class Holiday extends CommonObject
 			dol_print_error($this->db);
 		}
 
-		$result = array('morning' => $isavailablemorning, 'afternoon' => $isavailableafternoon);
+		$result = array('morning' => (int) $isavailablemorning, 'afternoon' => (int) $isavailableafternoon);
 		if (!$isavailablemorning) {
 			$result['morning_reason'] = 'leave_request';
 		}

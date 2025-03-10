@@ -21,6 +21,7 @@ parameters:
 		analyseAndScan:
 		- htdocs/custom/*
 		- htdocs/documents/*
+		- htdocs/install/*		# We must exclude this dir to avoid to have DOL_DOCUMENT_ROOT defined to .. by inc.php before the bootstrap*.php file can load it.
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*

@@ -132,6 +132,7 @@ AlsoCloseAProjectTooltip=أبقه مفتوحًا إذا كنت لا تزال ب�
 ReOpenAProject=فتح مشروع
 ConfirmReOpenAProject=هل أنت متأكد أنك تريد إعادة فتح هذا المشروع؟
 ProjectContact=اتصالات من المشروع
+ProjectContactTypeManager=عيّنني كجهة اتصال مع النوع
 TaskContact=جهات اتصال المهمة
 ActionsOnProject=الإجراءات على المشروع
 YouAreNotContactOfProject=كنت لا اتصال لهذا المشروع الخاص
@@ -204,8 +205,8 @@ InputPerWeek=مساهمة في الأسبوع
 InputPerMonth=المدخلات شهريا
 InputDetail=تفاصيل الإدخال
 TimeAlreadyRecorded=هذا هو الوقت المنقضي المسجل بالفعل لهذه المهمة / اليوم والمستخدم %s
-ProjectsWithThisUserAsContact=Projects assigned to this user
-ProjectsWithThisContact=Projects assigned to this third-party contact
+ProjectsWithThisUserAsContact=المشاريع المخصصة لهذا المستخدم
+ProjectsWithThisContact=المشاريع المخصصة لهذه الجهة الخارجية
 TasksWithThisUserAsContact=المهام الموكلة إلى هذا المستخدم
 ResourceNotAssignedToProject=لم يتم تعيين إلى المشروع
 ResourceNotAssignedToTheTask=لم يتم تعيينه للمهمة
@@ -303,11 +304,15 @@ NewLeadbyWeb=تم تسجيل رسالتك أو طلبك. سوف نقوم بال�
 NewLeadForm=استمارة اتصال جديدة
 LeadFromPublicForm=عميل محتمل عبر الإنترنت من شكل عام
 ExportAccountingReportButtonLabel=احصل على التقرير
-MergeOriginTask=Duplicated task (the task you want to delete)
-SelectTask=Select a task
-ConfirmMergeTasks=Are you sure you want to merge the chosen task with the current one? All linked objects (time spent, invoices, ...) will be moved to the current task, after which the chosen task will be deleted.
-MergeTasks=Merge tasks
-TaskMergeSuccess=Tasks have been merged
-ErrorTaskIdIsMandatory=Error: Task id is mandatory
-ErrorsTaskMerge=An error occurred while merging tasks
-Billable = Billable
+MergeOriginTask=المهمة المكررة (المهمة التي تريد حذفها)
+SelectTask=حدد مهمة
+ConfirmMergeTasks=هل أنت متأكد من أنك تريد دمج المهمة المختارة مع المهمة الحالية؟ سيتم نقل جميع الكائنات المرتبطة (الوقت المستغرق، الفواتير، ...) إلى المهمة الحالية، وبعد ذلك سيتم حذف المهمة المختارة.
+MergeTasks=دمج المهام
+TaskMergeSuccess=تم دمج المهام
+ErrorTaskIdIsMandatory=خطأ: معرف المهمة إلزامي
+ErrorsTaskMerge=حدث خطأ أثناء دمج المهام
+Billable = قابلة للفوترة
+ConfirmCloseTask=هل أنت متأكد أنك تريد إغلاق هذه المهمة؟
+ConfirmClosed=تأكيد إغلاق المهمة
+TaskStatus=حالة المهمة
+TaskReopened=تم إعادة فتح المهمة

@@ -1,13 +1,69 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuration du module Stripe
+StripeDesc=Proposez à vos clients une page de paiement en ligne pour les paiements par carte bancaire via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. Cela peut être utilisé pour permettre à vos clients d'effectuer des paiements ponctuels ou pour des paiements liés à un objet Dolibarr particulier (facture, commande, ...)
 StripeOrCBDoPayment=Payer avec carte de crédit ou Stripe
+FollowingUrlAreAvailableToMakePayments=Les URL suivantes sont disponibles pour offrir une page à un client pour effectuer un paiement sur les objets Dolibarr
+ThisScreenAllowsYouToPay=Cet écran vous permet de faire un paiement en ligne à %s.
+ThisIsInformationOnPayment=Il s'agit d'informations sur le paiement à effectuer
+ToComplete=Compléter
+YourEMail=Email pour recevoir la confirmation de paiement
+STRIPE_PAYONLINE_SENDEMAIL=Notification par e-mail après une tentative de paiement (succès ou échec)
+Creditor=Créancier
+StripeAutoRecordPayout=Activer l'enregistrement automatique du paiement (lorsque Stripe effectue un paiement et appelle le webhook IPN payout.create/payout.paid)
 YouWillBeRedirectedOnStripe=Vous serez redirigé sur la page Stripe sécurisée pour vous fournir des informations sur votre carte de crédit
+Continue=Suivant
 ToOfferALinkForOnlinePayment=URL pour le paiement %s
+ToOfferALinkForOnlinePaymentOnOrder=URL pour proposer une page de paiement en ligne %s pour une commande client
+ToOfferALinkForOnlinePaymentOnInvoice=URL pour proposer une page de paiement en ligne %s pour une facture client
+ToOfferALinkForOnlinePaymentOnContractLine=URL pour proposer une page de paiement en ligne %s pour une ligne de contrat
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL pour proposer une page de paiement en ligne %s de n'importe quel montant sans objet existant
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL pour proposer une page de paiement en ligne %s pour un abonnement membre
+ToOfferALinkForOnlinePaymentOnDonation=URL pour proposer une page de paiement en ligne %s pour le règlement d'un don
+YouCanAddTagOnUrl=Vous pouvez également ajouter le paramètre d'URL <b>&tag=value</b> à l'une de ces URL (obligatoire uniquement pour les paiements non liés à un objet) pour ajouter votre propre balise de commentaire de paiement.<br>Pour l'URL des paiements sans objet existant, vous pouvez également ajouter le paramètre <strong>&noidempotency=1</strong> afin que le même lien avec la même balise puisse être utilisé plusieurs fois (certains modes de paiement peuvent limiter le paiement à 1 pour chaque lien différent sans ce paramètre)
+YouCanEmbedOnWebsite=Si vous souhaitez intégrer la page de paiement dans un site Dolibarr, vous pouvez inclure le paramètre : <b>&ws=website_ref</b>.<br>De plus, deux pages nommées <b>paymentok</b> et <b>paymentko</b> doivent être créé sur le site Web pour recevoir la redirection après un paiement en ligne réussi ou échoué.
 SetupStripeToHavePaymentCreatedAutomatically=Configurez votre Stripe avec url <b> %s</b> pour que le paiement soit créé automatiquement lorsqu'il est validé par Stripe.
+InformationToFindParameters=Aidez-nous à trouver vos informations sur le compte %s
 STRIPE_CGI_URL_V2=Url of Stripe CGI module de paiement
+CSSUrlForPaymentForm=URL de la feuille de style CSS pour le formulaire de paiement
 NewStripePaymentFailed=Le paiement New Stripe a essayé mais échoué
+FailedToChargeCard=Impossible de facturer la carte
+FailedToChargeSEPA=Impossible de facturer SEPA
 STRIPE_TEST_SECRET_KEY=Clé de test secrète
 STRIPE_TEST_PUBLISHABLE_KEY=Clé de test publiable
+STRIPE_TEST_WEBHOOK_KEY=Clé de test Webhook
 STRIPE_LIVE_SECRET_KEY=Touche en direct secrète
 STRIPE_LIVE_PUBLISHABLE_KEY=Touche dynamique publiable
+STRIPE_LIVE_WEBHOOK_KEY=Clé Webhook en direct
+ONLINE_PAYMENT_WAREHOUSE=Stock à utiliser pour la diminution du stock lorsque le paiement en ligne est effectué<br>(TODO lorsque l'option de diminution du stock est effectuée sur une action sur la facture et que le paiement en ligne génère lui-même la facture ?)
 StripeLiveEnabled=Stripe en direct activé (sinon mode test / sandbox)
+StripeImportPayment=Importer des paiements Stripe
+ExampleOfTestCreditCard=Exemple de carte de crédit pour un paiement test : %s => valide, %s => erreur CVC, %s => expiré, %s => échec du débit
+ExampleOfTestBankAcountForSEPA=Exemple de BAN de compte bancaire pour test de prélèvement automatique : %s
+StripeGateways=Passerelles Stripe
+OAUTH_STRIPE_TEST_ID=ID client Stripe Connect (ca_...)
+OAUTH_STRIPE_LIVE_ID=ID client Stripe Connect (ca_...)
+BankAccountForBankTransfer=Compte bancaire pour les versements de fonds
+StripeChargeList=Liste des frais facturés par Stripe
+StripeID=Identifiant Stripe
+DeleteACard=Supprimer la carte
+ConfirmDeleteCard=Êtes-vous sûr de vouloir supprimer cette carte de crédit ou de débit ?
+CreateCustomerOnStripe=Créer un client sur Stripe
+CreateCardOnStripe=Créer une carte sur Stripe
+ShowInStripe=Afficher en Stripe
+StripeUserAccountForActions=Compte utilisateur à utiliser pour la notification par e-mail de certains événements Stripe (paiements Stripe)
+StripePayoutList=Liste des paiements Stripe
+ToOfferALinkForTestWebhook=Lien pour configurer Stripe WebHook pour appeler l'IPN (mode test)
+ToOfferALinkForLiveWebhook=Lien pour configurer Stripe WebHook pour appeler l'IPN (mode live)
+PaymentWillBeRecordedForNextPeriod=Le paiement sera enregistré pour la période suivante.
+ClickHereToTryAgain=<a href="%s">Cliquez ici pour réessayer...</a>
+CreationOfPaymentModeMustBeDoneFromStripeInterface=En raison des règles d'authentification forte du client, la création d'une carte doit être effectuée depuis le back-office de Stripe. Vous pouvez cliquer ici pour activer l'enregistrement client Stripe : %s
+TERMINAL_LOCATION=Localisation (adresse) des terminaux Stripe
+RequesCreditTransferWithStripe=Demander un virement bancaire avec Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Activer les paiements par prélèvement automatique via Stripe
+STRIPE_KLARNA=Activer les paiements via Klarna
+STRIPE_BANCONTACT=Activer les paiements via BANCONTACT
+STRIPE_IDEAL=Activer les paiements en utilisant IDEAL
+StripeConnect_Mode=Mode de connexion Stripe
+ExampleOnlyForBECustomers=Uniquement pour les clients belges
+ExampleOnlyForDECustomers=Uniquement pour les clients allemands
+ExampleOnlyForATBEDEITNLESCustomers=Uniquement pour les clients d'Autriche, de Belgique, d'Allemagne, d'Italie, des Pays-Bas et d'Espagne

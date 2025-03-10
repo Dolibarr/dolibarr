@@ -1,13 +1,14 @@
 <?php
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
- * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015		    Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		    Charlie BENKE				    <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				  <frederic.france@free.fr>
+ * Copyright (C) 2021		    Gauthier VERDOL				  <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		    Maxime Nicolas				  <maxime@oarces.com>
+ * Copyright (C) 2023		    Benjamin GREMBI				  <benjamin@oarces.com>
+ * Copyright (C) 2024-2025	MDW							        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,8 +94,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
 
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
+if ($id > 0) {
+	$object->fetch($id);
 
 	// Check current user can read this salary
 	$canread = 0;
@@ -580,7 +581,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
-	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'employee:=:1', 0, '', 'maxwidth300', $noactive);
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, null, 0, '', '', '0', 0, 0, 'employee:=:1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -615,7 +616,7 @@ if ($action == 'create' && $permissiontoadd) {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print $formproject->select_projects(-1, (string) $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -761,21 +762,67 @@ if ($id > 0) {
 		);
 
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		if (!empty($object->dateep)) {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => ($object->dateep) + 86400);
+		} else {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		}
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 
-		//Add fill with end of month button
+		//Add buttons to fill start and end dates
 		$formconfirm .= "<script>
+			// Buttons for start date: previous month, current month, previous week, current week
+			$('#clone_date_start').after(
+				$('<button id=\"start_prev_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousMonthShort')."</button>')
+				.add('<button id=\"start_curr_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentMonthShort')."</button>')
+				.add('<button id=\"start_prev_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousWeekShort')."</button>')
+				.add('<button id=\"start_curr_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentWeekShort')."</button>')
+			);
+
+			$('#start_prev_month').click(function(){
+				var now = new Date();
+				var startPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+				setStartDate(startPrevMonth);
+			});
+
+			$('#start_curr_month').click(function(){
+				var now = new Date();
+				var startCurrMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+			setStartDate(startCurrMonth);
+			});
+
+			$('#start_prev_week').click(function(){
+				var now = new Date();
+				var startPrevWeek = new Date(now.setDate(now.getDate() - now.getDay() - 7));
+				startPrevWeek.setDate(startPrevWeek.getDate() + 1);
+				setStartDate(startPrevWeek);
+			});
+
+			$('#start_curr_week').click(function(){
+				var now = new Date();
+				var startCurrWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+				setStartDate(startCurrWeek);
+			});
+
+			function setStartDate(date) {
+				$('#clone_date_start').val(formatDate(date, '".$langs->trans("FormatDateShortJavaInput")."'));
+				$('#clone_date_startday').val(date.getDate());
+				$('#clone_date_startmonth').val(date.getMonth() + 1);
+				$('#clone_date_startyear').val(date.getFullYear());
+			}
+
+   			// Button for end date
 			$('#clone_date_end').after($('<button id=\"fill_end_of_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('FillEndOfMonth')."</button>'));
 			$('#fill_end_of_month').click(function(){
 				var clone_date_startmonth = +$('#clone_date_startmonth').val();
 				var clone_date_startyear = +$('#clone_date_startyear').val();
 				var end_date;
+
 				if (clone_date_startmonth && clone_date_startyear) {
-					end_date = new Date(clone_date_startyear, clone_date_startmonth , 0);
+					end_date = new Date(clone_date_startyear, clone_date_startmonth, 0);
 				} else {
 					var currentDate = new Date();
 					var currentDay = currentDate.getDate();
@@ -784,7 +831,8 @@ if ($id > 0) {
 					} else {
 						end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 					}
-	 			}
+				}
+
 				$('#clone_date_end').val(formatDate(end_date,'".$langs->trans("FormatDateShortJavaInput")."'));
 				$('#clone_date_endday').val(end_date.getDate());
 				$('#clone_date_endmonth').val(end_date.getMonth() + 1);
@@ -884,7 +932,7 @@ if ($id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -960,9 +1008,9 @@ if ($id > 0) {
 	print '</td><td>';
 
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
 	}
 	print '</td></tr>';
 
@@ -978,9 +1026,9 @@ if ($id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 		}
 		print '</td>';
 		print '</tr>';

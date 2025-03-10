@@ -5,8 +5,8 @@
  * Copyright (C) 2018	   Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -165,28 +165,28 @@ if (empty($user->socid)) {
 }
 
 $arrayfields = array(
-	't.ref' => array('label' => "RefTask", 'checked' => 1, 'position' => 50),
-	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => 0, 'position' => 70),
-	't.label' => array('label' => "LabelTask", 'checked' => 1, 'position' => 75),
-	't.description' => array('label' => "Description", 'checked' => 0, 'position' => 80),
-	't.dateo' => array('label' => "DateStart", 'checked' => 1, 'position' => 100),
-	't.datee' => array('label' => "Deadline", 'checked' => 1, 'position' => 101),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => 1, 'position' => 151),
-	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'position' => 152),
-	's.nom' => array('label' => "ThirdParty", 'checked' => -1, 'csslist' => 'tdoverflowmax125', 'position' => 200),
-	's.name_alias' => array('label' => "AliasNameShort", 'checked' => 0, 'csslist' => 'tdoverflowmax125', 'position' => 201),
-	'p.fk_statut' => array('label' => "ProjectStatus", 'checked' => 1, 'position' => 205),
-	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => 1, 'position' => 302),
-	't.duration_effective' => array('label' => "TimeSpent", 'checked' => 1, 'position' => 303),
-	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => -1, 'position' => 304),
-	't.progress' => array('label' => "ProgressDeclared", 'checked' => 1, 'position' => 305),
-	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => 1, 'position' => 306),
-	't.budget_amount' => array('label' => "Budget", 'checked' => 0, 'position' => 307),
-	't.fk_statut' => array('label' => "TaskStatus", 'checked' => 0, 'position' => 308),
-	't.tobill' => array('label' => "TimeToBill", 'checked' => 0, 'position' => 310),
-	't.billed' => array('label' => "TimeBilled", 'checked' => 0, 'position' => 311),
-	't.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	't.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 501),
+	't.ref' => array('label' => "RefTask", 'checked' => '1', 'position' => 50),
+	't.fk_task_parent' => array('label' => "RefTaskParent", 'checked' => '0', 'position' => 70),
+	't.label' => array('label' => "LabelTask", 'checked' => '1', 'position' => 75),
+	't.description' => array('label' => "Description", 'checked' => '0', 'position' => 80),
+	't.dateo' => array('label' => "DateStart", 'checked' => '1', 'position' => 100),
+	't.datee' => array('label' => "Deadline", 'checked' => '1', 'position' => 101),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => '1', 'position' => 151),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'position' => 152),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '-1', 'csslist' => 'tdoverflowmax125', 'position' => 200),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '0', 'csslist' => 'tdoverflowmax125', 'position' => 201),
+	'p.fk_statut' => array('label' => "ProjectStatus", 'checked' => '1', 'position' => 205),
+	't.planned_workload' => array('label' => "PlannedWorkload", 'checked' => '1', 'position' => 302),
+	't.duration_effective' => array('label' => "TimeSpent", 'checked' => '1', 'position' => 303),
+	't.progress_calculated' => array('label' => "ProgressCalculated", 'checked' => '-1', 'position' => 304),
+	't.progress' => array('label' => "ProgressDeclared", 'checked' => '1', 'position' => 305),
+	't.progress_summary' => array('label' => "TaskProgressSummary", 'checked' => '1', 'position' => 306),
+	't.budget_amount' => array('label' => "Budget", 'checked' => '0', 'position' => 307),
+	't.fk_statut' => array('label' => "TaskStatus", 'checked' => '0', 'position' => 308),
+	't.tobill' => array('label' => "TimeToBill", 'checked' => '0', 'position' => 310),
+	't.billed' => array('label' => "TimeBilled", 'checked' => '0', 'position' => 311),
+	't.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	't.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 501),
 	//'t.fk_statut'=>array('label'=>"Status", 'checked'=>1, 'position'=>1000),
 );
 // Extra fields
@@ -194,7 +194,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoread = $user->hasRight('projet', 'lire');
 $permissiontocreate = $user->hasRight('projet', 'creer');
@@ -296,10 +296,10 @@ $morejs = array();
 $morecss = array();
 
 if ($search_project_user > 0) {
-	$puser->fetch($search_project_user);
+	$puser->fetch((int) $search_project_user);
 }
 if ($search_task_user > 0) {
-	$tuser->fetch($search_task_user);
+	$tuser->fetch((int) $search_task_user);
 }
 
 
@@ -802,7 +802,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', $search_categ, 'search_categ', 1, $tmptitle, 'maxwidth300');
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', (int) $search_categ, 'search_categ', 1, $tmptitle, 'maxwidth300');
 	$moreforfilter .= '</div>';
 }
 
@@ -813,7 +813,7 @@ $includeonly = '';
 if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_project_user ? $search_project_user : '', 'search_project_user', $tmptitle, null, 0, $includeonly, '', '0', 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 // If the user can view users
@@ -823,7 +823,7 @@ $includeonly = '';
 if (!$user->hasRight('user', 'user', 'lire')) {
 	$includeonly = array($user->id);
 }
-$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, '', 0, $includeonly, '', 0, 0, 0, '', 0, '', 'maxwidth250');
+$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_task_user, 'search_task_user', $tmptitle, null, 0, $includeonly, '', '0', 0, 0, '', 0, '', 'maxwidth250');
 $moreforfilter .= '</div>';
 
 // Filter on customer categories
@@ -1596,9 +1596,8 @@ while ($i < $imaxinloop) {
 				}
 			}
 			// Status
-			/*if (!empty($arrayfields['p.fk_statut']['checked']))
-			{
-				$projectstatic->statut = $obj->fk_statut;
+			/*if (!empty($arrayfields['p.fk_statut']['checked'])) {
+				$projectstatic->status = $obj->fk_statut;
 				print '<td class="right">'.$projectstatic->getLibStatut(5).'</td>';
 			}*/
 			// Action column

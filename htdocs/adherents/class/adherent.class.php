@@ -96,13 +96,12 @@ class Adherent extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use $civility_code
-	 * @see $civility_code
+	 * @deprecated 	Use $civility_code
 	 */
 	public $civility_id;
 
 	/**
-	 * @var string The civility code, not an integer (ex: 'MR', 'MME', 'MLE', etc.)
+	 * @var string 	The civility code, not an integer (ex: 'MR', 'MME', 'MLE', 'DR', etc.)
 	 */
 	public $civility_code;
 
@@ -3212,7 +3211,7 @@ class Adherent extends CommonObject
 								$sendtocc = '';
 								$sendtobcc = '';
 								$actioncode = 'EMAIL';
-								$extraparams = '';
+								$extraparams = array();
 
 								$actionmsg = '';
 								$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
