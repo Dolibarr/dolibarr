@@ -976,8 +976,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
 			if ($includefriday || $includesaturday || $includesunday || $includemonday) {
-				$jour_julien = unixtojd($timestampStart);
-				$jour_semaine = jddayofweek($jour_julien, 0);
+				$jour_semaine = dol_print_date($timestampStart, "%w");
 				//Monday (1), Friday (5), Saturday (6) and Sunday (0)
 				if ($includefriday && $jour_semaine == 5) {
 					$ferie = true;
