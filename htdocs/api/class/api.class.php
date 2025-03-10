@@ -2,7 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2020-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,12 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 class DolibarrApi
 {
 	/**
-	 * @var DoliDB        $db Database object
+	 * @var DoliDB        Database object
 	 */
 	protected $db;
 
 	/**
-	 * @var Restler     $r	Restler object
+	 * @var Restler    	Restler object
 	 */
 	public $r;
 
@@ -129,9 +129,13 @@ class DolibarrApi
 	/**
 	 * Filter properties that will be returned on object
 	 *
+	 * @phpstan-template T of Object
+	 *
 	 * @param   Object  $object			Object to clean
-	 * @param   String  $properties		Comma separated list of properties names
+	 * @param   string  $properties		Comma separated list of properties names
 	 * @return	Object					Object with cleaned properties
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _filterObjectProperties($object, $properties)
 	{

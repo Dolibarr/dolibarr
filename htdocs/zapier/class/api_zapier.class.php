@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/zapier/class/hook.class.php';
 class Zapier extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'url',

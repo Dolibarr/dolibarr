@@ -264,9 +264,16 @@ if (isModEnabled('barcode')) {
 }
 // Personalized search criteria. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
 if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
-	$fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
+	$fieldstosearchall = dolExplodeIntoArray(getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS'));
 }
 
+$parameters = array('fieldstosearchall'=>$fieldstosearchall);
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook > 0) {
+	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
+} elseif ($reshook == 0) {
+	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
+}
 
 // Define list of fields to show into list
 $checkedcustomercode = (in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? '1' : '0');
@@ -338,7 +345,9 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
+// @phpstan-ignore-next-line
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check

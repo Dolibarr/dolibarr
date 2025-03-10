@@ -15,9 +15,10 @@
  * Copyright (C) 2013       Cedric Gross            <c.gross@kreiz-it.fr>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2025  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2018-2025  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Sylvain Legrand         <contact@infras.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2023      	Gauthier VERDOL       	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -2339,7 +2340,7 @@ class Facture extends CommonInvoice
 		$sql .= ' l.rang, l.special_code, l.batch, l.fk_warehouse,';
 		$sql .= ' l.date_start as date_start, l.date_end as date_end,';
 		$sql .= ' l.info_bits, l.total_ht, l.total_tva, l.total_localtax1, l.total_localtax2, l.total_ttc, l.fk_code_ventilation, l.fk_product_fournisseur_price as fk_fournprice, l.buy_price_ht as pa_ht,';
-		$sql .= ' l.fk_unit,';
+		$sql .= ' l.fk_unit, l.extraparams,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc, p.barcode as product_barcode';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
@@ -2403,6 +2404,8 @@ class Facture extends CommonInvoice
 				$line->situation_percent = $objp->situation_percent;
 				$line->fk_prev_id = $objp->fk_prev_id;
 				$line->fk_unit = $objp->fk_unit;
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$line->batch = $objp->batch;
 				$line->fk_warehouse = $objp->fk_warehouse;
@@ -2536,10 +2539,10 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
-		if (!isset($this->user_creation_id) && isset($this->fk_user_author) ) {
+		if (!isset($this->user_creation_id) && isset($this->fk_user_author)) {
 			$this->user_creation_id = $this->fk_user_author;
 		}
-		if (!isset($this->user_validation_id) && isset($this->fk_user_valid) ) {
+		if (!isset($this->user_validation_id) && isset($this->fk_user_valid)) {
 			$this->user_validation_id = $this->fk_user_valid;
 		}
 
@@ -2819,6 +2822,18 @@ class Facture extends CommonInvoice
 				$error++;
 			}
 			// End call triggers
+		}
+
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_invoice";
+			$sql .= " WHERE fk_invoice = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
 		}
 
 		// Removed extrafields
@@ -4173,7 +4188,7 @@ class Facture extends CommonInvoice
 	 * 	@param	string		$label				Label of the line (deprecated, do not use)
 	 * 	@param	int			$special_code		Special code (also used by externals modules!)
 	 *  @param	array<string,mixed>	$array_options	extrafields array
-	 * 	@param	int         $situation_percent  Situation advance percentage
+	 * 	@param	float       $situation_percent  Situation advance percentage
 	 * 	@param	?int		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param	float		$pu_ht_devise		Unit price in currency
 	 * 	@param	int<0,1>	$notrigger			disable line update trigger
@@ -4225,7 +4240,12 @@ class Facture extends CommonInvoice
 				$special_code = 0;
 			}
 			if (!isset($situation_percent) || $situation_percent > 100 || (string) $situation_percent == '' || $situation_percent == null) {
-				$situation_percent = 100;
+				// INVOICE_USE_SITUATION = 2 - If there is no progress on a line, percent must not be 100% (No cumulative)
+				if ($this->type == Facture::TYPE_SITUATION && getDolGlobalInt('INVOICE_USE_SITUATION') == 2 && (int) $situation_percent < 100) {
+					$situation_percent = 0;
+				} else {
+					$situation_percent = 100;
+				}
 			}
 			if (empty($ref_ext)) {
 				$ref_ext = '';
@@ -4686,6 +4706,22 @@ class Facture extends CommonInvoice
 		return 0;
 	}
 	*/
+
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category or categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_INVOICE);
+	}
 
 	/**
 	 *      Return next reference of customer invoice not already used (or last reference)
@@ -6010,6 +6046,7 @@ class Facture extends CommonInvoice
 								$actioncomm->errors_to = $errors_to;
 
 								$actioncomm->elementtype = 'invoice';
+								$actioncomm->elementid = $tmpinvoice->id;
 								$actioncomm->fk_element = $tmpinvoice->id;
 
 								//$actioncomm->extraparams = $extraparams;

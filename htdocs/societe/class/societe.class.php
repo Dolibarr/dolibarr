@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
@@ -85,7 +84,7 @@ class Societe extends CommonObject
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
-	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
+	 * @var array<string,array{name:string}>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposal' => array('name' => 'SupplierProposal'),
@@ -2674,10 +2673,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User		$user			Object user (not used)
-	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
+	 *  @param	int<0,1>	$mode			0=Array with properties, 1=Array of IDs.
 	 *  @param	?string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	?string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
+	 *	@return	int<-1,-1>|int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>	Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -2712,7 +2711,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if (empty($mode)) {
-					$reparray[$i]['id'] = $obj->rowid;
+					$reparray[$i]['id'] = (int) $obj->rowid;
 					$reparray[$i]['lastname'] = $obj->lastname;
 					$reparray[$i]['firstname'] = $obj->firstname;
 					$reparray[$i]['email'] = $obj->email;
@@ -2729,7 +2728,7 @@ class Societe extends CommonObject
 					$reparray[$i]['photo'] = $obj->photo;
 					$reparray[$i]['gender'] = $obj->gender;
 				} else {
-					$reparray[] = $obj->rowid;
+					$reparray[] = (int) $obj->rowid;
 				}
 				$i++;
 			}
@@ -3095,8 +3094,7 @@ class Societe extends CommonObject
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}
-		print "\n";
-		//var_dump($label);exit;
+
 		$linkstart = '';
 		$linkend = '';
 
@@ -4806,7 +4804,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
+	 *  Check if we must use revenue stamps feature or not according to country (country of $mysoc in most cases).
 	 *  Table c_revenuestamp contains the country and value of stamp per invoice.
 	 *
 	 *  @return		boolean			true or false

@@ -135,13 +135,13 @@ foreach my $PROJECT (@PROJECTLIST) {
 	}
 
 	# Get version $MAJOR, $MINOR and $BUILD
-	print "Version detected for module ".$PROJECT.": ";
-	$result=open(IN,"<".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php");
+	print "Version detected for module ".$PROJECT." in file ".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php";
+	$result=open(IN,"<".$SOURCE."/htdocs/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
 	$custom=false;
 	if (! $result) {
-                $result=open(IN,"<".$SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php");
+                $result=open(IN,"<".$SOURCE."/htdocs/custom/".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php");
                 if (! $result) {
-                    die "Error: Can't open descriptor file ".$SOURCE."/htdocs/(or /htdocs/custom/)".$PROJECTLC."/core/modules/mod".$PROJECT.".class.php for reading.\n";
+                    die "Error: Can't open descriptor file ".$SOURCE."/htdocs/(or /htdocs/custom/)".$PROJECTLC."/core/modules/mod".ucfirst($PROJECT).".class.php for reading.\n";
                 }else{
                     $custom = true;
                 }
@@ -252,6 +252,8 @@ foreach my $PROJECT (@PROJECTLIST) {
 		    	mkdir "$BUILDROOT";
 		    	mkdir "$BUILDROOT/$PROJECTLC";
 
+				print "Now, we will copy all files declared in the makepack-".$PROJECT.".conf into the directory $BUILDROOT\n";
+
 				$result=open(IN,"<makepack-".$PROJECT.".conf");
 				if (! $result) { die "Error: Can't open conf file makepack-".$PROJECT.".conf for reading.\n"; }
 			    while(<IN>)
@@ -266,7 +268,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 			    	{
 			    		print "Remove $BUILDROOT/$PROJECTLC/$1\n";
 			    		$ret=`rm -fr "$BUILDROOT/$PROJECTLC/"$1`;
-		    		    if ($? != 0) { die "Failed to delete a file to exclude declared into makepack-".$PROJECT.".conf file (Fails on line ".$entry.")\n"; }
+		    		    if ($? != 0) { die "Failed to delete a file to exclude declared into makepack-".$PROJECT.".conf file (Failed on the line ".$entry.")\n"; }
 		    		    next;
 			    	}
 
@@ -277,7 +279,7 @@ foreach my $PROJECT (@PROJECTLIST) {
 			    	{
 			    	    print "Copy $SOURCE/$entry into $BUILDROOT/$PROJECTLC/$entry\n";
 		    		    $ret=`cp -pr "$SOURCE/$entry" "$BUILDROOT/$PROJECTLC/$entry"`;
-		    		    if ($? != 0) { die "Failed to make copy of a file declared into makepack-".$PROJECT.".conf file (Fails on line ".$entry.")\n"; }
+		    		    if ($? != 0) { die "Failed to make copy of a file declared into makepack-".$PROJECT.".conf file (Failed on the line '".$entry."')\n"; }
 			    	}
 
 				}

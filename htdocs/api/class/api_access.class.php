@@ -55,7 +55,7 @@ class DolibarrApiAccess implements iAuthenticate
 	public $db;
 
 	/**
-	 * @var array	role required by API method		user / external / admin
+	 * @var string[]	role required by API method		user / external / admin
 	 */
 	public static $requires = array('user', 'external', 'admin');
 

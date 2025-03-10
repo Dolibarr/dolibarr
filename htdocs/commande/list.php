@@ -12,7 +12,7 @@
  * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2023	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2021-2024	Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Noé Cendrier				<noe.cendrier@altairis.fr>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -200,49 +200,49 @@ if (empty($user->socid)) {
 
 $checkedtypetiers = 0;
 $arrayfields = array(
-	'c.rowid' => array('label' => "ID", 'checked' => 1, 'enabled' => getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
-	'c.ref' => array('label' => "Ref", 'checked' => 1, 'position' => 5, 'searchall' => 1),
-	'c.ref_ext' => array('label' => "RefExt", 'checked' => 1, 'position' => 5, 'visible' => 0, 'searchall' => 1),
-	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => -1, 'position' => 10, 'searchall' => 1),
-	'p.ref' => array('label' => "ProjectRef", 'checked' => -1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 20),
-	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 25),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 30, 'searchall' => 1),
-	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 31, 'searchall' => 1),
-	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => 0),
-	's.town' => array('label' => "Town", 'checked' => -1, 'position' => 35, 'searchall' => 1),
-	's.zip' => array('label' => "Zip", 'checked' => -1, 'position' => 40, 'searchall' => 1),
-	'state.nom' => array('label' => "StateShort", 'checked' => 0, 'position' => 45),
-	'country.code_iso' => array('label' => "Country", 'checked' => 0, 'position' => 50),
-	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 55),
-	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => 1, 'position' => 60, 'csslist' => 'nowraponall'),
-	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => 1, 'enabled' => !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
-	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => -1, 'position' => 66 , 'enabled' => isModEnabled("shipping")),
-	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => -1, 'position' => 67),
-	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => -1, 'position' => 68),
-	'c.fk_input_reason' => array('label' => "Origin", 'checked' => -1, 'position' => 69),
-	'c.total_ht' => array('label' => "AmountHT", 'checked' => 1, 'position' => 75),
-	'c.total_vat' => array('label' => "AmountVAT", 'checked' => 0, 'position' => 80),
-	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => 0, 'position' => 85),
-	'c.multicurrency_code' => array('label' => 'Currency', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 90),
-	'c.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 95),
-	'c.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 100),
-	'c.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 105),
-	'c.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => 0, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1), 'position' => 110),
-	'u.login' => array('label' => "Author", 'checked' => -1, 'position' => 115),
-	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => 0, 'position' => 116),
-	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => 0, 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
-	'total_margin' => array('label' => 'Margin', 'checked' => 0, 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => 0, 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => 0, 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
-	'c.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 120),
-	'c.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 125),
-	'c.date_cloture' => array('label' => "DateClosing", 'checked' => 0, 'position' => 130),
-	'c.note_public' => array('label' => 'NotePublic', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135, 'searchall' => 1),
-	'c.note_private' => array('label' => 'NotePrivate', 'checked' => 0, 'enabled' => (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
-	'shippable' => array('label' => "Shippable", 'checked' => 1,'enabled' => (isModEnabled("shipping")), 'position' => 990),
-	'c.facture' => array('label' => "Billed", 'checked' => 1, 'enabled' => (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
-	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 999),
-	'c.fk_statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
+	'c.rowid' => array('label' => "ID", 'checked' => '1', 'enabled' => (string) getDolGlobalInt('MAIN_SHOW_TECHNICAL_ID'), 'position' => 1),
+	'c.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5, 'searchall' => 1),
+	'c.ref_ext' => array('label' => "RefExt", 'checked' => '1', 'position' => 5, 'visible' => 0, 'searchall' => 1),
+	'c.ref_client' => array('label' => "RefCustomerOrder", 'checked' => '-1', 'position' => 10, 'searchall' => 1),
+	'p.ref' => array('label' => "ProjectRef", 'checked' => '-1', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 20),
+	'p.title' => array('label' => "ProjectLabel", 'checked' => '0', 'enabled' => (!isModEnabled('project') ? '0' : '1'), 'position' => 25),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1', 'position' => 30, 'searchall' => 1),
+	's.name_alias' => array('label' => "AliasNameShort", 'checked' => '-1', 'position' => 31, 'searchall' => 1),
+	's2.nom' => array('label' => 'ParentCompany', 'position' => 32, 'checked' => '0'),
+	's.town' => array('label' => "Town", 'checked' => '-1', 'position' => 35, 'searchall' => 1),
+	's.zip' => array('label' => "Zip", 'checked' => '-1', 'position' => 40, 'searchall' => 1),
+	'state.nom' => array('label' => "StateShort", 'checked' => '0', 'position' => 45),
+	'country.code_iso' => array('label' => "Country", 'checked' => '0', 'position' => 50),
+	'typent.code' => array('label' => "ThirdPartyType", 'checked' => (string) $checkedtypetiers, 'position' => 55),
+	'c.date_commande' => array('label' => "OrderDateShort", 'checked' => '1', 'position' => 60, 'csslist' => 'nowraponall'),
+	'c.delivery_date' => array('label' => "DateDeliveryPlanned", 'checked' => '1', 'enabled' => (string) (int) !getDolGlobalString('ORDER_DISABLE_DELIVERY_DATE'), 'position' => 65, 'csslist' => 'nowraponall'),
+	'c.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => '-1', 'position' => 66 , 'enabled' => (string) (int) isModEnabled("shipping")),
+	'c.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '-1', 'position' => 67),
+	'c.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '-1', 'position' => 68),
+	'c.fk_input_reason' => array('label' => "Origin", 'checked' => '-1', 'position' => 69),
+	'c.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 75),
+	'c.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 80),
+	'c.total_ttc' => array('label' => "AmountTTC", 'checked' => '0', 'position' => 85),
+	'c.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 90),
+	'c.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 95),
+	'c.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 100),
+	'c.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 105),
+	'c.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1'), 'position' => 110),
+	'u.login' => array('label' => "Author", 'checked' => '-1', 'position' => 115),
+	'sale_representative' => array('label' => "SaleRepresentativesOfThirdParty", 'checked' => '0', 'position' => 116),
+	'total_pa' => array('label' => (getDolGlobalString('MARGIN_TYPE') == '1' ? 'BuyingPrice' : 'CostPrice'), 'checked' => '0', 'position' => 300, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
+	'total_margin' => array('label' => 'Margin', 'checked' => '0', 'position' => 301, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") ? 0 : 1)),
+	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => '0', 'position' => 302, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? 0 : 1)),
+	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => '0', 'position' => 303, 'enabled' => (string) (int) (!isModEnabled('margin') || !$user->hasRight("margins", "liretous") || !getDolGlobalString('DISPLAY_MARK_RATES') ? 0 : 1)),
+	'c.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 120),
+	'c.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 125),
+	'c.date_cloture' => array('label' => "DateClosing", 'checked' => '0', 'position' => 130),
+	'c.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES')), 'position' => 135, 'searchall' => 1),
+	'c.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'enabled' => (string) (int) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES')), 'position' => 140),
+	'shippable' => array('label' => "Shippable", 'checked' => '1','enabled' => (string) (int) (isModEnabled("shipping")), 'position' => 990),
+	'c.facture' => array('label' => "Billed", 'checked' => '1', 'enabled' => (string) (int) (!getDolGlobalString('WORKFLOW_BILL_ON_SHIPMENT')), 'position' => 995),
+	'c.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
+	'c.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
 
 $parameters = array('fieldstosearchall' => $fieldstosearchall);
@@ -259,7 +259,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 
 // Security check
@@ -1575,7 +1574,7 @@ if ($user->hasRight("user", "user", "lire")) {
 if ($user->hasRight("user", "user", "lire")) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('LinkedToSpecificUsers');
-	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
+	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"').$form->select_dolusers($search_user, 'search_user', $tmptitle, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth250 widthcentpercentminusx');
 	$moreforfilter .= '</div>';
 }
 
@@ -1585,7 +1584,7 @@ if (isModEnabled('category') && $user->hasRight("categorie", "lire") && ($user->
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 0, array(), 1);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'maxwidth300 widthcentpercentminusx', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'maxwidth300 widthcentpercentminusx', 1);
 	$moreforfilter .= '</div>';
 }
 // If Categories are enabled & user has rights to see
@@ -1685,7 +1684,7 @@ if (!empty($arrayfields['p.title']['checked'])) {
 // Thirpdarty
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag($search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
+	print '<input class="flat maxwidth100" type="text" name="search_company" value="'.dol_escape_htmltag((string) $search_company).'"'.(!empty($user->socid) ? " disabled" : "").'>';
 	print '</td>';
 }
 // Alias
@@ -1756,7 +1755,7 @@ if (!empty($arrayfields['c.fk_shipping_method']['checked'])) {
 // Payment term
 if (!empty($arrayfields['c.fk_cond_reglement']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->getSelectConditionsPaiements($search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
+	print $form->getSelectConditionsPaiements((int) $search_fk_cond_reglement, 'search_fk_cond_reglement', 1, 1, 1);
 	print '</td>';
 }
 // Payment mode
@@ -2210,6 +2209,7 @@ while ($i < $imaxinloop) {
 
 	$generic_commande->id = $obj->rowid;
 	$generic_commande->ref = $obj->ref;
+	$generic_commande->status = $obj->fk_statut;
 	$generic_commande->statut = $obj->fk_statut;
 	$generic_commande->billed = $obj->billed;
 	$generic_commande->date = $db->jdate($obj->date_commande);
@@ -2258,7 +2258,7 @@ while ($i < $imaxinloop) {
 	} else {
 		// Show line of result
 		$j = 0;
-		print '<tr data-rowid="'.$object->id.'" class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$generic_commande->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

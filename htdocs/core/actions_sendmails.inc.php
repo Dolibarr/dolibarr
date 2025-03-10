@@ -24,24 +24,25 @@
  *  \brief			Code for actions on sending mails from object page
  */
 
-// $mysoc must be defined
-// $id must be defined
-// $paramname may be defined
-// $autocopy may be defined (used to know the automatic BCC to add)
-// $triggersendname must be set (can be '')
-// $actiontypecode can be set
-// $object and $subject may be defined
 /**
+ * @var Societe $mysoc
  * @var CommonObject $object
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  *
- * @var string $dolibarr_main_url_root
- * @var string $action
+ * @var int		$id
+ * @var string 	$dolibarr_main_url_root
+ * @var string 	$action
  * @var ?string $subject
+ * @var ?string $triggersendname (can be '')
+ * @var ?string	$sendcontext
+ * @var ?string	$autocopy (used to know the automatic BCC to add)
+ * @var ?string	$actiontypecode
+ * @var ?string $paramname
  */
 '
 @phan-var-force Societe      $mysoc
@@ -306,6 +307,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 			$reg = array();
 			$fromtype = GETPOST('fromtype', 'alpha');
+			$emailsendersignature = '';
 			if ($fromtype === 'robot') {
 				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")).' <' . getDolGlobalString('MAIN_MAIL_EMAIL_FROM').'>';
 			} elseif ($fromtype === 'user') {
@@ -319,12 +321,13 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				$tmp = explode(',', getDolGlobalString('MAIN_INFO_SOCIETE_MAIL_ALIASES'));
 				$from = trim($tmp[((int) $reg[1] - 1)]);
 			} elseif (preg_match('/senderprofile_(\d+)_(\d+)/', $fromtype, $reg)) {
-				$sql = 'SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
+				$sql = 'SELECT rowid, label, email, signature FROM '.MAIN_DB_PREFIX.'c_email_senderprofile';
 				$sql .= ' WHERE rowid = '.(int) $reg[1];
 				$resql = $db->query($sql);
 				$obj = $db->fetch_object($resql);
 				if ($obj) {
 					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
+					$emailsendersignature = $obj->signature;
 				}
 			} elseif (preg_match('/from_template_(\d+)/', $fromtype, $reg)) {
 				$sql = 'SELECT rowid, email_from FROM '.MAIN_DB_PREFIX.'c_email_templates';
@@ -384,6 +387,8 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 
 			// Make substitution in email content
 			$substitutionarray = getCommonSubstitutionArray($langs, 0, null, $object);
+
+			$substitutionarray['__SENDEREMAIL_SIGNATURE__'] = (empty($emailsendersignature) ? $user->signature : $emailsendersignature);
 			$substitutionarray['__EMAIL__'] = $sendto;
 			$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 
@@ -442,9 +447,9 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 						$object->email_tocc = $sendtocc;
 						$object->email_tobcc = $sendtobcc;
 
-						// Call of triggers (you should have set $triggersendname to execute trigger. $trigger_name is deprecated)
-						if (!empty($triggersendname) || !empty($trigger_name)) {
-							$result = $object->call_trigger(empty($triggersendname) ? $trigger_name : $triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
+						// Call of triggers (you should have set $triggersendname to execute trigger.
+						if (!empty($triggersendname)) {
+							$result = $object->call_trigger($triggersendname, $user);  // @phan-suppress-current-line PhanPossiblyUndeclaredGlobalVariable
 							if ($result < 0) {
 								$error++;
 							}
@@ -460,12 +465,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 					$mesg = $langs->trans('MailSuccessfulySent', $mailfile->getValidAddress($from, 2), $mailfile->getValidAddress($sendto, 2));
 					setEventMessages($mesg, null, 'mesgs');
 
-					$moreparam = '';
-					if (isset($paramval2)) { // @phan-var-suppress-current-line PhanPluginUndeclaredVariableIsset
-						// @phan-var-suppress-next-line PhanUndeclaredGlobalVariable
-						$moreparam .= '&'.($paramname2 ? $paramname2 : 'mid').'='.$paramval2;
-					}
-					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : '').$moreparam);
+					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname ?? 'id').'='.(is_object($object) ? $object->id : ''));
 					exit;
 				} else {
 					$langs->load("other");
