@@ -266,15 +266,6 @@ if (isModEnabled('barcode')) {
 if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
 	$fieldstosearchall = dolExplodeIntoArray(getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS'));
 }
-
-$parameters = array('fieldstosearchall'=>$fieldstosearchall);
-$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-if ($reshook > 0) {
-	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
-} elseif ($reshook == 0) {
-	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
-}
-
 // Define list of fields to show into list
 $checkedcustomercode = (in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? '1' : '0');
 $checkedsuppliercode = (in_array($contextpage, array('supplierlist')) ? '1' : '0');
