@@ -2467,6 +2467,18 @@ class CommandeFournisseur extends CommonOrder
 			}
 		}
 
+		// Remove linked categories.
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_order";
+			$sql .= " WHERE fk_order = ".((int) $this->id);
+
+			$result = $this->db->query($sql);
+			if (!$result) {
+				$error++;
+				$this->errors[] = $this->db->lasterror();
+			}
+		}
+
 		$main = $this->db->prefix().'commande_fournisseurdet';
 
 		if (!$error) {
@@ -2967,6 +2979,23 @@ class CommandeFournisseur extends CommonOrder
 			$this->db->rollback();
 			return -1;
 		}
+	}
+
+	/**
+	 * Sets object to given categories.
+	 *
+	 * Adds it to non existing supplied categories.
+	 * Deletes object from existing categories not supplied.
+	 * Existing categories are left untouch.
+	 *
+	 * @param int[]|int $categories Category ID or array of Categories IDs
+	 *
+	 * @return int Return integer <0 if KO, >0 if OK
+	 */
+	public function setCategories($categories)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_ORDER);
 	}
 
 	/**
