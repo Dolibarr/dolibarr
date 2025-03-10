@@ -2082,7 +2082,14 @@ function dolPrintText($s)
  */
 function dolPrintHTML($s, $allowiframe = 0)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+	// If text is already HTML, we want to escape only dangerous chars else we want to escape all content.
+	//$isAlreadyHTML = dol_textishtml($s);
+
+	// dol_htmlentitiesbr encode all chars except "'" if string is not already HTML, but
+	// encode only special char like é but not &, <, >, ", ' if already HTML.
+	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr($s);
+
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
 }
 
 /**
@@ -2143,7 +2150,7 @@ function dolPrintHTMLForTextArea($s, $allowiframe = 0)
  */
 function dolPrintPassword($s)
 {
-	return htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
+	return htmlspecialchars($s, ENT_HTML5, 'UTF-8');
 }
 
 
@@ -2151,8 +2158,8 @@ function dolPrintPassword($s)
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *  When we need to output strings on pages, we should use:
  *        - dolPrintLabel...
- *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
- *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
+ *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(...), 1, 1, 1, 0)), 1, 1, 'common', 0, 1) for notes or descriptions into textarea, add 'common' if into a html content
+ *        - dolPrintPassword that is a simple htmlspecialchars(... , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
@@ -2254,12 +2261,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				} while ($diff);
 			}
 
+			$tmp = str_ireplace('&amp', '__ANDNOSEMICOLON__', $tmp);
 			$tmp = str_ireplace('&quot', '__DOUBLEQUOTENOSEMICOLON__', $tmp);
 			$tmp = str_ireplace('&lt', '__LESSTHAN__', $tmp);
 			$tmp = str_ireplace('&gt', '__GREATERTHAN__', $tmp);
 		}
 
-		// Warning: htmlentities encode HTML tags like <abc> & into &amp; and more (but not &lt; &gt; &quotes; &apos; &#39; &amp; that remains untouched).
+		// Warning: htmlentities encode all special chars that remains (except "'" with ENT_COMPAT).
 		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');
 
 		//print $result;
@@ -2276,6 +2284,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 			$result = str_ireplace('__DOUBLEQUOTE__', '"', $result);
 
+			$result = str_ireplace('__ANDNOSEMICOLON__', '&amp', $result);
 			$result = str_ireplace('__DOUBLEQUOTENOSEMICOLON__', '&quot', $result);
 			$result = str_ireplace('__LESSTHAN__', '&lt', $result);
 			$result = str_ireplace('__GREATERTHAN__', '&gt', $result);
@@ -6094,7 +6103,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreakall '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
+		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -8527,7 +8536,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 }
 
 /**
- * Sanitize a HTML to remove js, dangerous content and external link.
+ * Sanitize a HTML to remove js, dangerous content and external links.
  * This function is used by dolPrintHTML... function for example.
  *
  * @param	string	$stringtoencode				String to encode
@@ -8588,6 +8597,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
+					//var_dump($out);
+
 					// Try cleaning using tidy
 					if (extension_loaded('tidy') && class_exists("tidy")) {
 						//print "aaa".$out."\n";
@@ -8602,7 +8613,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 							"indent-attributes" => false,
 							"vertical-space" => false,
 							//'ident' => false,			// Not always supported
-							"wrap" => 0
+							"wrap" => 0,
+							'preserve-entities' => true
 							// HTML5 tags
 							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
 							//'new-blocklevel-tags' => 'footer header section menu menuitem'
@@ -8616,6 +8628,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 						//print "xxx".$out;exit;
 					}
+
+					//var_dump($out);
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -8629,8 +8643,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// Clean some html entities that are useless so text is cleaner
 			$out = preg_replace('/&(tab|newline);/i', ' ', $out);
 
-			// Ckeditor uses the numeric entity for apostrophe so we force it to text entity (all other special chars are
-			// encoded using text entities) so we can then exclude all numeric entities.
+			// Ckeditor uses the numeric entity for apostrophe, so we force it to
+			// the text entity (all other special chars are encoded using text entities) so we can then exclude all numeric entities.
 			$out = preg_replace('/&#39;/i', '&apos;', $out);
 
 			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
@@ -8669,7 +8683,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				$out = dol_string_onlythesehtmlattributes($out);
 			}
 
-			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity) because it is
+			// compatible with HTML 4 used y CKEditor, and HTML 5 (when &apos; works only with HTML5).
 			$out = preg_replace('/&apos;/i', "&#39;", $out);
 
 			// Now remove js
@@ -8726,8 +8741,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 }
 
 /**
- *	This function is called to encode a string into a HTML string but differs from htmlentities because
- * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,>," are converted.
+ *	This function is called to encode a string into a HTML string but differs from htmlentities because a detection is
+ *  done before to see if text is already HTML or not. Also, all entities but &,<,>," (because protected by code) and ' (because not included by the ENT_COMPAT mode) are converted.
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
@@ -8736,7 +8751,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *        Because writeHTMLCell convert also \n into <br>, if function is used to build PDF, nl2brmode must be 1.
  *  Note: When we output string on pages, we should use
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
- *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
+ *        - dolPrintPassword that is a simple htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
@@ -12957,7 +12972,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
  * @param int|boolean	$userRight  	User action right
  * // phpcs:disable
- * @param array{confirm?:array{url?:string,title?:string,content?:string,action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
  *                                                                                                                                                                                                                                                                                                                                      'xxxxx' => '', // your xxxxx attribute you want
  *                                                                                                                                                                                                                                                                                                                                      'class' => 'reposition', // to add more css class to the button class attribute
@@ -12974,7 +12989,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                                                                                                                                                                                                      ],
  *                                                                                                                                                                                                                                                                                                                                      ]
  * // phpcs:enable
- *                                                                                                                                                                                                                                                                                                                                      Example: array('attr' => array('class' => 'reposition'))
+ *                                                                                                                                                                                                                                                                                                                                                                              Example: array('attr' => array('class' => 'reposition'))
  * @return string               		html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
@@ -13138,7 +13153,23 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// escape all attributes
+	// Escape all attributes
+	if (!empty($params['use_unsecured_unescapedattr'])) {	// Not recommended.
+		if (is_array($params['use_unsecured_unescapedattr'])) {
+			foreach ($attr as $attrK => $attrV) {
+				if (in_array($attrK, $params['use_unsecured_unescapedattr'])) {
+					$attr[$attrK] = dol_htmlentities($attrV, ENT_QUOTES | ENT_SUBSTITUTE);
+				} else {
+					$attr[$attrK] = dolPrintHTMLForAttribute($attrV);
+				}
+			}
+		} else {
+			$attr = array_map('dol_htmlentities', $attr);
+		}
+	} else {
+		$attr = array_map('dolPrintHTMLForAttribute', $attr);
+	}
+
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
 		if ($key == 'href') {

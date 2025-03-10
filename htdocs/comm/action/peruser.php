@@ -1468,10 +1468,11 @@ if (!empty($hookmanager->resArray['eventarray'])) {
 }
 
 // Sort events
+/*
 foreach ($eventarray as $keyDate => &$dateeventarray) {
 	usort($dateeventarray, 'sort_events_by_date');
 }
-
+*/
 
 $maxnbofchar = 18;
 $cachethirdparties = array();
