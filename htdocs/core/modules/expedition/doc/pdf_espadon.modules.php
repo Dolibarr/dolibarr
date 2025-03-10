@@ -1439,7 +1439,7 @@ class pdf_espadon extends ModelePdfExpedition
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 30, // in mm
-			'status' => true,
+			'status' => !getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'QtyToShip'
 			),

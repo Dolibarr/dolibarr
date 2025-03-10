@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if ($cancel) {
-		header("Location: ". $backtopage . (!empty($type)?'?type=sub':''));
+		header("Location: ". $backtopage . (!empty($type) ? '?type=sub' : ''));
 		exit;
 	}
 
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 					$object->sens = 'C';
 				}
 
-				$result = $object->update($user, false, $mode);
+				$result = $object->update($user, 0, $mode);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
@@ -234,7 +234,7 @@ if (empty($reshook)) {
 				$object->sens = 'C';
 			}
 
-			$result = $object->createStd($user, false, $mode);
+			$result = $object->createStd($user, 0, $mode);
 
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -366,7 +366,11 @@ if (empty($reshook)) {
 	}
 
 	// Delete all lines into the transaction
-	$toselect = explode(',', GETPOST('toselect', 'alphanohtml'));
+	$toselect_str = explode(',', GETPOST('toselect', 'alphanohtml'));
+	$toselect = array();
+	foreach ($toselect_str as $i) {
+		$toselect[] = (int) $i;
+	}
 
 	if ($action == 'deletebookkeepingwriting' && $confirm == "yes" && $permissiontodelete) {
 		$db->begin();
@@ -647,7 +651,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="type" value="'.$type.'">';
-			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, 1);
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, '');
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -980,13 +984,13 @@ if ($action == 'create') {
 					if (empty($total_debit) && empty($total_credit)) {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					} elseif ($total_debit == $total_credit) {
-						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
+						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
 					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $total_debit, $total_credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';
-					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type)?'?type=sub':'').'">'.$langs->trans("Cancel").'</a>';
+					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type) ? '?type=sub' : '').'">'.$langs->trans("Cancel").'</a>';
 
 					print "</div>";
 				}

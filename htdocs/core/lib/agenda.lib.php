@@ -104,7 +104,7 @@ function print_actions_filter(
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, null, !$canedit, '', '', '0', 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group

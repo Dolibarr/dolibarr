@@ -134,10 +134,11 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 }
 
 if ($massaction == 'preupdateprice'
- && (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+ && (
+	getDolGlobalString('PRODUCT_PRICE_UNIQ')
 		|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')
 		|| getDolGlobalString('PRODUIT_MULTIPRICES')
-	)) {
+ )) {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
@@ -151,9 +152,9 @@ if ($massaction == 'preupdateprice'
 				'value' => $valuefield
 			);
 
-	$descConfirmPreUpdatePrice=$langs->trans("ConfirmUpdatePriceQuestion", count($toselect));
+	$descConfirmPreUpdatePrice = $langs->trans("ConfirmUpdatePriceQuestion", count($toselect));
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$descConfirmPreUpdatePrice=$langs->trans("ConfirmUpdatePriceQuestion", count($toselect)*getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') .' ('.$langs->transnoentities('PricingRule').', '.$langs->transnoentities('MultiPricesNumPrices').')');
+		$descConfirmPreUpdatePrice = $langs->trans("ConfirmUpdatePriceQuestion", count($toselect) * getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') .' ('.$langs->transnoentities('PricingRule').', '.$langs->transnoentities('MultiPricesNumPrices').')');
 	}
 
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $descConfirmPreUpdatePrice, "updateprice", $formquestion, 1, 0, 200, 500, 1);
@@ -428,7 +429,7 @@ if ($massaction == 'predisable') {
 }
 if ($massaction == 'presetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 			'name' => 'affectedcommercial',
 			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
@@ -437,7 +438,7 @@ if ($massaction == 'presetcommercial') {
 }
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 		'name' => 'unassigncommercial',
 		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),
