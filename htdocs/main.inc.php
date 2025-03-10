@@ -80,7 +80,7 @@ function getArrayOfEmoji()
  * Return the real char for a numeric entities.
  * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
- * @param	array<int,string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
+ * @param	array<int,string>	$matches			Array with a decimal numeric entity like '&#x2f;' into key 0, value without the &# like 'x2f;' into the key 1
  * @return	string									New value
  */
 function realCharForNumericEntities($matches)
@@ -94,8 +94,8 @@ function realCharForNumericEntities($matches)
 		$newstringnumentity = (int) $newstringnumentity;
 	}
 
-	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
-	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
+	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for hacking ?
+	if (($newstringnumentity >= 47 && $newstringnumentity <= 59) || ($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
@@ -983,7 +983,7 @@ if (!defined('NOLOGIN')) {
 					if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn') == $oauthmodetotest) {
 						continue;
 					}
-					dol_syslog("User did not click on link for OAuth, or is not on the OAuth return, so we disable check using ".$oauthmodetotest);
+					dol_syslog("User did not click on link for OAuth mode ".$oauthmodetotest.", param beforeoauthloginredirect is ".GETPOST('beforeoauthloginredirect')." and param afteroauthloginreturn is ".GETPOST('afteroauthloginreturn')." so we disable check of login for mode ".$oauthmodetotest);
 					foreach ($authmode as $tmpkey => $tmpval) {
 						if ($tmpval == $oauthmodetotest.'oauth') {
 							unset($authmode[$tmpkey]);

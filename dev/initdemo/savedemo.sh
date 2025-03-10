@@ -35,6 +35,13 @@ admin=$4;
 passwd=$5;
 
 
+# ----------------------------- check if dialog available
+command -v dialog >/dev/null 2>&1 || {
+	echo "Error: command dialog not found. On Linux, you can install it with: apt install dialog"
+	exit
+}
+
+
 # ----------------------------- if no params on command line
 if [ "x$passwd" = "x" ]
 then

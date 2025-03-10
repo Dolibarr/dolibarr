@@ -397,3 +397,14 @@ ALTER TABLE llx_societe_rib ADD UNIQUE INDEX uk_societe_rib(entity, label, fk_so
 
 ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
 ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);
+
+
+create table llx_pos_cash_fence_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_pos_cash_fence_extrafields ADD UNIQUE INDEX uk_pos_cash_fence_extrafields (fk_object);

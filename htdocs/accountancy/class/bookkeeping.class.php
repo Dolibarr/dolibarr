@@ -364,8 +364,13 @@ class BookKeeping extends CommonObject
 				dol_syslog(get_class($this).":: create sqlnum=".$sqlnum, LOG_DEBUG);
 				$resqlnum = $this->db->query($sqlnum);
 				if ($resqlnum) {
-					$objnum = $this->db->fetch_object($resqlnum);
-					$this->piece_num = $objnum->piece_num;
+					$num = $this->db->num_rows($resqlnum);
+					if ($num > 0) {
+						$objnum = $this->db->fetch_object($resqlnum);
+						$this->piece_num = $objnum->piece_num;
+					} else {
+						$this->piece_num = 0;
+					}
 				}
 
 				dol_syslog(get_class($this)."::create this->piece_num=".$this->piece_num, LOG_DEBUG);
