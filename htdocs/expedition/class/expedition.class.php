@@ -605,17 +605,14 @@ class Expedition extends CommonObject
 
 								// determine quantity of sub-product
 								$product_child_id = (int) $product_child_arr['id'];
-								$qty = $line->qty; // by default
+								$product_child_qty = (float) $product_child_arr['nb_total']; // by default
 								$warehouse_id = $line->entrepot_id; // by default
 								if ($is_kit || !$product_child_incdec) {
-									if ($is_kit) {
-										$qty = $total_qty; // insert only one line in expeditiondet table and use "total_qty"
-									} else {
-										$qty = 0;
+									if (!$product_child_incdec) {
+										$product_child_qty = 0;
 									}
 									$warehouse_id = 0; // no warehouse used for a kit or if stock is not managed (empty incdec)
 								}
-								$product_child_qty = (float) $product_child_arr['nb'] * $qty;
 
 								// create line for a child of virtual product
 								if (!isset($sub_kits_id_cached[$product_child_id]) || $warehouse_id > 0) {
@@ -1156,12 +1153,37 @@ class Expedition extends CommonObject
 				$product = new Product($this->db);
 				$product->fetch($line->fk_product);
 
-				// Check must be done for stock of product into warehouse if $entrepot_id defined
-				if ($entrepot_id > 0) {
-					$product->load_stock('warehouseopen');
-					$product_stock = $product->stock_warehouse[$entrepot_id]->real;
+				$productChildrenNb = 0;
+				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+					$productChildrenNb = $product->hasFatherOrChild(1);
+				}
+				if ($productChildrenNb > 0) {
+					$product_stock = null;
+					$product->loadStockForVirtualProduct('warehouseopen', $line->qty);
+					if ($entrepot_id > 0) {
+						if (isset($product->stock_warehouse[$entrepot_id])) {
+							$product_stock = $product->stock_warehouse[$entrepot_id]->real;
+						}
+					} else {
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+					}
+					if ($product_stock === null) {
+						$product_stock = 0;
+					}
 				} else {
-					$product_stock = $product->stock_reel;
+					// Check must be done for stock of product into warehouse if $entrepot_id defined
+					if ($entrepot_id > 0) {
+						$product->load_stock('warehouseopen');
+						$product_stock = $product->stock_warehouse[$entrepot_id]->real;
+					} else {
+						$product_stock = $product->stock_reel;
+					}
 				}
 
 				$product_type = $product->type;

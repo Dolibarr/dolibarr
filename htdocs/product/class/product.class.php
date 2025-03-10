@@ -6423,7 +6423,6 @@ class Product extends CommonObject
 	 * @param  	string 		$option					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
 	 * @param 	int|float 	$qtyWish				[=1] Default quantity wish for the virtual product (1 by default or put qty ordered)
 	 * @return 	int                  				Return integer < 0 if KO, > 0 if OK
-	 * @throws 	Exception
 	 */
 	public function loadStockForVirtualProduct($option = '', $qtyWish = 1)
 	{
