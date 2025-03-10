@@ -1659,7 +1659,7 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 				if ($permission) {
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$supplier_order->id."'>";
 					print $langs->trans("DeleteFromCat");
-					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', false, 0, 0, '', 'paddingleft');
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";
 				}
 				print "</tr>\n";
