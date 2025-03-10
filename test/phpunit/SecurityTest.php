@@ -67,6 +67,9 @@ if (empty($user->id)) {
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
+print "PHP Version: ".phpversion()."\n";
+print "Memory limit: ". ini_get('memory_limit')."\n";
+
 
 /**
  * Class for PHPUnit tests
@@ -1021,7 +1024,8 @@ class SecurityTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 			print "WARNING !!! php-tidy is not available !!!";
 		}
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
+
+		$libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;		// Ok with 2.9.14, not ok on HTML5 and some libxmlversion like the one of travis
 
 
 		// With no clean option
@@ -1060,10 +1064,30 @@ class SecurityTest extends CommonClassTest
 			$result = dolPrintHTML($s);
 			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 
+			if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+				// With clean TIDY and remove Bad attributes option
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+				$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
 
-			// With clean TIDY and remove Bad attributes option
+				// For a string with a simple & inside and already encoded
+				$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+				$expectedresult = 'List of char+their entities: &amp; &amp; &eacute; &eacute; &lt; &lt; &quot; &quot; \' \' <a href="aaa?aaa=1&amp;bbb=2&amp;ccc=3">a</a> z';
+				$result = dolPrintHTML($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+				// For a string that is not an already HTML content
+				$s = 'List: & é < " \'';															// Detected as non already HTML
+				$expectedresult = 'List: &amp; &eacute; &lt; &quot; \'';
+				$result = dolPrintHTML($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+			}
+		}
+
+		if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+			// With remove Bad attributes option only
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
-			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
 			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
 
 			// For a string with a simple & inside and already encoded
@@ -1078,24 +1102,6 @@ class SecurityTest extends CommonClassTest
 			$result = dolPrintHTML($s);
 			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 		}
-
-
-		// With remove Bad attributes option only
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
-
-		// For a string with a simple & inside and already encoded
-		$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
-		$expectedresult = 'List of char+their entities: &amp; &amp; &eacute; &eacute; &lt; &lt; &quot; &quot; \' \' <a href="aaa?aaa=1&amp;bbb=2&amp;ccc=3">a</a> z';
-		$result = dolPrintHTML($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
-
-		// For a string that is not an already HTML content
-		$s = 'List: & é < " \'';															// Detected as non already HTML
-		$expectedresult = 'List: &amp; &eacute; &lt; &quot; \'';
-		$result = dolPrintHTML($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 
 		return 0;
 	}
@@ -1120,7 +1126,8 @@ class SecurityTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
 			print "WARNING !!! php-tidy is not available !!!";
 		}
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// disabled, does not work on HTML5 and some libxml versions
+
+		$libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;		// Ok with 2.9.14, not ok on HTML5 and some libxmlversion like the one of travis
 
 
 		// With no clean option
@@ -1141,58 +1148,63 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 
 
-		// With clean TIDY only
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+		if (extension_loaded('tidy') && class_exists("tidy")) {
+			// With clean TIDY only
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
 
-		// For a string with a simple & inside and already encoded
-		$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
-		$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
-		$result = dolPrintHTMLForAttribute($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+			// For a string with a simple & inside and already encoded
+			$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+			$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 
-		// For a string that is not an already HTML content
-		$s = 'List: & é < " \'';															// Detected as non already HTML
-		$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
-		$result = dolPrintHTMLForAttribute($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
-
-
-		// With clean TIDY and remove Bad attributes option
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
-
-		// For a string with a simple & inside and already encoded
-		$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
-		$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
-		$result = dolPrintHTMLForAttribute($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
-
-		// For a string that is not an already HTML content
-		$s = 'List: & é < " \'';															// Detected as non already HTML
-		$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
-		$result = dolPrintHTMLForAttribute($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+			// For a string that is not an already HTML content
+			$s = 'List: & é < " \'';															// Detected as non already HTML
+			$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 
 
-		// With remove Bad attributes option only
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
-		$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
-		$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+			if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+				// With clean TIDY and remove Bad attributes option
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+				$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;			//
+				$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
 
-		// For a string with a simple & inside and already encoded
-		$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
-		$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
-		$result = dolPrintHTMLForAttribute($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+				// For a string with a simple & inside and already encoded
+				$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+				$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+				$result = dolPrintHTMLForAttribute($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
 
-		// For a string that is not an already HTML content
-		$s = 'List: & é < " \'';															// Detected as non already HTML
-		$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
-		$result = dolPrintHTMLForAttribute($s);
-		$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+				// For a string that is not an already HTML content
+				$s = 'List: & é < " \'';															// Detected as non already HTML
+				$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+				$result = dolPrintHTMLForAttribute($s);
+				$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+			}
+		}
+
+		if ($libXmlIsOkForMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES) {
+			// With remove Bad attributes option only
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
+			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;			//
+			$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 1;	// 1 = Replaces & alone into &amp; and replaces &#39 into '
+
+			// For a string with a simple & inside and already encoded
+			$s = 'List of char+their entities: & &amp; é &eacute; < &lt; " &quot; \' &apos; <a href="aaa?aaa=1&bbb=2&amp;ccc=3">a</a> <zzz>z</zzz>';	// Detected as already HTML
+			$expectedresult = 'List of char+their entities: &amp; &amp;amp; &eacute; &eacute; &lt; &amp;lt; &quot; &amp;quot; \' &amp;apos; a z';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+
+			// For a string that is not an already HTML content
+			$s = 'List: & é < " \'';															// Detected as non already HTML
+			$expectedresult = 'List: &amp;amp; &eacute; &amp;lt; &amp;quot; \'';
+			$result = dolPrintHTMLForAttribute($s);
+			$this->assertEquals($expectedresult, $result, 'Error on test dolPrintHTML');
+		}
 
 		return 0;
 	}
