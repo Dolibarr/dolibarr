@@ -13167,17 +13167,19 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 			$attr = array_map('dol_htmlentities', $attr);
 		}
 	} else {
+		$attrHref = '';
+		if (isset($attr['href'])) {
+			$attrHref = dolPrintHTMLForAttributeUrl($attr['href']);
+			unset($attr['href']);
+		}
 		$attr = array_map('dolPrintHTMLForAttribute', $attr);
+		if ($attrHref !== '') {
+			$attr['href'] = dolPrintHTMLForAttributeUrl($attrHref);
+		}
 	}
 
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		if ($key == 'href') {
-			$value = dolPrintHTMLForAttributeUrl($value);
-		} else {
-			$value = dolPrintHTMLForAttribute($value);
-		}
-
 		$TCompiledAttr[] = $key.'="'.$value.'"';	// $value has been escaped by the dolPrintHTMLForAttribute... just before
 	}
 
