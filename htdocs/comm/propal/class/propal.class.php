@@ -732,7 +732,7 @@ class Propal extends CommonObject
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -953,7 +953,7 @@ class Propal extends CommonObject
 
 			// TODO Implement  if (getDolGlobalInt('MAIN_UNIT_PRICE_WITH_TAX_IS_FOR_ALL_TAXES')) ?
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, (float) $pu, (float) $remise_percent, $txtva, (float) $txlocaltax1, (float) $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1363,7 +1363,7 @@ class Propal extends CommonObject
 							$line->date_end,
 							$line->array_options,
 							$line->fk_unit,
-							$origintype,
+							(string) $origintype,
 							$originid,
 							0,
 							0,
@@ -1537,7 +1537,7 @@ class Propal extends CommonObject
 									}
 								} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 									$prodcustprice = new ProductCustomerPrice($this->db);
-									$filter = array('t.fk_product' => $prod->id, 't.fk_soc' => $objsoc->id);
+									$filter = array('t.fk_product' => (string) $prod->id, 't.fk_soc' => (string) $objsoc->id);
 									$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 									if ($result) {
 										// If there is some prices specific to the customer
@@ -1938,7 +1938,7 @@ class Propal extends CommonObject
 		$sql .= ' d.fk_unit,';
 		$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label, p.tobatch as product_tobatch, p.barcode as product_barcode,';
 		$sql .= ' p.weight, p.weight_units, p.volume, p.volume_units,';
-		$sql .= ' d.date_start, d.date_end,';
+		$sql .= ' d.date_start, d.date_end, d.extraparams,';
 		$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as d';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (d.fk_product = p.rowid)';
@@ -2018,6 +2018,8 @@ class Propal extends CommonObject
 
 				$line->date_start = $this->db->jdate($objp->date_start);
 				$line->date_end = $this->db->jdate($objp->date_end);
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				// Multicurrency
 				$line->fk_multicurrency = $objp->fk_multicurrency;
@@ -3700,7 +3702,7 @@ class Propal extends CommonObject
 	 *  Returns the reference to the following non used Proposal used depending on the active numbering module
 	 *  defined into PROPALE_ADDON
 	 *
-	 *  @param	Societe		$soc  	Object thirdparty
+	 *  @param	?Societe	$soc  	Object thirdparty
 	 *  @return string      		Reference libre pour la propale
 	 */
 	public function getNextNumRef($soc)

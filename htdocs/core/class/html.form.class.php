@@ -7017,7 +7017,7 @@ class Form
 			// If SERVICE_ARE_ECOMMERCE_200238EC=1 combo list vat rate of purchaser and seller countries
 			// If SERVICE_ARE_ECOMMERCE_200238EC=2 combo list only the vat rate of the purchaser country
 			$selectVatComboMode = getDolGlobalString('SERVICE_ARE_ECOMMERCE_200238EC');
-			if (is_object($societe_vendeuse) && isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
+			if (is_object($societe_vendeuse) && is_object($societe_acheteuse) && isInEEC($societe_vendeuse) && isInEEC($societe_acheteuse) && !$societe_acheteuse->isACompany()) {
 				// We also add the buyer country code
 				if (is_numeric($type)) {
 					if ($type == 1) { // We know product is a service
@@ -8948,7 +8948,7 @@ class Form
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 * @param string 				$htmlname 			Name of html select area. Try to start name with "multi" or "search_multi" if this is a multiselect
-	 * @param array<int|string,array{label:string,data-html:string,disable?:int<0,1>,css?:string}>|string[]	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param array<int|string,array{label:string,data-html?:string,data-noparam?:int<0,1>,data-placeholder?:string,disable?:int<0,1>,css?:string}>|string[]	$array 	Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param string|string[]|int 	$id					Preselected key or array of preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
 	 * @param int<0,1>|string 		$show_empty 		0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If 'Placeholder string': key is -1 and value is the string), <0 to add an empty value with key that is this value.
 	 * @param int<0,1>				$key_in_label 		1 to show key into label with format "[key] value"
@@ -8961,7 +8961,7 @@ class Form
 	 * @param string 				$morecss 			Add more class to css styles
 	 * @param int<0,1>				$addjscombo 		Add js combo
 	 * @param string 				$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
-	 * @param int 					$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
+	 * @param int<0,2> 					$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
 	 * @param int<0,1> 				$nohtmlescape 		No html escaping (not recommended, use 'data-html' if you need to use label with HTML content).
 	 * @return string									HTML select string.
 	 * @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
@@ -11356,6 +11356,109 @@ class Form
 					}
 
 					$labeltoshow = dol_trunc($obj->ref, 18); // Order ref
+
+					if (!empty($selected) && $selected == $obj->rowid) {
+						$out .= '<option value="'.$obj->rowid.'" selected';
+						//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+						$out .= '>'.$labeltoshow.'</option>';
+					} else {
+						if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
+							$resultat = '';
+						} else {
+							$resultat = '<option value="'.$obj->rowid.'"';
+							if ($disabled) {
+								$resultat .= ' disabled';
+							}
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$resultat .= '>';
+							$resultat .= $labeltoshow;
+							$resultat .= '</option>';
+						}
+						$out .= $resultat;
+					}
+					$i++;
+				}
+			}
+			if (empty($option_only)) {
+				$out .= '</select>';
+			}
+
+			print $out;
+
+			$this->db->free($resql);
+			return $num;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
+	 *  Output a combo list with supplier orders qualified for a third party
+	 *
+	 *  @param  string	$selected   	Id supplier order preselected
+	 *  @param  string	$htmlname   	Name of HTML select
+	 *	@param	int		$maxlength		Maximum length of label
+	 *	@param	int		$option_only	Return only html options lines without the select tag
+	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
+	 *  @param	int		$disabled		Disabled
+	 *  @param	string	$morecss        More css added to the select component
+	 *
+	 *	@return int         			Nbr of project if OK, <0 if KO
+	 */
+	public function selectSupplierOrder($selected = '', $htmlname = 'supplierorderid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500')
+	{
+		global $user, $conf, $langs;
+
+		$out = '';
+
+		$hideunselectables = false;
+		if (getDolGlobalString('SUPPLIER_ORDER_HIDE_UNSELECTABLES')) {
+			$hideunselectables = true;
+		}
+
+		// Search all supplier orders
+		$sql = "SELECT cf.rowid, cf.ref";
+		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur as cf';
+		$sql .= " ORDER BY cf.ref ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Use select2 selector
+			if (!empty($conf->use_javascript_ajax)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
+				$out .= $comboenhancement;
+				$morecss = 'minwidth200imp maxwidth500';
+			}
+
+			if (empty($option_only)) {
+				$out .= '<select class="valignmiddle flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlname.'" name="'.$htmlname.'">';
+			}
+			if (!empty($show_empty)) {
+				$out .= '<option value="0" class="optiongrey">';
+				if (!is_numeric($show_empty)) {
+					$out .= $show_empty;
+				} else {
+					$out .= '&nbsp;';
+				}
+				$out .= '</option>';
+			}
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+
+					if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {
+						$i++;
+						continue;
+					}
+
+					$labeltoshow = dol_trunc($obj->ref, 18); // Supplier order ref
 
 					if (!empty($selected) && $selected == $obj->rowid) {
 						$out .= '<option value="'.$obj->rowid.'" selected';

@@ -433,7 +433,6 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$bankaccountstatic = new Account($db);
 $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
@@ -455,9 +454,6 @@ $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedo
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-if ($search_all) {
-	$sql = 'SELECT DISTINCT';
-}
 $sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_modification,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
@@ -482,12 +478,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
-// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
-if (!$search_all) {
-	$sql .= ', SUM(pf.amount) as dynamount_payed';
-}
-
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -497,12 +487,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ', '.MAIN_DB_PREFIX.'facture_fourn as f';
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
-}
-if (!$search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det as pd ON f.rowid=pd.fk_facture_fourn';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
@@ -735,10 +719,16 @@ if ($filter && $filter != -1) {
 		$sql .= " AND ".$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
 	}
 }
-/*
-if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}*/
+
+if ($search_all) {
+	unset($fieldstosearchall['pd.description']);
+	$sql .= "AND (";
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all, 0, 1);
+	$sql .= " OR EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn_det as pd WHERE f.rowid = pd.fk_facture_fourn AND pd.description LIKE '%".$db->escape($db->escapeforlike($search_all))."%')";
+	$sql .= ")";
+	$fieldstosearchall['pd.description'] = 'Description';
+}
+
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='invoice_supplier' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
@@ -748,33 +738,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-if (!$search_all) {
-	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement, f.fk_mode_reglement, f.fk_cond_reglement,";
-	$sql .= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.close_code, f.fk_statut, f.libelle, f.datec, f.tms,";
-	$sql .= " f.localtax1, f.localtax2,";
-	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
-	$sql .= " f.note_public, f.note_private,";
-	$sql .= " f.fk_user_author,";
-	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
-	$sql .= " typent.code,";
-	$sql .= " state.code_departement, state.nom,";
-	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
-	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			//prevent error with sql_mode=only_full_group_by
-			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
-		}
-	}
-	// Add GroupBy from hooks
-	$parameters = array('all' => $search_all, 'fieldstosearchall' => $fieldstosearchall);
-	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
-} else {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-}
 
 // Add HAVING from hooks
 $parameters = array();
@@ -786,8 +749,6 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-	$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
 	if ($resql) {

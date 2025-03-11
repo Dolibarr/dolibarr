@@ -804,7 +804,7 @@ class FactureFournisseurRec extends CommonInvoice
 		$sql .= ' l.total_ht, l.total_tva, l.total_ttc, total_localtax1, total_localtax2,';
 		$sql .= ' l.product_type, l.date_start, l.date_end,';
 		$sql .= ' l.info_bits, l.special_code, l.rang,';
-		$sql .= ' l.fk_unit, l.import_key, l.fk_user_author, l.fk_user_modif,';
+		$sql .= ' l.fk_unit, l.import_key, l.fk_user_author, l.fk_user_modif, l.extraparams,';
 		$sql .= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det_rec as l';
@@ -857,6 +857,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$line->import_key               = $objp->import_key;
 				$line->fk_user_author           = $objp->fk_user_author;
 				$line->fk_user_modif            = $objp->fk_user_modif;
+				$this->extraparams 				= !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 				$line->fk_multicurrency         = $objp->fk_multicurrency;
 				$line->multicurrency_code       = $objp->multicurrency_code;
 				$line->multicurrency_subprice   = $objp->multicurrency_subprice;

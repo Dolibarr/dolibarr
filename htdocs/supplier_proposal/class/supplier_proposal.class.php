@@ -1341,7 +1341,7 @@ class SupplierProposal extends CommonObject
 				$sql = "SELECT d.rowid, d.fk_supplier_proposal, d.fk_parent_line, d.label as custom_label, d.description, d.price, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
 				$sql .= " d.info_bits, d.total_ht, d.total_tva, d.total_localtax1, d.total_localtax2, d.total_ttc, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht, d.special_code, d.rang, d.product_type,";
 				$sql .= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label as product_label,';
-				$sql .= ' d.ref_fourn as ref_produit_fourn,';
+				$sql .= ' d.ref_fourn as ref_produit_fourn, d.extraparams,';
 				$sql .= ' d.fk_multicurrency, d.multicurrency_code, d.multicurrency_subprice, d.multicurrency_total_ht, d.multicurrency_total_tva, d.multicurrency_total_ttc, d.fk_unit';
 				$sql .= " FROM ".MAIN_DB_PREFIX."supplier_proposaldet as d";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -1397,6 +1397,8 @@ class SupplierProposal extends CommonObject
 						$line->fk_product_type  = $objp->fk_product_type;
 
 						$line->ref_fourn = $objp->ref_produit_fourn;
+
+						$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 						// Multicurrency
 						$line->fk_multicurrency = $objp->fk_multicurrency;
@@ -2661,7 +2663,7 @@ class SupplierProposal extends CommonObject
 		$sql = 'SELECT pt.rowid, pt.label as custom_label, pt.description, pt.fk_product, pt.fk_remise_except,';
 		$sql .= ' pt.qty, pt.tva_tx, pt.vat_src_code, pt.remise_percent, pt.subprice, pt.info_bits,';
 		$sql .= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.fk_product_fournisseur_price as fk_fournprice, pt.buy_price_ht as pa_ht, pt.special_code, pt.localtax1_tx, pt.localtax2_tx,';
-		$sql .= ' pt.product_type, pt.rang, pt.fk_parent_line,';
+		$sql .= ' pt.product_type, pt.rang, pt.fk_parent_line, pt.extraparams,';
 		$sql .= ' p.label as product_label, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql .= ' p.description as product_desc, pt.ref_fourn as ref_supplier,';
 		$sql .= ' pt.fk_multicurrency, pt.multicurrency_code, pt.multicurrency_subprice, pt.multicurrency_total_ht, pt.multicurrency_total_tva, pt.multicurrency_total_ttc, pt.fk_unit';
@@ -2711,6 +2713,8 @@ class SupplierProposal extends CommonObject
 
 				$this->lines[$i]->ref_fourn = $obj->ref_supplier; // deprecated
 				$this->lines[$i]->ref_supplier = $obj->ref_supplier;
+
+				$this->extraparams = !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 				// Multicurrency
 				$this->lines[$i]->fk_multicurrency = $obj->fk_multicurrency;
@@ -3140,7 +3144,7 @@ class SupplierProposalLine extends CommonObjectLine
 		$sql .= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.fk_product_fournisseur_price as fk_fournprice, pd.buy_price_ht as pa_ht, pd.special_code, pd.rang,';
 		$sql .= ' pd.localtax1_tx, pd.localtax2_tx, pd.total_localtax1, pd.total_localtax2,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql .= ' pd.product_type, pd.ref_fourn as ref_produit_fourn,';
+		$sql .= ' pd.product_type, pd.ref_fourn as ref_produit_fourn, pd.extraparams,';
 		$sql .= ' pd.fk_multicurrency, pd.multicurrency_code, pd.multicurrency_subprice, pd.multicurrency_total_ht, pd.multicurrency_total_tva, pd.multicurrency_total_ttc, pd.fk_unit';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'supplier_proposaldet as pd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
@@ -3186,6 +3190,8 @@ class SupplierProposalLine extends CommonObjectLine
 				$this->product_desc = $objp->product_desc;
 
 				$this->ref_fourn = $objp->ref_produit_fourn;
+
+				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				// Multicurrency
 				$this->fk_multicurrency = $objp->fk_multicurrency;

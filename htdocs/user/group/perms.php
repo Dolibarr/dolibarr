@@ -463,7 +463,7 @@ if ($object->id > 0) {
 				print '<td class="right">';
 				$htmltext = $langs->trans("ID").': '.$obj->id;
 				$htmltext .= '<br>'.$langs->trans("Permission").': user->hasRight(\''.$obj->module.'\', \''.$obj->perms.'\''.($obj->subperms ? ', \''.$obj->subperms.'\'' : '').')';
-				print $form->textwithpicto('', $htmltext);
+				print $form->textwithpicto('', $htmltext, 1, 'help', 'marginrightonly');
 				//print '<span class="opacitymedium">'.$obj->id.'</span>';
 				print '</td>';
 			} else {
