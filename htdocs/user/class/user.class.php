@@ -4416,9 +4416,9 @@ class User extends CommonObject
 	{
 		global $conf;
 
-		$sql = 'SELECT s.rowid FROM '.$this->db->prefix().'societe s ';
-		$sql.= ' LEFT JOIN '.$this->db->prefix().'societe_commerciaux sc ON s.rowid = sc.fk_soc';
-		$sql.= ' WHERE sc.fk_user = '.(int) $this->id;
+		$sql = "SELECT s.rowid FROM ".$this->db->prefix()."societe s ";
+		$sql.= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux sc ON s.rowid = sc.fk_soc";
+		$sql.= " WHERE sc.fk_user = ".(int) $this->id;
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
