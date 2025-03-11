@@ -12893,7 +12893,7 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 	foreach ($attr as $key => $value) {
 		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
 			// Not recommended
-			$value = dol_htmlentities($attrV, ENT_QUOTES | ENT_SUBSTITUTE);
+			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
 		} elseif ($key == 'href') {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
