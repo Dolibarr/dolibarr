@@ -93,8 +93,6 @@ if ($module == 'propal') {
 	$permission = $user->hasRight($module, 'write');
 }
 
-$permission_view_all_thirdparties = $user->hasRight('societe', 'client', 'voir');
-
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
 $contactstatic = new Contact($db);
@@ -183,18 +181,7 @@ if ($permission) {
 		<div class="tagtd nowrap noborderbottom">
 			<?php
 			$selectedCompany = GETPOSTISSET("newcompany") ? GETPOSTINT("newcompany") : (empty($object->socid) ? 0 : $object->socid);
-			$allowed_thirdparties = [];
-			if ($object->restrictiononfksoc && ! $permission_view_all_thirdparties) {
-				$allowed_thirdparties = $user->getAffectedThirdparties(1);
-				if (is_int($allowed_thirdparties)) {
-					print $user->errorsToString();
-					$allowed_thirdparties = [$object->socid];
-				} elseif (empty($allowed_thirdparties)) {
-					$allowed_thirdparties = [$object->socid];
-				}
-			}
-			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', $allowed_thirdparties, 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component
-			?>
+			$selectedCompany = $formcompany->selectCompaniesForNewContact($object, 'id', $selectedCompany, 'newcompany', array(), 0, '', 'minwidth300imp maxwidth400 widthcentpercentminusx');	// This also print the select component?>
 		</div>
 		<div class="tagtd noborderbottom minwidth500imp">
 			<?php
