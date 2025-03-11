@@ -247,3 +247,30 @@ function dolSessionGC($max_lifetime)
 
 // Call to register user call back functions.
 session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line
+
+/**
+ * List sessions in db
+ *
+ * @return array<mixed, array{login: ?string, age: string, remote_ip: string}>
+ */
+function dolListSessions()
+{
+	global $dbsession;
+
+	$arrayofsessions = [];
+	$sql = "SELECT s.session_id, s.session_variable, s.fk_user, s.last_accessed, s.remote_ip";
+	$sql .= ", u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."session as s";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
+	$sql .= " LIMIT 500";
+	$resql = $dbsession->query($sql);
+	while ($resql && $obj = $dbsession->fetch_object($resql)) {
+		$arrayofsessions[$obj->session_id] = [
+			"login" => $obj->login,
+			"age" => $obj->last_accessed,
+			"remote_ip" => $obj->remote_ip,
+		];
+	}
+
+	return $arrayofsessions;
+}

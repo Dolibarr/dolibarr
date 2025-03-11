@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,7 +185,45 @@ if ($savehandler == 'files') {
 		print "</tr>\n";
 		$i++;
 	}
+	if (count($listofsessions) == 0) {
+		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
+	}
+	print "</table>";
+} elseif ($savehandler == 'user') {
+	print '<table class="liste centpercent">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "login", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("SessionId", $_SERVER["PHP_SELF"], "id", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("Age", $_SERVER["PHP_SELF"], "age", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("IPAddress", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
 
+	foreach ($listofsessions as $key => $sessionentry) {
+		print '<tr class="oddeven">';
+
+		// Login
+		print '<td>'.$sessionentry['login'].'</td>';
+
+		// ID
+		print '<td class="nowrap left">';
+		if ("$key" == session_id()) {
+			print $form->textwithpicto($key, $langs->trans("YourSession"));
+		} else {
+			print $key;
+		}
+		print '</td>';
+
+		// Age
+		print '<td>'.$sessionentry['age'].'</td>';
+
+		// Raw
+		print '<td>'.$sessionentry['remote_ip'].'</td>';
+		print '<td>&nbsp;</td>';
+
+		print "</tr>\n";
+		$i++;
+	}
 	if (count($listofsessions) == 0) {
 		print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoSessionFound", $savepath, $openbasedir).'</td></tr>';
 	}
