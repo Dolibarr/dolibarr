@@ -5,7 +5,7 @@
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +226,7 @@ if ($action == 'create') {
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-	print $form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print $form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 
 	print "<tr>";
@@ -317,7 +317,7 @@ if ($action == 'create') {
 			// Who
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-			print $form->select_dolusers(GETPOSTINT('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers(GETPOSTINT('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 			print '</td></tr>';
 
 			// Date
