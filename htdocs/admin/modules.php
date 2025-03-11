@@ -82,7 +82,7 @@ $search_version = GETPOST('search_version', 'alpha');
 
 // For remotestore search
 $options              		= array();
-$options['per_page']  		= 10;
+$options['per_page']  		= 11;
 $options['no_page']   		= ((int) GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
 $options['categorie'] 		= ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
 $options['search']    		= GETPOST('search_keyword', 'alpha');
@@ -1328,7 +1328,7 @@ if ($mode == 'marketplace') {
 
 		print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-		$categories_tree = $remotestore->getCategories();		// Call API to get the categories
+		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
 		$products_list = $remotestore->getProducts($options);
 

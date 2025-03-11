@@ -250,10 +250,11 @@ class ExternalModules
 
 	/**
 	 * Generate HTML for categories and their children.
+	 * @param int $active The active category id
 	 *
 	 * @return string HTML string representing the categories and their children.
 	 */
-	public function getCategories()
+	public function getCategories($active = 0)
 	{
 		$organized_tree = array();
 		$html = '';
@@ -261,6 +262,8 @@ class ExternalModules
 		$data = [
 			'lang' => $this->lang
 		];
+
+		$current = $active;
 
 		$resCategories = $this->callApi('categories', $data);
 		if (isset($resCategories['response']) && is_array($resCategories['response'])) {
@@ -272,13 +275,13 @@ class ExternalModules
 		$html = '';
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
-				$html .= '<li>';
+				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
 				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
 					foreach ($value['children'] as $key_children => $value_children) {
-						$html .= '<li>';
+						$html .= '<li' . ($current == $value_children['rowid'] ? ' class="active"' : '') . '>';
 						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
 						$html .= '</li>';
 					}
@@ -678,6 +681,9 @@ class ExternalModules
 
 				$pagelist .= '<li class="pagination">';
 				$pagelist .= '<label for="page_input">Page </label>';
+				if ($this->categorie != 0) {
+					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
+				}
 				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
 				$pagelist .= ' / '.$nbpages;
 				$pagelist .= '</li>';
