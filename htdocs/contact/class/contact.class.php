@@ -1189,8 +1189,7 @@ class Contact extends CommonObject
 		// Then search on email
 		// Then search on lastname + firstname
 		// Then search ref_ext or alias with a OR
-		$tmpcontact = new Contact($this->db);
-		$result = $tmpcontact->fetch($id, null, $ref_ext, $email, 0, $socid);
+		$result = $this->fetch($id, null, $ref_ext, $email, 0, $socid);
 
 		return $result;
 	}
