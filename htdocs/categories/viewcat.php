@@ -186,7 +186,7 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$tmpobject = new CommandeFournisseur($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'invoice';
+		$elementtype = 'supplier_order';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
@@ -265,7 +265,7 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 	} elseif ($type == Categorie::TYPE_SUPPLIER_ORDER && $user->hasRight('fournisseur', 'commande', 'creer')) {
 		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$newobject = new CommandeFournisseur($db);
-		$elementtype = 'order_supplier';
+		$elementtype = 'supplier_order';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
