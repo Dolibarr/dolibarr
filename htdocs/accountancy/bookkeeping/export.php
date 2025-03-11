@@ -6,7 +6,7 @@
  * Copyright (C) 2016-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Progiseize              <a.bisotti@progiseize.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ $form = new Form($db);
 if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOSTINT('page') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
 	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
 		$sql = "SELECT date_start, date_end";
-		$sql .=" FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
 			$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
 		} else {
@@ -204,21 +204,21 @@ if (!in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && !GE
 
 
 $arrayfields = array(
-	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => 1),
-	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => 1),
-	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => 1),
-	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => 1),
-	't.numero_compte' => array('label' => $langs->trans("AccountAccountingShort"), 'checked' => 1),
-	't.subledger_account' => array('label' => $langs->trans("SubledgerAccount"), 'checked' => 1),
-	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => 1),
-	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => 1),
-	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => 1),
-	't.lettering_code' => array('label' => $langs->trans("LetteringCode"), 'checked' => 1),
-	't.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => 0),
-	't.tms' => array('label' => $langs->trans("DateModification"), 'checked' => 0),
-	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => 1),
-	't.date_validated' => array('label' => $langs->trans("DateValidationAndLock"), 'checked' => -1, 'enabled' => !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => 0, 'position' => 1100),
+	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => '1'),
+	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => '1'),
+	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => '1'),
+	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => '1'),
+	't.numero_compte' => array('label' => $langs->trans("AccountAccountingShort"), 'checked' => '1'),
+	't.subledger_account' => array('label' => $langs->trans("SubledgerAccount"), 'checked' => '1'),
+	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => '1'),
+	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
+	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
+	't.lettering_code' => array('label' => $langs->trans("LetteringCode"), 'checked' => '1'),
+	't.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0'),
+	't.tms' => array('label' => $langs->trans("DateModification"), 'checked' => '0'),
+	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => '1'),
+	't.date_validated' => array('label' => $langs->trans("DateValidationAndLock"), 'checked' => '-1', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '0', 'position' => 1100),
 );
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
@@ -364,7 +364,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['id'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);

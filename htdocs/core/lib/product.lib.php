@@ -702,13 +702,13 @@ function show_stats_for_company($product, $socid)
 		print '</td><td class="right">';
 
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['nb_toconsume'], $langs->trans("RowMaterial"));
+		print $form->textwithpicto((string) $product->stats_bom['nb_toconsume'], $langs->trans("RowMaterial"));
 		print ' ';
-		print $form->textwithpicto($product->stats_bom['nb_toproduce'], $langs->trans("Finished"));
+		print $form->textwithpicto((string) $product->stats_bom['nb_toproduce'], $langs->trans("Finished"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_bom['qty_toconsume'], $langs->trans("RowMaterial"));
+		print $form->textwithpicto((string) $product->stats_bom['qty_toconsume'], $langs->trans("RowMaterial"));
 		print ' ';
-		print $form->textwithpicto($product->stats_bom['qty_toproduce'], $langs->trans("Finished"));
+		print $form->textwithpicto((string) $product->stats_bom['qty_toproduce'], $langs->trans("Finished"));
 		print '</td>';
 		print '</tr>';
 	}
@@ -724,34 +724,34 @@ function show_stats_for_company($product, $socid)
 		print '<tr><td>';
 		print '<a href="'.DOL_URL_ROOT.'/product/stats/mo.php?id='.$product->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $product->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $product->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
-		print $form->textwithpicto($product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_toconsume'], $langs->trans("ToConsume"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce"));
 		print ' ';
-		print $form->textwithpicto($product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $product->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}
 	$parameters = array('socid' => $socid);
-	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('addMoreProductStat', $parameters, $product, $nblines); // Note that $action and $object may have been modified by some hooks // TODO: Verify that $nblines is the correct value for argument $action
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
@@ -853,25 +853,25 @@ function show_stats_for_batch($batch, $socid)
 		print '<a href="'.dol_buildpath('/product/stock/stats/mo.php', 1).'?id='.$batch->id.'">'.img_object('', 'mrp', 'class="pictofixedwidth"').$langs->trans("MO").'</a>';
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['customers_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $batch->stats_mo['customers_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		//      print $form->textwithpicto($batch->stats_mo['customers_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $batch->stats_mo['customers_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['nb_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $batch->stats_mo['nb_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		//      print $form->textwithpicto($batch->stats_mo['nb_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $batch->stats_mo['nb_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td><td class="right">';
 		//      print $form->textwithpicto($batch->stats_mo['qty_toconsume'], $langs->trans("ToConsume")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
+		print $form->textwithpicto((string) $batch->stats_mo['qty_consumed'], $langs->trans("QtyAlreadyConsumed"));
 		//      print $form->textwithpicto($batch->stats_mo['qty_toproduce'], $langs->trans("QtyToProduce")); Makes no sense with batch, at this moment we don't know batch number
-		print $form->textwithpicto($batch->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
+		print $form->textwithpicto((string) $batch->stats_mo['qty_produced'], $langs->trans("QtyAlreadyProduced"));
 		print '</td>';
 		print '</tr>';
 	}
 
 	$parameters = array('socid' => $socid);
-	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('addMoreBatchProductStat', $parameters, $batch, $nblines); // Note that $action and $object may have been modified by some hooks  // TODO: Verify that $nblines is the correct value for argument $action
 	if ($reshook < 0) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}

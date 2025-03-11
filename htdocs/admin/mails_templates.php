@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -979,7 +979,7 @@ foreach ($fieldlist as $field => $value) {
 		print '</td>';
 	} elseif ($value == 'fk_user') {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), 0, 0, 0, '', 0, '', 'maxwidth100', 1);
+		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -1415,7 +1415,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin && $context != 'preview') {
-				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
+				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(-1); // Me

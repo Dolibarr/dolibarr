@@ -183,7 +183,7 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 		if (empty($webportal_logged_thirdparty_account_id)) {
 			// Set cookie for timeout management
 			if (getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
-				setcookie($sessiontimeout, $conf->global->MAIN_SESSION_TIMEOUT, 0, "/", '', !empty($dolibarr_main_force_https), true);
+				dolSetCookie($sessiontimeout, getDolGlobalString('MAIN_SESSION_TIMEOUT'), 0);
 			}
 
 			$context->controller = 'login';

@@ -1370,6 +1370,40 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 	return $out;
 }
 
+/**
+ * Set a cookie
+ *
+ * @param	string	$cookiename		Cookie name
+ * @param	string	$cookievalue	Cookie value
+ * @param	int		$expire			Expire delay. If 0, expire at end of session. -1 means 1 year.
+ * @return	void
+ */
+function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
+{
+	global $dolibarr_main_force_https;
+
+	if ($expire == -1) {
+		$expire = (time() + (86400 * 354));	// keep cookie 1 year.
+	}
+
+	if (PHP_VERSION_ID < 70300) {
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : $expire, '/', '', !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // add tag httponly
+	} else {
+		// Only available for php >= 7.3
+		$cookieparams = array(
+			'expires' => empty($cookievalue) ? 0 : $expire,
+			'path' => '/',
+			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
+			'httponly' => true,
+			'samesite' => 'Lax'	// None || Lax  || Strict
+		);
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, $cookieparams);
+	}
+	if (empty($cookievalue)) {
+		unset($_COOKIE[$cookiename]);
+	}
+}
 
 if (!function_exists('dol_getprefix')) {
 	/**
@@ -13153,26 +13187,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// Escape all attributes
-	if (!empty($params['use_unsecured_unescapedattr'])) {	// Not recommended.
-		if (is_array($params['use_unsecured_unescapedattr'])) {
-			foreach ($attr as $attrK => $attrV) {
-				if (in_array($attrK, $params['use_unsecured_unescapedattr'])) {
-					$attr[$attrK] = dol_htmlentities($attrV, ENT_QUOTES | ENT_SUBSTITUTE);
-				} else {
-					$attr[$attrK] = dolPrintHTMLForAttribute($attrV);
-				}
-			}
-		} else {
-			$attr = array_map('dol_htmlentities', $attr);
-		}
-	} else {
-		$attr = array_map('dolPrintHTMLForAttribute', $attr);
-	}
-
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		if ($key == 'href') {
+		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
+			// Not recommended
+			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
+		} elseif ($key == 'href') {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);
