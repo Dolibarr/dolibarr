@@ -142,6 +142,10 @@ $usercancreateinvoice = ($user->hasRight('facture', 'creer') == 1);
 $usercancreatecontract = ($user->hasRight('contrat', 'creer') == 1);
 $usercancreateintervention = ($user->hasRight('ficheinter', 'creer') == 1);
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
+$usercanreopen = ((empty(getDolGlobalBool('MAIN_USE_ADVANCED_PERMS')) && $usercancreate) || (getDolGlobalBool('MAIN_USE_ADVANCED_PERMS') && !empty($user->hasRight('propal', 'propal_advance', 'reopen'))));
+if (getDolGlobalBool('PROPAL_DISALLOW_REOPEN')) {
+	$usercanreopen = false;
+}
 
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
@@ -830,7 +834,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'confirm_reopen' && $usercanclose && !GETPOST('cancel', 'alpha')) {
+	} elseif ($action == 'confirm_reopen' && ((empty(getDolGlobalBool('MAIN_USE_ADVANCED_PERMS')) && $usercanclose) || $usercanreopen) && !GETPOST('cancel', 'alpha')) {
 		// Reopen proposal
 		// prevent browser refresh from reopening proposal several times
 		if ($object->status == Propal::STATUS_SIGNED || $object->status == Propal::STATUS_NOTSIGNED || $object->status == Propal::STATUS_BILLED || $object->status == Propal::STATUS_CANCELED) {
@@ -3143,7 +3147,7 @@ if ($action == 'create') {
 				}
 
 				// ReOpen
-				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->status == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->status == Propal::STATUS_SIGNED || $object->status == Propal::STATUS_NOTSIGNED || $object->status == Propal::STATUS_BILLED || $object->status == Propal::STATUS_CANCELED))) && $usercanclose) {
+				if (((getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && $object->status == Propal::STATUS_NOTSIGNED) || (!getDolGlobalString('PROPAL_REOPEN_UNSIGNED_ONLY') && ($object->status == Propal::STATUS_SIGNED || $object->status == Propal::STATUS_NOTSIGNED || $object->status == Propal::STATUS_BILLED || $object->status == Propal::STATUS_CANCELED))) && ((empty(getDolGlobalBool('MAIN_USE_ADVANCED_PERMS')) && $usercanclose) || $usercanreopen)) {
 					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().(!getDolGlobalString('MAIN_JUMP_TAG') ? '' : '#reopen').'"';
 					print '>'.$langs->trans('ReOpen').'</a>';
 				}
