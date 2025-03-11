@@ -6,9 +6,9 @@
  * Copyright (C) 2015-2017 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2021      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2021       Maxime DEMAREST         <maxime@indelog.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,22 +98,22 @@ class Don extends CommonObject
 	public $societe;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string Zipcode
+	 * @var ?string Zipcode
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
 	/**
-	 * @var string Email
+	 * @var ?string Email
 	 */
 	public $email;
 
@@ -163,6 +163,9 @@ class Don extends CommonObject
 	 */
 	public $modepaymentid = 0;
 
+	/**
+	 * @var int<0,1> paid
+	 */
 	public $paid;
 
 	const STATUS_DRAFT = 0;
@@ -474,10 +477,10 @@ class Don extends CommonObject
 			}
 		}
 
-		if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
-			//$res = $this->setValid($user);
-			//if ($res < 0) $error++;
-		}
+		//if (!$error && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_DONATION'))) {
+		//$res = $this->setValid($user);
+		//if ($res < 0) $error++;
+		//}
 
 		if (!$error) {
 			$this->db->commit();
@@ -591,7 +594,7 @@ class Don extends CommonObject
 
 		$this->db->begin();
 
-		if (!$error && !$notrigger) {
+		if (!$notrigger) {
 			// Call trigger
 			$result = $this->call_trigger('DON_DELETE', $user);
 
@@ -856,8 +859,21 @@ class Don extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED) {
+		if ($this->status != self::STATUS_CANCELED && $this->status != self::STATUS_PAID) {
 			return 0;
+		}
+		if ($this->statut == self::STATUS_PAID) {
+			$sql = "UPDATE " . MAIN_DB_PREFIX . "don SET paid = 0 WHERE rowid = " . ((int) $this->id);
+
+			$resql = $this->db->query($sql);
+			if ($resql) {
+				if ($this->db->affected_rows($resql)) {
+					$this->paid = 0;
+				} else {
+					dol_print_error($this->db);
+					return -1;
+				}
+			}
 		}
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'DON_REOPEN');
@@ -1016,14 +1032,14 @@ class Don extends CommonObject
 
 
 	/**
-	 *  Create a document onto disk according to template module.
+	 *  Create a document on disk according to template module.
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @return     int         				0 if KO, 1 if OK
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @return     int<-1,1>      				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -1095,6 +1111,8 @@ class Don extends CommonObject
 			$classname = $modele;
 			$obj = new $classname($this->db);
 
+			'@phan-var-force ModeleDon $obj';
+
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
 			$sav_charset_output = $outputlangs->charset_output;
@@ -1165,7 +1183,7 @@ class Don extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -1180,20 +1198,20 @@ class Don extends CommonObject
 		$return .= img_picto('', $this->picto);
 		$return .= '</span>';
 		$return .= '<div class="info-box-content">';
-		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl(1) : $this->ref).'</span>';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">' . $this->getNomUrl(1) . '</span>';
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'date')) {
+		if (isDolTms($this->date)) {
 			$return .= ' &nbsp; | &nbsp; <span class="info-box-label">'.dol_print_date($this->date, 'day', 'tzuserrel').'</span>';
 		}
-		if (property_exists($this, 'societe') && !empty($this->societe)) {
+		if (!empty($this->societe)) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Company").'</span> : <span class="info-box-label">'.$this->societe.'</span>';
 		}
-		if (property_exists($this, 'amount')) {
+		if (!empty($this->amount)) {
 			$return .= '<br><span class="info-box-label amount">'.price($this->amount, 1, $langs, 1, -1, -1, $conf->currency).'</span>';
 		}
-		if (method_exists($this, 'LibStatut')) {
+		if (isset($this->status)) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';

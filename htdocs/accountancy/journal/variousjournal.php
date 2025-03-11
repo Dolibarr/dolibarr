@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2021-2024  Alexandre Spangaro  <alexandre@inovea-conseil.com>
+/* Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,18 +29,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "accountancy", "compta", "other", "errors"));
 
 $id_journal = GETPOSTINT('id_journal');
 $action = GETPOST('action', 'aZ09');
 
-$date_startmonth = GETPOST('date_startmonth');
-$date_startday = GETPOST('date_startday');
-$date_startyear = GETPOST('date_startyear');
-$date_endmonth = GETPOST('date_endmonth');
-$date_endday = GETPOST('date_endday');
-$date_endyear = GETPOST('date_endyear');
+$date_startmonth = GETPOSTINT('date_startmonth');
+$date_startday = GETPOSTINT('date_startday');
+$date_startyear = GETPOSTINT('date_startyear');
+$date_endmonth = GETPOSTINT('date_endmonth');
+$date_endday = GETPOSTINT('date_endday');
+$date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping');
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';

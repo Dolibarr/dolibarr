@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,6 +41,15 @@ if (!defined('NOLOGIN') && $forlogin) {
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/OAuth/bootstrap.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 use OAuth\Common\Storage\DoliStorage;
 use OAuth\Common\Consumer\Credentials;
 
@@ -105,7 +114,7 @@ if ($state) {
 
 // Add a test to check that the state parameter is provided into URL when we make the first call to ask the redirect or when we receive the callback
 // but not when callback was ok and we recall the page
-if ($action != 'delete' && !GETPOSTINT('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
+if ($action != 'delete' && !GETPOST('afteroauthloginreturn') && (empty($statewithscopeonly) || empty($requestedpermissionsarray))) {
 	dol_syslog("state or statewithscopeonly and/or requestedpermissionsarray are empty");
 	setEventMessages($langs->trans('ScopeUndefined'), null, 'errors');
 	if (empty($backtourl)) {
@@ -222,7 +231,7 @@ if (!GETPOST('code')) {
 	exit();
 } else {
 	// We are coming from the return of an OAuth2 provider page.
-	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {
@@ -282,7 +291,7 @@ if (!GETPOST('code')) {
 
 				// Verify that email is a verified email
 				/*if (empty($userinfo['email_verified'])) {
-					setEventMessages($langs->trans('Bad value for email, email lwas not verified by Google'), null, 'errors');
+					setEventMessages($langs->trans('Bad value for email, email was not verified by Google'), null, 'errors');
 					$errorincheck++;
 				}*/
 
@@ -315,7 +324,7 @@ if (!GETPOST('code')) {
 					dol_syslog("we received the login/email to log to, it is ".$useremail);
 
 					$tmparray = (empty($_SESSION['datafromloginform']) ? array() : $_SESSION['datafromloginform']);
-					$entitytosearchuser = (isset($tmparray['entity']) ? $tmparray['entity'] : -1);
+					$entitytosearchuser = ((isset($tmparray['entity']) && $tmparray['entity'] != '') ? $tmparray['entity'] : -1);
 
 					// Delete the old token
 					$storage->clearToken('Google');	// Delete the token called ("Google-".$storage->keyforprovider)
@@ -363,7 +372,7 @@ if (!GETPOST('code')) {
 			// If call back to this url was for a OAUTH2 login
 			if ($forlogin) {
 				// _SESSION['googleoauth_receivedlogin'] has been set to the key to validate the next test by function_googleoauth(), so we can make the redirect
-				$backtourl .= '?actionlogin=login&afteroauthloginreturn=1&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
+				$backtourl .= '?actionlogin=login&afteroauthloginreturn=google&mainmenu=home'.($username ? '&username='.urlencode($username) : '').'&token='.newToken();
 				if (!empty($tmparray['entity'])) {
 					$backtourl .= '&entity='.$tmparray['entity'];
 				}

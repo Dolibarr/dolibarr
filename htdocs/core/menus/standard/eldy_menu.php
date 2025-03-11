@@ -148,9 +148,9 @@ class MenuManager
 	 *  Show menu.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
-	 *	@param	string				$mode			'top', 'topnb', 'left', 'leftdropdown', 'jmobile' (used to get full xml ul/li menu)
-	 *  @param	?array<string,mixed>	$moredata		An array with more data to output
-	 *  @return int                 			    0 or nb of top menu entries if $mode = 'topnb'
+	 *	@param	'top'|'topnb'|'left'|'leftdropdown'|'jmobile'	$mode			'top', 'topnb', 'left', 'leftdropdown', 'jmobile' (used to get full xml ul/li menu)
+	 *  @param	?array<string,string>	$moredata	An array with more data to output
+	 *  @return int<0,max>				0 or nb of top menu entries if $mode = 'topnb'
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
@@ -285,6 +285,7 @@ class MenuManager
 					*/
 
 					$lastlevel2 = array();
+					'@phan-var-force array<string> $lastlevel2';
 					foreach ($submenu->liste as $key2 => $val2) {		// $val['url','titre','level','enabled'=0|1|2,'target','mainmenu','leftmenu','prefix']
 						$showmenu = true;
 						if (getDolGlobalString('MAIN_MENU_HIDE_UNAUTHORIZED') && empty($val2['enabled'])) {

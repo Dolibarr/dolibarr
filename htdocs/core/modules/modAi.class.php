@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ class modAi extends DolibarrModules
 		$this->descriptionlong = "AiDescriptionLong";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = 'experimental';
+		$this->version = 'dolibarr';
 
 		// Key used in llx_const table to save module status enabled/disabled (where BOOKCAL is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
@@ -198,7 +198,7 @@ class modAi extends DolibarrModules
 		/* Example:
 		$this->dictionaries=array(
 			'langs'=>'ai@ai',
-			// List of tables we want to see into dictonnary editor
+			// List of tables we want to see into dictionary editor
 			'tabname'=>array("table1", "table2", "table3"),
 			// Label of tables
 			'tablib'=>array("Table1", "Table2", "Table3"),
@@ -387,7 +387,7 @@ class modAi extends DolibarrModules
 		// 		if (file_exists($src) && !file_exists($dest)) {
 		// 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		// 			dol_mkdir($dirodt);
-		// 			$result = dol_copy($src, $dest, 0, 0);
+		// 			$result = dol_copy($src, $dest, '0', 0);
 		// 			if ($result < 0) {
 		// 				$langs->load("errors");
 		// 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

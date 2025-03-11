@@ -1,8 +1,35 @@
 <?php
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+/**
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var int $dol_optimize_smallscreen
+ * @var string $colortextlink
+ * @var string $butactionbg
+ * @var string $textbutaction
+ * @var string $fontlist
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $butactionbg
+@phan-var-force string $colortextlink
+@phan-var-force int $dol_optimize_smallscreen
+@phan-var-force string $fontlist
+@phan-var-force string $left
+@phan-var-force int $nbtopmenuentries
+@phan-var-force string $right
+@phan-var-force string $textbutaction
+';
+?>
+
+/* IDE Hack <style type="text/css"> */
 
 :root {
 			--btncolortext:rgb(<?php print $colortextlink; ?>);
@@ -291,8 +318,10 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 TITLE BUTTON
  */
 
-div.pagination li:first-child a.btnTitle {
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle,
+table.table-fiche-title tr.titre td.col-center div.nowraponall a.btnTitle,
+table.table-fiche-title tr.titre td.col-right a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .btnTitle, a.btnTitle {
@@ -315,13 +344,16 @@ div.pagination li:first-child a.btnTitle {
 	text-decoration: none;
 	position: relative;
 	margin: 0 0 0 10px;
-	min-width: 80px;
 	text-align: center;
 	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: #fbfbfb; */
+}
+/* *:not(.paginationafterarrows) > .btnTitle, *:not(.paginationafterarrows) > a.btnTitle { */
+.btnTitle, a.btnTitle {
+	min-width: 60px;
 }
 
 a.btnTitle.btnTitleSelected {

@@ -85,7 +85,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
 		// Prefix settings
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 1).'</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskticket" value="'.getDolGlobalString("TICKET_UNIVERSAL_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 

@@ -7,7 +7,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021       Charlene Benke      	<charlene@patas-monkey.com>
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
 *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+'
+@phan-var-force ?string $dolibarr_main_url_root_alt
+@phan-var-force ?string $dolibarr_main_db_prefix
+';
 
 $conf = new Conf();
 
@@ -91,7 +96,7 @@ $long_options = array(
  * @param string $header  the message to signal to the user
  * @return void
  */
-function usage($program, $header)
+function install_usage($program, $header)
 {
 	echo $header."\n";
 	echo "  php ".$program." [options] [script options]\n";
@@ -144,7 +149,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 				break;
 			case 'h':
 			case 'help':
-				usage($argv[0], "Usage:");
+				install_usage($argv[0], "Usage:");
 				exit(0);
 		}
 	}
@@ -184,7 +189,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	// typo right now.
 	if (count($unknown_options) > 0) {
 		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
-		usage($argv[0], "Usage:");
+		install_usage($argv[0], "Usage:");
 		exit(1);
 	}
 
@@ -242,7 +247,7 @@ if (!defined('DONOTLOADCONF') && file_exists($conffile) && filesize($conffile) >
 			$result = conf($dolibarr_main_document_root);
 		}
 		// Load database driver
-		if ($result) {
+		if ($result > 0) {
 			if (!empty($dolibarr_main_document_root) && !empty($dolibarr_main_db_type)) {
 				$result = include_once $dolibarr_main_document_root."/core/db/".$dolibarr_main_db_type.'.class.php';
 				if (!$result) {
@@ -432,7 +437,7 @@ function conf($dolibarr_main_document_root)
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
 
-	$return = include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
+	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 	if (!$return) {
 		return -1;
 	}

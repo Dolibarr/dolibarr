@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Ҷустуҷӯи ҳисобнома-фа
 SendEmailsRemindersOnSupplierInvoiceDueDate=Ёдраскуниро тавассути почтаи электронӣ барои ҳисобнома-фактураҳои таъминкунандаи тасдиқшуда ва пардохтнашуда фиристед
 PaymentMadeForSeveralInvoices=Пардохт барои якчанд ҳисобнома-фактураҳо
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

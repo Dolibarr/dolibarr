@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,11 +48,20 @@ require_once DOL_DOCUMENT_ROOT.'/bookcal/class/calendar.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bookcal/class/availabilities.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 
 // Security check
 if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
@@ -120,15 +129,17 @@ $errmsg = '';
 /**
  * Show header for booking
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -185,12 +196,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  * Actions
  */
 
-if ($action == 'add' ) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+if ($action == 'add') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$idcontact = 0;
 	$calendar = $object;
 	$contact = new Contact($db);
 	$actioncomm = new ActionComm($db);
+	$nb_post_max = getDolGlobalInt("MAIN_SECURITY_MAX_POST_ON_PUBLIC_PAGES_BY_IP_ADDRESS", 200);
 
 	if (!is_object($user)) {
 		$user = new User($db);
@@ -229,10 +241,17 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 				$contact->lastname = GETPOST("lastname");
 				$contact->firstname = GETPOST("firstname");
 				$contact->email = GETPOST("email");
-				$result = $contact->create($user);
-				if ($result < 0) {
+				$contact->ip = getUserRemoteIP();
+
+				if (checkNbPostsForASpeceificIp($contact, $nb_post_max) <= 0) {
 					$error++;
-					$errmsg .= $contact->error." ".implode(',', $contact->errors);
+					$errmsg .= implode('<br>', $contact->errors);
+				} else {
+					$result = $contact->create($user);
+					if ($result < 0) {
+						$error++;
+						$errmsg .= $contact->error." ".implode(',', $contact->errors);
+					}
 				}
 			}
 		} else {
@@ -242,7 +261,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 	}
 
 	if (!$error) {
-		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOST("durationbooking"), 'i');
+		$dateend = dol_time_plus_duree(GETPOSTINT("datetimebooking"), GETPOSTINT("durationbooking"), 'i');
 
 		$actioncomm->label = $langs->trans("BookcalBookingTitle");
 		$actioncomm->type = 'AC_RDV';
@@ -259,28 +278,18 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 				'id' => $contact->id,
 				'mandatory' => 0,
 				'answer_status' => 0,
-				'transparency' =>0,
+				'transparency' => 0,
 			]
 		];
-
-		$result = $actioncomm->create($user);
-		if ($result < 0) {
+		$actioncomm->ip = getUserRemoteIP();
+		if (checkNbPostsForASpeceificIp($actioncomm, $nb_post_max) <= 0) {
 			$error++;
-			$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
-		}
-
-		if (!$error) {
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources";
-			$sql .= "(fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
-			$sql .= ") VALUES (";
-			$sql .= (int) $actioncomm->id;
-			$sql .= ", 'socpeople'";
-			$sql .= ", ". (int) $contact->id;
-			$sql .= ", 0, 0, 0)";
-			$resql = $db->query($sql);
-			if (!$resql) {
+			$errmsg .= implode('<br>', $actioncomm->errors);
+		} else {
+			$result = $actioncomm->create($user);
+			if ($result < 0) {
 				$error++;
-				$errmsg .= $db->lasterror();
+				$errmsg .= $actioncomm->error." ".implode(',', $actioncomm->errors);
 			}
 		}
 	}
@@ -300,6 +309,14 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
  */
 
 $form = new Form($db);
+
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+// TODO Replace DOL_URL_ROOT with $urlwithroot ?
+
 
 llxHeaderVierge('BookingCalendar');
 
@@ -421,7 +438,7 @@ if ($action == 'afteradd') {
 		}
 		print ' </tr>'."\n";
 
-		$todayarray = dol_getdate($now, 'fast');
+		$todayarray = dol_getdate($now, true);
 		$todaytms = dol_mktime(0, 0, 0, $todayarray['mon'], $todayarray['mday'], $todayarray['year']);
 
 		// Load into an array all days with availabilities of the calendar for the current month $todayarray['mon'] and $todayarray['year']

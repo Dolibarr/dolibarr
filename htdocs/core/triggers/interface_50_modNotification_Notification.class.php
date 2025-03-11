@@ -33,6 +33,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
  */
 class InterfaceNotification extends DolibarrTriggers
 {
+	/**
+	 * @var string[]
+	 */
 	public $listofmanagedevents = array();
 
 	/**
@@ -94,7 +97,11 @@ class InterfaceNotification extends DolibarrTriggers
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
 		$notify = new Notify($this->db);
-		$notify->send($action, $object);
+		$resultSend = $notify->send($action, $object);
+		if ($resultSend < 0) {
+			$this->errors = array_merge($this->errors, $notify->errors);
+			return $resultSend;
+		}
 
 		return 1;
 	}
@@ -102,7 +109,7 @@ class InterfaceNotification extends DolibarrTriggers
 	/**
 	 * Return list of events managed by notification module
 	 *
-	 * @return      array       Array of events managed by notification module
+	 * @return	array<array{rowid:int,code:string,contexts:string,label:string,description:string,elementtype:string}>		Array of events managed by notification module
 	 */
 	public function getListOfManagedEvents()
 	{

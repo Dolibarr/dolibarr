@@ -312,3 +312,7 @@ TaskMergeSuccess=Taken zijn samengevoegd
 ErrorTaskIdIsMandatory=Fout: taak ID is verplicht
 ErrorsTaskMerge=Er is een fout opgetreden bij het samenvoegen van taken
 Billable = Factureerbaar
+ConfirmCloseTask=Weet u zeker dat u deze taak wilt sluiten?
+ConfirmClosed=Bevestig taak gesloten
+TaskStatus=taak status
+TaskReopened=taak heropend

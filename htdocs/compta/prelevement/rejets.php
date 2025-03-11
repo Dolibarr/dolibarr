@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013 Juanjo Menent 		<jmenent@2byte.es>
  * Copyright (C) 2005-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'withdrawals', 'companies'));
@@ -172,7 +182,7 @@ if ($result) {
 				$thirdpartystatic->id = $obj->socid;
 				$thirdpartystatic->name = $obj->name;
 
-				print '<td class="tdoverlowmax200"><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$thirdpartystatic->getNomUrl(1)."</a></td>\n";
+				print '<td class="tdoverflowmax200"><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.$thirdpartystatic->getNomUrl(1)."</a></td>\n";
 			}
 
 			print '<td>'.$rej->motifs[$obj->motif].'</td>';

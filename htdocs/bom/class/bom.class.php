@@ -34,9 +34,6 @@ if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
 
 /**
  * Class for BOM
@@ -101,19 +98,19 @@ class BOM extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
-		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => 1, 'index' => 1, 'position' => 5),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'noteditable' => 1, 'visible' => 4, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'comment' => "Reference of BOM", 'showoncombobox' => 1, 'csslist' => 'nowraponall'),
-		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => 1, 'searchall' => 1, 'showoncombobox' => '2', 'autofocusoncreate' => 1, 'css' => 'minwidth300 maxwidth400', 'csslist' => 'tdoverflowmax200'),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'visible' => 1, 'position' => 30, 'notnull' => 1, 'searchall' => 1, 'showoncombobox' => 2, 'autofocusoncreate' => 1, 'css' => 'minwidth300 maxwidth400', 'csslist' => 'tdoverflowmax200'),
 		'bomtype' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 33, 'notnull' => 1, 'default' => '0', 'arrayofkeyval' => array(0 => 'Manufacturing', 1 => 'Disassemble'), 'css' => 'minwidth175', 'csslist' => 'minwidth175 center'),
 		//'bomtype' => array('type'=>'integer', 'label'=>'Type', 'enabled'=>1, 'visible'=>-1, 'position'=>32, 'notnull'=>1, 'default'=>'0', 'arrayofkeyval'=>array(0=>'Manufacturing')),
 		'fk_product' => array('type' => 'integer:Product:product/class/product.class.php:1:((finished:is:null) or (finished:!=:0))', 'label' => 'Product', 'picto' => 'product', 'enabled' => 1, 'visible' => 1, 'position' => 35, 'notnull' => 1, 'index' => 1, 'help' => 'ProductBOMHelp', 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 60, 'notnull' => -1,),
-		'qty' => array('type' => 'real', 'label' => 'Quantity', 'enabled' => 1, 'visible' => 1, 'default' => 1, 'position' => 55, 'notnull' => 1, 'isameasure' => 1, 'css' => 'maxwidth50imp right'),
-		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>1, 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
+		'qty' => array('type' => 'real', 'label' => 'Quantity', 'enabled' => 1, 'visible' => 1, 'default' => '1', 'position' => 55, 'notnull' => 1, 'isameasure' => 1, 'css' => 'maxwidth50imp right'),
+		//'efficiency' => array('type'=>'real', 'label'=>'ManufacturingEfficiency', 'enabled'=>1, 'visible'=>-1, 'default'=>'1', 'position'=>100, 'notnull'=>0, 'css'=>'maxwidth50imp', 'help'=>'ValueOfMeansLossForProductProduced'),
 		'duration' => array('type' => 'duration', 'label' => 'EstimatedDuration', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'notnull' => -1, 'css' => 'maxwidth50imp', 'help' => 'EstimatedDurationDesc'),
 		'fk_warehouse' => array('type' => 'integer:Entrepot:product/stock/class/entrepot.class.php:0', 'label' => 'WarehouseForProduction', 'picto' => 'stock', 'enabled' => 1, 'visible' => -1, 'position' => 102, 'css' => 'maxwidth500', 'csslist' => 'tdoverflowmax100'),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => -2, 'position' => 161, 'notnull' => -1,),
@@ -126,7 +123,7 @@ class BOM extends CommonObject
 		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'picto' => 'user', 'enabled' => 1, 'visible' => -2, 'position' => 512, 'notnull' => 0, 'csslist' => 'tdoverflowmax100'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 1000, 'notnull' => -1,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 1010),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'notnull' => 1, 'default' => 0, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Enabled', 9 => 'Disabled')),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => 2, 'position' => 1000, 'notnull' => 1, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Enabled', 9 => 'Disabled')),
 	);
 
 	/**
@@ -296,7 +293,7 @@ class BOM extends CommonObject
 	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 1)
+	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -341,6 +338,7 @@ class BOM extends CommonObject
 		// Clear fields
 		$default_ref = $this->fields['ref']['default'] ?? null;
 		$object->ref = empty($default_ref) ? $langs->trans("copy_of_").$object->ref : $default_ref;
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		$object->label = empty($this->fields['label']['default']) ? $langs->trans("CopyOf")." ".$object->label : $this->fields['label']['default'];
 		$object->status = self::STATUS_DRAFT;
 		// ...
@@ -555,7 +553,7 @@ class BOM extends CommonObject
 	 * @param  int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
 	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 1)
+	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -589,7 +587,7 @@ class BOM extends CommonObject
 	 * @param	?int		$fk_bom_child			Id of BOM Child
 	 * @param	?string		$import_key				Import Key
 	 * @param	int 		$fk_unit				Unit
-	 * @param	array		$array_options			extrafields array
+	 * @param	array<string,mixed>		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>							Return integer <0 if KO, Id of created object if OK
 	 */
@@ -697,7 +695,7 @@ class BOM extends CommonObject
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
 	 * @param	?string		$import_key				Import Key
 	 * @param	int			$fk_unit				Unit of line
-	 * @param	array		$array_options			extrafields array
+	 * @param	array<string,mixed>		$array_options			extrafields array
 	 * @param	?int		$fk_default_workstation	Default workstation
 	 * @return	int<-3,max>						Return integer <0 if KO, Id of updated BOM-Line if OK
 	 */
@@ -738,7 +736,7 @@ class BOM extends CommonObject
 
 			$this->db->begin();
 
-			//Fetch current line from the database and then clone the object and set it in $oldline property
+			// Fetch current line from the database and then clone the object and set it in $oldline property
 			$line = new BOMLine($this->db);
 			$line->fetch($rowid);
 			$line->fetch_optionals();
@@ -822,7 +820,7 @@ class BOM extends CommonObject
 
 		$this->db->begin();
 
-		//Fetch current line from the database and then clone the object and set it in $oldline property
+		// Fetch current line from the database and then clone the object and set it in $oldline property
 		$line = new BOMLine($this->db);
 		$line->fetch($idline);
 		$line->fetch_optionals();
@@ -1074,9 +1072,9 @@ class BOM extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 * @param array $params params to construct tooltip data
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array{picto:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -1161,9 +1159,9 @@ class BOM extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBillOfMaterials");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1298,7 +1296,7 @@ class BOM extends CommonObject
 	 *  @param      int<0,1>	$hidedetails    Hide details of lines
 	 *  @param      int<0,1>	$hidedesc       Hide description
 	 *  @param      int<0,1>	$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 *  @return     int<0,1>       				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1411,7 +1409,7 @@ class BOM extends CommonObject
 	 */
 	public function calculateCosts()
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$this->unit_cost = 0;
@@ -1470,8 +1468,12 @@ class BOM extends CommonObject
 					}
 				} else {
 					// Convert qty of line into hours
-					$unitforline = measuringUnitString($line->fk_unit, '', '', 1);
-					$qtyhourforline = convertDurationtoHour($line->qty, $unitforline);
+					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+					$measuringUnits = new CUnits($this->db);
+					$measuringUnits->fetch($line->fk_unit);
+
+					// The unit is a unit for time, so the $measuringUnits->scale is not a power of 10, but directly the factor to change unit into seconds
+					$qtyhourforline = $line->qty * (int) $measuringUnits->scale / 3600;
 
 					if (isModEnabled('workstation') && !empty($line->fk_default_workstation)) {
 						$workstation = new Workstation($this->db);
@@ -1488,7 +1490,7 @@ class BOM extends CommonObject
 						$reg = array();
 						$qtyhourservice = 0;
 						if (preg_match('/^(\d+)([a-z]+)$/', $defaultdurationofservice, $reg)) {
-							$qtyhourservice = convertDurationtoHour($reg[1], $reg[2]);
+							$qtyhourservice = convertDurationtoHour((float) $reg[1], $reg[2]);
 						}
 
 						if ($qtyhourservice) {

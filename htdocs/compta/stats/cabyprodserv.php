@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("products", "categories", "errors", 'accountancy'));
 
@@ -88,8 +96,8 @@ if ($selected_type == '') {
 }
 
 // Date range
-$year = GETPOST("year");
-$month = GETPOST("month");
+$year = GETPOSTINT("year");
+$month = GETPOSTINT("month");
 $date_startyear = GETPOST("date_startyear");
 $date_startmonth = GETPOST("date_startmonth");
 $date_startday = GETPOST("date_startday");
@@ -105,8 +113,8 @@ if (empty($year)) {
 	$month_current = dol_print_date(dol_now(), '%m');
 	$year_start = $year;
 }
-$date_start = dol_mktime(0, 0, 0, GETPOST("date_startmonth"), GETPOST("date_startday"), GETPOST("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
-$date_end = dol_mktime(23, 59, 59, GETPOST("date_endmonth"), GETPOST("date_endday"), GETPOST("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
+$date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"), 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"), 'tzserver');		// We use timezone of server so report is same from everywhere
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOSTINT("q");
@@ -208,7 +216,7 @@ if (!empty($selected_catsoc)) {
 if (!empty($selected_soc)) {
 	$tableparams['search_soc'] = $selected_soc;
 }
-if (!empty($selected_type)) {
+if ($selected_type > 0) {
 	$tableparams['search_type'] = $selected_type;
 }
 if (!empty($typent_id)) {
@@ -246,6 +254,12 @@ if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 
 $exportlink = "";
 $namelink = "";
+$builddate = 0;
+$calcmode = '';
+$name = '';
+$period = '';
+$periodlink = '';
+
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -269,9 +283,9 @@ if ($modecompta == "CREANCES-DETTES") {
 	$description .= $langs->trans("DepositsAreIncluded");
 
 	$builddate = dol_now();
-} elseif ($modecompta == "BOOKKEEPING") {
-} elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
-}
+} // elseif ($modecompta == "BOOKKEEPING") {
+// } elseif ($modecompta == "BOOKKEEPINGCOLLECTED") {
+// }
 
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
@@ -281,6 +295,12 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 } else {
 	$periodlink = '';
 }
+
+$builddate = 0;
+$calcmode = '';
+$name = '';
+$period = '';
+$periodlink = '';
 
 report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
@@ -469,7 +489,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '>';
 	print '<label for="subcat" class="marginrightonly">'.$langs->trans("SubCats").'?</label>';
 	// type filter (produit/service)
-	$form->select_type_of_lines(isset($selected_type) ? $selected_type : -1, 'search_type', $langs->trans("Type"), 1, 1);
+	$form->select_type_of_lines($selected_type, 'search_type', $langs->trans("Type"), 1, 1);
 
 	// Third party filter
 	print '<br>';
@@ -489,7 +509,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 	print '</td>';
 
 	print '<td colspan="5" class="right">';
-	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td>';
 
 	print '</tr>';
@@ -575,7 +595,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 			// Quantity
 			print '<td class="right">';
-			print $qty[$key];
+			print price($qty[$key], 1, $langs, 0, 0);
 			print '</td>';
 
 			// Percent;

@@ -4,6 +4,8 @@
  * Copyright (C) 2005-2009	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,13 +33,19 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('stockindex'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('stocks', 'productbatch'));
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('stockindex'));
 
 // Security check
 $result = restrictedArea($user, 'stock');
@@ -68,7 +76,7 @@ if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be u
 	print '<table class="noborder nohover centpercent">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
-	print '<tr class="oddevene"><td>';
+	print '<tr class="oddeven"><td>';
 	print $langs->trans("Warehouse").':</td><td><input class="flat" type="text" size="18" name="sall"></td><td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></div></form><br>";
 }

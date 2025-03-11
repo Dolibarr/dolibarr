@@ -49,6 +49,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "companies", "bills", "trips", "donations", "loan", "salaries"));
 
@@ -190,7 +198,7 @@ $sqlrequestforbankline = $sql;
  * Actions
  */
 
-if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt)) {
+if ($action == 'confirm_editbankreceipt' && !empty($oldbankreceipt) && !empty($newbankreceipt) && $user->hasRight('banque', 'consolidate')) {
 	// Test to check newbankreceipt does not exists yet
 	$sqltest = "SELECT b.rowid FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
 	$sqltest .= " WHERE b.fk_account = ba.rowid AND ba.entity = ".((int) $conf->entity);
@@ -302,7 +310,7 @@ if (empty($numref)) {
 
 		print dol_get_fiche_end();
 
-
+		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
 			$titletoconciliatemanual = $langs->trans("Conciliate");
@@ -331,6 +339,7 @@ if (empty($numref)) {
 				}
 			}
 		}
+		*/
 
 		// List of mass actions available
 		$arrayofmassactions = array(
@@ -487,6 +496,8 @@ if (empty($numref)) {
 		$obj = $db->fetch_object($resql);
 		$total = $obj->amount;
 		$db->free($resql);
+	} else {
+		$total = 0;
 	}
 
 	$totalc = $totald = 0;
@@ -664,7 +675,7 @@ if (empty($numref)) {
 			// Categories
 			if ($ve) {
 				$sql = "SELECT label";
-				$sql .= " FROM ".MAIN_DB_PREFIX."category_bank as ct";
+				$sql .= " FROM ".MAIN_DB_PREFIX."categorie as ct";
 				$sql .= ", ".MAIN_DB_PREFIX."category_bankline as cl";
 				$sql .= " WHERE ct.rowid = cl.fk_categ";
 				$sql .= " AND ct.entity = ".((int) $conf->entity);
@@ -733,12 +744,11 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
-				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
     				current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;

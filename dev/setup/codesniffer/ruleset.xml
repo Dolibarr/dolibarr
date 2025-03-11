@@ -7,7 +7,7 @@
 
 	<!-- info: '*' is replaced with '.*', so better use '+' in some cases -->
 	<!-- info: 'relative' paths are relative to the examined file, so not ok. -->
-	<exclude-pattern>/build/(html|aps)/</exclude-pattern>
+	<exclude-pattern>/dev/build/(html|aps)/</exclude-pattern>
 	<exclude-pattern>/dev/tools/test/namespacemig/</exclude-pattern>
 	<exclude-pattern>/dev/tools/phan/stubs/</exclude-pattern>
 	<!-- <exclude-pattern>dev/initdata/dbf/includes</exclude-pattern> -->

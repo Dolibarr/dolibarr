@@ -3,7 +3,7 @@
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2023-2024	Patrice Andreani		<pandreani@easya.solutions>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,6 @@ require_once DOL_DOCUMENT_ROOT . '/webportal/class/html.formwebportal.class.php'
 /**
  *    Class to manage generation of HTML components
  *    Only common components for WebPortal must be here.
- *
  */
 class FormListWebPortal
 {
@@ -48,7 +47,7 @@ class FormListWebPortal
 	public $db;
 
 	/**
-	 * @var Form  Instance of the Form
+	 * @var FormWebPortal  Instance of the Form
 	 */
 	public $form;
 
@@ -93,17 +92,17 @@ class FormListWebPortal
 	public $contextpage = '';
 
 	/**
-	 * @var array Search filters
+	 * @var string[] Search filters
 	 */
 	public $search = array();
 
 	/**
-	 * @var array Array of fields
+	 * @var array<string,array{type?:string,label:string,checked:int<0,1>,visible:int<0,1>,enabled:int<0,1>,position:int,help:string}>	Array of fields
 	 */
 	public $arrayfields = array();
 
 	/**
-	 * @var array Company static list (cache)
+	 * @var array<int,Societe> Company static list (cache)
 	 */
 	public $companyStaticList = array();
 
@@ -158,6 +157,7 @@ class FormListWebPortal
 				$search[$key] = GETPOST('search_' . $key, 'alpha');
 			}
 			if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
+				/* Fix: this is not compatible with multilangage date format, replaced with dolibarr method
 				$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
 				$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
 				// extract date YYYY-MM-DD for year, month and day
@@ -175,6 +175,13 @@ class FormListWebPortal
 					$dateEndDay = (int) $dateEndArr[2];
 					$search[$key . '_dtend'] = dol_mktime(23, 59, 59, $dateEndMonth, $dateEndDay, $dateEndYear);
 				}
+				*/
+				$search[$key . '_dtstartmonth'] = GETPOSTINT('search_' . $key . '_dtstartmonth');
+				$search[$key . '_dtstartday'] = GETPOSTINT('search_' . $key . '_dtstartday');
+				$search[$key . '_dtstartyear'] = GETPOSTINT('search_' . $key . '_dtstartyear');
+				$search[$key . '_dtendmonth'] = GETPOSTINT('search_' . $key . '_dtendmonth');
+				$search[$key . '_dtendday'] = GETPOSTINT('search_' . $key . '_dtendday');
+				$search[$key . '_dtendyear'] = GETPOSTINT('search_' . $key . '_dtendyear');
 			}
 		}
 		$this->search = $search;
@@ -191,7 +198,7 @@ class FormListWebPortal
 				$arrayfields['t.' . $key] = array(
 					'label' => $val['label'],
 					'checked' => (($visible < 0) ? 0 : 1),
-					'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+					'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 					'position' => $val['position'],
 					'help' => isset($val['help']) ? $val['help'] : ''
 				);
@@ -204,7 +211,6 @@ class FormListWebPortal
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
 			$arrayfields['signature_link'] = array('label' => 'Signature', 'checked' => 1, 'enabled' => 1, 'visible' => 1, 'position' => 10002, 'help' => '',);
 		}
-
 		$object->fields = dol_sort_array($object->fields, 'position');
 		//$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 		$arrayfields = dol_sort_array($arrayfields, 'position');
@@ -227,8 +233,14 @@ class FormListWebPortal
 			foreach ($object->fields as $key => $val) {
 				$search[$key] = '';
 				if (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$search[$key . '_dtstart'] = '';
-					$search[$key . '_dtend'] = '';
+					//$search[$key . '_dtstart'] = '';
+					//$search[$key . '_dtend'] = '';
+					$search[$key . '_dtstartmonth'] = '';
+					$search[$key . '_dtendmonth'] = '';
+					$search[$key . '_dtstartday'] = '';
+					$search[$key . '_dtendday'] = '';
+					$search[$key . '_dtstartyear'] = '';
+					$search[$key . '_dtendyear'] = '';
 				}
 			}
 			$this->search = $search;
@@ -246,6 +258,7 @@ class FormListWebPortal
 		global $conf, $hookmanager, $langs;
 
 		$html = '';
+		$nbpages = 0;
 
 		// initialize
 		$action = $this->action;
@@ -339,10 +352,10 @@ class FormListWebPortal
 					$columnName = preg_replace('/(_dtstart|_dtend)$/', '', $key);
 					if (preg_match('/^(date|timestamp|datetime)/', $object->fields[$columnName]['type'])) {
 						if (preg_match('/_dtstart$/', $key)) {
-							$sql .= " AND t." . $this->db->escape($columnName) . " >= '" . $this->db->idate($search[$key]) . "'";
+							$sql .= " AND t." . $this->db->escape($columnName) . " >= '" . $this->db->idate((int) $search[$key]) . "'";
 						}
 						if (preg_match('/_dtend$/', $key)) {
-							$sql .= " AND t." . $this->db->escape($columnName) . " <= '" . $this->db->idate($search[$key]) . "'";
+							$sql .= " AND t." . $this->db->escape($columnName) . " <= '" . $this->db->idate((int) $search[$key]) . "'";
 						}
 					}
 				}
@@ -487,13 +500,13 @@ class FormListWebPortal
 				if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 					$html .= $this->form->selectarray('search_' . $key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', '');
 				} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
-					$postDateStart = GETPOST('search_' . $key . '_dtstart', 'alphanohtml');
-					$postDateEnd = GETPOST('search_' . $key . '_dtend', 'alphanohtml');
+					$postDateStart = dol_mktime(0, 0, 0, (int) $search[$key . '_dtstartmonth'], (int) $search[$key . '_dtstartday'], (int) $search[$key . '_dtstartyear']);
+					$postDateEnd = dol_mktime(0, 0, 0, (int) $search[$key . '_dtendmonth'], (int) $search[$key . '_dtendday'], (int) $search[$key . '_dtendyear']);
 
-					$html .= '<div class="grid">';
+					$html .= '<div class="grid width150">';
 					$html .= $this->form->inputDate('search_' . $key . '_dtstart', $postDateStart ? $postDateStart : '', $langs->trans('From'));
 					$html .= '</div>';
-					$html .= '<div class="grid">';
+					$html .= '<div class="grid width150">';
 					$html .= $this->form->inputDate('search_' . $key . '_dtend', $postDateEnd ? $postDateEnd : '', $langs->trans('to'));
 					$html .= '</div>';
 				} else {
@@ -507,23 +520,23 @@ class FormListWebPortal
 		$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		$html .= $hookmanager->resPrint;
 		// Remain to pay
-		if (!empty($arrayfields['remain_to_pay']['checked'])) {
+		if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<td data-label="' . $arrayfields['remain_to_pay']['label'] . '">';
 			$html .= '</td>';
 		}
 		// Download link
-		if (!empty($arrayfields['download_link']['checked'])) {
+		if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
 			$html .= '<td data-label="' . $arrayfields['download_link']['label'] . '">';
 			$html .= '</td>';
 		}
-		$html .= '</tr>';
 		// Signature link
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			if (!empty($arrayfields['signature_link']['checked'])) {
+			if (array_key_exists('signature_link', $arrayfields) && !empty($arrayfields['signature_link']['checked'])) {
 				$html .= '<td data-label="' . $arrayfields['signature_link']['label'] . '">';
 				$html .= '</td>';
 			}
 		}
+		$html .= '</tr>';
 
 		$totalarray = array();
 		$totalarray['nbfield'] = 0;
@@ -553,14 +566,15 @@ class FormListWebPortal
 			}
 		}
 		// Remain to pay
-		if (!empty($arrayfields['remain_to_pay']['checked'])) {
+		if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
 			$html .= '<th scope="col">';
-			$html .= $langs->trans($arrayfields['remain_to_pay']['label']);
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
+			$html .= $langs->trans((string) $arrayfields['remain_to_pay']['label']);
 			$html .= '</th>';
 			$totalarray['nbfield']++;
 		}
 		// Download link
-		if (!empty($arrayfields['download_link']['checked'])) {
+		if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
 			$html .= '<th scope="col">';
 			$html .= $langs->trans($arrayfields['download_link']['label']);
 			$html .= '</th>';
@@ -568,7 +582,7 @@ class FormListWebPortal
 		}
 		// Signature link
 		if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
-			if (!empty($arrayfields['signature_link']['checked'])) {
+			if (array_key_exists('signature_link', $arrayfields) && !empty($arrayfields['signature_link']['checked'])) {
 				$html .= '<th scope="col">';
 				$html .= $langs->trans($arrayfields['signature_link']['label']);
 				$html .= '</th>';
@@ -602,6 +616,7 @@ class FormListWebPortal
 			'nbfield' => 0,
 			'totalizable' => [],
 		];
+		$remaintopay = 0;
 		$imaxinloop = ($limit ? min($num, $limit) : $num);
 		while ($i < $imaxinloop) {
 			$obj = $this->db->fetch_object($resql);
@@ -615,6 +630,7 @@ class FormListWebPortal
 			// specific to get invoice status (depends on payment)
 			$payment = -1;
 			if ($elementEn == 'invoice') {
+				'@phan-var-force Facture $object';
 				// paid sum
 				$payment = $object->getSommePaiement();
 				$totalcreditnotes = $object->getSumCreditNotesUsed();
@@ -627,7 +643,7 @@ class FormListWebPortal
 					$remaintopay = 0;
 				}
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $obj->paye == 1 && $discount) {
-					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, '', 'rc.fk_facture_source=' . $object->id);
+					$remaincreditnote = $discount->getAvailableDiscounts($companyStatic, null, 'rc.fk_facture_source=' . $object->id);
 					$remaintopay = -$remaincreditnote;
 				}
 			}
@@ -652,7 +668,7 @@ class FormListWebPortal
 							$html .= $object->getLibStatut(5);
 						}
 					} elseif ($key == 'rowid') {
-						$html .= $this->form->showOutputFieldForObject($object, $val, $key, $object->id, '');
+						$html .= $this->form->showOutputFieldForObject($object, $val, $key, (string) $object->id, '');
 					} else {
 						$html .= $this->form->showOutputFieldForObject($object, $val, $key, $object->$key, '');
 					}
@@ -677,8 +693,8 @@ class FormListWebPortal
 				}
 			}
 			// Remain to pay
-			if (!empty($arrayfields['remain_to_pay']['checked'])) {
-				$html .= '<td class="nowraponall" data-label="' . $arrayfields['remain_to_pay']['label'] . '">';
+			if (array_key_exists('remain_to_pay', $arrayfields) && !empty($arrayfields['remain_to_pay']['checked'])) {
+				// @phan-suppress-next-line PhanTypeMismatchArgument
 				$html .= $this->form->showOutputFieldForObject($object, $arrayfields['remain_to_pay'], 'remain_to_pay', $remaintopay, '');
 				//$html .= price($remaintopay);
 				$html .= '</td>';
@@ -687,7 +703,7 @@ class FormListWebPortal
 				}
 			}
 			// Download link
-			if (!empty($arrayfields['download_link']['checked'])) {
+			if (array_key_exists('download_link', $arrayfields) && !empty($arrayfields['download_link']['checked'])) {
 				$element = $object->element;
 				$html .= '<td class="nowraponall" data-label="' . $arrayfields['download_link']['label'] . '">';
 				$filename = dol_sanitizeFileName($obj->ref);
@@ -700,6 +716,7 @@ class FormListWebPortal
 			}
 			// Signature link
 			if ($elementEn == "propal" && getDolGlobalString("PROPOSAL_ALLOW_ONLINESIGN") != 0) {
+				'@phan-var-force Propal $object';
 				if (!empty($arrayfields['signature_link']['checked'])) {
 					$html .= '<td class="nowraponall" data-label="' . $arrayfields['signature_link']['label'] . '">';
 					if ($object->fk_statut == Propal::STATUS_VALIDATED) {

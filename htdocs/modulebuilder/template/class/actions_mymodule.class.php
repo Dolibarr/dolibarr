@@ -111,16 +111,18 @@ class ActionsMyModule extends CommonHookActions
 		if (in_array($parameters['currentcontext'], array('somecontext1', 'somecontext2'))) {	    // do something only for the context 'somecontext1' or 'somecontext2'
 			// Do what you want here...
 			// You can for example load and use call global vars like $fieldstosearchall to overwrite them, or update the database depending on $action and GETPOST values.
+
+			if (!$error) {
+				$this->results = array('myreturn' => 999);
+				$this->resprints = 'A text to show';
+				return 0; // or return 1 to replace standard code
+			} else {
+				$this->errors[] = 'Error message';
+				return -1;
+			}
 		}
 
-		if (!$error) {
-			$this->results = array('myreturn' => 999);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
+		return 0;
 	}
 
 
@@ -145,16 +147,18 @@ class ActionsMyModule extends CommonHookActions
 			foreach ($parameters['toselect'] as $objectid) {
 				// Do action on each object id
 			}
+
+			if (!$error) {
+				$this->results = array('myreturn' => 999);
+				$this->resprints = 'A text to show';
+				return 0; // or return 1 to replace standard code
+			} else {
+				$this->errors[] = 'Error message';
+				return -1;
+			}
 		}
 
-		if (!$error) {
-			$this->results = array('myreturn' => 999);
-			$this->resprints = 'A text to show';
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
+		return 0;
 	}
 
 
@@ -362,12 +366,12 @@ class ActionsMyModule extends CommonHookActions
 				$parameters['head'][$counter][2] = 'mymoduleemails';
 				$counter++;
 			}
-			if ($counter > 0 && (int) DOL_VERSION < 14) {
+			if ($counter > 0 && (int) DOL_VERSION < 14) {  // @phpstan-ignore-line
 				$this->results = $parameters['head'];
 				// return 1 to replace standard code
 				return 1;
 			} else {
-				// From V14 onwards, $parameters['head'] is modifiable by referende
+				// From V14 onwards, $parameters['head'] is modifiable by reference
 				return 0;
 			}
 		} else {

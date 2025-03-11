@@ -1,4 +1,5 @@
--- Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2024	Regis Houssin		<regis.houssin@inodbox.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,6 +18,6 @@
 -- Contenu de la table llx_c_ticket_resolution
 --
 
-INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('SOLVED',   '10', 'Solved',    1, 0, NULL);
-INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('CANCELED', '50', 'Canceled',  1, 0, NULL);
-INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description) VALUES('OTHER',    '90', 'Other',     1, 0, NULL);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description, entity) VALUES ('SOLVED',   '10', 'Solved',    1, 0, NULL, __ENTITY__);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description, entity) VALUES ('CANCELED', '50', 'Canceled',  1, 0, NULL, __ENTITY__);
+INSERT INTO llx_c_ticket_resolution (code, pos, label, active, use_default, description, entity) VALUES ('OTHER',    '90', 'Other',     1, 0, NULL, __ENTITY__);

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2022	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string[] $arrayofstreamtodisable // $arrayofstreamtodisable is defined into filefunc.inc.php
+ * @var string $conffile // $conffile is defined into filefunc.inc.php
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin", "errors"));
@@ -120,7 +133,7 @@ print "<strong>PHP open_basedir</strong> = ".(ini_get('open_basedir') ? img_pict
 
 print "<strong>PHP short_open_tag</strong> = ".((empty(ini_get('short_open_tag')) || ini_get('short_open_tag') == 'Off') ? img_picto('', 'tick').' '.yn(0) : img_warning().' '.yn(1)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).')</span>'."<br>\n";
 
-print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No"))." but may be required by some external modules)</span><br>\n";
+print "<strong>PHP allow_url_fopen</strong> = ".(ini_get('allow_url_fopen') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_fopen') : yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).", except if Yes is required by some external modules)</span><br>\n";
 
 print "<strong>PHP allow_url_include</strong> = ".(ini_get('allow_url_include') ? img_picto($langs->trans("YouShouldSetThisToOff"), 'warning').' '.ini_get('allow_url_include') : img_picto('', 'tick').' '.yn(0)).' &nbsp; <span class="opacitymedium">('.$langs->trans("RecommendedValueIs", $langs->transnoentitiesnoconv("No")).")</span><br>\n";
 //print "<strong>PHP safe_mode</strong> = ".(ini_get('safe_mode') ? ini_get('safe_mode') : yn(0)).' &nbsp; <span class="opacitymedium">'.$langs->trans("Deprecated")." (removed in PHP 5.4)</span><br>\n";
@@ -372,16 +385,18 @@ if (!getDolGlobalString('SECURITY_DISABLE_TEST_ON_OBFUSCATED_CONF')) {
 
 print '<strong>$dolibarr_main_stream_to_disable</strong>: ';
 // $arrayofstreamtodisable is defined into filefunc.inc.php
+'@phan-var-force string[] $arrayofstreamtodisable';
 if (empty($dolibarr_main_stream_to_disable)) {
 	print '<span class="opacitymedium">'.$langs->trans("Undefined").' = '.implode(', ', $arrayofstreamtodisable).'</span>';
 } else {
 	print implode(', ', $dolibarr_main_stream_to_disable);
 }
-print '<span class="bold"> -> Current PHP streams allowed = </span>';
+print '<span class="bold"> &nbsp; -> Current PHP streams allowed = </span>';
 $arrayofstreams = stream_get_wrappers();
 if (!empty($arrayofstreams)) {
 	sort($arrayofstreams);
-	print(implode(', ', $arrayofstreams)).' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
+	print '<span class="wordbreak">'.implode(',', $arrayofstreams).'</span>';
+	print ' &nbsp; &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("TryToKeepOnly", 'file,http,https,php,zip').')</span>'."\n";
 }
 print '</div>';
 
@@ -659,8 +674,24 @@ print '<br>';
 print '<strong>MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE</strong> = '.getDolGlobalString('MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': 1)</span><br>';
 print '<br>';
 
+print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>')."<br>";
+print '<br>';
+
+print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 2)</span>'."<br>";
+
+print '</div>';
+
+
+print '<br>';
+print '<br>';
+
+
+print load_fiche_titre($langs->trans("DatabaseEncryption"), '', 'folder');
+
+print '<div class="divsection wordbreak">';
+
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>MAIN_SECURITY_HASH_ALGO</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
+print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("Passwords")).' (non reversible encryption, defined into MAIN_SECURITY_HASH_ALGO)</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; (If unset: \'md5\')</span>';
 }
@@ -680,16 +711,74 @@ if (getDolGlobalString('MAIN_SECURITY_HASH_ALGO') != 'password_hash') {
 }
 print '<br>';
 
-print '<strong>MAIN_SECURITY_ANTI_SSRF_SERVER_IP</strong> = '.getDolGlobalString('MAIN_SECURITY_ANTI_SSRF_SERVER_IP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span> &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': List of static IPs of server separated with coma - '.$langs->trans("Note").': common loopback ip like 127.*.*.*, [::1] are already added)</span>')."<br>";
-print '<br>';
+$action = GETPOST('action');
+$exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
-print '<strong>MAIN_SECURITY_CSRF_WITH_TOKEN</strong> = '.getDolGlobalString('MAIN_SECURITY_CSRF_WITH_TOKEN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").' '.$langs->trans("or").' 2)</span>'."<br>";
+print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData")).' (reversible encryption done with dolEncrypt/dolDecrypt)</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_instance_unique_id<br>';
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="action" value="doldecrypt">';
+print '<input type="hidden" name="token" value="'.newToken().'">';
+print '<input type="hidden" name="page_y" value="">';
+print $langs->trans("ToolToDecryptAString").': ';
+print '<input type="text" name="exampletodecrypt" placeholder="dolcrypt:ALGOXXXX:ABCDFEF1234" value="'.$exampletodecrypt.'">';
+print '<input type="submit" class="reposition button small smallpaddingimp" name="submit" value="'.$langs->transnoentitiesnoconv("Decrypt").'">';
+if ($action == 'doldecrypt' && $user->admin && $exampletodecrypt) {
+	usleep(200);
+	print ' => <textarea rows="'.ROWS_1.'" class="valignmiddle">'.dolPrintHTMLForTextArea(dolDecrypt($exampletodecrypt)).'</textarea>';
+}
+print '</form>';
 
 print '</div>';
 
 
 print '<br>';
 print '<br>';
+
+// Websites
+
+print load_fiche_titre($langs->trans("Website"), '', 'website');
+print '<div class="divsection wordbreak">';
+
+$sql = "SELECT w.rowid as id, w.ref";
+$sql .= " FROM ".MAIN_DB_PREFIX."website as w";
+$sql .= " WHERE w.entity = ".((int) $conf->entity);
+$sql .= " AND w.status = 1";
+
+$resql = $db->query($sql);
+if ($resql) {
+	$num_rows = $db->num_rows($resql);
+	if ($num_rows > 0) {
+		$i = 0;
+		while ($obj = $db->fetch_object($resql)) {
+			print "<strong>".$langs->trans("RefWebsite").": ".$obj->ref."</strong>";
+			print'<br><br>';
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+			print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+			$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+			print $examplecsprule;
+			print '")</span><br>';
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCECSP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCECSP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
+			print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';
+			$examplecsprule = "default-src 'self' 'unsafe-inline' matomo.".getDomainFromURL($_SERVER["SERVER_NAME"], 1)." *.transifex.net *.transifex.com *.cloudflare.com *.cloudflareinsights.com *.google-analytics.com *.googletagmanager.com *.google.com *.gstatic.com *.googleapis.com *.googleadservices.com *.ads-twitter.com *.doubleclick.net; frame-ancestors 'self'; object-src *.youtube.com; frame-src 'self' *.twitter.com *.facebook.com *.youtube.com; img-src * data:;";
+			print $examplecsprule;
+			print '")</span><br>';
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCERP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCERP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").': '.$langs->trans("Undefined").'="strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured)</span><br>';
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCESTS</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCESTS', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"max-age=31536000; includeSubDomains\")</span><br>";
+
+			print '<strong>WEBSITE_'.$obj->id.'_SECURITY_FORCEPP</strong> = '.getDolGlobalString('WEBSITE_'.$obj->id.'_SECURITY_FORCEPP', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").": \"camera=(), microphone=(), geolocation=*\")</span><br>";
+			$i++;
+			if ($i != $num_rows) {
+				print '<br>';
+			}
+		}
+	}
+} else {
+	dol_print_error($db);
+}
+print '</div>';
 
 
 // Other - experimental
@@ -729,7 +818,7 @@ $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = getDolGlobalString('MAIN_RESTRICTHT
 $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 0;
-$result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+$result = dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
 $conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = $savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML;
 $conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
@@ -753,7 +842,7 @@ if (extension_loaded('tidy') && class_exists("tidy")) {
 	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = 0;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 0;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
-	$result=dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
+	$result = dol_htmlwithnojs('<img onerror<=alert(document.domain)> src=>0xbeefed');
 	$conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES = $savMAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML;
 	$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = $savMAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY;
@@ -802,7 +891,6 @@ print '<br>';
 print '<strong>MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN</strong> = '.getDolGlobalString('MAIN_SECURITY_FORCE_ACCESS_CONTROL_ALLOW_ORIGIN', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>').' &nbsp; <span class="opacitymedium">('.$langs->trans("Recommended").": 1)</span><br>";
 print '<br>';
 
-// For websites
 
 print '<strong>WEBSITE_MAIN_SECURITY_FORCECSPRO</strong> = '.getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');
 print ' &nbsp; <span class="opacitymedium">('.$langs->trans("Example").': "';

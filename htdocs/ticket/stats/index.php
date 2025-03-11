@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +29,13 @@ require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticketstats.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
@@ -172,7 +181,7 @@ print '</td></tr>';
 // User
 print '<tr><td class="left">'.$langs->trans("CreatedBy").'</td><td class="left">';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 // Status
 print '<tr><td class="left">'.$langs->trans("Status").'</td><td class="left">';
 $liststatus = $object->fields['fk_statut']['arrayofkeyval'];
@@ -210,7 +219,7 @@ print '</tr>';
 $oldyear = 0;
 foreach ($data as $val) {
 	$year = $val['year'];
-	while (!empty($year) && $oldyear > $year + 1) { // If we have empty year
+	while (!empty($year) && $oldyear > (int) $year + 1) { // If we have empty year
 		$oldyear--;
 
 		print '<tr class="oddeven" height="24">';

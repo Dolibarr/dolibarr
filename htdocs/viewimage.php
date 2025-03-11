@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024      MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,6 +114,8 @@ if (is_numeric($entity)) {
 /**
  * Header empty
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string 			$head				Optional head lines
  * @param 	string 			$title				HTML title
  * @param	string			$help_url			Url links to help page
@@ -122,8 +124,8 @@ if (is_numeric($entity)) {
  * @param	string			$target				Target to use on links
  * @param 	int    			$disablejs			More content into html header
  * @param 	int    			$disablehead		More content into html header
- * @param 	array|string  	$arrayofjs			Array of complementary js files
- * @param 	array|string  	$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @param	string			$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  * @param   string  		$morecssonbody      More CSS on body tag. For example 'classforhorizontalscrolloftabs'.
  * @param	string			$replacemainareaby	Replace call to main_area() by a print of this string
@@ -131,23 +133,33 @@ if (is_numeric($entity)) {
  * @param	int				$disablenoindex		Disable the "noindex" on meta robot header
  * @return	void
  */
-function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)
+function llxHeader($head = '', $title = '', $help_url = '', $target = '', $disablejs = 0, $disablehead = 0, $arrayofjs = '', $arrayofcss = '', $morequerystring = '', $morecssonbody = '', $replacemainareaby = '', $disablenofollow = 0, $disablenoindex = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 }
 /**
  * Footer empty
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @param	string	$comment    				A text to add as HTML comment into HTML generated page
  * @param	string	$zone						'private' (for private pages) or 'public' (for public pages)
  * @param	int		$disabledoutputofmessages	Clear all messages stored into session without displaying them
  * @return	void
  */
-function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
+function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)  // @phan-suppress-current-line PhanRedefineFunction
 {
 }
 
 require 'main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $original_file = GETPOST('file', 'alphanohtml');
@@ -181,20 +193,17 @@ if ($modulepart == 'fckeditor') {
  * View
  */
 
-if (GETPOST("cache", 'alpha')) {
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring) {
 	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
 	// We are here when param cache=xxx to force a cache policy:
 	//  xxx=1 means cache of 3600s
 	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
 	if (empty($dolibarr_nocache)) {
-		if (GETPOST('cache', 'alpha') != '1') {
-			$delaycache = 3600 * 24 * 7;
-		} else {
-			$delaycache = 3600;
-		}
+		$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
 		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 	} else {
 		// If any cache on files were disable by config file (for test purpose)
 		header('Cache-Control: no-cache');
@@ -294,7 +303,7 @@ if (!empty($hashp)) {
 } elseif (GETPOSTINT("publictakepos")) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
 		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-		// TODO Replace this with a call of getPublicImageOfObject like used by website so
+		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
 		// only shared images are visible
 	}
 } else {
@@ -388,6 +397,8 @@ if ($modulepart == 'barcode') {
 	$classname = "mod".ucfirst($generator);
 
 	$module = new $classname($db);
+	'@phan-var-force ModeleBarCode $module';
+	/** @var ModeleBarCode $module */
 	if ($module->encodingIsSupported($encoding)) {
 		$result = $module->buildBarCode($code, $encoding, $readable);
 	}

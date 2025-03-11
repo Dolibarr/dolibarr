@@ -8,8 +8,9 @@
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Nick Fragoulis
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'suppliers'));
 
@@ -75,7 +84,7 @@ $search_montant_ht = GETPOST('search_montant_ht');
 $search_montant_vat = GETPOST('search_montant_vat');
 $search_montant_ttc = GETPOST('search_montant_ttc');
 $search_payment_mode = GETPOST('search_payment_mode');
-$search_payment_term = GETPOST('search_payment_term');
+$search_payment_term = GETPOST('search_payment_term', 'int');
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -137,31 +146,31 @@ if (!$sortfield) {
 	$sortfield = 'f.titre';
 }
 $arrayfields = array(
-	'f.titre' => array('label' => 'Ref', 'checked' => 1),
-	's.nom' => array('label' => 'ThirdParty', 'checked' => 1),
-	'f.total_ht' => array('label' => 'AmountHT', 'checked' => 1),
-	'f.total_tva' => array('label' => 'AmountVAT', 'checked' => 1),
-	'f.total_ttc' => array('label' => 'AmountTTC', 'checked' => 1),
-	'f.fk_mode_reglement' => array('label' => 'PaymentMode', 'checked' => 0),
-	'f.fk_cond_reglement' => array('label' => 'PaymentTerm', 'checked' => 0),
-	'recurring' => array('label' => 'RecurringInvoice', 'checked' => 1),
-	'f.frequency' => array('label' => 'Frequency', 'checked' => 1),
-	'f.unit_frequency' => array('label' => 'FrequencyUnit', 'checked' => 1),
-	'f.nb_gen_done' => array('label' => 'NbOfGenerationDoneShort', 'checked' => 1),
-	'f.date_last_gen' => array('label' => 'DateLastGenerationShort', 'checked' => 1),
-	'f.date_when' => array('label' => 'NextDateToExecutionShort', 'checked' => 1),
-	'f.fk_user_author' => array('label' => 'UserCreation', 'checked' => 0, 'position' => 500),
-	'f.fk_user_modif' => array('label' => 'UserModification', 'checked' => 0, 'position' => 505),
-	'f.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 520),
-	'f.tms' => array('label' => 'DateModificationShort', 'checked' => 0, 'position' => 525),
-	'status' => array('label' => 'Status', 'checked' => 1, 'position' => 1000),
+	'f.titre' => array('label' => 'Ref', 'checked' => '1'),
+	's.nom' => array('label' => 'ThirdParty', 'checked' => '1'),
+	'f.total_ht' => array('label' => 'AmountHT', 'checked' => '1'),
+	'f.total_tva' => array('label' => 'AmountVAT', 'checked' => '1'),
+	'f.total_ttc' => array('label' => 'AmountTTC', 'checked' => '1'),
+	'f.fk_mode_reglement' => array('label' => 'PaymentMode', 'checked' => '0'),
+	'f.fk_cond_reglement' => array('label' => 'PaymentTerm', 'checked' => '0'),
+	'recurring' => array('label' => 'RecurringInvoice', 'checked' => '1'),
+	'f.frequency' => array('label' => 'Frequency', 'checked' => '1'),
+	'f.unit_frequency' => array('label' => 'FrequencyUnit', 'checked' => '1'),
+	'f.nb_gen_done' => array('label' => 'NbOfGenerationDoneShort', 'checked' => '1'),
+	'f.date_last_gen' => array('label' => 'DateLastGenerationShort', 'checked' => '1'),
+	'f.date_when' => array('label' => 'NextDateToExecutionShort', 'checked' => '1'),
+	'f.fk_user_author' => array('label' => 'UserCreation', 'checked' => '0', 'position' => 500),
+	'f.fk_user_modif' => array('label' => 'UserModification', 'checked' => '0', 'position' => 505),
+	'f.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 520),
+	'f.tms' => array('label' => 'DateModificationShort', 'checked' => '0', 'position' => 525),
+	'status' => array('label' => 'Status', 'checked' => '1', 'position' => 1000),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+'@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if ($socid > 0) {
 	$tmpthirdparty = new Societe($db);
@@ -601,7 +610,7 @@ if (!empty($arrayfields['f.titre']['checked'])) {
 }
 // Thirdparty
 if (!empty($arrayfields['s.nom']['checked'])) {
-	print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
+	print '<td class="liste_titre left"><input class="flat" type="text" size="8" name="search_societe" value="'.dol_escape_htmltag((string) $search_societe).'"></td>';
 }
 if (!empty($arrayfields['f.total_ht']['checked'])) {
 	// Amount net
@@ -624,7 +633,7 @@ if (!empty($arrayfields['f.total_ttc']['checked'])) {
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	// Payment term
 	print '<td class="liste_titre">';
-	print $form->getSelectConditionsPaiements($search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
+	print $form->getSelectConditionsPaiements((int) $search_payment_term, 'search_payment_term', -1, 1, 1, 'maxwidth100');
 	print "</td>";
 }
 if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
@@ -739,6 +748,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['f.titre']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['f.titre']['label'], $_SERVER['PHP_SELF'], "f.titre", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

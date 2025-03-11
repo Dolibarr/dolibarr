@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,16 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 global $dolibarr_main_url_root;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files
 $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
@@ -62,6 +73,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $errmsg = '';
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $securekeyreceived = GETPOST("securekey", 'alpha');
@@ -100,17 +112,19 @@ if (empty($conf->project->enabled)) {
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
 
@@ -157,9 +171,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</div>';
 
@@ -190,8 +206,6 @@ if (GETPOST('viewandvote')) {
 }
 
 
-
-
 /*
  * View
  */
@@ -209,7 +223,6 @@ $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
 //llxHeader($head, $langs->trans("SuggestForm"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea);
 
 llxHeaderVierge($langs->trans("SuggestForm"));
-
 
 
 print '<span id="dolpaymentspan"></span>'."\n";

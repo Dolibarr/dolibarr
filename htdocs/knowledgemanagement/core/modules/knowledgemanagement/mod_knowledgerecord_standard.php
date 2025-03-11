@@ -37,6 +37,9 @@ class mod_knowledgerecord_standard extends ModeleNumRefKnowledgeRecord
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string
+	 */
 	public $prefix = 'KM';
 
 	/**

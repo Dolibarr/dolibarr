@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Init vars
 $errmsg = '';
 $num = 0;
@@ -92,15 +100,17 @@ $user->loadDefaultValues();
 /**
  * Show header for new partnership
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
- * @param 	int    		$disablejs			More content into html header
- * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	int<0,1>	$disablejs			More content into html header
+ * @param 	int<0,1>	$disablehead		More content into html header
+ * @param 	string[]	$arrayofjs			Array of complementary js files
+ * @param 	string[]	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -147,9 +157,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs;
 
@@ -259,7 +271,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		$company = new Societe($db);
 		$result = $company->fetch(0, GETPOST('societe'));
 		if ($result == 0) { // if entry with name not found, we search using the email
-			$result1 = $company->fetch(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, GETPOST('email'));
+			$result1 = $company->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
 			if ($result1 > 0) {
 				$error++;
 				$errmsg = $langs->trans("EmailAlreadyExistsPleaseRewriteYourCompanyName");
@@ -385,12 +397,12 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 				// Send email to the foundation to say a new member subscribed with autosubscribe form
 				/*
-				if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
-					  !empty($conf->global->PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL)) {
+				if (getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') && getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL_SUBJECT') &&
+					  getDolGlobalString('PARTNERSHIP_AUTOREGISTER_NOTIF_MAIL')) {
 					// Define link to login card
 					$appli = constant('DOL_APPLICATION_TITLE');
-					if (!empty($conf->global->MAIN_APPLICATION_TITLE)) {
-						$appli = $conf->global->MAIN_APPLICATION_TITLE;
+					if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
+						$appli = getDolGlobalString('MAIN_APPLICATION_TITLE');
 						if (preg_match('/\d\.\d/', $appli)) {
 							if (!preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) {
 								$appli .= " (".DOL_VERSION.")"; // If new title contains a version that is different than core
@@ -433,8 +445,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				}
 
 				/*
-				if (!empty($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE) && $conf->global->PARTNERSHIP_NEWFORM_PAYONLINE != '-1') {
-					if ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'all') {
+				if (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') && getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE' != '-1') {
+					if (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'all') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
 						if (price2num(GETPOST('amount', 'alpha'))) {
 							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -442,14 +454,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						if (GETPOST('email')) {
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
+						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN()) {
+							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE()) {
+								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 							} else {
-								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 							}
 						}
-					} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'paybox') {
+					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paybox') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
 						if (price2num(GETPOST('amount', 'alpha'))) {
 							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -457,14 +469,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						if (GETPOST('email')) {
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
+						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 							} else {
-								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 							}
 						}
-					} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'paypal') {
+					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'paypal') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.urlencode($partnership->ref);
 						if (price2num(GETPOST('amount', 'alpha'))) {
 							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -472,14 +484,14 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						if (GETPOST('email')) {
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
+						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 							} else {
-								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 							}
 						}
-					} elseif ($conf->global->PARTNERSHIP_NEWFORM_PAYONLINE == 'stripe') {
+					} elseif (getDolGlobalString('PARTNERSHIP_NEWFORM_PAYONLINE') == 'stripe') {
 						$urlback = DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=partnershipnewform&source=membersubscription&ref='.$partnership->ref;
 						if (price2num(GETPOST('amount', 'alpha'))) {
 							$urlback .= '&amount='.price2num(GETPOST('amount', 'alpha'));
@@ -487,11 +499,11 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						if (GETPOST('email')) {
 							$urlback .= '&email='.urlencode(GETPOST('email'));
 						}
-						if (!empty($conf->global->PAYMENT_SECURITY_TOKEN)) {
-							if (!empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE)) {
-								$urlback .= '&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN.'membersubscription'.$partnership->ref, '2'));
+						if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
+							if (getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
+								$urlback .= '&securekey='.urlencode(dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN').'membersubscription'.$partnership->ref, '2'));
 							} else {
-								$urlback .= '&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
+								$urlback .= '&securekey='.urlencode(getDolGlobalString('PAYMENT_SECURITY_TOKEN'));
 							}
 						}
 					} else {
@@ -604,13 +616,13 @@ foreach ($listofpartnershipobj as $partnershipobj) {
 	$listofpartnership[$partnershipobj->id] = $partnershipobj->label;
 }
 
-if (getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
-	print $listofpartnership[getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')];
-	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="' . getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE').'">';
+if (getDolGlobalInt('PARTNERSHIP_NEWFORM_FORCETYPE')) {
+	print $listofpartnership[getDolGlobalInt('PARTNERSHIP_NEWFORM_FORCETYPE')];
+	print '<input type="hidden" id="partnershiptype" name="partnershiptype" value="' . getDolGlobalInt('PARTNERSHIP_NEWFORM_FORCETYPE').'">';
 }
 
 print '<table class="border" summary="form to subscribe" id="tablesubscribe">'."\n";
-if (!getDolGlobalString('PARTNERSHIP_NEWFORM_FORCETYPE')) {
+if (!getDolGlobalInt('PARTNERSHIP_NEWFORM_FORCETYPE')) {
 	print '<tr class="morphy"><td class="classfortooltip" title="'.dol_escape_htmltag($messagemandatory).'">'.$langs->trans('PartnershipType').' <span class="star">*</span></td><td>'."\n";
 	print $form->selectarray("partnershiptype", $listofpartnership, GETPOSTISSET('partnershiptype') ? GETPOSTINT('partnershiptype') : 'ifone', 1);
 	print '</td></tr>'."\n";
@@ -675,7 +687,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td class="wordbreak">'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	}
 	print '</td></tr>';
 }

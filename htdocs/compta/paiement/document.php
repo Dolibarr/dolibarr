@@ -7,6 +7,8 @@
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2021      Jesus Jerez       	 <jesusballesteros@protonmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,14 +37,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
-if (!empty($conf->project->enabled)) {
+if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'suppliers', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
@@ -96,7 +106,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
-$form = new	Form($db);
+$form = new Form($db);
 
 $title = $langs->trans('Payment')." - ".$langs->trans('Documents');
 llxHeader('', $title);
@@ -111,8 +121,8 @@ if ($object->id > 0) {
 	$morehtmlref = '<div class="refidno">';
 
 	// Date of payment
-	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', 0, 3).': ';
-	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, $object->statut == 0 && ($user->hasRight('facture', 'creer')), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
+	$morehtmlref .= $form->editfieldkey("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight('facture', 'creer'))), 'datehourpicker', '', 0, 3).': ';
+	$morehtmlref .= $form->editfieldval("Date", 'datep', $object->date, $object, (int) ($object->statut == 0 && ($user->hasRight('facture', 'creer'))), 'datehourpicker', '', null, $langs->trans('PaymentDateUpdateSucceeded'));
 
 	// Payment mode
 	$morehtmlref .= '<br>'.$langs->trans('PaymentMode').' : ';
@@ -127,7 +137,7 @@ if ($object->id > 0) {
 
 	$allow_delete = 1;
 	// Bank account
-	if (!empty($conf->banque->enabled)) {
+	if (isModEnabled('bank')) {
 		if ($object->fk_account) {
 			$bankline = new AccountLine($db);
 			$bankline->fetch($object->bank_line);
@@ -149,7 +159,7 @@ if ($object->id > 0) {
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 	// Build file list
-	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ?SORT_DESC:SORT_ASC), 1);
+	$filearray = dol_dir_list($upload_dir, "files", 0, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
 	$totalsize = 0;
 	foreach ($filearray as $key => $file) {
 		$totalsize += $file['size'];

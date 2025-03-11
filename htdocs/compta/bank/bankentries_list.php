@@ -10,6 +10,7 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,14 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "categories", "companies", "margins", "salaries", "loan", "donations", "trips", "members", "compta", "accountancy"));
 
@@ -99,14 +108,11 @@ if (empty($dateop)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-$pageplusone = GETPOSTINT("pageplusone");
-if ($pageplusone) {
-	$page = $pageplusone - 1;
-}
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -548,7 +554,11 @@ if ($id > 0 || !empty($ref)) {
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	$activetab = 'journal';
+	if ($action == 'reconcile') {
+		$activetab = 'reconcile';
+	}
+	print dol_get_fiche_head($head, $activetab, $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -560,7 +570,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Buttons actions
 	 */
-
+	/* Moved into tab
 	if ($action != 'reconcile') {
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
@@ -592,15 +602,16 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
+	*/
 }
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -613,8 +624,8 @@ if ($search_bid > 0) {
 }
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
-if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$extrafieldsobjectkey."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 
 // Add fields from hooks
@@ -889,7 +900,7 @@ if ($resql) {
 	}
 
 	// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
-	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
+	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?format=dayreduceformat&token='.currentToken();
 	print '
     <script type="text/javascript">
     $(function() {
@@ -898,10 +909,10 @@ if ($resql) {
     		current.click(function()
     		{
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
 					current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;
@@ -919,13 +930,17 @@ if ($resql) {
 	$newcardbutton = '';
 	if ($action != 'addline') {
 		if (!getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
-			if (!getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {	// Default is to record miscellaneous direct entries using miscellaneous payments
-				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
-			} else { // If direct entries is not done using miscellaneous payments
-				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', $user->rights->banque->modifier);
+			if ($object->status == $object::STATUS_CLOSED) {
+				$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), 'Bank account is closed', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', -2);
+			} else {
+				if (!getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {	// Default is to record miscellaneous direct entries using miscellaneous payments
+					$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.urlencode($search_account).'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.urlencode($search_account)), '', $user->rights->banque->modifier);
+				} else { // If direct entries is not done using miscellaneous payments
+					$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', $user->rights->banque->modifier);
+				}
 			}
 		} else {
-			$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', -1);
+			$newcardbutton = dolGetButtonTitle($langs->trans('AddBankRecord'), 'Direct input in bank lines has been disabled by option BANK_DISABLE_DIRECT_INPUT', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=addline&token='.newToken().'&page='.$page.$param, '', -2);
 		}
 	}
 
@@ -964,6 +979,7 @@ if ($resql) {
 		$last_receipts = array();
 		$last_releve = '';
 		$last_ok = 0;
+		$numr = 0;
 
 		$resqlr = $db->query($sql);
 		if ($resqlr) {
@@ -1021,8 +1037,8 @@ if ($resql) {
 		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
 		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
 		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
-		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
+		//print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
+		//print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br>';
@@ -1091,7 +1107,7 @@ if ($resql) {
 			// Bank line
 			$moreforfilter .= '<div class="divsearchfield">';
 			$tmptitle = $langs->trans('RubriquesTransactions');
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', null, null, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, $search_bid, 'parent', 0, 0, 1);
 			$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_bid', $cate_arbo, $search_bid, $tmptitle, 0, 0, '', 0, 0, 0, '', '', 1);
 			$moreforfilter .= '</div>';
 		}
@@ -1204,6 +1220,7 @@ if ($resql) {
 	}
 	// Numero statement
 	if (!empty($arrayfields['b.num_releve']['checked'])) {
+		// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print '<td class="liste_titre center"><input type="text" class="flat width50" name="search_num_releve" value="'.dol_escape_htmltag($search_num_releve).'"></td>';
 	}
 	// Conciliated
@@ -1291,6 +1308,7 @@ if ($resql) {
 		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['b.num_releve']['checked'])) {
+		// @phan-suppress-next-line PhanTypeInvalidDimOffset
 		print_liste_field_titre($arrayfields['b.num_releve']['label'], $_SERVER['PHP_SELF'], 'b.num_releve', '', $param, '', $sortfield, $sortorder, "center ");
 		$totalarray['nbfield']++;
 	}
@@ -1491,7 +1509,7 @@ if ($resql) {
 		}
 
 		$banklinestatic->id = $objp->rowid;
-		$banklinestatic->ref = $objp->rowid;
+		$banklinestatic->ref = (string) $objp->rowid;
 
 		print '<tr class="oddeven" '.$backgroundcolor.'>';
 
@@ -1548,25 +1566,25 @@ if ($resql) {
 					print $banktransferstatic->getNomUrl(0).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment') {
 					$paymentstatic->id = $links[$key]['url_id'];
-					$paymentstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
+					$paymentstatic->ref = (string) $links[$key]['url_id']; // FIXME This is id, not ref of payment
 					$paymentstatic->date = $db->jdate($objp->do);
 					print $paymentstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_supplier') {
 					$paymentsupplierstatic->id = $links[$key]['url_id'];
-					$paymentsupplierstatic->ref = $links[$key]['url_id']; // FIXME This is id, not ref of payment
+					$paymentsupplierstatic->ref = (string) $links[$key]['url_id']; // FIXME This is id, not ref of payment
 					print $paymentsupplierstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_sc') {
 					$paymentscstatic->id = $links[$key]['url_id'];
-					$paymentscstatic->ref = $links[$key]['url_id'];
+					$paymentscstatic->ref = (string) $links[$key]['url_id'];
 					$paymentscstatic->label = $links[$key]['label'];
 					print $paymentscstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_vat') {
 					$paymentvatstatic->id = $links[$key]['url_id'];
-					$paymentvatstatic->ref = $links[$key]['url_id'];
+					$paymentvatstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentvatstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_salary') {
 					$paymentsalstatic->id = $links[$key]['url_id'];
-					$paymentsalstatic->ref = $links[$key]['url_id'];
+					$paymentsalstatic->ref = (string) $links[$key]['url_id'];
 					$paymentsalstatic->label = $links[$key]['label'];
 					print $paymentsalstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_loan') {
@@ -1575,15 +1593,15 @@ if ($resql) {
 					print '</a>'.($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_donation') {
 					$paymentdonationstatic->id = $links[$key]['url_id'];
-					$paymentdonationstatic->ref = $links[$key]['url_id'];
+					$paymentdonationstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentdonationstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
-					$paymentexpensereportstatic->ref = $links[$key]['url_id'];
+					$paymentexpensereportstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentexpensereportstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'payment_various') {
 					$paymentvariousstatic->id = $links[$key]['url_id'];
-					$paymentvariousstatic->ref = $links[$key]['url_id'];
+					$paymentvariousstatic->ref = (string) $links[$key]['url_id'];
 					print $paymentvariousstatic->getNomUrl(2).($labeltoshow ? ' ' : '');
 				} elseif ($links[$key]['type'] == 'banktransfert') {
 					// Do not show link to transfer since there is no transfer card (avoid confusion). Can already be accessed from transaction detail.
@@ -1645,7 +1663,9 @@ if ($resql) {
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
 			print '<td class="nowraponall center">';
-			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">'.dol_print_date($db->jdate($objp->do), "dayreduceformat")."</span>";
+			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">';
+			print dol_print_date($db->jdate($objp->do), "dayreduceformat");
+			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1662,7 +1682,9 @@ if ($resql) {
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
 			print '<td class="nowraponall center">';
-			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">'.dol_print_date($db->jdate($objp->dv), "dayreduceformat")."</span>";
+			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">';
+			print dol_print_date($db->jdate($objp->dv), "dayreduceformat");
+			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1892,10 +1914,11 @@ if ($resql) {
 		}
 
 		// Extra fields
+		$obj = $objp; // Because extrafield template use $obj and not $objp as object variable name
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
-		$parameters = array('arrayfields' => $arrayfields, 'object'=>$object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
-		$reshook=$hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);    // Note that $action and $objecttmpect may have been modified by hook
+		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);    // Note that $action and $objecttmpect may have been modified by hook
 		print $hookmanager->resPrint;
 
 		// Action edit/delete and select
@@ -1966,9 +1989,9 @@ if ($resql) {
 				print '<td class="right"><span class="amount">'.price($totalarray['totalcred']).'</span></td>';
 			} elseif ($i == $posconciliatecol) {
 				print '<td class="center">';
-				if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
+				/*if ($user->hasRight('banque', 'consolidate') && $action == 'reconcile') {
 					print '<input class="button smallpaddingimp" name="confirm_reconcile" type="submit" value="'.$langs->trans("Conciliate").'">';
-				}
+				}*/
 				print '</td>';
 			} else {
 				print '<td></td>';

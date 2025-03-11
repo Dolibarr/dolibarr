@@ -3,6 +3,7 @@
  * Copyright (C) 2021		Florian Henry				<florian.henry@scopen.fr>
  * Copyright (C) 2023-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattend
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-global $dolibarr_main_url_root;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
@@ -94,7 +103,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criteria
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
@@ -334,7 +343,7 @@ if ($projectid > 0) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('project', 'all', 'lire')) {
 		$objectsListId = $project->getProjectsAuthorizedForUser($user, 0, 0);
-		$project->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$project->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($project, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -377,17 +386,6 @@ if ($projectid > 0) {
 		print '</td></tr>';
 	}
 
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($project->public == 0) {
-		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-		print $langs->trans("PrivateProject");
-	} else {
-		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-		print $langs->trans("SharedProject");
-	}
-	print '</td></tr>';
-
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($project->budget_amount, '')) {
@@ -424,6 +422,17 @@ if ($projectid > 0) {
 	print $project->location;
 	print '</td></tr>';
 
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($project->public == 0) {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+		print $langs->trans("PrivateProject");
+	} else {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+		print $langs->trans("SharedProject");
+	}
+	print '</td></tr>';
+
 	// Other attributes
 	$cols = 2;
 	$objectconf = $object;
@@ -439,16 +448,21 @@ if ($projectid > 0) {
 
 	print '<table class="border tableforfield centpercent">';
 
-	// Description
-	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td class="valuefield">';
-	print dol_htmlentitiesbr($project->description);
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category')) {
 		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("Categories").'</td><td class="valuefield">';
 		print $form->showCategories($project->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
+	}
+
+	// Description
+	print '<tr><td class="titlefield'.($project->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+	if ($project->description) {
+		print '<tr><td class="nottitleforfield" colspan="2">';
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($project->description);
+		print '</div>';
+		print '</td></tr>';
 	}
 
 	print '<tr><td class="titlefield">';
@@ -821,9 +835,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -875,9 +886,9 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($db);
-			print $formadmin->select_language($search[$key], 'search_lang', 0, null, 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+			print $formadmin->select_language($search[$key], 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
-			print '<input type="text" class="flat maxwidth75" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}
@@ -1027,7 +1038,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
@@ -1035,7 +1046,7 @@ while ($i < $imaxinloop) {
 				} elseif ($key == 'ref') {
 					print $object->getNomUrl(1, 0, '', (($projectid > 0) ? 'withproject' : ''));
 				} else {
-					print $object->showOutputField($val, $key, $object->$key, '');
+					print $object->showOutputField($val, $key, (string) $object->$key, '');
 				}
 				print '</td>';
 				if (!$i) {

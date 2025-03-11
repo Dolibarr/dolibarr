@@ -5,6 +5,7 @@
  * Copyright (C) 2012		Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("trips");
@@ -172,7 +181,7 @@ if ($action == 'validate' && $user->hasRight('deplacement', 'creer')) {
 	// Set fields
 	$dated = dol_mktime(GETPOSTINT('datedhour'), GETPOSTINT('datedmin'), GETPOSTINT('datedsec'), GETPOSTINT('datedmonth'), GETPOSTINT('datedday'), GETPOSTINT('datedyear'));
 	$object->fetch($id);
-	$result = $object->setValueFrom('dated', $dated, '', '', 'date', '', $user, 'DEPLACEMENT_MODIFY');
+	$result = $object->setValueFrom('dated', $dated, '', null, 'date', '', $user, 'DEPLACEMENT_MODIFY');
 	if ($result < 0) {
 		dol_print_error($db, $object->error);
 	}
@@ -217,7 +226,7 @@ if ($action == 'create') {
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-	print $form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	print $form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 
 	print "<tr>";
@@ -308,7 +317,7 @@ if ($action == 'create') {
 			// Who
 			print "<tr>";
 			print '<td class="fieldrequired">'.$langs->trans("Person").'</td><td>';
-			print $form->select_dolusers(GETPOSTINT('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 0, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+			print $form->select_dolusers(GETPOSTINT('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 0, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 			print '</td></tr>';
 
 			// Date

@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2007       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2019  Frederic France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -29,6 +29,15 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->load("admin");
 
@@ -132,6 +141,9 @@ if (dol_is_file($xmlfile)) {
 	print ' <span class="warning">('.$langs->trans("AvailableOnlyOnPackagedVersions").')</span></label>';
 	print '<br>';
 }
+
+print '<br>';
+
 print '<!-- for a remote target=remote&xmlremote=... -->'."\n";
 if ($enableremotecheck) {
 	print '<input type="radio" name="target" id="checkboxremote" value="remote"'.(GETPOST('target') == 'remote' ? 'checked="checked"' : '').'> <label for="checkboxremote">'.$langs->trans("RemoteSignature").'</label> = ';
@@ -259,6 +271,7 @@ if (empty($error) && !empty($xml)) {
 
 		// Fill file_list with files in signature, new files, modified files
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
+		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
 		// Complete with list of new files
 		foreach ($scanfiles as $keyfile => $valfile) {
 			$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
@@ -383,7 +396,7 @@ if (empty($error) && !empty($xml)) {
 					$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
 				}
 				$out .= '</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
+				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 				$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
 				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 				$totalsize += $size;
@@ -418,6 +431,7 @@ if (empty($error) && !empty($xml)) {
 	{
 		$file_list = array();
 		$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', ???, $checksumconcat);		// Fill array $file_list
+		'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
 	}*/
 
 

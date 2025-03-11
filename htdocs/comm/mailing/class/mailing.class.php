@@ -90,7 +90,7 @@ class Mailing extends CommonObject
 
 	/**
 	 * @var int status
-	 * @deprecated
+	 * @deprecated Use $status
 	 */
 	public $statut; // Status 0=Draft, 1=Validated, 2=Sent partially, 3=Sent completely
 
@@ -150,17 +150,17 @@ class Mailing extends CommonObject
 	public $extraparams = array();
 
 	/**
-	 * @var array statut dest
+	 * @var array<int,string> statut dest
 	 */
 	public $statut_dest = array();
 
 	/**
-	 * @var array substitutionarray
+	 * @var array<string,string> substitutionarray
 	 */
 	public $substitutionarray;
 
 	/**
-	 * @var array substitutionarrayfortest
+	 * @var array<string,string> substitutionarrayfortest
 	 */
 	public $substitutionarrayfortest;
 
@@ -773,10 +773,9 @@ class Mailing extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -853,9 +852,9 @@ class Mailing extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowEMailing");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2014       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'bills', 'compta'));
@@ -91,8 +100,8 @@ if ($pastmonth == 0) {
 	$pastmonthyear--;
 }
 
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
+$date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear);
+$date_end = dol_mktime(23, 59, 59, (int) $date_endmonth, (int) $date_endday, (int) $date_endyear);
 
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
@@ -115,7 +124,7 @@ report_header($name, '', $period, $periodlink, $description, $builddate, $export
 $p = explode(":", getDolGlobalString('MAIN_INFO_SOCIETE_COUNTRY'));
 $idpays = $p[0];
 
-$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid, f.ref, f.type, f.datef, f.ref_client, f.situation_cycle_ref,";
 $sql .= " fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.total_ttc, fd.localtax1_tx, fd.localtax2_tx, fd.total_localtax1, fd.total_localtax2, fd.rowid as id, fd.situation_percent,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta as code_compta_client, s.client,";
 $sql .= " p.rowid as pid, p.ref as pref,";
@@ -152,9 +161,10 @@ if (in_array($db->type, array('mysql', 'mysqli'))) {
 	$db->query('SET SQL_BIG_SELECTS=1');
 }
 
+$tabfac = array();
+
 $result = $db->query($sql);
 if ($result) {
-	$tabfac = array();
 	$tabht = array();
 	$tabtva = array();
 	$tablocaltax1 = array();
@@ -192,7 +202,7 @@ if ($result) {
 		$line = new FactureLigne($db);
 		$line->fetch($obj->id); // id of line
 		$prev_progress = 0;
-		if ($obj->type == Facture::TYPE_SITUATION) {
+		if ($obj->situation_cycle_ref > 0) {	// It is a situation invoice
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;

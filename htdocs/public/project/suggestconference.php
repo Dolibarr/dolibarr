@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,6 +60,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Init vars
 $errmsg = '';
 $num = 0;
@@ -67,7 +75,7 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
-$eventtype = GETPOST("eventtype");
+$eventtype = GETPOSTINT("eventtype");
 $email = GETPOST("email");
 $societe = GETPOST("societe");
 $label = GETPOST("label");
@@ -78,7 +86,7 @@ $dateend = dol_mktime(23, 59, 59, GETPOSTINT('dateendmonth'), GETPOSTINT('dateen
 $id = GETPOST('id');
 
 $project = new Project($db);
-$resultproject = $project->fetch($id);
+$resultproject = $project->fetch((int) $id);
 if ($resultproject < 0) {
 	$error++;
 	$errmsg .= $project->error;
@@ -86,7 +94,7 @@ if ($resultproject < 0) {
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -105,6 +113,9 @@ $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
 $arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
+if ($arrayofconfboothtype == -1) {
+	$arrayofconfboothtype = [];
+}
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
@@ -115,15 +126,17 @@ if (empty($conf->eventorganization->enabled)) {
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -171,9 +184,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</div>';
 
@@ -237,7 +252,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (!$error) {
 		// Getting the thirdparty or creating it
 		$thirdparty = new Societe($db);
-		$resultfetchthirdparty = $thirdparty->fetch('', $societe);
+		$resultfetchthirdparty = $thirdparty->fetch(0, $societe);
 
 		if ($resultfetchthirdparty < 0) {
 			// If an error was found
@@ -275,6 +290,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				}
 			}
 			$modCodeClient = new $module($db);
+			'@phan-var-force ModeleThirdPartyCode $modCodeClient';
 
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($thirdparty, 0);
@@ -293,7 +309,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		// From there we have a thirdparty, now looking for the contact
 		if (!$error) {
 			$contact = new Contact($db);
-			$resultcontact = $contact->fetch('', '', '', $email);
+			$resultcontact = $contact->fetch(0, null, '', $email);
 			if ($resultcontact <= 0) {
 				// Need to create a contact
 				$contact->socid = $thirdparty->id;
@@ -318,7 +334,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			// Adding supplier tag and tag from setup to thirdparty
 			$category = new Categorie($db);
 
-			$resultcategory = $category->fetch(getDolGlobalString('EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'));
+			$resultcategory = $category->fetch(getDolGlobalInt('EVENTORGANIZATION_CATEG_THIRDPARTY_CONF'));
 
 			if ($resultcategory <= 0) {
 				$error++;
@@ -344,6 +360,8 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 						}
 					}
 					$modCodeFournisseur = new $module($db);
+					'@phan-var-force ModeleThirdPartyCode $modCodeFournisseur';
+
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($thirdparty, 1);
 					}
@@ -432,11 +450,13 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					// Get email content from template
 					$arraydefaultmessage = null;
 
-					$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF');
+					$labeltouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF');
 					if (!empty($labeltouse)) {
 						$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $labeltouse, 1, '');
 					}
 
+					$subject = '';
+					$msg = '';
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
 						$subject = $arraydefaultmessage->topic;
 						$msg     = $arraydefaultmessage->content;
@@ -470,7 +490,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	if (!$error) {
 		$db->commit();
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 		header("Location: ".$redirection);
 		exit;
@@ -619,7 +639,7 @@ print '</td></tr>';
 if (!getDolGlobalString('SOCIETE_DISABLE_STATE')) {
 	print '<tr><td>'.$langs->trans('State').'</td><td>';
 	if ($country_code) {
-		print $formcompany->select_state(GETPOST("state_id"), $country_code);
+		print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 	} else {
 		print '';
 	}

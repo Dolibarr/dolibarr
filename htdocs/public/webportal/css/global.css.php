@@ -112,6 +112,10 @@ ul.menu-entries-alt {
 	display: none;
 }
 
+.maxwidthdate {
+	max-width: 110px;
+}
+
 @media (max-width: 576px) {
 	ul.brand li.brand {
 		padding-left: 0px;

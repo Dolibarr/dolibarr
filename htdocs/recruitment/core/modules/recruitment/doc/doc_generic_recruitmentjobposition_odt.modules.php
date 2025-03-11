@@ -97,6 +97,11 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
@@ -233,7 +238,12 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 		}
 
 		// Add odtgeneration hook
+		if (!is_object($hookmanager)) {
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager = new HookManager($this->db);
+		}
 		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -353,7 +363,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->recruitment->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -427,6 +437,7 @@ class doc_generic_recruitmentjobposition_odt extends ModelePDFRecruitmentJobPosi
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var CommonObjectLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

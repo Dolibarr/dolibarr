@@ -37,6 +37,13 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $element = GETPOST('element', 'alpha');

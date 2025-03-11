@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2003     	Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2017	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2018       Ferran Marcet	     <fmarcet@2byte.es>
- * Copyright (C) 2018       Charlene Benke       <charlie@patas-monkey.com>
- * Copyright (C) 2019       Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2019-2021  Frédéric France      <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2003     	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004     	Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2009	Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2018       Ferran Marcet	        <fmarcet@2byte.es>
+ * Copyright (C) 2018       Charlene Benke          <charlie@patas-monkey.com>
+ * Copyright (C) 2019       Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
@@ -95,7 +103,7 @@ if (!$sortfield) {
 }
 
 
-$search_all			= trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all			= trim(GETPOST('search_all', 'alphanohtml'));
 
 $search_ref			= GETPOST('search_ref', 'alpha');
 $search_user		= GETPOST('search_user', 'intcomma');
@@ -577,9 +585,6 @@ if (empty($reshook)) {
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
 	print $moreforfilter;
-	$parameters = array();
-	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
 	print '</div>';
 }
 
@@ -609,8 +614,8 @@ if (!empty($arrayfields['d.ref']['checked'])) {
 // User
 if (!empty($arrayfields['user']['checked'])) {
 	if ($user->hasRight('expensereport', 'readall') || $user->hasRight('expensereport', 'lire_tous')) {
-		print '<td class="liste_titre maxwidthonspartphone" align="left">';
-		print $form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+		print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+		print $form->select_dolusers($search_user, 'search_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth200');
 		print '</td>';
 	} else {
 		print '<td class="liste_titre">&nbsp;</td>';

@@ -13,7 +13,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -133,13 +133,13 @@ class ExpeditionLigne extends CommonObjectLine
 	/**
 	 * Detail of lot and qty = array(id in llx_expeditiondet_batch, fk_expeditiondet, batch, qty, fk_origin_stock)
 	 * We can use this to know warehouse planned to be used for each lot.
-	 * @var stdClass|array{ExpeditionLineBatch}
+	 * @var stdClass|ExpeditionLineBatch[]
 	 */
 	public $detail_batch;
 
 	/** detail of warehouses and qty
 	 * We can use this to know warehouse when there is no lot.
-	 * @var array{stdClass}
+	 * @var stdClass[]
 	 */
 	public $details_entrepot;
 
@@ -228,7 +228,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $width;
 
 	/**
-	 * @var string|int
+	 * @var int
 	 */
 	public $width_units;
 
@@ -238,7 +238,7 @@ class ExpeditionLigne extends CommonObjectLine
 	public $height;
 
 	/**
-	 * @var string|int
+	 * @var int
 	 */
 	public $height_units;
 
@@ -261,6 +261,13 @@ class ExpeditionLigne extends CommonObjectLine
 	 * @var string|int
 	 */
 	public $volume_units;
+
+	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var int
+	 */
+	public $stockable_product = 1;
 
 	/**
 	 * @var float|string
@@ -316,7 +323,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function fetch($rowid)
 	{
-		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang';
+		$sql = 'SELECT ed.rowid, ed.fk_expedition, ed.fk_entrepot, ed.fk_elementdet, ed.element_type, ed.qty, ed.rang, ed.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as ed';
 		$sql .= ' WHERE ed.rowid = '.((int) $rowid);
 		$result = $this->db->query($sql);
@@ -329,6 +336,8 @@ class ExpeditionLigne extends CommonObjectLine
 			$this->element_type = $objp->element_type;
 			$this->qty = $objp->qty;
 			$this->rang = $objp->rang;
+
+			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 			$this->db->free($result);
 
@@ -511,8 +520,8 @@ class ExpeditionLigne extends CommonObjectLine
 		$qty = price2num($this->qty);
 		$remainingQty = 0;
 		$batch = null;
-		$batch_id = null;
-		$expedition_batch_id = null;
+		$batch_id = 0;
+		$expedition_batch_id = 0;
 		if (is_array($this->detail_batch)) { 	// array of ExpeditionLineBatch
 			if (count($this->detail_batch) > 1) {
 				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
@@ -603,9 +612,9 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->batch = $lot->batch;
 						$shipmentLot->eatby = $lot->eatby;
 						$shipmentLot->sellby = $lot->sellby;
-						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
+						$shipmentLot->fk_warehouse = $this->detail_batch->entrepot_id;
 						$shipmentLot->qty = $this->detail_batch->qty;
-						$shipmentLot->fk_origin_stock = $batch_id;
+						$shipmentLot->fk_origin_stock = (int) $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {
 							$this->errors = $shipmentLot->errors;
 							$error++;

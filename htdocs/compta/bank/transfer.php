@@ -35,6 +35,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'multicurrency'));
 
@@ -165,13 +173,13 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * (float) $amount[$n]), '', '', $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * (float) $amount[$n]), '', 0, $user);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;
 				}
 				if (!$error) {
-					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', 0, $user);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$error++;

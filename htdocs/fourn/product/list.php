@@ -6,6 +6,7 @@
  * Copyright (C) 2012      Christophe Battarel   <christophe.battarel@altairis.fr>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +35,20 @@ require_once DOL_DOCUMENT_ROOT .'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT .'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT .'/fourn/class/fournisseur.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers'));
 
 // Get Parameters
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
+$massaction = GETPOST('massaction', 'alpha');
 $toselect   = GETPOST('toselect', 'array:int'); // Array of ids of elements selected into a list
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode       = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
@@ -227,7 +236,7 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 $i = 0;
-
+$help_url = '';
 if ($num == 1 && (GETPOST("mode") == 'search')) {
 	$objp = $db->fetch_object($resql);
 	header("Location: ".DOL_URL_ROOT."/product/card.php?id=".$objp->rowid);
@@ -302,10 +311,11 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 
+$moreforfilter = '';
 $topicmail = "Information";
 $modelmail = "product";
 $objecttmp = new Product($db);
-$trackid = 'prod'.$object->id;
+$trackid = 'prod'.$productstatic->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
@@ -342,7 +352,7 @@ print '<td></td>';
 print '<td></td>';
 // add filters from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $productstatic, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -355,6 +365,10 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '</td>';
 }
 print '</tr>'."\n";
+
+$totalarray = [
+	'nbfield' => 0
+];
 
 // Fields title label
 // --------------------------------------------------------------------
@@ -373,7 +387,7 @@ print_liste_field_titre("QtyMin", $_SERVER["PHP_SELF"], "ppf.quantity", $param, 
 print_liste_field_titre("UnitPrice", $_SERVER["PHP_SELF"], "ppf.unitprice", $param, "", '', $sortfield, $sortorder, 'right ');
 // add header cells from hooks
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
+$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $productstatic, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -407,17 +421,17 @@ while ($i < $imaxinloop) {
 	$productstatic->barcode = $objp->barcode;
 	$productstatic->barcode_type = $objp->fk_barcode_type;
 
-	print '<tr data-rowid="'.$object->id.'" class="oddeven">';
+	print '<tr data-rowid="'.$productstatic->id.'" class="oddeven">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
+			if (in_array($productstatic->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$productstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$productstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {
@@ -460,10 +474,10 @@ while ($i < $imaxinloop) {
 		print '<td class="nowrap center">';
 		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 			$selected = 0;
-			if (in_array($object->id, $arrayofselected)) {
+			if (in_array($productstatic->id, $arrayofselected)) {
 				$selected = 1;
 			}
-			print '<input id="cb'.$object->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$object->id.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '<input id="cb'.$productstatic->id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$productstatic->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
 		print '</td>';
 		if (!$i) {
@@ -492,7 +506,7 @@ if ($num == 0) {
 $db->free($resql);
 
 $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $productstatic, $action); // Note that $action and $productstatic may have been modified by hook
 print $hookmanager->resPrint;
 
 print '</table>'."\n";

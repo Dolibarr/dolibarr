@@ -28,6 +28,14 @@ require_once "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT . "/webportal/lib/webportal.lib.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array("admin", "webportal", "website"));
 

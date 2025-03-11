@@ -1,16 +1,16 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville        <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2020 Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne                 <eric.seigne@ryxeo.com>
- * Copyright (C) 2006      Andre Cianfarani            <acianfa@free.fr>
- * Copyright (C) 2005-2017 Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2020 Juanjo Menent               <jmenent@2byte.es>
- * Copyright (C) 2013      Alexandre Spangaro          <aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
- * Copyright (C) 2020      Open-Dsi         		   <support@open-dsi.fr>
- * Copyright (C) 2022      Anthony Berton     			<anthony.berton@bb2a.fr>
+/* Copyright (C) 2001-2005	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
+ * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
+ * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,6 +66,19 @@ if (isModEnabled('member')) {
 if (isModEnabled('intervention')) {
 	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 }
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+}
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'banks'));
@@ -99,10 +112,11 @@ $id = (GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id'));
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -149,6 +163,7 @@ $result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc'
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array('id' => $id, 'socid' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some
@@ -159,6 +174,16 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	if ($cancel) {
 		$action = "";
+	}
+
+	// set accountancy code
+	if ($action == 'setcustomeraccountancycodegeneral') {
+		$result = $object->fetch($id);
+		$object->accountancy_code_customer_general = GETPOST("customeraccountancycodegeneral");
+		$result = $object->update($object->id, $user, 1, 1, 0);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	// Set accountancy code
@@ -338,7 +363,7 @@ if ($object->id > 0) {
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">';
 
-	// Type Prospect/Customer/Supplier
+	// Nature Prospect/Customer/Supplier
 	print '<tr><td class="titlefield">'.$langs->trans('NatureOfThirdParty').'</td><td>';
 	print $object->getTypeUrl(1);
 	print '</td></tr>';
@@ -351,7 +376,7 @@ if ($object->id > 0) {
 	}
 
 	if ($object->client) {
-		$langs->load("compta");
+		$langs->loadLangs(array("compta", "accountancy"));
 
 		print '<tr><td>';
 		print $langs->trans('CustomerCode').'</td><td>';
@@ -361,6 +386,34 @@ if ($object->id > 0) {
 			print ' <span class="error">('.$langs->trans("WrongCustomerCode").')</span>';
 		}
 		print '</td></tr>';
+
+		if (isModEnabled('accounting')) {
+			$formaccounting = new FormAccounting($db);
+
+			print '<tr>';
+			print '<td>';
+			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->hasRight('societe', 'creer'));
+			print '</td><td>';
+			if ($action == 'editcustomeraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_customer_general, 'customeraccountancycodegeneral', 0, 1, '', 1);
+			} else {
+				if ($object->accountancy_code_customer_general > 0) {
+					$accountingaccount = new AccountingAccount($db);
+					$accountingaccount->fetch(0, $object->accountancy_code_customer_general, 1);
+
+					print $accountingaccount->getNomUrl(0, 1, 1, '', 1);
+				}
+				if (getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
+					if ($object->accountancy_code_customer_general > 0) {
+						print ' - ';
+					}
+					$accountingAccountByDefault = '<span class="opacitymedium">' . $langs->trans("AccountingAccountByDefaultShort") . ": " . length_accountg(getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) . '</span>';
+					print $accountingAccountByDefault;
+				}
+			}
+			print '</td>';
+			print '</tr>';
+		}
 
 		print '<tr>';
 		print '<td>';
@@ -380,8 +433,7 @@ if ($object->id > 0) {
 	print '<tr>';
 	print '<td class="nowrap">';
 	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
-	print '</td>';
-	print '<td>';
+	print '</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -502,6 +554,7 @@ if ($object->id > 0) {
 		print '</tr>';
 	}
 
+	$limit_field_type = '';
 	// Max outstanding bill
 	if ($object->client) {
 		print '<tr class="nowrap">';
@@ -529,7 +582,7 @@ if ($object->id > 0) {
 
 
 	// Multiprice level
-	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans("PriceLevel");
@@ -874,9 +927,9 @@ if ($object->id > 0) {
 				$filedir = $conf->propal->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -886,6 +939,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -895,7 +949,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $propal_static->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($propal_static->fk_project > 0) {
 					$project->fetch($propal_static->fk_project);
 					print $project->getNomUrl(1);
@@ -923,12 +977,12 @@ if ($object->id > 0) {
 		}
 	}
 
+	$orders2invoice = null;
+	$param = "";
 	/*
 	 * Latest orders
 	 */
 	if (isModEnabled('order') && $user->hasRight('commande', 'lire')) {
-		$param = "";
-
 		$sql = "SELECT s.nom, s.rowid";
 		$sql .= ", c.rowid as cid, c.entity, c.fk_projet, c.total_ht";
 		$sql .= ", c.total_tva";
@@ -992,9 +1046,9 @@ if ($object->id > 0) {
 				$filedir = $conf->commande->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1004,6 +1058,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1013,7 +1068,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $commande_static->element, $relativepath, 0, $param);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($commande_static->fk_project > 0) {
 					$project->fetch($commande_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1071,7 +1126,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSendings").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
+				print '<td colspan="5"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastSendings", ($num < $MAXLIST ? "" : $MAXLIST)).'</td><td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'"><span class="hideonsmartphone">'.$langs->trans("AllSendings").'</span><span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/expedition/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"), 'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
@@ -1089,12 +1144,12 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $sendingstatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->expedition->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->expedition->multidir_output[$objp->entity].'/sending/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1104,6 +1159,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1113,7 +1169,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $sendingstatic->table_element, $relativepath, 0, $param);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($sendingstatic->fk_project > 0) {
 					$project->fetch($sendingstatic->fk_project);
 					print $project->getNomUrl(1);
@@ -1166,7 +1222,7 @@ if ($object->id > 0) {
 				print '<table class="noborder centpercent lastrecordtable">';
 
 				print '<tr class="liste_titre">';
-				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
+				print '<td colspan="6"><table class="centpercent nobordernopadding"><tr><td>'.$langs->trans("LastContracts", ($num <= $MAXLIST ? "" : $MAXLIST)).'</td>';
 				print '<td class="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->id.'">'.$langs->trans("AllContracts").'<span class="badge marginleftonlyshort">'.$num.'</span></a></td>';
 				//print '<td width="20px" class="right"><a href="'.DOL_URL_ROOT.'/contract/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
@@ -1183,13 +1239,14 @@ if ($object->id > 0) {
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->fk_project = $objp->fk_projet;
 				$contrat->statut = $objp->contract_status;
+				$contrat->status = $objp->contract_status;
 				$contrat->last_main_doc = $objp->last_main_doc;
 				$contrat->model_pdf = $objp->model_pdf;
 				$contrat->fetch_lines();
 
 				$late = '';
 				foreach ($contrat->lines as $line) {
-					if ($contrat->statut == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
+					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
 						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
@@ -1204,9 +1261,9 @@ if ($object->id > 0) {
 					$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 					$file_list = null;
 					if (!empty($filedir)) {
-						$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+						$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 					}
-					if (is_array($file_list)) {
+					if (is_array($file_list) && !empty($file_list)) {
 						// Defined relative dir to DOL_DATA_ROOT
 						$relativedir = '';
 						if ($filedir) {
@@ -1216,6 +1273,7 @@ if ($object->id > 0) {
 						// Get list of files stored into database for same relative directory
 						if ($relativedir) {
 							completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+							'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 							//var_dump($sortfield.' - '.$sortorder);
 							if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1226,16 +1284,16 @@ if ($object->id > 0) {
 						print $formfile->showPreview($file_list, $contrat->element, $relativepath, 0);
 					}
 				}
-				print '</td><td class="left">';
-				if ($contrat->fk_project > 0) {
-					$project->fetch($contrat->fk_project);
-					print $project->getNomUrl(1);
-				}
 				// $filename = dol_sanitizeFileName($objp->ref);
 				// $filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				// $urlsource = '/contrat/card.php?id='.$objp->cid;
 				// print $formfile->getDocumentsLink($contrat->element, $filename, $filedir);
 				print $late;
+				print '</td><td class="tdoverflowmax125">';
+				if ($contrat->fk_project > 0) {
+					$project->fetch($contrat->fk_project);
+					print $project->getNomUrl(1);
+				}
 				print "</td>\n";
 				print '<td class="nowrap">';
 				print dol_trunc(strtolower(get_class($object)) == strtolower(Client::class) ? $objp->refcus : $objp->refsup, 12);
@@ -1303,9 +1361,9 @@ if ($object->id > 0) {
 				$filedir = $conf->ficheinter->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1315,6 +1373,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1324,7 +1383,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $fichinter_static->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($fichinter_static->fk_project > 0) {
 					$project->fetch($fichinter_static->fk_project);
 					print $project->getNomUrl(1);
@@ -1415,7 +1474,7 @@ if ($object->id > 0) {
 				print '<tr class="oddeven">';
 				print '<td class="tdoverflowmax250">';
 				print $invoicetemplate->getNomUrl(1);
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($invoicetemplate->fk_project > 0) {
 					$project->fetch($invoicetemplate->fk_project);
 					print $project->getNomUrl(1);
@@ -1531,9 +1590,9 @@ if ($object->id > 0) {
 				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
-					$file_list = dol_dir_list($filedir, 'files', 0, '', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
+					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
 				}
-				if (is_array($file_list)) {
+				if (is_array($file_list) && !empty($file_list)) {
 					// Defined relative dir to DOL_DATA_ROOT
 					$relativedir = '';
 					if ($filedir) {
@@ -1543,6 +1602,7 @@ if ($object->id > 0) {
 					// Get list of files stored into database for same relative directory
 					if ($relativedir) {
 						completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+						'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 						//var_dump($sortfield.' - '.$sortorder);
 						if (!empty($sortfield) && !empty($sortorder)) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)
@@ -1552,7 +1612,7 @@ if ($object->id > 0) {
 					$relativepath = dol_sanitizeFileName($objp->ref).'/'.dol_sanitizeFileName($objp->ref).'.pdf';
 					print $formfile->showPreview($file_list, $facturestatic->element, $relativepath, 0);
 				}
-				print '</td><td class="left">';
+				print '</td><td class="tdoverflowmax125">';
 				if ($facturestatic->fk_project > 0) {
 					$project->fetch($facturestatic->fk_project);
 					print $project->getNomUrl(1);
@@ -1563,8 +1623,8 @@ if ($object->id > 0) {
 				//print $formfile->getDocumentsLink($facturestatic->element, $filename, $filedir);
 				print '</td>';
 				if (getDolGlobalString('MAIN_SHOW_REF_CUSTOMER_INVOICES')) {
-					print '<td class="left nowraponall">';
-					print $objp->ref_client;
+					print '<td class="nowraponall">';
+					print dolPrintHTML($objp->ref_client);
 					print '</td>';
 				}
 				if ($objp->df > 0) {
@@ -1633,54 +1693,56 @@ if ($object->id > 0) {
 
 		if (isModEnabled("propal") && $user->hasRight('propal', 'creer') && $object->status == 1) {
 			$langs->load("propal");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddProp").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddProp").'</a></div>';
 		}
 
 		if (isModEnabled('order') && $user->hasRight('commande', 'creer') && $object->status == 1) {
 			$langs->load("orders");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddOrder").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddOrder").'</a></div>';
 		}
 
 		if ($user->hasRight('contrat', 'creer') && $object->status == 1) {
 			$langs->load("contracts");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddContract").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddContract").'</a></div>';
 		}
 
 		if (isModEnabled('intervention') && $user->hasRight('ficheinter', 'creer') && $object->status == 1) {
 			$langs->load("interventions");
-			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddIntervention").'</a></div>';
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddIntervention").'</a></div>';
 		}
 
 		// Add invoice
-		if ($user->socid == 0) {
-			if (isModEnabled('deplacement') && $object->status == 1) {
-				$langs->load("trips");
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&amp;action=create">'.$langs->trans("AddTrip").'</a></div>';
-			}
+		if (isModEnabled('deplacement') && $object->status == 1) {
+			$langs->load("trips");
+			print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/deplacement/card.php?socid='.$object->id.'&action=create">'.$langs->trans("AddTrip").'</a></div>';
+		}
 
-			if (isModEnabled('invoice') && $object->status == 1) {
-				if (!$user->hasRight('facture', 'creer')) {
-					$langs->load("bills");
-					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+		if (isModEnabled('invoice') && $object->status == 1) {
+			if (!$user->hasRight('facture', 'creer')) {
+				$langs->load("bills");
+				print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NotAllowed")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+			} else {
+				$langs->loadLangs(array("orders", "bills"));
+
+				if ($object->client != 0 && $object->client != 2) {
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
 				} else {
-					$langs->loadLangs(array("orders", "bills"));
+					print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+				}
+			}
+		}
 
-					if (isModEnabled('order')) {
-						if ($object->client != 0 && $object->client != 2) {
-							if (!empty($orders2invoice) && $orders2invoice > 0) {
-								print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-							} else {
-								print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-							}
-						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
-						}
-					}
-
+		if (isModEnabled('invoice') && $object->status == 1) {
+			if ($user->hasRight('facture', 'creer')) {
+				if (isModEnabled('order')) {
 					if ($object->client != 0 && $object->client != 2) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&socid='.$object->id.'">'.$langs->trans("AddBill").'</a></div>';
+						if (!empty($orders2invoice) && $orders2invoice > 0) {
+							print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'&search_billed=0&autoselectall=1">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						} else {
+							print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("NoOrdersToInvoice")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
+						}
 					} else {
-						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("AddBill").'</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused classfortooltip" title="'.dol_escape_js($langs->trans("ThirdPartyMustBeEditAsCustomer")).'" href="#">'.$langs->trans("CreateInvoiceForThisCustomer").'</a></div>';
 					}
 				}
 			}

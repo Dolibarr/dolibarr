@@ -34,6 +34,14 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "salaries", "bills", "hrm"));
 
@@ -161,6 +169,7 @@ restrictedArea($user, 'salaries', 0, 'salary', '');
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -205,6 +214,8 @@ if (empty($reshook)) {
 	$objectclass = 'PaymentSalary';
 	$objectlabel = 'SalariesPayments';
 	$uploaddir = $conf->salaries->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Validate records
@@ -475,7 +486,7 @@ print '<input class="flat" type="text" size="6" name="search_user" value="'.$db-
 print '</td>';
 // Type
 print '<td class="liste_titre">';
-print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, '', 1);
+print $form->select_types_paiements($search_type_id, 'search_type_id', '', 0, 1, 1, 16, 1, 'maxwidth150', 1);
 print '</td>';
 // Chq number
 print '<td class="liste_titre"><input name="search_chq_number" class="flat width50" type="text" value="'.$db->escape($search_chq_number).'"></td>';

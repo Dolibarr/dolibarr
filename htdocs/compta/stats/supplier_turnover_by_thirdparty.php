@@ -3,6 +3,7 @@
  * Copyright (C) 2023       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'categories', 'bills', 'compta'));
 
@@ -58,9 +67,23 @@ $socid = GETPOSTINT('socid');
 
 // Category
 $selected_cat = GETPOSTINT('search_categ');
+if ($selected_cat == -1) {
+	$selected_cat = 0;
+}
 $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
+}
+
+// Security check
+if ($user->socid > 0) {
+	$socid = $user->socid;
+}
+if (isModEnabled('comptabilite')) {
+	$result = restrictedArea($user, 'compta', '', '', 'resultat');
+}
+if (isModEnabled('accounting')) {
+	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
 }
 
 // Hook
@@ -94,8 +117,8 @@ if (empty($year)) {
 	$month_current = (int) dol_print_date(dol_now(), "%m");
 	$year_start = $year - $nbofyear + (getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') > 1 ? 0 : 1);
 }
-$date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
-$date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear, 'tzserver');		// We use timezone of server so report is same from everywhere
+$date_start = dol_mktime(0, 0, 0, (int) $date_startmonth, (int) $date_startday, (int) $date_startyear, 'tzserver');	// We use timezone of server so report is same from everywhere
+$date_end = dol_mktime(23, 59, 59, (int) $date_endmonth, (int) $date_endday, (int) $date_endyear, 'tzserver');		// We use timezone of server so report is same from everywhere
 
 // We define date_start and date_end
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
@@ -150,12 +173,24 @@ $commonparams['sortorder'] = $sortorder;
 $commonparams['sortfield'] = $sortfield;
 
 $headerparams = array();
-$headerparams['date_startyear'] = $date_startyear;
-$headerparams['date_startmonth'] = $date_startmonth;
-$headerparams['date_startday'] = $date_startday;
-$headerparams['date_endyear'] = $date_endyear;
-$headerparams['date_endmonth'] = $date_endmonth;
-$headerparams['date_endday'] = $date_endday;
+if (!empty($date_startyear)) {
+	$headerparams['date_startyear'] = $date_startyear;
+}
+if (!empty($date_startmonth)) {
+	$headerparams['date_startmonth'] = $date_startmonth;
+}
+if (!empty($date_startday)) {
+	$headerparams['date_startday'] = $date_startday;
+}
+if (!empty($date_endyear)) {
+	$headerparams['date_endyear'] = $date_endyear;
+}
+if (!empty($date_endmonth)) {
+	$headerparams['date_endmonth'] = $date_endmonth;
+}
+if (!empty($date_endday)) {
+	$headerparams['date_endday'] = $date_endday;
+}
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
@@ -175,16 +210,7 @@ foreach ($allparams as $key => $value) {
 	$paramslink .= '&'.$key.'='.$value;
 }
 
-// Security check
-if ($user->socid > 0) {
-	$socid = $user->socid;
-}
-if (isModEnabled('comptabilite')) {
-	$result = restrictedArea($user, 'compta', '', '', 'resultat');
-}
-if (isModEnabled('accounting')) {
-	$result = restrictedArea($user, 'accounting', '', '', 'comptarapport');
-}
+
 
 
 /*
@@ -204,6 +230,12 @@ if ($modecompta == "BOOKKEEPING") {
 if ($modecompta == "BOOKKEEPINGCOLLECTED") {
 	$modecompta = "RECETTES-DEPENSES";
 }
+
+
+$calcmode = '';
+$name = '';
+$namelink = '';
+$builddate = dol_now();
 
 // Show report header
 if ($modecompta == "CREANCES-DETTES") {
@@ -225,7 +257,6 @@ if ($modecompta == "CREANCES-DETTES") {
 	// TODO
 }
 
-$builddate = dol_now();
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
 $period .= ' - ';
 $period .= $form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0, 0, '', '', '', '', 1, '', '', 'tzserver');
@@ -237,7 +268,7 @@ if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) {
 
 $exportlink = '';
 
-report_header($name, '', $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
+report_header($name, $namelink, $period, $periodlink, $description, $builddate, $exportlink, $tableparams, $calcmode);
 
 if (isModEnabled('accounting')) {
 	if ($modecompta != 'BOOKKEEPING') {
@@ -406,7 +437,7 @@ if ($subcat) {
 }
 print'></td>';
 print '<td colspan="7" class="right">';
-print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', '', 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
+print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"), 'search.png', '', 0, 1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 print '</td>';
 print '</tr>';
 

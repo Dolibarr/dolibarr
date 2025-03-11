@@ -6,7 +6,7 @@
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,14 @@ $error = 0;
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files
 $langs->loadLangs(array("members", "companies", "install", "other", "projects"));
 
@@ -90,15 +98,17 @@ if (empty($conf->project->enabled)) {
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -146,9 +156,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</div>';
 
@@ -178,26 +190,26 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	$db->begin();
 
-	if (!GETPOST("lastname")) {
+	if (!GETPOST('lastname', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Lastname"))."<br>\n";
 	}
-	if (!GETPOST("firstname")) {
+	if (!GETPOST('firstname', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Firstname"))."<br>\n";
 	}
-	if (!GETPOST("email")) {
+	if (!GETPOST('email', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Email"))."<br>\n";
 	}
-	if (!GETPOST("description")) {
+	if (!GETPOST('description', 'alpha')) {
 		$error++;
 		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Message"))."<br>\n";
 	}
-	if (GETPOST("email") && !isValidEmail(GETPOST("email"))) {
+	if (GETPOST('email', 'alpha') && !isValidEmail(GETPOST('email', 'alpha'))) {
 		$error++;
 		$langs->load("errors");
-		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST("email"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorBadEMail", GETPOST('email', 'alpha'))."<br>\n";
 	}
 	// Set default opportunity status
 	$defaultoppstatus = getDolGlobalInt('PROJECT_DEFAULT_OPPORTUNITY_STATUS_FOR_ONLINE_LEAD');
@@ -214,21 +226,21 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	if (!$error) {
 		// Search thirdparty and set it if found to the new created project
-		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email'));
+		$result = $thirdparty->fetch(0, '', '', '', '', '', '', '', '', '', GETPOST('email', 'alpha'));
 		if ($result > 0) {
 			$proj->socid = $thirdparty->id;
 		} else {
 			// Create the prospect
-			if (GETPOST('societe')) {
-				$thirdparty->name =  GETPOST('societe');
-				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+			if (GETPOST('societe', 'alpha')) {
+				$thirdparty->name =  GETPOST('societe', 'alpha');
+				$thirdparty->name_alias = dolGetFirstLastname(GETPOST('firstname', 'alpha'), GETPOST('lastname', 'alpha'));
 			} else {
-				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname'), GETPOST('lastname'));
+				$thirdparty->name = dolGetFirstLastname(GETPOST('firstname', 'alpha'), GETPOST('lastname', 'alpha'));
 			}
-			$thirdparty->email = GETPOST('email');
-			$thirdparty->address = GETPOST('address');
-			$thirdparty->zip = GETPOST('zip');
-			$thirdparty->town = GETPOST('town');
+			$thirdparty->email = GETPOST('email', 'alpha');
+			$thirdparty->address = GETPOST('address', 'alpha');
+			$thirdparty->zip = GETPOST('zip', 'int');
+			$thirdparty->town = GETPOST('town', 'alpha');
 			$thirdparty->country_id = GETPOSTINT('country_id');
 			$thirdparty->state_id = GETPOSTINT('state_id');
 			$thirdparty->client = $thirdparty::PROSPECT;
@@ -263,6 +275,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		// Search template files
 		$file = '';
 		$classname = '';
+		$reldir = '';
 		$filefound = 0;
 		$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 		foreach ($dirmodels as $reldir) {
@@ -278,6 +291,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 			$result = dol_include_once($reldir."core/modules/project/".$modele.'.php');
 			if (class_exists($classname)) {
 				$modProject = new $classname();
+				'@phan-var-force ModeleNumRefProjects $modProject';
 
 				$defaultref = $modProject->getNextValue($thirdparty, $object);
 			}

@@ -53,8 +53,17 @@ class Deplacement extends CommonObject
 	 */
 	public $fk_element = '';
 
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var int|string
+	 */
 	public $date;
+	/**
+	 * @var string
+	 */
 	public $type;
 
 	/**
@@ -295,7 +304,7 @@ class Deplacement extends CommonObject
 			$this->note_public	= $obj->note_public;
 			$this->fk_project	= $obj->fk_project;
 
-			$this->extraparams	= (array) json_decode($obj->extraparams, true);
+			$this->extraparams	= !empty($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : array();
 
 			return 1;
 		} else {
@@ -408,7 +417,7 @@ class Deplacement extends CommonObject
 	 * List of types
 	 *
 	 * @param	int		$active		Active or not
-	 * @return	array
+	 * @return	array<string,string>
 	 */
 	public function listOfTypes($active = 1)
 	{

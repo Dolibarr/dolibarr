@@ -27,7 +27,7 @@
  * Prepare array of tabs for EmailCollector
  *
  * @param	EmailCollector	$object		EmailCollector
- * @return 	array						Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function emailcollectorPrepareHead($object)
 {
@@ -89,8 +89,8 @@ function emailcollectorPrepareHead($object)
 /**
  * Get parts of a message
  *
- * @param 	object 			$structure 		Structure of message
- * @return 	array|false						Array of parts of the message|false if error
+ * @param 	stdClass 			$structure 		Structure of message
+ * @return 	stdClass[]|false					Array of parts of the message|false if error
  */
 function getParts($structure)
 {
@@ -100,8 +100,8 @@ function getParts($structure)
 /**
  * Array with joined files
  *
- * @param 	object 			$part 		Part of message
- * @return 	object|boolean 				Definition of message|false in case of error
+ * @param 	stdClass	$part 		Part of message
+ * @return 	stdclass|boolean		Definition of message|false in case of error
  */
 function getDParameters($part)
 {
@@ -112,7 +112,7 @@ function getDParameters($part)
  * Get attachments of a given mail
  *
  * @param 	integer $jk 	Number of email
- * @param 	object 	$mbox 	object connection imap
+ * @param 	\IMAP\Connection 	$mbox 	object connection imap
  * @return 	array<array{type:int,filename:string,pos:int}> 	type, filename, pos
  */
 function getAttachments($jk, $mbox)
@@ -149,8 +149,8 @@ function getAttachments($jk, $mbox)
  * @param integer $jk numéro du mail
  * @param string $fpos position de la pièce jointe
  * @param integer $type type de la pièce jointe
- * @param object $mbox object connection imap
- * @return mixed data
+ * @param \IMAP\Connection $mbox object connection imap
+ * @return string data
  */
 function getFileData($jk, $fpos, $type, $mbox)
 {

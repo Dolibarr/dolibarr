@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2011 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "admin"));
 
@@ -50,6 +59,7 @@ foreach ($dirmenus as $dirmenu) {
 
 $action = GETPOST('action', 'aZ09');
 
+$menu = null;
 $menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
 $menu_handler_smartphone = getDolGlobalString('MAIN_MENU_SMARTPHONE');
 $menu_handler_top = preg_replace('/_backoffice.php/i', '', $menu_handler_top);
@@ -388,8 +398,10 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
-	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	if ($menu instanceof Menubase) {
+		print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+		print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	}
 	print '</select>';
 	print ajax_combobox("target");
 	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';

@@ -3,7 +3,8 @@
  * Copyright (c) 2008-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,11 @@ abstract class Stats
 	 * @var array<string,int>	Dates of cache file read by methods
 	 */
 	protected $lastfetchdate = array();
-	public $cachefilesuffix = ''; // Suffix to add to name of cache file (to avoid file name conflicts)
+
+	/**
+	 * @var string  Suffix to add to name of cache file (to avoid file name conflicts)
+	 */
+	public $cachefilesuffix = '';
 
 	/**
 	 * @var string	To store the FROM part of the main table of the SQL request
@@ -120,6 +125,7 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = -1;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
@@ -221,6 +227,7 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = -1;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
@@ -253,7 +260,7 @@ abstract class Stats
 				$year = $startyear;
 				while ($year <= $endyear) {
 					// floor(($i + $sm) / 12)) is 0 if we are after the month start $sm and same year, become 1 when we reach january of next year
-					$data[$i][] = $datay[$year - (1 - floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
+					$data[$i][] = $datay[$year - (1 - (int) floor(($i + $sm) / 12)) + ($sm == 0 ? 1 : 0)][($i + $sm) % 12][1]; // set yval for x=i
 					$year++;
 				}
 			}
@@ -345,6 +352,7 @@ abstract class Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = -1;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
@@ -424,7 +432,7 @@ abstract class Stats
 	 * 	Return nb of elements, total amount and avg amount each year
 	 *
 	 *	@param	string	$sql	SQL request
-	 * 	@return	array<array{year:string,nb:string,nb_diff:float,total_diff:float,avg_diff:float,avg_weighted:float}>	Array with nb, total amount, average for each year
+	 * 	@return	array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>	Array with nb, total amount, average for each year
 	 */
 	protected function _getAllByYear($sql)
 	{

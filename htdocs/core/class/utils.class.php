@@ -456,7 +456,7 @@ class Utils
 					$output_arr = array();
 					$retval = null;
 
-					exec($fullcommandclear, $output_arr, $retval);
+					exec($fullcommandclear, $output_arr, $retval);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 					// TODO Replace this exec with Utils->executeCLI() function.
 					// We must check that the case for $lowmemorydump works too...
 					//$utils = new Utils($db);
@@ -561,7 +561,7 @@ class Utils
 				} elseif ($compression == 'zstd') {
 					fclose($handle);
 				}
-				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*!999999/', $errormsg)) {	// Start of file is ok, NOT an error
+				if ($ok && preg_match('/^-- (MySql|MariaDB)/i', $errormsg) || preg_match('/^\/\*M?!999999/', $errormsg)) {	// Start of file is ok, NOT an error
 					$errormsg = '';
 				} else {
 					// Rename file out into a file error
@@ -751,7 +751,7 @@ class Utils
 
 		if ($execmethod == 1) {
 			$retval = null;
-			exec($command, $output_arr, $retval);
+			exec($command, $output_arr, $retval);  // @phan-suppress-current-line PhanPluginConstantVariableNull
 			$result = $retval;
 			if ($retval != 0) {
 				$langs->load("errors");
@@ -854,8 +854,8 @@ class Utils
 				}
 
 				// Copy some files into temp directory, so instruction include::ChangeLog.md[] will works inside the asciidoc file.
-				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', 0, 1);
-				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', 0, 1);
+				dol_copy($dirofmodule.'/README.md', $dirofmoduletmp.'/README.md', '0', 1);
+				dol_copy($dirofmodule.'/ChangeLog.md', $dirofmoduletmp.'/ChangeLog.md', '0', 1);
 
 				// Replace into README.md and ChangeLog.md (in case they are included into documentation with tag __README__ or __CHANGELOG__)
 				$arrayreplacement = array();
@@ -1304,8 +1304,10 @@ class Utils
 		global $dolibarr_main_url_root;
 
 		$filepath = '';
+		$filesize = -1;
 		$output = '';
 		$error = 0;
+		$mimetype = '';
 
 		if (!empty($from)) {
 			$from = dol_escape_htmltag($from);
@@ -1371,6 +1373,7 @@ class Utils
 			$error++;
 		}
 
+		$mailfile = null;
 		if (!$error) {
 			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
@@ -1381,7 +1384,8 @@ class Utils
 		}
 
 		$result = false;
-		if (!$error) {
+		$output = '';
+		if (!$error && $mailfile !== null) {
 			$result = $mailfile->sendfile();
 			if (!$result) {
 				$error++;

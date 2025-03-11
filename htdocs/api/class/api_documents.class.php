@@ -1,9 +1,11 @@
 <?php
+
 /* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +54,8 @@ class Documents extends DolibarrApi
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('facture', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: IN201701-999/IN201701-999.pdf)
 	 * @return  array                   List of documents
+	 * @phan-return array{filename:string,content-type:string,filesize:false|int,content:string,encoding:string}
+	 * @phpstan-return array{filename:string,content-type:string,filesize:false|int,content:string,encoding:string}
 	 *
 	 * @url GET /download
 	 *
@@ -105,7 +109,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content = file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'encoding'=>'base64');
+		return array('filename' => $filename, 'content-type' => dol_mimetype($filename), 'filesize' => filesize($original_file), 'content' => base64_encode($file_content), 'encoding' => 'base64');
 	}
 
 
@@ -121,6 +125,8 @@ class Documents extends DolibarrApi
 	 * @param	string	$doctemplate	Set here the doc template to use for document generation (If not set, use the default template).
 	 * @param	string	$langcode		Language code like 'en_US', 'fr_FR', 'es_ES', ... (If not set, use the default language).
 	 * @return  array                   List of documents
+	 * @phan-return array{filename:string,content-type:string,filesize:false|int,content:string,langcode:string,template:?string,encoding:string}
+	 * @phpstan-return array{filename:string,content-type:string,filesize:false|int,content:string,langcode:string,template:?string,encoding:string}
 	 *
 	 * @url PUT /builddoc
 	 *
@@ -290,7 +296,7 @@ class Documents extends DolibarrApi
 		}
 
 		$file_content = file_get_contents($original_file_osencoded);
-		return array('filename'=>$filename, 'content-type' => dol_mimetype($filename), 'filesize'=>filesize($original_file), 'content'=>base64_encode($file_content), 'langcode'=>$outputlangs->defaultlang, 'template'=>$templateused, 'encoding'=>'base64');
+		return array('filename' => $filename, 'content-type' => dol_mimetype($filename), 'filesize' => filesize($original_file), 'content' => base64_encode($file_content), 'langcode' => $outputlangs->defaultlang, 'template' => $templateused, 'encoding' => 'base64');
 	}
 
 	/**
@@ -304,6 +310,8 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @return	array					Array of documents with path
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url GET /
 	 *
@@ -619,6 +627,7 @@ class Documents extends DolibarrApi
 					for ($i = 0 ; $i < $count ; $i++) {
 						foreach ($ecmfile->lines as $line) {
 							if ($filearray[$i]['name'] == $line->filename) {
+								// Next line converts EcmFilesLine properties to array
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
@@ -662,6 +671,11 @@ class Documents extends DolibarrApi
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
+	 * @param   int     $position               Position
+	 * @param   string  $cover                  Cover info
+	 * @param   array   $array_options          array of options
+	 * @phan-param   array<string,string>   $array_options
+	 * @phpstan-param   array<string,string>   $array_options
 	 * @return  string
 	 *
 	 * @url POST /upload
@@ -669,15 +683,11 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	400		Bad Request
 	 * @throws	RestException	403		Access denied
 	 * @throws	RestException	404		Object not found
-	 * @throws	RestException	500		Error on file operationw
+	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1)
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [])
 	{
 		global $conf;
-
-		//var_dump($modulepart);
-		//var_dump($filename);
-		//var_dump($filecontent);exit;
 
 		$modulepartorig = $modulepart;
 
@@ -694,6 +704,7 @@ class Documents extends DolibarrApi
 		}
 
 		$original_file = dol_sanitizeFileName($filename);
+		$relativefile = 'UNSET';
 
 		// Define $uploadir
 		$object = null;
@@ -739,7 +750,7 @@ class Documents extends DolibarrApi
 
 				// Fetching the tasks project is required because its out_dir might be a sub-directory of the project
 				if ($task_result > 0) {
-					$project_result = $object->fetch_projet();
+					$project_result = $object->fetchProject();
 
 					if ($project_result >= 0) {
 						$tmpreldir = dol_sanitizeFileName($object->project->ref).'/';
@@ -789,7 +800,7 @@ class Documents extends DolibarrApi
 			if (is_object($object)) {
 				if ($fetchbyid) {
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$result = $object->fetch($ref);
+					$result = $object->fetch((int) $ref);
 				} else {
 					$result = $object->fetch(0, $ref);
 				}
@@ -939,11 +950,20 @@ class Documents extends DolibarrApi
 			$moreinfo['src_object_type'] = $object->table_element;
 			$moreinfo['src_object_id'] = $object->id;
 		}
+		if (!empty($array_options)) {
+			$moreinfo = array_merge($moreinfo, ["array_options" => $array_options]);
+		}
+		if (!empty($position)) {
+			$moreinfo = array_merge($moreinfo, ["position" => $position]);
+		}
+		if (!empty($cover)) {
+			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
+		}
 
 		// Move the temporary file at its final emplacement
 		$result = dol_move($destfiletmp, $dest_file, '0', $overwriteifexists, 1, 1, $moreinfo);
 		if (!$result) {
-			throw new RestException(500, "Failed to move file into '".$destfile."'");
+			throw new RestException(500, "Failed to move file into '".$dest_file."'");
 		}
 
 		return dol_basename($destfile);
@@ -954,7 +974,9 @@ class Documents extends DolibarrApi
 	 *
 	 * @param   string  $modulepart     Name of module or area concerned by file download ('product', ...)
 	 * @param   string  $original_file  Relative path with filename, relative to modulepart (for example: PRODUCT-REF-999/IMAGE-999.jpg)
-	 * @return  array                   List of documents
+	 * @return  array                   Success code
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE /
 	 *

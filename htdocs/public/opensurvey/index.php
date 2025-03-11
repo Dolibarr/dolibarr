@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2023       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ if (!defined('NOIPCHECK')) {
 if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load Dolibarr environment
 require '../../main.inc.php';

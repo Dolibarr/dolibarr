@@ -5,7 +5,7 @@
  * Copyright (C) 2019-2021	Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2019-2020  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2023		Charlene Benke		<charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
@@ -39,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("ticket", "companies", "other", "projects", "contracts"));
@@ -114,11 +122,15 @@ if (!$sortorder) {
 }*/
 
 // Initialize array of search criteria
-$search_all = (GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST("search_all", 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
 	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		$search[$key] = GETPOST('search_'.$key, 'alpha');
+		if (isset($val['arrayofkeyval'])) {
+			$search[$key] = GETPOST('search_'.$key, 'array');
+		} else {
+			$search[$key] = GETPOST('search_'.$key, 'alpha');
+		}
 	} else {
 		$search[$key] = "";
 	}
@@ -242,19 +254,54 @@ if (empty($reshook)) {
 	$objectclass = 'Ticket';
 	$objectlabel = 'Ticket';
 	$uploaddir = $conf->ticket->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Close records
 	if (!$error && $massaction == 'close' && $permissiontoadd) {
-		$objecttmp = new $objectclass($db);
-		if (!$error) {
-			$db->begin();
+		$objecttmp = new Ticket($db);
+		$db->begin();
 
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					$result = $objecttmp->close($user);
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				$result = $objecttmp->close($user);
+				if ($result < 0) {
+					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$error++;
+					break;
+				} else {
+					$nbok++;
+				}
+			} else {
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
+		//var_dump($listofobjectthirdparties);exit;
+	}
+
+	// Reopen records
+	if (!$error && $massaction == 'reopen' && $permissiontoadd) {
+		$objecttmp = new Ticket($db);
+		$db->begin();
+
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
+					$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
 					if ($result < 0) {
 						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 						$error++;
@@ -263,62 +310,25 @@ if (empty($reshook)) {
 						$nbok++;
 					}
 				} else {
-					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+					$langs->load("errors");
+					setEventMessages($langs->trans("ErrorObjectMustHaveStatusClosedToBeReOpened", $objecttmp->ref), null, 'errors');
 					$error++;
 					break;
 				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
 			} else {
-				$db->rollback();
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
 			}
-			//var_dump($listofobjectthirdparties);exit;
 		}
-	}
 
-	// Reopen records
-	if (!$error && $massaction == 'reopen' && $permissiontoadd) {
-		$objecttmp = new $objectclass($db);
 		if (!$error) {
-			$db->begin();
-
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					if ($objecttmp->status == Ticket::STATUS_CLOSED || $objecttmp->status == Ticket::STATUS_CANCELED) {
-						$result = $objecttmp->setStatut(Ticket::STATUS_ASSIGNED);
-						if ($result < 0) {
-							setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-							$error++;
-							break;
-						} else {
-							$nbok++;
-						}
-					} else {
-						$langs->load("errors");
-						setEventMessages($langs->trans("ErrorObjectMustHaveStatusClosedToBeReOpened", $objecttmp->ref), null, 'errors');
-						$error++;
-						break;
-					}
-				} else {
-					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-					$error++;
-					break;
-				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
-			} else {
-				$db->rollback();
-			}
-			//var_dump($listofobjectthirdparties);exit;
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
+		//var_dump($listofobjectthirdparties);exit;
 	}
 }
 
@@ -385,15 +395,18 @@ if ($socid > 0) {
 }
 
 foreach ($search as $key => $val) {
+	$tmpkey = 't.' . $key;
 	if ($key == 'fk_statut' && !empty($search['fk_statut'])) {
 		$newarrayofstatus = array();
-		foreach ($search['fk_statut'] as $key2 => $val2) {
-			if (in_array($val2, array('openall', 'closeall'))) {
-				continue;
+		if (is_array($search['fk_statut'])) {
+			foreach ($search['fk_statut'] as $key2 => $val2) {
+				if (in_array($val2, array('openall', 'closeall'))) {
+					continue;
+				}
+				$newarrayofstatus[] = $val2;
 			}
-			$newarrayofstatus[] = $val2;
 		}
-		if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
+		if ($search['fk_statut'] == 'openall' || (is_array($search['fk_statut']) && in_array('openall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
 			$newarrayofstatus[] = Ticket::STATUS_READ;
 			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
@@ -401,23 +414,23 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
 			$newarrayofstatus[] = Ticket::STATUS_WAITING;
 		}
-		if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) {
+		if ($search['fk_statut'] == 'closeall' || (is_array($search['fk_statut']) && in_array('closeall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_CLOSED;
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
 		if (count($newarrayofstatus)) {
-			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
+			$sql .= natural_search($tmpkey, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
 	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
-			$sql .= natural_search($key, $search[$key], 2);
+			$sql .= natural_search($tmpkey, $search[$key], 2);
 		}
 		continue;
 	} elseif ($key == 'type_code') {
 		$newarrayoftypecodes = is_array($search[$key]) ? $search[$key] : (!empty($search[$key]) ? explode(',', $search[$key]) : array());
 		if (count($newarrayoftypecodes)) {
-			$sql .= natural_search($key, implode(',', $newarrayoftypecodes), 3);
+			$sql .= natural_search($tmpkey, implode(',', $newarrayoftypecodes), 3);
 		}
 		continue;
 	}
@@ -425,7 +438,7 @@ foreach ($search as $key => $val) {
 	$mode_search = ((!empty($object->fields[$key]) && ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))) ? 1 : 0);
 	// $search[$key] can be an array of values, or a string. We add filter if array not empty or if it is a string.
 	if ((is_array($search[$key]) && !empty($search[$key])) || (!is_array($search[$key]) && $search[$key] != '')) {
-		$sql .= natural_search($key, $search[$key], $mode_search);
+		$sql .= natural_search($tmpkey, $search[$key], $mode_search);
 	}
 }
 if ($search_all) {
@@ -435,10 +448,10 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_fk_project > 0) {
-	$sql .= natural_search('fk_project', (string) $search_fk_project, 2);
+	$sql .= natural_search('t.fk_project', (string) $search_fk_project, 2);
 }
 if ($search_fk_contract > 0) {
-	$sql .= natural_search('fk_contract', (string) $search_fk_contract, 2);
+	$sql .= natural_search('t.fk_contract', (string) $search_fk_contract, 2);
 }
 if ($search_date_start) {
 	$sql .= " AND t.datec >= '".$db->idate($search_date_start)."'";
@@ -613,7 +626,7 @@ if ($projectid > 0 || $project_ref) {
 		// Define a complementary filter for search of next/prev ref.
 		if (!$user->hasRight('projet', 'all', 'lire')) {
 			$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-			$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+			$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 		}
 
 		dol_banner_tab($object, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -653,7 +666,7 @@ $param = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
-if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $contextpage can't be empty
 	$param .= '&contextpage='.urlencode($contextpage);
 }
 if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -821,7 +834,7 @@ $moreforfilter.= $langs->trans('MyFilter') . ': <input type="text" name="search_
 $moreforfilter.= '</div>';*/
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -901,7 +914,11 @@ foreach ($object->fields as $key => $val) {
 			//var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if (!empty($search[$key])) {
-				$selectedarray = array_values($search[$key]);
+				if (is_array($search[$key])) {
+					$selectedarray = array_values($search[$key]);
+				} else {
+					$selectedarray = array($search[$key]); // Compatibility with "Default search filters"
+				}
 			}
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'search_status width150 onrightofpage', 1, 0, '', '', '');
 			print '</td>';
@@ -1094,7 +1111,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'fk_statut') {
@@ -1159,7 +1176,7 @@ while ($i < $imaxinloop) {
 							$creation_date =  $object->datec;
 							$hour_diff_creation = ($now - $creation_date) / 3600 ;
 							if ($hour_diff_creation > getDolGlobalInt('TICKET_DELAY_BEFORE_FIRST_RESPONSE')) {
-								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', false, 0, 0, '', '');
+								print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayForFirstResponseTooLong', getDolGlobalString('TICKET_DELAY_BEFORE_FIRST_RESPONSE')), 'warning', 'style="color: red;"', 0, 0, 0, '', '');
 							}
 						} elseif (getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE') && $hour_diff > getDolGlobalInt('TICKET_DELAY_SINCE_LAST_RESPONSE')) {
 							print " " . img_picto($langs->trans('Late') . ' : ' . $langs->trans('TicketsDelayFromLastResponseTooLong', getDolGlobalString('TICKET_DELAY_SINCE_LAST_RESPONSE')), 'warning');

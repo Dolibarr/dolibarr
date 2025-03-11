@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('commande', 'propal', 'bills', 'other', 'products'));
@@ -211,7 +220,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], 'p.ref', '', $param, '', $sortfield, $sortorder);
-print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder);
+print_liste_field_titre('Type', $_SERVER["PHP_SELF"], 'p.fk_product_type', '', $param, '', $sortfield, $sortorder, 'center ');
 print_liste_field_titre('Label', $_SERVER["PHP_SELF"], 'p.label', '', $param, '', $sortfield, $sortorder);
 print_liste_field_titre($textforqty, $_SERVER["PHP_SELF"], 'c', '', $param, '', $sortfield, $sortorder, 'right ');
 print "</tr>\n";
@@ -245,10 +254,14 @@ if ($mode && $mode != '-1') {
 		$tmpproduct->barcode = $vals['barcode'];
 
 		print "<tr>";
+
+		// Product ref
 		print '<td>';
 		print $tmpproduct->getNomUrl(1);
 		print '</td>';
-		print '<td>';
+
+		// Type
+		print '<td class="center">';
 		$s = '';
 		if ($vals['type'] == 1) {
 			$s .= img_picto($langs->trans("Service"), 'service', 'class="paddingleftonly paddingrightonly colorgrey"');

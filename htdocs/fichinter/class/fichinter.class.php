@@ -8,7 +8,7 @@
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class Fichinter extends CommonObject
 		'fk_projet' => array('type' => 'integer:Project:projet/class/project.class.php:1:(fk_statut:=:1)', 'label' => 'Fk projet', 'enabled' => 'isModEnabled("project")', 'visible' => -1, 'position' => 20),
 		'fk_contrat' => array('type' => 'integer', 'label' => 'Fk contrat', 'enabled' => '$conf->contrat->enabled', 'visible' => -1, 'position' => 25),
 		'ref' => array('type' => 'varchar(30)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'showoncombobox' => 1, 'position' => 30),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 35),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'ref_client' => array('type' => 'varchar(255)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 36),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 40, 'index' => 1),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 45),
@@ -61,7 +61,7 @@ class Fichinter extends CommonObject
 		'dateo' => array('type' => 'date', 'label' => 'Dateo', 'enabled' => 1, 'visible' => -1, 'position' => 85),
 		'datee' => array('type' => 'date', 'label' => 'Datee', 'enabled' => 1, 'visible' => -1, 'position' => 90),
 		'datet' => array('type' => 'date', 'label' => 'Datet', 'enabled' => 1, 'visible' => -1, 'position' => 95),
-		'duree' => array('type' => 'double', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
+		'duree' => array('type' => 'integer', 'label' => 'Duree', 'enabled' => 1, 'visible' => -1, 'position' => 100),
 		'signed_status' => array('type' => 'smallint(6)', 'label' => 'SignedStatus', 'enabled' => 1, 'visible' => -1, 'position' => 101, 'arrayofkeyval' => array(0 => 'NoSignature', 1 => 'SignedSender', 2 => 'SignedReceiver', 3 => 'SignedReceiverOnline', 9 => 'SignedAll')),
 		'description' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => -1, 'position' => 105, 'showoncombobox' => 2),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 110),
@@ -82,11 +82,6 @@ class Fichinter extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'fichinter';
-
-	/**
-	 * @var string Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_fichinter';
 
 	/**
 	 * @var string    Name of subtable line
@@ -139,7 +134,7 @@ class Fichinter extends CommonObject
 	/**
 	 * Date modification record (tms)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datem;
 
@@ -205,10 +200,17 @@ class Fichinter extends CommonObject
 	const STATUS_CLOSED = 3;
 
 	/**
-	 * Date delivery
-	 * @var null|int|''		Delivery int
+	 * Date of delivery of receipt
+	 * @var null|int|''		Date the intervention receipt has been delivered
+	 * @deprecated Use $delivery_date_receipt
 	 */
 	public $date_delivery;
+
+	/**
+	 * Date of delivery of receipt
+	 * @var null|int|''		Date the intervention receipt has been delivered
+	 */
+	public $delivery_date_receipt;
 
 	/**
 	 * Author Id
@@ -300,6 +302,7 @@ class Fichinter extends CommonObject
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
+		$this->entity = setEntity($this);
 
 		$soc = new Societe($this->db);
 		$result = $soc->fetch($this->socid);
@@ -330,7 +333,7 @@ class Fichinter extends CommonObject
 		$sql .= ", '".$this->db->idate($now)."'";
 		$sql .= ", '".$this->db->escape($this->ref)."'";
 		$sql .= ", ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->description ? "'".$this->db->escape($this->description)."'" : "null");
@@ -788,13 +791,13 @@ class Fichinter extends CommonObject
 	/**
 	 *  Create a document onto disk according to template module.
 	 *
-	 *  @param      string                  $modele         Force model to use ('' to not force)
-	 *  @param      Translate               $outputlangs    Object langs to use for output
-	 *  @param      int                     $hidedetails    Hide details of lines
-	 *  @param      int                     $hidedesc       Hide description
-	 *  @param      int                     $hideref        Hide ref
-	 *  @param   null|array  $moreparams     Array to provide more information
-	 *  @return     int                                     0 if KO, 1 if OK
+	 *  @param	string                  $modele         Force model to use ('' to not force)
+	 *  @param	Translate               $outputlangs    Object langs to use for output
+	 *  @param	int<0,1>				$hidedetails    Hide details of lines
+	 *  @param	int<0,1>				$hidedesc       Hide description
+	 *  @param	int<0,1>				$hideref        Hide ref
+	 *  @param	?array<string,mixed>	$moreparams     Array to provide more information
+	 *  @return	int                                     0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
@@ -869,19 +872,18 @@ class Fichinter extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$langs->load('interventions');
 
 		$datas = [];
-		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Intervention").'</u>';
+		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowIntervention").'</u>';
 		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
@@ -941,9 +943,9 @@ class Fichinter extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowIntervention");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1123,7 +1125,7 @@ class Fichinter extends CommonObject
 		if (!$error) {
 			$main = MAIN_DB_PREFIX.'fichinterdet';
 			$ef = $main."_extrafields";
-			$sql = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM $main WHERE fk_fichinter = ".((int) $this->id).")";
+			$sql = "DELETE FROM ".$this->db->sanitize($ef)." WHERE fk_object IN (SELECT rowid FROM ".$this->db->sanitize($main)." WHERE fk_fichinter = ".((int) $this->id).")";
 
 			$resql = $this->db->query($sql);
 			if (!$resql) {
@@ -1201,23 +1203,24 @@ class Fichinter extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Defines a delivery date of intervention
+	 *  Defines a delivery date of the receipt of intervention
 	 *
-	 *  @param      User	$user				Object user who define
-	 *  @param      integer	$date_delivery   	date of delivery
-	 *  @return     int							Return integer <0 if KO, >0 if OK
+	 *  @param      User	$user						Object user who define
+	 *  @param      integer	$delivery_date_receipt   	Date of delivery of receipt
+	 *  @return     int									Return integer <0 if KO, >0 if OK
 	 */
-	public function set_date_delivery($user, $date_delivery)
+	public function set_date_delivery($user, $delivery_date_receipt)
 	{
 		// phpcs:enable
 		if ($user->hasRight('ficheinter', 'creer')) {
-			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
-			$sql .= " SET datei = '".$this->db->idate($date_delivery)."'";
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
+			$sql .= " SET datei = '".$this->db->idate($delivery_date_receipt)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 			$sql .= " AND fk_statut = 0";
 
 			if ($this->db->query($sql)) {
-				$this->date_delivery = $date_delivery;
+				$this->date_delivery = $delivery_date_receipt;
+				$this->delivery_date_receipt = $delivery_date_receipt;
 				return 1;
 			} else {
 				$this->error = $this->db->error();
@@ -1243,7 +1246,7 @@ class Fichinter extends CommonObject
 		if ($user->hasRight('ficheinter', 'creer')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql .= " SET description = '".$this->db->escape($description)."',";
-			$sql .= " fk_user_modif = ".$user->id;
+			$sql .= " fk_user_modif = ".((int) $user->id);
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -1295,11 +1298,14 @@ class Fichinter extends CommonObject
 	 *
 	 *  @param	    User	$user		    User making the clone
 	 *	@param		int		$socid			Id of thirdparty
+	 *	@param		bool	$clone_contacts	Clone contacts from origin
+	 *	@param		bool	$clone_notes	Clone notes from origin
 	 *	@return		int						New id of clone
 	 */
-	public function createFromClone(User $user, $socid = 0)
+	public function createFromClone(User $user, $socid = 0, $clone_contacts = false, $clone_notes = false)
 	{
-		global $hookmanager;
+		global $hookmanager, $langs;
+		$langs->load("errors");
 
 		$error = 0;
 
@@ -1341,6 +1347,11 @@ class Fichinter extends CommonObject
 
 		$this->ref_client         = '';
 
+		if (!$clone_notes) {
+			$this->note_private = '';
+			$this->note_public = '';
+		}
+
 		// Create clone
 		$this->context['createfromclone'] = 'createfromclone';
 		$result = $this->create($user);
@@ -1366,6 +1377,31 @@ class Fichinter extends CommonObject
 			}
 		}
 
+		//Duplicate contact
+		if ($clone_contacts) {
+			foreach (array('internal', 'external') as $source) {
+				$tab = $objFrom->liste_contact(-1, $source);
+				if (is_array($tab) && count($tab) > 0) {
+					foreach ($tab as $contacttoadd) {
+						$retAddContact = $this->add_contact(
+							$contacttoadd['id'],
+							$contacttoadd['code'],
+							$contacttoadd['source']
+						);
+						if ($this->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
+							$this->error .= $langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType");
+							$error++;
+						} elseif ($retAddContact < 0) {
+							$error++;
+						}
+					}
+				} elseif ($tab < 0) {
+					$this->error .= $objFrom->error;
+					$error++;
+				}
+			}
+		}
+
 		unset($this->context['createfromclone']);
 
 		// End
@@ -1385,9 +1421,9 @@ class Fichinter extends CommonObject
 	 *  @param      user	$user					User that do the action
 	 *	@param    	int		$fichinterid			Id of intervention
 	 *	@param    	string	$desc					Line description
-	 *	@param      integer	$date_intervention  	Intervention date
+	 *	@param      int		$date_intervention  	Intervention date
 	 *	@param      int		$duration            	Intervention duration
-	 *  @param		array	$array_options			Array option
+	 *  @param		array<string,?mixed>	$array_options	Array option
 	 *	@return    	int             				>0 if ok, <0 if ko
 	 */
 	public function addline($user, $fichinterid, $desc, $date_intervention, $duration, $array_options = [])
@@ -1478,7 +1514,7 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang";
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
 		$sql .= " ORDER BY rang ASC, date ASC";
@@ -1504,6 +1540,8 @@ class Fichinter extends CommonObject
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
 				$line->fetch_optionals();
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$this->lines[$i] = $line;
 				$i++;
@@ -1595,7 +1633,7 @@ class Fichinter extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -1616,6 +1654,7 @@ class Fichinter extends CommonObject
 		}
 		if (!empty($arraydata['thirdparty'])) {
 			$tmpthirdparty = $arraydata['thirdparty'];
+			'@phan-var-force Societe $tmpthirdparty';
 			$return .= '<br><span class="info-box-label">'.$tmpthirdparty->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'duration')) {

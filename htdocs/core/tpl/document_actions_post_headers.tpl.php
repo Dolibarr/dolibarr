@@ -1,8 +1,11 @@
 <?php
+
 /* Copyright (C)    2013      Cédric Salvador     <csalvador@gpcsolutions.fr>
  * Copyright (C)    2013-2014 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C)	2015	  Marcos García		  <marcosgdf@gmail.com>
  * Copyright (C) 	2019	  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,12 +31,25 @@
 // $object
 // $filearray
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
-
+/**
+ * @var CommonObject $object
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
 }
+'
+@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray
+@phan-var-force ?int<0,1> $permtoedit
+@phan-var-force ?int<0,1> $permission
+@phan-var-force int<0,1> $permissiontoadd
+@phan-var-force ?string $savingdocmask
+@phan-var-force ?string $param
+';
 
 
 $langs->load("link");
@@ -60,8 +76,11 @@ $disablemove = 1;
 if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) {
 	$disablemove = 0;
 }
-
-
+$parameters = array();
+$reshook = $hookmanager->executeHooks('isLinkedDocumentObjectNotMovable', $parameters, $object);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
+if ($reshook) {
+	$disablemove = $hookmanager->resArray['disablemove'];
+}
 
 /*
  * Confirm form to delete a file
@@ -121,8 +140,8 @@ if (empty($formfile) || !is_object($formfile)) {
 	$formfile = new FormFile($db);
 }
 
-// Show upload form (document and links)
-$formfile->form_attach_new_file(
+// Get the form to add files (upload and links)
+$tmparray = $formfile->form_attach_new_file(
 	$_SERVER["PHP_SELF"].'?id='.$object->id.(empty($withproject) ? '' : '&withproject=1').(empty($moreparam) ? '' : $moreparam),
 	'',
 	0,
@@ -132,10 +151,20 @@ $formfile->form_attach_new_file(
 	$object,
 	'',
 	1,
-	$savingdocmask
+	$savingdocmask,
+	1,
+	'formuserfile',
+	'',
+	'',
+	0,
+	0,
+	0,
+	2
 );
 
-//var_dump($modulepart);var_dump($upload_dir);
+$formToUploadAFile = $tmparray['formToUploadAFile'];
+$formToAddALink = $tmparray['formToAddALink'];
+
 
 // List of document
 $formfile->list_of_documents(
@@ -156,11 +185,26 @@ $formfile->list_of_documents(
 	$upload_dir,
 	$sortfield,
 	$sortorder,
-	$disablemove
+	$disablemove,
+	0,
+	-1,
+	'',
+	array('afteruploadtitle' => $formToUploadAFile, 'showhideaddbutton' => 1)
 );
 
-print "<br>";
+
+print "<br><br>";
+
 
 //List of links
-$formfile->listOfLinks($object, $permission, $action, GETPOSTINT('linkid'), $param);
+$formfile->listOfLinks(
+	$object,
+	$permission,
+	$action,
+	(string) GETPOSTINT('linkid'),
+	$param,
+	'formaddlink',
+	array('afterlinktitle' => $formToAddALink, 'showhideaddbutton' => 1)
+);
+
 print "<br>";

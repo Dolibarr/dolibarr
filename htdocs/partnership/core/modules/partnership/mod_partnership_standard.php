@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,9 @@ class mod_partnership_standard extends ModeleNumRefPartnership
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var string prefix
+	 */
 	public $prefix = 'PSHIP';
 
 	/**
@@ -117,8 +121,8 @@ class mod_partnership_standard extends ModeleNumRefPartnership
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  Object		$object		Object we need next value for
-	 *  @return string|-1      			Next value if OK, -1 if KO
+	 *  @param  Partnership	$object		Object we need next value for
+	 *  @return string|int<-1,0>		Next value if OK, 0 if KO
 	 */
 	public function getNextValue($object)
 	{

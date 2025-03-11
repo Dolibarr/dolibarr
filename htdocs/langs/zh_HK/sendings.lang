@@ -8,13 +8,12 @@ Shipments=出貨量
 ShowSending=顯示發貨
 Receivings=交貨收據
 SendingsArea=發貨區域
-ListOfSendings=發貨清單
 SendingMethod=郵寄方式
 LastSendings=最新 %s 出貨量
 StatisticsOfSendings=出貨量統計
 NbOfSendings=發貨數量
 NumberOfShipmentsByMonth=每月發貨數量
-SendingCard=發貨卡
+SendingCard=Shipment
 NewSending=新貨
 CreateShipment=創建發貨
 QtyShipped=發貨數量
@@ -44,6 +43,7 @@ ConfirmCancelSending=您確定要取消這批貨件嗎？
 DocumentModelMerou=MerouA5車型
 WarningNoQtyLeftToSend=警告，沒有等待發貨的產品。
 StatsOnShipmentsOnlyValidated=統計數據僅適用於經過驗證的發貨。使用的日期是發貨驗證日期（計劃發貨日期並不總是已知）
+DateShipping=Sending date
 DateDeliveryPlanned=計劃交貨日期
 RefDeliveryReceipt=交貨單參考
 StatusReceipt=交貨單狀態
@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=無行列，請轉到標籤 “%s” 以添加
 CreateInvoiceForThisCustomerFromSendings=建立帳單
 IfValidateInvoiceIsNoSendingStayUnbilled=如果發票驗證為“否”，則發貨狀態將保持為“未開票”直到發票驗證完成。
 OptionToSetSendingBilledNotEnabled=未啟用於工作流程模組中啟動的發票驗證後自動將發貨設為“已開票”的選項，因此您將需在發票生成後手動設置發貨狀態。
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=發貨分配
 ErrorTooManyCombinationBatchcode=行 %s 沒有發貨，因為找到的倉庫、產品、批號組合過多 ( %s )。
 ErrorNoCombinationBatchcode=無法保存行 %s，因為在庫存中找不到倉庫-產品-批次/序列 ( %s, %s, %s ) 的組合。
 ErrorTooMuchShipped=發貨數量不應大於第 %s 行的訂購數量。
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=跟進發貨代表人
+TypeContact_shipping_external_BILLING=客戶發票聯絡方式
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=客戶收貨聯絡人
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

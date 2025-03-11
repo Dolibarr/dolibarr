@@ -55,6 +55,13 @@ if (is_numeric($entity)) {
 }
 include '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 
@@ -144,9 +151,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('proposal');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -221,7 +229,7 @@ if ($action == "importSignature") {
 								// TODO Get position of box from PDF template
 
 								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
-											$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
+									$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
 								} else {
 									$param['xforimgstart'] = (empty($s['w']) ? 120 : round($s['w'] / 2) + 15);
 								}
@@ -288,7 +296,15 @@ if ($action == "importSignature") {
 							$error++;
 							$response = "error in trigger " . $object->error;
 						} else {
-							$response = "success";
+							$soc = new Societe($db);
+							$soc->id = $object->socid;
+							$result = $soc->setAsCustomer();
+							if ($result < 0) {
+								$error++;
+								$response = $db->lasterror();
+							} else {
+								$response = "success";
+							}
 						}
 					} else {
 						$response = "success";
@@ -338,9 +354,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('contrat');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -474,9 +491,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('fichinter');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -824,9 +842,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('expedition');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -930,7 +949,7 @@ echo $response;
  *
  * @param 	TCPDF 		$pdf		PDF handler
  * @param	Translate	$langs		Language
- * @param	array		$params		Array of params
+ * @param	array<string,int|float|string|mixed[]>		$params		Array of params
  * @return	void
  */
 function dolPrintSignatureImage(TCPDF $pdf, $langs, $params)

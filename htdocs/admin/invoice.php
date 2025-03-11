@@ -7,8 +7,9 @@
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
@@ -70,6 +80,7 @@ if ($action == 'updateMask') {
 	$maskreplacement = GETPOST('maskreplacement', 'alpha');
 	$maskcredit = GETPOST('maskcredit', 'alpha');
 	$maskdeposit = GETPOST('maskdeposit', 'alpha');
+	$res = 0;
 	if ($maskconstinvoice && preg_match('/_MASK_/', $maskconstinvoice)) {
 		$res = dolibarr_set_const($db, $maskconstinvoice, $maskinvoice, 'chaine', 0, '', $conf->entity);
 	}
@@ -440,11 +451,11 @@ foreach ($dirmodels as $reldir) {
 							}
 
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
 
 							if (getDolGlobalString('FACTURE_ADDON') . '.php' == $file) {  // If module is the one used, we show existing errors
 								if (!empty($module->error)) {
-									dol_htmloutput_mesg($module->error, '', 'error', 1);
+									dol_htmloutput_mesg($module->error, array(), 'error', 1);
 								}
 							}
 
@@ -597,7 +608,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -605,7 +616,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -757,6 +768,17 @@ print "</select>";
 print ajax_combobox("chq", array(), 0, 0, 'resolve', '-2');
 
 print "</td></tr>";
+
+// Structured communication
+// Specific to Belgium - See core/lib/functions_be.lib.php
+if ($mysoc->country_code == 'BE') {
+	print '<tr class="oddeven"><td>' . $langs->trans("InvoicePaymentManageStructuredCommunication") . '&nbsp;';
+	print $form->textwithpicto('', $langs->trans("InvoicePaymentManageStructuredCommunicationHelp"), 1, 'help') . '</td>';
+	print '<td class="left" colspan="2">';
+	print ajax_constantonoff('INVOICE_PAYMENT_ENABLE_STRUCTURED_COMMUNICATION');
+	print '</td></tr>';
+}
+
 print "</table>";
 print '</div>';
 
@@ -770,7 +792,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>';
-print '<td class="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td class="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -857,7 +879,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Name").'</td>'."\n";
-print '<td>'.$langs->trans("Value").'</td>'."\n";
+print '<td></td>'."\n";
 print "</tr>\n";
 print '<tr class="oddeven">'."\n";
 print '<td width="140">'.$langs->trans("PathDirectory").'</td>'."\n";

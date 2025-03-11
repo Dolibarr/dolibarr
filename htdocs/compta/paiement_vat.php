@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -30,13 +30,22 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/paymentvat.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills"));
 
-$chid = GETPOSTINT("id");
 $action = GETPOST('action', 'alpha');
+$confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel');
 
+$chid = GETPOSTINT("id");
 $amounts = array();
 
 // Security check
@@ -45,12 +54,14 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
+$permissiontoadd = $user->hasRight('tax', 'charges', 'creer');
+
 
 /*
  * Actions
  */
 
-if ($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) {
+if (($action == 'add_payment' || ($action == 'confirm_paiement' && $confirm == 'yes')) && $permissiontoadd) {
 	$error = 0;
 
 	if ($cancel) {
@@ -178,7 +189,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="chid" value="'.$chid.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
-	print dol_get_fiche_head('', '');
+	print dol_get_fiche_head([], '');
 
 	print '<table class="border centpercent">';
 
@@ -192,6 +203,7 @@ if ($action == 'create') {
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."payment_vat as p";
 	$sql .= " WHERE p.fk_tva = ".((int) $chid);
+	$sumpaid = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
@@ -217,7 +229,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
+	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

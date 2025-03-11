@@ -3,7 +3,7 @@
  * Copyright (C) 2017       Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020       Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
@@ -41,7 +51,7 @@ $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
 $optioncss = GETPOST('optioncss', 'alpha');
 $mode      = GETPOST('mode', 'alpha');
 $massaction = GETPOST('massaction', 'aZ09');
-$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
+$toselect = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'directdebitcredittransferlist'; // To manage different context of search
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -126,7 +136,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_type_id = '';
 }
 
-$search_all = GETPOSTISSET("search_all") ? trim(GETPOST("search_all", 'alpha')) : trim(GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 /*
 * TODO: fill array "$fields" in "/compta/bank/class/paymentvarious.class.php" and use
@@ -159,22 +169,22 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields = array(
-	'ref'			=> array('label' => "Ref", 'checked' => 1, 'position' => 100),
-	'label'			=> array('label' => "Label", 'checked' => 1, 'position' => 110),
-	'datep'			=> array('label' => "DatePayment", 'checked' => 1, 'position' => 120),
-	'datev'			=> array('label' => "DateValue", 'checked' => -1, 'position' => 130),
-	'type'			=> array('label' => "PaymentMode", 'checked' => 1, 'position' => 140),
-	'project'		=> array('label' => "Project", 'checked' => 1, 'position' => 200, "enabled" => isModEnabled('project')),
-	'bank'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 300, "enabled" => isModEnabled("bank")),
-	'entry'			=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 310, "enabled" => isModEnabled("bank")),
-	'account'		=> array('label' => "AccountAccountingShort", 'checked' => 1, 'position' => 400, "enabled" => isModEnabled('accounting')),
-	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => 1, 'position' => 410, "enabled" => isModEnabled('accounting')),
-	'debit'			=> array('label' => "Debit", 'checked' => 1, 'position' => 500),
-	'credit'		=> array('label' => "Credit", 'checked' => 1, 'position' => 510),
+	'ref'			=> array('label' => "Ref", 'checked' => '1', 'position' => 100),
+	'label'			=> array('label' => "Label", 'checked' => '1', 'position' => 110),
+	'datep'			=> array('label' => "DatePayment", 'checked' => '1', 'position' => 120),
+	'datev'			=> array('label' => "DateValue", 'checked' => '-1', 'position' => 130),
+	'type'			=> array('label' => "PaymentMode", 'checked' => '1', 'position' => 140),
+	'project'		=> array('label' => "Project", 'checked' => '-1', 'position' => 200, "enabled" => (string) (int) isModEnabled('project')),
+	'bank'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 300, "enabled" => (string) (int) isModEnabled("bank")),
+	'entry'			=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 310, "enabled" => (string) (int) isModEnabled("bank")),
+	'account'		=> array('label' => "AccountAccountingShort", 'checked' => '1', 'position' => 400, "enabled" => (string) (int) isModEnabled('accounting')),
+	'subledger'		=> array('label' => "SubledgerAccount", 'checked' => '1', 'position' => 410, "enabled" => (string) (int) isModEnabled('accounting')),
+	'debit'			=> array('label' => "Debit", 'checked' => '1', 'position' => 500),
+	'credit'		=> array('label' => "Credit", 'checked' => '1', 'position' => 510),
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $socid = GETPOSTINT("socid");
@@ -230,26 +240,23 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$proj = null;
+$accountingaccount = new AccountingAccount($db);
+$bankline = new AccountLine($db);
+$variousstatic = new PaymentVarious($db);
+$accountstatic = null;
+$accountingjournal = null;
 if ($arrayfields['account']['checked'] || $arrayfields['subledger']['checked']) {
 	$formaccounting = new FormAccounting($db);
 }
 if ($arrayfields['bank']['checked'] && isModEnabled('accounting')) {
 	$accountingjournal = new AccountingJournal($db);
 }
-if ($arrayfields['ref']['checked']) {
-	$variousstatic		= new PaymentVarious($db);
-}
 if ($arrayfields['bank']['checked']) {
-	$accountstatic		= new Account($db);
+	$accountstatic = new Account($db);
 }
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
-}
-if ($arrayfields['entry']['checked']) {
-	$bankline = new AccountLine($db);
-}
-if ($arrayfields['account']['checked']) {
-	$accountingaccount = new AccountingAccount($db);
 }
 
 $title = $langs->trans("VariousPayments");
@@ -305,8 +312,12 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if ($search_accountancy_subledger > 0) {
-	$sql .= " AND v.subledger_account = ".((int) $search_accountancy_subledger);
+if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
+} else {
+	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {
+		$sql .= natural_search("v.subledger_account", $search_accountancy_subledger);
+	}
 }
 if ($search_type_id > 0) {
 	$sql .= " AND v.fk_typepayment=".((int) $search_type_id);
@@ -314,6 +325,7 @@ if ($search_type_id > 0) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -474,11 +486,11 @@ $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('che
 
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
-print '<tr class="liste_titre_filter">';
+print '<tr class="liste_titre liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print '<td class="liste_titre center maxwidthsearch">';
@@ -538,7 +550,7 @@ if ($arrayfields['type']['checked']) {
 }
 
 // Project
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	print '<td class="liste_titre">';
 	// TODO
 	print '</td>';
@@ -560,6 +572,7 @@ if ($arrayfields['entry']['checked']) {
 
 // Accounting account
 if (!empty($arrayfields['account']['checked'])) {
+	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
 	print $formaccounting->select_account($search_accountancy_account, 'search_accountancy_account', 1, array(), 1, 1, 'maxwidth200');
@@ -569,9 +582,16 @@ if (!empty($arrayfields['account']['checked'])) {
 
 // Subledger account
 if (!empty($arrayfields['subledger']['checked'])) {
+	/** @var FormAccounting $formaccounting */
 	print '<td class="liste_titre">';
 	print '<div class="nowrap">';
-	print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth200');
+
+	if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+		print $formaccounting->select_auxaccount($search_accountancy_subledger, 'search_accountancy_subledger', 1, 'maxwidth150');
+	} else {
+		print '<input type="text" class="maxwidth150 maxwidthonsmartphone" name="search_accountancy_subledger" value="'.$search_accountancy_subledger.'">';
+	}
+
 	print '</div>';
 	print '</td>';
 }
@@ -635,7 +655,7 @@ if ($arrayfields['type']['checked']) {
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	print_liste_field_titre($arrayfields['project']['label'], $_SERVER["PHP_SELF"], 'fk_project', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -648,6 +668,7 @@ if ($arrayfields['entry']['checked']) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['account']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['account']['label'], $_SERVER["PHP_SELF"], 'v.accountancy_code', '', $param, '', $sortfield, $sortorder, 'left ');
 	$totalarray['nbfield']++;
 }
@@ -697,20 +718,23 @@ while ($i < $imaxinloop) {
 	$variousstatic->label = $obj->label;
 	$variousstatic->datep = $obj->datep;
 	$variousstatic->type_payment = $obj->payment_code;
-	$bankline->fetch($obj->fk_bank);
-	$variousstatic->fk_bank = $bankline->getNomUrl(1);
+	$variousstatic->accountancy_code = $obj->accountancy_code;
 	$variousstatic->amount = $obj->amount;
 
-	$accountingaccount->fetch(0, $obj->accountancy_code, 1);
-	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
-
 	if ($mode == 'kanban') {
+		if ($obj->fk_bank > 0) {
+			$bankline->fetch($obj->fk_bank);
+		} else {
+			$bankline->id = 0;
+		}
+		$accountingaccount->fetch(0, $obj->accountancy_code, 1);
+
 		if ($i == 0) {
 			print '<tr class="trkanban"><td colspan="'.$savnbfield.'">';
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected)));
+		print $variousstatic->getKanbanView('', array('selected' => in_array($object->id, $arrayofselected), 'bankline' => $bankline, 'formatedaccountancycode' => $accountingaccount->getNomUrl(0, 0, 1, $obj->accountancy_code, 1)));
 		if ($i == ($imaxinloop) - 1) {
 			print '</div>';
 			print '</td></tr>';
@@ -767,12 +791,13 @@ while ($i < $imaxinloop) {
 
 		// Type
 		if ($arrayfields['type']['checked']) {
-			print '<td class="center">';
+			$labeltoshow = '';
 			if ($obj->payment_code) {
-				print $langs->trans("PaymentTypeShort".$obj->payment_code);
-				print ' ';
+				$labeltoshow = $langs->transnoentitiesnoconv("PaymentTypeShort".$obj->payment_code).' ';
 			}
-			print $obj->num_payment;
+			$labeltoshow .= $obj->num_payment;
+			print '<td class="center tdoverflowmax150" title="'.dolPrintHTML($labeltoshow).'">';
+			print $labeltoshow;
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -780,9 +805,9 @@ while ($i < $imaxinloop) {
 		}
 
 		// Project
-		if ($arrayfields['project']['checked']) {
+		if (isModEnabled('project') && $arrayfields['project']['checked']) {
 			print '<td class="nowraponall">';
-			if ($obj->fk_project > 0) {
+			if ($obj->fk_project > 0 && is_object($proj)) {
 				$proj->fetch($obj->fk_project);
 				print $proj->getNomUrl(1);
 			}
@@ -795,12 +820,12 @@ while ($i < $imaxinloop) {
 		// Bank account
 		if ($arrayfields['bank']['checked']) {
 			print '<td class="nowraponall">';
-			if ($obj->bid > 0) {
+			if (is_object($accountstatic) && $obj->bid > 0) {
 				$accountstatic->id = $obj->bid;
 				$accountstatic->ref = $obj->bref;
 				$accountstatic->number = $obj->bnumber;
 
-				if (isModEnabled('accounting')) {
+				if (isModEnabled('accounting') && is_object($accountingjournal)) {
 					$accountstatic->account_number = $obj->bank_account_number;
 					$accountingjournal->fetch($obj->accountancy_journal);
 					$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
@@ -808,8 +833,6 @@ while ($i < $imaxinloop) {
 
 				$accountstatic->label = $obj->blabel;
 				print $accountstatic->getNomUrl(1);
-			} else {
-				print '&nbsp;';
 			}
 			print '</td>';
 			if (!$i) {

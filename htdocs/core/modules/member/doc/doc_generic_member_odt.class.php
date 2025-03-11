@@ -81,7 +81,12 @@ class doc_generic_member_odt extends ModelePDFMember
 		$this->option_freetext = 1; // Support add of a personalised text
 		$this->option_draft_watermark = 0; // Support add of a watermark on drafts
 
-		// Recupere emetteur
+		if ($mysoc === null) {
+			dol_syslog(get_class($this).'::__construct() Global $mysoc should not be null.'. getCallerInfoString(), LOG_ERR);
+			return;
+		}
+
+		// Retrieves issuer
 		$this->emetteur = $mysoc;
 		if (!$this->emetteur->country_code) {
 			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
@@ -290,6 +295,7 @@ class doc_generic_member_odt extends ModelePDFMember
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}
 
+				$contactobject = null;
 				// Recipient name
 				if (!empty($usecontact)) {
 					// We can use the company of contact instead of thirdparty company
@@ -313,7 +319,7 @@ class doc_generic_member_odt extends ModelePDFMember
 						$srctemplatepath,
 						array(
 							'PATH_TO_TMP'	  => $conf->adherent->dir_temp,
-							'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
 							'DELIMITER_LEFT'  => '{',
 							'DELIMITER_RIGHT' => '}'
 						)
@@ -421,7 +427,7 @@ class doc_generic_member_odt extends ModelePDFMember
 	 * @param CommonObject  $object         member
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
-	 * @return array                        array of substitutions
+	 * @return array<string,string>			Array of substitutions
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{

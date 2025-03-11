@@ -1,4 +1,5 @@
 <?php
+
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -7,6 +8,8 @@
  * Copyright (C) 2013      Florian Henry          <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +28,7 @@
 /**
  *       \file       htdocs/product/document.php
  *       \ingroup    product
- *       \brief      Page des documents joints sur les produits
+ *       \brief      Page of documents attached to products/services
  */
 
 
@@ -40,6 +43,13 @@ if (getDolGlobalString('PRODUIT_PDF_MERGE_PROPAL')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'products'));
@@ -79,6 +89,8 @@ if (!$sortfield) {
 	$sortfield = "position_name";
 }
 
+$upload_dir = '';
+$upload_dirold = '';
 // Initialize objects
 $object = new Product($db);
 if ($id > 0 || !empty($ref)) {
@@ -120,7 +132,7 @@ $permissiontoadd = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -154,6 +166,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 
 		$filetomerge_file_array = GETPOST('filetoadd');
 
+		$lang_id = null;
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$lang_id = GETPOST('lang_id', 'aZ09');
 		}
@@ -161,7 +174,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 		// Delete all file already associated
 		$filetomerge = new Propalmergepdfproduct($db);
 
-		if (getDolGlobalInt('MAIN_MULTILANGS')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') && $lang_id !== null) {
 			$result = $filetomerge->delete_by_product($user, $object->id, $lang_id);
 		} else {
 			$result = $filetomerge->delete_by_product($user, $object->id);
@@ -176,7 +189,7 @@ if ($action == 'filemerge' && $permissiontoadd) {
 				$filetomerge->fk_product = $object->id;
 				$filetomerge->file_name = $filetomerge_file;
 
-				if (getDolGlobalInt('MAIN_MULTILANGS')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') && $lang_id !== null) {
 					$filetomerge->lang = $lang_id;
 				}
 
@@ -211,7 +224,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-card_document');
 
 
-if ($object->id) {
+if ($object->id > 0) {
 	$head = product_prepare_head($object);
 	$titre = $langs->trans("CardProduct".$object->type);
 	$picto = ($object->type == Product::TYPE_SERVICE ? 'service' : 'product');
@@ -240,7 +253,7 @@ if ($object->id) {
 
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+	$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 	$shownav = 1;
 	if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -262,6 +275,29 @@ if ($object->id) {
 	print '<div class="clearboth"></div>';
 
 	print dol_get_fiche_end();
+
+	/* To move into tpl
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+
+	$formmail = new FormMail($db);
+	$formmail->withaiprompt = 'text';
+	$out = '';
+
+	$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
+	$showlinktoailabel = $langs->trans("GenerateImage");
+
+	$formatforouput = 'image';
+	$htmlname = 'bodyemail';
+
+	print load_fiche_titre($langs->trans('GenerateWithAI'), '', '');
+	print '<table class="border centpercent">';
+
+	// Fill $out
+	require DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+	print $out;
+	print '</table>';
+	*/
 
 	$param = '&id='.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';
@@ -304,6 +340,7 @@ if ($object->id) {
 
 			print  '<table class="noborder">';
 
+			$default_lang = null;
 			// Get language
 			if (getDolGlobalInt('MAIN_MULTILANGS')) {
 				$langs->load("languages");
@@ -317,18 +354,19 @@ if ($object->id) {
 				print Form::selectarray('lang_id', $langs_available, $default_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					print  '<input type="submit" class="button" name="refresh" value="'.$langs->trans('Refresh').'">';
+					print  '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans('Refresh').'">';
 				}
 
 				print  '</td></tr>';
 			}
 
 			foreach ($filearray as $filetoadd) {
-				if ($ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION) == 'pdf') {
+				$ext = pathinfo($filetoadd['name'], PATHINFO_EXTENSION);
+				if ($ext == 'pdf') {
 					$checked = '';
 					$filename = $filetoadd['name'];
 
-					if (getDolGlobalInt('MAIN_MULTILANGS')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') && $default_lang !== null) {
 						if (array_key_exists($filetoadd['name'].'_'.$default_lang, $filetomerge->lines)) {
 							$filename = $filetoadd['name'].' - '.$langs->trans('Language_'.$default_lang);
 							$checked = ' checked ';

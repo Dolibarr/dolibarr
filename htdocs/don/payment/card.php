@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,17 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "banks", "companies", "donations"));
+$outputlangs = $langs;
 
 // Security check
 $id = GETPOST('rowid') ? GETPOSTINT('rowid') : GETPOSTINT('id');
@@ -54,13 +63,17 @@ if ($id > 0) {
 	}
 }
 
+$permissiontoread = $user->hasRight('don', 'lire');
+$permissiontoadd = $user->hasRight('don', 'creer');
+$permissiontodelete = $user->hasRight('don', 'supprimer');
+
 
 /*
  * Actions
  */
 
 // Delete payment
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', 'supprimer')) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
 	$result = $object->delete($user);
@@ -79,6 +92,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('don', '
 /*
  * View
  */
+
 $title = $langs->trans("Payment");
 llxHeader('', $title, '', '', 0, 0, '', '', '', 'mod-donation page-payment_card');
 

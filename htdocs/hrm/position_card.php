@@ -4,6 +4,8 @@
  * Copyright (C) 2021 Greg Rastklan <greg.rastklan@atm-consulting.fr>
  * Copyright (C) 2021 Jean-Pascal BOUDET <jean-pascal.boudet@atm-consulting.fr>
  * Copyright (C) 2021 Grégory BLEMAND <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT . '/hrm/class/position.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/class/job.class.php';
 require_once DOL_DOCUMENT_ROOT . '/hrm/lib/hrm_position.lib.php';
 //dol_include_once('/hrm/position.php');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Get Parameters
 $action 	= GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -164,7 +174,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT . '/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -308,8 +318,8 @@ function displayPositionCard(&$object)
 		//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 		//unset($object->fields['fk_project']);				// Hide field already shown in banner
 		//unset($object->fields['fk_soc']);					// Hide field already shown in banner
-		$object->fields['fk_user']['visible']=0; // Already in banner
-		$object->fields['fk_job']['visible']=0; // Already in banner
+		$object->fields['fk_user']['visible'] = 0; // Already in banner
+		$object->fields['fk_job']['visible'] = 0; // Already in banner
 		include DOL_DOCUMENT_ROOT . '/core/tpl/commonfields_view.tpl.php';
 
 		// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -383,9 +393,12 @@ if ($action !== 'edit' && $action !== 'create') {
 	print '<div class="fichecenter"><div class="fichehalfleft">';
 
 	// Show links to link elements
-	$linktoelem = $form->showLinkToObjectBlock($object, null, array('position'));
-	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+	$tmparray = $form->showLinkToObjectBlock($object, array(), array('position'), 1);
+	$linktoelem = $tmparray['linktoelem'];
+	$htmltoenteralink = $tmparray['htmltoenteralink'];
+	print $htmltoenteralink;
 
+	$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 	print '</div><div class="fichehalfright">';
 

@@ -31,6 +31,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("admin", "install", "errors"));
 
 if (!$user->admin) {
@@ -318,9 +326,9 @@ $db->close();
  * Return a result column with a translated result text
  *
  * @param string $name			The name of the PHP extension
- * @param array $activated		A list with all activated PHP extensions. Deprecated.
- * @param array $loaded			A list with all loaded PHP extensions
- * @param array $functions		A list with all PHP functions to check
+ * @param string[] $activated		A list with all activated PHP extensions. Deprecated.
+ * @param string[] $loaded			A list with all loaded PHP extensions
+ * @param string[] $functions		A list with all PHP functions to check
  * @return string
  */
 function getResultColumn($name, array $activated, array $loaded, array $functions)

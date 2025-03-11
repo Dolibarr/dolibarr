@@ -7,7 +7,8 @@
  * Copyright (C) 2022      Anthony Berton     	<anthony.berton@bb2a.fr>
  * Copyright (C) 2023      William Mead         <william.mead@manchenumerique.fr>
  * Copyright (C) 2024      Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +62,6 @@ class Notify
 	 */
 	public $context;
 
-
 	/**
 	 * @var int		ID of event action that trigger the notification
 	 */
@@ -112,10 +112,25 @@ class Notify
 	 */
 	public $errors = array();
 
+	/**
+	 * @var string
+	 */
 	public $author;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $date;
+	/**
+	 * @var int
+	 */
 	public $duree;
+	/**
+	 * @var string
+	 */
 	public $note;
 
 	/**
@@ -248,10 +263,10 @@ class Notify
 	/**
 	 *  Delete a notification from database
 	 *
-	 *	@param		User|null	$user		User deleting
+	 *	@param		?User		$user		User deleting
 	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user = null)
+	public function delete($user = null)
 	{
 		$error = 0;
 
@@ -281,11 +296,11 @@ class Notify
 	/**
 	 * Create notification information record.
 	 *
-	 * @param   User|null   $user		User
-	 * @param   int    		$notrigger  1=Disable triggers
+	 * @param   ?User		$user		User
+	 * @param   int<0,1>	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company notification information)
 	 */
-	public function create(User $user = null, $notrigger = 0)
+	public function create($user = null, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -383,11 +398,11 @@ class Notify
 	/**
 	 *	Update record in database
 	 *
-	 *	@param	User|null	$user	     Object user
-	 *  @param  int     	$notrigger   1=Disable triggers
+	 *	@param	?User		$user	     Object user
+	 *  @param  int<0,1>  	$notrigger   1=Disable triggers
 	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
-	public function update(User $user = null, $notrigger = -1)
+	public function update($user = null, $notrigger = 0)
 	{
 		global $langs;
 
@@ -433,12 +448,12 @@ class Notify
 	/**
 	 * Return number of notifications activated, for all or a given action code (and third party)
 	 *
-	 * @param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-	 * @param	int		$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
-	 * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
-	 * @param	int		$userid         Id of user or 0 for all users or -1 for no users
-	 * @param   array   $scope          Scope where to search
-	 * @return	array|int				Return integer <0 if KO, array of notifications to send if OK
+	 * @param	string			$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+	 * @param	int				$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
+	 * @param	CommonObject	$object			Object the notification is about (need it to check threshold value of some notifications)
+	 * @param	int				$userid         Id of user or 0 for all users or -1 for no users
+	 * @param   array   		$scope          Scope where to search
+	 * @return	array|int						Return integer <0 if KO, array of notifications to send if OK
 	 */
 	public function getNotificationsArray($notifcode, $socid = 0, $object = null, $userid = 0, $scope = array('thirdparty', 'user', 'global'))
 	{
@@ -594,7 +609,6 @@ class Notify
 			return -1;
 		}
 
-		//var_dump($resarray);
 		return $resarray;
 	}
 
@@ -602,12 +616,12 @@ class Notify
 	 *  Check if notification are active for couple action/company.
 	 * 	If yes, send mail and save trace into llx_notify.
 	 *
-	 * 	@param	string	$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-	 * 	@param	Object	$object				Object the notification deals on
-	 *	@param 	array	$filename_list		List of files to attach (full path of filename on file system)
-	 *	@param 	array	$mimetype_list		List of MIME type of attached files
-	 *	@param 	array	$mimefilename_list	List of attached file name in message
-	 *	@return	int							Return integer <0 if KO, or number of changes if OK
+	 * 	@param	string			$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+	 * 	@param	CommonObject	$object				Object the notification deals on
+	 *	@param 	string[]		$filename_list		List of files to attach (full path of filename on file system)
+	 *	@param 	string[]		$mimetype_list		List of MIME type of attached files
+	 *	@param 	string[]		$mimefilename_list	List of attached file name in message
+	 *	@return	int									Return integer <0 if KO, or number of changes if OK
 	 */
 	public function send($notifcode, $object, $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
 	{
@@ -707,7 +721,7 @@ class Notify
 		if ($result) {
 			$num = $this->db->num_rows($result);
 			$projtitle = '';
-			if (is_object($object->project) || $object->fetch_project() > 0) {
+			if (is_object($object->project) || $object->fetchProject() > 0) {
 				$projtitle = '('.$object->project->title.')';
 			}
 
@@ -938,6 +952,9 @@ class Notify
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
+								$object->fetch_thirdparty();
+							}
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);

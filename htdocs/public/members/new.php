@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +55,9 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+// if (is_numeric($entity)) { // $entity is casted to int
+define("DOLENTITY", $entity);
+// }
 
 
 // Load Dolibarr environment
@@ -78,6 +78,15 @@ $action = GETPOST('action', 'aZ09');
 $errmsg = '';
 $num = 0;
 $error = 0;
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
@@ -104,15 +113,17 @@ $user->loadDefaultValues();
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
  * @param 	int    		$disablehead		More content into html header
- * @param 	array  		$arrayofjs			Array of complementary js files
- * @param 	array  		$arrayofcss			Array of complementary css files
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -159,9 +170,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs;
 
@@ -688,7 +701,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 		print '<tr><td>'.$langs->trans('State').'</td><td>';
 		if ($country_code) {
 			print img_picto('', 'state', 'class="pictofixedwidth paddingright"');
-			print $formcompany->select_state(GETPOST("state_id"), $country_code);
+			print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 		}
 		print '</td></tr>';
 	}
@@ -969,7 +982,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 }
 
-
+//htmlPrintOnlineFooter($mysoc, $langs);
 llxFooterVierge();
 
 $db->close();

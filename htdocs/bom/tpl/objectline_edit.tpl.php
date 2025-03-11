@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
+/* Copyright (C) 2010-2012	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2012		Christophe Battarel	    <christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013		Florian Henry		    <florian.henry@open-concept.pro>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		Vincent Maury		    <vmaury@timgroup.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,19 @@
  */
 
 require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
-
+/**
+ * @var BOMLine $line
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var HookManager $hookmanager
+ * @var Societe $buyer
+ * @var Societe $seller
+ * @var Translate $langs
+ *
+ * @var string $action
+ * @var int $i
+ * @var bool $var
+ */
 
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
@@ -41,8 +54,15 @@ if (empty($object) || !is_object($object)) {
 	exit(1);
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+@phan-var-force int $i
+@phan-var-force bool $var
+@phan-var-force BOMLine $line
+@phan-var-force Societe $buyer
+@phan-var-force Societe $seller
+';
 
 global $forceall, $filtertype;
 
@@ -94,13 +114,13 @@ if ($line->fk_product > 0) {
 
 if (is_object($hookmanager)) {
 	$fk_parent_line = (GETPOST('fk_parent_line') ? GETPOST('fk_parent_line') : $line->fk_parent_line);
-	$parameters = array('line'=>$line, 'fk_parent_line'=>$fk_parent_line, 'var'=>$var, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer);
+	$parameters = array('line' => $line, 'fk_parent_line' => $fk_parent_line, 'var' => $var, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer);
 	$reshook = $hookmanager->executeHooks('formEditProductOptions', $parameters, $this, $action);
 }
 
 //Line extrafield
 if (is_object($objectline) && !empty($extrafields)) {
-	$temps = $line->showOptionals($extrafields, 'edit', array('class'=>'tredited'), '', '', 1, 'line');
+	$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', 1, 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 		print $temps;

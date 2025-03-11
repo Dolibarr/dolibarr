@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
@@ -76,7 +85,10 @@ if (!$sortfield) {
 	$sortfield = "pd.rowid";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
+$morejs = array();
+$morecss = array();
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -87,17 +99,17 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'pd.rowid'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
-	'pd.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
-	'c.code'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
-	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled("bank"))),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 70, 'enabled' => (isModEnabled("bank"))),
-	'pd.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 80),
+	'pd.rowid'			=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
+	'pd.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
+	'c.code'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
+	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (isModEnabled("bank"))),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (isModEnabled("bank"))),
+	'pd.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
+'@phan-var-force array<string,array{label:string,checked:string,position?:int,help?:string,enabled?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
@@ -443,6 +455,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.rowid']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pd.rowid']['label'], $_SERVER["PHP_SELF"], "pd.rowid", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

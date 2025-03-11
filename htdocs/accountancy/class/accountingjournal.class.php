@@ -2,6 +2,7 @@
 /* Copyright (C) 2017-2022  OpenDSI     <support@open-dsi.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Janniaux <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +75,7 @@ class AccountingJournal extends CommonObject
 	public $active;
 
 	/**
-	 * @var array<string,array{found:bool,label:string,code_formatted1:string,label_formatted_1:string,label_formatted_2:string}> 	Accounting account cached
+	 * @var array<string,array{found:bool,label:string,code_formatted_1:string,label_formatted_1:string,label_formatted_2:string}> 	Accounting account cached
 	 */
 	public static $accounting_account_cached = array();
 
@@ -101,6 +102,50 @@ class AccountingJournal extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 0;
+	}
+
+	/**
+	 * Create a new Accounting Journal.
+	 *
+	 * @param  User	$user the user that created the journal, currently unused
+	 * @return int  Return integer <0 on error, or the ID of the created object
+	 */
+	public function create($user)
+	{
+		$valid_nature = array(1, 2, 3, 4, 5, 8, 9);
+		if (!in_array((int) $this->nature, $valid_nature)) {
+			$this->error = get_class($this)."::Create Error invalid field nature '" . strval($this->nature) . "'";
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_journal";
+		$sql .= " (entity, code, label, nature, active)";
+		$sql .= " VALUES ("
+			. ((int) $this->entity)           .",'"
+			. $this->db->escape($this->code)  ."','"
+			. $this->db->escape($this->label) ."',"
+			. ((int) $this->nature)           .","
+			. ((int) $this->active)           .")";
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = get_class($this)."::Create Error: " . $this->db->lasterror();
+			dol_syslog($this->error, LOG_ERR);
+			return -1;
+		}
+
+		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_journal");
+		if ($id <= 0) {
+			$this->error = get_class($this)."::Create Error " . $id . ": " . $this->db->lasterror();
+			dol_syslog($this->error, LOG_ERR);
+			return -2;
+		}
+
+		$this->id = $id;
+		$this->rowid = $id;
+		return $id;
 	}
 
 	/**
@@ -189,9 +234,9 @@ class AccountingJournal extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAccountingJournal");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 
@@ -211,7 +256,7 @@ class AccountingJournal extends CommonObject
 		}
 		if ($withlabel == 2 && !empty($this->nature)) {
 			$key = $langs->trans("AccountingJournalType".$this->nature);
-			$transferlabel = ($this->nature && $key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
+			$transferlabel = ($key != "AccountingJournalType".strtoupper($langs->trans($this->nature)) ? $key : $this->label);
 			$label_link .= ' - '.($nourl ? '<span class="opacitymedium">' : '').$transferlabel.($nourl ? '</span>' : '');
 		}
 
@@ -462,7 +507,7 @@ class AccountingJournal extends CommonObject
 
 			$element = array(
 				'ref' => dol_trunc($element_static->ref, 16, 'right', 'UTF-8', 1),
-				'error' => $pre_data_info['error'],
+				'error' => array_key_exists('error', $pre_data_info) ? $pre_data_info['error'] : '',
 				'blocks' => array(),
 			);
 
@@ -583,7 +628,7 @@ class AccountingJournal extends CommonObject
 
 							$lines = array();
 							$lines[0][$accountancy_code_value_asset_sold] = -((float) $element_static->acquisition_value_ht - $last_cumulative_amount_ht);
-							$lines[0][$accountancy_code_depreciation_asset] = -$last_cumulative_amount_ht;
+							$lines[0][$accountancy_code_depreciation_asset] = - (float) $last_cumulative_amount_ht;
 							$lines[0][$accountancy_code_asset] = $element_static->acquisition_value_ht;
 
 							$disposal_amount_vat = $disposal_subject_to_vat ? (float) price2num($disposal_amount * $disposal_vat / 100, 'MT') : 0;
@@ -928,7 +973,7 @@ class AccountingJournal extends CommonObject
 	 *  Get accounting account info
 	 *
 	 * @param	string	$account	Accounting account number
-	 * @return	array{found:bool,label:string,code_formatted1:string,label_formatted_1:string,label_formatted_2:string}		Accounting account info
+	 * @return	array{found:bool,label:string,code_formatted_1:string,label_formatted_1:string,label_formatted_2:string}		Accounting account info
 	 */
 	public function getAccountingAccountInfos($account)
 	{

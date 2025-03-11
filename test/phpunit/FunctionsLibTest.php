@@ -93,12 +93,12 @@ class FunctionsLibTest extends CommonClassTest
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT') != 5) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') != 2) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
 			die(1);
 		}
@@ -208,11 +208,11 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
-	 * testDolForgeCriteriaCallback
+	 * testDolForgeSQLCriteriaCallback
 	 *
 	 * @return boolean
 	 */
-	public function testDolForgeCriteriaCallback()
+	public function testDolForgeSQLCriteriaCallback()
 	{
 		global $conf, $langs, $db;
 
@@ -372,18 +372,23 @@ class FunctionsLibTest extends CommonClassTest
 
 		$input = "yahoo.com";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
 
 		$input = "yhaoo.com";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
 		$input = "dolibarr.fr";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
+
+		$input = "usace.army.mil";
+		$result = isValidMXRecord($input);
+		print __METHOD__." ".$input." result=".$result."\n";
+		$this->assertEquals(1, $result);
 	}
 
 	/**
@@ -533,7 +538,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//Internet Explorer 11
+		// Internet Explorer 11
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
@@ -542,7 +547,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//Internet Explorer 11 bis
+		// Internet Explorer 11 bis
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; NP06; rv:11.0) like Gecko';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
@@ -551,7 +556,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//iPad
+		// iPad
 		$user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('safari', $tmp['browsername']);
@@ -560,11 +565,19 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
 
-		//Lynx
+		// Lynx
 		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
 		$tmp = getBrowserInfo($user_agent);
-		$this->assertEquals('lynxlinks', $tmp['browsername']);
+		$this->assertEquals('textbrowser', $tmp['browsername']);
 		$this->assertEquals('2.8.8', $tmp['browserversion']);
+		$this->assertEquals('unknown', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
+
+		// W3M
+		$user_agent = 'w3m/1.2.3-git123456';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('textbrowser', $tmp['browsername']);
+		$this->assertEquals('1.2.3', $tmp['browserversion']);
 		$this->assertEquals('unknown', $tmp['browseros']);
 		$this->assertEquals('classic', $tmp['layout']);
 	}
@@ -1124,6 +1137,18 @@ class FunctionsLibTest extends CommonClassTest
 		$input = 'x&<b>#</b>,"';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1);
 		$this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;', $result);
+
+		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub%20Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
+		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub%20Mark-ea2971cee799.png">', $result);
+
+		$input = '<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals('<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">', $result);
+
+		$input = '<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1);
+		$this->assertEquals('&lt;img src=&quot;data:image/png;base64, 123/456+789==&quot; style=&quot;height: 123px; width:456px&quot;&gt;', $result);
 
 		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
@@ -1869,7 +1894,6 @@ class FunctionsLibTest extends CommonClassTest
 		return true;
 	}
 
-
 	/**
 	 * testRoundUpToNextMultiple
 	 *
@@ -1892,5 +1916,45 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(roundUpToNextMultiple(40, 6), 42);
 		$this->assertEquals(roundUpToNextMultiple(40.5, 6), 42);
 		$this->assertEquals(roundUpToNextMultiple(44.5, 6), 48);
+	}
+
+	/**
+	 * testNaturalSearch
+	 *
+	 * @return void;
+	 */
+	public function testNaturalSearch()
+	{
+		global $db;
+
+		$s = natural_search("t.field", "abc def");
+		$this->assertEquals(" AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')", $s);
+
+		$s = natural_search("t.field", "'abc def' ghi");
+		$this->assertEquals(" AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')", $s);
+
+		$s = natural_search("t.field", "abc def,ghi", 3);				// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi'))", $s);
+
+		$s = natural_search("t.field", "'ab\'c' def','ghi', 'jkl'", 3);	// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi','jkl'))", $s);
+
+		$s = natural_search("t.field", "a,b", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('a','b'))", $s);
+
+		$s = natural_search("t.field", "A'@%B", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('AB'))", $s);
+
+		/*
+		$s = $db->sanitize("a,b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a',b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a'b',c", 1);
+		var_dump($s);
+		*/
+
+		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
 	}
 }

@@ -5,7 +5,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,10 @@ define('DONOTLOADCONF', 1); // To avoid loading conf by file inc.php
 include 'inc.php';
 
 global $langs;
+
+/**
+ * @var Translate $langs
+ */
 
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
 $setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
@@ -98,8 +102,9 @@ if (@file_exists($forcedfile)) {
 			$main_data_dir = $argv[4]; // override when executing the script in command line
 		}
 		// In mode 3 the main_url is custom
-		if ($force_install_noedit != 3)
-		$main_url = detect_dolibarr_main_url_root();
+		if ($force_install_noedit != 3) {
+			$main_url = detect_dolibarr_main_url_root();
+		}
 		if (!empty($argv[5])) {
 			$main_url = $argv[5]; // override when executing the script in command line
 		}
@@ -513,7 +518,7 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 					$dest = $dirodt.'/template_'.$cursorfile.'.odt';
 
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						print '<tr><td colspan="2"><br>'.$langs->trans('ErrorFailToCopyFile', $src, $dest).'</td></tr>';
 					}
@@ -564,14 +569,20 @@ if (!$error && $db->connected && $action == "set") {	// Test on permission not r
 
 			// Check database connection
 
-			$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, (int) $conf->db->port);
-
-			if ($db->error) {
-				print '<div class="error">'.$db->error.'</div>';
+			$db = null;
+			if ($databasefortest === null) {
+				print '<div class="error">Database name can not be empty</div>';
 				$error++;
+			} else {
+				$db = getDoliDBInstance($conf->db->type, $conf->db->host, $userroot, $passroot, $databasefortest, (int) $conf->db->port);
+
+				if ($db->error) {
+					print '<div class="error">'.$db->error.'</div>';
+					$error++;
+				}
 			}
 
-			if (!$error) {
+			if (!$error && $db !== null) {
 				if ($db->connected) {
 					$resultbis = 1;
 

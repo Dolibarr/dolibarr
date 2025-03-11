@@ -3,6 +3,8 @@
  * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2012 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +36,19 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals', 'salaries', 'suppliers'));
+
+$contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : str_replace('_', '', basename(dirname(__FILE__)).basename(__FILE__, '.php')); // To manage different context of search
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 // Get supervariables
 $id = GETPOSTINT('id');
@@ -94,7 +107,6 @@ $thirdpartytmp = new Societe($db);
 llxHeader('', $langs->trans("WithdrawalsReceipts"));
 
 if ($id > 0 || $ref) {
-	$object->fetch($id, $ref);
 	if (empty($object->id)) {
 		$langs->load('errors');
 		echo '<div class="error">'.$langs->trans("ErrorRecordNotFound").'</div>';
@@ -311,13 +323,17 @@ if ($resql) {
 		print_liste_field_titre("RefSupplierShort", $_SERVER["PHP_SELF"], "f.ref_supplier", '', $param, '', $sortfield, $sortorder);
 	}
 	print_liste_field_titre(($salaryBonPl ? "Employee" : "ThirdParty"), $_SERVER["PHP_SELF"], "s.nom", '', $param, '', $sortfield, $sortorder);
-	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, 'class="right"', $sortfield, $sortorder);
-	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, 'align="center"', $sortfield, $sortorder);
+	print_liste_field_titre(($salaryBonPl ? "AmountSalary" : "AmountInvoice"), $_SERVER["PHP_SELF"], "f.total_ttc", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("AmountRequested", $_SERVER["PHP_SELF"], "pl.amount", "", $param, '', $sortfield, $sortorder, 'right ');
+	print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "", "", $param, '"', $sortfield, $sortorder, 'center ');
 	print "</tr>\n";
 
 	$totalinvoices = 0;
 	$totalamount_requested = 0;
+	$salarytmp = null;
+	$usertmp = null;
+	$invoicetmpcustomer = null;
+	$invoicetmpsupplier = null;
 
 	if ($salaryBonPl) {
 		$salarytmp = new Salary($db);
@@ -337,7 +353,7 @@ if ($resql) {
 			$salarytmp->fetch($obj->salaryid);
 			$usertmp->fetch($obj->userid);
 			$itemurl = $salarytmp->getNomUrl(1);
-			$partyurl = $usertmp->getNomUrl(1);
+			$partyurl = $usertmp->getNomUrl(-1);
 		} elseif ($invoicetmpcustomer instanceof Facture && $invoicetmpsupplier instanceof FactureFournisseur) {
 			if ($obj->type == 'bank-transfer') {
 				$invoicetmp = $invoicetmpsupplier;
@@ -413,8 +429,10 @@ if ($resql) {
 		print "</td>\n";
 		print '<td class="right">';
 		// If the page show all record (no pagination) and total does not match total of file, we show a warning. Should not happen.
-		if (($nbtotalofrecords <= $num) && $totalamount_requested != $object->amount) {
-			print img_warning("AmountOfFileDiffersFromSumOfInvoices");
+		if (($nbtotalofrecords <= $num) && $totalamount_requested != (float) $object->amount) {
+			$langs->load("errors");
+			// Warning, amount of file (%s) differs from the sum of lines (%s)
+			print img_warning($langs->trans("WarningAmountOfFileDiffersFromSumOfLines", price((float) $object->amount), price($totalamount_requested)));
 		}
 		print price($totalamount_requested);
 		print "</td>\n";

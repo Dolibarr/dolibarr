@@ -1,14 +1,15 @@
 <?php
-/* Copyright (C) 2010-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2015-2016	Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2018-2019  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024		Vincent Maury		<vmaury@timgroup.fr>
+/* Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2012-2013	Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012       Cédric Salvador     	<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014       Raphaël Doursenaud  	<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2015-2016	Marcos García			<marcosgdf@gmail.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2024		Vincent Maury			<vmaury@timgroup.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,25 @@
 
 require_once DOL_DOCUMENT_ROOT."/product/class/html.formproduct.class.php";
 
+/**
+ * @var CommonObject $this
+ * @var CommonObject $object
+ * @var Form $form
+ * @var Societe $buyer
+ * @var Translate $langs
+ */
+
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error: this template page cannot be called directly as an URL";
 	exit;
 }
 
-'@phan-var-force CommonObject $this
- @phan-var-force CommonObject $object';
+'
+@phan-var-force CommonObject $this
+@phan-var-force CommonObject $object
+@phan-var-force Societe $buyer
+';
 
 global $forceall, $forcetoshowtitlelines, $filtertype;
 
@@ -100,7 +112,7 @@ if ($nolinesbefore) {
 
 	// Service and workstations are active
 	if ($filtertype == 1 && isModEnabled('workstation')) {
-		print '<td class="linecolworkstation right">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
+		print '<td class="linecolworkstation">' .  $form->textwithpicto($langs->trans('Workstation'), '') . '</td>';
 	}
 	// Cost
 	print '<td class="linecoltotalcost right">' .  $form->textwithpicto($langs->trans('TotalCost'), '') . '</td>';
@@ -108,6 +120,7 @@ if ($nolinesbefore) {
 	print '<td class="linecoledit" colspan="' . $colspan . '">&nbsp;</td>';
 	print '</tr>';
 }
+
 print '<tr class="pair nodrag nodrop nohoverpair'.(($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create').'">';
 $coldisplay = 0;
 
@@ -133,11 +146,11 @@ if (isModEnabled("product") || isModEnabled("service")) {
 	$statustoshow = -1;
 	if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 		// hide products in closed warehouse, but show products for internal transfer
-		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, 'warehouseopen,warehouseinternal', GETPOSTINT('combinations'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, 'warehouseopen,warehouseinternal', GETPOSTINT('combinations'), 1);
 	} else {
-		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOSTINT('combinations'), 1);
+		print $form->select_produits(GETPOSTINT('idprod'), (($filtertype == 1) ? 'idprodservice' : 'idprod'), $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), 0, $statustoshow, 2, '', 1, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOSTINT('combinations'), 1);
 	}
-	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
+	$urltocreateproduct = DOL_URL_ROOT.'/product/card.php?action=create'.(($filtertype == 1) ? '&leftmenu=service&type=1' : '&leftmenu=product&type=0').'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id);
 	print '<a href="'.$urltocreateproduct.'"><span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddProduct").'"></span></a>';
 
 	echo '</span>';

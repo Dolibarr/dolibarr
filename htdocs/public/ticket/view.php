@@ -2,6 +2,7 @@
 /* Copyright (C) 2013-2016  Jean-François FERRY     <hello@librethic.io>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,6 +57,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket"));
 
@@ -95,9 +104,9 @@ if ($cancel) {
 	$action = 'view_ticket';
 }
 
+$display_ticket = false;
 if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_close", "add_message", "add_contact"))) {	// Test on permission not required here. Done later by using the $track_id + check email in session
 	$error = 0;
-	$display_ticket = false;
 	if (!strlen($track_id)) {
 		$error++;
 		array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("TicketTrackId")));
@@ -116,7 +125,7 @@ if (in_array($action, array("view_ticket", "presend", "close", "confirm_public_c
 	}
 
 	if (!$error) {
-		$ret = $object->fetch('', '', $track_id);
+		$ret = $object->fetch(0, '', $track_id);
 		if ($ret && $object->dao->id > 0) {
 			// Check if emails provided is the one of author
 			$emailofticket = CMailFile::getValidAddress($object->dao->origin_email, 2);
@@ -396,7 +405,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 			$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
 			$formticket->param = array('track_id' => $object->dao->track_id, 'fk_user_create' => '-1',
-									   'returnurl' => $baseurl.'view.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:''));
+									   'returnurl' => $baseurl.'view.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : ''));
 
 			$formticket->withfile = 2;
 			$formticket->withcancel = 1;
@@ -407,7 +416,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		if ($action != 'presend') {
 			$baseurl = getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', DOL_URL_ROOT.'/public/ticket/');
 
-			print '<form method="POST" id="form_view_ticket_list" name="form_view_ticket_list" action="'.$baseurl.'list.php'.(!empty($entity) && isModEnabled('multicompany')?'?entity='.$entity:'').'">';
+			print '<form method="POST" id="form_view_ticket_list" name="form_view_ticket_list" action="'.$baseurl.'list.php'.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="view_ticketlist">';
 			print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
@@ -441,6 +450,8 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '</div>';
 
 		$object->viewTicketMessages(false, true, $object->dao);
+
+		print '<br>';
 	} else {
 		print '<!-- public view ticket -->';
 		print '<div class="ticketpublicarea ticketlargemargin centpercent">';

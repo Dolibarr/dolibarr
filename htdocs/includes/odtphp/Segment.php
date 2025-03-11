@@ -16,8 +16,24 @@ class SegmentException extends Exception
  */
 class Segment implements IteratorAggregate, Countable
 {
+	/**
+	 * @var string
+	 */
 	protected $xml;
+
+	/**
+	 * @var string
+	 */
+	protected $savxml;
+
+	/**
+	 * @var string
+	 */
 	protected $xmlParsed = '';
+
+	/**
+	 * @var string
+	 */
 	protected $name;
 	protected $children = array();
 	protected $vars = array();
@@ -30,7 +46,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @param string $name  name of the segment to construct
 	 * @param string $xml   XML tree of the segment
-	 * @param string $odf   odf
+	 * @param Odf    $odf   odf
 	 */
 	public function __construct($name, $xml, $odf)
 	{
@@ -64,6 +80,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count()
 	{
 		return count($this->children);
@@ -73,6 +90,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return Iterator
 	 */
+	#[\ReturnTypeWillChange]
 	public function getIterator()
 	{
 		return new RecursiveIteratorIterator(new SegmentIterator($this->children), 1);
@@ -114,13 +132,13 @@ class Segment implements IteratorAggregate, Countable
 				// Remove the IF tag
 				$this->xml = str_replace('[!-- IF '.$key.' --]', '', $this->xml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
-				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$this->xml = preg_replace($reg, '', $this->xml);
 			}
 			// Else the value is false, then two cases: no ELSE and we're done, or there is at least one place where there is an ELSE clause, then we replace it
 			else {
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
-				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@\[!--\sIF\s' . preg_quote($key, '@') . '\s--\](.*)(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $this->xml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
 					if (!empty($match[3])) $this->xml = str_replace($match[0], $match[3], $this->xml);
@@ -165,7 +183,7 @@ class Segment implements IteratorAggregate, Countable
 	*
 	* Miguel Erill 09/04/2017
 	*
-	* @param	string	$value	String to convert
+	* @param	string	$text	String to convert
 	*/
 	public function macroReplace($text)
 	{

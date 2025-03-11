@@ -4,9 +4,10 @@
  * Copyright (C) 2005-2024	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
@@ -125,33 +134,33 @@ $permissiontowritehr = $user->hasRight('hrm', 'write_personal_information', 'wri
 
 // Definition of fields for list
 $arrayfields = array(
-	'u.rowid' => array('label' => "TechnicalID", 'checked' => -1, 'position' => 5),
-	'u.login' => array('label' => "Login", 'checked' => 1, 'position' => 10),
-	'u.lastname' => array('label' => "Lastname", 'checked' => 1, 'position' => 15),
-	'u.firstname' => array('label' => "Firstname", 'checked' => 1, 'position' => 20),
-	'u.entity' => array('label' => "Entity", 'checked' => 1, 'position' => 50, 'enabled' => (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
-	'u.gender' => array('label' => "Gender", 'checked' => 0, 'position' => 22),
-	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? 1 : 0), 'position' => 25),
-	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => 1, 'position' => 27, 'csslist' => 'maxwidth150'),
-	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => 0, 'position' => 30),
-	'u.office_phone' => array('label' => "PhonePro", 'checked' => 1, 'position' => 31),
-	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => 1, 'position' => 32),
-	'u.email' => array('label' => "EMail", 'checked' => 1, 'position' => 35),
-	'co.label' => array('label' => "Country", 'checked' => 0, 'position' => 37),
-	'u.api_key' => array('label' => "ApiKey", 'checked' => 0, 'position' => 40, "enabled" => (isModEnabled('api') && $user->admin)),
-	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? 0 : 1), 'position' => 45),
-	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => -1, 'position' => 50, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => -1, 'position' => 51, 'enabled' => (isModEnabled('hrm') && $permissiontoreadhr)),
-	'u.job' => array('label' => "PostOrFunction", 'checked' => -1, 'position' => 60),
-	'u.salary' => array('label' => "Salary", 'checked' => -1, 'position' => 80, 'enabled' => (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
-	'u.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'u.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'u.statut' => array('label' => "Status", 'checked' => 1, 'position' => 1000),
+	'u.rowid' => array('label' => "TechnicalID", 'checked' => '-1', 'position' => 5),
+	'u.login' => array('label' => "Login", 'checked' => '1', 'position' => 10),
+	'u.lastname' => array('label' => "Lastname", 'checked' => '1', 'position' => 15),
+	'u.firstname' => array('label' => "Firstname", 'checked' => '1', 'position' => 20),
+	'u.entity' => array('label' => "Entity", 'checked' => '1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled('multicompany') && !getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))),
+	'u.gender' => array('label' => "Gender", 'checked' => '0', 'position' => 22),
+	'u.employee' => array('label' => "Employee", 'checked' => ($contextpage == 'employeelist' ? '1' : '0'), 'position' => 25),
+	'u.fk_user' => array('label' => "HierarchicalResponsible", 'checked' => '1', 'position' => 27, 'csslist' => 'maxwidth150'),
+	'u.accountancy_code' => array('label' => "AccountancyCode", 'checked' => '0', 'position' => 30),
+	'u.office_phone' => array('label' => "PhonePro", 'checked' => '1', 'position' => 31),
+	'u.user_mobile' => array('label' => "PhoneMobile", 'checked' => '1', 'position' => 32),
+	'u.email' => array('label' => "EMail", 'checked' => '1', 'position' => 35),
+	'co.label' => array('label' => "Country", 'checked' => '0', 'position' => 37),
+	'u.api_key' => array('label' => "ApiKey", 'checked' => '0', 'position' => 40, "enabled" => (string) (int) (isModEnabled('api') && $user->admin)),
+	'u.fk_soc' => array('label' => "Company", 'checked' => ($contextpage == 'employeelist' ? '0' : '1'), 'position' => 45),
+	'u.ref_employee' => array('label' => "RefEmployee", 'checked' => '-1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.national_registration_number' => array('label' => "NationalRegistrationNumber", 'checked' => '-1', 'position' => 51, 'enabled' => (string) (int) (isModEnabled('hrm') && $permissiontoreadhr)),
+	'u.job' => array('label' => "PostOrFunction", 'checked' => '-1', 'position' => 60),
+	'u.salary' => array('label' => "Salary", 'checked' => '-1', 'position' => 80, 'enabled' => (string) (int) (isModEnabled('salaries') && $user->hasRight("salaries", "readall")), 'isameasure' => 1),
+	'u.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'u.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'u.statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
 if (getDolGlobalInt('MAIN_ENABLE_LOGINS_PRIVACY') == 0) {
-	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => 1, 'position' => 100);
-	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => 0, 'position' => 110);
+	$arrayfields['u.datelastlogin'] = array('label' => "LastConnexion", 'checked' => '1', 'position' => 100);
+	$arrayfields['u.datepreviouslogin'] = array('label' => "PreviousConnexion", 'checked' => '0', 'position' => 110);
 }
 
 // Extra fields
@@ -159,10 +168,9 @@ include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Init search fields
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_user = GETPOST('search_user', 'alpha');
 $search_rowid = GETPOST('search_rowid', 'alpha');
 $search_login = GETPOST('search_login', 'alpha');
@@ -295,62 +303,62 @@ if (empty($reshook)) {
 	$objectclass = 'User';
 	$objectlabel = 'User';
 	$uploaddir = $conf->user->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// Disable or Enable records
 	if (!$error && ($massaction == 'disable' || $massaction == 'reactivate') && $permissiontoadd) {
 		$objecttmp = new User($db);
 
-		if (!$error) {
-			$db->begin();
+		$db->begin();
 
-			$nbok = 0;
-			foreach ($toselect as $toselectid) {
-				if ($toselectid == $user->id) {
-					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+		$nbok = 0;
+		foreach ($toselect as $toselectid) {
+			if ($toselectid == $user->id) {
+				setEventMessages($langs->trans($massaction == 0 ? 'CantDisableYourself' : 'CanEnableYourself'), null, 'errors');
+				$error++;
+				break;
+			}
+
+			$result = $objecttmp->fetch($toselectid);
+			if ($result > 0) {
+				if ($objecttmp->admin) {
+					setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
 					$error++;
 					break;
 				}
 
-				$result = $objecttmp->fetch($toselectid);
-				if ($result > 0) {
-					if ($objecttmp->admin) {
-						setEventMessages($langs->trans($massaction == 0 ? 'CantDisableAnAdminUserWithMassActions' : 'CantEnableAnAdminUserWithMassActions', $objecttmp->login), null, 'errors');
-						$error++;
-						break;
-					}
-
-					$result = $objecttmp->setstatus($massaction == 'disable' ? 0 : 1);
-					if ($result == 0) {
-						// Nothing is done
-					} elseif ($result < 0) {
-						setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-						$error++;
-						break;
-					} else {
-						$nbok++;
-					}
-				} else {
+				$result = $objecttmp->setstatus($massaction == 'disable' ? 0 : 1);
+				if ($result == 0) {
+					// Nothing is done
+				} elseif ($result < 0) {
 					setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
 					$error++;
 					break;
+				} else {
+					$nbok++;
 				}
-			}
-
-			if (!$error && !empty($conf->file->main_limit_users)) {
-				$nb = $object->getNbOfUsers("active");
-				if ($nb >= $conf->file->main_limit_users) {
-					$error++;
-					setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
-				}
-			}
-
-			if (!$error) {
-				setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
-				$db->commit();
 			} else {
-				$db->rollback();
+				setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+				$error++;
+				break;
 			}
+		}
+
+		if (!$error && !empty($conf->file->main_limit_users)) {
+			$nb = $object->getNbOfUsers("active");
+			if ($nb >= $conf->file->main_limit_users) {
+				$error++;
+				setEventMessages($langs->trans("YourQuotaOfUsersIsReached"), null, 'errors');
+			}
+		}
+
+		if (!$error) {
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+			$db->commit();
+		} else {
+			$db->rollback();
 		}
 	}
 }
@@ -733,12 +741,12 @@ if (isModEnabled('stock') && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) 
 	$formproduct = new FormProduct($db);
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('Warehouse');
-	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', $tmptitle, 0, 0, $tmptitle);
+	$moreforfilter .= img_picto($tmptitle, 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($search_warehouse, 'search_warehouse', '', 1, 0, 0, $tmptitle);
 	$moreforfilter .= '</div>';
 }
 
 $parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 if (empty($reshook)) {
 	$moreforfilter .= $hookmanager->resPrint;
 } else {
@@ -795,7 +803,7 @@ if (!empty($arrayfields['u.employee']['checked'])) {
 // Supervisor
 if (!empty($arrayfields['u.fk_user']['checked'])) {
 	print '<td class="liste_titre">';
-	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', 0, 0, 0, 0, '', 0, '', 'maxwidth125');
+	print $form->select_dolusers($search_supervisor, 'search_supervisor', 1, array(), 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth125');
 	print '</td>';
 }
 if (!empty($arrayfields['u.accountancy_code']['checked'])) {
@@ -884,6 +892,7 @@ if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['u.rowid']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['u.rowid']['label'], $_SERVER['PHP_SELF'], "u.rowid", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }

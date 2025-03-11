@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,14 @@ require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'boxes', 'accountancy'));
@@ -447,19 +455,23 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
-print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
+print '<td class="liste_titre"></td>';
 print '</tr>';
 
 // Activate FileCache (so content of file boxes are stored into a cache file int boxes/temp for 3600 seconds)
 print '<tr class="oddeven"><td>'.$langs->trans("EnableFileCache").'</td><td>';
-print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0), 1);
+if ($conf->use_javascript_ajax) {
+	print ajax_constantonoff('MAIN_ACTIVATE_FILECACHE', array(), null, 0, 0, 0, 2, 0, 1);
+} else {
+	print $form->selectyesno('MAIN_ACTIVATE_FILECACHE', getDolGlobalInt('MAIN_ACTIVATE_FILECACHE', 0), 1);
+}
 print '</td>';
 print '</tr>';
 
 print '</table>';
 print '</div>';
 
-print $form->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
+print $form->buttonsSaveCancel("Save", '', array(), false, 'reposition');
 
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";

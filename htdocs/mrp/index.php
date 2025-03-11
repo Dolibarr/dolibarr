@@ -4,8 +4,9 @@
  * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2019		Nicolas ZABOURI				<info@inovea-conseil.com>
- * Copyright (C) 2019		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +33,13 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 
-$hookmanager = new HookManager($db);
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('mrpindex'));
@@ -201,7 +208,7 @@ if ($resql) {
 			$staticbom->status = $obj->status;
 
 			print '<tr class="oddeven">';
-			print '<td>'.$staticbom->getNomUrl(1, 32).'</td>';
+			print '<td>'.$staticbom->getNomUrl(1, '32').'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
 			print '<td class="right">'.$staticbom->getLibStatut(3).'</td>';
 			print '</tr>';
@@ -257,7 +264,7 @@ if ($resql) {
 			$staticmo->status = $obj->status;
 
 			print '<tr class="oddeven">';
-			print '<td>'.$staticmo->getNomUrl(1, 32).'</td>';
+			print '<td>'.$staticmo->getNomUrl(1, '32').'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'dayhour').'</td>';
 			print '<td class="right">'.$staticmo->getLibStatut(3).'</td>';
 			print '</tr>';

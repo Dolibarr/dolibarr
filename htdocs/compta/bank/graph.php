@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
@@ -86,6 +94,13 @@ if (GETPOST("ref")) {
 
 $title = $object->ref.' - '.$langs->trans("Graph");
 $helpurl = "";
+$show1 = '';
+$show2 = '';
+$show3 = '';
+$show4 = '';
+$show5 = '';
+$morehtml = '';
+
 llxHeader('', $title, $helpurl);
 
 $result = dol_mkdir($conf->bank->dir_temp);
@@ -757,7 +772,7 @@ if ($result < 0) {
 
 // Onglets
 $head = bank_prepare_head($object);
-print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0, 'account');
+print dol_get_fiche_head($head, 'annual', $langs->trans("FinancialAccount"), 0, 'account');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
@@ -792,6 +807,8 @@ if ($account) {
 
 print dol_get_fiche_end();
 
+$head = bank_report_prepare_head($object);
+print dol_get_fiche_head($head, 'graph', $langs->trans("FinancialAccount"), 0);
 
 print '<table class="notopnoleftnoright" width="100%">';
 
@@ -867,6 +884,7 @@ if ($mode == 'showalltime') {
 	print '</div>';
 }
 
+print dol_get_fiche_end();
 
 // End of page
 llxFooter();

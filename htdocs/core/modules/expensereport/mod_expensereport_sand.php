@@ -87,7 +87,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$mask = getDolGlobalString('EXPENSEREPORT_SAND_MASK');
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.$mask.'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
 
@@ -152,7 +152,7 @@ class mod_expensereport_sand extends ModeleNumRefExpenseReport
 			$fuser->fetch($object->fk_user_author);
 		}
 
-		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, (string) $date, 'next', true, $fuser);
+		$numFinal = get_next_value($db, $mask, 'expensereport', 'ref', '', null, $date, 'next', true, $fuser);
 
 		return $numFinal;
 	}

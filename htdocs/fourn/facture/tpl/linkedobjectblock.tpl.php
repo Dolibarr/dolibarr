@@ -35,6 +35,10 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'
+@phan-var-force array<string,CommonObject> $linkedObjectBlock
+';
+
 
 $langs->load("bills");
 
@@ -68,6 +72,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		} ?></td>
 		<td class="right"><?php
 		if (method_exists($objectlink, 'getSommePaiement')) {
+			// @phan-suppress-next-line PhanUnknownMethodCall
 			echo $objectlink->getLibStatut(3, $objectlink->getSommePaiement());
 		} else {
 			echo $objectlink->getLibStatut(3);

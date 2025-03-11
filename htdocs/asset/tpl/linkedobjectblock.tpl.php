@@ -3,6 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,11 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
+/**
+ * @var HookManager $hookmanager
+ * @var User $user
+ */
+
 print "<!-- BEGIN PHP TEMPLATE commande/tpl/linkedobjectblock.tpl.php -->\n";
 
 global $user;
@@ -33,6 +39,10 @@ $langs = $GLOBALS['langs'];
 '@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 '@phan-var-force CommonObject[] $linkedObjectBlock';
+/**
+ * @var CommonObject[] $linkedObjectBlock
+ * @var Translate $langs
+ */
 
 // Load translation files required by the page
 $langs->load("assets");
@@ -52,7 +62,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="'.$trclass.'" >';
 	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Asset");
 	if (!empty($showImportButton) && getDolGlobalString('MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES')) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';
