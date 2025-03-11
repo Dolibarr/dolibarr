@@ -158,6 +158,7 @@ if (empty($reshook)) {
 		$object->country_id   = GETPOSTINT("country_id");
 		$object->phone        = (string) GETPOST("phone", "alpha");
 		$object->fax          = (string) GETPOST("fax", "alpha");
+		$object->warehouse_usage = (string) GETPOST("warehouse_usage", "alpha");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
@@ -396,6 +397,22 @@ if ($action == 'create') {
 	print '</select>';
 	print ajax_combobox('warehousestatus');
 	print '</td></tr>';
+
+	// warehouse usage
+	if (getDolGlobalString('STOCK_USE_WAREHOUSE_USAGE')) {
+		print '<tr><td>'.$langs->trans("WarehouseUsage").'</td><td>';
+		print '<select id="warehouseusage" name="warehouse_usage" class="flat">';
+		foreach ($object->warehouse_usage_label as $key => $value) {
+			if ($key == $object->warehouse_usage) {
+				print '<option value="'.$key.'" selected>'.$langs->trans($value).'</option>';
+			} else {
+				print '<option value="'.$key.'">'.$langs->trans($value).'</option>';
+			}
+		}
+		print '</select>';
+		print ajax_combobox('warehouseusage');
+		print '</td></tr>';
+	}
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
