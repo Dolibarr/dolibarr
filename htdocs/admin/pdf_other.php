@@ -231,7 +231,7 @@ print "<br>\n";
 
 
 $maxfilesizearray = getMaxFileSizeArray();
-$tooltipconcatpdf .= ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
+$tooltipconcatpdf = ($maxfilesizearray['maxmin'] > 0) ? $langs->trans('MaxSize').' : '.$maxfilesizearray['maxmin'].' '.$langs->trans('Kb') : '';
 $documenturl = DOL_URL_ROOT.'/document.php';
 if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
 	$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP');
