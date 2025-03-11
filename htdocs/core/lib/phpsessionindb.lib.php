@@ -251,14 +251,14 @@ session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", 
 /**
  * List sessions in db
  *
- * @return array<mixed, array{login: ?string, age: string, remote_ip: string}>
+ * @return array<mixed, array{login: ?string, age: string, remote_ip: string, user_agent: string}>
  */
 function dolListSessions()
 {
 	global $dbsession;
 
 	$arrayofsessions = [];
-	$sql = "SELECT s.session_id, s.session_variable, s.fk_user, s.last_accessed, s.remote_ip";
+	$sql = "SELECT s.session_id, s.session_variable, s.fk_user, s.last_accessed, s.remote_ip, s.user_agent";
 	$sql .= ", u.login";
 	$sql .= " FROM ".MAIN_DB_PREFIX."session as s";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
@@ -269,6 +269,7 @@ function dolListSessions()
 			"login" => $obj->login,
 			"age" => $obj->last_accessed,
 			"remote_ip" => $obj->remote_ip,
+			"user_agent" => $obj->user_agent,
 		];
 	}
 

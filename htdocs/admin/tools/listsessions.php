@@ -196,6 +196,7 @@ if ($savehandler == 'files') {
 	print_liste_field_titre("SessionId", $_SERVER["PHP_SELF"], "id", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("Age", $_SERVER["PHP_SELF"], "age", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("IPAddress", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
@@ -217,10 +218,12 @@ if ($savehandler == 'files') {
 		// Age
 		print '<td>'.$sessionentry['age'].'</td>';
 
-		// Raw
+		// Remote IP
 		print '<td>'.$sessionentry['remote_ip'].'</td>';
 		print '<td>&nbsp;</td>';
 
+		// User Agent
+		print '<td>'.$sessionentry['user_agent'].'</td>';
 		print "</tr>\n";
 		$i++;
 	}
