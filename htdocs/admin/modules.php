@@ -1337,7 +1337,7 @@ if ($mode == 'marketplace') {
 		$nextlink = $remotestore->get_next_link();
 
 
-		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="">';
 
 		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
 					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
@@ -1353,8 +1353,12 @@ if ($mode == 'marketplace') {
 						&nbsp;
 					</div>
 		<?php
-		print $previouslink;
-		print $nextlink;
+			$totalnboflines .= '<span class="product-count opacitymedium paddingleft">';
+			$totalnboflines .= $langs->trans("itemFound", $remotestore->numberTotalOfProducts);
+			$totalnboflines .= '</span>';
+
+			print $totalnboflines;
+			print $remotestore->getPagination();
 		print '</form>';
 
 		print '</div></div>';
@@ -1377,6 +1381,8 @@ if ($mode == 'marketplace') {
 					</tbody>
 				</table>
 			</div>
+			<div style="clear: both;"></div>
+			<div><?php print $remotestore->getPagination(); ?></div>
 		<?php
 	}
 }
