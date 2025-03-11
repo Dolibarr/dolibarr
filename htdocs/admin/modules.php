@@ -1353,7 +1353,7 @@ if ($mode == 'marketplace') {
 						&nbsp;
 					</div>
 		<?php
-			$totalnboflines .= '<span class="product-count opacitymedium paddingleft">';
+			$totalnboflines = '<span class="product-count opacitymedium paddingleft">';
 			$totalnboflines .= $langs->trans("itemFound", $remotestore->numberTotalOfProducts);
 			$totalnboflines .= '</span>';
 

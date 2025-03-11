@@ -313,7 +313,7 @@ class ExternalModules
 		$this->per_page = 11;	// We fix number of products per page to 11
 
 		// Length of $search must be at least 2 characters
-		if (!empty($this->search) && strlen(str_replace(' ', '', $this->search)) < 2) {
+		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {
 			$html .= '<tr class=""><td colspan="3" class="center">';
 			$html .= '<br><br>';
 			$html .= $langs->trans("SearchStringMinLength").'...';
@@ -332,6 +332,7 @@ class ExternalModules
 
 		// Fetch the products from Dolistore source
 		$dolistoreProducts = array();
+		$dolistoreProductsTotal = 0;
 		$this->numberTotalOfProducts = 0;
 		if ($this->dolistoreApiStatus > 0 && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$getDolistoreProducts = $this->callApi('products', $data);
@@ -348,6 +349,7 @@ class ExternalModules
 
 		// fetch from github repo
 		$fileProducts = array();
+		$fileProductsTotal = 0;
 		if (!empty($this->githubFileStatus) && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
 			$fileProducts = $this->fetchModulesFromFile($data);			// Return an array with all modules from the cache filecontent in $data
 
@@ -363,7 +365,7 @@ class ExternalModules
 		}
 
 		// Number of pages
-		$this->numberTotalOfPages = ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
+		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
 		// merge both sources
 		$this->products = array_values(array_merge($dolistoreProducts, $fileProducts));
@@ -654,7 +656,7 @@ class ExternalModules
 
 		$page = $this->no_page;
 		$limit = $this->per_page;
-		$totalnboflines = $this->numberTotalOfProducts;
+		$totalnboflines = $this->numberTotalOfProducts ?: 0;
 		$num = $this->numberOfProducts;
 
 		$html = "";
