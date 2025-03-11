@@ -1219,7 +1219,9 @@ class Notify
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
 					if (property_exists($object, 'thirdparty')) {
-						$object->fetch_thirdparty();
+						if (!($object->thirdparty instanceof Societe)) {
+							$object->fetch_thirdparty();
+						}
 
 						if ($object->thirdparty instanceof Societe && $object->thirdparty->default_lang && $object->thirdparty->default_lang != $langs->defaultlang) {
 							$outputlangs = new Translate('', $conf);
