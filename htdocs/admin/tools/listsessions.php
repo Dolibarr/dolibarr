@@ -174,7 +174,7 @@ if ($savehandler == 'files') {
 		// Date modification
 		print '<td class="nowrap left">'.dol_print_date($sessionentry['modification'], '%Y-%m-%d %H:%M:%S').'</td>';
 
-		// Age
+		// Age in seconds
 		print '<td>'.$sessionentry['age'].'</td>';
 
 		// Raw
@@ -194,6 +194,7 @@ if ($savehandler == 'files') {
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Login", $_SERVER["PHP_SELF"], "login", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("SessionId", $_SERVER["PHP_SELF"], "id", "", "", 'align="left"', $sortfield, $sortorder);
+	print_liste_field_titre("DateModification", $_SERVER["PHP_SELF"], "datem", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("Age", $_SERVER["PHP_SELF"], "age", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("IPAddress", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
 	print_liste_field_titre("UserAgent", $_SERVER["PHP_SELF"], "raw", "", "", 'align="left"', $sortfield, $sortorder);
@@ -216,15 +217,18 @@ if ($savehandler == 'files') {
 		}
 		print '</td>';
 
-		// Age
+		// Date modification
+		print '<td class="nowrap left">'.dol_print_date($sessionentry['modification'], '%Y-%m-%d %H:%M:%S').'</td>';
+
+		// Age in seconds
 		print '<td>'.$sessionentry['age'].'</td>';
 
 		// Remote IP
 		print '<td>'.$sessionentry['remote_ip'].'</td>';
-		print '<td>&nbsp;</td>';
 
 		// User Agent
-		print '<td>'.$sessionentry['user_agent'].'</td>';
+		print '<td class="nowrap left">'.$sessionentry['user_agent'].'</td>';
+		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 		$i++;
 	}
