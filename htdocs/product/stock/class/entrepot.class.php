@@ -118,7 +118,7 @@ class Entrepot extends CommonObject
 	public $warehouse_usage;
 
 	/**
-	 * @var	array	Warehouse usage ID labels
+	 * @var	array<int,string>	Warehouse usage ID labels
 	 */
 	public $warehouse_usage_label;
 
