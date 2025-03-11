@@ -92,7 +92,7 @@ class pdf_rouget extends ModelePdfExpedition
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$this->db = $db;
 		$this->name = "rouget";
