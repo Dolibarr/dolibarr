@@ -1105,6 +1105,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 							}
 
 							//$suffix = "_".$j."_".$i;
+						} else {
+							$errorMsg = 'Shipment dispatch SQL error : '.$db->lasterror();
+							setEventMessage($errorMsg, 'errors');
+							dol_syslog($errorMsg, LOG_ERR);
 						}
 
 						/*
