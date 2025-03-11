@@ -1,0 +1,7 @@
+# Dolibarr language file - Source file is en_US - datapolicy
+Module4100Desc =Module de gestion de la confidentialité des données (Conformité au RGPD)
+NB_YEARS =%s années
+DATAPOLICY_ADHERENT =Membre
+SendAgreement =Envoyer des e-mails
+TXTLINKDATAPOLICYACCEPT =Texte pour le lien « accord »
+MailSent =Un e-mail a été envoyé

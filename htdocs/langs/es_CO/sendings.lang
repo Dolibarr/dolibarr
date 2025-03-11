@@ -3,7 +3,6 @@ RefSending=Ref. de envío
 AllSendings=Todos los envios
 Receivings=Recibos de entrega
 SendingsArea=Área de envíos
-ListOfSendings=Lista de envíos
 LastSendings=Últimos envíos de %s
 NbOfSendings=Numero de envios
 SendingCard=Tarjeta de envío

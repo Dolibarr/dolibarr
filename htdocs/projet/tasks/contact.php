@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
@@ -153,7 +161,7 @@ if (!empty($withproject)) {
 }
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project project-tasks page-task_contact');
 
 
 /* *************************************************************************** */
@@ -204,7 +212,7 @@ if ($id > 0 || !empty($ref)) {
 			// Define a complementary filter for search of next/prev ref.
 			if (!$user->hasRight('projet', 'all', 'lire')) {
 				$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-				$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+				$projectstatic->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 			}
 
 			dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -247,17 +255,6 @@ if ($id > 0 || !empty($ref)) {
 				print '</td></tr>';
 			}
 
-			// Visibility
-			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-			if ($projectstatic->public) {
-				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-				print $langs->trans('SharedProject');
-			} else {
-				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-				print $langs->trans('PrivateProject');
-			}
-			print '</td></tr>';
-
 			// Budget
 			print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 			if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
@@ -277,9 +274,23 @@ if ($id > 0 || !empty($ref)) {
 			}
 			print '</td></tr>';
 
+			// Visibility
+			print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+			if ($projectstatic->public) {
+				print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+				print $langs->trans('SharedProject');
+			} else {
+				print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+				print $langs->trans('PrivateProject');
+			}
+			print '</td></tr>';
+
 			// Other attributes
 			$cols = 2;
-			//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			$savobject = $object;
+			$object = $projectstatic;
+			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+			$object = $savobject;
 
 			print '</table>';
 
@@ -289,16 +300,21 @@ if ($id > 0 || !empty($ref)) {
 
 			print '<table class="border tableforfield centpercent">';
 
-			// Description
-			print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-			print nl2br($projectstatic->description);
-			print '</td></tr>';
-
 			// Categories
 			if (isModEnabled('category')) {
 				print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 				print $form->showCategories($projectstatic->id, 'project', 1);
 				print "</td></tr>";
+			}
+
+			// Description
+			print '<tr><td class="titlefield'.($projectstatic->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+			if ($projectstatic->description) {
+				print '<tr><td class="nottitleforfield" colspan="2">';
+				print '<div class="longmessagecut">';
+				print dolPrintHTML($projectstatic->description);
+				print '</div>';
+				print '</td></tr>';
 			}
 
 			print '</table>';
@@ -327,9 +343,9 @@ if ($id > 0 || !empty($ref)) {
 
 		if (!GETPOST('withproject') || empty($projectstatic->id)) {
 			$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1);
-			$object->next_prev_filter = "fk_projet IN (".$db->sanitize($projectsListId).")";
+			$object->next_prev_filter = "fk_projet:IN:".$db->sanitize($projectsListId);
 		} else {
-			$object->next_prev_filter = "fk_projet = ".((int) $projectstatic->id);
+			$object->next_prev_filter = "fk_projet:=:".((int) $projectstatic->id);
 		}
 
 		$morehtmlref = '';

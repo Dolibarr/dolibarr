@@ -17,8 +17,9 @@ Module4100Name = Politique de confidentialité des données
 Module4100Desc = Module de gestion de la confidentialité des données (conformité avec le RGPD)
 # Administration page
 datapolicySetup = Configuration de la politique de confidentialité des données du module
-Deletion = Suppression de données
-datapolicySetupPage = En fonction des législations de vos pays (Exemple <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> Article 5 </a> du RGPD), les données personnelles doivent être conservées pendant une durée n'excédant pas celle nécessaire aux finalités pour lesquelles elles ont été collectées, sauf à des fins d'archivage. <br> La suppression se fera automatiquement après une certaine durée sans événement (la durée que vous aurez indiquée ci-dessous).
+DataDeletion=Suppression de données
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s mois
 ONE_YEAR = 1 an
 NB_YEARS = %s ans
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Prospect/Client
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Ni prospect/Ni client
 DATAPOLICY_CONTACT_FOURNISSEUR = Fournisseur
 DATAPOLICY_ADHERENT = Adhérent
-DATAPOLICY_Tooltip_SETUP=Définissez le délai sans interaction après lequel vous souhaitez que l'enregistrement soit automatiquement purgé.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Vous pouvez envoyer un e-mail RGPD à tous vos contacts concernés (qui n'ont pas encore reçu d'e-mail et pour lesquels vous n'avez rien enregistré concernant leur accord RGPD). Pour ce faire, utilisez le bouton suivant.
 SendAgreement = Envoyer des emails
 AllAgreementSend = Tous les e-mails ont été envoyés
 TXTLINKDATAPOLICYACCEPT = Texte pour le lien "accord"
 TXTLINKDATAPOLICYREFUSE = Texte pour le lien "désaccord"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = RGPD : Traitement des données personnelles
 DATAPOLICY_consentement = Consentement obtenu pour le traitement des données personnelles

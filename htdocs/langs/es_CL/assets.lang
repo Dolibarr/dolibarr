@@ -1,6 +1,4 @@
 # Dolibarr language file - Source file is en_US - assets
-DeleteType=Borrar
 ConfirmDeleteAssetType=¿Estás seguro de que quieres eliminar este tipo de activo?
-ShowTypeCard=Mostrar tipo &#39;%s&#39;
 AssetsTypeId=Identificación del tipo de activo
 AssetsTypeLabel=Etiqueta de tipo de activo

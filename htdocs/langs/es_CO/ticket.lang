@@ -126,7 +126,6 @@ TicketNewEmailSubjectAdmin=Nuevo ticket creado - Ref %s (ID de ticket público %
 TicketNewEmailBodyAdmin=<p> El ticket se acaba de crear con ID # %s, ver información: </p>
 SeeThisTicketIntomanagementInterface=Ver ticket en la interfaz de gestión
 ErrorEmailOrTrackingInvalid=Valor incorrecto para el ID de seguimiento o el correo electrónico
-NewUser=Nuevo Usuario
 NbOfTickets=Numero de tickets
 TicketCloseEmailSubjectCustomer=Boleto cerrado
 TicketCloseEmailSubjectAdmin=Ticket cerrado - Réf %s (ID de ticket público %s)

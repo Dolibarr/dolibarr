@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2019-2022	Thibault Foucart		<support@ptibogxiv.net>
- * Copyright (C) 2020		Josep Lluís Amador		<joseplluis@lliuretic.cat>
- * Copyright (C) 2021		Waël Almoman			<info@almoman.com>
+/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
+ * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
+ * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->load("members");
@@ -92,13 +100,32 @@ $comment = GETPOST("comment", 'restricthtml');
 $mail_valid = GETPOST("mail_valid", 'restricthtml');
 $caneditamount = GETPOSTINT("caneditamount");
 
-// Initialize technical objects
+// Initialize a technical object
 $object = new AdherentType($db);
 $extrafields = new ExtraFields($db);
 $hookmanager->initHooks(array('membertypecard', 'globalcard'));
 
 // Fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
+
+
+// Definition of array of fields for columns
+$tableprefix = 't';
+$arrayfields = array();
+foreach ($object->fields as $key => $val) {
+	// If $val['visible']==0, then we never show the field
+	if (!empty($val['visible'])) {
+		$visible = (int) dol_eval((string) $val['visible'], 1);
+		$arrayfields[$tableprefix.'.'.$key] = array(
+			'label' => $val['label'],
+			'checked' => (($visible < 0) ? 0 : 1),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => $val['position'],
+			'help' => isset($val['help']) ? $val['help'] : ''
+		);
+	}
+}
+
 
 // Security check
 $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
@@ -107,8 +134,9 @@ $result = restrictedArea($user, 'adherent', $rowid, 'adherent_type');
 /*
  *	Actions
  */
+$error = 0;
 
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 	$search_ref = "";
 	$search_lastname = "";
 	$search_login = "";
@@ -168,7 +196,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 		if ($num) {
 			$error++;
 			$langs->load("errors");
-			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $login), null, 'errors');
+			setEventMessages($langs->trans("ErrorLabelAlreadyExists", $object->label), null, 'errors');
 		}
 	}
 
@@ -249,15 +277,16 @@ if ($action == 'confirm_delete' && $user->hasRight('adherent', 'configurer')) {
 $form = new Form($db);
 $formproduct = new FormProduct($db);
 
+$title = $langs->trans("MembersTypeSetup");
 $help_url = 'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros|DE:Modul_Mitglieder';
 
-llxHeader('', $langs->trans("MembersTypeSetup"), $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-member page-type');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 // List of members type
 if (!$rowid && $action != 'create' && $action != 'edit') {
-	//print dol_get_fiche_head('');
+	//print dol_get_fiche_head([]);
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.amount, d.caneditamount, d.vote, d.statut as status, d.morphy, d.duration";
 	$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -308,7 +337,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		$moreforfilter = '';
 
 		print '<div class="div-table-responsive">';
-		print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+		print '<table class="tagtable noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 		print '<tr class="liste_titre">';
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -419,16 +448,18 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$i++;
 		}
 
+		// Show total line
+		include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
+
 		// If no record found
 		if ($num == 0) {
-			/*$colspan = 1;
+			$colspan = 1;
 			foreach ($arrayfields as $key => $val) {
-				if (!empty($val['checked'])) {
+				//if (!empty($val['checked'])) {
 					$colspan++;
-				}
-			}*/
-			$colspan = 9;
-			print '<tr><td colspan="'.$colspan.'" class="opacitymedium">'.$langs->trans("NoRecordFound").'</td></tr>';
+				//}
+			}
+			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 		}
 
 		print "</table>";
@@ -442,8 +473,6 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 
 // Creation
 if ($action == 'create') {
-	$object = new AdherentType($db);
-
 	print load_fiche_titre($langs->trans("NewMemberType"), '', 'members');
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
@@ -451,7 +480,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	print dol_get_fiche_head('');
+	print dol_get_fiche_head(array());
 
 	print '<table class="border centpercent">';
 	print '<tbody>';

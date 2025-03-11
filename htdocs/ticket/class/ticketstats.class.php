@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2016      Jean-François Ferry  <hello@librethic.io>
+/* Copyright (C) 2016       Jean-François Ferry     <hello@librethic.io>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,19 +36,22 @@ class TicketStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int thirdparty ID
+	 */
 	public $socid;
-	public $userid;
 
-	public $from;
-	public $field;
-	public $where;
+	/**
+	 * @var int User ID
+	 */
+	public $userid;
 
 	/**
 	 * Constructor
 	 *
 	 * @param  DoliDB $db     Database handler
 	 * @param  int    $socid  Id third party
-	 * @param  mixed  $userid Id user for filter or array of user ids
+	 * @param  int|int[]  $userid Id user for filter or array of user ids
 	 * @return void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -76,7 +81,7 @@ class TicketStats extends Stats
 	/**
 	 *     Renvoie le nombre de tickets par annee
 	 *
-	 *    @return array    Array of values
+	 *    @return array<array{0:int,1:int}>		Array of values
 	 */
 	public function getNbByYear()
 	{
@@ -93,7 +98,7 @@ class TicketStats extends Stats
 	 *
 	 *  @param  int 	$year 		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *  @return array            	Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -105,16 +110,16 @@ class TicketStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getNbByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
 	/**
-	 *  Return th eamount of tickets for a month and a given year
+	 *  Return the number of tickets for a month and a given year
 	 *
 	 *  @param  int 	$year 		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *  @return array               Array of values
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -126,7 +131,7 @@ class TicketStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 
 		$res = $this->_getAmountByMonth($year, $sql, $format);
-		//var_dump($res);print '<br>';
+
 		return $res;
 	}
 
@@ -134,7 +139,7 @@ class TicketStats extends Stats
 	 *    Return average amount
 	 *
 	 *    @param  int $year Year to scan
-	 *    @return array                Array of values
+	 *    @return array<int<0,11>,array{0:int<1,12>,1:int|float}>		Array of values
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -151,7 +156,7 @@ class TicketStats extends Stats
 	/**
 	 *    Return nb, total and average
 	 *
-	 *    @return array                Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{

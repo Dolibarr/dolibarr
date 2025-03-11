@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021      Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Vincent de Grandpré	<vincent@de-grandpre.quebec>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,18 @@ include_once 'inc.php';
 if (file_exists($conffile)) {
 	include_once $conffile;
 }
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_document_root
+ * @var string $dolibarr_main_db_host
+ * @var string $dolibarr_main_db_port
+ * @var string $dolibarr_main_db_name
+ * @var string $dolibarr_main_db_user
+ * @var string $dolibarr_main_db_pass
+ */
+
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
@@ -40,8 +52,8 @@ $step = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le delai autorise.
-// Ne fonctionne que si on est pas en safe_mode.
+// This page may be long. We are increasing the time allowed.
+// Only works if not in safe_mode.
 $err = error_reporting();
 error_reporting(0);
 @set_time_limit(120);
@@ -99,6 +111,7 @@ print 'Option clean_menus is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean
 print 'Option clean_orphelin_dir is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
 print 'Option clean_product_stock_batch is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
 print 'Option clean_perm_table is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_ecm_files_table is '.(GETPOST('clean_ecm_files_table', 'alpha') ? GETPOST('clean_ecm_files_table', 'alpha') : 'undefined').'<br>'."\n";
 print 'Option repair_link_dispatch_lines_supplier_order_lines, is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
 // Init data
 print 'Option set_empty_time_spent_amount is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
@@ -193,7 +206,7 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
-	|| GETPOST('clean_perm_table', 'alpha')
+	|| GETPOST('clean_perm_table', 'alpha') || GETPOST('clean_ecm_files_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
 	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha'));
@@ -239,7 +252,7 @@ if ($ok && GETPOST('standard', 'alpha')) {
 		$name = substr($file, 0, dol_strlen($file) - 4);
 
 		// Run sql script
-		$ok = run_sql($dir.$file, 0, '', 1);
+		$ok = run_sql($dir.$file, 0, 0, 1);
 	}
 }
 
@@ -517,7 +530,7 @@ if ($ok && GETPOST('restore_thirdparties_logos')) {
 			$name=preg_replace('/\'/','',$name);
 			*/
 
-			$tmp = explode('.', $obj->logo);
+			$tmp = explode('.', (string) $obj->logo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -591,7 +604,7 @@ if ($ok && GETPOST('restore_user_pictures', 'alpha')) {
 			 $name=preg_replace('/\'/','',$name);
 			 */
 
-			$tmp = explode('.', $obj->photo);
+			$tmp = explode('.', (string) $obj->photo);
 			$name = $tmp[0];
 			if (isset($tmp[1])) {
 				$ext = '.'.$tmp[1];
@@ -843,7 +856,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		print '<tr><td colspan="2"><br>*** Clean orphelins files into files '.$upload_dir.'</td></tr>';
 
-		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, true);
+		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
@@ -919,7 +932,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 					$id = $reg[1];
 				}
 
-				if ($id || $ref) {
+				if (($id || $ref) && $object_instance !== null) {
 					//print 'Fetch '.$id.' or '.$ref.'<br>';
 					$result = $object_instance->fetch($id, $ref);
 					//print $result.'<br>';
@@ -1282,6 +1295,59 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 }
 
 
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Clean table ecm_files from lines of entries whose physical files does not exists anymore (emplemented for entity 1 only)</td></tr>';
+
+	$MAXTODELETE = 100;
+
+	$sql = "SELECT rowid, filename, filepath, entity from ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity = 1";
+	$sql .= " ORDER BY rowid ASC";
+
+	$nbfile = 0;
+	$nbfiletodelete = 0;
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		if ($num) {
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				if ($obj->rowid > 0) {
+					$filetocheck = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
+					$nbfile++;
+					if (!dol_is_file($filetocheck) && !dol_is_file($filetocheck.'.noexe')) {
+						$nbfiletodelete++;
+						if ($nbfiletodelete <= $MAXTODELETE) {
+							print '<tr><td>Found line with id '.$obj->rowid.', entity '.$obj->entity.', file "'.$filetocheck.'" to delete';
+							if (GETPOST('clean_ecm_files_table', 'alpha') == 'confirmed') {
+								$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files WHERE rowid = ".((int) $obj->rowid);
+								$resqldelete = $db->query($sqldelete);
+								if (!$resqldelete) {
+									dol_print_error($db);
+								}
+								print ' - deleted';
+							}
+							print '</td></tr>';
+						} else {
+							break;
+						}
+					}
+				}
+				$i++;
+			}
+		}
+		if ($nbfiletodelete > $MAXTODELETE) {
+			print '<tr><td>There is more than '.$MAXTODELETE.' invalid entries into ecm_files index table (among '.$nbfile.' analyzed) with no valid physical files. Run the page several time to process all of them.</td></tr>';
+		} else {
+			print '<tr><td>Nb of entries processed into ecm_files index table: '.$nbfile.', number of invalid record: '.$nbfiletodelete.'</td></tr>';
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {

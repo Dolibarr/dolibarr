@@ -86,7 +86,7 @@ class Inventory extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'              => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -1, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => 'Id',),
@@ -136,23 +136,19 @@ class Inventory extends CommonObject
 	 * @var string Categories id separated by comma
 	 */
 	public $categories_product;
+	/**
+	 * @var int|''
+	 */
 	public $date_inventory;
+	/**
+	 * @var string
+	 */
 	public $title;
 
 	/**
 	 * @var int Status
 	 */
 	public $status;
-
-	/**
-	 * @var integer|string date_creation
-	 */
-	public $date_creation;
-
-	/**
-	 * @var integer|string date_validation
-	 */
-	public $date_validation;
 
 	/**
 	 * @var int ID
@@ -606,9 +602,9 @@ class Inventory extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowInventory");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -650,10 +646,10 @@ class Inventory extends CommonObject
 	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 5=Long label + Picto, 6=Long label + Picto
 	 *  @return string 			       	Label of status
 	 */
-	public static function LibStatut($status, $mode = 0)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
+		global $langs, $hookmanager;
 
 		$labelStatus = array();
 		$labelStatusShort = array();
@@ -671,15 +667,20 @@ class Inventory extends CommonObject
 			$statusType = 'status6';
 		}
 
+		$parameters = array('status' => $status, 'mode' => $mode);
+		$reshook = $hookmanager->executeHooks('LibStatut', $parameters, $this); // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			return $hookmanager->resPrint;
+		}
 		return dolGetStatus($labelStatus[$status], $labelStatusShort[$status], '', $statusType, $mode);
 	}
 
 	/**
 	 *	Return a thumb for kanban views
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -766,8 +767,8 @@ class Inventory extends CommonObject
 	 * Return the child warehouse of the current one
 	 *
 	 * @param int 	$id 				Id of warehouse
-	 * @param array	$TChildWarehouse  	Array of child warehouses
-	 * @return int             			Return integer <0 if KO, >0 if OK
+	 * @param int[]	$TChildWarehouse  	Array of child warehouses
+	 * @return int<-1,-1>|int<1,1>		Return integer <0 if KO, >0 if OK
 	 */
 	public function getChildWarehouse($id, &$TChildWarehouse)
 	{
@@ -836,7 +837,7 @@ class InventoryLine extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'         => array('type' => 'integer', 'label' => 'TechnicalID', 'visible' => -1, 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => 'Id',),
@@ -858,10 +859,25 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public $rowid;
 
+	/**
+	 * @var int
+	 */
 	public $fk_inventory;
+	/**
+	 * @var int
+	 */
 	public $fk_warehouse;
+	/**
+	 * @var int
+	 */
 	public $fk_product;
+	/**
+	 * @var string
+	 */
 	public $batch;
+	/**
+	 * @var int
+	 */
 	public $datec;
 
 	/**
@@ -870,7 +886,7 @@ class InventoryLine extends CommonObjectLine
 	public $qty_stock;
 
 	/**
-	 * @var float|null Quantity viewed
+	 * @var ?float Quantity viewed
 	 */
 	public $qty_view;
 
@@ -879,7 +895,13 @@ class InventoryLine extends CommonObjectLine
 	 */
 	public $qty_regulated;
 
+	/**
+	 * @var string
+	 */
 	public $pmp_real;
+	/**
+	 * @var string
+	 */
 	public $pmp_expected;
 
 	/**

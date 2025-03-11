@@ -6,7 +6,6 @@ ConfirmDeleteAction=¿Seguro que quieres eliminar este evento?
 CardAction=Tarjeta de evento
 ActionOnCompany=Compañía vinculada
 TaskRDVWith=Encuentro con %s
-ShowTask=Mostrar tarea
 ShowAction=Mostrar evento
 ThirdPartiesOfSaleRepresentative=Terceros con representante de ventas
 SaleRepresentativesOfThirdParty=Representantes de ventas de terceros

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,15 @@
  * $module must be defined ('ecm', 'medias', ...)
  * $formalreadyopen can be set to 1 to avoid to open the <form> to submit files a second time
  */
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Website $website
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page filemanager.tpl.php can't be called as URL";
@@ -41,9 +50,13 @@ if (empty($module)) {
 	$module = 'ecm';
 }
 
+'@phan-var-force Website $website';
+
 $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
+$error = 0;
+
 if ($module == 'ecm') {
 	$permtoadd = $user->hasRight("ecm", "setup");
 	$permtoupload = $user->hasRight("ecm", "upload");
@@ -79,27 +92,27 @@ print '<div class="inline-block toolbarbutton centpercent">';
 if ($permtoadd) {
 	$websitekeyandpageid = (!empty($websitekey) ? '&website='.urlencode($websitekey) : '').(!empty($pageid) ? '&pageid='.urlencode((string) $pageid) : '');
 	print '<a id="acreatedir" href="'.DOL_URL_ROOT.'/ecm/dir_add_card.php?action=create&module='.urlencode($module).$websitekeyandpageid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?file_manager=1'.$websitekeyandpageid).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ECMAddSection')).'">';
-	print img_picto('', 'folder-plus', '', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'folder-plus', '', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 } else {
 	print '<a id="acreatedir" href="#" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.$langs->trans("NotAllowed").'">';
-	print img_picto('', 'folder-plus', 'disabled', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'folder-plus', 'disabled', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($module == 'ecm') {
 	$tmpurl = ((!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_ECM_DISABLE_JS')) ? '#' : ($_SERVER["PHP_SELF"].'?action=refreshmanual'.($module ? '&amp;module='.$module : '').($section ? '&amp;section='.$section : '')));
 	print '<a id="arefreshbutton" href="'.$tmpurl.'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans('ReSyncListOfDir')).'">';
-	print img_picto('', 'refresh', 'id="refreshbutton"', false, 0, 0, '', 'size15x marginrightonly');
+	print img_picto('', 'refresh', 'id="refreshbutton"', 0, 0, 0, '', 'size15x marginrightonly');
 	print '</a>';
 }
 if ($permtoadd && GETPOSTISSET('website')) {	// If on file manager to manage medias of a web site
 	print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'&website='.urlencode($website->ref).'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-	print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+	print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 	print '</a>';
 } elseif ($permtoadd && $module == 'ecm') {	// If on file manager medias in ecm
 	if (getDolGlobalInt('ECM_SHOW_GENERATE_WEBP_BUTTON')) {
 		print '<a id="agenerateimgwebp" href="'.$_SERVER["PHP_SELF"].'?action=confirmconvertimgwebp&token='.newToken().'" class="inline-block valignmiddle toolbarbutton paddingtop" title="'.dol_escape_htmltag($langs->trans("GenerateImgWebp")).'">';
-		print img_picto('', 'images', '', false, 0, 0, '', 'size15x flip marginrightonly');
+		print img_picto('', 'images', '', 0, 0, 0, '', 'size15x flip marginrightonly');
 		print '</a>';
 	}
 }
@@ -271,10 +284,11 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 	$action = 'file_manager';
 }
 
+// List of directories
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

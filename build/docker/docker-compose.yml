@@ -1,25 +1,15 @@
-# This docker-compose.yml file is used to build and test quickly
-# a specific version of Dolibarr
-#
-# Before build, define the variable DOLI_VERSION as following:
-# $ export DOLI_VERSION=4.0.4
-# And then, you can run :
-# $ docker-compose up
-#
-# More information about Docker-compose : https://docs.docker.com/compose/
-
 version: "3"
 
 services:
-    mariadb:
-        container_name: dolibarr-mariadb-dev
+    mariadb-prod:
+        container_name: dolibarr-mariadb-prod
         image: mariadb:latest
         environment:
             MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PWD
             MYSQL_DATABASE: "dolibarr-prod"
 
     web:
-        container_name: dolibarr-web-dev
+        container_name: dolibarr-web-prod
         build: .
 
         volumes:
@@ -27,12 +17,12 @@ services:
          - ../../documents:/var/www/html/documents
 
         depends_on:
-            - mariadb
+            - mariadb-prod
         environment:
-            WWW_USER_ID: 1000
-            WWW_GROUP_ID: 1000
+            HOST_USER_ID: $HOST_USER_ID
+            HOST_GROUP_ID: $HOST_GROUP_ID
             DOLI_ROOT_PASSWORD: $MYSQL_ROOT_PWD
             DOLI_DATABASE: "dolibarr-prod"
-            DOLI_DB_SERVER: "mariadb"
+            DOLI_DB_SERVER: "mariadb-prod"
         ports:
             - "8080:80"

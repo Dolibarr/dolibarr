@@ -48,7 +48,6 @@ TicketsDisableCustomerEmail=Schakel e-mails altijd uit wanneer een ticket wordt 
 TicketList=Lijst met tickets
 CreateTicket=Maak een ticket
 TicketsManagement=Ticket beheer
-CreatedBy=Gemaakt door
 NewTicket=Nieuw ticket
 MarkAsRead=Markeer ticket als gelezen
 TicketHistory=Ticket geschiedenis

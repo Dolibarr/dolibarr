@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2013-2018  Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016       Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2022-2023  Udo Tamm            <dev@dolibit.de>
- * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2018  Jean-François FERRY 	<hello@librethic.io>
+ * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
+ * Copyright (C) 2022-2023  Udo Tamm            	<dev@dolibit.de>
+ * Copyright (C) 2023       Alexandre Spangaro  	<aspangaro@easya.solutions>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 /**
  *     \file        htdocs/admin/ticket.php
  *     \ingroup     ticket
- *     \brief       Page to setup module ticket
+ *     \brief       Page to setup the module ticket
  */
 
 // Load Dolibarr environment
@@ -32,6 +33,15 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "ticket"));
@@ -53,6 +63,17 @@ $type = 'ticket';
 $error = 0;
 $reg = array();
 
+// Initiate status list
+$statuslist = array(
+	Ticket::STATUS_IN_PROGRESS => $langs->trans("InProgress"),
+	Ticket::STATUS_NOT_READ => $langs->trans("NotRead"),
+	Ticket::STATUS_READ => $langs->trans("Read"),
+	Ticket::STATUS_ASSIGNED => $langs->trans("Assigned"),
+	Ticket::STATUS_NEED_MORE_INFO => $langs->trans("NeedMoreInformationShort"),
+	Ticket::STATUS_WAITING => $langs->trans("Waiting"),
+	Ticket::STATUS_CLOSED => $langs->trans("SolvedClosed")
+);
+
 /*
  * Actions
  */
@@ -71,6 +92,8 @@ if (GETPOSTISSET('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION')) {	// only for no
 if ($action == 'updateMask') {
 	$maskconstticket = GETPOST('maskconstticket', 'aZ09');
 	$maskticket = GETPOST('maskticket', 'alpha');
+
+	$res = 0;
 
 	if ($maskconstticket && preg_match('/_MASK$/', $maskconstticket)) {
 		$res = dolibarr_set_const($db, $maskconstticket, $maskticket, 'chaine', 0, '', $conf->entity);
@@ -150,6 +173,12 @@ if ($action == 'updateMask') {
 
 	$param_limit_view = GETPOST('TICKET_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
 	$res = dolibarr_set_const($db, 'TICKET_LIMIT_VIEW_ASSIGNED_ONLY', $param_limit_view, 'chaine', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$param_status = GETPOST('TICKET_SET_STATUS_ON_ANSWER');
+	$res = dolibarr_set_const($db, 'TICKET_SET_STATUS_ON_ANSWER', $param_status, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
 	}
@@ -412,7 +441,7 @@ foreach ($dirmodels as $reldir) {
 
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
-							'@phan-var-force CommonDocGenerator $module';
+							'@phan-var-force ModelePDFTicket $module';
 
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -427,7 +456,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -460,7 +489,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -536,12 +565,7 @@ print '</tr>';
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("TicketsAutoAssignTicket").'</td>';
 print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_AUTO_ASSIGN_USER_CREATE');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_AUTO_ASSIGN_USER_CREATE", $arrval, getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE'));
-}
+print '<input class="minwidth100" type="text" id="TICKET_AUTO_ASSIGN_USER_CREATE" name="TICKET_AUTO_ASSIGN_USER_CREATE" value="'.getDolGlobalString('TICKET_AUTO_ASSIGN_USER_CREATE').'">';
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoAssignTicketHelp"), 1, 'help');
@@ -560,6 +584,16 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td class="center">';
 print $formcategory->textwithpicto('', $langs->trans("TicketsAutoNotifyCloseHelp"), 1, 'help');
+print '</td>';
+print '</tr>';
+
+// Automatically define status on answering a ticket
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoChangeStatusOnAnswer").'</td>';
+print '<td class="left">';
+print $formcategory->selectarray("TICKET_SET_STATUS_ON_ANSWER", $statuslist, getDolGlobalString('TICKET_SET_STATUS_ON_ANSWER'));
+print '</td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoChangeStatusOnAnswerHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 
@@ -583,22 +617,7 @@ print $formcategory->textwithpicto('', $langs->trans("TicketsDelayBetweenAnswers
 print '</td>';
 print '</tr>';
 
-// Allow classification modification even if the ticket is closed
-print '<tr class="oddeven"><td>'.$langs->trans("TicketsAllowClassificationModificationIfClosed").'</td>';
-print '<td class="left">';
-if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED');
-} else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $formcategory->selectarray("TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED", $arrval, getDolGlobalString('TICKET_ALLOW_CLASSIFICATION_MODIFICATION_EVEN_IF_CLOSED'));
-}
-print '</td>';
-print '<td class="center">';
-print $formcategory->textwithpicto('', $langs->trans("TicketsAllowClassificationModificationIfClosedHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-print '</table><br>';
+print '</table>';
 
 print $formcategory->buttonsSaveCancel("Save", '', array(), 0, 'reposition');
 
@@ -621,7 +640,8 @@ print '<input type="hidden" name="action" value="setvar">';
 print '<input type="hidden" name="page_y" value="">';
 
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Email").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
 print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
 print "</tr>\n";
 
@@ -652,19 +672,19 @@ print $formcategory->textwithpicto('', $langs->trans("TicketEmailNotificationToH
 print '</td>';
 print '</tr>';
 
-// Disable email to customers
-print '<tr class="pair"><td>';
-print $form->textwithpicto($langs->trans("TicketsNotifyThirdPartyFromBackOfficeByDefault"), $langs->trans("TicketsNotifyThirdPartyFromBackOfficeByDefaultHelp"), 1, 'help');
-print '</td>';
+// Check "Notify thirdparty" on ticket creation
+print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
 print '<td class="left">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalInt('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
+	print $formcategory->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
 }
 print '</td>';
-print '<td></td>';
+print '<td class="center">';
+print $formcategory->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
+print '</td>';
 print '</tr>';
 
 // Message header
@@ -672,7 +692,7 @@ $mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';
@@ -684,7 +704,7 @@ $mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, 70);
+$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
 $doleditor->Create();
 print '</td>';
 print '<td class="center">';

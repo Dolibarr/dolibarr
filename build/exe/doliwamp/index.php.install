@@ -562,12 +562,11 @@ a:hover {
 	<ul class="tools">
 		<li><a target="_blank" href="index.php?phpinfo=1">Phpinfo</a></li>
 		<li><a target="_blank" href="server-status">Server-status</a></li>
-		<li><a target="_blank" href="/dolibarr/support/index.php">{$langues[$langue]['askhelp']}</a></li>
 	</ul>
 
 
 	<ul id="foot">
-		<li><a href="https://www.nltechno.com/pages/dolibarrwinbin.php">DoliWamp project</a> was built from modified sources of <a href="http://www.wampserver.com">WampServer project</a> from Anaska</li>
+		<li>DoliWamp package was built from modified sources of <a href="http://www.wampserver.com">WampServer project</a> from Anaska</li>
 	</ul>
 </body>
 </html>

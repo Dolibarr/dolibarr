@@ -6,6 +6,7 @@
  * Copyright (C) 2015       Benoit Bruchard			<benoitb21@gmail.com>
  * Copyright (C) 2019       Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,14 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
 
@@ -53,6 +62,7 @@ $type = 'donation';
 /*
  * Action
  */
+$error = 0;
 
 if ($action == 'specimen') {
 	$modele = GETPOST('module', 'alpha');
@@ -68,6 +78,7 @@ if ($action == 'specimen') {
 
 		$classname = (string) $modele;
 		$obj = new $classname($db);
+		'@phan-var-force ModeleDon $obj';
 
 		if ($obj->write_file($don, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=donation&file=SPECIMEN.html");
@@ -231,6 +242,7 @@ if (is_resource($handle)) {
 
 			require_once $dir.'/'.$file;
 			$module = new $classname($db);
+			'@phan-var-force ModeleDon $module';
 
 			// Show modules according to features level
 			if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -341,7 +353,8 @@ $label = $langs->trans("AccountAccounting");
 print '<label for="DONATION_ACCOUNTINGACCOUNT">'.$label.'</label></td>';
 print '<td class="center">';
 if (isModEnabled('accounting')) {
-	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, '', 1, 1);
+	/** @var FormAccounting $formaccounting */
+	print $formaccounting->select_account($conf->global->DONATION_ACCOUNTINGACCOUNT, 'DONATION_ACCOUNTINGACCOUNT', 1, array(), 1, 1);
 } else {
 	print '<input type="text" size="10" id="DONATION_ACCOUNTINGACCOUNT" name="DONATION_ACCOUNTINGACCOUNT" value="' . getDolGlobalString('DONATION_ACCOUNTINGACCOUNT').'">';
 }

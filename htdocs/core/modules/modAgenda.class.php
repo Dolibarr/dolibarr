@@ -9,6 +9,7 @@
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
  * Copyright (C) 2017      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,10 @@ class modAgenda extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array();
-		//$this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
+		$r = 0;
+
+		// $this->const[$r] = ["ACTION_EVENT_ADDON_PDF", "chaine", "standard", 'Name of PDF model of actioncomm', 0];
+		// $this->const[] = array('AGENDA_DEFAULT_FILTER_TYPE', 'chaine', 'AC_NON_AUTO', 'Default filter for type of event on agenda', 0, 'current');
 		$sqlreadactions = "SELECT code, label, description FROM ".MAIN_DB_PREFIX."c_action_trigger ORDER by rang";
 		$resql = $this->db->query($sqlreadactions);
 		if ($resql) {
@@ -99,7 +103,7 @@ class modAgenda extends DolibarrModules
 				$this->const[] = array('MAIN_AGENDA_ACTIONAUTO_'.$obj->code, "chaine", "1", '', 0, 'current');
 			}
 		} else {
-			dol_print_error($this->db->lasterror());
+			dol_print_error($this->db, $this->db->lasterror());
 		}
 		//$this->const[] = array("MAIN_AGENDA_XCAL_EXPORTKEY", "chaine", "123456", "Securekey for the public link");
 
@@ -207,6 +211,8 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
+
+		// TODO Move the top menu entry into the code part (eldy_menu.php and auguria.sql) so we can have a top menu shown for resource module only.
 		$this->menu[$r] = array(
 			'fk_menu' => 0,
 			'type' => 'top',
@@ -243,7 +249,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewAction',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
+			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&action=create',
 			'langs' => 'commercial',
 			'position' => 101,
 			'perms' => '($user->hasRight("agenda", "myactions", "create") || $user->hasRight("agenda", "allactions", "create"))',
@@ -598,8 +604,6 @@ class modAgenda extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Permissions
 		$this->remove($options);
 

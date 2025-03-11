@@ -170,13 +170,13 @@ class Stripe extends CommonObject
 	 * Get the Stripe customer of a thirdparty (with option to create it in Stripe if not linked yet).
 	 * Search on site_account = 0 or = $stripearrayofkeysbyenv[$status]['publishable_key']
 	 *
-	 * @param	CommonObject	$object							Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
-	 * @param	string	$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
-	 * @param	int		$status							Status (0=test, 1=live)
-	 * @param	int		$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
+	 * @param	Societe|Adherent	$object				Object thirdparty to check, or create on stripe (create on stripe also update the stripe_account table for current entity).  Used for AdherentType and Societe.
+	 * @param	string		$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	int<0,1>	$status							Status (0=test, 1=live)
+	 * @param	int<0,1>	$createifnotlinkedtostripe		1=Create the stripe customer and the link if the thirdparty is not yet linked to a stripe customer
 	 * @return 	\Stripe\Customer|null 					Stripe Customer or null if not found
 	 */
-	public function customerStripe(CommonObject $object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
+	public function customerStripe($object, $key = '', $status = 0, $createifnotlinkedtostripe = 0)
 	{
 		global $conf, $user;
 
@@ -198,6 +198,7 @@ class Stripe extends CommonObject
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 		$sql .= " AND (sa.site_account IS NULL OR sa.site_account = '' OR sa.site_account = '".$this->db->escape($stripearrayofkeysbyenv[$status]['publishable_key'])."')";
 		$sql .= " AND sa.key_account IS NOT NULL AND sa.key_account <> ''";
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -354,18 +355,18 @@ class Stripe extends CommonObject
 	 * @param   string  $currency_code                      Currency code
 	 * @param   string  $tag                                Tag
 	 * @param   string  $description                        Description
-	 * @param	mixed	$object							    Object to pay with Stripe
-	 * @param	string 	$customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
-	 * @param	string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	?CommonObject	$object					    Object to pay with Stripe
+	 * @param	?string $customer							Stripe customer ref 'cus_xxxxxxxxxxxxx' via customerStripe()
+	 * @param	?string	$key							    ''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int		$status							    Status (0=test, 1=live)
 	 * @param	int		$usethirdpartyemailforreceiptemail	1=use thirdparty email for receipt
 	 * @param	string	$mode		                        automatic=automatic confirmation/payment when conditions are ok, manual=need to call confirm() on intent
 	 * @param   boolean $confirmnow                         false=default, true=try to confirm immediately after create (if conditions are ok)
-	 * @param   string  $payment_method                     'pm_....' (if known)
+	 * @param   ?string  $payment_method                     'pm_....' (if known)
 	 * @param   int     $off_session                        If we use an already known payment method to pay when customer is not available during the checkout flow.
 	 * @param	int     $noidempotency_key					Do not use the idempotency_key when creating the PaymentIntent
 	 * @param	int		$did								ID of an existing line into llx_prelevement_demande (Dolibarr intent). If provided, no new line will be created.
-	 * @return 	\Stripe\PaymentIntent|null 			        Stripe PaymentIntent or null if not found and failed to create
+	 * @return 	?\Stripe\PaymentIntent				        Stripe PaymentIntent or null if not found and failed to create
 	 */
 	public function getPaymentIntent($amount, $currency_code, $tag, $description = '', $object = null, $customer = null, $key = null, $status = 0, $usethirdpartyemailforreceiptemail = 0, $mode = 'automatic', $confirmnow = false, $payment_method = null, $off_session = 0, $noidempotency_key = 1, $did = 0)
 	{
@@ -690,7 +691,7 @@ class Stripe extends CommonObject
 
 		$setupintent = null;
 
-		if (empty($setupintent)) {
+		if (empty($setupintent)) {  // @phan-suppress-current-line PhanPluginConstantVariableNull
 			$ipaddress = getUserRemoteIP();
 			$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress, 'dol_noidempotency' => (int) $noidempotency_key);
 			if (is_object($object)) {
@@ -845,7 +846,7 @@ class Stripe extends CommonObject
 
 		$card = null;
 
-		$sql = "SELECT sa.stripe_card_ref, sa.proprio, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn"; // stripe_card_ref is card_....
+		$sql = "SELECT sa.stripe_card_ref, sa.proprio as owner_name, sa.exp_date_month, sa.exp_date_year, sa.number, sa.cvn"; // stripe_card_ref is card_....
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe_rib as sa";
 		$sql .= " WHERE sa.rowid = ".((int) $object->id); // We get record from ID, no need for filter on entity
 		$sql .= " AND sa.type = 'card'";
@@ -885,7 +886,7 @@ class Stripe extends CommonObject
 					$exp_date_year = $obj->exp_date_year;
 					$number = $obj->number;
 					$cvc = $obj->cvn; // cvn in database, cvc for stripe
-					$cardholdername = $obj->proprio;
+					$cardholdername = $obj->owner_name;
 
 					$ipaddress = getUserRemoteIP();
 
@@ -1011,7 +1012,9 @@ class Stripe extends CommonObject
 			if ($num) {
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
+
 				dol_syslog(get_class($this)."::sepaStripe paymentmode=".$cardref);
+
 				if ($cardref) {
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
@@ -1034,7 +1037,7 @@ class Stripe extends CommonObject
 						dol_syslog($this->error, LOG_WARNING);
 					}
 				} elseif ($createifnotlinkedtostripe) {
-					$iban = $obj->iban;
+					$iban = dolDecrypt($obj->iban);
 					$ipaddress = getUserRemoteIP();
 					$metadata = array('dol_version' => DOL_VERSION, 'dol_entity' => $conf->entity, 'ipaddress' => $ipaddress);
 					if (is_object($object)) {
@@ -1095,6 +1098,7 @@ class Stripe extends CommonObject
 						$sepa = $s->paymentMethods->create($dataforcard);
 						if (!$sepa) {
 							$this->error = 'Creation of payment method sepa_debit on Stripe has failed';
+							dol_syslog($this->error, LOG_ERR);
 						} else {
 							// link customer and src
 							//$cs = $this->getSetupIntent($description, $soc, $cu, '', $status);
@@ -1107,6 +1111,7 @@ class Stripe extends CommonObject
 
 							if (!$cs) {
 								$this->error = 'Link SEPA <-> Customer failed';
+								dol_syslog($this->error, LOG_ERR);
 							} else {
 								dol_syslog("Update the payment mode of the customer");
 
@@ -1186,6 +1191,7 @@ class Stripe extends CommonObject
 		$sql .= " WHERE sa.key_account = '".$this->db->escape($customer)."'";
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql .= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
+		$sql .= " ORDER BY sa.site_account DESC, sa.rowid DESC"; // To get the entry with a site_account defined in priority
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -1362,8 +1368,11 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$description", "stripe_account" => "$account"));
 				}
 			}
+			'@phan-var-force stdClass|\Stripe\Charge $charge';
+			/*
 			if (isset($charge->id)) {
 			}
+			*/
 
 			$return->result = 'success';
 			$return->id = $charge->id;
@@ -1375,8 +1384,8 @@ class Stripe extends CommonObject
 					$return->message = $charge->source->card->brand." ....".$charge->source->card->last4;
 				} elseif ($charge->source->type == 'three_d_secure') {
 					$stripe = new Stripe($this->db);
-					$src = \Stripe\Source::retrieve("".$charge->source->three_d_secure->card, array(
-					"stripe_account" => $stripe->getStripeAccount($service)
+					$src = \Stripe\Source::retrieve((string) $charge->source->three_d_secure->card, array(
+						"stripe_account" => $stripe->getStripeAccount($service)
 					));
 					$return->message = $src->card->brand." ....".$src->card->last4;
 				} else {

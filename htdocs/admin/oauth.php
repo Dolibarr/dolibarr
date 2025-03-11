@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015-2018  Frederic France     <frederic.france@netlogic.fr>
+/* Copyright (C) 2015-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2022       Laurent Destailleur <eldy@users.sourceforge.net>
  *
@@ -28,6 +28,16 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/oauth.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 $supportedoauth2array = getSupportedOauth2Array();
 
@@ -90,6 +100,11 @@ if ($action == 'update') {
 					$error++;
 				}
 			}
+			if (GETPOSTISSET($constvalue.'_URL')) {
+				if (!dolibarr_set_const($db, $newconstvalue.'_URL', GETPOST($constvalue.'_URL'), 'chaine', 0, '', $conf->entity)) {
+					$error++;
+				}
+			}
 			if (GETPOSTISSET($constvalue.'_URLAUTHORIZE')) {
 				if (!dolibarr_set_const($db, $newconstvalue.'_URLAUTHORIZE', GETPOST($constvalue.'_URLAUTHORIZE'), 'chaine', 0, '', $conf->entity)) {
 					$error++;
@@ -119,6 +134,7 @@ if ($action == 'update') {
 			if ($constvalue !== $newconstvalue) {
 				dolibarr_del_const($db, $constvalue.'_ID', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_SECRET', $conf->entity);
+				dolibarr_del_const($db, $constvalue.'_URL', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_URLAUTHORIZE', $conf->entity);
 				dolibarr_del_const($db, $constvalue.'_SCOPE', $conf->entity);
 
@@ -139,7 +155,7 @@ if ($action == 'update') {
 					$error++;
 				}
 
-				// Update const where the token was used, might not be exhaustive
+				// Update other const that was using the renamed key as token (might not be exhaustive)
 				if (getDolGlobalString('MAIN_MAIL_SMTPS_OAUTH_SERVICE') == $oldname) {
 					if (!dolibarr_set_const($db, 'MAIN_MAIL_SMTPS_OAUTH_SERVICE', strtoupper($oldprovider).'-'.$newlabel, 'chaine', 0, '', $conf->entity)) {
 						$error++;
@@ -196,7 +212,12 @@ if ($action == 'delete_entry') {
 
 	$globalkey = empty($provider) ? $label : $label.'-'.$provider;
 
-	if (!dolibarr_del_const($db, $globalkey.'_NAME', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_ID', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity) ||  !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity) || !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
+	if (!dolibarr_del_const($db, $globalkey.'_NAME', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_ID', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_SECRET', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_URL', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_URLAUTHORIZE', $conf->entity)
+		|| !dolibarr_del_const($db, $globalkey.'_SCOPE', $conf->entity)) {
 		setEventMessages($langs->trans("ErrorInEntryDeletion"), null, 'errors');
 		$error++;
 	} else {
@@ -255,7 +276,20 @@ foreach ($list as $key) {
 		continue; // show only supported
 	}
 
-	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">'.$supportedoauth2array[$keyforsupportedoauth2array]['name'].'</option>'."\n";
+	print '<option name="'.$keyforsupportedoauth2array.'" value="'.str_replace('_NAME', '', $keyforsupportedoauth2array).'">';
+
+	$keyforsupportedoauth2array = preg_replace('/^OAUTH_/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = preg_replace('/_NAME$/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = preg_replace('/-.*$/', '', $keyforsupportedoauth2array);
+	$keyforsupportedoauth2array = 'OAUTH_'.$keyforsupportedoauth2array.'_NAME';
+
+	$label = $langs->trans($keyforsupportedoauth2array);
+	if ($label == $keyforsupportedoauth2array) {
+		print $supportedoauth2array[$keyforsupportedoauth2array]['name'];
+	} else {
+		print $label;
+	}
+	print'</option>'."\n";
 }
 print '</select>';
 print ajax_combobox('provider');
@@ -278,8 +312,8 @@ foreach ($conf->global as $key => $val) {
 			$provider.'_NAME',
 			$provider.'_ID',
 			$provider.'_SECRET',
-			$provider.'_URLAUTHORIZE',	// For custom oauth links
-			$provider.'_SCOPE'			// For custom oauth links
+			$provider.'_URL',	// For custom oauth links
+			$provider.'_SCOPE'	// For custom oauth links
 		);
 	}
 }
@@ -372,7 +406,10 @@ if (count($listinsetup) > 0) {
 
 			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
-				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
+				print '<td>';
+				$tooltiphelp = $langs->trans("Example").'<br>https://mastodon.example.com<br>https://mastodon.social';
+				print $form->textwithpicto($langs->trans("URLOfOAuthServiceEndpoints"), $tooltiphelp);
+				print '</td>';
 				print '<td><input style="width: 80%" type="text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
 				print '</td>';
 				print '<td></td>';
@@ -417,7 +454,9 @@ if (count($listinsetup) > 0) {
 		if ($supported) {
 			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
-				print '<td>'.$langs->trans("Scopes").'</td>';
+				print '<td>';
+				print $form->textwithpicto($langs->trans("Scopes"), $langs->trans("ScopesDesc"));
+				print '</td>';
 				print '<td>';
 				print '<input style="width: 80%" type"text" name="'.$key[4].'" value="'.getDolGlobalString($key[4]).'" >';
 				print '</td>';

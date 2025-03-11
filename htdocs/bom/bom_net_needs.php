@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "other", "stocks"));
 
@@ -43,11 +52,11 @@ $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'bo
 $backtopage  = GETPOST('backtopage', 'alpha');
 
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 
-// Initialize technical objects for hooks
+// Initialize a technical objects for hooks
 $hookmanager->initHooks(array('bomnetneeds')); // Note that conf->hooks_modules contains array
 
 // Massaction
@@ -71,7 +80,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if ($object->id > 0) {
 	$object->calculateCosts();
 }
@@ -180,8 +189,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
-	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
-	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
+	// Manufacturing cost
+	print '<tr><td>'.$form->textwithpicto($langs->trans("ManufacturingCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">';
+	print price($object->total_cost);
+	print '</span>';
+	if ($object->total_cost != $object->unit_cost) {
+		print '&nbsp; &nbsp; <span class="opacitymedium">('.$form->textwithpicto(price($object->unit_cost), $langs->trans("ManufacturingUnitCost"), 1, 'help', '').')</span>';
+	}
+	print '</td></tr>';
+
+	// Find sell price of generated product. We suppose we sell it to a company like ours (same country...).
+	$object->fetch_product();
+	$manufacturedvalued = '';
+	if (!empty($object->product)) {
+		global $mysoc;
+		$tmparray = $object->product->getSellPrice($mysoc, $mysoc);
+		$manufacturedvalued = $tmparray['pu_ht'] * $object->qty;
+	}
+	print '<tr><td>'.$langs->trans("ManufacturingGeneratedValue").'</td><td>'.price($manufacturedvalued).'</td></tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -232,7 +257,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	print '</thead>';
 	print '<tbody>';
-	if (!empty($TChildBom)) {
+	if (count($TChildBom) > 0) {
 		if ($action == 'treeview') {
 			foreach ($TChildBom as $fk_bom => $TProduct) {
 				$repeatChar = '&emsp;';

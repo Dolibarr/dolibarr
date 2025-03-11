@@ -33,7 +33,7 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -111,9 +111,9 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param	Societe			$objsoc     Object thirdparty
-	 *  @param  RemiseCheque	$object		Object we need next value for
-	 *  @return string|-1      				Next value if OK, -1 if KO
+	 *  @param	Societe			$objsoc		Object third party
+	 *  @param	RemiseCheque	$object		Object we need next value for
+	 *  @return	string|int<-1,0>			Next value if OK, -1 if KO
 	 */
 	public function getNextValue($objsoc, $object)
 	{

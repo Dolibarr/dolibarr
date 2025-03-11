@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
@@ -49,7 +57,7 @@ $mode = GETPOST('mode', 'aZ');
 
 $id = GETPOSTINT('id');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_categ = GETPOST("search_categ", 'intcomma');
 $search_projectstatus = GETPOST('search_projectstatus', 'intcomma');
 $search_project_ref = GETPOST('search_project_ref');
@@ -108,7 +116,7 @@ $search_datelimit_end = dol_mktime(23, 59, 59, $search_datelimit_endmonth, $sear
 // Initialize context for list
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'tasklist';
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new Task($db);
 $hookmanager->initHooks(array('tasklist'));
 $extrafields = new ExtraFields($db);
@@ -301,7 +309,8 @@ if ($id) {
 	$projectstatic->fetch_thirdparty();
 }
 
-// Get list of project id allowed to user (in a string list separated by coma)
+$projectsListId = '0';
+// Get list of project id allowed to user (in a comma separated string list)
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$projectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, $socid);
 }
@@ -596,7 +605,7 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'bodyforlist mod-project project-tasks page-list');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -748,18 +757,18 @@ $newcardbutton .= dolGetButtonTitle($langs->trans('NewTask'), '', 'fa fa-plus-ci
 
 
 // Show description of content
-$texthelp = '';
+$htmltooltip = '';
 if ($search_task_user == $user->id) {
-	$texthelp .= $langs->trans("MyTasksDesc");
+	$htmltooltip .= $langs->trans("MyTasksDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$texthelp .= $langs->trans("TasksOnProjectsDesc");
+		$htmltooltip .= $langs->trans("TasksOnProjectsDesc");
 	} else {
-		$texthelp .= $langs->trans("TasksOnProjectsPublicDesc");
+		$htmltooltip .= $langs->trans("TasksOnProjectsPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $texthelp), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'projecttask', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "task";
@@ -1082,6 +1091,7 @@ if (!empty($arrayfields['t.budget_amount']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['t.tobill']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.tobill']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
@@ -1459,7 +1469,7 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.progress_summary']['checked'])) {
 				print '<td class="center">';
 				//if ($obj->progress != '') {
-					print getTaskProgressView($object, false, false);
+				print getTaskProgressView($object, false, false);
 				//}
 				print '</td>';
 				if (!$i) {
@@ -1633,6 +1643,7 @@ if (isset($totalarray['totaldurationeffectivefield']) || isset($totalarray['tota
 			print '<td class="center">'.price((float) $totalarray['totalbudgetamount'], 0, $langs, 1, 0, 0, $conf->currency).'</td>';
 		} elseif (!empty($totalarray['pos'][$i])) {
 			print '<td class="right">';
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			if (isset($totalarray['type']) && $totalarray['type'][$i] == 'duration') {
 				print(!empty($totalarray['val'][$totalarray['pos'][$i]]) ? convertSecondToTime($totalarray['val'][$totalarray['pos'][$i]], 'allhourmin') : 0);
 			} else {

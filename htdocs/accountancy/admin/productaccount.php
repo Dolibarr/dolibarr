@@ -39,6 +39,15 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "compta", "accountancy", "products"));
 
@@ -87,10 +96,11 @@ if (empty($accounting_product_mode)) {
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalInt('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -274,6 +284,7 @@ if ($action == 'update' && $permissiontobind) {
  */
 
 $form = new FormAccounting($db);
+'@phan-var-force string[] $toselect';  // For some reason typing is lost at this point
 
 // Default AccountingAccount RowId Product / Service
 // at this time ACCOUNTING_SERVICE_SOLD_ACCOUNT & ACCOUNTING_PRODUCT_SOLD_ACCOUNT are account number not accountingacount rowid
@@ -517,7 +528,7 @@ if ($resql) {
 
 	$massactionbutton = '';
 
-	$nbselected = is_array($toselect) ? count($toselect) : 0;
+	$nbselected = count($toselect);
 	if ($massaction == 'set_default_account') {
 		if ($nbselected <= 0) {
 			$langs->load("errors");
@@ -726,10 +737,8 @@ if ($resql) {
 		}
 
 		$selected = 0;
-		if (!empty($toselect)) {
-			if (in_array($product_static->id, $toselect)) {
-				$selected = 1;
-			}
+		if (in_array($product_static->id, $toselect)) {
+			$selected = 1;
 		}
 
 		print '<tr class="oddeven">';

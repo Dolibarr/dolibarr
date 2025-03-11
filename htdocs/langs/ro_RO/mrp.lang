@@ -15,6 +15,10 @@ ListOfBOMs=Liste de materiale - BOM
 ListOfManufacturingOrders=Comenzi de producţie
 NewBOM=Bon de consum nou
 ProductBOMHelp=Produs de creat (sau dezasamblat) cu această listă de materiale.<br> Notă: Produsele cu proprietatea 'Natură produs' = 'Materie primă' nu sunt vizibile în această listă.
+CloneDefBomProduct=Clone the default BOM to use to manufacture the product
+CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
+BOMofRef=BOM of %s
+ErrorProductCloneBom=Error: Failed to clone a BOM
 BOMsNumberingModules=Şabloane numerotare BOM
 BOMsModelModule=Şabloane documente BOM
 MOsNumberingModules=Şabloane numerotare Comenzi de producţie
@@ -65,6 +69,8 @@ ToProduce=De fabricat
 ToObtain=De procurat
 QtyAlreadyConsumed=Cantitate deja consumată
 QtyAlreadyProduced=Cantitate deja fabricată
+QtyAlreadyConsumedShort=Cantitate consumată
+QtyAlreadyProducedShort=Cantitate fabricată
 QtyRequiredIfNoLoss=Cantitatea necesară pentru a produce cantitatea definită în Bon de producție BOM dacă nu există nicio pierdere (dacă eficiența de fabricație este 100%%)
 ConsumeOrProduce=Consumă sau Produce
 ConsumeAndProduceAll=Consumă sau Produce tot
@@ -98,6 +104,7 @@ WorkstationSetup = Configurare staţii de lucru
 WorkstationSetupPage = Pagină setup Staţii de lucru
 WorkstationList=Listă staţii de lucru
 WorkstationCreate=Adăugare staţie de lucru nouă
+NewWorkstation=Post de lucru nou
 ConfirmEnableWorkstation=Eşti sigur că vrei să activezi staţia de lucru <b>%s</b> ?
 EnableAWorkstation=Activare staţie de lucru
 ConfirmDisableWorkstation=Eşti sigur că vrei să dezactivezi staţia de lucru <b>%s</b> ?
@@ -128,10 +135,8 @@ Manufacturing=Producție
 Disassemble=Dezasamblare
 ProducedBy=Produs de
 QtyTot=Total Cantitate
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Cantitatea nu poate fi împărțită
 NoRemainQtyToDispatch=Nu a mai rămas nicio cantitate de împărțit
-
 THMOperatorEstimatedHelp=Costul estimat al operatorului pe oră. Va fi folosit pentru a estima costul unei deviz BOM folosind această stație de lucru.
 THMMachineEstimatedHelp=Costul estimat al mașinii pe oră. Va fi folosit pentru a estima costul unui deviz BOM folosind această stație de lucru.
-

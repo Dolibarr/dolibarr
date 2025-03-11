@@ -2,7 +2,7 @@
 /* Copyright (C) 2023-2024 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2023-2024	Lionel Vessiller		<lvessiller@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ class WebPortalInvoice extends Facture
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 1,),
@@ -113,6 +113,9 @@ class WebPortalInvoice extends Facture
 	);
 	//public $rowid;
 	//public $ref;
+	/**
+	 * @var int date invoice
+	 */
 	public $datef;
 	//public $date_lim_reglement;
 	//public $total_ht;
@@ -121,6 +124,10 @@ class WebPortalInvoice extends Facture
 	//public $multicurrency_total_ht;
 	//public $multicurrency_total_tva;
 	//public $multicurrency_total_ttc;
+
+	/**
+	 * @var int status
+	 */
 	public $fk_statut;
 	// END MODULEBUILDER PROPERTIES
 
@@ -142,7 +149,7 @@ class WebPortalInvoice extends Facture
 	/**
 	 * Constructor
 	 *
-	 * @param	DoliDb	 $db	Database handler
+	 * @param	DoliDB	 $db	Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -155,10 +162,9 @@ class WebPortalInvoice extends Facture
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param 	array	$params		ex option, infologin
-	 * @return 	array
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -172,7 +178,7 @@ class WebPortalInvoice extends Facture
 	}
 
 	/**
-	 *  Return clicable link of object (with eventually picto)
+	 *  Return clickable link of object (with eventually picto)
 	 *
 	 * @param	int		$withpicto				Add picto into link
 	 * @param	string	$option					Where point the link
@@ -262,11 +268,11 @@ class WebPortalInvoice extends Facture
 	}
 
 	/**
-	 * Return clicable link of object (with eventually picto)
+	 * Return clickable link of object (with eventually picto)
 	 *
-	 * @param	string	$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 * @param	array 	$arraydata	Array of data
-	 * @return	string	HTML Code for Kanban thumb.
+	 * @param	string					$option				Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 * @param	array{string,mixed} 	$arraydata			Array of data
+	 * @return	string										HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -325,16 +331,17 @@ class WebPortalInvoice extends Facture
 	/**
 	 *  Return label of a status
 	 *
-	 * @param	int		$paye			Status field paye
-	 * @param	int		$status			Id status
-	 * @param	int 	$mode 			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 * @param	int 	$alreadypaid	0=No payment already done, >0=Some payments were already done
-	 * @param	int 	$type 			Type invoice. If -1, we use $this->type
+	 * @param	int			$paye			Status field paye
+	 * @param	int			$status			Id status
+	 * @param	int<0,6>	$mode 			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 * @param	int 		$alreadypaid	0=No payment already done, >0=Some payments were already done
+	 * @param	int 		$type 			Type invoice. If -1, we use $this->type
+	 * @param	int			$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
 	 * @return  string	Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
-		return $this->getInvoiceStatic()->LibStatut($paye, $status, $mode, $alreadypaid, $type);
+		return $this->getInvoiceStatic()->LibStatut($paye, $status, $mode, $alreadypaid, $type, $nbofopendirectdebitorcredittransfer);
 	}
 }

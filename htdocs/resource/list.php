@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014  Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -29,6 +29,14 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("resource", "companies", "other"));
 
@@ -52,7 +60,7 @@ $optioncss		= GETPOST('optioncss', 'alpha');
 // Initialize context for list
 $contextpage 	= GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'resourcelist';
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Dolresource($db);
 $extrafields = new ExtraFields($db);
 
@@ -526,6 +534,7 @@ $totalarray['nbfield'] = 0;
 
 print '<tr class="liste_titre">';
 if (!empty($arrayfields['t.ref']['checked'])) {
+	// @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['t.ref']['label'], $_SERVER["PHP_SELF"], "t.ref", "", $param, "", $sortfield, $sortorder);
 }
 if (!empty($arrayfields['ty.label']['checked'])) {

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +40,13 @@ if (!defined('NOREQUIREAJAX')) {
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("bills", "orders", "commercial", "cashdesk"));
 
@@ -50,7 +59,7 @@ $action = GETPOST('action', 'aZ09');
 $left = GETPOST('left', 'alpha');
 $top = GETPOST('top', 'alpha');
 
-$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Ba or Restaurant
+$place = (GETPOST('place', 'aZ09') ? GETPOST('place', 'aZ09') : 0); // $place is id of table for Bar or Restaurant
 
 $newname = GETPOST('newname', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -64,16 +73,23 @@ if (!$user->hasRight('takepos', 'run')) {
  * Actions
  */
 
-if ($action == "getTables") {
-	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor FROM ".MAIN_DB_PREFIX."takepos_floor_tables WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
-	$resql = $db->query($sql);
+if ($action == "getTables" && $user->hasRight('takepos', 'run')) {
 	$rows = array();
+
+	$sql = "SELECT rowid, entity, label, leftpos, toppos, floor";
+	$sql .= " FROM ".MAIN_DB_PREFIX."takepos_floor_tables";
+	$sql .= " WHERE floor = ".((int) $floor)." AND entity IN (".getEntity('takepos').")";
+
+	$resql = $db->query($sql);
 	while ($row = $db->fetch_array($resql)) {
+		$tmpplace = (int) $row['rowid'];
+
 		$invoice = new Facture($db);
-		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$row['rowid'].')');
+		$result = $invoice->fetch('', '(PROV-POS'.$_SESSION['takeposterminal'].'-'.$tmpplace.')');
 		if ($result > 0) {
 			$row['occupied'] = "red";
 		}
+
 		$rows[] = $row;
 	}
 
@@ -82,7 +98,7 @@ if ($action == "getTables") {
 	exit;
 }
 
-if ($action == "update") {
+if ($action == "update" && $user->hasRight('takepos', 'run')) {
 	if ($left > 95) {
 		$left = 95;
 	}
@@ -96,7 +112,7 @@ if ($action == "update") {
 	}
 }
 
-if ($action == "updatename") {
+if ($action == "updatename" && $user->hasRight('takepos', 'run')) {
 	$newname = preg_replace("/[^a-zA-Z0-9\s]/", "", $newname); // Only English chars
 	if (strlen($newname) > 3) {
 		$newname = substr($newname, 0, 3); // Only 3 chars
@@ -104,7 +120,7 @@ if ($action == "updatename") {
 	$resql = $db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label='".$db->escape($newname)."' WHERE rowid = ".((int) $place));
 }
 
-if ($action == "add") {
+if ($action == "add" && $user->hasRight('takepos', 'run')) {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."takepos_floor_tables(entity, label, leftpos, toppos, floor) VALUES (".$conf->entity.", '', '45', '45', ".((int) $floor).")";
 	$asdf = $db->query($sql);
 	$db->query("UPDATE ".MAIN_DB_PREFIX."takepos_floor_tables SET label = rowid WHERE label = ''"); // No empty table names
@@ -123,7 +139,7 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 }
 $arrayofcss = array('/takepos/css/pos.css.php?a=xxx');
 
-top_htmlhead($head, $title, 0, 0, '', $arrayofcss);
+top_htmlhead($head, $title, 0, 0, array(), $arrayofcss);
 
 ?>
 <body style="overflow: hidden">

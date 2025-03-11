@@ -40,7 +40,7 @@ class FormWebPortal extends Form
 	public $db;
 
 	/**
-	 * @var array $infofiles Array of file info
+	 * @var array{nboffiles:int,extensions:array<string,int>,files:string[]} Array of file info
 	 */
 	public $infofiles; // Used to return information by function getDocumentsLink
 
@@ -136,7 +136,7 @@ class FormWebPortal extends Form
 	 * Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
 	 * @param	string				$htmlname				Name of html select area.
-	 * @param	array				$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
+	 * @param	array<string,mixed>	$array					Array like array(key => value) or array(key=>array('label'=>..., 'data-...'=>..., 'disabled'=>..., 'css'=>...))
 	 * @param	string|string[]		$id						Preselected key or preselected keys for multiselect. Use 'ifone' to autoselect record if there is only one record.
 	 * @param	int|string			$show_empty				0 no empty value allowed, 1 or string to add an empty value into list (If 1: key is -1 and value is '' or '&nbsp;', If placeholder string: key is -1 and value is the string), <0 to add an empty value with key that is this value.
 	 * @param	int					$key_in_label			1 to show key into label with format "[key] value"
@@ -253,7 +253,7 @@ class FormWebPortal extends Form
 	 * @param string $filedir Full path to directory to scan
 	 * @param string $filter Filter filenames on this regex string (Example: '\.pdf$')
 	 * @param string $morecss Add more css to the download picto
-	 * @param int    $allfiles 0=Only generated docs, 1=All files
+	 * @param int<0,1> $allfiles 0=Only generated docs, 1=All files
 	 * @return    string                Output string with HTML link of documents (might be empty string). This also fill the array ->infofiles
 	 */
 	public function getDocumentsLink($modulepart, $modulesubdir, $filedir, $filter = '', $morecss = '', $allfiles = 0)
@@ -318,9 +318,10 @@ class FormWebPortal extends Form
 				$this->infofiles['nboffiles']++;
 				$this->infofiles['files'][] = $file['fullname'];
 				$ext = pathinfo($file["name"], PATHINFO_EXTENSION);
-				if (empty($this->infofiles[$ext])) {
+				if (empty($this->infofiles['extensions'][$ext])) {
 					$this->infofiles['extensions'][$ext] = 1;
 				} else {
+					// @phan-suppress-next-line PhanTypeInvalidDimOffset
 					$this->infofiles['extensions'][$ext]++;
 				}
 
@@ -342,6 +343,31 @@ class FormWebPortal extends Form
 			}
 		}
 
+		return $out;
+	}
+
+	/**
+	 * Show a Signature icon with link
+	 * You may want to call this into a div like this:
+	 * print '<div class="inline-block valignmiddle">'.$formfile->getDocumentsLink($element_doc, $filename, $filedir).'</div>';
+	 *
+	 * @param string $modulepart 'proposal', 'facture', 'facture_fourn', ...
+	 * @param Object $object Object linked to the document to be signed
+	 * @param string $morecss Add more css to the download picto
+	 * @return    string                Output string with HTML link of signature (might be empty string).
+	 */
+	public function getSignatureLink($modulepart, $object, $morecss = '')
+	{
+		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
+		$out = '<!-- html.formwebportal::getSignatureLink -->' . "\n";
+		$url = getOnlineSignatureUrl(0, $modulepart, $object->ref, 1, $object);
+		if (!empty($url)) {
+			$out .= '<a target="_blank" rel="noopener noreferrer" href="' . $url . '"' . ($morecss ? ' class="' . $morecss . '"' : '') . ' role="signaturelink">';
+			$out .= '<i class="fa fa-file-signature"></i>';
+			$out .= $langs->trans("Sign");
+			$out .= '</a>';
+		}
 		return $out;
 	}
 
@@ -433,7 +459,7 @@ class FormWebPortal extends Form
 	 * @param int 			$disabled 			1=Html component is disabled
 	 * @param string 		$sortfield 			Sort field
 	 * @param string 		$filter 			Add more filter (Universal Search Filter)
-	 * @return string|array                     Return HTML string
+	 * @return string|array<array{key:int,value:string,label:string}>	Return HTML string
 	 * @see selectForForms()
 	 */
 	public function selectForFormsList($objecttmp, $htmlname, $preselectedvalue, $showempty = '', $searchkey = '', $placeholder = '', $morecss = '', $moreparams = '', $forcecombo = 0, $outputmode = 0, $disabled = 0, $sortfield = '', $filter = '')
@@ -537,7 +563,7 @@ class FormWebPortal extends Form
 			$textifempty = '&nbsp;';
 
 			//if (!empty($conf->use_javascript_ajax) || $forcecombo) $textifempty='';
-			if (!empty($conf->global->$confkeyforautocompletemode)) {
+			if (getDolGlobalString($confkeyforautocompletemode)) {
 				if ($showempty && !is_numeric($showempty)) {
 					$textifempty = $langs->trans($showempty);
 				} else {
@@ -601,9 +627,9 @@ class FormWebPortal extends Form
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField for common object
 	 *
-	 * @param array|null 	$val 			Array of properties for field to show
+	 * @param array{type:string,label:string,enabled:int|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val Array of properties for field to show
 	 * @param string 		$key 			Key of attribute
-	 * @param string|array 	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param string|mixed[]	$value 			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
 	 * @param string 		$moreparam 		To add more parameters on html input tag
 	 * @param string 		$keysuffix 		Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param string 		$keyprefix 		Suffix string to add into name and id of field (can be used to avoid duplicate names)
@@ -811,7 +837,7 @@ class FormWebPortal extends Form
 					}
 				}
 
-				if ($filter_categorie === false) {
+				if (!$filter_categorie) {
 					$fields_label = explode('|', $InfoFieldList[1]);
 					if (is_array($fields_label)) {
 						$keyList .= ', ';
@@ -919,7 +945,7 @@ class FormWebPortal extends Form
 					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 					$categorytype = $InfoFieldList[5];
 					if (is_numeric($categorytype)) {
-						$categorytype = Categorie::$MAP_ID_TO_CODE[$categorytype]; // For backward compatibility
+						$categorytype = Categorie::$MAP_ID_TO_CODE[(int) $categorytype]; // For backward compatibility
 					}
 					$data = $this->select_all_categories($categorytype, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
@@ -934,7 +960,7 @@ class FormWebPortal extends Form
 
 			case 'link':
 				$param_list = array_keys($param['options']); // $param_list='ObjectName:classPath[:AddCreateButtonOrNot[:Filter[:Sortfield]]]'
-				$showempty = (($required && $default != '') ? 0 : 1);
+				$showempty = (($required && $default != '') ? '0' : '1');
 
 				$out = $this->selectForForms($param_list[0], $htmlName, $value, $showempty, '', '', $morecss, $moreparam, 0, empty($val['disabled']) ? 0 : 1);
 
@@ -954,7 +980,7 @@ class FormWebPortal extends Form
 	 * Return HTML string to show a field into a page
 	 *
 	 * @param CommonObject $object Common object
-	 * @param array $val Array of properties of field to show
+	 * @param array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties of field to show
 	 * @param string $key Key of attribute
 	 * @param string|string[] $value Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param string $moreparam To add more parameters on html input tag
@@ -1077,11 +1103,17 @@ class FormWebPortal extends Form
 		} elseif ($type == 'duration') {
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			if (!is_null($value) && $value !== '') {
-				$value = convertSecondToTime($value, 'allhourmin');
+				$value = convertSecondToTime((int) $value, 'allhourmin');
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'double' || $type == 'real') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value);
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'boolean') {
 			$checked = '';
@@ -1100,6 +1132,9 @@ class FormWebPortal extends Form
 		} elseif ($type == 'price') {
 			if (!is_null($value) && $value !== '') {
 				$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
+			} else {
+				// Resulting type must be string
+				$value = '';
 			}
 		} elseif ($type == 'select') {
 			$value = isset($param['options'][$value]) ? $param['options'][$value] : '';
@@ -1144,8 +1179,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=sellist', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$numrows = $this->db->num_rows($resql);
 					if ($numrows) {
 						$obj = $this->db->fetch_object($resql);
@@ -1194,7 +1229,7 @@ class FormWebPortal extends Form
 				dol_syslog(__METHOD__ . ' error ' . $this->db->lasterror(), LOG_WARNING);
 			}
 		} elseif ($type == 'radio') {
-			$value = $param['options'][$value];
+			$value = (string) $param['options'][$value];
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
@@ -1247,8 +1282,8 @@ class FormWebPortal extends Form
 			dol_syslog(__METHOD__ . ' type=chkbxlst', LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
-				if ($filter_categorie === false) {
-					$value = ''; // value was used, so now we reste it to use it to build final output
+				if (!$filter_categorie) {
+					$value = ''; // value was used, so now we reset it to use it to build final output
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						// Several field into label (eq table:code|libelle:rowid)
@@ -1310,15 +1345,16 @@ class FormWebPortal extends Form
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
 						$object = new $classname($this->db);
+						'@phan-var-force CommonObject $object';
 						$result = $object->fetch($value);
 						$value = '';
 						if ($result > 0) {
 							if (property_exists($object, 'label')) {
-								$value = $object->label;
+								$value = $object->label;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'libelle')) {
-								$value = $object->libelle;
+								$value = $object->libelle;  // @phan-suppress-current-line PhanUndeclaredProperty
 							} elseif (property_exists($object, 'nom')) {
-								$value = $object->nom;
+								$value = $object->nom;  // @phan-suppress-current-line PhanUndeclaredProperty
 							}
 						}
 					}

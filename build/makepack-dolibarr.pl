@@ -507,6 +507,7 @@ if ($nboftargetok) {
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.xz`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/dolibarr-*.zip`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/build/doxygen/doxygen_warnings.log`;
+		$ret=`rm -fr $BUILDROOT/$PROJECT/build/phpstan/phpstan`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/cache.manifest`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php`;
 		$ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/conf/conf.php.mysql`;

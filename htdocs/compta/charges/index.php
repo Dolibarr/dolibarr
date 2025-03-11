@@ -7,6 +7,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +41,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $hookmanager = new HookManager($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('specialexpensesindex'));
 
 // Load translation files required by the page
@@ -155,7 +166,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " OR (cs.periode IS NULL AND cs.date_ech between '".$db->idate(dol_get_first_day($year))."' AND '".$db->idate(dol_get_last_day($year))."')";
 		$sql .= ")";
 	}
-	if (preg_match('/^cs\./', $sortfield) || preg_match('/^c\./', $sortfield) || preg_match('/^pc\./', $sortfield) || preg_match('/^pct\./', $sortfield)) {
+	if (preg_match('/^(cs?|pct?)\./', (string) $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 	//$sql.= $db->plimit($limit+1,$offset);
@@ -256,8 +267,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 			print '</td>';
 			print '</tr>';
 
-			$total = $total + $obj->total;
-			$totalpaid = $totalpaid + $obj->totalpaid;
+			$total += $obj->total;
+			$totalpaid += $obj->totalpaid;
 			$i++;
 		}
 		print '<tr class="liste_total">';
@@ -299,7 +310,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
-	if (preg_match('/^pv\./', $sortfield) || preg_match('/^ptva\./', $sortfield)) {
+	if (preg_match('/^(pv|ptva)\./', (string) $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 
@@ -337,8 +348,8 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		while ($i < $imaxinloop) {
 			$obj = $db->fetch_object($result);
 
-			$totaltopay = $totaltopay + $obj->amount_tva;
-			$total = $total + $obj->amount;
+			$totaltopay += $obj->amount_tva;
+			$total += $obj->amount;
 
 			print '<tr class="oddeven">';
 
@@ -454,7 +465,7 @@ while ($j < $numlt) {
 		// so we are compatible when period is not mandatory
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
-	if (preg_match('/^pv/', $sortfield)) {
+	if (preg_match('/^pv/', (string) $sortfield)) {
 		$sql .= $db->order($sortfield, $sortorder);
 	}
 
@@ -478,7 +489,7 @@ while ($j < $numlt) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($result);
 
-			$total = $total + $obj->amount;
+			$total += $obj->amount;
 
 			print '<tr class="oddeven">';
 			print '<td class="left">'.dol_print_date($db->jdate($obj->dm), 'day').'</td>'."\n";

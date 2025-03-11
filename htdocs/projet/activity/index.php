@@ -4,6 +4,8 @@
  * Copyright (C) 2010      Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +33,18 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies'));
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('activityindex'));
 
 $action = GETPOST('action', 'aZ09');
@@ -70,7 +78,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 if (empty($reshook)) {
-	if ($action == 'refresh_search_project_user') {
+	if ($action == 'refresh_search_project_user' && $user->hasRight('projet', 'lire')) {
 		$search_project_user = GETPOSTINT('search_project_user');
 		$tabparam = array("MAIN_SEARCH_PROJECT_USER_PROJECTSINDEX" => $search_project_user);
 
@@ -99,7 +107,7 @@ $tasktmp = new Task($db);
 $title = $langs->trans("Activities");
 //if ($mine) $title=$langs->trans("MyActivities");
 
-llxHeader("", $title);
+llxHeader("", $title, '', '', 0, 0, '', '', '', 'mod-project project-activity page-dashboard');
 
 
 // Title for combo list see all projects
@@ -124,16 +132,16 @@ $morehtml .= ajax_combobox("search_project_user", array(), 0, 0, 'resolve', '-1'
 $morehtml .= '<input type="submit" class="button smallpaddingimp" name="refresh" value="'.$langs->trans("Refresh").'">';
 
 if ($mine) {
-	$tooltiphelp = $langs->trans("MyTasksDesc");
+	$htmltooltip = $langs->trans("MyTasksDesc");
 } else {
 	if ($user->hasRight('projet', 'all', 'lire') && !$socid) {
-		$tooltiphelp = $langs->trans("TasksDesc");
+		$htmltooltip = $langs->trans("TasksDesc");
 	} else {
-		$tooltiphelp = $langs->trans("TasksPublicDesc");
+		$htmltooltip = $langs->trans("TasksPublicDesc");
 	}
 }
 
-print_barre_liste($form->textwithpicto($title, $tooltiphelp), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'projecttask', 0, $morehtml);
+print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_SELF"], '', '', '', '', 0, -1, 'projecttask', 0, $morehtml);
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
@@ -510,6 +518,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 			$taskstatic->dateo = $db->jdate($obj->date_start);
 			$taskstatic->datee = $db->jdate($obj->date_end);
 
+			/* username and userstatic not used + not defined
 			$username = '';
 			if ($obj->userid && $userstatic->id != $obj->userid) {	// We have a user and it is not last loaded user
 				$result = $userstatic->fetch($obj->userid);
@@ -520,6 +529,7 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 			if ($userstatic->id) {
 				$username = $userstatic->getNomUrl(0, 0);
 			}
+			*/
 
 			print '<tr class="oddeven">';
 			//print '<td>'.$username.'</td>';
@@ -563,6 +573,8 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 				} else {
 					$percentcompletion = intval($obj->duration_effective * 100 / $obj->planned_workload).'%';
 				}
+			} else {
+				$percentcompletion = 0;
 			}
 			print $percentcompletion;
 			print '</td>';

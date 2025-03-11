@@ -33,7 +33,7 @@
  */
 function dolStripPhpCode($str, $replacewith = '')
 {
-	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?=', '<?php echo', $str);	// replace a bad practive
 
 	$newstr = '';
 
@@ -77,9 +77,9 @@ function dolStripPhpCode($str, $replacewith = '')
  */
 function dolKeepOnlyPhpCode($str)
 {
-	$str = str_replace('<?=', '<?php', $str);
+	$str = str_replace('<?=', '<?php echo', $str);
 	$str = str_replace('<?php', '__LTINTPHP__', $str);
-	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this is Off in php.ini
+	$str = str_replace('<?', '<?php', $str);			// replace the short_open_tag. It is recommended to set this to Off in php.ini
 	$str = str_replace('__LTINTPHP__', '<?php', $str);
 
 	$newstr = '';
@@ -287,6 +287,7 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 	global $dolibarr_main_url_root, $dolibarr_main_data_root;
 	global $website;
 	global $includehtmlcontentopened;
+	'@phan-var-force Website $website';
 
 	$nbrep = 0;
 
@@ -331,9 +332,9 @@ function dolWebsiteOutput($content, $contenttype = 'html', $containerid = 0)
 		// at end we replace the '!~!~!~' only if we are in final parent page.
 		$content = preg_replace('/(href=")\/?([^:\"\!]*)\.php\?([^#\"<>]*)(#[^\"<>]*)?\"/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2&\3\4"', $content, -1, $nbrep);
 		// Replace occurrence like _service_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
+		$content = preg_replace('/([\'"])_service_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_service_\2\1', $content, -1, $nbrep);
 		// Replace occurrence like _library_XXX.php with dolibarr URL
-		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/',	'\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
+		$content = preg_replace('/([\'"])_library_([^\'"]+)\.php\1/', '\1!~!~!~' . DOL_URL_ROOT . '/public/website/index.php?website=' . $website->ref . '&pageref=_library_\2\1', $content, -1, $nbrep);
 		// Replace relative link without .php like /xxx#aaa or /xxx with dolibarr URL:  ...href="....php"
 		$content = preg_replace('/(href=")\/?([a-zA-Z0-9\-_#]+)(\"|\?)/', '\1!~!~!~'.DOL_URL_ROOT.'/public/website/index.php?website='.$website->ref.'&pageref=\2\3', $content, -1, $nbrep);
 
@@ -508,16 +509,18 @@ function dolWebsiteSaveContent($content)
 /**
  * Make a redirect to another container.
  *
- * @param 	string	$containerref		Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
- * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
- * @param 	int		$containerid		Id of container.
- * @param	int		$permanent			0=Use temporary redirect 302, 1=Use permanent redirect 301
- * @param 	array	$parameters			Array of parameters to append to the URL.
+ * @param 	string		$containerref			Ref of container to redirect to (Example: 'mypage' or 'mypage.php').
+ * @param 	string		$containeraliasalt		Ref of alternative aliases to redirect to.
+ * @param 	int			$containerid			Id of container.
+ * @param	int<0,1>	$permanent				0=Use temporary redirect 302 (default), 1=Use permanent redirect 301
+ * @param 	array<string,mixed>	$parameters		Array of parameters to append to the URL.
+ * @param	int<0,1>	$parampropagation		0=Do not propagate query parameter in URL when doing the redirect, 1=Keep parameters (default)
  * @return  void
  */
-function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array())
+function redirectToContainer($containerref, $containeraliasalt = '', $containerid = 0, $permanent = 0, $parameters = array(), $parampropagation = 1)
 {
 	global $db, $website;
+	'@phan-var-force Website $website';
 
 	$newurl = '';
 	$result = 0;
@@ -570,7 +573,9 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 		}
 	} else { // When page called from virtual host server
 		$newurl = '/'.$containerref.'.php';
-		$newurl = $newurl.(empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		if ($parampropagation) {
+			$newurl .= (empty($_SERVER["QUERY_STRING"]) ? '' : '?'.$_SERVER["QUERY_STRING"]);
+		}
 	}
 
 	if ($newurl) {
@@ -591,17 +596,21 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 
 
 /**
- * Clean an HTML page to report only content, so we can include it into another page.
- * It outputs content of file sanitized from html and body part.
+ * Execute content of a php page and report result to be included into another page.
+ * It outputs content of file where the html and body part have been removed.
  *
  * @param 	string	$containerref		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
+ * @param 	int		$once				If set to 1, we use include_once.
+ * @param	int		$cachedelay			A cache delay in seconds.
+ * @param	string	$cachekey			Add a key into the name of the cache so the includeContainer can use different cache content for the same page.
  * @return  void
  */
-function includeContainer($containerref)
+function includeContainer($containerref, $once = 0, $cachedelay = 0, $cachekey = '')
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
 	global $includehtmlcontentopened;
 	global $websitekey, $websitepagefile;
+	'@phan-var-force Website $website';
 
 	$MAXLEVEL = 20;
 
@@ -610,6 +619,11 @@ function includeContainer($containerref)
 	}
 
 	$fullpathfile = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$websitekey.'/'.$containerref;
+	$fullpathcache = '';
+	// If we ask to use the cache delay
+	if ($cachedelay > 0 && !getDolGlobalString("WEBSITE_DISABLE_CACHE_OF_CONTAINERS")) {
+		$fullpathcache = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/temp/'.$websitekey.'-'.$websitepage->id.'-'.$containerref.($cachekey ? '-'.$cachekey: '').'.cache';
+	}
 
 	if (empty($includehtmlcontentopened)) {
 		$includehtmlcontentopened = 0;
@@ -622,21 +636,57 @@ function includeContainer($containerref)
 
 	//dol_syslog("Include container ".$containerref.' includehtmlcontentopened='.$includehtmlcontentopened);
 
-	// file_get_contents is not possible. We must execute code with include
-	//$content = file_get_contents($fullpathfile);
-	//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
-
-	ob_start();
-	$res = @include $fullpathfile; // Include because we want to execute code content
-	$tmpoutput = ob_get_contents();
-	ob_end_clean();
-
-	print "\n".'<!-- include '.$websitekey.'/'.$containerref.(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level = '.$includehtmlcontentopened.' -->'."\n";
-	print preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
-
-	if (!$res) {
-		print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref.".\n";
+	// We don't print info messages for pages of type library or service
+	if (!empty($websitepage->type_container) && !in_array($websitepage->type_container, array('library', 'service'))) {
+		print "\n".'<!-- include '.$websitekey.'/'.$containerref.($cachekey ? ' '.$cachekey: '').(is_object($websitepage) ? ' parent id='.$websitepage->id : '').' level='.$includehtmlcontentopened.' -->'."\n";
 	}
+
+	$tmpoutput = '';
+
+	if ($cachedelay > 0 && $fullpathcache) {
+		if (is_file($fullpathcache)) {
+			// Get the last modification time of the file
+			$lastModifiedTime = filemtime($fullpathcache);
+
+			// Get the current time
+			$currentTime = time();
+
+			// Check if the file is not older than X seconds
+			if (($currentTime - $lastModifiedTime) <= $cachedelay) {
+				// The file is too recent
+				$tmpoutput = file_get_contents($fullpathcache);
+			}
+		}
+	}
+
+	if (empty($tmpoutput)) {
+		// file_get_contents is not possible because we must execute code with include
+		//$content = file_get_contents($fullpathfile);
+		//print preg_replace(array('/^.*<body[^>]*>/ims','/<\/body>.*$/ims'), array('', ''), $content);*/
+
+		ob_start();
+		if ($once) {
+			$res = @include_once $fullpathfile;
+		} else {
+			$res = @include $fullpathfile;
+		}
+		$tmpoutput = ob_get_contents();
+		ob_end_clean();
+
+		if (!$res) {
+			print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref."(once=".$once.")\n";
+		} else {
+			$tmpoutput = preg_replace(array('/^.*<body[^>]*>/ims', '/<\/body>.*$/ims'), array('', ''), $tmpoutput);
+
+			// Save the content into cache file if content is lower than 10M
+			if ($fullpathcache && strlen($tmpoutput) < 10000000) {
+				file_put_contents($fullpathcache, $tmpoutput);
+				dolChmod($fullpathcache);
+			}
+		}
+	}
+
+	print $tmpoutput;
 
 	$includehtmlcontentopened--;
 }
@@ -648,12 +698,13 @@ function includeContainer($containerref)
  * <?php getStructureData('software', array('name'=>'Name', 'os'=>'Windows', 'price'=>10)); ?>
  *
  * @param 	string		$type				'blogpost', 'product', 'software', 'organization', 'qa',  ...
- * @param	array		$data				Array of data parameters for structured data
+ * @param	array<string,mixed>	$data				Array of data parameters for structured data
  * @return  string							HTML content
  */
 function getStructuredData($type, $data = array())
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force Website $website';
 
 	$type = strtolower($type);
 
@@ -728,13 +779,13 @@ function getStructuredData($type, $data = array())
 
 			$pageurl = $websitepage->pageurl;
 			$title = $websitepage->title;
-			$image = $websitepage->image;
+			$image = getImageFromHtmlContent($websitepage->content);
 			$companyname = $mysoc->name;
 			$description = $websitepage->description;
 
 			$pageurl = str_replace('__WEBSITE_KEY__', $website->ref, $pageurl);
 			$title = str_replace('__WEBSITE_KEY__', $website->ref, $title);
-			$image = '/medias'.(preg_match('/^\//', $image) ? '' : '/').str_replace('__WEBSITE_KEY__', $website->ref, $image);
+			$imagepath = '/medias'.(preg_match('/^\//', $image) ? '' : '/').str_replace('__WEBSITE_KEY__', $website->ref, $image);
 			$companyname = str_replace('__WEBSITE_KEY__', $website->ref, $companyname);
 			$description = str_replace('__WEBSITE_KEY__', $website->ref, $description);
 
@@ -747,10 +798,14 @@ function getStructuredData($type, $data = array())
 				    "@type": "WebPage",
 				    "@id": "'.dol_escape_json($pageurl).'"
 				  },
-				  "headline": "'.dol_escape_json($title).'",
+				  "headline": "'.dol_escape_json($title).'",';
+			if ($image) {
+				$ret .= '
 				  "image": [
-				    "'.dol_escape_json($image).'"
-				   ],
+				    "'.dol_escape_json($imagepath).'"
+				   ],';
+			}
+			$ret .= '
 				  "dateCreated": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "datePublished": "'.dol_print_date($websitepage->date_creation, 'dayhourrfc').'",
 				  "dateModified": "'.dol_print_date($websitepage->date_modification, 'dayhourrfc').'",
@@ -763,7 +818,7 @@ function getStructuredData($type, $data = array())
 				     "name": "'.dol_escape_json($companyname).'",
 				     "logo": {
 				        "@type": "ImageObject",
-				        "url": "/wrapper.php?modulepart=mycompany&file=logos%2F'.urlencode($mysoc->logo).'"
+				        "url": "/wrapper.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo).'"
 				     }
 				   },'."\n";
 			if ($websitepage->keywords) {
@@ -855,12 +910,13 @@ function getStructuredData($type, $data = array())
 /**
  * Return HTML content to add as header card for an article, news or Blog Post or home page.
  *
- * @param	array	$params					Array of parameters
+ * @param	?array<string,mixed>	$params	Array of parameters
  * @return  string							HTML content
  */
 function getSocialNetworkHeaderCards($params = null)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force Website $website';
 
 	$out = '';
 
@@ -936,6 +992,7 @@ function getSocialNetworkHeaderCards($params = null)
 function getSocialNetworkSharingLinks($socialnetworks = '')
 {
 	global $website, $websitepage; // Very important. Required to have var available when running included containers.
+	'@phan-var-force Website $website';
 
 	$out = '<!-- section for social network sharing of page -->'."\n";
 
@@ -982,7 +1039,7 @@ function getSocialNetworkSharingLinks($socialnetworks = '')
 
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return nb of images known into inde files for an object;
  *
  * @param	Object	$object		Object
  * @return  int					HTML img content or '' if no image found
@@ -1017,15 +1074,17 @@ function getNbOfImagePublicURLOfObject($object)
 }
 
 /**
- * Return HTML content to add structured data for an article, news or Blog Post.
+ * Return the public image URL of an object.
+ * For example, you can get the public image URL of a product (image that is shared).
  *
  * @param	Object	$object			Object
  * @param	int		$no				Numero of image (if there is several images. 1st one by default)
  * @param   string  $extName        Extension to differentiate thumb file name ('', '_small', '_mini')
+ * @param	int		$cover			1=Sort with cover then position, -1=Filter on cover last then position, 0=Exclude cover and filter on position first
  * @return  string					HTML img content or '' if no image found
- * @see getNbOfImagePublicURLOfObject(), getImageFromHtmlContent()
+ * @see getNbOfImagePublicURLOfObject(), getPublicFilesOfObject(), getImageFromHtmlContent()
  */
-function getImagePublicURLOfObject($object, $no = 1, $extName = '')
+function getImagePublicURLOfObject($object, $no = 1, $extName = '', $cover = 1)
 {
 	global $db;
 
@@ -1040,7 +1099,12 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 	$sql .= " WHERE entity IN (".getEntity($object->element).")";
 	$sql .= " AND src_object_type = '".$db->escape($object->element)."' AND src_object_id = ".((int) $object->id);	// Filter on object
 	$sql .= " AND ".$db->regexpsql('filename', $regexforimg, 1);
-	$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	$sql .= ($cover ? "" : " AND cover <> 1");
+	if ($cover == 1) {
+		$sql .= $db->order("cover,position,rowid", "ASC,ASC,ASC");
+	} else {
+		$sql .= $db->order("cover,position,rowid", "DESC,ASC,ASC");
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1061,8 +1125,8 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 					} else {
 						$image_path = '/wrapper.php?hashp='.urlencode($obj->share);
 					}
+
 					if ($extName) {
-						//getImageFileNameForSize($dir.$file, '_small')
 						$image_path .= '&extname='.urlencode($extName);
 					}
 				}
@@ -1093,10 +1157,11 @@ function getImagePublicURLOfObject($object, $no = 1, $extName = '')
 }
 
 /**
- * Return list of public files of a given object.
+ * Return array with list of all public files of a given object.
  *
  * @param	Object	$object			Object
- * @return  array					List of public files of object
+ * @return array<array{filename:string,position:int,url:string}>	List of public files of object
+ * @see getImagePublicURLOfObject()
  */
 function getPublicFilesOfObject($object)
 {
@@ -1152,15 +1217,16 @@ function getPublicFilesOfObject($object)
  * @param	string		$searchstring		Search string
  * @param	int			$max				Max number of answers
  * @param	string		$sortfield			Sort Fields
- * @param	string		$sortorder			Sort order ('DESC' or 'ASC')
+ * @param	'DESC'|'ASC'	$sortorder			Sort order ('DESC' or 'ASC')
  * @param	string		$langcode			Language code ('' or 'en', 'fr', 'es', ...)
- * @param	array		$otherfilters		Other filters
- * @param	int			$status				0 or 1, or -1 for both
- * @return  array							Array with results of search
+ * @param	array<string,mixed>	$otherfilters		Other filters
+ * @param	int<-1,1>	$status				0 or 1, or -1 for both
+ * @return  array{list?:WebsitePage[],code?:string,message?:string}	Array with results of search
  */
 function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $sortfield = 'date_creation', $sortorder = 'DESC', $langcode = '', $otherfilters = [], $status = 1)
 {
 	global $conf, $db, $hookmanager, $langs, $mysoc, $user, $website, $websitepage, $weblangs; // Very important. Required to have var available when running included containers.
+	'@phan-var-force Website $website';
 
 	$error = 0;
 	$arrayresult = array('code' => '', 'list' => array());
@@ -1185,15 +1251,15 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 		$arrayresult['message'] = $weblangs->trans("ErrorSearchCriteriaTooSmall");
 	} else {
 	*/
-		$tmparrayoftype = explode(',', $type);
-		/*foreach ($tmparrayoftype as $tmptype) {
-			if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
-				$error++;
-				$arrayresult['code'] = 'KO';
-				$arrayresult['message'] = 'Bad value for parameter type';
-				break;
-			}
-		}*/
+	$tmparrayoftype = explode(',', $type);
+	/*foreach ($tmparrayoftype as $tmptype) {
+		if (!in_array($tmptype, array('', 'page', 'blogpost'))) {
+			$error++;
+			$arrayresult['code'] = 'KO';
+			$arrayresult['message'] = 'Bad value for parameter type';
+			break;
+		}
+	}*/
 	//}
 
 	$searchdone = 0;
@@ -1337,7 +1403,9 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 	}
 
 	// Load HTML content into object
-	$dom->loadHTML($htmlContent);
+	// We add the @ to avoid verbose warnings logsin the error.log file. For example:
+	// "PHP message: PHP Warning:  DOMDocument::loadHTML(): Tag section invalid in Entity, line: ...", etc.
+	@$dom->loadHTML($htmlContent);
 
 	// Re-enable HTML load errors
 	libxml_clear_errors();
@@ -1358,17 +1426,19 @@ function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 }
 
 /**
- * Download all images found into page content $tmp.
+ * Download all images found into an external URL.
+ * It using a text regex parsing solution, not a DOM analysis.
  * If $modifylinks is set, links to images will be replace with a link to viewimage wrapper.
+ * To extract an URL from a HTML text content, see instead getImageFromHtmlContent().
  *
  * @param 	Website	 	$object			Object website
  * @param 	WebsitePage	$objectpage		Object website page
- * @param 	string		$urltograb		URL to grab (example: http://www.nltechno.com/ or http://www.nltechno.com/dir1/ or http://www.nltechno.com/dir1/mapage1)
+ * @param 	string		$urltograb		URL to grab (example: https://www.nltechno.com/ or s://www.nltechno.com/dir1/ or https://www.nltechno.com/dir1/mapage1)
  * @param 	string		$tmp			Content to parse
  * @param 	string		$action			Var $action
- * @param	int 		$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
- * @param	int			$grabimages		0=Do not grab images, 1=Grab images
- * @param	string		$grabimagesinto	'root' or 'subpage'
+ * @param	int<0,1>	$modifylinks	0=Do not modify content, 1=Replace links with a link to viewimage
+ * @param	int<0,1>	$grabimages		0=Do not grab images, 1=Grab images
+ * @param	'root'|'subpage'	$grabimagesinto	'root' or 'subpage'
  * @return	void
  */
 function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modifylinks = 0, $grabimages = 1, $grabimagesinto = 'subpage')
@@ -1513,5 +1583,31 @@ function getAllImages($object, $objectpage, $urltograb, &$tmp, &$action, $modify
 		if ($modifylinks) {
 			$tmp = preg_replace('/'.preg_quote($regs[0][$key], '/').'/i', 'background'.$regs[1][$key].'url("'.DOL_URL_ROOT.'/viewimage.php?modulepart=medias&file='.$filename.'")', $tmp);
 		}
+	}
+}
+
+/**
+ * Retrieves the details of a news post by its ID.
+ *
+ * @param string $postId  The ID of the news post to retrieve.
+ * @return array<string,mixed>|int<-1,-1>   Return array if OK, -1 if KO
+ */
+function getNewsDetailsById($postId)
+{
+	global $db;
+
+	if (empty($postId)) {
+		return -1;
+	}
+
+	$sql = "SELECT p.title, p.description, p.date_creation, p.image
+            FROM ".MAIN_DB_PREFIX."website_page as p
+            WHERE p.rowid = ".(intval($postId));
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		return $db->fetch_array($resql);
+	} else {
+		return -1;
 	}
 }

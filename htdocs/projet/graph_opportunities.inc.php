@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2013-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +18,17 @@
  */
 
 // variable $listofopplabel and $listofoppstatus should be defined
+/**
+ * @var Conf $conf
+ * @var Form $form
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $projectsListId
+ * @var int $socid
+ * @var string[] $listofoppstatus
+ */
 
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";
@@ -63,7 +76,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 		}
 		$db->free($resql);
 
-		$ponderated_opp_amount = $ponderated_opp_amount / 100;
+		$ponderated_opp_amount /= 100;
 
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder nohover centpercent">';

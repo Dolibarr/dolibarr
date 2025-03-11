@@ -836,7 +836,8 @@ IMG;
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
 			// We delete and recreate a subdir because the soffice may have change pemrissions on it
-			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			$countdeleted = 0;
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
@@ -925,7 +926,7 @@ IMG;
 					throw new OdfException("headers already sent ($filename at $linenum)");
 				}
 
-				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$name=preg_replace('/\.od(x|t)/i', '', $name);
 					header('Content-type: application/pdf');
 					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
@@ -933,7 +934,7 @@ IMG;
 				}
 			}
 
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
+			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
 				unlink($name);
 			}
 		} else {

@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Sustav upravljanja znanjem
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Upravljajte bazom upravljanja znanjem (KM) ili Help-Desk bazom
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Postavljanje sustava za upravljanje znanjem
 KnowledgeManagementSetupPage = Stranica za postavljanje sustava upravljanja znanjem
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = O upravljanju znanjem
 KnowledgeManagementAboutPage = Upravljanje znanjem o stranici
-
 KnowledgeManagementArea = Upravljanje znanjem
 MenuKnowledgeRecord = Baza znanja
 MenuKnowledgeRecordShort = Baza znanja
@@ -46,8 +33,7 @@ KnowledgeRecord = Stavka
 KnowledgeRecordExtraFields = Dodatna polja za članak
 GroupOfTicket=Skupina ulaznica
 YouCanLinkArticleToATicketCategory=Možete povezati članak s grupom ulaznica (tako da će članak biti istaknut na svim ulaznicama u ovoj grupi)
-SuggestedForTicketsInGroup=Predloženo prilikom izrade ulaznice
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Postavi kao zastarjelo
 ConfirmCloseKM=Potvrđujete li zatvaranje ovog članka kao zastarjelog?
 ConfirmReopenKM=Želite li vratiti ovaj članak na status "Provjeren"?

@@ -2,6 +2,7 @@
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,11 +36,26 @@ class DeplacementStats extends Stats
 	 */
 	public $table_element;
 
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $where;
 
 	/**
@@ -47,7 +63,7 @@ class DeplacementStats extends Stats
 	 *
 	 * @param 	DoliDB		$db		   Database handler
 	 * @param 	int			$socid	   Id third party
-	 * @param   mixed		$userid    Id user for filter or array of user ids
+	 * @param   int|int[]	$userid    Id user for filter or array of user ids
 	 * @return 	void
 	 */
 	public function __construct($db, $socid = 0, $userid = 0)
@@ -78,7 +94,7 @@ class DeplacementStats extends Stats
 	/**
 	 * 	Renvoie le nombre de facture par annee
 	 *
-	 *	@return		array	Array of values
+	 * @return	array<array{0:int,1:int}>				Array of nb each year
 	 */
 	public function getNbByYear()
 	{
@@ -96,7 +112,7 @@ class DeplacementStats extends Stats
 	 *
 	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int}>	Array with number by month
 	 */
 	public function getNbByMonth($year, $format = 0)
 	{
@@ -118,7 +134,7 @@ class DeplacementStats extends Stats
 	 *
 	 *	@param	int		$year		Year to scan
 	 *	@param	int		$format		0=Label of abscissa is a translated text, 1=Label of abscissa is month number, 2=Label of abscissa is first letter of month
-	 *	@return	array				Array of values
+	 *  @return array<int<0,11>,array{0:int<1,12>,1:int|float}>	Array of values
 	 */
 	public function getAmountByMonth($year, $format = 0)
 	{
@@ -138,7 +154,7 @@ class DeplacementStats extends Stats
 	 *	Return average amount
 	 *
 	 *	@param	int		$year		Year to scan
-	 *	@return	array				Array of values
+	 * @return	array<int<0,11>,array{0:int<1,12>,1:int|float}> 	Array with number by month
 	 */
 	public function getAverageByMonth($year)
 	{
@@ -155,7 +171,7 @@ class DeplacementStats extends Stats
 	/**
 	 *	Return nb, total and average
 	 *
-	 *	@return	array				Array of values
+	 *  @return array<array{year:string,nb:string,nb_diff:float,total?:float,avg?:float,weighted?:float,total_diff?:float,avg_diff?:float,avg_weighted?:float}>    Array of values
 	 */
 	public function getAllByYear()
 	{

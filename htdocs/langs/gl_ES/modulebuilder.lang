@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=O permiso engadiuse correctamente
 MenuDeletedSuccessfuly=O menú eliminouse correctamente
 MenuAddedSuccessfuly=O menú engadiuse correctamente
 MenuUpdatedSuccessfuly=O menú actualizouse correctamente
+AddAPIsForThisObject=Engadir APIs a este obxecto
 ApiObjectDeleted=A API para o obxecto %s eliminouse correctamente
 CRUDRead=Ler
 CRUDCreateWrite=Crear ou actualizar

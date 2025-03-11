@@ -1,6 +1,8 @@
 <?php
 /* Advance Targeting Emailing for mass emailing module
- * Copyright (C) 2013  Florian Henry <florian.henry@open-concept.pro>
+ * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
  */
 
 /**
- * 	\file		comm/mailing/class/advtargetemailing.class.php
+ * 	\file		htdocs/comm/mailing/class/advtargetemailing.class.php
  * 	\ingroup	mailing
  * 	\brief		This file is an example CRUD class file (Create/Read/Update/Delete)
  */
@@ -84,15 +86,23 @@ class AdvanceTargetingMailing extends CommonObject
 	public $fk_user_mod;
 
 	/**
-	 * @var array select target type
+	 * @var array<int,string> select target type
 	 */
 	public $select_target_type = array();
 
 	/**
-	 * @var array type status comm prospect
+	 * @var array<int,string> type status comm prospect
 	 */
 	public $type_statuscommprospect = array();
+
+	/**
+	 * @var int[]
+	 */
 	public $thirdparty_lines;
+
+	/**
+	 * @var int[]
+	 */
 	public $contact_lines;
 
 
@@ -120,7 +130,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$customerStatic->loadCacheOfProspStatus();
 		if (!empty($customerStatic->cacheprospectstatus)) {
 			foreach ($customerStatic->cacheprospectstatus as $dataProspectSt) {
-				$this->type_statuscommprospect[$dataProspectSt['id']]=$dataProspectSt['label'];
+				$this->type_statuscommprospect[$dataProspectSt['id']] = $dataProspectSt['label'];
 			}
 		} else {
 			$this->type_statuscommprospect = array(
@@ -142,7 +152,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs;
+		global $conf;
 		$error = 0;
 
 		// Clean parameters
@@ -175,13 +185,13 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= "fk_user_mod";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
-		$sql .= " ".$conf->entity.",";
+		$sql .= " ".((int) $conf->entity).",";
 		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : "'".$this->db->escape($this->fk_element)."'").",";
 		$sql .= " ".(!isset($this->type_element) ? 'NULL' : "'".$this->db->escape($this->type_element)."'").",";
 		$sql .= " ".(!isset($this->filtervalue) ? 'NULL' : "'".$this->db->escape($this->filtervalue)."'").",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " ".$user->id;
+		$sql .= " ".((int) $user->id);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -389,9 +399,9 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 *  Update object into database
 	 *
-	 *  @param	User	$user        User that modifies
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return int     		   	 Return integer <0 if KO, >0 if OK
+	 *  @param	User		$user		User that modifies
+	 *  @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -419,11 +429,11 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_advtarget SET";
 
 		$sql .= " name=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "''").",";
-		$sql .= " entity=".$conf->entity.",";
+		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
 		$sql .= " type_element=".(isset($this->type_element) ? "'".$this->db->escape($this->type_element)."'" : "null").",";
 		$sql .= " filtervalue=".(isset($this->filtervalue) ? "'".$this->db->escape($this->filtervalue)."'" : "null").",";
-		$sql .= " fk_user_mod=".$user->id;
+		$sql .= " fk_user_mod=".((int) $user->id);
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -452,9 +462,9 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 *  Delete object in database
 	 *
-	 *	@param  User	$user        User that deletes
-	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
-	 *  @return	int					 Return integer <0 if KO, >0 if OK
+	 *	@param  User		$user        User that deletes
+	 *  @param  int<0,1>	$notrigger	 0=launch triggers after, 1=disable triggers
+	 *  @return	int						 Return integer <0 if KO, >0 if OK
 	 */
 	public function delete($user, $notrigger = 0)
 	{
@@ -494,7 +504,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * Save query in database to retrieve it
 	 *
 	 *	@param  	User		$user    		User that deletes
-	 * 	@param		array		$arrayquery		All element to Query
+	 * 	@param		array<string,string|string[]>	$arrayquery	All element to Query
 	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function savequery($user, $arrayquery)
@@ -522,7 +532,7 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 * Load object in memory from database
 	 *
-	 * 	@param		array		$arrayquery	All element to Query
+	 * 	@param		array<string,string|string[]>	$arrayquery	All element to Query
 	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function query_thirdparty($arrayquery)
@@ -629,7 +639,7 @@ class AdvanceTargetingMailing extends CommonObject
 						}
 					} elseif ($extrafields->attributes[$elementtype]['type'][$key] == 'link') {
 						if ($arrayquery['options_'.$key] > 0) {
-							$sqlwhere[]= " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
+							$sqlwhere[] = " (te.".$key." = ".((int) $arrayquery["options_".$key]).")";
 						}
 					} else {
 						if (is_array($arrayquery['options_'.$key])) {
@@ -676,8 +686,8 @@ class AdvanceTargetingMailing extends CommonObject
 	/**
 	 * Load object in memory from database
 	 *
-	 * 	@param		array		$arrayquery	All element to Query
-	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
+	 * 	@param		array<string,string|string[]>	$arrayquery	All element to Query
+	 * 	@param		int			$withThirdpartyFilter	add contact with third party filter
 	 * 	@return		int			Return integer <0 if KO, >0 if OK
 	 */
 	public function query_contact($arrayquery, $withThirdpartyFilter = 0)

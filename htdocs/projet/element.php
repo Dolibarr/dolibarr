@@ -108,7 +108,14 @@ if (isModEnabled('stocktransfer')) {
 	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
 }
 
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
@@ -145,9 +152,6 @@ if (isModEnabled('mrp')) {
 if (isModEnabled('eventorganization')) {
 	$langs->load("eventorganization");
 }
-//if (isModEnabled('stocktransfer')) {
-//	$langs->load("stockstransfer");
-//}
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
@@ -175,22 +179,44 @@ if ($id == '' && $ref == '') {
 	exit();
 }
 
+if ($dates === '') {
+	$dates = null;
+}
+if ($datee === '') {
+	$datee = null;
+}
+
 $mine = GETPOST('mode') == 'mine' ? 1 : 0;
 //if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
 
 $object = new Project($db);
 
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($object, 'fetchComments') && empty($object->comments)) {
 	$object->fetchComments();
 }
 
 // Security check
 $socid = $object->socid;
+
+$hookmanager->initHooks(array('projectOverview'));
+
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignment.
 $result = restrictedArea($user, 'projet', $object->id, 'projet&project');
 
-$hookmanager->initHooks(array('projectOverview'));
+$total_duration = 0;
+$total_ttc_by_line = 0;
+$total_ht_by_line = 0;
+$expensereport = null;
+$othermessage = '';
+$tmpprojtime = array();
+$nbAttendees = 0;
+
+/*
+ * Actions
+ */
+
+// None
 
 
 /*
@@ -204,7 +230,7 @@ if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/projectnameonly/', get
 
 $help_url = 'EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos|DE:Modul_Projekte';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_element');
 
 $form = new Form($db);
 $formproject = new FormProjets($db);
@@ -241,7 +267,7 @@ $morehtmlref .= '</div>';
 // Define a complementary filter for search of next/prev ref.
 if (!$user->hasRight('projet', 'all', 'lire')) {
 	$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-	$object->next_prev_filter = "te.rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+	$object->next_prev_filter = "te.rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -285,18 +311,7 @@ if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') || !getDolGlobalString('PROJ
 	print '</td></tr>';
 }
 
-// Visibility
-print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-if ($object->public) {
-	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-	print $langs->trans('SharedProject');
-} else {
-	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-	print $langs->trans('PrivateProject');
-}
-print '</td></tr>';
-
-if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
+if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 	// Opportunity status
 	print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
 	$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
@@ -342,6 +357,17 @@ if ($object->hasDelay()) {
 }
 print '</td></tr>';
 
+// Visibility
+print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+if ($object->public) {
+	print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+	print $langs->trans('SharedProject');
+} else {
+	print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+	print $langs->trans('PrivateProject');
+}
+print '</td></tr>';
+
 // Other attributes
 $cols = 2;
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -354,16 +380,21 @@ print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border tableforfield centpercent">';
 
-// Description
-print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-print dol_htmlentitiesbr($object->description);
-print '</td></tr>';
-
 // Categories
 if (isModEnabled('category')) {
 	print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 	print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 	print "</td></tr>";
+}
+
+// Description
+print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+if ($object->description) {
+	print '<tr><td class="nottitleforfield" colspan="2">';
+	print '<div class="longmessagecut">';
+	print dolPrintHTML($object->description);
+	print '</div>';
+	print '</td></tr>';
 }
 
 print '</table>';
@@ -701,6 +732,8 @@ $resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $ob
 
 if (!empty($hookmanager->resArray)) {
 	$listofreferent = array_merge($listofreferent, $hookmanager->resArray);
+} elseif ($resHook > 0 && !empty($hookmanager->resPrint)) {
+	$listofreferent = $hookmanager->resPrint;
 }
 
 if ($action == "addelement") {
@@ -910,6 +943,7 @@ foreach ($listofreferent as $key => $value) {
 					$defaultvat = get_default_tva($mysoc, $mysoc);
 					$reg = array();
 					if (preg_replace('/^(\d+\.)\s\(.*\)/', $defaultvat, $reg)) {
+						// @phan-suppress-next-line PhanTypeInvalidDimOffset
 						$defaultvat = $reg[1];
 					}
 					$total_ttc_by_line = price2num($total_ht_by_line * (1 + ((float) $defaultvat / 100)), 'MT');
@@ -935,8 +969,8 @@ foreach ($listofreferent as $key => $value) {
 
 				// Add total if we have to
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 				}
 			}
 
@@ -1090,7 +1124,7 @@ foreach ($listofreferent as $key => $value) {
 
 		if (!getDolGlobalString('PROJECT_LINK_ON_OVERWIEW_DISABLED') && $idtofilterthirdparty && !in_array($tablename, $exclude_select_element)) {
 			$selectList = $formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300 minwidth75imp', -2, empty($project_field) ? 'fk_projet' : $project_field, $langs->trans("SelectElement"));
-			if ($selectList < 0) {
+			if ((int) $selectList < 0) {  // cast to int because ''<0 is true.
 				setEventMessages($formproject->error, $formproject->errors, 'errors');
 			} elseif ($selectList) {
 				// Define form with the combo list of elements to link
@@ -1175,7 +1209,7 @@ foreach ($listofreferent as $key => $value) {
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') {
 			print ''; // if $key == 'project_task', we don't want details per user
 		} elseif (in_array($tablename, array('payment_various'))) {
-			print ''; // if $key == 'payment_various', we don't have any thirdparty
+			print $langs->trans("Label"); // complementary info about the payment
 		} elseif (in_array($tablename, array('expensereport_det', 'don', 'projet_task', 'stock_mouvement', 'salary'))) {
 			print $langs->trans("User");
 		} else {
@@ -1440,6 +1474,8 @@ foreach ($listofreferent as $key => $value) {
 					}
 				} elseif ($tablename == 'projet_task' && $key == 'element_time') {	// if $key == 'project_task', we don't want details per user
 					print $elementuser->getNomUrl(1);
+				} elseif ($tablename == 'payment_various') {	// payment label
+					print $element->label;
 				}
 				print '</td>';
 
@@ -1579,8 +1615,8 @@ foreach ($listofreferent as $key => $value) {
 				print '</tr>';
 
 				if ($qualifiedfortotal) {
-					$total_ht = $total_ht + $total_ht_by_line;
-					$total_ttc = $total_ttc + $total_ttc_by_line;
+					$total_ht += $total_ht_by_line;
+					$total_ttc += $total_ttc_by_line;
 
 					$total_ht_by_third += $total_ht_by_line;
 					$total_ttc_by_third += $total_ttc_by_line;
@@ -1711,14 +1747,16 @@ function canApplySubtotalOn($tablename)
 /**
  * sortElementsByClientName
  *
- * @param 	array		$elementarray	Element array
- * @return	array						Element array sorted
+ * @param 	int[]		$elementarray	Element array
+ * @return	int[]						Element array sorted
  */
 function sortElementsByClientName($elementarray)
 {
 	global $db, $classname;
+	'@phan-var-force string $classname';
 
 	$element = new $classname($db);
+	'@phan-var-force CommonObject $element';
 
 	$clientname = array();
 	foreach ($elementarray as $key => $id) {	// id = id of object

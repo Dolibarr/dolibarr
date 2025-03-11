@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Liste mit anderen Namen/Aliasen verwenden, damit diese Seit
 WEBSITE_CSS_URL=URL der externen CSS-Datei
 WEBSITE_CSS_INLINE=CSS-Dateiinhalt (für alle Seiten gleich)
 WEBSITE_JS_INLINE=JavaScript-Dateiinhalt (für alle Seiten gleich)
-WEBSITE_HTML_HEADER=Diesen Code am Schluss des HTML Headers anhängen (für alle Seiten gleich)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Roboterdatei (robots.txt)
 WEBSITE_HTACCESS=Website  .htaccess Datei
 WEBSITE_MANIFEST_JSON=Website manifest.json Datei
@@ -56,16 +56,17 @@ ReadPerm=Lesen
 WritePerm=Schreiben
 TestDeployOnWeb=Test/Bereitstellung im Web
 PreviewSiteServedByWebServer=Die <u>Vorschau %s in einem neuen Tab</u><br><br>%s wird durch einen externen Webserver (Wie Apache, Nginx, IIS) ausgeliefert. Dieser Server muss installiert und eingerichtet sein, bevor Sie den Verzeichnis <br><strong>%s</strong> anzeigen können.<br> URL, die von dem externen Server bereitgestellt wird: <br><strong>%s</strong>
-PreviewSiteServedByDolibarr= <u> Vorschau für %s in einem neuen Tab. </u> <br> <br> %s wird vom Dolibarr-Server bereitgestellt, so dass kein zusätzlicher Webserver (wie Apache, Nginx, IIS) installiert werden muss. <br> Der Nachteil ist, dass die URLs der Seiten nicht benutzerfreundlich sind und mit dem Pfad Ihrer Dolibarr-Installation beginnen. <br> Von Dolibarr bereitgestellte URL: <br> <strong> %s </strong> <br> <br> Um diese Website auf Ihrem eigenen Webserver zu hosten, muss dort ein virtueller Host erstellt werden, der auf das Verzeichnis <br> <strong> %s </strong> <br> verweist. Anschließens den Namen des virtuellen Servers in den Eigenschaften dieser Website eintragen und auf den Link "Im Web testen/bereitstellen" klicken.
+PreviewSiteServedByDolibarr=<u>Vorschau %s in einem neuen Tab.</u><br><br>Die %s wird von Dolibarr Server bereitgestellt, sod ass kein zusätzliches Web Server (wie Apache, Nginx, IIS) installiert werden muss.<br>Der Nachteil besteht darin, dass die URLs der Seiten nicht benutzerfreundlich sind und mit dem Pfad Ihrer Dolibarr-Installation beginnen.<br>Von Dolibarr bereitgestellte URL:<br><strong>%s</strong><br><br>Um die Bereitstellung oder den Test mit Ihrem eigenen externen Web-Server (wie Apache, Nginx, Lighttp) durchzuführen, verwenden Sie den Link "%s".
 VirtualHostUrlNotDefined=Die URL des virtuellen Hosts, der von einem externen Webserver bereit gestellt wird, ist nicht definiert
 NoPageYet=Noch keine Seiten
 YouCanCreatePageOrImportTemplate=Sie können eine neue Seite erstellen oder eine komplette Website-Vorlage importieren
-SyntaxHelp=Hilfe zu bestimmten Syntaxtipps
+SyntaxHelp=Hilfe zu Programmierfragen
 YouCanEditHtmlSourceckeditor=Sie können den HTML-Quellcode über die Schaltfläche "HTML-Code bearbeiten" im Editor bearbeiten.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Um ein <strong>Bild</strong>, das im Verzeichnis <strong>Dokumente</strong> gespeichert ist, einzubinden, verwenden Sie den Wrapper <strong>viewimage.php</strong>.<br>Beispiel: Für ein Bild in Dokumente/Medien (konfigurieren Sie das Verzeichnis für den öffentlichen Zugriff), lautet die Syntax:<br> <strong>&lt;img src="/viewimage.php?modulepart=medias &amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=Für Bilder, die über einen Link geteilt werden (öffentlicher Zugriff über den geteilten Hash-Schlüssel der Datei) gilt folgende Syntax:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> Sie können PHP-Code in diese Quellcode mit Tags einfügen<strong>&lt;?php ?&gt;</strong>. Die folgenden globalen Variablen sind verfügbar: $conf, $db, $mysoc, $Benutzer, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> Sie können mit folgender Syntax auch Inhalte einer anderen Seite/eines anderen Containers einbinden: <br><strong>&lt;?php includeContainer('Alias_des_zu_einzuschließenden_Containers'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> Sie können eine Weiterleitung zu einer anderen Seite/einem anderen Container mit der folgenden Syntax erstellen (Hinweis: Keinen Inhalt vor der Umleitung ausgeben): <br><strong>&lt;?php redirectToContainer('Alias_des_Containers, zu dem_umgeleitet_werden_soll'); ?&gt;</strong><br>Sie können auch eine Umleitung mit GET-Parametern vornehmen:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> Um einen Link zu einer anderen Seite hinzuzufügen, verwenden Sie die Syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> Sie können den Seitentitel und <strong>SEO-Meta-Tags </strong> (Titel, Schlüsselwörter, Beschreibung) dynamisch festlegen. Definieren Sie einfach die folgenden Variablen: <br> <code>$__PAGE__TITLE__ = "Titelwert …"; </code><br> <code>$__PAGE__KEYWORDS__ = "Schlüsselwort1, Schlüsselwort2, Schlüsselwort3 …"; // Durch Komma getrennt</code><br><code>$__PAGE__DESC__ = "Description …";<br><span class="fa fa-download paddingright"></span> Um einen <strong>Link zum Herunterladen</strong> einers Datei, die im <strong>Dokumenten</strong>-Verzeichnis gespeichert ist, einzufügen, verwenden Sie den <strong>document.php</strong> Wrapper:<br>Beispiel für eine Datei in Dokumente/ECM (muss protokolliert werden), lautet die Syntax:<br><strong>&lt;a href="/Dokument.php?modulepart=ecm&Datei=[relative_dir/]filename.ext"&gt;</strong><br>Für ein Datei in Dokumente/Medien (öffnen Sie Verzeichnis für den öffentlichen Zugriff) lautet die Syntax:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>Für ein Datei, die mit einem Share-Link geteilt wird (offener Zugriff unter Verwendung des Freigabe-Hash-Schlüssels der Datei), lautet die Syntax:<br><strong>&lt;a href="/Dokument.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Um ein <strong>Bild</strong> , das im Verzeichnis <strong>medias</strong> gespeichert ist (Verzeichnis für den öffentlichen Zugriff konfiguriert), verwenden Sie den relativen Pfad, beginnend mit <strong>/medias</strong>, Beispiel:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=Für ein Bild, das mit einem freigegebenen Link geteilt wird (offener Zugriff mithilfe des Freigabe-Hashs der Datei), verwenden Sie den Wrapper: <br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=Um die URL des Bildes eines PHP Objektes zu erhalten, verwenden Sie<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($Objekt , 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=Um die URL eines Bildes im HTML-Inhalt eines Artikels abzurufen, verwenden Sie <br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>Weitere Beispiele für HTML oder dynamischen Code finden Sie in <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">der Wiki-Dokumentation</a>.<br>
 ClonePage=Seite/Container klonen
 CloneSite=Website klonen
@@ -87,14 +88,14 @@ WebsiteAccount=Website Konto
 WebsiteAccounts=Website Konten
 AddWebsiteAccount=Website-Konto erstellen
 BackToListForThirdParty=Zurück zur Liste der Geschäftspartner
-DisableSiteFirst=Website zuerst deaktivieren
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Titel der Website
 AnotherContainer=So fügen Sie den Inhalt einer anderen Seite/eines anderen Containers ein (Sie könnten hierbei Fehler haben, wenn Sie dynamischen Code aktivieren, weil der eingebettete Subcontainer möglicherweise nicht existiert)
 SorryWebsiteIsCurrentlyOffLine=Diese Website ist derzeit offline. Bitte kommen Sie später wieder...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Benutzertabelle für Website aktivieren
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Aktiviere die Benutzertabelle, um Webseiten-Konten (Login/Kennwort) für jede Website / jeden Geschäftspartner zu speichern
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Zuerst muss die Startseite definiert sein
-OnlyEditionOfSourceForGrabbedContentFuture=Warnung: Das Erstellen einer Webseite durch Importieren einer externen Webseite ist nur für erfahrene Benutzern empfohlen. Abhängig von der Komplexität der Quellseite kann das Ergebnis des Imports vom Original abweichen. Auch wenn die Quellseite einige CSS-Stile oder problematisches JavaScript verwendet, kann es bei der Arbeit an dieser Seite zu Beeinträchtigungen des Erscheinungsbilds oder der Funktionen des Website-Editors kommen. Mit dieser Methode können Sie eine Seite schneller erstellen. Es wird jedoch empfohlen, Ihre neue Seite von Grund auf oder anhand einer vorgeschlagenen Seitenvorlage zu erstellen.<br>Beachten Sie auch, dass der Inline-Editor möglicherweise nicht korrekt funktioniert bei Verwendung auf einer importierten externen Seite.
+OnlyEditionOfSourceForGrabbedContentFuture=Achtung: Das Erstellen einer Webseite durch Importieren einer externen Webseite ist erfahrenen Benutzern vorbehalten. Je nach Komplexität der Quellseite kann das Ergebnis des Imports vom Original abweichen. Auch wenn die Quellseite gängige CSS-Styles (ohne vorangestellten Präfix) oder allgemeines JavaScript verwendet, kann dies beim Arbeiten an dieser Seite das Erscheinungsbild oder die Funktionen des Website-Editors beeinträchtigen. Diese Methode ist eine schnellere Möglichkeit zum Erstellen einer Seite, es wird jedoch empfohlen, die neue Seite von Grund auf neu oder anhand einer empfohlenen Seitenvorlage zu erstellen. <br>Beachten Sie auch, dass der Inline-Editor möglicherweise nicht richtig funktioniert, wenn er bei einer übernommenen externen Seite verwendet wird.
 OnlyEditionOfSourceForGrabbedContent=Der HTML Code kann nur editiert werden, wenn der Inhalt von einer externen Site geladen wurde
 GrabImagesInto=Auch Bilder aus CSS und Seite übernehmen
 ImagesShouldBeSavedInto=Bilder sollten im Verzeichnis gespeichert werden
@@ -196,8 +197,8 @@ WebPortalOrderListMenu=Kundenaufträge
 WebPortalOrderListTitle=Kundenaufträge
 WebPortalOrderListDesc=Hier finden Sie alle Ihre Aufträge
 WebPortalOrderListNothing=Keine Aufträge gefunden
-WebPortalInvoiceListMenu=(Kunden-)Rechnungen
-WebPortalInvoiceListTitle=(Kunden-)Rechnungen
+WebPortalInvoiceListMenu=Rechnungen
+WebPortalInvoiceListTitle=Rechnungen
 WebPortalInvoiceListDesc=Hier finden Sie alle Ihre Rechnungen
 WebPortalInvoiceListNothing=Keine Rechnungen gefunden
 WebPortalMemberCardMenu=Mitglied
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Aus Kundenkonto ausloggen
 filteredByVersion=Nach Version gefiltert
 removeFilter=Filter entfernen
 viewMyCart=Meinen Warenkorb anzeigen
+Shipping=Shipping
 freeShipping=Kostenloser Versand!
 noProducts=Keine Produkte
 nbrItemsInCart=Der Warenkorb enthält <span class="ajax_cart_quantity">0</span> Artikel.
@@ -284,12 +286,13 @@ productNameAToZ=Produktname: A bis Z
 productNameZToA=Produktname: Z bis A
 referenceLowestFirst=Artikelnr.z: Niedrigste zuerst
 referenceHighestFirst=Artikelnr.: Höchste zuerst
+productPerPage=products per page
 perPage=pro Seite
 showAll=Alles anzeigen
 showing= Anzeigen
 nbrOfProducts= Es gibt %s Produkte.
 noResultsHaveBeenFound=Es wurden 0 Ergebnisse gefunden.
-noResultsWereFound= Es wurden keine Ergebnisse gefunden.
+noResultsWereFound=Es wurden keine Ergebnisse gefunden.
 addToCart=Zum Warenkorb hinzufügen
 backHome=Zur Startseite zurückkehren
 priceDrop=Preis gesenkt
@@ -302,10 +305,11 @@ lastUpdate=Letztes Update
 contactSupport=So kontaktieren Sie den Support
 noProductToDisplay=Fehler, kein Produkt zum anzeigen
 yourCompanyInformation=Ihre Unternehmensinformation
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Dieser E-Mail ist bereits registriert.
 firstnameContainsLettersOnly=<b>Vorname</b> darf nur Buchstaben und Leerzeichen enthalten
 lastnameContainsLettersOnly=<b>Nachname</b> darf nur Buchstaben und Leerzeichen enthalten
-passwordCriteria=<b>Das Passwort</b> muss die folgenden folgenden Kriterien erfüllen:<br>- 12 Zeichen lang<br>- 1 Großbuchstabe<br>- 1 Ziffer<br>- Keine Sonderzeichen<br>- Keine Zeichen mehr als dreimal wiederholen<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=Ein Fehler ist aufgetreten.
 accountCreation=Konto erstellen
 errorsOccurred=Es gibt %s Fehler %s
@@ -357,3 +361,7 @@ subtract=Abziehen
 LoginCheckout=Einloggen und zur Kasse gehen
 paymentSuccessProcessed=Ihr Zahlung wurde erfolgreich verarbeitet.
 youWillBeRedirectedToOrderPage=Sie werden in Kürze zur Detailseite Ihrer Bestellung weitergeleitet.
+WebPortalSetupNotComplete=Die Webportal-Konfiguration ist nicht vollständig
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

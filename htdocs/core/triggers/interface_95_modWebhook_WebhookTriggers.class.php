@@ -76,6 +76,9 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$errors = 0;
 		$static_object = new Target($this->db);
 		$target_url = $static_object->fetchAll();
+		if (!is_array($target_url)) {
+			return 0;
+		}
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
 			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
@@ -101,10 +104,12 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 					//'Accept: application/json'
 				);
 
-				$method = 'POST';
-				if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_IN_BODY')) {
-					$method = 'POSTALREADYFORMATED';
+				$method = 'POSTALREADYFORMATED';
+				if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_AS_PARAM_STRING')) {		// For compatibility with v20- versions
+					$method = 'POST';
 				}
+
+				// warning; the test page use its own call
 				$response = getURLContent($tmpobject->url, $method, $jsonstr, 1, $headers, array('http', 'https'), 2, -1);
 
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {

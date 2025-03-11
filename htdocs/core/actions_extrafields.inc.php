@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2011-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +24,21 @@
  *  \brief			Code for actions on extrafields admin pages
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ *
+ * @var int $error
+ * @var string $action
+ * @var string $elementtype
+ * @var string $value
+ */
 $maxsizestring = 255;
 $maxsizeint = 10;
-$mesg = array();
+$mesg = '';
+$mesgs = array();
 
 $extrasize = GETPOST('size', 'intcomma');
 $type = GETPOST('type', 'alphanohtml');
@@ -48,13 +61,14 @@ if ($type == 'select') {
 	$extrasize = '';
 }
 
+// List of reserved words for databases
 $listofreservedwords = array(
 	'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASENSITIVE', 'BEFORE', 'BETWEEN', 'BINARY', 'BLOB', 'BOTH', 'CALL', 'CASCADE', 'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER',
 	'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DOUBLE', 'DROP', 'DUAL',
 	'EACH', 'ELSE', 'ELSEIF', 'ENCLOSED', 'ESCAPED', 'EXISTS', 'EXPLAIN', 'FALSE', 'FETCH', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FORCE', 'FOREIGN', 'FULLTEXT', 'GRANT', 'GROUP', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND',
 	'IGNORE', 'IGNORE_SERVER_IDS', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INTEGER', 'INTERVAL', 'INTO', 'ITERATE',
 	'KEYS', 'KEYWORD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINES', 'LOCALTIME', 'LOCALTIMESTAMP', 'LONGBLOB', 'LONGTEXT', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NUMERIC',
-	'OFFSET', 'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE',
+	'OFFSET', 'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE', 'OVER',
 	'PARTITION', 'POSITION', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'READS', 'READ_WRITE', 'REAL', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REQUIRE', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE',
 	'SCHEMAS', 'SECOND_MICROSECOND', 'SENSITIVE', 'SEPARATOR', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SSL', 'STARTING', 'STRAIGHT_JOIN',
 	'TABLE', 'TERMINATED', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TRAILING', 'TRIGGER', 'UNDO', 'UNIQUE', 'UNSIGNED', 'UPDATE', 'USAGE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARYING',
@@ -68,55 +82,61 @@ if ($action == 'add') {
 		if (!$type) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			$action = 'create';
 		}
 		if ($type == 'varchar' && $extrasize <= 0) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
 			$action = 'edit';
 		}
 		if ($type == 'varchar' && $extrasize > $maxsizestring) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
 			$action = 'create';
 		}
 		if ($type == 'int' && $extrasize > $maxsizeint) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$action = 'create';
+		}
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesgs[] = $langs->trans("ErrorSizeForStarsType");
 			$action = 'create';
 		}
 		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectType");
 			$action = 'create';
 		}
 		if ($type == 'sellist' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'create';
 		}
 		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForCheckBoxType");
+			$mesgs[] = $langs->trans("ErrorNoValueForCheckBoxType");
 			$action = 'create';
 		}
 		if ($type == 'link' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForLinkType");
+			$mesgs[] = $langs->trans("ErrorNoValueForLinkType");
 			$action = 'create';
 		}
 		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForRadioType");
+			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'create';
 		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
@@ -129,13 +149,13 @@ if ($action == 'add') {
 						if (count($matches[0]) > 1) {
 							$error++;
 							$langs->load("errors");
-							$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+							$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 							$action = 'create';
 						}
 					} else {
 						$error++;
 						$langs->load("errors");
-						$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+						$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 						$action = 'create';
 					}
 				}
@@ -146,7 +166,7 @@ if ($action == 'add') {
 			if (strlen(GETPOST('attrname', 'aZ09')) < 3) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
+				$mesgs[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
 				$action = 'create';
 			}
 		}
@@ -156,7 +176,7 @@ if ($action == 'add') {
 			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords)) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
+				$mesgs[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
 				$action = 'create';
 			}
 		}
@@ -226,17 +246,18 @@ if ($action == 'add') {
 				} else {
 					$error++;
 					$mesg = $extrafields->error;
-					setEventMessages($mesg, null, 'errors');
+					$mesgs = array_merge($mesgs, $extrafields->errors);
+					setEventMessages($mesg, $mesgs, 'errors');
 				}
 			} else {
 				$error++;
 				$langs->load("errors");
 				$mesg = $langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters", $langs->transnoentities("AttributeCode"));
-				setEventMessages($mesg, null, 'errors');
+				setEventMessages($mesg, $mesgs, 'errors');
 				$action = 'create';
 			}
 		} else {
-			setEventMessages($mesg, null, 'errors');
+			setEventMessages($mesg, $mesgs, 'errors');
 		}
 	}
 }
@@ -248,49 +269,55 @@ if ($action == 'update') {
 		if (!$type) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			$action = 'edit';
 		}
 		if ($type == 'varchar' && $extrasize <= 0) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
 			$action = 'edit';
 		}
 		if ($type == 'varchar' && $extrasize > $maxsizestring) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
 			$action = 'edit';
 		}
 		if ($type == 'int' && $extrasize > $maxsizeint) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
 			$action = 'edit';
 		}
 		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectType");
 			$action = 'edit';
 		}
 		if ($type == 'sellist' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectListType");
+			$action = 'edit';
+		}
+		if ($type == 'stars' && ($extrasize < 1|| $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesgs[] = $langs->trans("ErrorSizeForStarsType");
 			$action = 'edit';
 		}
 		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForCheckBoxType");
+			$mesgs[] = $langs->trans("ErrorNoValueForCheckBoxType");
 			$action = 'edit';
 		}
 		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForRadioType");
+			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'edit';
 		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
@@ -303,13 +330,13 @@ if ($action == 'update') {
 						if (count($matches[0]) > 1) {
 							$error++;
 							$langs->load("errors");
-							$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+							$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 							$action = 'edit';
 						}
 					} else {
 						$error++;
 						$langs->load("errors");
-						$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+						$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 						$action = 'edit';
 					}
 				}
@@ -320,7 +347,7 @@ if ($action == 'update') {
 			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
+				$mesgs[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
 				$action = 'edit';
 			}
 		}
@@ -330,7 +357,7 @@ if ($action == 'update') {
 			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
+				$mesgs[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
 				$action = 'edit';
 			}
 		}
@@ -403,7 +430,8 @@ if ($action == 'update') {
 				} else {
 					$error++;
 					$mesg = $extrafields->error;
-					setEventMessages($mesg, null, 'errors');
+					$mesgs = array_merge($mesgs, $extrafields->errors);
+					setEventMessages($mesg, $mesgs, 'errors');
 				}
 			} else {
 				$error++;
@@ -412,7 +440,7 @@ if ($action == 'update') {
 				setEventMessages($mesg, null, 'errors');
 			}
 		} else {
-			setEventMessages($mesg, null, 'errors');
+			setEventMessages($mesg, $mesgs, 'errors');
 		}
 	}
 }
@@ -430,6 +458,7 @@ if ($action == 'confirm_delete' && $confirm == "yes") {
 			exit;
 		} else {
 			$mesg = $extrafields->error;
+			$mesgs = array_merge($mesgs, $extrafields->errors);
 		}
 	} else {
 		$error++;
@@ -484,7 +513,7 @@ if ($action == 'encrypt') {
 									if ($resupdate) {
 										$nbupdatedone++;
 									} else {
-										setEventMessages($db->lasterror(), '', 'errors');
+										setEventMessages($db->lasterror(), null, 'errors');
 										$error++;
 										break;
 									}

@@ -2,6 +2,8 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +40,9 @@ class mailing_contacts1 extends MailingTargets
 	public $require_module = array("societe"); // Module mailing actif si modules require_module actifs
 	public $require_admin = 0; // Module mailing actif pour user admin ou non
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 	/**
@@ -317,10 +322,10 @@ class mailing_contacts1 extends MailingTargets
 
 
 	/**
-	 *  Renvoie url lien vers fiche de la source du destinataire du mailing
+	 *  Provide the URL to the car of the source information of the recipient for the mailing
 	 *
 	 *  @param	int		$id		ID
-	 *  @return string      	Url lien
+	 *  @return string      	URL link
 	 */
 	public function url($id)
 	{
@@ -457,7 +462,7 @@ class mailing_contacts1 extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 						'email' => $obj->email,
-						'fk_contact' => $obj->fk_contact,
+						'fk_contact' => (int) $obj->fk_contact,
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
 						'other' =>
@@ -465,7 +470,7 @@ class mailing_contacts1 extends MailingTargets
 							($langs->transnoentities("UserTitle").'='.($obj->civility_id ? $langs->transnoentities("Civility".$obj->civility_id) : '')).';'.
 							($langs->transnoentities("PostOrFunction").'='.$obj->jobposition),
 						'source_url' => $this->url($obj->id),
-						'source_id' => $obj->id,
+						'source_id' => (int) $obj->id,
 						'source_type' => 'contact'
 					);
 					$old = $obj->email;

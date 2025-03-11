@@ -42,7 +42,6 @@ PrintCustomerOnReceipts=Imprimir cliente en boletos | recibos
 EnableBarOrRestaurantFeatures=Habilitar funciones para bar o restaurante
 ConfirmDeletionOfThisPOSSale=¿Confirma la eliminación de esta venta actual?
 ConfirmDiscardOfThisPOSSale=¿Quieres descartar esta venta actual?
-History=Historia
 NumberOfTerminals=Numero de terminales
 TerminalSelect=Seleccione el terminal que desea utilizar:
 DirectPaymentButton=Agregar un botón "Pago directo en efectivo"

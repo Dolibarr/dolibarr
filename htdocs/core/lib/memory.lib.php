@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021       Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,10 +63,11 @@ $shmoffset = 1000; // Max number of entries found into a language file. If too l
  *  @param	string      $memoryid		Memory id of shared area
  * 	@param	mixed		$data			Data to save. It must not be a null value.
  *  @param 	int			$expire			ttl in seconds, 0 never expire
+ *  @param 	int			$filecache		1 Enable file cache if no other session cache available, 0 Disabled (default)
  * 	@return	int							Return integer <0 if KO, 0 if nothing is done, Nb of bytes written if OK
  *  @see dol_getcache()
  */
-function dol_setcache($memoryid, $data, $expire = 0)
+function dol_setcache($memoryid, $data, $expire = 0, $filecache = 0)
 {
 	global $conf;
 
@@ -124,6 +125,31 @@ function dol_setcache($memoryid, $data, $expire = 0)
 	} elseif (getDolGlobalInt('MAIN_OPTIMIZE_SPEED') & 0x02) {	// This is a really not reliable cache ! Use Memcached instead.
 		// Using shmop
 		$result = dol_setshmop($memoryid, $data, $expire);
+	} elseif ($filecache > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$now = dol_now();
+		$memoryid = session_name().'_'.$memoryid;
+		$dircache = 'dolcache';
+		$pathcache = DOL_DATA_ROOT.'/'.$dircache;
+		if (!dol_is_dir($pathcache)) {
+			$result = dol_mkdir($pathcache);
+			if ($result < 0) {
+				return $result;
+			}
+		}
+		if ($expire != 0) {
+			$expire = dol_time_plus_duree($now, $expire, 's');
+		}
+
+		$cachedata = array("expire" => $expire, "data" => $data);
+		$cachejson = dolEncrypt(json_encode($cachedata));
+		if (!dol_is_file($pathcache.'/'.$memoryid.'.cache')) {
+			$result = file_put_contents($pathcache.'/'.$memoryid.'.cache', $cachejson);
+		} else {
+			return 0;
+		}
 	} else {
 		// No intersession cache system available, we use at least the perpage cache
 		$conf->cache['cachememory_'.$memoryid] = $data;
@@ -137,10 +163,11 @@ function dol_setcache($memoryid, $data, $expire = 0)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area
+ *  @param	int		$filecache		1 Enable file cache if no other session cache available, 0 Disabled (default)
  * 	@return	int|mixed				Return integer <0 if KO, data if OK, null if not found into cache or no caching feature enabled
  *  @see dol_setcache()
  */
-function dol_getcache($memoryid)
+function dol_getcache($memoryid, $filecache = 0)
 {
 	global $conf;
 
@@ -203,6 +230,31 @@ function dol_getcache($memoryid)
 		// Using shmop
 		$data = dol_getshmop($memoryid);
 		return $data;
+	} elseif ($filecache > 0) {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+		$now = dol_now();
+		$memoryid = session_name().'_'.$memoryid;
+		$dircache = 'dolcache';
+		$pathcache = DOL_DATA_ROOT.'/'.$dircache;
+		if (!dol_is_file($pathcache.'/'.$memoryid.'.cache')) {
+			return null;
+		}
+		$data = file_get_contents($pathcache.'/'.$memoryid.'.cache');
+		if (!$data) {
+			return -1;
+		}
+		$json = json_decode(dolDecrypt($data));
+		if ($json->expire > $now) {
+			return $json->data;
+		} else {
+			$result = dol_delete_file($pathcache.'/'.$memoryid.'.cache');
+			if (!$result) {
+				return -2;
+			}
+		}
+		return null;
 	} else {
 		// No intersession cache system available, we use at least the perpage cache
 		if (isset($conf->cache['cachememory_'.$memoryid])) {
@@ -233,11 +285,11 @@ function dol_getshmopaddress($memoryid)
 /**
  * 	Return list of contents of all memory area shared
  *
- * 	@return	array
+ * 	@return	array<string,mixed|mixed[]>
  */
 function dol_listshmop()
 {
-	global $shmkeys, $shmoffset;
+	global $shmkeys;
 
 	$resarray = array();
 	foreach ($shmkeys as $key => $val) {
@@ -252,14 +304,14 @@ function dol_listshmop()
 /**
  * 	Save data into a memory area shared by all users, all sessions on server
  *
- *  @param	int		$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@param	string	$data			Data to save. Must be a not null value.
+ *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
+ * 	@param	mixed|mixed[]	$data	Data to save. Must be a not null value.
  *  @param 	int		$expire			ttl in seconds, 0 never expire
  * 	@return	int						Return integer <0 if KO, 0=Caching not available, Nb of bytes written if OK
  */
 function dol_setshmop($memoryid, $data, $expire)
 {
-	global $shmkeys, $shmoffset;
+	global $shmkeys;
 
 	//print 'dol_setshmop memoryid='.$memoryid."<br>\n";
 	if (empty($shmkeys[$memoryid]) || !function_exists("shmop_write")) {
@@ -293,11 +345,11 @@ function dol_setshmop($memoryid, $data, $expire)
  * 	Read a memory area shared by all users, all sessions on server
  *
  *  @param	string	$memoryid		Memory id of shared area ('main', 'agenda', ...)
- * 	@return	int|null				Return integer <0 if KO, data if OK, null if no cache enabled or not found
+ * 	@return	int<-1,-1>|null|mixed|mixed[]	 integer <0 if KO, data if OK, null if no cache enabled or not found
  */
 function dol_getshmop($memoryid)
 {
-	global $shmkeys, $shmoffset;
+	global $shmkeys;
 
 	$data = null;
 

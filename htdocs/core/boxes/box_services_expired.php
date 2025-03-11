@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,9 @@ class box_services_expired extends ModeleBoxes
 		$this->db = $db;
 
 		$this->hidden = !($user->hasRight('contrat', 'lire'));
+
+		$this->urltoaddentry = DOL_URL_ROOT.'/contrat/card.php?action=create';
+		$this->msgNoRecords = 'NoExpiredServices';
 	}
 
 	/**
@@ -113,6 +117,7 @@ class box_services_expired extends ModeleBoxes
 					$thirdpartytmp->code_client = $objp->code_client;
 					$thirdpartytmp->code_fournisseur = $objp->code_fournisseur;
 					$thirdpartytmp->code_compta = $objp->code_compta;
+					$thirdpartytmp->code_compta_client = $objp->code_compta;
 					$thirdpartytmp->code_compta_fournisseur = $objp->code_compta_fournisseur;
 
 					$contract->id = $objp->rowid;
@@ -141,7 +146,7 @@ class box_services_expired extends ModeleBoxes
 					$this->info_box_contents[$i][] = array(
 						'td' => 'class="center nowraponall" title="'.dol_escape_htmltag($langs->trans("DateEndPlanned").': '.dol_print_date($dateline, 'dayhour', 'tzuserrel')).'"',
 						'text' => dol_print_date($dateline, 'day', 'tzuserrel'),
-						'text2'=> $late,
+						'text2' => $late,
 					);
 
 					$this->info_box_contents[$i][] = array(
@@ -153,19 +158,12 @@ class box_services_expired extends ModeleBoxes
 					$i++;
 				}
 
-				if ($num == 0) {
-					$langs->load("contracts");
-					$this->info_box_contents[$i][] = array(
-						'td' => 'class="nohover center"',
-						'text' => '<span class="opacitymedium">'.$langs->trans("NoExpiredServices").'</span>'
-					);
-				}
 
 				$this->db->free($resql);
 			} else {
 				$this->info_box_contents[0][] = array(
 					'td' => '',
-					'maxlength'=>500,
+					'maxlength' => 500,
 					'text' => ($this->db->error().' sql='.$sql),
 				);
 			}
@@ -177,13 +175,15 @@ class box_services_expired extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *  Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *  @param	array	$head       Array with properties of box title
-	 *  @param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
-	 *  @return	string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

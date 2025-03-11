@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Utilitzeu aquí la llista d'altres noms/àlies, per la qual
 WEBSITE_CSS_URL=URL del fitxer CSS extern
 WEBSITE_CSS_INLINE=Fitxer de contingut CSS (comú a totes les pàgines)
 WEBSITE_JS_INLINE=Contingut del fitxer JavaScript (comú a totes les pàgines)
-WEBSITE_HTML_HEADER=Afegit a la part inferior de l'encapçalament HTML (comú a totes les pàgines)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Fitxer per robots (robots.txt)
 WEBSITE_HTACCESS=Fitxer .htaccess del lloc web
 WEBSITE_MANIFEST_JSON=Arxiu del lloc web manifest.json
@@ -46,26 +46,26 @@ RealURL=URL real
 ViewWebsiteInProduction=Visualitza el lloc web utilitzant els URL d'inici
 Virtualhost=Host virtual o nom de domini
 VirtualhostDesc=El nom de l'amfitrió o domini virtual (per exemple: www.mywebsite.com, mybigcompany.net, ...)
-ToDeployYourWebsiteOnLiveYouHave3Solutions=To deploy this website live, you have 3 solutions...
+ToDeployYourWebsiteOnLiveYouHave3Solutions=Per implementar aquest lloc web en producció, teniu 3 solucions...
 SetHereVirtualHost=<u>Utilitzeu-lo amb Apache/NGinx/...</u><br>Creeu al vostre servidor web (Apache, Nginx, ...) un host virtual dedicat amb PHP habilitat i un directori arrel a<br><strong>%s</strong>
 ExampleToUseInApacheVirtualHostConfig=Exemple per a utilitzar a la configuració de l'amfitrió virtual d'Apache:
-YouCanAlsoTestWithPHPS=<u>Use with PHP embedded server</u><br>On develop environment, you may prefer to test the site with the PHP embedded web server by running
-YouCanAlsoDeployToAnotherWHP=<u>Run your web site inside a Dolibarr web Hosting provider</u><br>If you don't have a web server like Apache or NGinx available on internet, you can export and import your web site onto another Dolibarr instance provided by another Dolibarr hosting provider that provide full integration with the Website module. You can find a list of some Dolibarr hosting providers on <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
+YouCanAlsoTestWithPHPS=<u>S'utilitza amb un servidor PHP incrustat</u><br>A l'entorn de desenvolupament, podeu prefereix provar el lloc amb el servidor web incrustat PHP executant-lo
+YouCanAlsoDeployToAnotherWHP=<u>Executeu el vostre lloc web dins d'un proveïdor d'allotjament web Dolibarr</u><br>If no teniu disponible un servidor web com Apache o NGinx Internet, podeu exportar i importar el vostre lloc web a una altra instància de Dolibarr proporcionada per un altre proveïdor d'allotjament de Dolibarr que proporcioni una integració completa amb el mòdul del lloc web. Podeu trobar una llista d'alguns proveïdors d'allotjament de Dolibarr a <a href="https://saas.dolibarr.org" target="_blank" rel="noopener noreferrer external">https://saas.dolibarr.org</a>
 CheckVirtualHostPerms=Comproveu també que l'usuari del VIRTUAL HOST (per exemple www-data) té permisos <strong>%s</strong> sobre els fitxers a <br><strong>%s</strong>
 ReadPerm=Llegit
 WritePerm=Escriu
 TestDeployOnWeb=Prova / implantació a la web
 PreviewSiteServedByWebServer=<LI>Vista prèvia %s en una nova pestanya.</LI><br><br>El %s serà servit per un servidor web extern (com ara Apache, Nginx, IIS). Heu d'instal·lar i configurar aquest servidor abans d'apuntar al directori:<br><strong>%s</strong><br> URL servit per un servidor extern:<br><strong>%s</strong><br>
-PreviewSiteServedByDolibarr=<u>Previsualitza %s en una pestanya nova.</u><br><br>El %s serà servit pel servidor Dolibarr, de manera que no cal instal·lar cap servidor web addicional (com Apache, Nginx, IIS).<br>L'inconvenient és que els URL de les pàgines no són fàcils d'utilitzar i comencen pel camí del vostre Dolibarr.<br>URL servit per Dolibarr: <br><strong>%s</strong><br><br>Per a utilitzar el vostre propi servidor web extern per a servir aquest lloc web, creeu un VIRTUALHOST al vostre servidor web que apunti al directori <br><strong>%s</strong><br>, llavors introduïu el nom d'aquest servidor virtual i feu clic a l'enllaç «Prova/Desplega a la web».
+PreviewSiteServedByDolibarr=<u>Previsualitza %s en una pestanya nova.</u><br><br>El %s serà servit pel servidor Dolibarr, de manera que no necessita cap servidor web addicional (com Apache, Nginx, IIS) instal·lat.<br>L'inconvenient és que els URL de les pàgines no són fàcils d'utilitzar i comencen amb el camí del vostre Dolibarr.<br>URL ofert per Dolibarr:<br> <strong>%s</strong><br><br>span>1 Per implementar o provar amb el vostre propi servidor web extern (com ara Apache, Nginx, Lighttp) utilitzeu l'enllaç "%s".
 VirtualHostUrlNotDefined=No s'ha definit l'URL de l'amfitrió virtual servit per un servidor web extern
 NoPageYet=Encara sense pàgines
 YouCanCreatePageOrImportTemplate=Podeu crear una pàgina nova o importar una plantilla completa del lloc web
 SyntaxHelp=Ajuda sobre consells de sintaxi específica
 YouCanEditHtmlSourceckeditor=Podeu editar el codi font HTML usant el botó "Codi font" a l'editor.
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Per incloure un  <strong>imatge</strong> emmagatzemat al director de <strong>documentsb9z0f65fc0<strong></span> , utilitzeu l'embolcall <strong>viewimage.php</strong>.<br>, per exemple, una imatge a documents/mitjans (directori obert per a accés públic), la sintaxi és:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"b0018c7d31ecz0 </strong><br>
-YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç compartit (accés obert utilitzant la clau hash de compartició del fitxer), la sintaxi és:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
-YouCanEditHtmlSource3=Per obtenir l'URL de la imatge d'un objecte PHP, utilitzeu<br><strong>&lt;&lt; span>img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Per incloure un <strong>imatge</strong> emmagatzemat als <strong>mitjans de comunicació<span directori</strong></span> (directori obert per a l'accés públic), utilitzeu el camí relatiu que comença per <strong>/mediasb0a65dc071f , exemple:<br><strong>&lt;img src="/medias/image/myimagepath/filename ext"&gt;</strong><br>
+YouCanEditHtmlSource2=Per a una imatge compartida amb un enllaç per compartir (accés obert mitjançant la clau hash per compartir del fitxer), utilitzeu l'embolcall:<br><strong> &lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong>b0319bzcc
+YouCanEditHtmlSource3=Per a obtenir l'URL de la imatge d'un objecte PHP, utilitzeu<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=Per obtenir l'URL d'una imatge dins del contingut html d'un article, utilitzeu<br><strong> &lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Clona la pàgina/contenidor
 CloneSite=Clona el lloc
@@ -87,15 +87,15 @@ WebsiteAccount=Compte del lloc web
 WebsiteAccounts=Comptes de lloc web
 AddWebsiteAccount=Crear un compte de lloc web
 BackToListForThirdParty=Torna a la llista de tercers
-DisableSiteFirst=Deshabilita primer el lloc web
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Títol del meu lloc web
 AnotherContainer=Així s’inclou contingut d’una altra pàgina / contenidor (pot ser que tingueu un error aquí si activeu el codi dinàmic perquè pot no existir el subconjunt incrustat)
 SorryWebsiteIsCurrentlyOffLine=Ho sentim, actualment aquest lloc web està fora de línia. Per favor com a més endavant ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Activa la taula del compte del lloc web
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Activeu la taula per a emmagatzemar comptes de lloc web (nom d'usuari / contrasenya) per a cada lloc web / tercer
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Primer heu de definir la pàgina d'inici predeterminada
-OnlyEditionOfSourceForGrabbedContentFuture=Avís: la creació d'una pàgina web mitjançant la importació d'una pàgina web externa està reservada per a usuaris experimentats. Depenent de la complexitat de la pàgina d'origen, el resultat de la importació pot ser diferent de l'original. A més, si la pàgina d'origen utilitza estils CSS comuns o JavaScript conflictiu, pot trencar l'aspecte o les funcions de l'editor del lloc web quan es treballa en aquesta pàgina. Aquest mètode és una manera més ràpida de crear una pàgina, però es recomana crear la vostra pàgina nova des de zero o des d'una plantilla de pàgina suggerida.<br>Tingueu en compte també que l'editor en línia pot no funcionar correcta quan s'utilitza en una pàgina externa agafada.
-OnlyEditionOfSourceForGrabbedContent=Només l'edició de codi HTML és possible quan el contingut s'ha capturat d'un lloc extern
+OnlyEditionOfSourceForGrabbedContentFuture=Avís: la creació d'una pàgina web mitjançant la importació d'una pàgina web externa està reservada per a usuaris experimentats. Depenent de la complexitat de la pàgina d'origen, el resultat de la importació pot ser diferent de l'original. A més, si la pàgina d'origen utilitza estils CSS comuns o JavaScript conflictiu, pot trencar l'aspecte o les funcions de l'editor del lloc web quan es treballa en aquesta pàgina. Aquest mètode és una manera més ràpida de crear una pàgina, però es recomana crear la vostra pàgina nova des de zero o des d'una plantilla de pàgina suggerida.<br>Tingueu en compte també que l'editor en línia pot no funcionar correctament quan s'utilitza en una pàgina externa agafada.
+OnlyEditionOfSourceForGrabbedContent=Només és possible la modificació de la font HTML quan el contingut s'agafa d'un lloc extern
 GrabImagesInto=Agafa també imatges trobades dins del css i a la pàgina.
 ImagesShouldBeSavedInto=Les imatges s'han de desar al directori
 WebsiteRootOfImages=Directori arrel d'imatges del lloc web
@@ -126,7 +126,7 @@ Dynamiccontent=Exemple d’una pàgina amb contingut dinàmic
 EditInLineOnOff=El mode &quot;Edita en línia&quot; és %s
 ShowSubContainersOnOff=El mode d'execució del «contingut dinàmic» és %s
 GlobalCSSorJS=Fitxer CSS / JS / Capçalera global del lloc web
-BackToHomePage=Torna a la pàgina principal...
+BackToHomePage=Torna a la pàgina d'inici...
 TranslationLinks=Enllaços de traducció
 YouTryToAccessToAFileThatIsNotAWebsitePage=Intenteu accedir a una pàgina que no està disponible. <br> (ref = %s, type = %s, status = %s)
 UseTextBetween5And70Chars=Per a bones pràctiques de SEO, utilitzeu un text d'entre 5 i 70 caràcters
@@ -256,6 +256,7 @@ logOutFromYourCustomerAccount=Tanqueu la sessió del vostre compte de client
 filteredByVersion=Filtrat per versió
 removeFilter=Eliminar filtre
 viewMyCart=Veure el meu carretó de la compra
+Shipping=Shipping
 freeShipping=Enviament gratuït!
 noProducts=No hi ha productes
 nbrItemsInCart=Hi ha <span class="ajax_cart_quantity">0</span> articles al vostre carretó.
@@ -271,8 +272,8 @@ totalTaxIncl=Total (IVA inclòs)
 clickToClose=Feu clic per tancar
 sidebarCategories=categories
 noSubCat=NoSubCat
-specialPromo=Promotions
-allSpecials=All promotions
+specialPromo=Promocions
+allSpecials=Totes les promocions
 newProducts=Nous productes
 allNewProducts= Tots els productes nous
 view=Visualització:
@@ -284,14 +285,15 @@ productNameAToZ=Nom del producte: de la A a la Z
 productNameZToA=Nom del producte: Z a A
 referenceLowestFirst=Referència: el més baix primer
 referenceHighestFirst=Referència: el més alt primer
+productPerPage=products per page
 perPage=per pàgina
 showAll=Mostrar tots
 showing= Mostrant
 nbrOfProducts= Hi ha productes %s.
 noResultsHaveBeenFound=S'han trobat 0 resultats.
-noResultsWereFound= No s'han trobat resultats.
+noResultsWereFound=No s'han trobat resultats.
 addToCart=Afegeix a la cistella
-backHome=Torna a casa
+backHome=Torna a Inici
 priceDrop=Baixada de preu
 condition=Condició
 otherViews=Altres vistes
@@ -302,10 +304,11 @@ lastUpdate=Darrera actualització
 contactSupport=Com contactar amb l'assistència
 noProductToDisplay=Error, no hi ha producte per mostrar
 yourCompanyInformation=Informació de la teva empresa
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Aquest correu electrònic ja està registrat.
 firstnameContainsLettersOnly=<b>El nom</b> només ha de contenir lletres i espais
 lastnameContainsLettersOnly=<b>El cognom</b> només ha de contenir lletres i espais
-passwordCriteria=<b>La contrasenya</b> ha de complir els criteris següents:<br>- 12 caràcters<br>- 1 lletra majúscula<br>- 1 dígit<br>- Sense caràcters especials <br>- Eviteu repetir caràcters més de 3 vegades<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=S'ha produït un error.
 accountCreation=Crea un compte
 errorsOccurred=Hi ha %s error%s
@@ -357,3 +360,7 @@ subtract=Sostreure
 LoginCheckout=Inicieu sessió i procediu a la compra
 paymentSuccessProcessed=El vostre pagament s'ha processat correctament.
 youWillBeRedirectedToOrderPage=En breu se us redirigirà a la pàgina de detalls de la comanda.
+WebPortalSetupNotComplete=La configuració del portal web no s'ha completat
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

@@ -4,10 +4,8 @@ name: "Exakat analysis"
 on:
   # execute once a month, the 1st
   schedule:
-  - cron: "0 20 1 * *"
+    - cron: "0 20 1 * *"
   workflow_dispatch:
-    branches:
-      - develop
 
 permissions:
   contents: read
@@ -19,6 +17,7 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 1
+        ref: develop
     - name: Exakat
       uses: docker://exakat/exakat-ga
       with:

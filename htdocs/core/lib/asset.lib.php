@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2018-2022  OpenDSI     <support@open-dsi.fr>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2018-2022  OpenDSI                 <support@open-dsi.fr>
+ * Copyright (C) 2022-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array head array with tabs
+ * @return array<array{0:string,1:string,2:string}> head array with tabs
  */
 function assetAdminPrepareHead()
 {
@@ -82,7 +83,7 @@ function assetAdminPrepareHead()
  * Prepare array of tabs for Asset
  *
  * @param	Asset	$object		Asset
- * @return 	array				Array of tabs
+ * @return 	array<array{0:string,1:string,2:string}>	Array of tabs
  */
 function assetPrepareHead(Asset $object)
 {
@@ -178,7 +179,7 @@ function assetPrepareHead(Asset $object)
  * Prepare array of tabs for AssetModel
  *
  * @param	AssetModel	$object		AssetModel
- * @return 	array					Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function assetModelPrepareHead($object)
 {

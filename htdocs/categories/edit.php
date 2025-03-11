@@ -3,7 +3,8 @@
  * Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
- * Copyright (C) 2020      Frédéric France		<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024	Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->load("categories");
 
@@ -54,6 +63,9 @@ if ($id == "") {
 	exit();
 }
 
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
+$hookmanager->initHooks(array('categorycard'));
+
 // Security check
 $result = restrictedArea($user, 'categorie', $id, '&category');
 
@@ -66,14 +78,11 @@ if ($result <= 0) {
 
 $type = $object->type;
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type]; // For backward compatibility
 }
 
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->table_element);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('categorycard'));
 
 $error = 0;
 
@@ -81,7 +90,7 @@ $error = 0;
 /*
  * Actions
  */
-$parameters = array('id' => $id, 'ref' => $ref, 'cancel'=> $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
+$parameters = array('id' => $id, 'ref' => $ref, 'cancel' => $cancel, 'backtopage' => $backtopage, 'socid' => $socid, 'label' => $label, 'description' => $description, 'color' => $color, 'position' => $position, 'visible' => $visible, 'parent' => $parent);
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -162,7 +171,7 @@ print '<input type="hidden" name="id" value="'.$object->id.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-print dol_get_fiche_head('');
+print dol_get_fiche_head([]);
 
 print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="border centpercent">';
@@ -215,7 +224,8 @@ print '</div>';
 print dol_get_fiche_end();
 
 
-print '<div class="center"><input type="submit" class="button" name"submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'"></div>';
+print $form->buttonsSaveCancel("Save", "Cancel");
+
 
 print '</form>';
 

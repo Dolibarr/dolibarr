@@ -34,7 +34,7 @@ PriceFormatInCurrentLanguage=تنسيق عرض السعر باللغة والع�
 ThirdPartyName=اسم الطرف الثالث
 ThirdPartyEmail=البريد الإلكتروني للطرف الثالث
 ThirdParty=طرف ثالث
-ThirdParties=الأطراف الثالثة
+ThirdParties=أطراف ثالثة
 ThirdPartyProspects=فرص
 ThirdPartyProspectsStats=فرص
 ThirdPartyCustomers=العملاء
@@ -65,6 +65,7 @@ State=الولاية / المقاطعة
 StateId=معرف الدولة
 StateCode=رمز الولاية / المقاطعة
 StateShort=الولاية
+DepartmentBuyer=Buyer's state/province
 Region=المنطقة
 Region-State=المنطقة - الولاية
 Country=الدولة
@@ -78,7 +79,7 @@ Chat=دردشة
 PhonePro=أوتوبيس. هاتف
 PhonePerso=الهاتف الشخصي
 PhoneMobile=الجوال
-No_Email=رفض الرسائل الإلكترونية الجماعية
+No_Email=Refuse mass emails
 Fax=الفاكس
 Zip=الرمز البريدي
 Town=مدينة
@@ -382,12 +383,12 @@ ExportCardToFormat=تصدير البطاقة إلى التنسيق
 ContactNotLinkedToCompany=جهة الاتصال ليست مرتبطة بأي طرف ثالث
 DolibarrLogin=تسجيل الدخول الى دوليبار
 NoDolibarrAccess=لا يوجد وصول دوليبار
-ExportDataset_company_1=الأطراف الثالثة (الشركات / المؤسسات / الأشخاص الطبيعيون) وممتلكاتهم
-ExportDataset_company_2=جهات الاتصال وخصائصها
-ExportDataset_company_3=حسابات بنكية لأطراف ثالثة
+ExportDataset_company_1=Third-parties (organizations/natural persons) and attributes
+ExportDataset_company_2=جهات اتصال | عناوين وسمات إضافية للأطراف الثالثة
+ExportDataset_company_3=Third-parties payment modes (bank accounts)
 ImportDataset_company_1=الأطراف الثالثة وممتلكاتهم
 ImportDataset_company_2=جهات اتصال | عناوين وسمات إضافية للأطراف الثالثة
-ImportDataset_company_3=حسابات بنكية لأطراف ثالثة
+ImportDataset_company_3=Third-parties payment modes (bank accounts)
 ImportDataset_company_4=ممثلو مبيعات اطراف ثالثة (تعيين مندوبي مبيعات / مستخدمين للشركات)
 PriceLevel=مستوى السعر
 PriceLevelLabels=تسميات مستوى السعر
@@ -431,7 +432,7 @@ LeopardNumRefModelDesc=Free code without verification.
 ManagingDirectors=اسم المدير (المديرون) (الرئيس التنفيذي ، المدير ، الرئيس)
 MergeOriginThirdparty=Duplicated third party (the third party you want to delete)
 MergeThirdparties=دمج أطراف ثالثة
-ConfirmMergeThirdparties=هل أنت متأكد أنك تريد دمج الطرف الثالث المختار مع الطرف الحالي؟ سيتم نقل جميع العناصر المرتبطة (الفواتير ، الطلبات ، ...) إلى الطرف الثالث الحالي ، وبعد ذلك سيتم حذف الطرف الثالث المختار.
+ConfirmMergeThirdparties=Are you sure you want to merge the chosen third party with the current one? All linked objects (invoices, orders, ...) will be moved to the current third party, then the chosen third party will be deleted.
 ThirdpartiesMergeSuccess=تم دمج الأطراف الثالثة
 SaleRepresentativeLogin=تسجيل دخول مندوب مبيعات
 SaleRepresentativeFirstname=الاسم الأول لمندوب المبيعات
@@ -461,3 +462,6 @@ ExternalSystemID=معرف النظام الخارجي
 IDOfPaymentInAnExternalSystem=معرف طريقة الدفع في نظام خارجي (مثل Stripe، Paypal، ...)
 AADEWebserviceCredentials=بيانات اعتماد خدمة الويب AADE
 ThirdPartyMustBeACustomerToCreateBANOnStripe=يجب أن يكون الطرف الثالث العميل للسماح بإنشاء معلوماته المصرفية على جانب Stripe
+NewSocNameForClone=New company name
+ConfirmCloneThirdparties=Are you sure that you want to clone <b>%s</b> company ?
+SocialNetworksBusiness=Social networks for company

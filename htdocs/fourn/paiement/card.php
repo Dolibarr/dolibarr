@@ -4,6 +4,7 @@
  * Copyright (C) 2006-2010 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'bills', 'companies', 'suppliers'));
 
@@ -50,11 +59,11 @@ $socid = 0;
 // Initialize objects
 $object = new PaiementFourn($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('supplierpaymentcard', 'globalcard'));
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 $result = restrictedArea($user, $object->element, $object->id, 'paiementfourn', '');	// This also test permission on read invoice
 
@@ -68,12 +77,16 @@ if ($socid && $socid != $object->thirdparty->id) {
 	accessforbidden();
 }
 
+$permissiontoadd = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "write"));
+$permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "write"))) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")));
+$permissiontodelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "delete"));
+
 
 /*
  * Actions
  */
 
-if ($action == 'setnote' && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"))) {
+if ($action == 'setnote' && $permissiontoadd) {
 	$db->begin();
 
 	$object->fetch($id);
@@ -87,7 +100,7 @@ if ($action == 'setnote' && ($user->hasRight("fournisseur", "facture", "creer") 
 	}
 }
 
-if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight("fournisseur", "facture", "supprimer")) {
+if ($action == 'confirm_delete' && $confirm == 'yes' && $permissiontodelete) {
 	$db->begin();
 
 	$object->fetch($id);
@@ -102,10 +115,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight("fournis
 	}
 }
 
-if ($action == 'confirm_validate' && $confirm == 'yes' &&
-	((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer")))
-	|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight("fournisseur", "supplier_invoice_advance", "validate")))
-) {
+if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontovalidate) {
 	$db->begin();
 
 	$object->fetch($id);
@@ -119,7 +129,7 @@ if ($action == 'confirm_validate' && $confirm == 'yes' &&
 	}
 }
 
-if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
+if ($action == 'setnum_paiement' && GETPOST('num_paiement') && $permissiontoadd) {
 	$object->fetch($id);
 	$res = $object->update_num(GETPOST('num_paiement'));
 	if ($res === 0) {
@@ -129,7 +139,7 @@ if ($action == 'setnum_paiement' && GETPOST('num_paiement')) {
 	}
 }
 
-if ($action == 'setdatep' && GETPOST('datepday')) {
+if ($action == 'setdatep' && GETPOST('datepday') && $permissiontoadd) {
 	$object->fetch($id);
 	$datepaye = dol_mktime(GETPOSTINT('datephour'), GETPOSTINT('datepmin'), GETPOSTINT('datepsec'), GETPOSTINT('datepmonth'), GETPOSTINT('datepday'), GETPOSTINT('datepyear'));
 	$res = $object->update_date($datepaye);
@@ -142,8 +152,6 @@ if ($action == 'setdatep' && GETPOST('datepday')) {
 
 // Build document
 $upload_dir = $conf->fournisseur->payment->dir_output;
-// TODO: get the appropriate permission
-$permissiontoadd = true;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 // Actions to send emails
@@ -334,7 +342,7 @@ if ($result > 0) {
 					$allow_delete = 0;
 					$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemovePaymentWithOneInvoicePaid"));
 				}
-				$total = $total + $objp->amount;
+				$total += $objp->amount;
 				$i++;
 			}
 		}

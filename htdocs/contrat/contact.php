@@ -1,9 +1,11 @@
 <?php
-/* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
- * Copyright (C) 2005-2009	Destailleur Laurent	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
- * Copyright (C) 2023       Christian Foellmann <christian@foellmann.de>
+/* Copyright (C) 2005		Patrick Rouillon			<patrick@rouillon.net>
+ * Copyright (C) 2005-2009	Destailleur Laurent			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2023       Christian Foellmann			<christian@foellmann.de>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +37,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'companies'));
 
@@ -51,7 +61,7 @@ if ($user->socid) {
 
 $object = new Contrat($db);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('contractcontactcard', 'globalcard'));
 
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -121,9 +131,9 @@ if (empty($reshook)) {
  */
 
 $title = $langs->trans("Contract");
-$help_url = 'EN:Module_Contracts|FR:Module_Contrat';
+$help_url = 'EN:Module_Contracts|FR:Module_Contrat|ES:Contratos_de_servicio';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-contrat page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -132,7 +142,7 @@ $userstatic = new User($db);
 
 /* *************************************************************************** */
 /*                                                                             */
-/* Card view and edit mode                                                       */
+/* Card view and edit mode                                                     */
 /*                                                                             */
 /* *************************************************************************** */
 
@@ -142,7 +152,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$head = contract_prepare_head($object);
 
-		$hselected = 1;
+		$hselected = '1';
 
 		print dol_get_fiche_head($head, $hselected, $langs->trans("Contract"), -1, 'contract');
 
@@ -169,6 +179,9 @@ if ($id > 0 || !empty($ref)) {
 		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1, 'getFormatedSupplierRef');
 		// Thirdparty
 		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
+		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
+			$morehtmlref .= ' <span class="otherlink">(<a href="'.DOL_URL_ROOT.'/contrat/list.php?socid='.$object->thirdparty->id.'&search_name='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherContracts").'</a>)</span>';
+		}
 		// Project
 		if (isModEnabled('project')) {
 			$langs->load("projects");

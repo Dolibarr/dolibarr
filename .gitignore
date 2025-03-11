@@ -41,6 +41,7 @@ htdocs/includes/php-parallel-lint/
 htdocs/includes/sebastian/
 htdocs/includes/squizlabs/
 htdocs/includes/webmozart/
+htdocs/install/install.forced.php
 htdocs/.well-known/apple-developer-merchantid-domain-association
 /factory/
 /output/

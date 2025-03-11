@@ -5,7 +5,9 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Charlene Benke	        <charlene@patas-monkey.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,11 +200,12 @@ class DoliDBMysqli extends DoliDB
 	 * Return SQL string to force an index
 	 *
 	 * @param	string	$nameofindex	Name of index
+	 * @param	int		$mode			0=Use, 1=Force
 	 * @return	string					SQL string
 	 */
-	public function hintindex($nameofindex)
+	public function hintindex($nameofindex, $mode = 1)
 	{
-		return " FORCE INDEX(".preg_replace('/[^a-z0-9_]/', '', $nameofindex).")";
+		return " ".($mode == 1 ? 'FORCE' : 'USE')." INDEX(".preg_replace('/[^a-z0-9_]/', '', $nameofindex).")";
 	}
 
 
@@ -413,10 +416,10 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return datas as an array
+	 *	Return data as an array
 	 *
 	 *	@param	mysqli_result	$resultset	Resultset of request
-	 *	@return	array|null					Array or null if KO or end of cursor
+	 *	@return	array<int|string,mixed>|null|false	Array or null if KO or end of cursor
 	 */
 	public function fetch_array($resultset)
 	{
@@ -430,10 +433,10 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Return datas as an array
+	 *	Return data as an array
 	 *
 	 *	@param	mysqli_result	$resultset	Resultset of request
-	 *	@return	array|null|int				Array or null if KO or end of cursor or 0 if resultset is bool
+	 *	@return	array<int,mixed>|null|int<0,0>	Array or null if KO or end of cursor or 0 if resultset is bool
 	 */
 	public function fetch_row($resultset)
 	{
@@ -733,7 +736,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	string[]				List of tables in an array
 	 */
 	public function DDLListTables($database, $table = '')
 	{
@@ -765,7 +768,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *  @param	string		$database	Name of database
 	 *  @param	string		$table		Name of table filter ('xxx%')
-	 *  @return	array					List of tables in an array
+	 *  @return	array<array{0:string,1:string}>		List of tables in an array
 	 */
 	public function DDLListTablesFull($database, $table = '')
 	{
@@ -793,10 +796,10 @@ class DoliDBMysqli extends DoliDB
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	List information of columns into a table.
+	 *	List information of columns in a table.
 	 *
 	 *	@param	string	$table		Name of table
-	 *	@return	array				Tableau des information des champs de la table
+	 *	@return	array<array<mixed>>		Table with information of columns in the table
 	 */
 	public function DDLInfoTable($table)
 	{
@@ -822,12 +825,12 @@ class DoliDBMysqli extends DoliDB
 	 *	Create a table into database
 	 *
 	 *	@param	    string	$table 			Name of table
-	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
+	 *	@param	    array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 *	@param	    string	$primary_key 	Nom du champ qui sera la clef primaire
 	 *	@param	    string	$type 			Type de la table
-	 *	@param	    array	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-	 *	@param	    array	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
-	 *	@param	    array	$keys 			Tableau des champs cles noms => valeur
+	 *	@param	    ?array<string,mixed>	$unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+	 *	@param	    string[]	$fulltext_keys	Tableau des Nom de champs qui seront indexes en fulltext
+	 *	@param	    array<string,mixed>	$keys 	Tableau des champs cles noms => valeur
 	 *	@return	    int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null)
@@ -898,7 +901,7 @@ class DoliDBMysqli extends DoliDB
 			}
 		}
 		$sql .= implode(', ', $sqlfields);
-		if ($unique_keys != "") {
+		if (!is_array($unique_keys) && $unique_keys != "") {
 			$sql .= ",".implode(',', $sqluq);
 		}
 		if (is_array($keys)) {
@@ -979,7 +982,11 @@ class DoliDBMysqli extends DoliDB
 			$sql .= " ".$this->sanitize($field_desc['attribute']);
 		}
 		if (isset($field_desc['null']) && preg_match("/^[^\s]/i", $field_desc['null'])) {
-			$sql .= " ".$field_desc['null'];
+			if ($field_desc['null'] == 'NOT NULL') {
+				$sql .= " ".$this->sanitize($field_desc['null'], 0, 0, 1);
+			} else {
+				$sql .= " ".$this->sanitize($field_desc['null']);
+			}
 		}
 		if (isset($field_desc['default']) && preg_match("/^[^\s]/i", $field_desc['default'])) {
 			if (in_array($field_desc['type'], array('tinyint', 'smallint', 'int', 'double'))) {
@@ -1008,7 +1015,7 @@ class DoliDBMysqli extends DoliDB
 	 *
 	 *	@param	string	$table 				Name of table
 	 *	@param	string	$field_name 		Name of field to modify
-	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$field_desc 		Array with description of field format
+	 *	@param	array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string,value?:string,null?:string}	$field_desc 		Array with description of field format
 	 *	@return	int							Return integer <0 if KO, >0 if OK
 	 */
 	public function DDLUpdateField($table, $field_name, $field_desc)
@@ -1016,10 +1023,10 @@ class DoliDBMysqli extends DoliDB
 		// phpcs:enable
 		$sql = "ALTER TABLE ".$this->sanitize($table);
 		$sql .= " MODIFY COLUMN ".$this->sanitize($field_name)." ".$this->sanitize($field_desc['type']);
-		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && $field_desc['value']) {
+		if (in_array($field_desc['type'], array('double', 'tinyint', 'int', 'varchar')) && array_key_exists('value', $field_desc) && $field_desc['value']) {
 			$sql .= "(".$this->sanitize($field_desc['value']).")";
 		}
-		if (isset($field_desc['value']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
+		if (isset($field_desc['null']) && ($field_desc['null'] == 'not null' || $field_desc['null'] == 'NOT NULL')) {
 			// We will try to change format of column to NOT NULL. To be sure the ALTER works, we try to update fields that are NULL
 			if ($field_desc['type'] == 'varchar' || $field_desc['type'] == 'text') {
 				$sqlbis = "UPDATE ".$this->sanitize($table)." SET ".$this->sanitize($field_name)." = '".$this->escape(isset($field_desc['default']) ? $field_desc['default'] : '')."' WHERE ".$this->sanitize($field_name)." IS NULL";
@@ -1141,7 +1148,7 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Return list of available charset that can be used to store data in database
 	 *
-	 *	@return		array|null		List of Charset
+	 *	@return	?array<int,array{charset:string,description:string}>		List of Charset
 	 */
 	public function getListOfCharacterSet()
 	{
@@ -1184,7 +1191,7 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 *	Return list of available collation that can be used for database
 	 *
-	 *	@return		array|null		Liste of Collation
+	 *	@return		?array<int,array{collation:string}>		List of Collations
 	 */
 	public function getListOfCollation()
 	{
@@ -1243,8 +1250,8 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Return value of server parameters
 	 *
-	 * @param	string	$filter		Filter list on a particular value
-	 * @return	array				Array of key-values (key=>value)
+	 * @param	string	$filter			Filter list on a particular value
+	 * @return	array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerParametersValues($filter = '')
 	{
@@ -1267,8 +1274,8 @@ class DoliDBMysqli extends DoliDB
 	/**
 	 * Return value of server status (current indicators on memory, cache...)
 	 *
-	 * @param	string	$filter		Filter list on a particular value
-	 * @return  array				Array of key-values (key=>value)
+	 * @param	string	$filter			Filter list on a particular value
+	 * @return  array<string,string>	Array of key-values (key=>value)
 	 */
 	public function getServerStatusValues($filter = '')
 	{
