@@ -251,7 +251,7 @@ session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", 
 /**
  * List sessions in db
  *
- * @return array<mixed,array{login:?string,age:string,creation:?int,modification:?int,remote_ip:string,user_agent:string}>
+ * @return array<mixed,array{login:?string,age:string,creation:?int,modification:?int,raw:string,remote_ip:string,user_agent:string}>
  */
 function dolListSessions()
 {
@@ -272,6 +272,7 @@ function dolListSessions()
 			"modification" => null,
 			"remote_ip" => $obj->remote_ip,
 			"user_agent" => $obj->user_agent,
+			"raw" => "",
 		];
 	}
 
