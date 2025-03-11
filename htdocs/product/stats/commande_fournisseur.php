@@ -296,7 +296,7 @@ if ($id > 0 || !empty($ref)) {
 						print '<td class="center">'.$objp->qty."</td>\n";
 						print '<td align="right">'.price($objp->unitprice)."</td>\n";
 						print '<td align="right">'.price($objp->total_ht)."</td>\n";
-						print '<td align="right">'.$supplierorderstatic->getLibStatut(4).'</td>';
+						print '<td align="right">'.$supplierorderstatic->LibStatut($objp->statut, 5).'</td>';
 						print "</tr>\n";
 						$i++;
 					}
