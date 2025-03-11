@@ -196,4 +196,4 @@ UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NUL
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
 
 ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
-UPDATE llx_accounting_account AS acc JOIN llx_const AS cst ON acc.account_number = cst.value SET acc.centralized = 1 WHERE cst.name in (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__);
+UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));
