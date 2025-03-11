@@ -251,7 +251,7 @@ session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", 
 /**
  * List sessions in db
  *
- * @return array<mixed,array{login:?string,age:int,creation:?int,modification:?int,raw:string,remote_ip:string,user_agent:string}>
+ * @return array<mixed,array{login:?string,age:int,creation:?int,modification:int,raw:string,remote_ip:string,user_agent:string}>
  */
 function dolListSessions()
 {
