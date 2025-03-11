@@ -182,6 +182,11 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$tmpobject = new Facture($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'invoice';
+	} elseif ($type == Categorie::TYPE_SUPPLIER_ORDER && $user->hasRight('fournisseur', 'commande', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		$tmpobject = new CommandeFournisseur($db);
+		$result = $tmpobject->fetch($removeelem);
+		$elementtype = 'invoice';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
@@ -257,6 +262,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$newobject = new Facture($db);
 		$elementtype = 'invoice';
+	} elseif ($type == Categorie::TYPE_SUPPLIER_ORDER && $user->hasRight('fournisseur', 'commande', 'creer')) {
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+		$newobject = new CommandeFournisseur($db);
+		$elementtype = 'order_supplier';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
 	}
@@ -1473,7 +1482,7 @@ if ($type == Categorie::TYPE_ORDER) {
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("Orders"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit);
 
-		print "<table class='noborder' width='100%'>\n";
+		print "<table class='noborder centpercent'>\n";
 		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 		if (count($objects) > 0) {
@@ -1485,7 +1494,7 @@ if ($type == Categorie::TYPE_ORDER) {
 				}
 
 				print "\t".'<tr class="oddeven">'."\n";
-				print '<td class="nowrap" valign="top">';
+				print '<td class="nowrap tdtop">';
 				print $order->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdtop">'.$order->ref."</td>\n";
@@ -1551,7 +1560,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("BillsCustomers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit);
 
-		print "<table class='noborder' width='100%'>\n";
+		print "<table class='noborder centpercent'>\n";
 		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
 
 		if (count($objects) > 0) {
@@ -1563,7 +1572,7 @@ if ($type == Categorie::TYPE_INVOICE) {
 				}
 
 				print "\t".'<tr class="oddeven">'."\n";
-				print '<td class="nowrap" valign="top">';
+				print '<td class="nowrap tdtop">';
 				print $invoice->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdtop">'.$invoice->ref."</td>\n";
@@ -1571,6 +1580,84 @@ if ($type == Categorie::TYPE_INVOICE) {
 				print '<td class="right">';
 				if ($permission) {
 					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$invoice->id."'>";
+					print $langs->trans("DeleteFromCat");
+					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
+					print "</a>";
+				}
+				print "</tr>\n";
+			}
+		} else {
+			print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("ThisCategoryHasNoItems").'</td></tr>';
+		}
+		print "</table>\n";
+
+		print '</form>'."\n";
+	}
+}
+
+// List of Supplier Orders
+if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
+	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
+
+	$permission = $user->rights->fournisseur->commande->creer;
+
+	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
+	if ($objects < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+	} else {
+		// Form to add record into a category
+		$showclassifyform = $user->hasRight('fournisseur', 'commande', 'creer');;
+		if ($showclassifyform) {
+			print '<br>';
+			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+			print '<input type="hidden" name="type" value="'.$typeid.'">';
+			print '<input type="hidden" name="id" value="'.$object->id.'">';
+			print '<input type="hidden" name="action" value="addintocategory">';
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre"><td>';
+			print $langs->trans("AddSupplierOrderIntoCategory").' &nbsp;';
+			$form->selectSupplierOrder('', 'elemid');
+			print '<input type="submit" class="button buttongen" value="'.$langs->trans("ClassifyInCategory").'"></td>';
+			print '</tr>';
+			print '</table>';
+			print '</form>';
+		}
+
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.newToken().'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
+		print '<input type="hidden" name="type" value="'.$typeid.'">';
+		print '<input type="hidden" name="id" value="'.$object->id.'">';
+		print '<input type="hidden" name="action" value="list">';
+
+		print '<br>';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
+		print_barre_liste($langs->trans("SuppliersOrders"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit);
+
+		print "<table class='noborder centpercent'>\n";
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Ref").'</td></tr>'."\n";
+
+		if (count($objects) > 0) {
+			$i = 0;
+			foreach ($objects as $key => $supplier_order) {
+				$i++;
+				if ($i > $limit) {
+					break;
+				}
+
+				print "\t".'<tr class="oddeven">'."\n";
+				print '<td class="nowrap tdtop">';
+				print $supplier_order->getNomUrl(1);
+				print "</td>\n";
+				print '<td class="tdtop">'.$supplier_order->ref."</td>\n";
+				// Link to delete from category
+				print '<td class="right">';
+				if ($permission) {
+					print "<a href= '".$_SERVER['PHP_SELF']."?".(empty($socid) ? 'id' : 'socid')."=".$object->id."&amp;type=".$typeid."&amp;removeelem=".$supplier_order->id."'>";
 					print $langs->trans("DeleteFromCat");
 					print img_picto($langs->trans("DeleteFromCat"), 'unlink', '', 0, 0, 0, '', 'paddingleft');
 					print "</a>";

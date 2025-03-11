@@ -665,7 +665,7 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && !$error) {
 			// Call trigger
-			if ($product->stockable_product != Product::NOT_MANAGED_IN_STOCK ) {
+			if ($product->stockable_product != Product::DISABLED_STOCK ) {
 				$result = $this->call_trigger('STOCK_MOVEMENT', $user);
 				if ($result < 0) {
 					$error++;

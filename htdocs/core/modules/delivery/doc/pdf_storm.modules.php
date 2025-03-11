@@ -694,7 +694,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -890,7 +890,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 	 */
 	public function defineColumnField($object, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
-		global $conf, $hookmanager;
+		global $hookmanager;
 
 		// Default field style for content
 		$this->defaultContentsFieldsStyle = array(
@@ -985,7 +985,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->cols['qty_shipped'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
-			'status' => true,
+			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_SHIPPED'),
 			'title' => array(
 				'textkey' => 'QtyShippedShort'
 			),
@@ -996,7 +996,7 @@ class pdf_storm extends ModelePDFDeliveryOrder
 		$this->cols['qty_remaining'] = array(
 			'rank' => $rank,
 			'width' => 20, // in mm
-			'status' => 1,
+			'status' => !getDolGlobalString('DELIVERY_PDF_HIDE_QTYTOSHIP'),
 			'title' => array(
 				'textkey' => 'KeepToShipShort'
 			),

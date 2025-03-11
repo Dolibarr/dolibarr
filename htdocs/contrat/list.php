@@ -188,29 +188,28 @@ if ($reshook > 0) {
 }
 
 $arrayfields = array(
-	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => 1, 'position' => 10),
-	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => 1, 'position' => 12),
-	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => 1, 'position' => 14),
-	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => 1, 'position' => 30),
-	's.email' => array('label' => $langs->trans("ThirdPartyEmail"), 'checked' => 0, 'position' => 30),
-	's.town' => array('label' => $langs->trans("Town"), 'checked' => 0, 'position' => 31),
-	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => 1, 'position' => 32),
-	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => 0, 'position' => 33),
-	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => 0, 'position' => 34),
-	'sale_representative' => array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => -1, 'position' => 80),
-	'c.date_contrat' => array('label' => $langs->trans("DateContract"), 'checked' => 1, 'position' => 45),
-	'c.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => 0, 'position' => 500),
-	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => 0, 'position' => 500),
-	'lower_planned_end_date' => array('label' => $langs->trans("LowerDateEndPlannedShort"), 'checked' => 1, 'position' => 900, 'help' => $langs->trans("LowerDateEndPlannedShort")),
-	'status' => array('label' => $langs->trans("Status"), 'checked' => 1, 'position' => 1000),
-	'c.signed_status' => array('label' => $langs->trans('SignedStatus'), 'checked' => 0, 'position' => 1001),
+	'c.ref' => array('label' => $langs->trans("Ref"), 'checked' => '1', 'position' => 10),
+	'c.ref_customer' => array('label' => $langs->trans("RefCustomer"), 'checked' => '1', 'position' => 12),
+	'c.ref_supplier' => array('label' => $langs->trans("RefSupplier"), 'checked' => '1', 'position' => 14),
+	's.nom' => array('label' => $langs->trans("ThirdParty"), 'checked' => '1', 'position' => 30),
+	's.email' => array('label' => $langs->trans("ThirdPartyEmail"), 'checked' => '0', 'position' => 30),
+	's.town' => array('label' => $langs->trans("Town"), 'checked' => '0', 'position' => 31),
+	's.zip' => array('label' => $langs->trans("Zip"), 'checked' => '1', 'position' => 32),
+	'state.nom' => array('label' => $langs->trans("StateShort"), 'checked' => '0', 'position' => 33),
+	'country.code_iso' => array('label' => $langs->trans("Country"), 'checked' => '0', 'position' => 34),
+	'sale_representative' => array('label' => $langs->trans("SaleRepresentativesOfThirdParty"), 'checked' => '-1', 'position' => 80),
+	'c.date_contrat' => array('label' => $langs->trans("DateContract"), 'checked' => '1', 'position' => 45),
+	'c.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
+	'c.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
+	'lower_planned_end_date' => array('label' => $langs->trans("LowerDateEndPlannedShort"), 'checked' => '1', 'position' => 900, 'help' => $langs->trans("LowerDateEndPlannedShort")),
+	'status' => array('label' => $langs->trans("Status"), 'checked' => '1', 'position' => 1000),
+	'c.signed_status' => array('label' => $langs->trans('SignedStatus'), 'checked' => '0', 'position' => 1001),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -837,7 +836,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire') && ($user->
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('IncludingProductWithTag');
 	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 2);
-	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, 0, 'widthcentpercentminusx maxwidth300', 1);
+	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$form->selectarray('search_product_category', $cate_arbo, $search_product_category, $tmptitle, 0, 0, '', 0, 0, 0, '', 'widthcentpercentminusx maxwidth300', 1);
 	$moreforfilter .= '</div>';
 }
 // Filter on customer categories

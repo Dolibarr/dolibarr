@@ -3,9 +3,10 @@
  * Copyright (C) 2005-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Stéphane Lesage			<stephane.lesage@ateis.com>
- * Copyright (C) 2022-2023	Solution Libre SAS		<contact@solution-libre.fr>
+ * Copyright (C) 2022-2025	Solution Libre SAS		<contact@solution-libre.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,6 +173,9 @@ class modCategorie extends DolibarrModules
 		}
 		if (isModEnabled('invoice')) {
 			$typeexample .= ($typeexample ? " / " : "")."17=Invoice";
+		}
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
+			$typeexample .= ($typeexample ? " / " : "")."20=Supplier order";
 		}
 
 		// Definition of vars
@@ -513,6 +517,23 @@ class modCategorie extends DolibarrModules
 			);
 		}
 
+		// 20 Supplier order
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
+			++$r;
+			$this->exportTagLinks(
+				$r,
+				'supplier_order',
+				'CommandeFournisseur',
+				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_order"))',
+				['fournisseur', 'commande', 'export'],
+				[
+					'rowid' => [
+						'name' => 'SupplierOrderID',
+						'type' => 'Numeric'
+					]
+				]
+			);
+		}
 
 		// Imports
 		//--------
@@ -530,7 +551,7 @@ class modCategorie extends DolibarrModules
 			'ca.label' => "Label*", 'ca.type' => "Type*", 'ca.description' => "Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17)$');
+		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -722,6 +743,18 @@ class modCategorie extends DolibarrModules
 				'/compta/facture/class/facture.class.php',
 				'Facture',
 				'Facture'
+			);
+		}
+
+		// 20 Supplier order
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				'supplier_order',
+				'/fourn/class/fournisseur.commande.class.php',
+				'CommandeFournisseur',
+				'CommandeFournisseur'
 			);
 		}
 	}

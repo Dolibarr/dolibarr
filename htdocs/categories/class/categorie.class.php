@@ -14,6 +14,7 @@
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2023-2024	Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,23 +50,25 @@ require_once DOL_DOCUMENT_ROOT.'/knowledgemanagement/class/knowledgerecord.class
 class Categorie extends CommonObject
 {
 	// Categories types (we use string because we want to accept any modules/types in a future)
-	const TYPE_PRODUCT             = 'product';
-	const TYPE_SUPPLIER            = 'supplier';
-	const TYPE_CUSTOMER            = 'customer';
-	const TYPE_MEMBER              = 'member';
-	const TYPE_CONTACT             = 'contact';
-	const TYPE_USER                = 'user';
-	const TYPE_PROJECT             = 'project';
-	const TYPE_ACCOUNT             = 'bank_account';
-	const TYPE_BANK_LINE           = 'bank_line';
-	const TYPE_WAREHOUSE           = 'warehouse';
-	const TYPE_ACTIONCOMM          = 'actioncomm';
-	const TYPE_WEBSITE_PAGE        = 'website_page';
-	const TYPE_TICKET              = 'ticket';
-	const TYPE_KNOWLEDGEMANAGEMENT = 'knowledgemanagement';
-	const TYPE_FICHINTER           = 'fichinter';
-	const TYPE_ORDER               = 'order';
-	const TYPE_INVOICE             = 'invoice';
+	const TYPE_PRODUCT				= 'product';
+	const TYPE_SUPPLIER				= 'supplier';
+	const TYPE_CUSTOMER				= 'customer';
+	const TYPE_MEMBER				= 'member';
+	const TYPE_CONTACT				= 'contact';
+	const TYPE_USER					= 'user';
+	const TYPE_PROJECT				= 'project';
+	const TYPE_ACCOUNT				= 'bank_account';
+	const TYPE_BANK_LINE			= 'bank_line';
+	const TYPE_WAREHOUSE			= 'warehouse';
+	const TYPE_ACTIONCOMM			= 'actioncomm';
+	const TYPE_WEBSITE_PAGE			= 'website_page';
+	const TYPE_TICKET				= 'ticket';
+	const TYPE_KNOWLEDGEMANAGEMENT	= 'knowledgemanagement';
+	const TYPE_FICHINTER			= 'fichinter';
+	const TYPE_ORDER				= 'order';
+	const TYPE_INVOICE				= 'invoice';
+	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
+
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -77,23 +80,24 @@ class Categorie extends CommonObject
 	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
 	 */
 	public $MAP_ID = array(
-		'product'             => 0,
-		'supplier'            => 1,
-		'customer'            => 2,
-		'member'              => 3,
-		'contact'             => 4,
-		'bank_account'        => 5,
-		'project'             => 6,
-		'user'                => 7,
-		'bank_line'           => 8,
-		'warehouse'           => 9,
-		'actioncomm'          => 10,
-		'website_page'        => 11,
-		'ticket'              => 12,
-		'knowledgemanagement' => 13,
-		'fichinter'           => 14,
-		'order'               => 16,
-		'invoice'             => 17,
+		'product'				=> 0,
+		'supplier'				=> 1,
+		'customer'				=> 2,
+		'member'				=> 3,
+		'contact'				=> 4,
+		'bank_account'			=> 5,
+		'project'				=> 6,
+		'user'					=> 7,
+		'bank_line'				=> 8,
+		'warehouse'				=> 9,
+		'actioncomm'			=> 10,
+		'website_page'			=> 11,
+		'ticket'				=> 12,
+		'knowledgemanagement'	=> 13,
+		'fichinter'				=> 14,
+		'order'					=> 16,
+		'invoice'				=> 17,
+		'supplier_order'		=> 20
 	);
 
 	/**
@@ -119,6 +123,7 @@ class Categorie extends CommonObject
 		14 => 'fichinter',
 		16 => 'order',
 		17 => 'invoice',
+		20 => 'supplier_order'
 	);
 
 	/**
@@ -150,23 +155,24 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public $MAP_OBJ_CLASS = array(
-		'product'             => 'Product',
-		'customer'            => 'Societe',
-		'supplier'            => 'Fournisseur',
-		'member'              => 'Adherent',
-		'contact'             => 'Contact',
-		'user'                => 'User',
-		'account'             => 'Account', // old for bank account
-		'bank_account'        => 'Account',
-		'project'             => 'Project',
-		'warehouse'           => 'Entrepot',
-		'actioncomm'          => 'ActionComm',
-		'website_page'        => 'WebsitePage',
-		'ticket'              => 'Ticket',
-		'knowledgemanagement' => 'KnowledgeRecord',
-		'fichinter'           => 'Fichinter',
-		'order'               => 'Commande',
-		'invoice'             => 'Facture'
+		'product'				=> 'Product',
+		'customer'				=> 'Societe',
+		'supplier'				=> 'Fournisseur',
+		'member'				=> 'Adherent',
+		'contact'				=> 'Contact',
+		'user'					=> 'User',
+		'account'				=> 'Account', // old for bank account
+		'bank_account'			=> 'Account',
+		'project'				=> 'Project',
+		'warehouse'				=> 'Entrepot',
+		'actioncomm'			=> 'ActionComm',
+		'website_page'			=> 'WebsitePage',
+		'ticket'				=> 'Ticket',
+		'knowledgemanagement'	=> 'KnowledgeRecord',
+		'fichinter'				=> 'Fichinter',
+		'order'					=> 'Commande',
+		'invoice'				=> 'Facture',
+		'supplier_order'		=> 'CommandeFournisseur'
 	);
 
 	/**
@@ -175,23 +181,24 @@ class Categorie extends CommonObject
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product'             => 'ProductsCategoriesArea',
-		'customer'            => 'CustomersCategoriesArea',
-		'supplier'            => 'SuppliersCategoriesArea',
-		'member'              => 'MembersCategoriesArea',
-		'contact'             => 'ContactsCategoriesArea',
-		'user'                => 'UsersCategoriesArea',
-		'account'             => 'AccountsCategoriesArea', // old for bank account
-		'bank_account'        => 'AccountsCategoriesArea',
-		'project'             => 'ProjectsCategoriesArea',
-		'warehouse'           => 'StocksCategoriesArea',
-		'actioncomm'          => 'ActioncommCategoriesArea',
-		'website_page'        => 'WebsitePagesCategoriesArea',
-		'ticket'              => 'TicketsCategoriesArea',
-		'knowledgemanagement' => 'KnowledgemanagementsCategoriesArea',
-		'fichinter'           => 'FichintersCategoriesArea',
-		'order'               => 'OrderCategoriesArea',
-		'invoice'             => 'InvoiceCategoriesArea'
+		'product'				=> 'ProductsCategoriesArea',
+		'customer'				=> 'CustomersCategoriesArea',
+		'supplier'				=> 'SuppliersCategoriesArea',
+		'member'				=> 'MembersCategoriesArea',
+		'contact'				=> 'ContactsCategoriesArea',
+		'user'					=> 'UsersCategoriesArea',
+		'account'				=> 'AccountsCategoriesArea', // old for bank account
+		'bank_account'			=> 'AccountsCategoriesArea',
+		'project'				=> 'ProjectsCategoriesArea',
+		'warehouse'				=> 'StocksCategoriesArea',
+		'actioncomm'			=> 'ActioncommCategoriesArea',
+		'website_page'			=> 'WebsitePagesCategoriesArea',
+		'ticket'				=> 'TicketsCategoriesArea',
+		'knowledgemanagement'	=> 'KnowledgemanagementsCategoriesArea',
+		'fichinter'				=> 'FichintersCategoriesArea',
+		'order'					=> 'OrderCategoriesArea',
+		'invoice'				=> 'InvoicesCategoriesArea',
+		'supplier_order'		=> 'SuppliersOrdersCategoriesArea'
 	);
 
 	/**
@@ -199,17 +206,18 @@ class Categorie extends CommonObject
 	 * 				This array may be completed by external modules with hook "constructCategory"
 	 */
 	public $MAP_OBJ_TABLE = array(
-		'customer'            => 'societe',
-		'supplier'            => 'societe',
-		'member'              => 'adherent',
-		'contact'             => 'socpeople',
-		'account'             => 'bank_account', // old for bank account
-		'project'             => 'projet',
-		'warehouse'           => 'entrepot',
-		'knowledgemanagement' => 'knowledgemanagement_knowledgerecord',
-		'fichinter'           => 'fichinter',
-		'order'               => 'commande',
-		'invoice'             => 'facture'
+		'customer'				=> 'societe',
+		'supplier'				=> 'societe',
+		'member'				=> 'adherent',
+		'contact'				=> 'socpeople',
+		'account'				=> 'bank_account', // old for bank account
+		'project'				=> 'projet',
+		'warehouse'				=> 'entrepot',
+		'knowledgemanagement'	=> 'knowledgemanagement_knowledgerecord',
+		'fichinter'				=> 'fichinter',
+		'order'					=> 'commande',
+		'invoice'				=> 'facture',
+		'supplier_order'		=> 'commande_fournisseur'
 	);
 
 	/**
@@ -276,6 +284,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_FICHINTER
 	 * @see Categorie::TYPE_ORDER
 	 * @see Categorie::TYPE_INVOICE
+	 * @see Categorie::TYPE_SUPPLIER_ORDER
 	 */
 	public $type;
 
