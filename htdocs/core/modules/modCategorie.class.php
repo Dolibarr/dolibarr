@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020		Stéphane Lesage			<stephane.lesage@ateis.com>
  * Copyright (C) 2022-2025	Solution Libre SAS		<contact@solution-libre.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
@@ -484,6 +484,7 @@ class modCategorie extends DolibarrModules
 		// 16 Order
 		if (isModEnabled("order")) {
 			++$r;
+			dol_include_once('/commande/class/commande.class.php');
 			$this->exportTagLinks(
 				$r,
 				'order',
@@ -502,6 +503,7 @@ class modCategorie extends DolibarrModules
 		// 17 Invoice
 		if (isModEnabled("invoice")) {
 			++$r;
+			dol_include_once('/compta/facture/class/facture.class.php');
 			$this->exportTagLinks(
 				$r,
 				'invoice',
@@ -520,6 +522,7 @@ class modCategorie extends DolibarrModules
 		// 20 Supplier order
 		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			++$r;
+			dol_include_once('/fourn/class/fournisseur.commande.class.php');
 			$this->exportTagLinks(
 				$r,
 				'supplier_order',
@@ -762,6 +765,8 @@ class modCategorie extends DolibarrModules
 	/**
 	 * Configure a tag link export
 	 *
+	 * The $class file must be included by the caller of this function.
+	 *
 	 * @param int									$r				Index of import tables
 	 * @param string								$categcode		Categorie code
 	 * @param string								$class			Class of the linked object
@@ -821,14 +826,15 @@ class modCategorie extends DolibarrModules
 		$keyforselect = $class;
 		$keyforelement = $class;
 		$keyforaliasextra = 'extra';
+		$class_table = (new $class($db))->table_element;
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_'.$categcode.' as cfk ON cfk.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.strtolower($class).' as p ON p.rowid = cfk.fk_'.$categcode;
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.strtolower($class).'_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.$class_table.' as p ON p.rowid = cfk.fk_'.$categcode;
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.$class_table.'_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND cat.type = '.((int) $cat_id);
 	}
