@@ -225,7 +225,7 @@ abstract class ModelePDFFactures extends CommonDocGenerator
 		// Add payment amount, with currency
 		$pai = SwissQrBill\DataGroup\Element\PaymentAmountInformation::create($currencyinvoicecode, $object->total_ttc);
 		if (!$pai->isValid()) {
-			$this->error = $langs->transnoentities("SwissQrPaymentInformationInvalid", $object->total_ttc, (string) $pai->getViolations());
+			$this->error = $langs->transnoentities("SwissQrPaymentInformationInvalid", (string) $object->total_ttc, (string) $pai->getViolations());
 			return false;
 		}
 		$qrBill->setPaymentAmountInformation($pai);

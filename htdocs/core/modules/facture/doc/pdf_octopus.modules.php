@@ -118,7 +118,7 @@ class pdf_octopus extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -635,7 +635,7 @@ class pdf_octopus extends ModelePDFFactures
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
 				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
 				}
 
 				$pagenb = $pdf->getPage();
@@ -1327,7 +1327,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *   @param		Facture		$object			Object to show
 	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
+	 *   @param  	?Translate	$outputlangsbis	Object lang for output bis
 	 *   @return	float						Pos y
 	 */
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
@@ -1492,7 +1492,7 @@ class pdf_octopus extends ModelePDFFactures
 					require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 					$bac = new CompanyBankAccount($this->db);
 					// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-					$bac->fetch(0, $object->thirdparty->id);
+					$bac->fetch(0, (string) $object->thirdparty->id);
 					$iban = $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
 					$lib_mode_reg .= ' '.$outputlangs->trans("PaymentTypePREdetails", dol_trunc($iban, 6, 'right', 'UTF-8', 1));
 				}
@@ -1632,7 +1632,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *	@param  float		$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
 	 *	@return float						Position pour suite
 	 */
 	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
@@ -2217,7 +2217,7 @@ class pdf_octopus extends ModelePDFFactures
 		}
 		if ($this->situationinvoice) {
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation");
-			$subtitle = $outputlangs->transnoentities("PDFSituationTitle", $object->situation_counter);
+			$subtitle = $outputlangs->transnoentities("PDFSituationTitle", (string) $object->situation_counter);
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
 			$title .= ' - ';
@@ -2446,7 +2446,7 @@ class pdf_octopus extends ModelePDFFactures
 				$thirdparty = $object->thirdparty;
 			}
 
-			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : 0;
 
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);
@@ -2614,7 +2614,7 @@ class pdf_octopus extends ModelePDFFactures
 		$rank += 10;
 		$this->cols['photo'] = array(
 			'rank' => $rank,
-			'width' => getDolGlobalString('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
+			'width' => getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20), // in mm
 			'status' => false,
 			'title' => array(
 				'textkey' => 'Photo',
@@ -2913,7 +2913,7 @@ class pdf_octopus extends ModelePDFFactures
 		$pdf->line($this->posx_current - 1, $tab_top, $this->posx_current - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posx_current - 1, $tab_top + 0.5);
-			$pdf->MultiCell(36, 2, $outputlangs->transnoentities("CurrentSituationTotal", $object->situation_counter), '', 'C');
+			$pdf->MultiCell(36, 2, $outputlangs->transnoentities("CurrentSituationTotal", (string) $object->situation_counter), '', 'C');
 		}
 
 		// ADD HORIZONTAL LINES
@@ -2971,7 +2971,7 @@ class pdf_octopus extends ModelePDFFactures
 
 		if ($displayWarranty) {
 			$pdf->SetXY($this->marge_gauche + 2, $tab_top + 74);
-			$pdf->MultiCell(80, 2, $outputlangs->trans("TotalSituationInvoiceWithRetainedWarranty", $object->retained_warranty), '', 'L');
+			$pdf->MultiCell(80, 2, $outputlangs->trans("TotalSituationInvoiceWithRetainedWarranty", (string) $object->retained_warranty), '', 'L');
 			$nextY = $tab_top + 93;
 		} else {
 			$nextY = $tab_top + 74;
@@ -3450,7 +3450,7 @@ class pdf_octopus extends ModelePDFFactures
 	 *	@param  int			$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	int			$posy           Position depart
 	 *	@param	Translate	$outputlangs    Object langs
-	 *  @param  Translate	$outputlangsbis Object lang for output bis
+	 *  @param  ?Translate	$outputlangsbis Object lang for output bis
 	 *	@return void
 	 */
 	public function resumeLastPage(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
@@ -3681,7 +3681,7 @@ class pdf_octopus extends ModelePDFFactures
 				$pdf->SetXY($posx, $posy + $height * $index);
 				$pdf->SetTextColor(0, 0, 60);
 				$pdf->SetFillColor(241, 241, 241);
-				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("RetainedWarrantyShort", $retainedWarrantyRate), $useborder, 'L', true);
+				$pdf->MultiCell($width, $height, $outputlangs->transnoentities("RetainedWarrantyShort", (string) $retainedWarrantyRate), $useborder, 'L', true);
 
 				$total_ht_rg = (float) price2num(price($total_ht * $retainedWarrantyRate / 100), 'MT');
 				$total_ttc_rg = (float) price2num(price($total_ttc * $retainedWarrantyRate / 100), 'MT');

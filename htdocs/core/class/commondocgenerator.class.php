@@ -219,7 +219,7 @@ abstract class CommonDocGenerator
 	public $phpmin = array(7, 1);
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of columns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -1586,7 +1586,7 @@ abstract class CommonDocGenerator
 			$curentCellPaddinds = $pdf->getCellPaddings();
 			// set cell padding with column content definition
 			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
-			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
 			$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 			// restore cell padding
