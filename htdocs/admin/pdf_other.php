@@ -153,6 +153,8 @@ if ($action == 'update') {
 			$result = dol_move_uploaded_file($_FILES['termsofsale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termsofsale']['error']);
 			if ($result) {
 				dolibarr_set_const($db, 'MAIN_INFO_SOCIETE_TERMSOFSALE', $original_file, 'chaine', 0, '', $conf->entity);
+
+				$mysoc->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 			}
 		}
 	}
