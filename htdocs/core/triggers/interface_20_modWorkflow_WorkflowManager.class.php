@@ -118,7 +118,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					$this->setErrorsFromObject($newobject);
 				} else {
 					if (empty($object->fk_account) && !empty($object->thirdparty->fk_account) && !getDolGlobalInt('BANK_ASK_PAYMENT_BANK_DURING_ORDER')) {
-						$res = $newobject->setBankAccount($object->thirdparty->fk_account, true, $user);
+						$res = $newobject->setBankAccount($object->thirdparty->fk_account, 1, $user);
 						if ($ret < 0) {
 							$this->setErrorsFromObject($newobject);
 						}
@@ -244,7 +244,7 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 				$object->fetchObjectLinked(0, 'commande', $object->id, $object->element);
 				if (!empty($object->linkedObjects['commande']) && count($object->linkedObjects['commande']) == 1) {	// If the invoice has only 1 source order
 					$orderLinked = reset($object->linkedObjects['commande']);
-					$orderLinked->fetchObjectLinked($orderLinked->id, '', $orderLinked->element);
+					$orderLinked->fetchObjectLinked($orderLinked->id, $orderLinked->element);
 					if (count($orderLinked->linkedObjects['facture']) >= 1) {
 						$totalHTInvoices = 0;
 						$areAllInvoicesValidated = true;
