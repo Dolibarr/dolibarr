@@ -837,12 +837,11 @@ if ($step == 4 && $datatoimport) {
 		foreach ($arrayrecord as $key => $val) {
 			if ($val["type"] != -1) {
 				$fieldssource[$i]['example1'] = dol_trunc($val['val'], 128);
-				$i++;
 			} else {
 				$fieldssource[$i]['example1'] = $langs->trans('Empty');
-				$i++;
 			}
 			$fieldssource[$i]['imported'] = 0;
+			$i++;
 		}
 		$obj->import_close_file();
 	}
@@ -2473,7 +2472,7 @@ function show_elem($fieldssource, $pos, $key)
 		print '<td class="nocellnopadd" width="16" style="font-weight: normal">';
 		// The image must have the class 'boxhandle' because it's value used in DOM draggable objects to define the area used to catch the full object
 		//print img_picto($langs->trans("MoveField", $pos), 'grip_title', 'class="boxhandle" style="cursor:move;"');
-		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwidth"');
+		print img_picto($langs->trans("Column").' '.num2Alpha($pos - 1), 'file', 'class="pictofixedwidth marginleftonly"');
 		print '</td>';
 		if (isset($fieldssource[$pos]['imported']) && $fieldssource[$pos]['imported'] == false) {
 			print '<td class="nowraponall boxtdunused" style="font-weight: normal">';
