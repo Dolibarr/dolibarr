@@ -251,7 +251,7 @@ session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", 
 /**
  * List sessions in db
  *
- * @return array<mixed,array{login:string,age:int,creation:?int,modification:int,raw:string,remote_ip:string,user_agent:string}>
+ * @return array<mixed,array{login:string,age:int,creation:int|false,modification:int,raw:string,remote_ip:string,user_agent:string}>
  */
 function dolListSessions()
 {
@@ -267,8 +267,9 @@ function dolListSessions()
 	while ($resql && $obj = $dbsession->fetch_object($resql)) {
 		$arrayofsessions[$obj->session_id] = [
 			"login" => (string) $obj->login,
-			"age" => dol_now() - $dbsession->jdate($obj->last_accessed),
-			"creation" => null,
+			// "age" => dol_now() - $dbsession->jdate($obj->creation),
+			"age" => false,
+			"creation" => false,
 			"modification" => $dbsession->idate($obj->last_accessed),
 			"remote_ip" => $obj->remote_ip,
 			"user_agent" => $obj->user_agent,

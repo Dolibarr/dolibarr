@@ -1098,6 +1098,7 @@ function listOfSessions()
 						$arrayofSessions[$idsess]["age"] = time() - filectime($fullpath);
 						$arrayofSessions[$idsess]["creation"] = filectime($fullpath);
 						$arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
+						$arrayofSessions[$idsess]["user_agent"] = "";
 						$arrayofSessions[$idsess]["raw"] = $sessValues;
 					}
 				}
