@@ -840,7 +840,7 @@ if ($step == 4 && $datatoimport) {
 			} else {
 				$fieldssource[$i]['example1'] = $langs->trans('Empty');
 			}
-			$fieldssource[$i]['imported'] = 0;
+			$fieldssource[$i]['imported'] = false;
 			$i++;
 		}
 		$obj->import_close_file();
@@ -1057,7 +1057,7 @@ if ($step == 4 && $datatoimport) {
 	print $s;
 	print '</span> ';
 	$htmlother->select_import_model((string) $importmodelid, 'importmodelid', $datatoimport, 1, $user->id);
-	print '<input type="submit" class="button small reposition" value="'.$langs->trans("Select").'">';
+	print '<input type="submit" class="button smallpaddingimp reposition" value="'.$langs->trans("Select").'">';
 	print '</div>';
 	print '</form>';
 
@@ -1154,6 +1154,7 @@ if ($step == 4 && $datatoimport) {
 		/*if ($i == $minpos) {
 			break;
 		}*/
+		//var_dump($line);
 		print '<tr style="height:'.$height.'" class="trimport oddevenimport">';
 		// Note: $code is int, but index should be fieldname? -> @phan-suppress-next-line PhanTypeMismatchDimFetch
 		$entity = (!empty($objimport->array_import_entities[0][$code]) ? $objimport->array_import_entities[0][$code] : $objimport->array_import_icon[0]);
@@ -1166,11 +1167,7 @@ if ($step == 4 && $datatoimport) {
 
 		$selectforline = '';
 		$selectforline .= '<select id="selectorderimport_'.($i + 1).'" class="targetselectchange minwidth300" name="select_'.($i + 1).'">';
-		if (!empty($line["imported"])) {
-			$selectforline .= '<option value="-1">&nbsp;</option>';
-		} else {
-			$selectforline .= '<option selected="" value="-1">&nbsp;</option>';
-		}
+		$selectforline .= '<option value="-1">&nbsp;</option>';
 
 		$j = 0;
 		$codeselectedarray = array();
