@@ -364,7 +364,7 @@ class pdf_strato extends ModelePDFContract
 							$txtpredefinedservice .= $objectligne->product_label;
 						}
 
-						$desc = dol_htmlentitiesbr($objectligne->desc, 1); // Desc (not empty for free lines)
+						$desc = dol_htmlentitiesbr($objectligne->product_desc, 1); // Desc (not empty for free lines)
 						$txt = '';
 						if (!getDolGlobalString('CONTRACT_HIDE_QTY_ON_PDF')) {
 							$txt .= $outputlangs->transnoentities("Quantity") . ' : <strong>' . $objectligne->qty . '</strong>';
