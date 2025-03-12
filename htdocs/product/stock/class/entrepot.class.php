@@ -391,7 +391,7 @@ class Entrepot extends CommonObject
 		$sql .= ", fk_pays = ".((int) $this->country_id);
 		$sql .= ", phone = '".$this->db->escape($this->phone)."'";
 		$sql .= ", fax = '".$this->db->escape($this->fax)."'";
-		$sql .= ", warehouse_usage = '".$this->db->escape((string) $this->warehouse_usage)."'";
+		$sql .= ", warehouse_usage = '".$this->db->escape((empty($this->warehouse_usage)) ? 1 : (string) $this->warehouse_usage)."'";
 		$sql .= " WHERE rowid = ".((int) $id);
 
 		$this->db->begin();
