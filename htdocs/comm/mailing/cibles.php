@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW	                <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -393,7 +393,7 @@ if ($object->fetch($id) >= 0) {
 		$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 		foreach ($emailarray as $email => $name) {
 			if ($name != $email) {
-				print dol_escape_htmltag($name).' &lt;'.$email;
+				print dol_escape_htmltag((string) $name).' &lt;'.$email;
 				print '&gt;';
 				if ($email && !isValidEmail($email)) {
 					$langs->load("errors");
@@ -412,7 +412,7 @@ if ($object->fetch($id) >= 0) {
 	// Reply to
 	if ($object->messtype != 'sms') {
 		print '<tr><td>';
-		print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+		print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 		print '</td><td>';
 		print $form->editfieldval("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 		$email = CMailFile::getValidAddress($object->email_replyto, 2);

@@ -3397,7 +3397,9 @@ abstract class CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$children = $this->getChildrenOfLine($row[0], $grandchild);
+					if ($fk_parent_line) {
+						$children = $this->getChildrenOfLine($row[0], $grandchild);
+					}
 					if (!empty($children)) {
 						foreach ($children as $child) {
 							array_push($rows, $child);
