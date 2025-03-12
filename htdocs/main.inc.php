@@ -384,24 +384,8 @@ if (GETPOST("DOL_AUTOSET_COOKIE")) {
 	}
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
-	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // keep cookie 1 year and add tag httponly
-	} else {
-		// Only available for php >= 7.3
-		$cookieparams = array(
-			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
-			'path' => '/',
-			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
-			'httponly' => true,
-			'samesite' => 'Lax'	// None || Lax  || Strict
-		);
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, $cookieparams);
-	}
-	if (empty($cookievalue)) {
-		unset($_COOKIE[$cookiename]);
-	}
+
+	dolSetCookie($cookiename, $cookievalue);
 }
 
 // Set the handler of session
