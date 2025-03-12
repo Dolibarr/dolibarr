@@ -9,8 +9,8 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 670+ occurrences
-    // PhanUndeclaredProperty : 470+ occurrences
+    // PhanTypeMismatchArgument : 660+ occurrences
+    // PhanUndeclaredProperty : 460+ occurrences
     // PhanTypeMismatchArgumentNullable : 200+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
@@ -360,10 +360,8 @@ return [
         'htdocs/core/tpl/objectline_view.tpl.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/tpl/passwordreset.tpl.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/tpl/resource_view.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/core/triggers/interface_50_modMailmanspip_Mailmanspipsynchro.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/triggers/interface_90_modSociete_ContactRoles.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/triggers/interface_20_modWorkflow_WorkflowManager.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/core/triggers/interface_50_modAgenda_ActionsAuto.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/datapolicy/class/datapolicycron.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/dav/dav.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/debugbar/class/TraceableDB.php' => ['PhanTypeMismatchArgument'],

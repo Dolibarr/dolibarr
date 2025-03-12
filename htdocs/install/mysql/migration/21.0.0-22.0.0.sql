@@ -194,3 +194,6 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_
 ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
+
+ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
+UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));
