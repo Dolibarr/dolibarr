@@ -235,9 +235,6 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 				'export' => $objp->aarowid_export,
 				'thirdparty' => $objp->aarowid_thirdparty);
 
-			$code_sell_p_notset = '';
-			$code_sell_t_notset = '';
-
 			$suggestedid = 0;
 
 			$return = $accountingAccount->getAccountingCodeToBind($thirdpartystatic, $mysoc, $product_static, $facture_static, $facture_static_det, $accountingAccountArray, 'customer');
