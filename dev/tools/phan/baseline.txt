@@ -9,14 +9,14 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 660+ occurrences
+    // PhanTypeMismatchArgument : 600+ occurrences
     // PhanUndeclaredProperty : 460+ occurrences
-    // PhanTypeMismatchArgumentNullable : 200+ occurrences
+    // PhanTypeMismatchArgumentNullable : 190+ occurrences
     // PhanTypeMismatchProperty : 140+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
-    // PhanTypeMismatchDimFetch : 20+ occurrences
+    // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
     // PhanUndeclaredMethod : 9 occurrences
@@ -28,13 +28,10 @@ return [
     // PhanPluginUndeclaredVariableIsset : 5 occurrences
     // PhanParamTooMany : 4 occurrences
     // PhanPluginDuplicateArrayKey : 4 occurrences
-    // PhanPluginSuspiciousParamPosition : 2 occurrences
     // PhanTypeMismatchDimAssignment : 2 occurrences
     // PhanTypeMismatchReturn : 2 occurrences
     // PhanTypeSuspiciousStringExpression : 2 occurrences
-    // PhanPluginBothLiteralsBinaryOp : 1 occurrence
     // PhanPluginDuplicateExpressionAssignmentOperation : 1 occurrence
-    // PhanPluginUnknownArrayPropertyType : 1 occurrence
     // PhanPossiblyUndeclaredVariable : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
 
@@ -93,7 +90,6 @@ return [
         'htdocs/admin/mails_ticket.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/menus/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/multicurrency.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/admin/pdf_other.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/receiptprinter.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/system/filecheck.php' => ['PhanTypeMismatchArgument'],
         'htdocs/admin/system/modules.php' => ['PhanTypeMismatchArgument'],
@@ -132,27 +128,16 @@ return [
         'htdocs/categories/photos.php' => ['PhanTypeMismatchArgument'],
         'htdocs/categories/viewcat.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/collab/index.php' => ['PhanUndeclaredProperty'],
-        'htdocs/comm/action/card.php' => ['PhanPluginBothLiteralsBinaryOp', 'PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/action/class/actioncomm.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/comm/action/class/cactioncomm.class.php' => ['PhanPluginUnknownArrayPropertyType'],
-        'htdocs/comm/action/document.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/action/info.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/comm/action/list.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/comm/action/index.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
+        'htdocs/comm/action/info.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchDimFetch'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeComparisonFromArray', 'PhanTypeMismatchArgument'],
-        'htdocs/comm/action/rapport/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/comm/mailing/card.php' => ['PhanPluginSuspiciousParamPosition', 'PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/comm/mailing/cibles.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/comm/mailing/class/advtargetemailing.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
+        'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/comm/mailing/cibles.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
-        'htdocs/comm/multiprix.php' => ['PhanTypeMismatchArgument'],
         'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/comm/remise.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/remx.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/api_orders.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
