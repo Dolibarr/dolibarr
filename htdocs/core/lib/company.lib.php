@@ -1349,9 +1349,15 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$arrayfields = dol_sort_array($arrayfields, 'position');
 
 	$newcardbutton = '';
-	if ($user->hasRight('societe', 'contact', 'creer')) {
-		$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
+	$parameters = array('socid' => $object->id);
+	$reshook = $hookmanager->executeHooks('printNewCardButton', $parameters, $object);
+	if (empty($reshook)) {
+		if ($user->hasRight('societe', 'contact', 'creer')) {
+			$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
+			$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
+		}
+	} else {
+		$newcardbutton = $hookmanager->resPrint;
 	}
 
 	print "\n";

@@ -1678,9 +1678,15 @@ if ($action == 'create') {
 						$moreparam = 'style="display: none;"';
 					}
 
+					$line = $objp;
+					$coldisplay = 0;
+
 					print '<tr class="tdtop oddeven" '.$moreparam.'>';
 
 					// Label
+					print '<td class="linecoldescription minwidth300imp">';
+					$coldisplay++;
+					print '<div id="line_'.$line->id.'"></div>';
 					if ($objp->fk_product > 0) {
 						$productstatic->id = $objp->fk_product;
 						$productstatic->type = $objp->ptype;
@@ -1691,7 +1697,6 @@ if ($action == 'create') {
 						$productstatic->status_buy = $objp->tobuy;
 						$productstatic->status_batch = $objp->tobatch;
 
-						print '<td>';
 						$text = $productstatic->getNomUrl(1, '', 32);
 						if ($objp->plabel) {
 							$text .= ' - ';
@@ -1699,18 +1704,30 @@ if ($action == 'create') {
 						}
 						$description = $objp->description;
 
-						// Add description in form
-						if (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
-							$text .= (!empty($objp->description) && $objp->description != $objp->plabel) ? '<br>'.dol_htmlentitiesbr($objp->description) : '';
-							$description = ''; // Already added into main visible desc
+						if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+							print (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : '') . $text;
+							if (!getDolGlobalInt('PRODUIT_DESC_IN_FORM')) {
+								print $form->textwithpicto('', $description);
+							}
+						} else {
+							print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 						}
 
-						print $form->textwithtooltip($text, $description, 3, 0, '0', (string) $cursorline, 3, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
-
-						print '</td>';
+						// Add description in form
+						if ($line->fk_product > 0 && getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE')) {
+							if ($line->element == 'facturedetrec') {
+								print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start_fill || $line->date_end_fill) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+							} elseif ($line->element == 'invoice_supplier_det_rec') {
+								print (!empty($line->description) && $line->description != $line->label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+							} else {
+								print (!empty($line->description) && $line->description != $line->product_label) ? (($line->date_start || $line->date_end) ? '' : '<br>').'<br>'.dol_htmlentitiesbr($line->description) : '';
+							}
+						}
 					} else {
-						print '<td>'.img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."</td>\n";
+						print img_object($langs->trans("ShowProductOrService"), ($objp->product_type ? 'service' : 'product')).' '.dol_htmlentitiesbr($objp->description)."\n";
 					}
+					print '</td>';
+
 					// VAT
 					print '<td class="center">';
 					print vatrate($objp->tva_tx.($objp->vat_src_code ? (' ('.$objp->vat_src_code.')') : ''), true, $objp->info_bits);

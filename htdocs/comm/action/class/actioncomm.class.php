@@ -6,7 +6,7 @@
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2018	    Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,7 +72,7 @@ class ActionComm extends CommonObject
 	public $id;
 
 	/**
-	 * @var string Id of the event. Use $id as possible
+	 * @var string Id of the event. Use as possible
 	 */
 	public $ref;
 
@@ -382,7 +382,7 @@ class ActionComm extends CommonObject
 	public $recurid;
 	/** @var string Rule of recurring */
 	public $recurrule;
-	/** @var string Repeat until this date */
+	/** @var int|'' Repeat until this date */
 	public $recurdateend;
 
 	/** @var int Duration of phone call when the event is a phone call */
@@ -579,7 +579,7 @@ class ActionComm extends CommonObject
 		$sql .= "'".$this->db->idate($now)."', ";	// date creation
 		$sql .= "'".$this->db->idate($this->datep)."', ";	// date start event
 		$sql .= (strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : "null").", ";
-		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape($this->durationp)."'" : "null").", "; // deprecated
+		$sql .= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '') ? "'".$this->db->escape((string) $this->durationp)."'" : "null").", "; // deprecated
 		$sql .= (isset($this->type_id) ? $this->type_id : "null").",";
 		$sql .= ($code ? ("'".$this->db->escape($code)."'") : "null").", ";
 		$sql .= (!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").", ";
@@ -590,14 +590,14 @@ class ActionComm extends CommonObject
 		$sql .= (isset($user->id) && $user->id > 0 ? $user->id : "null").", ";
 		$sql .= ($userownerid > 0 ? $userownerid : "null").", ";
 		$sql .= "'".$this->db->escape($this->label)."', ";
-		$sql .= "'".$this->db->escape($this->percentage)."', ";
-		$sql .= "'".$this->db->escape($this->priority)."', ";
-		$sql .= "'".$this->db->escape($this->fulldayevent)."', ";
+		$sql .= "'".$this->db->escape((string) $this->percentage)."', ";
+		$sql .= "'".$this->db->escape((string) $this->priority)."', ";
+		$sql .= "'".$this->db->escape((string) $this->fulldayevent)."', ";
 		$sql .= "'".$this->db->escape($this->location)."', ";
-		$sql .= "'".$this->db->escape($this->transparency)."', ";
+		$sql .= "'".$this->db->escape((string) $this->transparency)."', ";
 		$sql .= (!empty($this->elementid) ? ((int) $this->elementid) : "null").", ";
 		$sql .= (!empty($this->elementtype) ? "'".$this->db->escape($this->elementtype)."'" : "null").", ";
-		$sql .= (!empty($this->fk_bookcal_calendar) ? "'".$this->db->escape($this->fk_bookcal_calendar)."'" : "null").", ";
+		$sql .= (!empty($this->fk_bookcal_calendar) ? "'".$this->db->escape((string) $this->fk_bookcal_calendar)."'" : "null").", ";
 		$sql .= ((int) $conf->entity).",";
 		$sql .= (!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").", ";
 		// Fields emails
@@ -1184,21 +1184,21 @@ class ActionComm extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm";
-		$sql .= " SET percent = '".$this->db->escape($this->percentage)."'";
+		$sql .= " SET percent = '".$this->db->escape((string) $this->percentage)."'";
 		$sql .= ", fk_action = ".(int) $this->type_id;
 		$sql .= ", code = " . ($code ? "'".$this->db->escape($code)."'" : "null");
 		$sql .= ", label = ".($this->label ? "'".$this->db->escape($this->label)."'" : "null");
 		$sql .= ", datep = ".(strval($this->datep) != '' ? "'".$this->db->idate($this->datep)."'" : 'null');
 		$sql .= ", datep2 = ".(strval($this->datef) != '' ? "'".$this->db->idate($this->datef)."'" : 'null');
-		$sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape($this->durationp)."'" : "null"); // deprecated
+		$sql .= ", durationp = ".(isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '' ? "'".$this->db->escape((string) $this->durationp)."'" : "null"); // deprecated
 		$sql .= ", note = '".$this->db->escape($this->note_private)."'";
 		$sql .= ", fk_project =".($this->fk_project > 0 ? ((int) $this->fk_project) : "null");
 		$sql .= ", fk_soc =".($socid > 0 ? ((int) $socid) : "null");
 		$sql .= ", fk_contact =".($contactid > 0 ? ((int) $contactid) : "null");
-		$sql .= ", priority = '".$this->db->escape($this->priority)."'";
-		$sql .= ", fulldayevent = '".$this->db->escape($this->fulldayevent)."'";
+		$sql .= ", priority = '".$this->db->escape((string) $this->priority)."'";
+		$sql .= ", fulldayevent = '".$this->db->escape((string) $this->fulldayevent)."'";
 		$sql .= ", location = ".($this->location ? "'".$this->db->escape($this->location)."'" : "null");
-		$sql .= ", transparency = '".$this->db->escape($this->transparency)."'";
+		$sql .= ", transparency = '".$this->db->escape((string) $this->transparency)."'";
 		$sql .= ", fk_user_mod = ".((int) $user->id);
 		$sql .= ", fk_user_action = ".($userownerid > 0 ? ((int) $userownerid) : "null");
 		if (!empty($this->fk_element)) {
@@ -2761,7 +2761,7 @@ class ActionComm extends CommonObject
 								$errors_to = getDolGlobalString('MAIN_MAIL_ERRORS_TO');
 
 								// Mail Creation
-								$cMailFile = new CMailFile($sendTopic, $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
+								$cMailFile = new CMailFile($sendTopic, (string) $to, $from, $sendContent, array(), array(), array(), '', "", 0, 1, $errors_to, '', '', '', '', '');
 
 								// Sending Mail
 								if ($cMailFile->sendfile()) {
