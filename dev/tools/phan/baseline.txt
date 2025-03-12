@@ -9,10 +9,10 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 600+ occurrences
+    // PhanTypeMismatchArgument : 540+ occurrences
     // PhanUndeclaredProperty : 460+ occurrences
-    // PhanTypeMismatchArgumentNullable : 190+ occurrences
-    // PhanTypeMismatchProperty : 140+ occurrences
+    // PhanTypeMismatchArgumentNullable : 180+ occurrences
+    // PhanTypeMismatchProperty : 130+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
@@ -405,18 +405,10 @@ return [
         'htdocs/fichinter/stats/index.php' => ['PhanTypeMismatchArgument'],
         'htdocs/fichinter/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/filefunc.inc.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/fourn/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/fourn/class/api_supplier_orders.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
-        'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/fourn/class/fournisseur.facture-rec.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/fourn/class/fournisseur.facture-rec.ligne.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/fourn/class/fournisseur.facture.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/fourn/class/fournisseur.facture.ligne.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/fourn/class/fournisseur.orderline.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/fourn/class/fournisseur.product.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/fourn/commande/card.php' => ['PhanTypeMismatchDimAssignment', 'PhanTypeMismatchProperty', 'PhanTypeSuspiciousStringExpression', 'PhanUndeclaredProperty'],
-        'htdocs/fourn/commande/dispatch.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/fourn/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
+        'htdocs/fourn/class/fournisseur.commande.class.php' => ['PhanUndeclaredProperty'],
+        'htdocs/fourn/commande/card.php' => ['PhanTypeMismatchDimAssignment', 'PhanTypeSuspiciousStringExpression', 'PhanUndeclaredProperty'],
+        'htdocs/fourn/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/fourn/facture/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
         'htdocs/fourn/facture/paiement.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/fourn/facture/rapport.php' => ['PhanTypeMismatchArgument'],

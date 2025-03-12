@@ -15,7 +15,7 @@
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -525,8 +525,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ", tva_tx = ".price2num($this->tva_tx);
 		$sql .= ", localtax1_tx = ".price2num($this->localtax1_tx);
 		$sql .= ", localtax2_tx = ".price2num($this->localtax2_tx);
-		$sql .= ", localtax1_type = '".$this->db->escape($this->localtax1_type)."'";
-		$sql .= ", localtax2_type = '".$this->db->escape($this->localtax2_type)."'";
+		$sql .= ", localtax1_type = '".$this->db->escape((string) $this->localtax1_type)."'";
+		$sql .= ", localtax2_type = '".$this->db->escape((string) $this->localtax2_type)."'";
 		$sql .= ", total_ht = ".price2num($this->total_ht);
 		$sql .= ", tva= ".price2num($this->total_tva);
 		$sql .= ", total_localtax1= ".price2num($this->total_localtax1);
@@ -694,7 +694,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_facture_fourn.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$product_label
 			= !empty($this->product_label)
 			? $this->product_label :
@@ -708,8 +708,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$sql .= " ".price2num($this->tva_tx).",";
 		$sql .= " ".price2num($this->localtax1_tx).",";
 		$sql .= " ".price2num($this->localtax2_tx).",";
-		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
-		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
+		$sql .= " '".$this->db->escape((string) $this->localtax1_type)."',";
+		$sql .= " '".$this->db->escape((string) $this->localtax2_type)."',";
 		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
 		$sql .= " ".((int) $this->product_type).",";
 		$sql .= " ".price2num($this->remise_percent).",";
