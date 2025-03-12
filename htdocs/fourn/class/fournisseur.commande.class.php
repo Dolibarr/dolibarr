@@ -2470,7 +2470,7 @@ class CommandeFournisseur extends CommonOrder
 		// Remove linked categories.
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."categorie_supplier_order";
-			$sql .= " WHERE fk_order = ".((int) $this->id);
+			$sql .= " WHERE fk_supplier_order = ".((int) $this->id);
 
 			$result = $this->db->query($sql);
 			if (!$result) {
