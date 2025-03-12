@@ -10664,7 +10664,7 @@ class Form
 	/**
 	 * Return select list of user groups
 	 *
-	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
+	 * @param int|object|array<int|object> 	$selected	Id group or group(s) preselected
 	 * @param string 				$htmlname 		Field name in form
 	 * @param int<0,1> 				$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 * @param string|int[] 			$exclude 		Array list of groups id to exclude
