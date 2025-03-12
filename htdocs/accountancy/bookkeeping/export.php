@@ -465,7 +465,7 @@ if (empty($reshook)) {
 		$param .= '&search_lettering_code='.urlencode($search_lettering_code);
 	}
 	if (!empty($search_not_reconciled)) {
-		$filter['t.reconciled_option'] = $search_not_reconciled;
+		$filter['customsql'] = 't.lettering_code IS NULL';
 		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
 	}
 	if (!empty($search_import_key)) {
@@ -584,8 +584,6 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.date_validated <= '".$db->idate($value)."'";
 		} elseif ($key == 't.credit' || $key == 't.debit') {
 			$sqlwhere[] = natural_search($key, $value, 1, 1);
-		} elseif ($key == 't.reconciled_option') {
-			$sqlwhere[] = 't.lettering_code IS NULL';
 		} elseif ($key == 't.code_journal' && !empty($value)) {
 			if (is_array($value)) {
 				$sqlwhere[] = natural_search("t.code_journal", implode(',', $value), 3, 1);
@@ -594,6 +592,8 @@ if (count($filter) > 0) {
 			}
 		} elseif ($key == 't.search_accounting_code_in' && !empty($value)) {
 			$sqlwhere[] = 't.numero_compte IN ('.$db->sanitize($value, 1).')';
+		} elseif ($key == 'customsql') {
+			$sqlwhere[] = $value;
 		} else {
 			$sqlwhere[] = natural_search($key, $value, 0, 1);
 		}
