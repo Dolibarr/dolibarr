@@ -180,10 +180,6 @@ if ($action == 'validatehistory' && $user->hasRight('accounting', 'bind', 'write
 	} else {
 		$num_lines = $db->num_rows($result);
 
-		$facture_static = new Facture($db);
-
-		$isSellerInEEC = isInEEC($mysoc);
-
 		$thirdpartystatic = new Societe($db);
 		$facture_static = new Facture($db);
 		$facture_static_det = new FactureLigne($db);
