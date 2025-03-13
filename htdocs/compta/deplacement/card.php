@@ -221,7 +221,7 @@ if ($action == 'create') {
 
 	print "<tr>";
 	print '<td class="fieldrequired">'.$langs->trans("Type").'</td><td>';
-	$form->select_type_fees(GETPOSTINT('type'), 'type', 1);
+	$form->select_type_fees((string) GETPOSTINT('type'), 'type', 1);
 	print '</td></tr>';
 
 	print "<tr>";
@@ -419,7 +419,7 @@ if ($action == 'create') {
 
 			// Km/Price
 			print '<tr><td class="tdtop">';
-			print $form->editfieldkey("FeesKilometersOrAmout", 'km', $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
+			print $form->editfieldkey("FeesKilometersOrAmout", 'km', (string) $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
 			print '</td><td>';
 			print $form->editfieldval("FeesKilometersOrAmout", 'km', $object->km, $object, $user->hasRight('deplacement', 'creer'), 'numeric:6');
 			print "</td></tr>";
@@ -449,9 +449,9 @@ if ($action == 'create') {
 				print '</tr></table>';
 				print '</td><td colspan="3">';
 				if ($action == 'classify') {
-					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1);
+					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'projectid', 0, 0, 1);
 				} else {
-					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, 'none', 0, 0);
+					$form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, 'none', 0, 0);
 				}
 				print '</td>';
 				print '</tr>';

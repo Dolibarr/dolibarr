@@ -9432,7 +9432,7 @@ class Form
 	 * Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 * @param 	string 		$htmlname 		Name of select
-	 * @param 	array<string|int,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
+	 * @param 	array<string|int,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
 	 * @param 	string[]	$selected 		Array of keys preselected
 	 * @param 	int<0,1>	$key_in_label 	1 to show key like in "[key] value"
 	 * @param 	int<0,1>	$value_as_key 	1 to use value as key
