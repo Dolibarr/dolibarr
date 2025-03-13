@@ -1,13 +1,13 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2014	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -137,7 +137,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$arrayofimages = array('logo', 'logo_squarred');
 	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
-		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
@@ -419,7 +419,7 @@ $formother = new FormOther($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
 
-$countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' <a href="#trzipbeforecountry">('.$langs->trans("SeeAbove").')</a></span>';
+$countrynotdefined = '<span class="error">'.$langs->trans("ErrorSetACountryFirst").' <a href="" onclick="window.scrollTo({top: 0, behavior: \'smooth\'}); return false;">('.$langs->trans("SeeAbove").')</a></span>';
 
 print load_fiche_titre($langs->trans("CompanyFoundation"), '', 'title_setup');
 
@@ -475,10 +475,10 @@ print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->
 print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'.(GETPOSTISSET('MAIN_INFO_SOCIETE_ADDRESS') ? GETPOST('MAIN_INFO_SOCIETE_ADDRESS', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_ADDRESS'))).'</textarea></td></tr>'."\n";
 
 // Zip
-print '<tr class="oddeven" id="trzipbeforecountry"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
+print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
 print '<input class="width100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_ZIP') ? GETPOST('MAIN_INFO_SOCIETE_ZIP', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_ZIP')))).'"></td></tr>'."\n";
 
-print '<tr class="oddeven" id="trtownbeforecountry"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
+print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
 print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth200" id="MAIN_INFO_SOCIETE_TOWN" value="'.dol_escape_htmltag((GETPOSTISSET('MAIN_INFO_SOCIETE_TOWN') ? GETPOST('MAIN_INFO_SOCIETE_TOWN', 'alphanohtml') : (getDolGlobalString('MAIN_INFO_SOCIETE_TOWN')))).'"></td></tr>'."\n";
 
 // State

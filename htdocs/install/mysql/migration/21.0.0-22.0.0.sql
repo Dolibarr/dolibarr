@@ -44,8 +44,7 @@ ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_websit
 -- V22 migration
 
 ALTER TABLE llx_c_country ADD COLUMN sepa tinyint DEFAULT 0 NOT NULL;
-
-UPDATE llx_c_country SET sepa = 1 WHERE sepa = 0 AND eec = 1;
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
 
 -- fix element
 UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
@@ -161,3 +160,42 @@ CREATE TABLE llx_bank_record_link
 
 ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_record_bank_record FOREIGN KEY (fk_bank_record) REFERENCES llx_bank_record (rowid);
 ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_import_bank_import FOREIGN KEY (fk_bank_import) REFERENCES llx_bank_import (rowid);
+
+ALTER TABLE llx_commandedet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_contratdet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_deliverydet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_expeditiondet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facturedet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facturedet_rec ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facture_fourn_det ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facture_fourn_det_rec ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_fichinterdet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_fichinterdet_rec ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_propaldet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_receptiondet_batch ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_facture_rec ADD COLUMN rule_for_lines_dates varchar(255) DEFAULT 'prepaid';
+
+ALTER TABLE llx_product_customer_price ADD COLUMN date_begin date AFTER ref_customer;
+ALTER TABLE llx_product_customer_price ADD COLUMN date_end date AFTER date_begin;
+ALTER TABLE llx_product_customer_price ADD COLUMN discount_percent real DEFAULT 0 AFTER localtax2_type;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN date_begin date AFTER ref_customer;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN date_end date AFTER date_begin;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN discount_percent real DEFAULT 0 AFTER localtax2_type;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_product_customer_price_fk_product;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_product_customer_price_fk_soc;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_customer_price_fk_product;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_customer_price_fk_soc;
+ALTER TABLE llx_product_customer_price DROP INDEX uk_customer_price_fk_product_fk_soc;
+ALTER TABLE llx_product_customer_price ADD UNIQUE INDEX uk_customer_price_fk_product_fk_soc (fk_product, fk_soc, date_begin);
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product(rowid);
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
+UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
+
+ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
+
+ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
+UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));

@@ -13,7 +13,7 @@
  * Copyright (C) 2016-2022 Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -175,7 +175,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' cd.fk_multicurrency, cd.multicurrency_code, cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc, p.tobatch as product_tobatch,';
 		$sql .= ' p.packaging,';
-		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code';
+		$sql .= ' cd.date_start, cd.date_end, cd.vat_src_code, cd.extraparams';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
 		$sql .= ' WHERE cd.rowid = '.((int) $rowid);
@@ -233,6 +233,8 @@ class OrderLine extends CommonOrderLine
 
 			$this->date_start       = $this->db->jdate($objp->date_start);
 			$this->date_end         = $this->db->jdate($objp->date_end);
+
+			$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 			$this->fk_multicurrency = $objp->fk_multicurrency;
 			$this->multicurrency_code = $objp->multicurrency_code;
@@ -425,7 +427,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 		$sql .= ')';
 		$sql .= " VALUES (".$this->fk_commande.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " '".price2num($this->qty)."',";
@@ -437,7 +439,7 @@ class OrderLine extends CommonOrderLine
 		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
 		$sql .= ' '.((!empty($this->fk_product) && $this->fk_product > 0) ? $this->fk_product : "null").',';
-		$sql .= " '".$this->db->escape($this->product_type)."',";
+		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
 		$sql .= " '".price2num($this->remise_percent)."',";
 		$sql .= " ".(price2num($this->subprice) !== '' ? price2num($this->subprice) : "null").",";
 		$sql .= " ".($this->price != '' ? "'".price2num($this->price)."'" : "null").",";

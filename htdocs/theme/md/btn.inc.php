@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
@@ -7,11 +7,15 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 /**
  * @var Conf $conf
+ * @var User $user
  *
  * @var int $dol_optimize_smallscreen
  * @var string $colortextlink
  * @var string $butactionbg
  * @var string $textbutaction
+ * @var string $fontlist
+ * @var string $left
+ * @var string $right
  */
 '
 @phan-var-force string $butactionbg

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -81,6 +81,8 @@ $leftmenuwidth = 240;
  * @var int $nbtopmenuentries
  * @var int $nbtopmenuentriesreal
  * @var string $path
+ * @var string $theme
+ * @var string $left
  * @var string $right
  * @var string $textDanger
  * @var string $textSuccess
@@ -414,9 +416,11 @@ input[type=checkbox], input[type=radio] {
 	margin-top: 5px;
 }
 input {
-	line-height: 1.3em;
 	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	line-height: 1.3em;
 }
 .tableforfield input, .refidno input {
 	padding: 2px;
@@ -1076,7 +1080,7 @@ textarea.centpercent {
 	word-break: break-word !important;
 }
 .wordbreak {
-	word-break: break-word;	/* cut fist between word, inside word if not possible */
+	word-break: break-word;	/* cut first between word, inside word if not possible */
 }
 .wordbreakall {
 	word-break: break-all;
@@ -4012,9 +4016,6 @@ a.tabTitle {
 	text-decoration: none;
 	white-space: nowrap;
 }
-.tabTitleText {
-	display: none;
-}
 .imgTabTitle {
 	max-height: 14px;
 }
@@ -6407,9 +6408,6 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
-}
-.jPicker td.Text input {
-	height: 1em !important;
 }
 .jPicker .Preview div {
 	height: 36px !important;

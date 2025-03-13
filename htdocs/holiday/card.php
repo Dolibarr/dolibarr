@@ -61,7 +61,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : $user->id);
+$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : ($action == 'create' ? $user->id : 0));
 $socid = GETPOSTINT('socid');
 
 // Load translation files required by the page
@@ -99,6 +99,9 @@ if (($id > 0) || $ref) {
 	}
 	if (!$canread) {
 		accessforbidden();
+	}
+	if ($fuserid == 0) {
+		$fuserid = $object->fk_user; // If $fuserid is not defined, set it to the owner of the leave request
 	}
 }
 

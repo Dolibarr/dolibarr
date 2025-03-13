@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -164,7 +164,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	}
 	//var_dump(GETPOST('action','aZ09'));
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
-	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
+	$check_access = restrictedArea($user, $feature, $object_id, '', (string) $feature2);
 	//var_dump($user->rights);
 	/*
 	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)

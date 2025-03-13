@@ -109,7 +109,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('projet', 'cree
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Label")), null, 'errors');
 	}
 	if (!$error) {
-		$object->oldcopy = clone $object;
+		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$tmparray = explode('_', GETPOST('task_parent'));
 		$task_parent = $tmparray[1];

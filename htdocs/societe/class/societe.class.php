@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2002-2006	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
@@ -16,7 +15,7 @@
  * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
  * Copyright (C) 2018		Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2019-2020	Josep Lluís Amador			<joseplluis@lliuretic.cat>
- * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		ButterflyOfFire				<butterflyoffire+dolibarr@protonmail.com>
  * Copyright (C) 2023-2024	Alexandre Janniaux			<alexandre.janniaux@gmail.com>
@@ -85,7 +84,7 @@ class Societe extends CommonObject
 	public $fieldsforcombobox = 'nom,name_alias';
 
 	/**
-	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
+	 * @var array<string,array{name:string}>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array(
 		'supplier_proposal' => array('name' => 'SupplierProposal'),
@@ -314,21 +313,21 @@ class Societe extends CommonObject
 	public $country_id;
 
 	/**
-	 * @var string State code
+	 * @var ?string State code
 	 * @deprecated Use $state_code instead
 	 * @see $state_code
 	 */
 	public $departement_code;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $state instead
 	 * @see $state
 	 */
 	public $departement;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $country instead
 	 * @see $country
 	 */
@@ -336,23 +335,23 @@ class Societe extends CommonObject
 
 	/**
 	 * Phone number
-	 * @var string
+	 * @var ?string
 	 */
 	public $phone;
 	/**
 	 * PhoneMobile number
-	 * @var string
+	 * @var ?string
 	 */
 	public $phone_mobile;
 	/**
 	 * Fax number
-	 * @var string
+	 * @var ?string
 	 */
 	public $fax;
 
 	/**
 	 * Email
-	 * @var string
+	 * @var ?string
 	 */
 	public $email;
 
@@ -392,7 +391,7 @@ class Societe extends CommonObject
 
 	/**
 	 * Webpage
-	 * @var string
+	 * @var ?string
 	 */
 	public $url;
 
@@ -406,12 +405,12 @@ class Societe extends CommonObject
 
 	/**
 	 * Professional ID 1 (Ex: Siren in France)
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof1;
 
 	/**
-	 * @var string Professional ID 1
+	 * @var ?string Professional ID 1
 	 * @deprecated Use $idprof1 instead
 	 * @see $idprof1
 	 */
@@ -420,12 +419,12 @@ class Societe extends CommonObject
 
 	/**
 	 * Professional ID 2 (Ex: Siret in France)
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof2;
 
 	/**
-	 * @var string Professional ID 2
+	 * @var ?string Professional ID 2
 	 * @deprecated Use $idprof2 instead
 	 * @see $idprof2
 	 */
@@ -433,12 +432,12 @@ class Societe extends CommonObject
 
 	/**
 	 * Professional ID 3 (Ex: Ape in France)
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof3;
 
 	/**
-	 * @var string Professional ID 3
+	 * @var ?string Professional ID 3
 	 * @deprecated Use $idprof3 instead
 	 * @see $idprof3
 	 */
@@ -446,43 +445,43 @@ class Societe extends CommonObject
 
 	/**
 	 * Professional ID 4 (Ex: RCS in France)
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof4;
 
 	/**
 	 * Professional ID 5
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof5;
 
 	/**
 	 * Professional ID 6
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof6;
 
 	/**
 	 * Professional ID 7
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof7;
 
 	/**
 	 * Professional ID 8
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof8;
 
 	/**
 	 * Professional ID 9
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof9;
 
 	/**
 	 * Professional ID 10
-	 * @var string
+	 * @var ?string
 	 */
 	public $idprof10;
 
@@ -503,7 +502,7 @@ class Societe extends CommonObject
 	public $tva_assuj = 1;
 
 	/**
-	 * @var string	Intracommunitary VAT ID
+	 * @var ?string	Intracommunitary VAT ID
 	 */
 	public $tva_intra;
 
@@ -644,49 +643,49 @@ class Societe extends CommonObject
 
 	/**
 	 * Client code. E.g: CU2014-003
-	 * @var string
+	 * @var ?string
 	 */
 	public $code_client;
 
 	/**
 	 * Supplier code. E.g: SU2014-003
-	 * @var string
+	 * @var ?string
 	 */
 	public $code_fournisseur;
 
 	/**
 	 * Accounting code for client
-	 * @var string
+	 * @var ?string
 	 */
 	public $code_compta_client;
 
 	/**
 	 * Accounting general account for customer
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_customer_general;
 
 	/**
 	 * Accounting auxiliary account for customer
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_customer;
 
 	/**
 	 * Accounting code for supplier
-	 * @var string
+	 * @var ?string
 	 */
 	public $code_compta_fournisseur;
 
 	/**
 	 * Accounting general account for supplier
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_supplier_general;
 
 	/**
 	 * Accounting auxiliary account for supplier
-	 * @var string
+	 * @var ?string
 	 */
 	public $accountancy_code_supplier;
 
@@ -697,7 +696,7 @@ class Societe extends CommonObject
 	public $code_compta_product;
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $note_public, $note_private - Note is split in public and private notes
 	 * @see $note_public, $note_private
 	 */
@@ -705,13 +704,13 @@ class Societe extends CommonObject
 
 	/**
 	 * Private note
-	 * @var string
+	 * @var ?string
 	 */
 	public $note_private;
 
 	/**
 	 * Public note
-	 * @var string
+	 * @var ?string
 	 */
 	public $note_public;
 
@@ -1000,11 +999,11 @@ class Societe extends CommonObject
 		}
 		$this->import_key = trim((string) $this->import_key);
 
-		$this->code_compta_client = trim($this->code_compta_client);
+		$this->code_compta_client = trim($this->code_compta_client ?? '');
 
-		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general);
+		$this->accountancy_code_customer_general = trim($this->accountancy_code_customer_general ?? '');
 		$this->accountancy_code_customer = trim((string) $this->code_compta_client);
-		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general);
+		$this->accountancy_code_supplier_general = trim($this->accountancy_code_supplier_general ?? '');
 		$this->accountancy_code_supplier = trim((string) $this->code_compta_fournisseur);
 		$this->accountancy_code_buy = trim((string) $this->accountancy_code_buy);
 		$this->accountancy_code_sell = trim((string) $this->accountancy_code_sell);
@@ -1472,9 +1471,9 @@ class Societe extends CommonObject
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
 		$this->phone		= preg_replace("/\./", "", $this->phone);
-		$this->phone_mobile		= trim((string) $this->phone_mobile);
-		$this->phone_mobile		= preg_replace("/\s/", "", $this->phone_mobile);
-		$this->phone_mobile		= preg_replace("/\./", "", $this->phone_mobile);
+		$this->phone_mobile = trim((string) $this->phone_mobile);
+		$this->phone_mobile = preg_replace("/\s/", "", $this->phone_mobile);
+		$this->phone_mobile = preg_replace("/\./", "", $this->phone_mobile);
 		$this->fax			= trim((string) $this->fax);
 		$this->fax			= preg_replace("/\s/", "", $this->fax);
 		$this->fax			= preg_replace("/\./", "", $this->fax);
@@ -1488,14 +1487,14 @@ class Societe extends CommonObject
 		$this->idprof4		= trim((string) $this->idprof4);
 		$this->idprof5		= (!empty($this->idprof5) ? trim($this->idprof5) : '');
 		$this->idprof6		= (!empty($this->idprof6) ? trim($this->idprof6) : '');
-		$this->prefix_comm 	= trim((string) $this->prefix_comm);
+		$this->prefix_comm = trim((string) $this->prefix_comm);
 		$this->outstanding_limit = price2num($this->outstanding_limit);
 		$this->order_min_amount = price2num($this->order_min_amount);
 		$this->supplier_order_min_amount = price2num($this->supplier_order_min_amount);
 
-		$this->tva_assuj			= (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
-		$this->tva_intra			= dol_sanitizeFileName($this->tva_intra, '');
-		$this->vat_reverse_charge	= empty($this->vat_reverse_charge) ? 0 : 1;
+		$this->tva_assuj = (is_numeric($this->tva_assuj)) ? (int) trim((string) $this->tva_assuj) : 0;
+		$this->tva_intra = dol_sanitizeFileName($this->tva_intra ?? '', '');
+		$this->vat_reverse_charge = empty($this->vat_reverse_charge) ? 0 : 1;
 		if (empty($this->status)) {
 			$this->status = 0;
 		}
@@ -2674,10 +2673,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User		$user			Object user (not used)
-	 *  @param	int			$mode			0=Array with properties, 1=Array of IDs.
+	 *  @param	int<0,1>	$mode			0=Array with properties, 1=Array of IDs.
 	 *  @param	?string		$sortfield		List of sort fields, separated by comma. Example: 't1.fielda,t2.fieldb'
 	 *  @param	?string		$sortorder		Sort order, separated by comma. Example: 'ASC,DESC';
-	 *  @return array|int      				Array of sales representatives of the current third party or <0 if KO
+	 *	@return	int<-1,-1>|int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>	Array of sales representatives of the current third party or <0 if KO
 	 */
 	public function getSalesRepresentatives(User $user, $mode = 0, $sortfield = null, $sortorder = null)
 	{
@@ -2712,7 +2711,7 @@ class Societe extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				if (empty($mode)) {
-					$reparray[$i]['id'] = $obj->rowid;
+					$reparray[$i]['id'] = (int) $obj->rowid;
 					$reparray[$i]['lastname'] = $obj->lastname;
 					$reparray[$i]['firstname'] = $obj->firstname;
 					$reparray[$i]['email'] = $obj->email;
@@ -2729,7 +2728,7 @@ class Societe extends CommonObject
 					$reparray[$i]['photo'] = $obj->photo;
 					$reparray[$i]['gender'] = $obj->gender;
 				} else {
-					$reparray[] = $obj->rowid;
+					$reparray[] = (int) $obj->rowid;
 				}
 				$i++;
 			}
@@ -3095,8 +3094,7 @@ class Societe extends CommonObject
 		} else {
 			$label = implode($this->getTooltipContentArray($params));
 		}
-		print "\n";
-		//var_dump($label);exit;
+
 		$linkstart = '';
 		$linkend = '';
 
@@ -4668,6 +4666,10 @@ class Societe extends CommonObject
 		$this->idprof4 = getDolGlobalString('MAIN_INFO_RCS');
 		$this->idprof5 = getDolGlobalString('MAIN_INFO_PROFID5');
 		$this->idprof6 = getDolGlobalString('MAIN_INFO_PROFID6');
+		$this->idprof7 = getDolGlobalString('MAIN_INFO_PROFID7');
+		$this->idprof8 = getDolGlobalString('MAIN_INFO_PROFID8');
+		$this->idprof9 = getDolGlobalString('MAIN_INFO_PROFID9');
+		$this->idprof10 = getDolGlobalString('MAIN_INFO_PROFID10');
 		$this->tva_intra = getDolGlobalString('MAIN_INFO_TVAINTRA'); // VAT number, not necessarily INTRA.
 		$this->managers = getDolGlobalString('MAIN_INFO_SOCIETE_MANAGERS');
 		$this->capital = is_numeric(getDolGlobalString('MAIN_INFO_CAPITAL')) ? (float) price2num(getDolGlobalString('MAIN_INFO_CAPITAL')) : 0;
@@ -4687,6 +4689,8 @@ class Societe extends CommonObject
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
 		$this->localtax2_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on')) ? 1 : 0);
+
+		$this->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 	}
 
 	/**
@@ -4802,7 +4806,7 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 *  Check if we must use revenue stamps feature or not according to country (country of $mysocin most cases).
+	 *  Check if we must use revenue stamps feature or not according to country (country of $mysoc in most cases).
 	 *  Table c_revenuestamp contains the country and value of stamp per invoice.
 	 *
 	 *  @return		boolean			true or false

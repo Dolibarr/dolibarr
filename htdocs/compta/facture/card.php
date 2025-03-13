@@ -1,24 +1,24 @@
 <?php
-/* Copyright (C) 2002-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
- * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
- * Copyright (C) 2010-2015  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2012-2023  Christophe Battarel     <christophe.battarel@altairis.fr>
- * Copyright (C) 2012-2013  Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2013       Jean-Francois FERRY     <jfefe@aternatik.fr>
- * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014-2024  Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
+/* Copyright (C) 2002-2006	Rodolphe Quiedeville    	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005		Marc Barilley / Ocebo		<marc@ocebo.com>
+ * Copyright (C) 2005-2015	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
+ * Copyright (C) 2010-2015	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2012-2023	Christophe Battarel			<christophe.battarel@altairis.fr>
+ * Copyright (C) 2012-2013	Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2013		Jean-Francois FERRY			<jfefe@aternatik.fr>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2014-2024	Ferran Marcet				<fmarcet@2byte.es>
+ * Copyright (C) 2015-2016	Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2018-2025	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2022		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
+ * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@
 
 // Libraries
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -304,7 +305,7 @@ if (empty($reshook)) {
 
 		if (($usercandelete && $isErasable > 0)
 			|| ($usercancreate && $isErasable == 1)) {
-			$result = $object->delete($user, 0, $idwarehouse);
+			$result = $object->delete($user, 0, (int) $idwarehouse);
 			if ($result > 0) {
 				header('Location: '.DOL_URL_ROOT.'/compta/facture/list.php?restore_lastsearch_values=1');
 				exit();
@@ -426,7 +427,7 @@ if (empty($reshook)) {
 
 						if ($tmpvatratetoshow[0] != 0) {
 							$langs->load("errors");
-							setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate", $tmpvatratetoshow[0]), null, 'errors');
+							setEventMessages($langs->trans("ErrorLinesCantBeNegativeForOneVATRate", (string) $tmpvatratetoshow[0]), null, 'errors');
 							$error++;
 							$action = '';
 						}
@@ -471,7 +472,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setretainedwarrantydatelimit' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setRetainedWarrantyDateLimit(GETPOSTFLOAT('retained_warranty_date_limit'));
+		$result = $object->setRetainedWarrantyDateLimit(GETPOSTINT('retained_warranty_date_limit'));
 		if ($result < 0) {
 			dol_print_error($db, $object->error);
 		}
@@ -600,11 +601,13 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'setbankaccount' && $usercancreate) {	// bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 	} elseif ($action == 'setremisepercent' && $usercancreate) {
 		$object->fetch($id);
-		$result = $object->setDiscount($user, price2num(GETPOST('remise_percent'), '', 2));
+		$result = $object->setDiscount($user, (float) price2num(GETPOST('remise_percent'), '', 2));
 	} elseif ($action == "setabsolutediscount" && $usercancreate) {
 		// We have POST[remise_id] or POST[remise_id_for_payment]
 		$db->begin();
@@ -1688,7 +1691,7 @@ if (empty($reshook)) {
 								$descline .= ' - '.$srcobject->ref;
 								$result = $object->addline(
 									$descline,
-									$amount, // subprice
+									(float) $amount, // subprice
 									1, // quantity
 									$tva, // vat rate
 									0, // localtax1_tx
@@ -1746,7 +1749,7 @@ if (empty($reshook)) {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
-											$line->qty = price2num((float) $line->qty * (float) $valuestandardinvoice / 100, 'MS');
+											$line->qty = (float) price2num((float) $line->qty * (float) $valuestandardinvoice / 100, 'MS');
 										}
 									}
 								}
@@ -1755,7 +1758,7 @@ if (empty($reshook)) {
 									if (is_array($lines)) {
 										foreach ($lines as $line) {
 											// We keep ->subprice and ->pa_ht, but we change the qty
-											$line->qty = price2num((float) $line->qty * (float) $valuedeposit / 100, 'MS');
+											$line->qty = (float) price2num((float) $line->qty * (float) $valuedeposit / 100, 'MS');
 										}
 									}
 								}
@@ -1968,7 +1971,7 @@ if (empty($reshook)) {
 							$product->fetch(GETPOSTINT('idprod'.$i));
 							$startday = dol_mktime(12, 0, 0, GETPOSTINT('date_start'.$i.'month'), GETPOSTINT('date_start'.$i.'day'), GETPOSTINT('date_start'.$i.'year'));
 							$endday = dol_mktime(12, 0, 0, GETPOSTINT('date_end'.$i.'month'), GETPOSTINT('date_end'.$i.'day'), GETPOSTINT('date_end'.$i.'year'));
-							$result = $object->addline($product->description, $product->price, price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOSTINT('idprod'.$i), price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, 0, $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, 0, 0, '', array(), 100, 0, $product->fk_unit, 0, '', 1);
+							$result = $object->addline($product->description, $product->price, (float) price2num(GETPOST('qty'.$i), 'MS'), $product->tva_tx, $product->localtax1_tx, $product->localtax2_tx, GETPOSTINT('idprod'.$i), (float) price2num(GETPOST('remise_percent'.$i), '', 2), $startday, $endday, 0, 0, 0, $product->price_base_type, $product->price_ttc, $product->type, -1, 0, '', 0, 0, 0, 0, '', array(), 100, 0, $product->fk_unit, 0, '', 1);
 						}
 					}
 
@@ -2109,6 +2112,13 @@ if (empty($reshook)) {
 
 		// End of object creation, we show it
 		if ($id > 0 && !$error) {
+			if (isModEnabled('category')) {
+				$categories = GETPOST('categories', 'array');
+				if (method_exists($object, 'setCategories')) {
+					$object->setCategories($categories);
+				}
+			}
+
 			$db->commit();
 
 			// Define output language
@@ -2171,7 +2181,7 @@ if (empty($reshook)) {
 			if (!empty($line->vat_src_code)) {
 				$tvatx .= ' ('.$line->vat_src_code.')';
 			}
-			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $remise_percent, $line->date_start, $line->date_end, $tvatx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
+			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $remise_percent, $line->date_start, $line->date_end, $tvatx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
 		}
 	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && $usercancreate) {		// Add a new line
 		$langs->load('errors');
@@ -2554,7 +2564,7 @@ if (empty($reshook)) {
 				}
 
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOST('fk_parent_line'), $fournprice, $buyingprice, $label, $array_options, GETPOST('progress'), 0, $fk_unit, $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $date_start, $date_end, 0, $info_bits, 0, $price_base_type, $pu_ttc, $type, min($rank, count($object->lines) + 1), $special_code, '', 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, GETPOSTINT('progress'), 0, $fk_unit, (float) $pu_ht_devise);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -2833,9 +2843,9 @@ if (empty($reshook)) {
 			$result = $object->updateline(
 				GETPOSTINT('lineid'),
 				$description,
-				$pu,
-				$qty,
-				$remise_percent,
+				(float) $pu,
+				(float) $qty,
+				(float) $remise_percent,
 				$date_start,
 				$date_end,
 				$vat_rate,
@@ -2852,8 +2862,8 @@ if (empty($reshook)) {
 				$special_code,
 				$array_options,
 				$addprogress,
-				GETPOST('units', 'alpha'),
-				$pu_ht_devise
+				GETPOSTINT('units'),
+				(float) $pu_ht_devise
 			);
 
 			if ($result >= 0) {
@@ -2930,7 +2940,7 @@ if (empty($reshook)) {
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else {
-					$object->update_percent($line, GETPOST('all_progress'), false);
+					$object->update_percent($line, GETPOSTINT('all_progress'), false);
 				}
 			}
 			$object->update_price(1);
@@ -3145,7 +3155,7 @@ if (empty($reshook)) {
 
 
 	if ($action == 'update_extras' && $usercancreate) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from add form
@@ -3173,7 +3183,7 @@ if (empty($reshook)) {
 			$result = $object->fetch($id);
 
 			if ($result > 0 && $id > 0) {
-				$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
+				$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
 				$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
 				$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 			}
@@ -3724,7 +3734,7 @@ if ($action == 'create') {
 				print '</div></div>';
 
 				// Next situation invoice
-				$opt = $form->selectSituationInvoices(GETPOSTINT('originid'), $socid);
+				$opt = $form->selectSituationInvoices((string) GETPOSTINT('originid'), $socid);
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input id="radio_situation_bis" type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOSTINT('originid') ? ' checked' : '');
@@ -3964,7 +3974,7 @@ if ($action == 'create') {
 		// Invoice Subtype
 		if (getDolGlobalInt('INVOICE_SUBTYPE_ENABLED')) {
 			print '<tr><td class="fieldrequired">'.$langs->trans('InvoiceSubtype').'</td><td colspan="2">';
-			print $form->getSelectInvoiceSubtype(GETPOST('subtype'), 'subtype', 1, 0, '');
+			print $form->getSelectInvoiceSubtype(GETPOSTINT('subtype'), 'subtype', 1, 0, '');
 			print '</td></tr>';
 		}
 
@@ -4058,7 +4068,7 @@ if ($action == 'create') {
 		// Payment mode
 		print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 		print img_picto('', 'bank', 'class="pictofixedwidth"');
-		print $form->select_types_paiements($mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth250 widthcentpercentminusx', 1);
+		print $form->select_types_paiements((string) $mode_reglement_id, 'mode_reglement_id', 'CRDT', 0, 1, 0, 0, 1, 'maxwidth250 widthcentpercentminusx', 1);
 		print '</td></tr>';
 
 		// Bank Account
@@ -4094,6 +4104,16 @@ if ($action == 'create') {
 			print img_picto('', 'incoterm', 'class="pictofixedwidth"');
 			print $form->select_incoterms($incoterm_id, $location_incoterms);
 			print '</td></tr>';
+		}
+
+		// Category
+		if (isModEnabled('category')) {
+			// Categories
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
+			$arrayselected = GETPOST('categories', 'array');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+			print "</td></tr>";
 		}
 
 		// Other attributes
@@ -4174,7 +4194,7 @@ if ($action == 'create') {
 		print $form->textwithpicto($langs->trans('NotePublic'), $htmltext);
 		print '</td>';
 		print '<td valign="top" colspan="2">';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', (string) $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 
 		// Private note
@@ -4184,7 +4204,7 @@ if ($action == 'create') {
 			print $form->textwithpicto($langs->trans('NotePrivate'), $htmltext);
 			print '</td>';
 			print '<td valign="top" colspan="2">';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', (string) $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			// print '<textarea name="note_private" wrap="soft" cols="70" rows="'.ROWS_3.'">'.$note_private.'.</textarea>
 			print '</td></tr>';
@@ -4701,13 +4721,13 @@ if ($action == 'create') {
 	$morehtmlref = '<div class="refidno">';
 	// Ref invoice
 	if ($object->status == $object::STATUS_DRAFT && !$mysoc->isInEEC() && getDolGlobalString('INVOICE_ALLOW_FREE_REF')) {
-		$morehtmlref .= $form->editfieldkey("Ref", 'ref', $object->ref, $object, $usercancreate, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("Ref", 'ref', $object->ref, $object, $usercancreate, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("Ref", 'ref', $object->ref, $object, (int) $usercancreate, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("Ref", 'ref', $object->ref, $object, (int) $usercancreate, 'string', '', null, null, '', 1);
 		$morehtmlref .= '<br>';
 	}
 	// Ref customer
-	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, $usercancreate, 'string', '', 0, 1);
-	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, $usercancreate, 'string'.(getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
+	$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, (int) $usercancreate, 'string', '', 0, 1);
+	$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, (int) $usercancreate, 'string'.(getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') ? ':' . getDolGlobalString('THIRDPARTY_REF_INPUT_SIZE') : ''), '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
 	if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
@@ -4722,7 +4742,7 @@ if ($action == 'create') {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -4883,9 +4903,9 @@ if ($action == 'create') {
 		print '</td><td>';
 		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
 			if ($action == 'editconditions') {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
+				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id');
 			} else {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
+				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->cond_reglement_id, 'none');
 			}
 		} else {
 			print '&nbsp;';
@@ -4927,9 +4947,9 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmode') {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', 'CRDT', 1, 1);
 		} else {
-			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->mode_reglement_id, 'none', 'CRDT');
+			$form->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->mode_reglement_id, 'none', 'CRDT');
 		}
 		print '</td></tr>';
 
@@ -4945,9 +4965,9 @@ if ($action == 'create') {
 			print '</tr></table>';
 			print '</td><td>';
 			if ($action == 'editbankaccount') {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 			} else {
-				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+				$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 			}
 			print "</td>";
 			print '</tr>';
@@ -4975,7 +4995,39 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
-
+		// Categories
+		if (isModEnabled('category')) {
+			print '<tr><td>';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans("Categories");
+			print '<td><td class="right">';
+			if ($usercancreate) {
+				print '<a class="editfielda" href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+			} else {
+				print '&nbsp;';
+			}
+			print '</td></tr></table>';
+			print '</td>';
+			print '<td>';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
+			if ($action == 'edittags') {
+				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+				print '<input type="hidden" name="action" value="settags">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				$c = new Categorie($db);
+				$cats = $c->containing($object->id, Categorie::TYPE_INVOICE);
+				$arrayselected = [];
+				foreach ($cats as $cat) {
+					$arrayselected[] = $cat->id;
+				}
+				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print '</form>';
+			} else {
+				print $form->showCategories($object->id, Categorie::TYPE_INVOICE, 1);
+			}
+			print "</td></tr>";
+		}
 
 		$displayWarranty = false;
 
@@ -5039,7 +5091,7 @@ if ($action == 'create') {
 					print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {
-					$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->retained_warranty_fk_cond_reglement, 'none');
+					$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, (string) $object->retained_warranty_fk_cond_reglement, 'none');
 					if (!$displayWarranty) {
 						print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
 					}
@@ -6138,7 +6190,7 @@ if ($action == 'create') {
 			$filedir,
 			$urlsource,
 			$genallowed,
-			$delallowed,
+			(int) $delallowed,
 			$object->model_pdf,
 			1,
 			0,

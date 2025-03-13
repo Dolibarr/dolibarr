@@ -2,7 +2,7 @@
 /* Copyright (C) 2006-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		JF FERRY			<jfefe@aternatik.fr>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -685,6 +685,7 @@ function createOrder($authentication, $order)
 
 	$now = dol_now();
 
+	// TODO: socid is not defined in '$order_fields' above used to define the web interface - verify.
 	dol_syslog("Function: createOrder login=".$authentication['login']." socid :".$order['socid']);
 
 	if ($authentication['entity']) {
@@ -705,9 +706,11 @@ function createOrder($authentication, $order)
 	if (!$error) {
 		$newobject = new Commande($db);
 		$newobject->socid = $order['thirdparty_id'];
+		// TODO: 'type' is not defined in the $order_fields for the WS - verify
 		$newobject->type = $order['type'];
 		$newobject->ref_ext = $order['ref_ext'];
 		$newobject->date = dol_stringtotime($order['date'], 'dayrfc');
+		// TODO: 'date_due' is not defined in the $order_fields for the WS - verify
 		$newobject->date_lim_reglement = dol_stringtotime($order['date_due'], 'dayrfc');
 		$newobject->note_private = $order['note_private'];
 		$newobject->note_public = $order['note_public'];
@@ -921,7 +924,7 @@ function updateOrder($authentication, $order)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Commande($db);
-		$result = $object->fetch($order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
+		$result = $object->fetch((int) $order['id'], (empty($order['id']) ? $order['ref'] : ''), (empty($order['id']) && empty($order['ref']) ? $order['ref_ext'] : ''));
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -937,7 +940,7 @@ function updateOrder($authentication, $order)
 					if ($result >= 0) {
 						// Define output language
 						$outputlangs = $langs;
-						$object->generateDocument($order->model_pdf, $outputlangs);
+						$object->generateDocument($object->model_pdf, $outputlangs);
 					}
 				}
 				if ($order['status'] == 0) {

@@ -679,7 +679,7 @@ if ($id > 0 || $ref) {
 							on_change();
 						}
 						function on_click() {
-							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").val();
+							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=price_suppliers&eid=" + $("#eid").val();
 						}
 						function on_change() {
 							if ($("#eid").val() == 0) {

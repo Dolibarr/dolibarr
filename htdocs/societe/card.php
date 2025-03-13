@@ -110,6 +110,7 @@ if (isModEnabled('accounting')) {
 $error = 0;
 $errors = array();
 
+$refalreadyexists = 0;
 
 // Get parameters
 $action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
@@ -154,10 +155,6 @@ if ($socid > 0) {
 	$object->fetch($socid);
 }
 
-if (!($object->id > 0) && $action == 'view') {
-	recordNotFound();
-}
-
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
@@ -176,8 +173,11 @@ $permissiondellink 	= $user->hasRight('societe', 'creer'); // Used by the includ
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+$result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
 
+if (!($object->id > 0) && $action == 'view') {
+	recordNotFound();
+}
 
 
 /*
@@ -1555,7 +1555,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			print '<tr>';
 			print '<td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td>';
 			print '<table class="nobordernopadding"><tr><td>';
-			$tmpcode = $object->code_client;
+			$tmpcode = $object->code_client ?? '';
 			if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 				$tmpcode = $modCodeClient->getNextValue($object, 0);
 			}
@@ -1574,7 +1574,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td>';
 				print '<table class="nobordernopadding"><tr><td>';
-				$tmpcode = $object->code_fournisseur;
+				$tmpcode = $object->code_fournisseur ?? '';
 				if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 					$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 				}
@@ -2401,7 +2401,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td colspan="3">';
 				print '<table class="nobordernopadding"><tr><td>';
-				$tmpcode = $object->code_client;
+				$tmpcode = $object->code_client ?? '';
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
 					$tmpcode = $modCodeClient->getNextValue($object, 0);
 				}
@@ -2420,7 +2420,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 					print '<table class="nobordernopadding"><tr><td>';
-					$tmpcode = $object->code_fournisseur;
+					$tmpcode = $object->code_fournisseur ?? '';
 					if (empty($tmpcode) && !empty($modCodeFournisseur->code_auto)) {
 						$tmpcode = $modCodeFournisseur->getNextValue($object, 1);
 					}

@@ -4,7 +4,7 @@
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
+ * @var ?string $permissiontoadd
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose

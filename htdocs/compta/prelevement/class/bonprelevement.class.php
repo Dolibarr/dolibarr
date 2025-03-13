@@ -1514,13 +1514,13 @@ class BonPrelevement extends CommonObject
 			}
 
 			if (!$error && !$notrigger) {
-				$triggername = 'DIRECT_DEBIT_ORDER_CREATE';
+				$triggerName = 'DIRECT_DEBIT_ORDER_CREATE';
 				if ($type != 'bank-transfer') {
-					$triggername = 'CREDIT_TRANSFER_ORDER_CREATE';
+					$triggerName = 'CREDIT_TRANSFER_ORDER_CREATE';
 				}
 
 				// Call trigger
-				$result = $this->call_trigger($triggername, $user);
+				$result = $this->call_trigger($triggerName, $user);
 				if ($result < 0) {
 					$error++;
 				}

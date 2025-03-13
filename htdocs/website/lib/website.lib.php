@@ -221,13 +221,17 @@ function websiteGetContentPolicyToArray($forceCSP)
 		$sources = $securitypolicyarr;
 		$issourcedata = 0;
 		if (empty($sources)) {
-				$forceCSPArr[$directive] = array();
+			$forceCSPArr[$directive] = array();
 		} else {
 			//Loop on each sources to add to the right directive array key
 			foreach ($sources as $key2 => $source) {
 				$source = str_replace(":", "", $source);
 				$source = str_replace("'", "", $source);
 
+				if (empty($source)) {
+					$forceCSPArr[$directive] = array();
+					continue;
+				}
 				if ($source == "data") {
 					$issourcedata = 1;
 					if (empty($forceCSPArr[$directive])) {

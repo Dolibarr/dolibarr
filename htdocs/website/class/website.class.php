@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -823,7 +823,7 @@ class Website extends CommonObject
 				dol_delete_file($filetplold);
 
 				// Create new file
-				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
+				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, '1');
 
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl) {
@@ -1170,7 +1170,7 @@ class Website extends CommonObject
 			$line .= "'".$this->db->escape($objectpageold->lang)."', ";
 			$line .= "'".$this->db->escape($objectpageold->image)."', ";
 			$line .= "'".$this->db->escape($objectpageold->keywords)."', ";
-			$line .= "'".$this->db->escape($objectpageold->status)."', ";
+			$line .= "'".$this->db->escape((string) $objectpageold->status)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_creation)."', ";
 			$line .= "'".$this->db->idate($objectpageold->date_modification)."', ";
 			$line .= ($objectpageold->import_key ? "'".$this->db->escape((string) $objectpageold->import_key)."'" : "null").", ";
@@ -1219,7 +1219,7 @@ class Website extends CommonObject
 			//var_dump($this->fk_default_home.' - '.$objectpageold->id.' - '.$objectpageold->newid);exit;
 			if ($this->fk_default_home > 0 && ($objectpageold->id == $this->fk_default_home) && ($objectpageold->newid > 0)) {	// This is the page that is set as the home page
 				// Warning: We must keep llx_ here. It is a generic SQL.
-				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape($objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
+				$line = "UPDATE llx_website SET fk_default_home = ".($objectpageold->newid > 0 ? $this->db->escape((string) $objectpageold->newid)."__+MAX_llx_website_page__" : "null")." WHERE rowid = __WEBSITE_ID__;";
 				$line .= "\n";
 				fwrite($fp, $line);
 			}
@@ -1698,7 +1698,7 @@ class Website extends CommonObject
 		if ($languagecodeselected) {
 			// Convert $languagecodeselected into a long language code
 			if (strlen($languagecodeselected) == 2) {
-				$languagecodeselected = (empty($arrayofspecialmainlanguages[$languagecodeselected]) ? $languagecodeselected.'_'.strtoupper($languagecodeselected) : $arrayofspecialmainlanguages[$languagecodeselected]);
+				$languagecodeselected = (string) (empty($arrayofspecialmainlanguages[$languagecodeselected]) ? $languagecodeselected.'_'.strtoupper($languagecodeselected) : $arrayofspecialmainlanguages[$languagecodeselected]);
 			}
 
 			$countrycode = strtolower(substr($languagecodeselected, -2));

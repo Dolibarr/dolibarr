@@ -48,7 +48,7 @@
  * @var string $action
  */
 '
-@phan-var-force CommonObjectLine $line
+@phan-var-force BOMLine $line
 @phan-var-force int $num
 @phan-var-force int $i
 @phan-var-force CommonObject $this

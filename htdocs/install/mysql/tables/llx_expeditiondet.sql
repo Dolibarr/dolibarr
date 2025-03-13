@@ -30,5 +30,6 @@ create table llx_expeditiondet
   qty               real,              						    -- Quantity
   fk_unit           integer, 				                    -- ID of unit code
   fk_entrepot       integer,           						    -- Warehouse for departure of product
-  rang              integer  DEFAULT 0
+  rang              integer  DEFAULT 0,
+  extraparams		varchar(255)				 				-- to stock other parameters in json format
 )ENGINE=innodb;

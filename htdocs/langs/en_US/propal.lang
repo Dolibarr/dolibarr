@@ -23,6 +23,7 @@ AllPropals=All proposals
 SearchAProposal=Search a proposal
 NoProposal=No proposal
 ProposalsStatistics=Commercial proposal's statistics
+NumberOfProposals=Number of proposals
 NumberOfProposalsByMonth=Number by month
 AmountOfProposals=Amount of proposals
 AmountOfProposalsHT=Amount of proposals (excl. tax)

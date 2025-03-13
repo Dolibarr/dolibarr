@@ -124,7 +124,7 @@ To generate a changelog of a **maintenance version** x.y.z, you can do
 
 ```
 cd ~/git/dolibarr_x.y
-git log --ancestry-path x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy
+git log x.y.(z-1)..   | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/changelogtocopy
 ```
 
 - Recopy the content of the output file into the file ChangeLog.

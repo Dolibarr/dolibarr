@@ -7,8 +7,9 @@
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,9 +77,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr = array();
 
 	// Home
+	$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
+	if (!empty($landingpage)) {
+		$landingpage = dol_buildpath($landingpage, 1);
+	} else {
+		$landingpage = '/index.php?mainmenu=home&leftmenu=home';
+	}
 	$menu_arr[] = array(
 		'name' => 'Home',
-		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
+		'link' => $landingpage,
 		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,
@@ -1122,7 +1129,13 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		$langs->load("users");
 
 		// Home - dashboard
-		$newmenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("MyDashboard"), 0, 1, '', $mainmenu, 'home', 0, '', '', '', '<i class="fas fa-chart-bar fa-fw paddingright pictofixedwidth"></i>');
+		$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
+		if (!empty($landingpage)) {
+			$landingpage = dol_buildpath($landingpage, 1);
+		} else {
+			$landingpage = '/index.php?mainmenu=home&leftmenu=home';
+		}
+		$newmenu->add($landingpage, $langs->trans("MyDashboard"), 0, 1, '', $mainmenu, 'home', 0, '', '', '', '<i class="fas fa-chart-bar fa-fw paddingright pictofixedwidth"></i>');
 
 		// Setup
 		$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup', 0, '', '', '', '<i class="fa fa-tools fa-fw paddingright pictofixedwidth"></i>');
@@ -1441,6 +1454,12 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			} else {
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'commande', 'lire'));
 			}
+
+			// Categories
+			if (isModEnabled('category')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=20", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+			}
 		}
 
 		// Contrat
@@ -1514,6 +1533,12 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			}
 
 			$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_stats');
+
+			// Categories
+			if (isModEnabled('category')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=14", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+			}
 		}
 
 		// Suppliers invoices

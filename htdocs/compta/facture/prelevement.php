@@ -132,7 +132,7 @@ if (empty($reshook)) {
 			// Get chosen iban id
 			$iban = GETPOSTINT('accountcustomerid');
 			$amount = GETPOST('withdraw_request_amount', 'alpha');
-			$result = $object->demande_prelevement($user, price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
+			$result = $object->demande_prelevement($user, (float) price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -389,7 +389,7 @@ if ($object->id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -529,9 +529,9 @@ if ($object->id > 0) {
 	print '</td><td colspan="3">';
 	if ($object->type != $object::TYPE_CREDIT_NOTE) {
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'none');
 		}
 	} else {
 		print '&nbsp;';
@@ -582,9 +582,9 @@ if ($object->id > 0) {
 		$filtertype = 'DBIT';
 	}
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
 
@@ -599,9 +599,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 	}
 	print '</td>';
 	print '</tr>';

@@ -291,7 +291,12 @@ abstract class CommonInvoice extends CommonObject
 		$alreadypaid += $this->getSumDepositsUsed($multicurrency);
 		$alreadypaid += $this->getSumCreditNotesUsed($multicurrency);
 
-		$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
+		if ((int) $multicurrency > 0) {
+			$totalamount = $this->multicurrency_total_ttc;
+		} else {
+			$totalamount = $this->total_ttc;
+		}
+		$remaintopay = price2num($totalamount - $alreadypaid, 'MT');
 		if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 			$remaintopay = 0.0;
 		}
@@ -1612,7 +1617,7 @@ abstract class CommonInvoice extends CommonObject
 												$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
 											} else {
 												$actioncode = 'PAYMENT_STRIPE_OK';
-												$extraparams = '';
+												$extraparams = array();
 											}
 										} else {
 											$error++;
@@ -1630,7 +1635,7 @@ abstract class CommonInvoice extends CommonObject
 											$object = $this;
 
 											$actioncode = 'PAYMENT_STRIPE_KO';
-											$extraparams = '';
+											$extraparams = array();
 										}
 									} else {
 										// If error because payment was canceled for a logical reason, we do nothing (no event added)
@@ -1641,7 +1646,7 @@ abstract class CommonInvoice extends CommonObject
 										$object = $this;
 
 										$actioncode = '';
-										$extraparams = '';
+										$extraparams = array();
 									}
 								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
 									if ($resultthirdparty <= 0) {
@@ -1664,7 +1669,7 @@ abstract class CommonInvoice extends CommonObject
 									$object = $this;
 
 									$actioncode = 'PAYMENT_STRIPE_KO';
-									$extraparams = '';
+									$extraparams = array();
 								}
 
 								if ($description) {
@@ -1696,8 +1701,9 @@ abstract class CommonInvoice extends CommonObject
 									 $actioncomm->email_subject = $object->email_subject;
 									 $actioncomm->errors_to   = $object->errors_to;*/
 									$actioncomm->fk_element = $this->id;
+									$actioncomm->elementid = $this->id;
 									$actioncomm->elementtype = $this->element;
-									$actioncomm->extraparams = dol_trunc($extraparams, 250);
+									$actioncomm->extraparams = $extraparams;		// Can be null, empty string or array()
 
 									$actioncomm->create($user);
 								}
@@ -1900,9 +1906,10 @@ abstract class CommonInvoice extends CommonObject
 		$s .= '';					// ecda signature of public key stamp
 		*/
 		$mysocname = $mysoc->name ?? '';
+		$mysoctva_intra = $mysoc->tva_intra ?? '';
 		// Using TLV format
 		$s = pack('C1', 1).pack('C1', strlen($mysocname)).$mysocname;
-		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
+		$s .= pack('C1', 2).pack('C1', strlen($mysoctva_intra)).$mysoctva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
 		$s .= pack('C1', 5).pack('C1', strlen($pricetaxstring)).$pricetaxstring;
