@@ -1710,7 +1710,7 @@ if ($action == 'create') {
 								print $form->textwithpicto('', $description);
 							}
 						} else {
-							print $form->textwithtooltip($text, $description, 3, 0, '', $i, 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
+							print $form->textwithtooltip($text, $description, 3, 0, '', '', 0, (!empty($line->fk_parent_line) ? img_picto('', 'rightarrow') : ''));
 						}
 
 						// Add description in form
