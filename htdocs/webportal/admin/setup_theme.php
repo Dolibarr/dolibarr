@@ -94,7 +94,9 @@ $item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND');
 $item->fieldAttr = array('type'=>'url', 'size'=> 50, 'placeholder'=>'https://');
 
 
-$item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND_IS_DARK')->setAsYesNo();
+$item = $formSetup->newItem('WEBPORTAL_BANNER_BACKGROUND_IS_DARK');
+$item->setAsYesNo();
+$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 
 $setupnotempty += count($formSetup->items);
 
