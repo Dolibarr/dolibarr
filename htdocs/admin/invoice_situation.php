@@ -72,18 +72,20 @@ $formSetup = new FormSetup($db);
 
 
 // Setup conf MYMODULE_MYPARAM4 : example of quick define write style
-$formSetup->newItem('INVOICE_USE_SITUATION')
-	->setAsYesNo()
-	->nameText = $langs->trans('UseSituationInvoices');
+$item = $formSetup->newItem('INVOICE_USE_SITUATION');
+	$item->setAsYesNo();
+	$item->nameText = $langs->trans('UseSituationInvoices');
+	$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 
-$item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
-	->setAsYesNo()
-	->nameText = $langs->trans('UseSituationInvoicesCreditNote');
+$item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE');
+	$item->setAsYesNo();
+	$item->nameText = $langs->trans('UseSituationInvoicesCreditNote');
+	$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 
 //$item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY')
 //	->setAsYesNo()
-//	->nameText = $langs->trans('RetainedWarranty');
-
+//	->nameText = $langs->trans('RetainedWarranty')
+//  ->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 
 $item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY');
 $item->nameText = $langs->trans('AllowedInvoiceForRetainedWarranty');
@@ -96,9 +98,10 @@ $item->setAsSelect($arrayAvailableType);
 //$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();
 //$item->nameText = $langs->trans('RetainedWarrantyOnlyForSituation');
 
-$formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')
-	->setAsYesNo()
-	->nameText = $langs->trans('RetainedWarrantyOnlyForSituationFinal');
+$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION');
+	$item->setAsYesNo();
+	$item->nameText = $langs->trans('RetainedWarrantyOnlyForSituationFinal');
+	$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 
 
 $item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
