@@ -764,16 +764,16 @@ class modCategorie extends DolibarrModules
 	 *
 	 * @param int									$r				Index of import tables
 	 * @param string								$categcode		Categorie code
-	 * @param string								$class			Class of the linked object
+	 * @param string								$elementtype	Element type of the linked object
 	 * @param string								$enabled		Condition to enable this export
 	 * @param array<int,string>						$permission		Permission to export the linked object
 	 * @param array<string,array<string,string>>	$fields_list	Additional fields of the linked object to export
 	 *
 	 * @return void
 	 */
-	protected function exportTagLinks(int $r, string $categcode, string $class, string $enabled, array $permission, array $fields_list)
+	protected function exportTagLinks(int $r, string $categcode, string $elementtype, string $enabled, array $permission, array $fields_list)
 	{
-		global $conf, $db;		// $conf is required into an include later
+		global $db,$conf;		// $conf is required into an include later
 
 		$categstatic = new Categorie($db);
 		$cat_id = array_search($categcode, $categstatic->MAP_ID);
@@ -818,8 +818,11 @@ class modCategorie extends DolibarrModules
 		);
 		$this->export_entities_array[$r] = $entities; // We define here only fields that use another picto
 
-		$keyforselect = $class;
-		$keyforelement = $class;
+
+		$arrayofproperties = getElementProperties(strtolower($elementtype));
+		$keyforselect = $elementtype;
+		$keyforelement = $arrayofproperties['element'];
+		$keyfortable = $arrayofproperties['table_element'];
 		$keyforaliasextra = 'extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
 
@@ -827,8 +830,8 @@ class modCategorie extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'categorie as cat';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'categorie as pcat ON pcat.rowid = cat.fk_parent';
 		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.'categorie_'.$categcode.' as cfk ON cfk.fk_categorie = cat.rowid';
-		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.strtolower($class).' as p ON p.rowid = cfk.fk_'.$categcode;
-		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.strtolower($class).'_extrafields as extra ON extra.fk_object = p.rowid';
+		$this->export_sql_end[$r] .= ' INNER JOIN '.MAIN_DB_PREFIX.$keyfortable.' as p ON p.rowid = cfk.fk_'.$categcode;
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.$keyfortable.'_extrafields as extra ON extra.fk_object = p.rowid';
 		$this->export_sql_end[$r] .= ' WHERE cat.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .= ' AND cat.type = '.((int) $cat_id);
 	}
@@ -839,17 +842,22 @@ class modCategorie extends DolibarrModules
 	 * @param int		$r				Index of import tables
 	 * @param string	$categcode		Category code
 	 * @param string	$class_file		Class file of the linked object
-	 * @param string	$class			Class of the linked object
+	 * @param string	$elementtype	Element type of the linked object
 	 * @param string	$element		Name of the linked object
 	 *
 	 * @return void
 	 */
-	protected function importTagLinks(int $r, string $categcode, string $class_file, string $class, string $element)
+	protected function importTagLinks(int $r, string $categcode, string $class_file, string $elementtype, string $element)
 	{
 		global $db;
 
 		$categstatic = new Categorie($db);
 		$cat_id = array_search($categcode, $categstatic->MAP_ID);
+
+		$arrayofproperties = getElementProperties(strtolower($elementtype));
+
+		$class = $arrayofproperties['classname'];
+		$class_file = $arrayofproperties['classpath'].'/'.$arrayofproperties['classfile'];
 
 		$this->import_code[$r] = $this->rights_class.'_'.$cat_id.'_'.$categcode;
 		$this->import_label[$r] = 'Cat'.ucfirst($categcode).'sLinks'; // Translation key

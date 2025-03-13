@@ -2640,5 +2640,7 @@ NotConnected=Not connected
 HTTPHeaderEditor=This page allows you to edit security related HTTP headers
 ReservedToAdvancedUsers=It is reserverd for advanced users
 HTTPHeader=HTTP Header
+itemFound=%s Items found
+SearchStringMinLength=Search string must be at least 2 characters
 RefWebsite=Website reference
 FileToConcatToGeneratedPDF=File to concat to the generated PDF
