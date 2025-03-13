@@ -574,7 +574,7 @@ class Facture extends CommonInvoice
 
 			if ($originaldatewhen) {
 				if ($_facrec->rule_for_lines_dates == 'prepaid') {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, $_facrec->frequency, $_facrec->unit_frequency);
+					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
 				}
 
 				if ($_facrec->rule_for_lines_dates == 'postpaid') {

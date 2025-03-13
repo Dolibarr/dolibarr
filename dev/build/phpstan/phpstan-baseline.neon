@@ -10879,6 +10879,12 @@ parameters:
 			path: ../../../htdocs/core/modules/bom/doc/doc_generic_bom_odt.modules.php
 
 		-
+			message: '#^Parameter \#2 \$object of method BordereauChequeBlochet\:\:_pagefoot\(\) expects CommonObject, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
+
+		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
