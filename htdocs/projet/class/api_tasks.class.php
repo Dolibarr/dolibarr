@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class Tasks extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'ref',
@@ -106,6 +106,8 @@ class Tasks extends DolibarrApi
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return  array                               Array of project objects
+	 * @phan-return Task[]
+	 * @phpstan-return Task[]
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
 	{
@@ -132,7 +134,7 @@ class Tasks extends DolibarrApi
 		$sql .= " INNER JOIN ".MAIN_DB_PREFIX."projet AS p ON p.rowid = t.fk_projet";
 		$sql .= ' WHERE t.entity IN ('.getEntity('project').')';
 		if ($socids) {
-			$sql .= " AND t.fk_soc IN (".$this->db->sanitize($socids).")";
+			$sql .= " AND t.fk_soc IN (".$this->db->sanitize((string) $socids).")";
 		}
 		// Search on sale representative
 		if ($search_sale && $search_sale != '-1') {
@@ -270,6 +272,8 @@ class Tasks extends DolibarrApi
 	 * @param   int   $id           Id of task
 	 * @param   int   $userid       Id of user (0 = connected user)
 	 * @return	array				Array of roles
+	 * @phan-return array<int,string>
+	 * @phpstan-return array<int,string>
 	 *
 	 * @url	GET {id}/roles
 	 */
@@ -295,7 +299,7 @@ class Tasks extends DolibarrApi
 			$usert = new User($this->db);
 			$usert->fetch($userid);
 		}
-		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(null, $usert, 0, $id);
+		$this->task->roles = $this->task->getUserRolesForProjectsOrTasks(null, $usert, '0', $id);
 		$result = array();
 		foreach ($this->task->roles as $line) {
 			array_push($result, $this->_cleanObjectDatas($line));
@@ -531,6 +535,7 @@ class Tasks extends DolibarrApi
 	 *
 	 * @param   int         $id                 Task ID
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @phan-param string $date
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
@@ -593,6 +598,7 @@ class Tasks extends DolibarrApi
 	 * @param   int         $id                 Task ID
 	 * @param   int         $timespent_id       Time spent ID (llx_element_time.rowid)
 	 * @param   datetime    $date               Date (YYYY-MM-DD HH:MI:SS in GMT)
+	 * @phan-param string $date
 	 * @param   int         $duration           Duration in seconds (3600 = 1h)
 	 * @param   int         $user_id            User (Use 0 for connected user)
 	 * @param   string      $note               Note
@@ -696,10 +702,14 @@ class Tasks extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensitive object data
+	 * @phpstan-template T of Object
 	 *
 	 * @param   Object  $object     Object to clean
 	 * @return  Object              Object with cleaned properties
+	 *
+	 * @phpstan-param T $object
+	 * @phpstan-return T
 	 */
 	protected function _cleanObjectDatas($object)
 	{

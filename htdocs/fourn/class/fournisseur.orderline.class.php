@@ -173,7 +173,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
+		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit, cd.extraparams,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' c.fk_soc as socid';
 		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur as c, '.$this->db->prefix().'commande_fournisseurdet as cd';
@@ -247,6 +247,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->date_start       		= $this->db->jdate($objp->date_start);
 				$this->date_end         		= $this->db->jdate($objp->date_end);
 				$this->fk_unit = $objp->fk_unit;
+
+				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$this->multicurrency_subprice	= $objp->multicurrency_subprice;
 				$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;

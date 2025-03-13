@@ -258,6 +258,7 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 
 Follow Dolibarr project on:
 
+- [Mastodon](https://pouet.chapril.org/@dolibarr)
 - [Facebook](https://www.facebook.com/dolibarr)
 - [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)

@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 class Warehouses extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
@@ -92,6 +92,8 @@ class Warehouses extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
+	 * @phan-return Entrepot[]
+	 * @phpstan-return Entrepot[]
 	 *
 	 * @throws RestException
 	 */

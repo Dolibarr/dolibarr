@@ -151,9 +151,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('proposal');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -353,9 +354,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('contrat');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -489,9 +491,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('fichinter');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);
@@ -839,9 +842,10 @@ if ($action == "importSignature") {
 				$directdownloadlink = $object->getLastMainDocLink('expedition');    // url to download the $object->last_main_doc
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
-					// TODO Use the $last_main_doc_file to defined the $newpdffilename and $sourcefile
-					$newpdffilename = $upload_dir . $ref . "_signed-" . $date . ".pdf";
-					$sourcefile = $upload_dir . $ref . ".pdf";
+					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+
+					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
+					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
 
 					if (dol_is_file($sourcefile)) {
 						$parameters = array('sourcefile' => $sourcefile, 'newpdffilename' => $newpdffilename);

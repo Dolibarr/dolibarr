@@ -110,6 +110,20 @@ class ExternalModules
 	 */
 	public $products;
 
+	/**
+	 * @var int Total number of products
+	 */
+	public $numberTotalOfProducts;
+
+	/**
+	 * @var int Total number of pages
+	 */
+	public $numberTotalOfPages;
+
+	/**
+	 * @var int Number of products displayed on the page.
+	 */
+	public $numberOfProducts;
 
 	/**
 	 * Constructor
@@ -190,9 +204,12 @@ class ExternalModules
 
 		$url = $this->dolistore_api_url . (preg_match('/\/$/', $this->dolistore_api_url) ? '' : '/') . $resource;
 
+		$options['apikey'] = $this->dolistore_api_key;
+
 		if ($options) {
 			$url .= '?' . http_build_query($options);
 		}
+
 		$url .= (preg_match('/\?/', $url) ? '&' : '?').'apikey='.$this->dolistore_api_key;
 		$response = getURLContent($url, 'GET', '', 1, $httpheader);
 
@@ -233,10 +250,11 @@ class ExternalModules
 
 	/**
 	 * Generate HTML for categories and their children.
+	 * @param int $active The active category id
 	 *
 	 * @return string HTML string representing the categories and their children.
 	 */
-	public function getCategories()
+	public function getCategories($active = 0)
 	{
 		$organized_tree = array();
 		$html = '';
@@ -244,6 +262,8 @@ class ExternalModules
 		$data = [
 			'lang' => $this->lang
 		];
+
+		$current = $active;
 
 		$resCategories = $this->callApi('categories', $data);
 		if (isset($resCategories['response']) && is_array($resCategories['response'])) {
@@ -255,13 +275,13 @@ class ExternalModules
 		$html = '';
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
-				$html .= '<li>';
+				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
 				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
 					foreach ($value['children'] as $key_children => $value_children) {
-						$html .= '<li>';
+						$html .= '<li' . ($current == $value_children['rowid'] ? ' class="active"' : '') . '>';
 						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
 						$html .= '</li>';
 					}
@@ -293,6 +313,18 @@ class ExternalModules
 		$this->no_page  = $options['no_page'] ?? 1;
 		$this->search    = $options['search'] ?? '';
 
+		$this->per_page = 11;	// We fix number of products per page to 11
+
+		// Length of $search must be at least 2 characters
+		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {
+			$html .= '<tr class=""><td colspan="3" class="center">';
+			$html .= '<br><br>';
+			$html .= $langs->trans("SearchStringMinLength").'...';
+			$html .= '<br><br>';
+			$html .= '</td></tr>';
+			return $html;
+		}
+
 		$data = [
 			'categorieid' 	=> $this->categorie,
 			'limit' 		=> $this->per_page,
@@ -303,25 +335,40 @@ class ExternalModules
 
 		// Fetch the products from Dolistore source
 		$dolistoreProducts = array();
+		$dolistoreProductsTotal = 0;
+		$this->numberTotalOfProducts = 0;
 		if ($this->dolistoreApiStatus > 0 && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$getDolistoreProducts = $this->callApi('products', $data);
 
 			if (!isset($getDolistoreProducts['response']) || !is_array($getDolistoreProducts['response']) || ($getDolistoreProducts['status_code'] != 200 && $getDolistoreProducts['status_code'] != 201)) {
 				$dolistoreProducts = array();
+				$dolistoreProductsTotal = 0;
 			} else {
-				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response'], 'dolistore');
+				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response']['products'], 'dolistore');
+				$dolistoreProductsTotal = $getDolistoreProducts['response']['total'];
+				$this->numberTotalOfProducts += $dolistoreProductsTotal;
 			}
 		}
 
 		// fetch from github repo
 		$fileProducts = array();
+		$fileProductsTotal = 0;
 		if (!empty($this->githubFileStatus) && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
 			$fileProducts = $this->fetchModulesFromFile($data);			// Return an array with all modules from the cache filecontent in $data
 
 			$fileProducts = $this->adaptData($fileProducts, 'githubcommunity');
 
 			$fileProducts = $this->applyFilters($fileProducts, $data);
+
+			$fileProductsTotal = $fileProducts['total'];
+
+			$this->numberTotalOfProducts += $fileProductsTotal;
+
+			$fileProducts = $fileProducts['data'];
 		}
+
+		// Number of pages
+		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
 		// merge both sources
 		$this->products = array_values(array_merge($dolistoreProducts, $fileProducts));
@@ -385,10 +432,9 @@ class ExternalModules
 				}
 
 				if ($product['source'] === 'dolistore') {
+					$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
 					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.'/product.php?id='.((int) $product["id"]).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
-					if (!empty($product['direct-download']) && $product['direct-download'] == 'yes') {
-						$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$product["download_link"].'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
-					}
+					$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$urldownload.'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
 				}
 			}
 
@@ -464,14 +510,7 @@ class ExternalModules
 			$html .= '</td></tr>';
 		}
 
-		if (count($this->products) > $data['limit']) {
-			$html .= '<tr class=""><td colspan="3" class="center">';
-			$html .= '<br><br>';
-			$html .= $langs->trans("ThereIsMoreThanXAnswers", $data["limit"]).'...';
-			$html .= '<br><br>';
-			$html .= '</td></tr>';
-		}
-
+		$this->numberOfProducts = count($this->products);
 
 		return $html ;
 	}
@@ -609,6 +648,67 @@ class ExternalModules
 	}
 
 	/**
+	 * Generate pagination for navigating through pages of products.
+	 *
+	 * @return string HTML string representing the pagination.
+	 */
+	public function getPagination()
+	{
+
+		global $conf, $langs;
+
+		$page = $this->no_page;
+		$limit = $this->per_page;
+		$totalnboflines = $this->numberTotalOfProducts ?: 0;
+		$num = $this->numberOfProducts;
+
+		$html = "";
+
+		// Show navigation bar
+		$pagelist = '';
+		if ($page > 0 || $num > $limit) {
+			if ($totalnboflines) {
+				if ($limit > 0) {
+					$nbpages = $this->numberTotalOfPages;
+				} else {
+					$nbpages = 1;
+				}
+
+				// Show previous page
+				if ($page > 1) {
+					$pagelist .= '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious reposition" href="'.$this->get_previous_url().'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+				}
+
+				$pagelist .= '<li class="pagination">';
+				$pagelist .= '<label for="page_input">Page </label>';
+				if ($this->categorie != 0) {
+					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
+				}
+				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
+				$pagelist .= ' / '.$nbpages;
+				$pagelist .= '</li>';
+
+				// Show next page
+				if ($page < $nbpages) {
+					$pagelist .= '<li class="pagination paginationpage paginationpageright"><a class="paginationnext reposition" href="'.$this->get_next_url().'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+				}
+			}
+		}
+
+		if ($limit || $pagelist) {
+			$html .= '<div class="pagination" style="padding: 7px;">';
+			$html .= '<ul>';
+			$html .= $pagelist;
+			$html .= '</ul>';
+			$html .= '</div>';
+		}
+
+		$html .= ajax_autoselect('.page_input');
+
+		return $html;
+	}
+
+	/**
 	 * Check the status code of the request
 	 *
 	 * @param array{status_code:int,response:null|string|array{errors:array{code:int,message:string}[]}} $request Response elements of CURL request
@@ -650,10 +750,11 @@ class ExternalModules
 	 *
 	 * @param 	string 		$file_source_url 	URL of the remote source
 	 * @param 	int 		$cache_time 		Cache time
-	 * @return 	string 							Uri of the cache file
+	 * @return 	bool|string 					File content
 	 */
 	public function getRemoteYamlFile($file_source_url, $cache_time)
 	{
+		$yaml = '';
 		$cache_file = $this->cache_file;
 		$cache_folder = dirname($cache_file);
 
@@ -661,8 +762,6 @@ class ExternalModules
 		if (!dol_is_dir($cache_folder)) {
 			dol_mkdir($cache_folder, DOL_DATA_ROOT);
 		}
-
-		$yaml = '';
 
 		if (!file_exists($cache_file) || filemtime($cache_file) < (dol_now() - $cache_time)) {
 			// We get remote url
@@ -848,7 +947,7 @@ class ExternalModules
 	 * @param list<array<string, mixed>> $list Data to filter
 	 * @param array<string, mixed> $options Options for the filter
 	 *
-	 * @return list<array<string, mixed>> Filtered data
+	 * @return array{total:int, data:list<array<string, mixed>>} Filtered data
 	 */
 	public function applyFilters($list, $options)
 	{
@@ -901,11 +1000,13 @@ class ExternalModules
 			);
 		}
 
+		$total = count($filteredData);
+
 		// Pagination
 		$filteredData = array_values($filteredData);
 		$filteredData = array_slice($filteredData, ($options['page'] - 1) * $options['limit'], $options['limit']);
 
-		return $filteredData;
+		return ['total' => $total, 'data' => $filteredData];
 	}
 
 	/**

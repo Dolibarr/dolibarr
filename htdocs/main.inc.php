@@ -80,7 +80,7 @@ function getArrayOfEmoji()
  * Return the real char for a numeric entities.
  * WARNING: This function is required by testSqlAndScriptInject() and the GETPOST 'restricthtml'. Regex calling must be similar.
  *
- * @param	array<int,string>	$matches			Array with a decimal numeric entity into key 0, value without the &# into the key 1
+ * @param	array<int,string>	$matches			Array with a decimal numeric entity like '&#x2f;' into key 0, value without the &# like 'x2f;' into the key 1
  * @return	string									New value
  */
 function realCharForNumericEntities($matches)
@@ -94,8 +94,8 @@ function realCharForNumericEntities($matches)
 		$newstringnumentity = (int) $newstringnumentity;
 	}
 
-	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for haking ?
-	if (($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
+	// The numeric values we don't want as entities because they encode ascii char, and why using html entities on ascii except for hacking ?
+	if (($newstringnumentity >= 47 && $newstringnumentity <= 59) || ($newstringnumentity >= 65 && $newstringnumentity <= 90) || ($newstringnumentity >= 97 && $newstringnumentity <= 122)) {
 		return chr((int) $newstringnumentity);
 	}
 
@@ -384,24 +384,8 @@ if (GETPOST("DOL_AUTOSET_COOKIE")) {
 	}
 	$cookiename = $tmpautoset[0];
 	$cookievalue = json_encode($cookiearrayvalue);
-	//var_dump('setcookie cookiename='.$cookiename.' cookievalue='.$cookievalue);
-	if (PHP_VERSION_ID < 70300) {
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : (time() + (86400 * 354)), '/', '', !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // keep cookie 1 year and add tag httponly
-	} else {
-		// Only available for php >= 7.3
-		$cookieparams = array(
-			'expires' => empty($cookievalue) ? 0 : (time() + (86400 * 354)),
-			'path' => '/',
-			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
-			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
-			'httponly' => true,
-			'samesite' => 'Lax'	// None || Lax  || Strict
-		);
-		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, $cookieparams);
-	}
-	if (empty($cookievalue)) {
-		unset($_COOKIE[$cookiename]);
-	}
+
+	dolSetCookie($cookiename, $cookievalue);
 }
 
 // Set the handler of session
@@ -983,7 +967,7 @@ if (!defined('NOLOGIN')) {
 					if (GETPOST('beforeoauthloginredirect') == $oauthmodetotest || GETPOST('afteroauthloginreturn') == $oauthmodetotest) {
 						continue;
 					}
-					dol_syslog("User did not click on link for OAuth, or is not on the OAuth return, so we disable check using ".$oauthmodetotest);
+					dol_syslog("User did not click on link for OAuth mode ".$oauthmodetotest.", param beforeoauthloginredirect is ".GETPOST('beforeoauthloginredirect')." and param afteroauthloginreturn is ".GETPOST('afteroauthloginreturn')." so we disable check of login for mode ".$oauthmodetotest);
 					foreach ($authmode as $tmpkey => $tmpval) {
 						if ($tmpval == $oauthmodetotest.'oauth') {
 							unset($authmode[$tmpkey]);
@@ -1495,7 +1479,7 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 	$conf->dol_optimize_smallscreen = 1;
 
 	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM') == 1) {
-		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
+		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;	// This was set to PRODUIT_DESC_IN_FORM and is forced to 0 if smartphone in this case
 	}
 }
 // Replace themes bugged with jmobile with eldy

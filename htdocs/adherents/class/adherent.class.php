@@ -3211,7 +3211,7 @@ class Adherent extends CommonObject
 								$sendtocc = '';
 								$sendtobcc = '';
 								$actioncode = 'EMAIL';
-								$extraparams = '';
+								$extraparams = array();
 
 								$actionmsg = '';
 								$actionmsg2 = $langs->transnoentities('MailSentByTo', CMailFile::getValidAddress($from, 4, 0, 1), CMailFile::getValidAddress($sendto, 4, 0, 1));
