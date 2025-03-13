@@ -537,3 +537,14 @@ ALTER TABLE llx_usergroup_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CU
 ALTER TABLE llx_usergroup CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_user_rib CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
 ALTER TABLE llx_user CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+-- 13.0 -> 14.0 rename llx_payment_salary_extrafields to llx_salary_extrafields
+ALTER TABLE llx_salary_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+-- 15.0 -> 16.0 rename llx_advtargetemailing to llx_mailing_advtarget
+ALTER TABLE llx_mailing_advtarget CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+-- 19.0 -> 20.0 rename llx_commande_fournisseur_dispatch_extrafields to llx_receptiondet_batch_extrafields
+ALTER TABLE llx_receptiondet_batch_extrafields CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+-- 19.0 -> 20.0 rename llx_commande_fournisseur_dispatch to llx_receptiondet_batch
+ALTER TABLE llx_receptiondet_batch CHANGE COLUMN tms tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
