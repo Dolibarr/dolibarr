@@ -4405,42 +4405,4 @@ class User extends CommonObject
 		$this->db->commit();
 		return 1;
 	}
-
-	/**
-	 * Get the thirdparties for which this user is affected as comemrcial
-	 * @param 	int 	$only_ids		only IDs. If 0, will return an array of thirdparties. default 1.
-	 *
-	 * @return 	int<-1,-1>|array<Societe,int>		Array of IDs if $only_ids is set, else array of thirdparties. -1 if error.
-	 */
-	public function getAffectedThirdparties($only_ids = 1)
-	{
-		global $conf;
-
-		$sql = "SELECT s.rowid FROM ".$this->db->prefix()."societe s ";
-		$sql.= " LEFT JOIN ".$this->db->prefix()."societe_commerciaux sc ON s.rowid = sc.fk_soc";
-		$sql.= " WHERE sc.fk_user = ".(int) $this->id;
-
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$this->errors[] = "Error: could not get thirdparties for which user ".htmlentities($this->login)." is a commercial.";
-			return -1;
-		}
-
-		$return_arr = [];
-		while ($obj = $this->db->fetch_object($resql)) {
-			if ($only_ids) {
-				$return_arr[] = $obj->rowid;
-			} else {
-				$soc = new Societe($this->db);
-				$res = $soc->fetch($obj->rowid);
-				if (!$res) {
-					$this->errors  = array_merge($this->errors, $soc->errors);
-					return -1;
-				}
-				$return_arr[] = $soc;
-			}
-		}
-
-		return $return_arr;
-	}
 }

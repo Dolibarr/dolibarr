@@ -1263,7 +1263,6 @@ abstract class CommonObject
 		}
 
 		if ($this->restrictiononfksoc && ! $user->hasRight('societe', 'client', 'voir')) {
-			// $allowed_thirdparties = $user->getAffectedThirdparties(1);
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux sc';
 			$sql_allowed_contacts.= ' INNER JOIN '.$this->db->prefix().'societe s ON s.rowid = sc.fk_soc';
 			$sql_allowed_contacts.= ' LEFT JOIN '.$this->db->prefix().'socpeople sp ON sp.fk_soc = sc.fk_soc';
