@@ -6270,7 +6270,7 @@ class Form
 	/**
 	 * Form select for rule for lines dates
 	 *
-	 * @param $page Page
+	 * @param string $page Page
 	 * @param string $selected Id condition pre-selectionne
 	 * @param string $htmlname Name of select html field
 	 * @param int $addempty Add empty entry

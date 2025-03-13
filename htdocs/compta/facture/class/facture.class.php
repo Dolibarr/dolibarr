@@ -579,7 +579,7 @@ class Facture extends CommonInvoice
 
 				if ($_facrec->rule_for_lines_dates == 'postpaid') {
 					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-				} else {
+				} elseif ($nextdatewhen) {
 					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
 				}
 
