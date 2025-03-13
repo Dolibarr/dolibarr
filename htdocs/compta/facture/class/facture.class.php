@@ -3496,7 +3496,7 @@ class Facture extends CommonInvoice
 											$sortorder = 'ASC,ASC,ASC,ASC';
 										}
 
-										$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER') ? null : 0), $sortfield, $sortorder);
+										$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') ? 0 : null), $sortfield, $sortorder);
 										if (!is_array($resBatchList)) {
 											$error++;
 											$this->error = $this->db->lasterror();
@@ -3540,7 +3540,13 @@ class Facture extends CommonInvoice
 											}
 
 											if (!$error && $product_qty_remain > 0) {
-												if (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+												if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
+													$error++;
+													$langs->load('errors');
+													$warehouseStatic->fetch($idwarehouse);
+													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+													dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+												} else {
 													// take in the first batch
 													$batch = $batchList[0];
 													$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
@@ -3549,12 +3555,6 @@ class Facture extends CommonInvoice
 														$this->error = $mouvP->error;
 														$this->errors = array_merge($this->errors, $mouvP->errors);
 													}
-												} else {
-													$error++;
-													$langs->load('errors');
-													$warehouseStatic->fetch($idwarehouse);
-													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-													dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
 												}
 											}
 										}
