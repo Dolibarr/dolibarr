@@ -544,7 +544,7 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 
 		// Line num
 		$pdf->SetXY($this->posxpiece, $curY);
-		$pdf->writeHTMLCell($this->posxskill - $this->posxpiece - 0.8, 3, $this->posxpiece - 1, $curY, $linenumber + 1, 0, 1, 0, 0, 'C');
+		$pdf->writeHTMLCell($this->posxskill - $this->posxpiece - 0.8, 3, $this->posxpiece - 1, $curY, (string) ($linenumber + 1), 0, 1, false, false, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

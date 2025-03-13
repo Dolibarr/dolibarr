@@ -383,7 +383,7 @@ class pdf_rouget extends ModelePdfExpedition
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
@@ -594,12 +594,12 @@ class pdf_rouget extends ModelePdfExpedition
 
 					if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
 						$pdf->SetXY($this->posxqtyordered, $curY);
-						$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
+						$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, (string) $object->lines[$i]->qty_asked, '', 'C');
 					}
 
 					if (!getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP')) {
 						$pdf->SetXY($this->posxqtytoship, $curY);
-						$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty_shipped, '', 'C');
+						$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, (string) $object->lines[$i]->qty_shipped, '', 'C');
 					}
 
 					if (getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT')) {
@@ -785,12 +785,12 @@ class pdf_rouget extends ModelePdfExpedition
 
 		if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', true);
+			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, (string) $totalOrdered, 0, 'C', true);
 		}
 
 		if (!getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP')) {
 			$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', true);
+			$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, (string) $totalToShip, 0, 'C', true);
 		}
 
 		if (getDolGlobalString('SHIPPING_PDF_DISPLAY_AMOUNT_HT')) {

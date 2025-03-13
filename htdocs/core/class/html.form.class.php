@@ -87,7 +87,7 @@ class Form
 	public $cache_types_fees = array();
 	public $cache_vatrates = array();
 	public $cache_invoice_subtype = array();
-	/** @var array<string,string}> */
+	/** @var array<string,string> */
 	public $cache_rule_for_lines_dates = array();
 
 
@@ -4390,7 +4390,7 @@ class Form
 	/**
 	 * Loads into a cache property the list of possible rules for line dates
 	 *
-	 * @return int 1=OK ; -1=Empty
+	 * @return -1|1		OK=1 ; Empty=-1
 	 */
 	public function load_cache_rule_for_lines_dates()
 	{
