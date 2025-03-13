@@ -708,7 +708,13 @@ class Proposals extends DolibarrApi
 				continue;
 			}
 
-			$this->propal->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->propal->array_options[$index] = $this->_checkValForAPI($field, $val, $this->propal);
+				}
+				continue;
+			}
+			$this->propal->$field = $this->_checkValForAPI($field, $value, $this->propal);
 		}
 
 		// update end of validity date

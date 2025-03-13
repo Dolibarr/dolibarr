@@ -327,10 +327,10 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					$odfHandler = new Odf(
 						$srctemplatepath,
 						array(
-						'PATH_TO_TMP'	  => $conf->asset->dir_temp,
-						'ZIP_PROXY'		  => 'PclZipProxy', // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
-						'DELIMITER_LEFT'  => '{',
-						'DELIMITER_RIGHT' => '}'
+							'PATH_TO_TMP'	  => $conf->asset->dir_temp,
+							'ZIP_PROXY'		  => getDolGlobalString('MAIN_ODF_ZIP_PROXY', 'PclZipProxy'), // PhpZipProxy or PclZipProxy. Got "bad compression method" error when using PhpZipProxy.
+							'DELIMITER_LEFT'  => '{',
+							'DELIMITER_RIGHT' => '}'
 						)
 					);
 				} catch (Exception $e) {
@@ -391,7 +391,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					}
 				}
 				// Replace tags of lines
-				try {
+				/*try {
 					$foundtagforlines = 1;
 					try {
 						$listlines = $odfHandler->setSegment('lines');
@@ -429,7 +429,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					$this->error = $e->getMessage();
 					dol_syslog($this->error, LOG_WARNING);
 					return -1;
-				}
+				}*/
 
 				// Replace labels translated
 				$tmparray = $outputlangs->get_translations_for_substitutions();

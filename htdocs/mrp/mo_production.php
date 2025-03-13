@@ -1644,6 +1644,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
+							$href .= '&token='.newToken();
 							$href .= '&lineid='.$line->id;
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';
@@ -1860,9 +1861,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$.each(data, function (key, value) {
 
 							if(selectwarehouse.val() == -1) {
-								var label = " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
+								var label = key + " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
 							} else {
-								var label =  " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
+								var label = key + " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
 							}
 
 							if(key === selectedbatch) {

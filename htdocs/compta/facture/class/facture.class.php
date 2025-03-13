@@ -76,6 +76,11 @@ class Facture extends CommonInvoice
 	public $table_element_line = 'facturedet';
 
 	/**
+	 * @var string Name of class line
+	 */
+	public $class_element_line = 'FactureLigne';
+
+	/**
 	 * @var string Fieldname with ID of parent key if this field has a parent
 	 */
 	public $fk_element = 'fk_facture';
@@ -463,8 +468,8 @@ class Facture extends CommonInvoice
 		$this->ref_client = trim($this->ref_client);
 
 		$this->note = (isset($this->note) ? trim($this->note) : trim($this->note_private)); // deprecated
-		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : trim($this->note_private));
-		$this->note_public = trim($this->note_public);
+		$this->note_private = (isset($this->note_private) ? trim($this->note_private) : '');
+		$this->note_public = (isset($this->note_public) ? trim($this->note_public) : '');
 		if (!$this->cond_reglement_id) {
 			$this->cond_reglement_id = 0;
 		}
@@ -2451,9 +2456,6 @@ class Facture extends CommonInvoice
 		if (empty($this->type)) {
 			$this->type = self::TYPE_STANDARD;
 		}
-		if (isset($this->subtype)) {
-			$this->subtype = trim($this->subtype);
-		}
 		if (isset($this->ref)) {
 			$this->ref = trim($this->ref);
 		}
@@ -2490,6 +2492,9 @@ class Facture extends CommonInvoice
 		if (isset($this->retained_warranty)) {
 			$this->retained_warranty = (float) $this->retained_warranty;
 		}
+		if (!isset($this->fk_user_author) && isset($this->user_author) ) {
+			$this->fk_user_author = $this->user_author;
+		}
 
 
 		// Check parameters
@@ -2517,8 +2522,8 @@ class Facture extends CommonInvoice
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
 		$sql .= " revenuestamp=".((isset($this->revenuestamp) && $this->revenuestamp != '') ? $this->db->escape($this->revenuestamp) : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->db->escape($this->status) : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author) ? $this->db->escape($this->user_author) : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? ((int) $this->status) : "null").",";
+		$sql .= " fk_user_author=".(isset($this->fk_user_author) ? ((int) $this->fk_user_author) : "null").",";
 		$sql .= " fk_user_valid=".(isset($this->fk_user_valid) ? $this->db->escape($this->fk_user_valid) : "null").",";
 		$sql .= " fk_facture_source=".(isset($this->fk_facture_source) ? $this->db->escape($this->fk_facture_source) : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->db->escape($this->fk_project) : "null").",";
@@ -4051,7 +4056,7 @@ class Facture extends CommonInvoice
 	 *  @param     	double		$remise_percent  	Percentage discount of the line
 	 *  @param     	int		    $date_start      	Date de debut de validite du service
 	 *  @param     	int		    $date_end        	Date de fin de validite du service
-	 *  @param     	double		$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
+	 *  @param     	double|string	$txtva          	VAT Rate (Can be '8.5', '8.5 (ABC)')
 	 * 	@param		double		$txlocaltax1		Local tax 1 rate
 	 *  @param		double		$txlocaltax2		Local tax 2 rate
 	 * 	@param     	string		$price_base_type 	HT or TTC

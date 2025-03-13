@@ -340,11 +340,11 @@ class Mo extends CommonObject
 
 		if (!$error) {
 			$this->db->commit();
+			return $idcreated;
 		} else {
 			$this->db->rollback();
+			return -1;
 		}
-
-		return $idcreated;
 	}
 
 	/**
@@ -764,6 +764,7 @@ class Mo extends CommonObject
 							if ($moline->qty <= 0) {
 								$error++;
 								$this->error = "BadValueForquantityToConsume";
+								$this->errors[] = $this->error;
 								break;
 							} else {
 								$moline->fk_product = $line->fk_product;
@@ -779,7 +780,8 @@ class Mo extends CommonObject
 								if ($resultline <= 0) {
 									$error++;
 									$this->error = $moline->error;
-									$this->errors = $moline->errors;
+									$this->errors[] = $moline->error;
+									$this->errors = array_merge($this->errors, $moline->errors);
 									dol_print_error($this->db, $moline->error, $moline->errors);
 									break;
 								}

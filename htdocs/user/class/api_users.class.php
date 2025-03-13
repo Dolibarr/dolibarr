@@ -417,7 +417,13 @@ class Users extends DolibarrApi
 					throw new RestException(500, 'Error when updating status of user: '.$this->useraccount->error);
 				}
 			} else {
-				$this->useraccount->$field = $value;
+				if ($field == 'array_options' && is_array($value)) {
+					foreach ($value as $index => $val) {
+						$this->useraccount->array_options[$index] = $this->_checkValForAPI($field, $val, $this->useraccount);
+					}
+					continue;
+				}
+				$this->useraccount->$field = $this->_checkValForAPI($field, $value, $this->useraccount);
 			}
 		}
 

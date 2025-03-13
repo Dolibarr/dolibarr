@@ -202,10 +202,15 @@ class MembersTypes extends DolibarrApi
 				$membertype->context['caller'] = $request_data['caller'];
 				continue;
 			}
-
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$membertype->array_options[$index] = $this->_checkValForAPI($field, $val, $membertype);
+				}
+				continue;
+			}
 			// Process the status separately because it must be updated using
 			// the validate(), resiliate() and exclude() methods of the class AdherentType.
-			$membertype->$field = $value;
+			$membertype->$field = $this->_checkValForAPI($field, $value, $membertype);
 		}
 
 		// If there is no error, update() returns the number of affected rows

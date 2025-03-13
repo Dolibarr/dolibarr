@@ -248,7 +248,13 @@ class Categories extends DolibarrApi
 				continue;
 			}
 
-			$this->category->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+				}
+				continue;
+			}
+			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 
 		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
@@ -278,8 +284,8 @@ class Categories extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		if (!$this->category->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401, 'error when delete category');
+		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
 		}
 
 		return array(

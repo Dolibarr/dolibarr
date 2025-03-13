@@ -196,7 +196,13 @@ class Subscriptions extends DolibarrApi
 				continue;
 			}
 
-			$subscription->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$subscription->array_options[$index] = $this->_checkValForAPI($field, $val, $subscription);
+				}
+				continue;
+			}
+			$subscription->$field = $this->_checkValForAPI($field, $value, $subscription);
 		}
 
 		if ($subscription->update(DolibarrApiAccess::$user) > 0) {

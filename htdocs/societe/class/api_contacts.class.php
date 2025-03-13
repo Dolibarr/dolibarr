@@ -350,7 +350,7 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $val;
+					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
 				}
 				continue;
 			}
@@ -373,7 +373,7 @@ class Contacts extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  integer
+	 * @return  array[]
 	 */
 	public function delete($id)
 	{
@@ -389,7 +389,17 @@ class Contacts extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete(DolibarrApiAccess::$user);
+
+		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact deleted'
+			)
+		);
 	}
 
 	/**

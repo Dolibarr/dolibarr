@@ -96,11 +96,11 @@ class pdf_paiement extends CommonDocGenerator
 		$this->tab_height = $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5; // must be > $this->line_height * $this->line_per_page and < $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5;
 
 		$this->posxdate = $this->marge_gauche + 2;
-		$this->posxpaymenttype = 42;
-		$this->posxinvoice = 82;
-		$this->posxbankaccount = 110;
-		$this->posxinvoiceamount = 132;
-		$this->posxpaymentamount = 162;
+		$this->posxpaymenttype = 32;
+		$this->posxinvoice = 72;
+		$this->posxbankaccount = 115;
+		$this->posxinvoiceamount = 135;
+		$this->posxpaymentamount = 167;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->line_per_page = 35;
 			$this->posxpaymenttype -= 10;
@@ -108,6 +108,7 @@ class pdf_paiement extends CommonDocGenerator
 			$this->posxinvoiceamount -= 10;
 			$this->posxpaymentamount -= 20;
 		}
+
 		// which type of document will be generated: clients (client) or providers (fourn) invoices
 		$this->doc_type = "client";
 	}

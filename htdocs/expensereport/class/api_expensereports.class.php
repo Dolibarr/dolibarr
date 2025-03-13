@@ -430,7 +430,13 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
-			$this->expensereport->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->expensereport->array_options[$index] = $this->_checkValForAPI($field, $val, $this->expensereport);
+				}
+				continue;
+			}
+			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 
 		if ($this->expensereport->update(DolibarrApiAccess::$user) > 0) {

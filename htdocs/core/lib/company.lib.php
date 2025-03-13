@@ -2119,11 +2119,13 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = '', $noprin
 				$out .= dol_trunc($libelle, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
 				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
+				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'"';
 				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
+				$out .= img_object($langs->trans("ShowEMailing"), "email").' ';
 				$out .= dol_trunc($libelle, 120);
+				$out .= '</a>';
 			}
 			$out .= '</td>';
 
@@ -2249,7 +2251,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$i = -1;
 
-	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -2289,6 +2291,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$socstatic->canvas = $obj->canvas;
 			$socstatic->client = $obj->client;
 			$socstatic->fournisseur = $obj->fournisseur;
+			$socstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';
 

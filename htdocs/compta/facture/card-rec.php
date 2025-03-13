@@ -93,7 +93,10 @@ $pagenext = $page + 1;
 $object = new FactureRec($db);
 if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
 	$ret = $object->fetch($id, $ref);
-	if (!$ret) {
+	if ($ret < 0) {
+		dol_print_error($db, $object->error, $object->errors);
+		exit;
+	} elseif (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
 }
@@ -658,12 +661,14 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
+			$fk_parent_line = GETPOST('fk_parent_line', 'int');
+
 			if ($usercanproductignorepricemin && (!empty($price_min) && (price2num($pu_ht) * (1 - price2num($remise_percent) / 100) < price2num($price_min)))) {
 				$mesg = $langs->trans("CantBeLessThanMinPrice", price(price2num($price_min, 'MU'), 0, $langs, 0, 0, - 1, $conf->currency));
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice);
+				$result = $object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, -1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill, $fournprice, $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -849,6 +854,7 @@ if (empty($reshook)) {
 
 		$date_start_fill = GETPOST('date_start_fill', 'int');
 		$date_end_fill = GETPOST('date_end_fill', 'int');
+		$fk_parent_line = GETPOST('fk_parent_line', 'int');
 
 		// Update line
 		if (!$error) {
@@ -876,7 +882,8 @@ if (empty($reshook)) {
 				$date_start_fill,
 				$date_end_fill,
 				$fournprice,
-				$buyingprice
+				$buyingprice,
+				$fk_parent_line
 			);
 
 			if ($result >= 0) {
@@ -1224,7 +1231,7 @@ if ($action == 'create') {
 		}
 
 		// Call Hook formConfirm
-		$parameters = array('formConfirm' => $formconfirm);
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) {
 			$formconfirm .= $hookmanager->resPrint;
@@ -1340,14 +1347,10 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($object->type != Facture::TYPE_CREDIT_NOTE) {
-			if ($action == 'editconditions') {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
-			} else {
-				$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
-			}
+		if ($action == 'editconditions') {
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'cond_reglement_id');
 		} else {
-			print '&nbsp;';
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->cond_reglement_id, 'none');
 		}
 		print '</td></tr>';
 
@@ -1777,6 +1780,7 @@ if ($action == 'create') {
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
+		$morehtmlcenter = '';
 		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 
 		print '</div>';

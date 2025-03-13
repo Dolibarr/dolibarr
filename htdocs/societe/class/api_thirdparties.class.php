@@ -318,6 +318,12 @@ class Thirdparties extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
+				}
+				continue;
+			}
 			$this->company->$field = $this->_checkValForAPI($field, $value, $this->company);
 		}
 

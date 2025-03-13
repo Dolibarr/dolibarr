@@ -240,7 +240,13 @@ class Donations extends DolibarrApi
 				continue;
 			}
 
-			$this->don->$field = $value;
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->don->array_options[$index] = $this->_checkValForAPI($field, $val, $this->don);
+				}
+				continue;
+			}
+			$this->don->$field = $this->_checkValForAPI($field, $value, $this->don);
 		}
 
 		if ($this->don->update(DolibarrApiAccess::$user) > 0) {

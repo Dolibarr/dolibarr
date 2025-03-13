@@ -1114,8 +1114,8 @@ class DolGraph
 					$values[$x] = (is_numeric($tmpvalue) ? $tmpvalue : null);
 					$arrayofgroupslegend[$i] = array(
 						'stacknum' => $tmpykey[1],
-						'legend' => $this->Legend[$tmpykey[1]],
-						'legendwithgroup' => $this->Legend[$tmpykey[1]] . ' - ' . $tmpykey[2]
+						'legend' => $this->Legend[$tmpykey[1]] ?? '',
+						'legendwithgroup' => ($this->Legend[$tmpykey[1]] ?? '') . ' - ' . $tmpykey[2]
 					);
 				} else {
 					$tmpvalue = (array_key_exists('y_' . $i, $valarray) ? $valarray['y_' . $i] : $valarray[$i + 1]);

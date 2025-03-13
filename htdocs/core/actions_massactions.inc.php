@@ -477,6 +477,11 @@ if (!$error && $massaction == 'confirm_presend') {
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
+					if ($oneemailperrecipient) {
+						$substitutionarray['__ONLINE_PAYMENT_URL__'] = '';
+						$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
+					}
+
 					$parameters = array('mode'=>'formemail');
 
 					if (!empty($listofobjectthirdparties)) {
@@ -1276,18 +1281,35 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 				$result = $object->fetch($toselectid);
 				//var_dump($contcats);exit;
 				if ($result > 0) {
-					if ($obj->price_base_type == 'TTC') {
-						$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min_ttc;
-					} else {
-						$newprice = $object->price * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min;
-					}
-					$res = $object->updatePrice($newprice, $obj->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
-					if ($res > 0) {
-						$nbok++;
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
+					if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+							|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+						if ($object->price_base_type == 'TTC') {
+							$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min_ttc;
+						} else {
+							$newprice = $object->price * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min;
+						}
+						$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+						if ($res > 0) {
+							$nbok++;
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} elseif (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						for ($level = 1; $level <= getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); $level++) {
+							if ($object->price_base_type == 'TTC') {
+								$newprice = $object->multiprices_ttc[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min_ttc[$level];
+							} else {
+								$newprice = $object->multiprices[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min[$level];
+							}
+							$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+							if ($res > 0) {
+								$nbok++;
+							}
+						}
 					}
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');

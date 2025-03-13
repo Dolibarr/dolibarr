@@ -11,6 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2022  Frédéric France         <frederic.france@netlogic.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
+ * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,6 +149,7 @@ class ExtraFields
 
 		$result = 0;
 
+		// Clean properties
 		if ($type == 'separate') {
 			$unique = 0;
 			$required = 0;
@@ -157,6 +159,11 @@ class ExtraFields
 		}
 		if ($elementtype == 'contact') {
 			$elementtype = 'socpeople';
+		}
+		// If property has a computed formula, it must not be a required or unique field
+		if (!empty($computed)) {
+			$required = 0;
+			$unique = 0;
 		}
 
 		// Create field into database except for separator type which is not stored in database
@@ -568,6 +575,7 @@ class ExtraFields
 		}
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
+			// Clean parameters
 			if ($type == 'boolean') {
 				$typedb = 'int';
 				$lengthdb = '1';
@@ -603,6 +611,12 @@ class ExtraFields
 				$lengthdb = $length;
 			}
 			$field_desc = array('type'=>$typedb, 'value'=>$lengthdb, 'null'=>($required ? 'NOT NULL' : 'NULL'), 'default'=>$default);
+
+			// If property has a computed formula, it must not be a required or unique field
+			if (!empty($computed)) {
+				$required = 0;
+				$unique = 0;
+			}
 
 			if (is_object($hookmanager)) {
 				$hookmanager->initHooks(array('extrafieldsdao'));
@@ -2402,10 +2416,13 @@ class ExtraFields
 					}
 					$value_key = dol_htmlcleanlastbr(GETPOST($keysuffix."options_".$key.$keyprefix, 'restricthtml'));
 				} else {
-					if (!GETPOST($keysuffix."options_".$key.$keyprefix)) {
+					if (!GETPOSTISSET($keysuffix."options_".$key.$keyprefix)) {
 						continue; // Value was not provided, we should not set it.
 					}
 					$value_key = GETPOST($keysuffix."options_".$key.$keyprefix);
+					if ($value_key === '') {
+						$value_key = null;
+					}
 				}
 
 				$array_options[$keysuffix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.

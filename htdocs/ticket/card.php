@@ -470,7 +470,7 @@ if (empty($reshook)) {
 	// Action to add a message (private or not, with email or not).
 	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $permissiontoread) {
-		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0), 0);
+		$ret = $object->newMessage($user, $action, GETPOSTINT('private_message'), 0);
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
@@ -590,7 +590,7 @@ if (empty($reshook)) {
 		if ($object->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
-				$res = $object->setStatut(Ticket::STATUS_ASSIGNED);
+				$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
 				if ($res) {
 					$url = 'card.php?track_id='.$object->track_id;
 					header("Location: ".$url);
@@ -755,6 +755,10 @@ if ($action == 'create' || $action == 'presend') {
 
 	$formticket->withcancel = 1;
 
+	// Init list of files
+	if (GETPOST("mode", "aZ09") == 'init') {
+		$formticket->clear_attached_files();
+	}
 	$formticket->showForm(1, 'create', 0, null, $action);
 	/*} elseif ($action == 'edit' && $user->rights->ticket->write && $object->status < Ticket::STATUS_CLOSED) {
 	$formticket = new FormTicket($db);

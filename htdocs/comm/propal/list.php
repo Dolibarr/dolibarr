@@ -17,6 +17,7 @@
  * Copyright (C) 2021	   Anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2021      Frédéric France			<frederic.france@netlogic.fr>
  * Copyright (C) 2022      Josep Lluís Amador		<joseplluis@lliuretic.cat>
+ * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,6 +73,7 @@ $confirm 	= GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'alpha');
 $toselect 	= GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'proposallist';
+$optioncss  = GETPOST('optioncss', 'alpha');
 $mode 		= GETPOST('mode', 'alpha');
 
 // Search Fields
@@ -142,6 +144,12 @@ $search_status = GETPOST('search_status', 'alpha');
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $object_statut = GETPOST('search_statut', 'alpha');
+
+$search_option = GETPOST('search_option', 'alpha');
+if ($search_option == 'late') {
+	$search_status = '1';
+	$object_statut = '1';
+}
 
 // Pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -254,27 +262,27 @@ $arrayfields = array(
 
 // List of fields to search into when doing a "search in all"
 /*$fieldstosearchall = array();
-foreach ($object->fields as $key => $val) {
-	if (!empty($val['searchall'])) {
-		$fieldstosearchall['t.'.$key] = $val['label'];
-	}
-}*/
+ foreach ($object->fields as $key => $val) {
+ if (!empty($val['searchall'])) {
+ $fieldstosearchall['t.'.$key] = $val['label'];
+ }
+ }*/
 
 // Definition of array of fields for columns
 /*$arrayfields = array();
-foreach ($object->fields as $key => $val) {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) {
-		$visible = (int) dol_eval($val['visible'], 1);
-		$arrayfields['t.'.$key] = array(
-			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
-			'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
-			'position'=>$val['position'],
-			'help'=> isset($val['help']) ? $val['help'] : ''
-		);
-	}
-}*/
+ foreach ($object->fields as $key => $val) {
+ // If $val['visible']==0, then we never show the field
+ if (!empty($val['visible'])) {
+ $visible = (int) dol_eval($val['visible'], 1);
+ $arrayfields['t.'.$key] = array(
+ 'label'=>$val['label'],
+ 'checked'=>(($visible < 0) ? 0 : 1),
+ 'enabled'=>(abs($visible) != 3 && dol_eval($val['enabled'], 1)),
+ 'position'=>$val['position'],
+ 'help'=> isset($val['help']) ? $val['help'] : ''
+ );
+ }
+ }*/
 
 if (!$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
@@ -372,6 +380,7 @@ if (empty($reshook)) {
 		$search_date_delivery_start = '';
 		$search_date_delivery_end = '';
 		$search_availability = '';
+		$search_option = '';
 		$search_status = '';
 		$object_statut = '';
 		$search_categ_cus = 0;
@@ -800,6 +809,9 @@ if (!empty($searchCategoryProductList)) {
 		}
 	}
 }
+if ($search_option == 'late') {
+	$sql .= " AND p.fin_validite < '".$db->idate(dol_now() - $conf->propal->cloture->warning_delay)."'";
+}
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 //print $sql;
@@ -848,8 +860,8 @@ if (!$resql) {
 	exit;
 }
 
-	$objectstatic = new Propal($db);
-	$userstatic = new User($db);
+$objectstatic = new Propal($db);
+$userstatic = new User($db);
 
 if ($socid > 0) {
 	$soc = new Societe($db);
@@ -862,9 +874,9 @@ if ($socid > 0) {
 	$title = $langs->trans('Proposals');
 }
 
-	$num = $db->num_rows($resql);
+$num = $db->num_rows($resql);
 
-	$arrayofselected = is_array($toselect) ? $toselect : array();
+$arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
 	$obj = $db->fetch_object($resql);
@@ -875,10 +887,10 @@ if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $s
 	exit;
 }
 
-	$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
-	llxHeader('', $title, $help_url);
+$help_url = 'EN:Commercial_Proposals|FR:Proposition_commerciale|ES:Presupuestos';
+llxHeader('', $title, $help_url);
 
-	$param = '&search_status='.urlencode($search_status);
+$param = '&search_status='.urlencode($search_status);
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
@@ -1531,7 +1543,7 @@ if (!empty($arrayfields['state.nom']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['country.code_iso']['checked'])) {
-	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['country.code_iso']['label'], $_SERVER["PHP_SELF"], "country.code_iso", "", $param, 'class="center"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['typent.code']['checked'])) {
@@ -1539,19 +1551,19 @@ if (!empty($arrayfields['typent.code']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date']['label'], $_SERVER["PHP_SELF"], 'p.datep', '', $param, 'class="center"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.fin_validite']['checked'])) {
-	print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.fin_validite']['label'], $_SERVER["PHP_SELF"], 'dfv', '', $param, 'class="center"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date_livraison']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date_livraison']['label'], $_SERVER["PHP_SELF"], 'p.date_livraison', '', $param, 'class="center"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.date_signature']['checked'])) {
-	print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, 'class="center"', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, 'class="center"', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['ava.rowid']['checked'])) {
@@ -1701,10 +1713,11 @@ if (isModEnabled('margin') && (
 	|| !empty($arrayfields['total_margin']['checked'])
 	|| !empty($arrayfields['total_margin_rate']['checked'])
 	|| !empty($arrayfields['total_mark_rate']['checked'])
-)
-) {
-	$with_margin_info = true;
+	)
+	) {
+		$with_margin_info = true;
 }
+
 $total_ht = 0;
 $total_margin = 0;
 
@@ -1717,6 +1730,9 @@ while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
+	}
+	if ($search_option) {
+		$param .= "&search_option=".urlencode($search_option);
 	}
 
 	$objectstatic->id = $obj->rowid;

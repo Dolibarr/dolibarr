@@ -629,7 +629,7 @@ class ActionComm extends CommonObject
 				foreach ($this->userassigned as $key => $val) {
 					// Common value with new behavior is to have $val = array('id'=>iduser, 'transparency'=>0|1) and $this->userassigned is an array of iduser => $val.
 					if (!is_array($val)) {	// For backward compatibility when $val='id'.
-						$val = array('id'=>$val);
+						$val = array('id' => $val);
 					}
 
 					if ($val['id'] > 0) {
@@ -1271,7 +1271,7 @@ class ActionComm extends CommonObject
 					$already_inserted = array();
 					foreach (array_keys($this->socpeopleassigned) as $key => $val) {
 						if (!is_array($val)) {	// For backward compatibility when val=id
-							$val = array('id'=>$val);
+							$val = array('id' => $val);
 						}
 						if (!empty($already_inserted[$val['id']])) {
 							continue;
@@ -2546,6 +2546,7 @@ class ActionComm extends CommonObject
 
 					// Load event
 					$res = $this->fetch($actionCommReminder->fk_actioncomm);
+					if ($res > 0) $res = $this->fetch_thirdparty();
 					if ($res > 0) {
 						// PREPARE EMAIL
 						$errormesg = '';

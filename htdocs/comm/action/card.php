@@ -2067,7 +2067,27 @@ if ($id > 0) {
 			// related contact
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
-			print img_picto('', 'contact', 'class="paddingrightonly"').$form->selectcontacts(!getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? $object->socid : 0, array_keys($object->socpeopleassigned), 'socpeopleassigned[]', 1, '', '', 1, 'minwidth300 widthcentpercentminusx', false, 0, 0, array(), 'multiple', 'contactid');
+
+			$searchSocid = ($object->socid > 0) ? $object->socid : (getDolGlobalString('MAIN_ACTIONCOM_CAN_ADD_ANY_CONTACT') ? 0 : -1);
+
+			print img_picto('', 'contact', 'class="paddingrightonly"');
+			print $form->selectcontacts(
+				$searchSocid,
+				array_keys($object->socpeopleassigned),
+				'socpeopleassigned[]',
+				1,
+				'',
+				'',
+				1,
+				'minwidth300 widthcentpercentminusx',
+				false,
+				0,
+				0,
+				array(),
+				'multiple',
+				'contactid'
+			);
+
 			print '</div>';
 			print '</td>';
 			print '</tr>';
@@ -2511,9 +2531,11 @@ if ($id > 0) {
 		}
 
 		// Priority
-		print '<tr><td class="nowrap" class="titlefield">'.$langs->trans("Priority").'</td><td>';
-		print($object->priority ? $object->priority : '');
-		print '</td></tr>';
+		if (getDolGlobalString('AGENDA_SUPPORT_PRIORITY_IN_EVENTS')) {
+			print '<tr><td class="nowrap" class="titlefield">' . $langs->trans("Priority") . '</td><td>';
+			print($object->priority ? $object->priority : '');
+			print '</td></tr>';
+		}
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm.

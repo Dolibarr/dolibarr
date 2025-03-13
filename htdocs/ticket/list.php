@@ -390,6 +390,7 @@ if ($socid > 0) {
 }
 
 foreach ($search as $key => $val) {
+	$tmpkey = 't.' . $key;
 	if ($key == 'fk_statut' && !empty($search['fk_statut'])) {
 		$newarrayofstatus = array();
 		foreach ($search['fk_statut'] as $key2 => $val2) {
@@ -411,18 +412,18 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
 		if (count($newarrayofstatus)) {
-			$sql .= natural_search($key, join(',', $newarrayofstatus), 2);
+			$sql .= natural_search($tmpkey, join(',', $newarrayofstatus), 2);
 		}
 		continue;
 	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
-			$sql .= natural_search($key, $search[$key], 2);
+			$sql .= natural_search($tmpkey, $search[$key], 2);
 		}
 		continue;
 	} elseif ($key == 'type_code') {
 		$newarrayoftypecodes = is_array($search[$key]) ? $search[$key] : (!empty($search[$key]) ? explode(',', $search[$key]) : array());
 		if (count($newarrayoftypecodes)) {
-			$sql .= natural_search($key, join(',', $newarrayoftypecodes), 3);
+			$sql .= natural_search($tmpkey, join(',', $newarrayoftypecodes), 3);
 		}
 		continue;
 	}
@@ -430,7 +431,7 @@ foreach ($search as $key => $val) {
 	$mode_search = ((!empty($object->fields[$key]) && ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))) ? 1 : 0);
 	// $search[$key] can be an array of values, or a string. We add filter if array not empty or if it is a string.
 	if ((is_array($search[$key]) && !empty($search[$key])) || (!is_array($search[$key]) && $search[$key] != '')) {
-		$sql .= natural_search($key, $search[$key], $mode_search);
+		$sql .= natural_search($tmpkey, $search[$key], $mode_search);
 	}
 }
 if ($search_all) {
@@ -440,7 +441,7 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_fk_project > 0) {
-	$sql .= natural_search('fk_project', $search_fk_project, 2);
+	$sql .= natural_search('t.fk_project', $search_fk_project, 2);
 }
 if ($search_fk_contract > 0) {
 	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
