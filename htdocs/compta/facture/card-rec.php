@@ -1160,7 +1160,7 @@ if ($action == 'create') {
 		// Bank account
 		if ($sourceInvoice->fk_account > 0) {
 			print "<tr><td>".$langs->trans('BankAccount')."</td><td>";
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$objsourceInvoiceect->id, (string) $sourceInvoice->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$sourceInvoice->id, (string) $sourceInvoice->fk_account, 'none');
 			print "</td></tr>";
 		}
 
