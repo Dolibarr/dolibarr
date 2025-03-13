@@ -1263,16 +1263,23 @@ abstract class CommonObject
 		}
 
 		if ($this->restrictiononfksoc && ! $user->hasRight('societe', 'client', 'voir')) {
-			$allowed_thirdparties = $user->getAffectedThirdparties(1);
-			$sql_allowed_contacts = 'SELECT rowid FROM '.$this->db->prefix().'socpeople';
-			$sql_allowed_contacts.= ' WHERE fk_soc IN ('.$this->db->sanitize(implode(',', $allowed_thirdparties)).')';
-			$sql_allowed_contacts.= ' AND rowid = '.(int) $fk_socpeople;
+			// $allowed_thirdparties = $user->getAffectedThirdparties(1);
+			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux sc';
+			$sql_allowed_contacts.= ' INNER JOIN '.$this->db->prefix().'societe s ON s.rowid = sc.fk_soc';
+			$sql_allowed_contacts.= ' LEFT JOIN '.$this->db->prefix().'socpeople sp ON sp.fk_soc = sc.fk_soc';
+			$sql_allowed_contacts.= ' WHERE sp.rowid = '.(int) $fk_socpeople;
+			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
 			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
-			if ($this->db->num_rows($resql_allowed_contacts) == 0) {
-				$langs->load("companies");
-				$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty");
-				dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
+			if (!$resql_allowed_contacts) {
+				$this->errors[] = $this->db->lasterror();
 				return -3;
+			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
+				if ($obj->cnt == 0) {
+					$langs->load("companies");
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty");
+					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
+					return -3;
+				}
 			}
 		}
 
