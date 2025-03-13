@@ -1038,9 +1038,9 @@ class ImportXlsx extends ModeleImports
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
 
 
-								if (empty($keyfield)) {
-									$keyfield = 'rowid';
-								}
+								
+								$keyfield = 'rowid';
+								
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1083,9 +1083,8 @@ class ImportXlsx extends ModeleImports
 								}
 								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
 
-								if (empty($keyfield)) {
-									$keyfield = 'rowid';
-								}
+								$keyfield = 'rowid';
+								
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
