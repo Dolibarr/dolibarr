@@ -99,17 +99,23 @@ $formSetup->newItem('WEBPORTAL_TITLE')->defaultFieldValue = getDolGlobalString('
 
 // Enable access for the proposals
 if (isModEnabled('propal')) {
-	$formSetup->newItem('WEBPORTAL_PROPAL_LIST_ACCESS')->setAsYesNo();
+	$item = $formSetup->newItem('WEBPORTAL_PROPAL_LIST_ACCESS');
+	$item->setAsYesNo();
+	$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 }
 
 // Enable access for the orders
 if (isModEnabled('order')) {
-	$formSetup->newItem('WEBPORTAL_ORDER_LIST_ACCESS')->setAsYesNo();
+	$item = $formSetup->newItem('WEBPORTAL_ORDER_LIST_ACCESS');
+	$item->setAsYesNo();
+	$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 }
 
 // Enable access for the invoices
 if (isModEnabled('invoice')) {
-	$formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS')->setAsYesNo();
+	$item = $formSetup->newItem('WEBPORTAL_INVOICE_LIST_ACCESS');
+	$item->setAsYesNo();
+	$item->fieldParams = array('revertonoff' => '', 'forcereload' => '') ;
 }
 
 // Enable access for the partnership record
