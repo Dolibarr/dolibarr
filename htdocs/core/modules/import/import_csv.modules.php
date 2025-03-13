@@ -960,9 +960,9 @@ class ImportCsv extends ModeleImports
 								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM ".$tablename;
 
-								if (empty($keyfield)) {
+								
 									$keyfield = 'rowid';
-								}
+								
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1005,9 +1005,9 @@ class ImportCsv extends ModeleImports
 								}
 								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
 
-								if (empty($keyfield)) {
+								
 									$keyfield = 'rowid';
-								}
+								
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
