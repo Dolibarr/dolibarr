@@ -1092,6 +1092,17 @@ class pdf_espadon extends ModelePdfExpedition
 			}
 		}
 
+		if (getDolGlobalInt('PDF_SHOW_PROJECT')) {
+			$object->fetchProject();
+			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
+				$posy += 4;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+			}
+		}
+
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && !empty($object->thirdparty->code_client)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
