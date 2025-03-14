@@ -844,7 +844,6 @@ TimeOnly
 Timezone
 ToGetBack
 ToPay
-ToReopon
 Token
 Tooltip
 TooltipEditAndRevertStockMovement
@@ -900,7 +899,6 @@ WorkingBoard
 Workload
 WrongAmount
 XDebug
-XXX
 XmlCorrupted
 Y
 ZeroMeansEveryYear
