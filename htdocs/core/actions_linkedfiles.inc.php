@@ -222,6 +222,8 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		if ($shareenabled) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 			$link->share = getRandomPassword(true);
+		} else {
+			$link->share = '';
 		}
 		$res = $link->update($user);
 		if (!$res) {

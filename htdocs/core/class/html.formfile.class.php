@@ -2332,7 +2332,7 @@ class FormFile
 					global $dolibarr_main_url_root;
 					$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
 					$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT; // This is to use external domain name found into config file
-					$fulllink = $urlwithroot.'/document.php?hashp=' . $link->share;
+					$fulllink = $urlwithroot.'/document.php?type=link&hashp=' . $link->share;
 
 					print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
 					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
