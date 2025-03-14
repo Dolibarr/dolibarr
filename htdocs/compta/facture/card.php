@@ -4470,10 +4470,10 @@ if ($action == 'create') {
 		}
 
 		$text = $langs->trans('ConfirmValidateBill', $numref);
-        if (getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
-            $text .= '<br><br>';
-            $text .= img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans('WarningInvoiceCanNeverBeEdited');
-        }
+		if (getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
+			$text .= '<br><br>';
+			$text .= img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans('WarningInvoiceCanNeverBeEdited');
+		}
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
