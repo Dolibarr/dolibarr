@@ -76,6 +76,11 @@ class Link extends CommonObject
 	public $share;
 
 	/**
+	 * @var string share pass hash
+	 */
+	public $share_pass;
+
+	/**
 	 *    Constructor
 	 *
 	 *    @param	DoliDB		$db		Database handler
@@ -117,12 +122,14 @@ class Link extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid)";
+		$sql = "INSERT INTO ".$this->db->prefix()."links (entity, datea, url, label, objecttype, objectid, share,share_pass)";
 		$sql .= " VALUES (".$conf->entity.", '".$this->db->idate($this->datea)."'";
 		$sql .= ", '".$this->db->escape($this->url)."'";
 		$sql .= ", '".$this->db->escape($this->label)."'";
 		$sql .= ", '".$this->db->escape($this->objecttype)."'";
-		$sql .= ", ".((int) $this->objectid).")";
+		$sql .= ", ".((int) $this->objectid);
+		$sql .= ', '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
+		$sql .= ', '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null").")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -202,6 +209,8 @@ class Link extends CommonObject
 		$sql .= ", label = '".$this->db->escape($this->label)."'";
 		$sql .= ", objecttype = '".$this->db->escape($this->objecttype)."'";
 		$sql .= ", objectid = ".$this->objectid;
+		$sql .= ', share = '.(!empty($this->share) ? "'".$this->db->escape($this->share)."'" : "null");
+		$sql .= ', share_pass = '.(!empty($this->share_pass) ? "'".$this->db->escape($this->share_pass)."'" : "null");
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update sql = ".$sql);
