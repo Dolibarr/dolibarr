@@ -1590,7 +1590,7 @@ while ($currentdaytoshow < $lastdaytoshow) {
 	}
 	print '<input type="number" class="short" name="end_h" value="'.$end_h.'" min="1" max="24">';
 	if (empty($conf->dol_use_jmobile)) {
-		print ' '.$langs->trans("H");
+		print ' '.$langs->trans("HourShort");
 	}
 	print '</div></div>';
 
