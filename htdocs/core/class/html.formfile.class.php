@@ -2289,6 +2289,8 @@ class FormFile
 			'',
 			'center '
 		);
+		// Shared or not - Hash of file
+		print_liste_field_titre('');
 		print_liste_field_titre('', '', '');
 		print '</tr>';
 		$nboflinks = count($links);

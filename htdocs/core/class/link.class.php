@@ -70,6 +70,10 @@ class Link extends CommonObject
 	 */
 	public $objectid;
 
+	/**
+	 * @var string share hash
+	 */
+	public $share;
 
 	/**
 	 *    Constructor
@@ -249,7 +253,7 @@ class Link extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE objecttype = '".$this->db->escape($objecttype)."' AND objectid = ".((int) $objectid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".((int) $conf->entity);
@@ -276,6 +280,7 @@ class Link extends CommonObject
 					$link->label = $obj->label;
 					$link->objecttype = $obj->objecttype;
 					$link->objectid = $obj->objectid;
+					$link->share = $obj->share;
 					$links[] = $link;
 				}
 				return 1;
@@ -329,7 +334,7 @@ class Link extends CommonObject
 			$rowid = $this->id;
 		}
 
-		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM ".$this->db->prefix()."links";
+		$sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid, share FROM ".$this->db->prefix()."links";
 		$sql .= " WHERE rowid = ".((int) $rowid);
 		if ($conf->entity != 0) {
 			$sql .= " AND entity = ".$conf->entity;
@@ -348,6 +353,7 @@ class Link extends CommonObject
 				$this->label = $obj->label;
 				$this->objecttype = $obj->objecttype;
 				$this->objectid = $obj->objectid;
+				$this->share = $obj->share;
 				return 1;
 			} else {
 				return 0;
