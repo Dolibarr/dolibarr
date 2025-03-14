@@ -66,25 +66,46 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $reg = array();
 
-if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
-	$code = $reg[1];
-
-	// If constant is for a unique choice, delete other choices
-	if (in_array($code, array('STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE'))) {
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_BILL', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_VALIDATE_ORDER', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE', $conf->entity);
-	}
-	if (in_array($code, array('STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'))) {
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_BILL', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', $conf->entity);
-		dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', $conf->entity);
+if ($action == 'update' || preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
+	if ($action == 'update') {
+		$arrayofcode = array(
+			'STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE',
+			'STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER',
+			'STOCK_DISALLOW_NEGATIVE_TRANSFER',	'STOCK_MUST_BE_ENOUGH_FOR_INVOICE', 'STOCK_MUST_BE_ENOUGH_FOR_ORDER', 'STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT',
+			'STOCK_USE_REAL_STOCK_BY_DEFAULT_FOR_REPLENISHMENT'
+		);
+	} else {
+		$arrayofcode = array($reg[1]);
 	}
 
-	if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0) {
+	$result = 1;
+	foreach ($arrayofcode as $code) {
+		$value = 1;
+		if (GETPOSTISSET($code)) {	// For the case of nojs=1
+			$value = GETPOST($code);
+		}
+
+		if ($value == 1) {
+			if (in_array($code, array('STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE'))) {
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_BILL', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_VALIDATE_ORDER', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE', $conf->entity);
+			}
+			if (in_array($code, array('STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER'))) {
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_BILL', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', $conf->entity);
+				dolibarr_del_const($db, 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER', $conf->entity);
+			}
+		}
+
+		// If constant is for a unique choice, delete other choices
+		$result = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
+	}
+
+	if ($result) {
 		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
 		exit;
 	} else {
@@ -92,9 +113,21 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	}
 }
 
-if (preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
-	$code = $reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0) {
+if ($action == 'update' || preg_match('/del_([a-z0-9_\-]+)/i', $action, $reg)) {
+	if ($action == 'update') {
+		$arrayofcode = array(
+			'STOCK_CALCULATE_ON_BILL', 'STOCK_CALCULATE_ON_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_SHIPMENT', 'STOCK_CALCULATE_ON_SHIPMENT_CLOSE',
+			'STOCK_CALCULATE_ON_SUPPLIER_BILL', 'STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER', 'STOCK_CALCULATE_ON_RECEPTION', 'STOCK_CALCULATE_ON_RECEPTION_CLOSE', 'STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER',
+		);
+	} else {
+		$arrayofcode = array($reg[1]);
+	}
+
+	$result = 1;
+	foreach ($arrayofcode as $code) {
+		$result = dolibarr_del_const($db, $code, $conf->entity);
+	}
+	if ($result > 0) {
 		header("Location: ".$_SERVER["PHP_SELF"].($page_y ? '?page_y='.$page_y : ''));
 		exit;
 	} else {
@@ -222,7 +255,7 @@ print '<br>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="warehouse">';
+print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="page_y" value="">';
 
 // Title rule for stock decrease
@@ -325,6 +358,7 @@ $found++;
 
 print '</table>';
 print '</div>';
+
 
 print '<br>';
 
@@ -462,8 +496,8 @@ print '<td class="right">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STOCK_DISALLOW_NEGATIVE_TRANSFER', array(), null, 1);
 } else {
-	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_DISALLOW_NEGATIVE_TRANSFER", $arrval, getDolGlobalString('STOCK_DISALLOW_NEGATIVE_TRANSFER'));
+	$arrval = array('1' => $langs->trans("No"), '0' => $langs->trans("Yes"));
+	print $form->selectarray("STOCK_DISALLOW_NEGATIVE_TRANSFER", $arrval, getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER'));
 }
 print "</td>\n";
 print "</tr>\n";
@@ -552,13 +586,23 @@ if ($virtualdiffersfromphysical) {
 	print '<br>';
 }
 
-print '<form>';
+if (empty($conf->use_javascript_ajax)) {
+	print '<center>';
+	print '<input type="submit" class="button button-edit" value="'.$langs->trans("Save").'">';
+	print '<center>';
+	print '<br>';
+}
 
+print '</form>';
+
+
+
+print '<form>';
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="warehouse">';
-
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="page_y" value="">';
 
 /*
  * Document templates generators
@@ -714,6 +758,7 @@ print '</form>';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="action" value="warehouse">';
+print '<input type="hidden" name="page_y" value="">';
 
 print load_fiche_titre($langs->trans("Other"), '', '');
 
@@ -728,7 +773,7 @@ print '</tr>'."\n";
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MainDefaultWarehouse").'</td>';
 print '<td class="right">';
-print $formproduct->selectWarehouses(getDolGlobalString('MAIN_DEFAULT_WAREHOUSE') ? $conf->global->MAIN_DEFAULT_WAREHOUSE : -1, 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
+print $formproduct->selectWarehouses(getDolGlobalInt('MAIN_DEFAULT_WAREHOUSE', -1), 'default_warehouse', '', 1, 0, 0, '', 0, 0, array(), 'left reposition');
 print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans("Modify").'">';
 print "</td>";
 print "</tr>\n";
@@ -740,7 +785,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('MAIN_DEFAULT_WAREHOUSE_USER', array(), null, 0, 0, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, $conf->global->MAIN_DEFAULT_WAREHOUSE_USER);
+	print $form->selectarray("MAIN_DEFAULT_WAREHOUSE_USER", $arrval, getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER'));
 }
 print "</td>\n";
 print "</tr>\n";
@@ -753,7 +798,7 @@ if (getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
 		print ajax_constantonoff('STOCK_USERSTOCK_AUTOCREATE');
 	} else {
 		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_USERSTOCK_AUTOCREATE", $arrval, $conf->global->STOCK_USERSTOCK_AUTOCREATE);
+		print $form->selectarray("STOCK_USERSTOCK_AUTOCREATE", $arrval, getDolGlobalString('STOCK_USERSTOCK_AUTOCREATE'));
 	}
 	print "</td>\n";
 	print "</tr>\n";
@@ -766,7 +811,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('SOCIETE_ASK_FOR_WAREHOUSE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("SOCIETE_ASK_FOR_WAREHOUSE", $arrval, $conf->global->SOCIETE_ASK_FOR_WAREHOUSE);
+	print $form->selectarray("SOCIETE_ASK_FOR_WAREHOUSE", $arrval, getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE'));
 }
 print "</td>";
 print "</tr>\n";
@@ -778,7 +823,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL);
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL", $arrval, getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL'));
 }
 print "</td>";
 print "</tr>\n";
@@ -790,7 +835,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER);
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER", $arrval, getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER'));
 }
 print '</td>';
 print "</tr>\n";
@@ -803,7 +848,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT", $arrval, $conf->global->WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT);
+	print $form->selectarray("WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT", $arrval, getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROJECT'));
 }
 print '</td>';
 print "</tr>\n";
@@ -831,7 +876,7 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE", $arrval, $conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE);
+	print $form->selectarray("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE", $arrval, getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE'));
 }
 print "</td>\n";
 print "</tr>\n";
@@ -843,26 +888,10 @@ if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('STOCK_ALWAYS_SHOW_FULL_ARBO');
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_ALWAYS_SHOW_FULL_ARBO", $arrval, $conf->global->STOCK_ALWAYS_SHOW_FULL_ARBO);
+	print $form->selectarray("STOCK_ALWAYS_SHOW_FULL_ARBO", $arrval, getDolGlobalString('STOCK_ALWAYS_SHOW_FULL_ARBO'));
 }
 print "</td>\n";
 print "</tr>\n";
-
-/* Disabled. Would be better to be managed with a user cookie
-if (isModEnabled('productbatch')) {
-	print '<tr class="oddeven">';
-	print '<td>' . $langs->trans("ShowAllBatchByDefault") . '</td>';
-	print '<td class="right">';
-	if ($conf->use_javascript_ajax) {
-		print ajax_constantonoff('STOCK_SHOW_ALL_BATCH_BY_DEFAULT');
-	} else {
-		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-		print $form->selectarray("STOCK_SHOW_ALL_BATCH_BY_DEFAULT", $arrval, $conf->global->STOCK_SHOW_ALL_BATCH_BY_DEFAULT);
-	}
-	print "</td>\n";
-	print "</tr>\n";
-}
-*/
 
 print '</table>';
 print '</div>';
