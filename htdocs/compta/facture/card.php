@@ -3640,7 +3640,9 @@ if ($action == 'create') {
 			print $form->selectarray('typestandard', $arraylist, GETPOST('typestandard', 'aZ09'), 0, 0, 0, '', 1);
 			print '</td>';*/
 			print '<td class="nowrap" style="padding-left: 15px">';
-			print '<span class="opacitymedium">'.$langs->trans('PercentOfOriginalObject').'</span>:<input class="right" placeholder="100%" type="text" id="valuestandardinvoice" name="valuestandardinvoice" size="3" value="'.(GETPOSTISSET('valuestandardinvoice') ? GETPOST('valuestandardinvoice', 'alpha') : '100%').'"/>';
+			if (empty(getDolGlobalInt('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES'))) {
+				print '<span class="opacitymedium">' . $langs->trans('PercentOfOriginalObject') . '</span>:<input class="right" placeholder="100%" type="text" id="valuestandardinvoice" name="valuestandardinvoice" size="3" value="' . (GETPOSTISSET('valuestandardinvoice') ? GETPOST('valuestandardinvoice', 'alpha') : '100%') . '"/>';
+			}
 			print '</td>';
 		}
 		print '</tr></table>';
@@ -3693,11 +3695,18 @@ if ($action == 'create') {
 				print '</td>';
 				if (($origin == 'propal') || ($origin == 'commande')) {
 					print '<td class="nowrap" style="padding-left: 15px">';
-					$arraylist = array(
-						'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
-						'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
-						'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
-					);
+					if (empty(getDolGlobalInt('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES'))) {
+						$arraylist = array(
+							'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
+							'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
+							'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
+						);
+					} else {
+						$arraylist = array(
+							'variablealllines' => $langs->transnoentitiesnoconv('VarAmountAllLines')
+						);
+					}
+
 					$typedeposit = GETPOST('typedeposit', 'aZ09');
 					$valuedeposit = GETPOSTINT('valuedeposit');
 					if (empty($typedeposit) && !empty($objectsrc->deposit_percent)) {

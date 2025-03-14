@@ -866,6 +866,13 @@ print '<td class="left" colspan="2">';
 print ajax_constantonoff('INVOICE_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td></tr>';
 
+// Consistency of Deposit Invoice
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("LimitDepositInvoicePossibilityForConsistency").'</td>';
+print '<td class="left" colspan="2">';
+print ajax_constantonoff('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td></tr>';
+
 print '</table>';
 print '</div>';
 
