@@ -6841,23 +6841,18 @@ abstract class CommonObject
 
 								$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
 								if (is_numeric($value)) {
-									$sqlFetchObject .= " WHERE rowid = " . $value;
+									$sqlFetchObject .= " WHERE rowid = " . (int) $value;
 								} else {
-									$sqlFetchObject .= " WHERE ref = '" . $value . "'";
+									$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
 								}
 
-								$resql = $this->db->query($sqlFetchObject);
-								if ($resql) {
-									if ($this->db->num_rows($resql) === 1) {
-										$obj = $this->db->fetch_object($resql);
-										$objectId = $obj->rowid;
-										$res = 1;
-									} else {
-										$res = -1;
-									}
+								$obj = $this->db->getRow($sqlFetchObject);
+
+								if ($obj !== false) {
+									$objectId = $obj->rowid;
+									$res = 1;
 								} else {
-									$this->error = 'SQL Query error : ' . $this->db->lasterror();
-									return -1;
+									$res = -1;
 								}
 
 								if ($res > 0) {
