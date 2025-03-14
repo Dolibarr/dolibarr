@@ -872,7 +872,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 															$batch_sort_field_arr[] = 'pl.rowid'; // order by rowid
 															$batch_sort_order_arr[] = 'ASC';
 															$product_batch = new Productbatch($db);
-															$product_batch_result = $product_batch->findAllForProduct($child_product_id, $line_obj->fk_warehouse, (getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER') ? null : 0), implode(',', $batch_sort_field_arr), implode(',', $batch_sort_order_arr));
+															$product_batch_result = $product_batch->findAllForProduct($child_product_id, $line_obj->fk_warehouse, (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') ? 0 : null), implode(',', $batch_sort_field_arr), implode(',', $batch_sort_order_arr));
 															if (is_array($product_batch_result)) {
 																foreach ($product_batch_result as $batch_current) {
 																	$batch_current->eatby = dol_print_date($batch_current->eatby, 'day');
