@@ -1597,9 +1597,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			'fontWeight' => 'B', 
 			'fontSize' => $default_font_size - 1, 
 			'values' => array(
-				'NewCumul' => price($travaux_total), 
-				'PrevCumul' => price($travaux_cum_total), 
-				'Situation' => price($travaux_total - $travaux_cum_total), 
+				'NewCumul' => price(round($travaux_total, 2)), 
+				'PrevCumul' => price(round($travaux_cum_total, 2)), 
+				'Situation' => price(round($travaux_total - $travaux_cum_total, 2)), 
 			), 
 		);
 
@@ -1621,9 +1621,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				'fontWeight' => '', 
 				'fontSize' => $default_font_size - 1, 
 				'values' => array(
-					'NewCumul' => price($total), 
-					'PrevCumul' => price($prev_cum_price), 
-					'Situation' => price($total - $prev_cum_price), 
+					'NewCumul' => price(round($total, 2)), 
+					'PrevCumul' => price(round($prev_cum_price, 2)), 
+					'Situation' => price(round($total - $prev_cum_price, 2)), 
 				), 
 			);
 		}
@@ -1638,9 +1638,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				'fontWeight' => 'B', 
 				'fontSize' => $default_font_size - 1, 
 				'values' => array(
-					'NewCumul' => price($nouveau_cumul), 
-					'PrevCumul' => price($cumul_anterieur_ht), 
-					'Situation' => price($object->total_ht), 
+					'NewCumul' => price(round($nouveau_cumul, 2)), 
+					'PrevCumul' => price(round($cumul_anterieur_ht, 2)), 
+					'Situation' => price(round($object->total_ht, 2)), 
 				), 
 			);
 
@@ -1657,9 +1657,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 					'fontWeight' => '', 
 					'fontSize' => $default_font_size - 1, 
 					'values' => array(
-						'NewCumul' => price($tvaval), 
-						'PrevCumul' => price($prev_cumul_vat), 
-						'Situation' => price($marginal_vat), 
+						'NewCumul' => price(round($tvaval, 2)), 
+						'PrevCumul' => price(round($prev_cumul_vat, 2)), 
+						'Situation' => price(round($marginal_vat, 2)), 
 					), 
 				);
 			}
@@ -1673,9 +1673,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				'fontWeight' => 'B', 
 				'fontSize' => $default_font_size - 1, 
 				'values' => array(
-					'NewCumul' => price($nouveau_cumul + array_sum($nouveau_cumul_tva)), 
-					'PrevCumul' => price($cumul_anterieur_ht + array_sum($cumul_anterieur_tva)), 
-					'Situation' => price($object->total_ht + $object->total_tva), 
+					'NewCumul' => price(round($nouveau_cumul + array_sum($nouveau_cumul_tva), 2)), 
+					'PrevCumul' => price(round($cumul_anterieur_ht + array_sum($cumul_anterieur_tva), 2)), 
+					'Situation' => price(round($object->total_ht + $object->total_tva, 2)), 
 				), 
 			);
 		$recap_lines[] = array(
@@ -1687,9 +1687,9 @@ class pdf_couffignal_situation extends ModelePDFFactures
 				'fontWeight' => 'B', 
 				'fontSize' => $default_font_size - 1, 
 				'values' => array(
-					'NewCumul' => price($nouveau_cumul + array_sum($nouveau_cumul_tva)), 
-					'PrevCumul' => price($cumul_anterieur_ht + array_sum($cumul_anterieur_tva)), 
-					'Situation' => price($object->total_ht + $object->total_tva), 
+					'NewCumul' => price(round($nouveau_cumul + array_sum($nouveau_cumul_tva), 2)), 
+					'PrevCumul' => price(round($cumul_anterieur_ht + array_sum($cumul_anterieur_tva), 2)), 
+					'Situation' => price(round($object->total_ht + $object->total_tva, 2)), 
 				), 
 			);
 		$recap_lines[] = array(
