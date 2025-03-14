@@ -460,10 +460,10 @@ print '<tr class="oddeven">';
 print '<td>'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
 print '<td class="right">';
 if ($conf->use_javascript_ajax) {
-	print ajax_constantonoff('STOCK_ALLOW_NEGATIVE_TRANSFER');
+	print ajax_constantonoff('STOCK_DISALLOW_NEGATIVE_TRANSFER', array(), null, 1);
 } else {
 	$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-	print $form->selectarray("STOCK_ALLOW_NEGATIVE_TRANSFER", $arrval, getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER'));
+	print $form->selectarray("STOCK_DISALLOW_NEGATIVE_TRANSFER", $arrval, getDolGlobalString('STOCK_DISALLOW_NEGATIVE_TRANSFER'));
 }
 print "</td>\n";
 print "</tr>\n";
