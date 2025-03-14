@@ -515,11 +515,11 @@ class Adherent extends CommonObject
 
 		// Send email (substitutionarray must be done just before this)
 		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-		$mailfile = new CMailFile($subjecttosend, $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, '', '', $trackid, $moreinheader);
+		$mailfile = new CMailFile($subjecttosend, (string) $this->email, $from, $texttosend, $filename_list, $mimetype_list, $mimefilename_list, $addr_cc, $addr_bcc, $deliveryreceipt, $msgishtml, '', '', $trackid, $moreinheader);
 		if ($mailfile->sendfile()) {
 			return 1;
 		} else {
-			$this->error = $langs->trans("ErrorFailedToSendMail", $from, $this->email).'. '.$mailfile->error;
+			$this->error = $langs->trans("ErrorFailedToSendMail", $from, (string) $this->email).'. '.$mailfile->error;
 			return -1;
 		}
 	}
@@ -576,12 +576,12 @@ class Adherent extends CommonObject
 			'__FIRSTNAME__' => $msgishtml ? dol_htmlentitiesbr($this->firstname) : ($this->firstname ? $this->firstname : ''),
 			'__LASTNAME__' => $msgishtml ? dol_htmlentitiesbr($this->lastname) : ($this->lastname ? $this->lastname : ''),
 			'__FULLNAME__' => $msgishtml ? dol_htmlentitiesbr($this->getFullName($langs)) : $this->getFullName($langs),
-			'__COMPANY__' => $msgishtml ? dol_htmlentitiesbr($this->company) : ($this->company ? $this->company : ''),
-			'__ADDRESS__' => $msgishtml ? dol_htmlentitiesbr($this->address) : ($this->address ? $this->address : ''),
-			'__ZIP__' => $msgishtml ? dol_htmlentitiesbr($this->zip) : ($this->zip ? $this->zip : ''),
-			'__TOWN__' => $msgishtml ? dol_htmlentitiesbr($this->town) : ($this->town ? $this->town : ''),
+			'__COMPANY__' => $msgishtml ? dol_htmlentitiesbr((string) $this->company) : ($this->company ? $this->company : ''),
+			'__ADDRESS__' => $msgishtml ? dol_htmlentitiesbr((string) $this->address) : ($this->address ? $this->address : ''),
+			'__ZIP__' => $msgishtml ? dol_htmlentitiesbr((string) $this->zip) : ($this->zip ? $this->zip : ''),
+			'__TOWN__' => $msgishtml ? dol_htmlentitiesbr((string) $this->town) : ($this->town ? $this->town : ''),
 			'__COUNTRY__' => $msgishtml ? dol_htmlentitiesbr($this->country) : ($this->country ? $this->country : ''),
-			'__EMAIL__' => $msgishtml ? dol_htmlentitiesbr($this->email) : ($this->email ? $this->email : ''),
+			'__EMAIL__' => $msgishtml ? dol_htmlentitiesbr((string) $this->email) : ($this->email ? $this->email : ''),
 			'__BIRTH__' => $msgishtml ? dol_htmlentitiesbr($birthday) : ($birthday ? $birthday : ''),
 			'__PHOTO__' => $msgishtml ? dol_htmlentitiesbr($this->photo) : ($this->photo ? $this->photo : ''),
 			'__LOGIN__' => $msgishtml ? dol_htmlentitiesbr($this->login) : ($this->login ? $this->login : ''),
@@ -670,7 +670,7 @@ class Adherent extends CommonObject
 		}
 
 		// Check parameters
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail((string) $this->email)) {
 			$langs->load("errors");
 			$this->error = $langs->trans("ErrorBadEMail", $this->email);
 			return -1;
@@ -824,9 +824,9 @@ class Adherent extends CommonObject
 		$this->url = $this->url ? clean_url($this->url, 0) : '';
 		$this->setUpperOrLowerCase();
 		// Check parameters
-		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail($this->email)) {
+		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail((string) $this->email)) {
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorBadEMail", $this->email);
+			$this->error = $langs->trans("ErrorBadEMail", (string) $this->email);
 			return -1;
 		}
 
@@ -848,7 +848,7 @@ class Adherent extends CommonObject
 		$sql .= ", town = ".($this->town ? "'".$this->db->escape($this->town)."'" : "null");
 		$sql .= ", country = ".($this->country_id > 0 ? (int) $this->country_id : "null");
 		$sql .= ", state_id = ".($this->state_id > 0 ? (int) $this->state_id : "null");
-		$sql .= ", email = '".$this->db->escape($this->email)."'";
+		$sql .= ", email = '".$this->db->escape((string) $this->email)."'";
 		$sql .= ", url = ".(!empty($this->url) ? "'".$this->db->escape($this->url)."'" : "null");
 		$sql .= ", socialnetworks = ".($this->socialnetworks ? "'".$this->db->escape(json_encode($this->socialnetworks))."'" : "null");
 		$sql .= ", phone = ".($this->phone ? "'".$this->db->escape($this->phone)."'" : "null");
@@ -1851,7 +1851,7 @@ class Adherent extends CommonObject
 							}
 						}
 
-						$result = $customer->create_from_member($this, $companyname, $companyalias);
+						$result = $customer->create_from_member($this, (string) $companyname, $companyalias);
 						if ($result < 0) {
 							$this->error = $customer->error;
 							$this->errors = $customer->errors;

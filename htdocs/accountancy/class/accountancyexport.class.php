@@ -14,7 +14,7 @@
  * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
  * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
  * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1076,7 +1076,7 @@ class AccountancyExport
 					$attachmentFileName = $archiveFileList[$attachmentFileKey]['name'];
 				}
 			}
-			if (dol_strlen($attachmentFileName) == 12) {
+			if (dol_strlen((string) $attachmentFileName) == 12) {
 				$tab['attachment'] = $attachmentFileName; // position 182
 			} else {
 				$tab['attachment'] = str_repeat(' ', 12); // position 182
@@ -1134,7 +1134,7 @@ class AccountancyExport
 
 			$tab['jour_ecriture'] = dol_print_date($line->doc_date, '%d%m%y');
 
-			$tab['num_compte'] = str_pad(dol_trunc($code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
+			$tab['num_compte'] = str_pad(dol_trunc((string) $code_compta, 6, 'right', 'UTF-8', 1), 6, '0');
 
 			if ($line->sens == 'D') {
 				$tab['montant_debit']  = str_pad(number_format($line->debit, 2, ',', ''), 13, ' ', STR_PAD_LEFT);
@@ -1148,7 +1148,7 @@ class AccountancyExport
 
 			$tab['libelle_ecriture'] = str_pad(dol_trunc(dol_string_unaccent($line->doc_ref).' '.dol_string_unaccent($line->label_operation), 30, 'right', 'UTF-8', 1), 30);
 
-			$tab['lettrage'] = str_repeat(dol_trunc($line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
+			$tab['lettrage'] = str_repeat(dol_trunc((string) $line->lettering_code, 2, 'left', 'UTF-8', 1), 2);
 
 			$tab['code_piece'] = str_pad(dol_trunc((string) $line->piece_num, 5, 'left', 'UTF-8', 1), 5, ' ', STR_PAD_LEFT);
 
@@ -2415,7 +2415,7 @@ class AccountancyExport
 			} else {
 				$account = $line->numero_compte;
 			}
-			$tab[] = self::trunc($account, 15); //Account number
+			$tab[] = self::trunc((string) $account, 15); //Account number
 
 			$tab[] = self::trunc($line->label_compte, 60); //Account label
 			$tab[] = self::trunc($line->doc_ref, 20); //Piece
@@ -2598,14 +2598,14 @@ class AccountancyExport
 	}
 
 	/**
-	* Export format : iSuite Expert
-	*
-	* by OpenSolus [https://opensolus.fr]
-	*
+	 * Export format : iSuite Expert
+	 *
+	 * by OpenSolus [https://opensolus.fr]
+	 *
 	 * @param 	BookKeepingLine[]	$objectLines 	data
 	 * @param	?resource			$exportFile		[=null] File resource to export or print if null
 	 * @return 	void
-	*/
+	 */
 	public function exportiSuiteExpert($objectLines, $exportFile = null)
 	{
 		$separator = ';';
