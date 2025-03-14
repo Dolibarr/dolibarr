@@ -361,7 +361,7 @@ class pdf_espadon extends ModelePdfExpedition
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
@@ -391,7 +391,7 @@ class pdf_espadon extends ModelePdfExpedition
 
 						$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 						complete_substitutions_array($substitutionarray, $outputlangs, $object);
-						$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+						$notetoshow = make_substitutions((string) $notetoshow, $substitutionarray, $outputlangs);
 						$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
 
 						$pdf->startTransaction();
@@ -700,7 +700,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					if ($this->getColumnStatus('qty_asked')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_asked', $object->lines[$i]->qty_asked);
+						$this->printStdColumnContent($pdf, $curY, 'qty_asked', (string) $object->lines[$i]->qty_asked);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -710,7 +710,7 @@ class pdf_espadon extends ModelePdfExpedition
 					}
 
 					if ($this->getColumnStatus('qty_shipped')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
+						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', (string) $object->lines[$i]->qty_shipped);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
@@ -926,7 +926,7 @@ class pdf_espadon extends ModelePdfExpedition
 		}
 
 		if ($this->getColumnStatus('qty_asked') && $totalOrdered) {
-			$this->printStdColumnContent($pdf, $tab2_top, 'qty_asked', $totalOrdered);
+			$this->printStdColumnContent($pdf, $tab2_top, 'qty_asked', (string) $totalOrdered);
 		}
 
 		if ($this->getColumnStatus('qty_shipped') && $totalToShip) {

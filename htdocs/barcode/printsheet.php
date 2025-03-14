@@ -2,7 +2,7 @@
 /* Copyright (C) 2003	   Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003	   Jean-Louis Bergamo	<jlb@j1b.org>
  * Copyright (C) 2006-2017 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -296,7 +296,7 @@ if (empty($reshook)) {
 					// This generates and send PDF to output
 					// TODO Move
 					try {
-						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
+						$result = doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, (string) $diroutput, (string) $template, dol_sanitizeFileName($outfile));
 					} catch (Exception $e) {
 						$mesg = $langs->trans('ErrorGeneratingBarcode');
 					}
