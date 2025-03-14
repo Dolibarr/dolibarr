@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ function dolSessionRead($sess_id)
  */
 function dolSessionWrite($sess_id, $val)
 {
-	global $dbsession;
+	global $dbsession, $user;
 	global $sessionlastvalueread;
 	global $sessionidfound;
 
@@ -170,6 +170,7 @@ function dolSessionWrite($sess_id, $val)
 			$update_query = "UPDATE ".MAIN_DB_PREFIX."session";
 			$update_query .= " SET session_variable = '".$dbsession->escape($val)."',";
 			$update_query .= " last_accessed = '".$dbsession->idate($time_stamp)."',";
+			$update_query .= " fk_user = ".(int) $user->id.",";
 			$update_query .= " remote_ip = '".$dbsession->escape(getUserRemoteIP())."',";
 			$update_query .= " user_agent = '".$dbsession->escape($_SERVER['HTTP_USER_AGENT'])."'";
 			$update_query .= " WHERE session_id = '".$dbsession->escape($sess_id)."'";

@@ -103,6 +103,8 @@ class SupplierInvoices extends DolibarrApi
 	 * @param string    $properties		  Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data  If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array                      Array of invoice objects
+	 * @phan-return FactureFournisseur[]|array{data:FactureFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return FactureFournisseur[]|array{data:FactureFournisseur[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
@@ -406,6 +408,8 @@ class SupplierInvoices extends DolibarrApi
 	 * @url     GET {id}/payments
 	 *
 	 * @return array
+	 * @phan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
+	 * @phpstan-return array<array{amount:int|float,date:int,num:string,ref:string,ref_ext?:string,fk_bank_line?:int,type:string}>
 	 * @throws RestException 400
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -548,6 +552,8 @@ class SupplierInvoices extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return CommonInvoiceLine[]
+	 * @phpstan-return CommonInvoiceLine[]
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -629,7 +635,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->price_base_type ? $request_data->price_base_type : 'HT',
 			$request_data->product_type,
 			$request_data->rang,
-			false,
+			0,
 			$request_data->array_options,
 			$request_data->fk_unit,
 			$request_data->origin_id,
@@ -695,7 +701,7 @@ class SupplierInvoices extends DolibarrApi
 			$request_data->info_bits,
 			$request_data->product_type,
 			$request_data->remise_percent,
-			false,
+			0,
 			$request_data->date_start,
 			$request_data->date_end,
 			$request_data->array_options,

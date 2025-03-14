@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 class Proposals extends DolibarrApi
 {
 	/**
-	 * @var array       Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid'
@@ -162,6 +162,8 @@ class Proposals extends DolibarrApi
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @return  array                       Array of order objects
+	 * @phan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
@@ -315,6 +317,8 @@ class Proposals extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return PropaleLigne[]
+	 * @phpstan-return PropaleLigne[]
 	 */
 	public function getLines($id, $sqlfilters = '')
 	{
@@ -620,6 +624,8 @@ class Proposals extends DolibarrApi
 	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
 	 * @param string $source         Source of the contact (internal, external)
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *

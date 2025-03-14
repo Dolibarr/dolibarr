@@ -19,7 +19,7 @@ WARNING:
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
 * The directory /build has been moved into /dev/build.
 * The use of GETPOST function is not allowed inside extrafields conditions or any strings that contains dynamic code evaluated with dol_eval()
-
+* The deprecated variable $trigger_name (duplicate of variable $triggersendname) has been removed. You must use $triggersendname everywhere now.
 
 
 ***** ChangeLog for 21.0.0 compared to 20.0 *****

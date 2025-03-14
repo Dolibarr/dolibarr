@@ -37,7 +37,7 @@ class AgendaEvents extends DolibarrApi
 	);
 
 	/**
-	 * @var ActionComm {@type ActionComm}
+	 * @var ActionComm {@type ActionActionCom}
 	 */
 	public $actioncomm;
 
@@ -104,6 +104,8 @@ class AgendaEvents extends DolibarrApi
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array						Array of order objects
+	 * @phan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return ActionComm[]|array{data:ActionComm[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
 	public function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -197,7 +199,7 @@ class AgendaEvents extends DolibarrApi
 			$obj_ret['pagination'] = [
 				'total' => (int) $total,
 				'page' => $page, //count starts from 0
-				'page_count' => ceil((int) $total / $limit),
+				'page_count' => (int) ceil((int) $total / $limit),
 				'limit' => $limit
 			];
 		}
@@ -272,7 +274,7 @@ class AgendaEvents extends DolibarrApi
 		if ($result) {
 			$this->actioncomm->fetch_optionals();
 			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;
+			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 		}
 		if (!$result) {
 			throw new RestException(404, 'actioncomm not found');
@@ -326,7 +328,7 @@ class AgendaEvents extends DolibarrApi
 		if ($result) {
 			$this->actioncomm->fetch_optionals();
 			$this->actioncomm->fetch_userassigned();
-			$this->actioncomm->oldcopy = clone $this->actioncomm;
+			$this->actioncomm->oldcopy = clone $this->actioncomm;  // @phan-suppress-current-line PhanTypeMismatchProperty
 		}
 
 		if (!DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'delete') && DolibarrApiAccess::$user->id != $this->actioncomm->userownerid) {

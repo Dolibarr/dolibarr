@@ -1617,7 +1617,7 @@ abstract class CommonInvoice extends CommonObject
 												$extraparams .= (($extraparams && $stripefailuredeclinecode) ? ' - ' : '') . $stripefailuredeclinecode;
 											} else {
 												$actioncode = 'PAYMENT_STRIPE_OK';
-												$extraparams = '';
+												$extraparams = array();
 											}
 										} else {
 											$error++;
@@ -1635,7 +1635,7 @@ abstract class CommonInvoice extends CommonObject
 											$object = $this;
 
 											$actioncode = 'PAYMENT_STRIPE_KO';
-											$extraparams = '';
+											$extraparams = array();
 										}
 									} else {
 										// If error because payment was canceled for a logical reason, we do nothing (no event added)
@@ -1646,7 +1646,7 @@ abstract class CommonInvoice extends CommonObject
 										$object = $this;
 
 										$actioncode = '';
-										$extraparams = '';
+										$extraparams = array();
 									}
 								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
 									if ($resultthirdparty <= 0) {
@@ -1669,7 +1669,7 @@ abstract class CommonInvoice extends CommonObject
 									$object = $this;
 
 									$actioncode = 'PAYMENT_STRIPE_KO';
-									$extraparams = '';
+									$extraparams = array();
 								}
 
 								if ($description) {
@@ -1701,8 +1701,9 @@ abstract class CommonInvoice extends CommonObject
 									 $actioncomm->email_subject = $object->email_subject;
 									 $actioncomm->errors_to   = $object->errors_to;*/
 									$actioncomm->fk_element = $this->id;
+									$actioncomm->elementid = $this->id;
 									$actioncomm->elementtype = $this->element;
-									$actioncomm->extraparams = dol_trunc($extraparams, 250);
+									$actioncomm->extraparams = $extraparams;		// Can be null, empty string or array()
 
 									$actioncomm->create($user);
 								}

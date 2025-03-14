@@ -69,7 +69,9 @@ class Categories extends DolibarrApi
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
-	 * @return	array|mixed data without useless information
+	 * @return	array   Data without useless information
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
 	 *
 	 * @throws	RestException
 	 */
@@ -115,6 +117,8 @@ class Categories extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
+	 * @phan-return Categorie[]
+	 * @phpstan-return Categorie[]
 	 *
 	 * @throws RestException
 	 */
@@ -217,6 +221,8 @@ class Categories extends DolibarrApi
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -306,6 +312,8 @@ class Categories extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @return array                Array of category objects
+	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 *
 	 * @throws RestException
 	 *
@@ -360,6 +368,8 @@ class Categories extends DolibarrApi
 	 * @param int      $object_id ID of object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url POST {id}/objects/{type}/{object_id}
@@ -441,6 +451,8 @@ class Categories extends DolibarrApi
 	 * @param string   $object_ref Reference of object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url POST {id}/objects/{type}/ref/{object_ref}
@@ -522,6 +534,8 @@ class Categories extends DolibarrApi
 	 * @param int      $object_id ID of the object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url DELETE {id}/objects/{type}/{object_id}
@@ -601,6 +615,8 @@ class Categories extends DolibarrApi
 	 * @param string   $object_ref Reference of the object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url DELETE {id}/objects/{type}/ref/{object_ref}

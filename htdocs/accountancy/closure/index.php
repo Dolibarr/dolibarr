@@ -2,6 +2,7 @@
 /* Copyright (C) 2019-2023  Open-DSI    	    		<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,8 +155,8 @@ if (empty($reshook)) {
 			}
 		} elseif ($action == 'confirm_step_2' && $confirm == "yes" && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			$new_fiscal_period_id = GETPOSTINT('new_fiscal_period_id');
-			$separate_auxiliary_account = GETPOST('separate_auxiliary_account', 'aZ09');
-			$generate_bookkeeping_records = GETPOST('generate_bookkeeping_records', 'aZ09');
+			$separate_auxiliary_account = GETPOSTINT('separate_auxiliary_account');
+			$generate_bookkeeping_records = GETPOSTINT('generate_bookkeeping_records');
 
 			$error = 0;
 			if ($generate_bookkeeping_records) {
@@ -169,7 +170,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, $separate_auxiliary_account, $generate_bookkeeping_records);
+				$result = $object->closeFiscalPeriod($current_fiscal_period['id'], $new_fiscal_period_id, (bool) $separate_auxiliary_account, (bool) $generate_bookkeeping_records);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
@@ -362,7 +363,7 @@ if (empty($current_fiscal_period)) {
 
 		print '<span class="opacitymedium">' . $langs->trans("AccountancyClosureStep1Desc") . '</span><br>';
 
-		$count_by_month = $object->getCountByMonthForFiscalPeriod($current_fiscal_period['date_start'], $current_fiscal_period['date_end']);
+		$count_by_month = $object->getCountByMonthForFiscalPeriod((int) $current_fiscal_period['date_start'], (int) $current_fiscal_period['date_end']);
 
 		if (!is_array($count_by_month)) {
 			setEventMessages($object->error, $object->errors, 'errors');

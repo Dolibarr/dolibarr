@@ -110,6 +110,20 @@ class ExternalModules
 	 */
 	public $products;
 
+	/**
+	 * @var int Total number of products
+	 */
+	public $numberTotalOfProducts;
+
+	/**
+	 * @var int Total number of pages
+	 */
+	public $numberTotalOfPages;
+
+	/**
+	 * @var int Number of products displayed on the page.
+	 */
+	public $numberOfProducts;
 
 	/**
 	 * Constructor
@@ -120,14 +134,13 @@ class ExternalModules
 	{
 		global $langs;
 
-		$this->dolistore_api_url = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV');
-		$this->dolistore_api_key = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY');
-
-		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
-		$this->shop_url  = 'https://www.dolistore.com/product.php?id=';
+		$this->dolistore_api_url = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_SRV', 'https://admin2.dolibarr.org/api/index.php/marketplace');
+		$this->dolistore_api_key = getDolGlobalString('MAIN_MODULE_DOLISTORE_API_KEY', 'dolistorepublicapi');
+		$this->shop_url  = getDolGlobalString('MAIN_MODULE_DOLISTORE_SHOP_URL', 'https://www.dolistore.com');
 
 		$this->debug_api = $debug;
 
+		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->file_source_url = "https://raw.githubusercontent.com/Dolibarr/dolibarr-community-modules/refs/heads/main/index.yaml";
 		$this->cache_file = DOL_DATA_ROOT.'/admin/temp/remote_github_modules_file.yaml';
 
@@ -147,15 +160,19 @@ class ExternalModules
 	 */
 	public function loadRemoteSources($debug = false)
 	{
-		$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
+		// Check access to Community repo
+		if (getDolGlobalString('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+			$cachedelayforgithubrepo = getDolGlobalInt('MAIN_REMOTE_GITHUBREPO_CACHE_DELAY', 86400);
 
-		$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
+			$this->getRemoteYamlFile($this->file_source_url, $cachedelayforgithubrepo);
 
+			$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
+		}
 
 		// Check access to Dolistore API
-		$this->dolistoreApiStatus = $this->checkApiStatus();
-
-		$this->githubFileStatus = dol_is_file($this->cache_file) ? 1 : 0;
+		if (getDolGlobalString('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
+			$this->dolistoreApiStatus = $this->checkApiStatus();
+		}
 
 		// Count the number of online providers
 		$this->numberOfProviders = $this->dolistoreApiStatus + $this->githubFileStatus;
@@ -166,14 +183,14 @@ class ExternalModules
 	 *
 	 * @param string 						$resource Resource name
 	 * @param array<string, mixed>|false 	$options Options for the request
-	 * @return array{status_code:int,response:null|string|array<string,mixed>,header:string}
+	 * @return array{status_code:int,response:null|string|array<string,mixed>}
 	 */
 	public function callApi($resource, $options = false)
 	{
 
 		// If no dolistore_api_key is set, we can't access the API
 		if (empty($this->dolistore_api_key) || empty($this->dolistore_api_url)) {
-			return array('status_code' => 0, 'response' => null, 'header' => '');
+			return array('status_code' => 0, 'response' => null);
 		}
 
 		// Add basic auth if needed
@@ -187,16 +204,22 @@ class ExternalModules
 
 		$url = $this->dolistore_api_url . (preg_match('/\/$/', $this->dolistore_api_url) ? '' : '/') . $resource;
 
+		$options['apikey'] = $this->dolistore_api_key;
+
 		if ($options) {
 			$url .= '?' . http_build_query($options);
 		}
 
-		$response = getURLContent($url, 'POST', '', 1, $httpheader);
-
-		$body = $response['content'];
-		$body = json_decode($body, true);
+		$url .= (preg_match('/\?/', $url) ? '&' : '?').'apikey='.$this->dolistore_api_key;
+		$response = getURLContent($url, 'GET', '', 1, $httpheader);
 
 		$status_code = $response['http_code'];
+		$body = 'Error';
+
+		if ($status_code == 200) {
+			$body = $response['content'];
+			$body = json_decode($body, true);
+		}
 
 		return array('status_code' => $status_code, 'response' => $body);
 	}
@@ -227,10 +250,11 @@ class ExternalModules
 
 	/**
 	 * Generate HTML for categories and their children.
+	 * @param int $active The active category id
 	 *
 	 * @return string HTML string representing the categories and their children.
 	 */
-	public function getCategories()
+	public function getCategories($active = 0)
 	{
 		$organized_tree = array();
 		$html = '';
@@ -238,6 +262,8 @@ class ExternalModules
 		$data = [
 			'lang' => $this->lang
 		];
+
+		$current = $active;
 
 		$resCategories = $this->callApi('categories', $data);
 		if (isset($resCategories['response']) && is_array($resCategories['response'])) {
@@ -249,13 +275,13 @@ class ExternalModules
 		$html = '';
 		foreach ($organized_tree as $key => $value) {
 			if ($value['label'] != "Versions" && $value['label'] != "Specials") {
-				$html .= '<li>';
+				$html .= '<li' . ($current == $value['rowid'] ? ' class="active"' : '') . '>';
 				$html .= '<a href="?mode=marketplace&categorie=' . $value['rowid'] . '">' . $value['label'] . '</a>';
 				if (isset($value['children'])) {
 					$html .= '<ul>';
 					usort($value['children'], $this->buildSorter('position'));
 					foreach ($value['children'] as $key_children => $value_children) {
-						$html .= '<li>';
+						$html .= '<li' . ($current == $value_children['rowid'] ? ' class="active"' : '') . '>';
 						$html .= '<a href="?mode=marketplace&categorie=' . $value_children['rowid'] . '" title="' . dol_escape_htmltag(strip_tags($value_children['description'])) . '">' . $value_children['label'] . '</a>';
 						$html .= '</li>';
 					}
@@ -274,12 +300,11 @@ class ExternalModules
 	 */
 	public function getProducts($options)
 	{
-
 		global $langs;
 
 		$html       = "";
 		$last_month = dol_now() - (30 * 24 * 60 * 60);
-		$dolibarrversiontouse = DOL_VERSION;
+		$dolibarrversiontouse = DOL_VERSION;	// full string with version
 
 		$this->products = array();
 
@@ -287,6 +312,18 @@ class ExternalModules
 		$this->per_page  = $options['per_page'] ?? 11;
 		$this->no_page  = $options['no_page'] ?? 1;
 		$this->search    = $options['search'] ?? '';
+
+		$this->per_page = 11;	// We fix number of products per page to 11
+
+		// Length of $search must be at least 2 characters
+		if (!empty($this->search) && strlen(str_replace(' ', '', (string) $this->search)) < 2) {
+			$html .= '<tr class=""><td colspan="3" class="center">';
+			$html .= '<br><br>';
+			$html .= $langs->trans("SearchStringMinLength").'...';
+			$html .= '<br><br>';
+			$html .= '</td></tr>';
+			return $html;
+		}
 
 		$data = [
 			'categorieid' 	=> $this->categorie,
@@ -298,22 +335,40 @@ class ExternalModules
 
 		// Fetch the products from Dolistore source
 		$dolistoreProducts = array();
-		if ($this->dolistoreApiStatus > 0 && $options['search_source_dolistore'] == 1) {
+		$dolistoreProductsTotal = 0;
+		$this->numberTotalOfProducts = 0;
+		if ($this->dolistoreApiStatus > 0 && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
 			$getDolistoreProducts = $this->callApi('products', $data);
+
 			if (!isset($getDolistoreProducts['response']) || !is_array($getDolistoreProducts['response']) || ($getDolistoreProducts['status_code'] != 200 && $getDolistoreProducts['status_code'] != 201)) {
 				$dolistoreProducts = array();
+				$dolistoreProductsTotal = 0;
 			} else {
-				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response'], 'dolistore');
+				$dolistoreProducts = $this->adaptData($getDolistoreProducts['response']['products'], 'dolistore');
+				$dolistoreProductsTotal = $getDolistoreProducts['response']['total'];
+				$this->numberTotalOfProducts += $dolistoreProductsTotal;
 			}
 		}
 
 		// fetch from github repo
 		$fileProducts = array();
-		if (!empty($this->githubFileStatus) && $options['search_source_github'] == 1) {
+		$fileProductsTotal = 0;
+		if (!empty($this->githubFileStatus) && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
 			$fileProducts = $this->fetchModulesFromFile($data);			// Return an array with all modules from the cache filecontent in $data
+
 			$fileProducts = $this->adaptData($fileProducts, 'githubcommunity');
+
 			$fileProducts = $this->applyFilters($fileProducts, $data);
+
+			$fileProductsTotal = $fileProducts['total'];
+
+			$this->numberTotalOfProducts += $fileProductsTotal;
+
+			$fileProducts = $fileProducts['data'];
 		}
+
+		// Number of pages
+		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
 		// merge both sources
 		$this->products = array_values(array_merge($dolistoreProducts, $fileProducts));
@@ -359,7 +414,7 @@ class ExternalModules
 			// free or pay ?
 			if ($product["price_ttc"] > 0) {
 				$price = '<h3>'.price(price2num($product["price_ttc"], 'MT'), 0, $langs, 1, -1, -1, 'EUR').' '.$langs->trans("TTC").'</h3>';
-				$download_link = '<a target="_blank" href="'.$this->shop_url.urlencode($product['id']).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
+				$download_link = '<a target="_blank" href="'.$this->shop_url.'/product.php?id='.((int) $product['id']).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
 			} else {
 				$download_link = '#';
 				$price         = '<h3>'.$langs->trans('Free').'</h3>';
@@ -377,10 +432,9 @@ class ExternalModules
 				}
 
 				if ($product['source'] === 'dolistore') {
-					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.urlencode($product["id"]).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
-					if (!empty($product['direct-download']) && $product['direct-download'] == 'yes') {
-						$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$product["download_link"].'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
-					}
+					$urldownload = 'https://www.dolistore.com/_service_download.php?t=free&p=' . $product['id'];
+					$download_link = '<a class="paddingleft paddingright" target="_blank" href="'.$this->shop_url.'/product.php?id='.((int) $product["id"]).'"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/follow.png" /></a>';
+					$download_link .= '<a class="paddingleft paddingright" target="_blank" href="'.$urldownload.'" rel="noopener noreferrer"><img width="32" src="'.DOL_URL_ROOT.'/admin/remotestore/img/Download-128.png" /></a>';
 				}
 			}
 
@@ -456,14 +510,7 @@ class ExternalModules
 			$html .= '</td></tr>';
 		}
 
-		if (count($this->products) > $data['limit']) {
-			$html .= '<tr class=""><td colspan="3" class="center">';
-			$html .= '<br><br>';
-			$html .= $langs->trans("ThereIsMoreThanXAnswers", $data["limit"]).'...';
-			$html .= '<br><br>';
-			$html .= '</td></tr>';
-		}
-
+		$this->numberOfProducts = count($this->products);
 
 		return $html ;
 	}
@@ -601,10 +648,70 @@ class ExternalModules
 	}
 
 	/**
+	 * Generate pagination for navigating through pages of products.
+	 *
+	 * @return string HTML string representing the pagination.
+	 */
+	public function getPagination()
+	{
+
+		global $conf, $langs;
+
+		$page = $this->no_page;
+		$limit = $this->per_page;
+		$totalnboflines = $this->numberTotalOfProducts ?: 0;
+		$num = $this->numberOfProducts;
+
+		$html = "";
+
+		// Show navigation bar
+		$pagelist = '';
+		if ($page > 0 || $num > $limit) {
+			if ($totalnboflines) {
+				if ($limit > 0) {
+					$nbpages = $this->numberTotalOfPages;
+				} else {
+					$nbpages = 1;
+				}
+
+				// Show previous page
+				if ($page > 1) {
+					$pagelist .= '<li class="pagination paginationpage paginationpageleft"><a class="paginationprevious reposition" href="'.$this->get_previous_url().'"><i class="fa fa-chevron-left" title="'.dol_escape_htmltag($langs->trans("Previous")).'"></i></a></li>';
+				}
+
+				$pagelist .= '<li class="pagination">';
+				$pagelist .= '<label for="page_input">Page </label>';
+				if ($this->categorie != 0) {
+					$pagelist .= '<input type="hidden" name="categorie" value="' . $this->categorie . '">';
+				}
+				$pagelist .= '<input type="text" id="page_input" name="no_page" value="'.($page).'" min="1" max="'.$nbpages.'" class="width40 page_input" oninput="if(this.value > '.$nbpages.') this.value='.$nbpages.'">';
+				$pagelist .= ' / '.$nbpages;
+				$pagelist .= '</li>';
+
+				// Show next page
+				if ($page < $nbpages) {
+					$pagelist .= '<li class="pagination paginationpage paginationpageright"><a class="paginationnext reposition" href="'.$this->get_next_url().'"><i class="fa fa-chevron-right" title="'.dol_escape_htmltag($langs->trans("Next")).'"></i></a></li>';
+				}
+			}
+		}
+
+		if ($limit || $pagelist) {
+			$html .= '<div class="pagination" style="padding: 7px;">';
+			$html .= '<ul>';
+			$html .= $pagelist;
+			$html .= '</ul>';
+			$html .= '</div>';
+		}
+
+		$html .= ajax_autoselect('.page_input');
+
+		return $html;
+	}
+
+	/**
 	 * Check the status code of the request
 	 *
-	 * @param array{status_code:int,response:null|string|array{errors:array{code:int,message:string}[]},header:string} $request Response elements of CURL request
-	 *
+	 * @param array{status_code:int,response:null|string|array{errors:array{code:int,message:string}[]}} $request Response elements of CURL request
 	 * @return string|null
 	 */
 	protected function checkStatusCode($request)
@@ -643,10 +750,11 @@ class ExternalModules
 	 *
 	 * @param 	string 		$file_source_url 	URL of the remote source
 	 * @param 	int 		$cache_time 		Cache time
-	 * @return 	string 							Uri of the cache file
+	 * @return 	bool|string 					File content
 	 */
 	public function getRemoteYamlFile($file_source_url, $cache_time)
 	{
+		$yaml = '';
 		$cache_file = $this->cache_file;
 		$cache_folder = dirname($cache_file);
 
@@ -746,7 +854,6 @@ class ExternalModules
 	public function adaptData($data, $source)
 	{
 		$adaptedData = [];
-		$urldolibarrmodules = 'https://www.dolistore.com';
 
 		if (!is_array($data) || empty($data) || empty($source)) {
 			return $adaptedData;
@@ -824,7 +931,7 @@ class ExternalModules
 					'phpmin' => $package['phpmin'],
 					'phpmax' => $package['phpmax'],
 					'module_version' => $package['module_version'],
-					'cover_photo_url' => $urldolibarrmodules.$package['cover_photo_url'],
+					'cover_photo_url' => $this->shop_url.$package['cover_photo_url'],
 					'source' => 'dolistore'
 				];
 
@@ -840,7 +947,7 @@ class ExternalModules
 	 * @param list<array<string, mixed>> $list Data to filter
 	 * @param array<string, mixed> $options Options for the filter
 	 *
-	 * @return list<array<string, mixed>> Filtered data
+	 * @return array{total:int, data:list<array<string, mixed>>} Filtered data
 	 */
 	public function applyFilters($list, $options)
 	{
@@ -893,11 +1000,13 @@ class ExternalModules
 			);
 		}
 
+		$total = count($filteredData);
+
 		// Pagination
 		$filteredData = array_values($filteredData);
 		$filteredData = array_slice($filteredData, ($options['page'] - 1) * $options['limit'], $options['limit']);
 
-		return $filteredData;
+		return ['total' => $total, 'data' => $filteredData];
 	}
 
 	/**
