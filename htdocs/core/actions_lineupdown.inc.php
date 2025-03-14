@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@
  * @var string $action
  */
 if ($action == 'up' && $permissiontoedit) {
-	$object->line_up(GETPOST('rowid'));
+	$object->line_up(GETPOSTINT('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;
@@ -66,7 +66,7 @@ if ($action == 'up' && $permissiontoedit) {
 }
 
 if ($action == 'down' && $permissiontoedit) {
-	$object->line_down(GETPOST('rowid'));
+	$object->line_down(GETPOSTINT('rowid'));
 
 	// Define output language
 	$outputlangs = $langs;

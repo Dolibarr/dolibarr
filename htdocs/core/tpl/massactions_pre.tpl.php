@@ -58,6 +58,7 @@
 '
 @phan-var-force string $string
 @phan-var-force CommonObject $objecttmp
+@phan-var-force CommonObject $object
 @phan-var-force int[] $toselect
 @phan-var-force ?string $uploaddir
 @phan-var-force int<0,1> $withmaindocfilemail

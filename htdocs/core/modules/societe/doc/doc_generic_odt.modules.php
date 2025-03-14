@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
  * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -342,7 +342,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines) {
+					if ($foundtagforlines && $contactstatic !== null) {
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
 							if ((int) $res_contact > 0) {
