@@ -886,7 +886,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 													// determine if line is virtual product and stock is managed
 													$line_obj->iskit = 0;
-													$line_obj->incdec = 1;
+													if ($child_product->stockable_product == Product::ENABLED_STOCK) {
+														$can_manage_stock = 1;
+													} else {
+														$can_manage_stock = 0; // the value of "incdec" can't be modified
+													}
+													$line_obj->incdec = $can_manage_stock; // set value by default before this request
 													$sql_child  = "SELECT ";
 													$sql_child .= " SUM(".$db->ifsql("pa.rowid IS NOT NULL", "1", "0").") as iskit";
 													$sql_child .= ", ".$db->ifsql("pai.incdec IS NULL", "1", "pai.incdec")." as incdec";
@@ -900,7 +905,9 @@ if ($object->id > 0 || !empty($object->ref)) {
 													if ($resql_child) {
 														if ($child_obj = $db->fetch_object($resql_child)) {
 															$line_obj->iskit = (int) $child_obj->iskit;
-															$line_obj->incdec = (int) $child_obj->incdec;
+															if ($can_manage_stock) {
+																$line_obj->incdec = (int) $child_obj->incdec; // reset value to 0 or 1 if stock can be managed
+															}
 														}
 														$db->free($resql_child);
 													}
@@ -914,7 +921,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 								}
 								if (empty($expedition_line_child_list)) {
 									$obj_exp->iskit = 0; // is not virtual product
-									$obj_exp->incdec = 1; // manage stock
+									// manage stock if enabled for product
+									if ($objp->stockable_product == Product::ENABLED_STOCK) {
+										$obj_exp->incdec = 1;
+									} else {
+										$obj_exp->incdec = 0;
+									}
 									$expedition_line_child_list[] = $obj_exp;
 								}
 
@@ -1063,7 +1075,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 									// Warehouse
 									print '<td class="right">';
-									if ($objp->stockable_product == Product::ENABLED_STOCK && $can_update_stock) {
+									if ($can_update_stock) {
 										if (count($listwarehouses) > 1) {
 											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 										} elseif (count($listwarehouses) == 1) {
