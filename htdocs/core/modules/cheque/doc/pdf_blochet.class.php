@@ -317,7 +317,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 
 		$pdf->SetFont('', 'B', $default_font_size);
 		$pdf->SetXY(57, $posy + 1);
-		$pdf->MultiCell(40, 2, $this->nbcheque, 0, 'L');
+		$pdf->MultiCell(40, 2, (string) $this->nbcheque, 0, 'L');
 
 		$pdf->SetFont('', '', $default_font_size);
 		$pdf->SetXY(148, $posy + 1);
@@ -402,16 +402,16 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			$lineinpage += $nb_lines;
 
 			$pdf->SetXY(1, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(8, $this->line_height, $j + 1, 0, 'R', false);
+			$pdf->MultiCell(8, $this->line_height, (string) ($j + 1), 0, 'R', false);
 
 			$pdf->SetXY(10, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(30, $this->line_height, $this->lines[$j]->num_chq ? $this->lines[$j]->num_chq : '', 0, 'L', false);
 
 			$pdf->SetXY(40, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(60, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq, 44), 0, 'L', false);
+			$pdf->MultiCell(60, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->bank_chq, '44'), 0, 'L', false);
 
 			$pdf->SetXY(100, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(80, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq, 50), 0, 'L', false);
+			$pdf->MultiCell(80, $this->line_height, $outputlangs->convToOutputCharset($this->lines[$j]->emetteur_chq, '50'), 0, 'L', false);
 
 			$pdf->SetXY(180, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(20, $this->line_height, price($this->lines[$j]->amount_chq), 0, 'R', false);
@@ -424,10 +424,10 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *  Show footer of page. Need this->emetteur object
 	 *
-	 *  @param	TCPDF		$pdf     			PDF
-	 *  @param	?CommonObject	$object			Object to show
-	 *  @param	Translate	$outputlangs		Object lang for output
-	 *  @param	int<0,1>	$hidefreetext		1=Hide free text
+	 *  @param	TCPDF			$pdf     			PDF
+	 *  @param	CommonObject	$object				Object to show
+	 *  @param	Translate		$outputlangs		Object lang for output
+	 *  @param	int<0,1>		$hidefreetext		1=Hide free text
 	 *  @return	int
 	 */
 	protected function _pagefoot(&$pdf, $object, $outputlangs, $hidefreetext = 0)
