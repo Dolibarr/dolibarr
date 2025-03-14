@@ -9,16 +9,16 @@
  */
 return [
     // # Issue statistics:
-    // PhanTypeMismatchArgument : 540+ occurrences
+    // PhanTypeMismatchArgument : 490+ occurrences
     // PhanUndeclaredProperty : 460+ occurrences
-    // PhanTypeMismatchArgumentNullable : 180+ occurrences
+    // PhanTypeMismatchArgumentNullable : 170+ occurrences
     // PhanTypeMismatchProperty : 130+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
+    // PhanTypeMismatchArgumentProbablyReal : 15+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
-    // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
     // PhanUndeclaredMethod : 9 occurrences
     // PhanPossiblyUndeclaredGlobalVariable : 8 occurrences
     // PhanTypeMismatchArgumentNullableInternal : 7 occurrences
@@ -108,7 +108,7 @@ return [
         'htdocs/asset/tpl/accountancy_codes_edit.tpl.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/asset/tpl/depreciation_options_edit.tpl.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/asset/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/barcode/printsheet.php' => ['PhanPluginDuplicateExpressionBinaryOp', 'PhanTypeMismatchArgumentNullable'],
+        'htdocs/barcode/printsheet.php' => ['PhanPluginDuplicateExpressionBinaryOp'],
         'htdocs/bom/bom_card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/bom/bom_list.php' => ['PhanTypeMismatchArgument'],
         'htdocs/bom/class/bom.class.php' => ['PhanTypeMismatchArgumentNullable'],
@@ -277,49 +277,43 @@ return [
         'htdocs/core/login/functions_dolibarr.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/login/functions_ldap.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
         'htdocs/core/menus/standard/auguria.lib.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/asset/mod_asset_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/barcode/mod_barcode_product_standard.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/barcode/mod_barcode_thirdparty_standard.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/bom/mod_bom_advanced.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/cheque/doc/pdf_blochet.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/modules/cheque/doc/pdf_blochet.class.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/core/modules/cheque/modules_chequereceipts.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/commande/doc/pdf_einstein.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/commande/doc/pdf_einstein.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchDimFetch', 'PhanTypeMismatchProperty', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/contract/doc/pdf_strato.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/modules/delivery/doc/pdf_storm.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/modules/delivery/doc/pdf_typhon.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/modules/delivery/doc/pdf_storm.modules.php' => ['PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/modules/delivery/doc/pdf_typhon.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/delivery/mod_delivery_saphir.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/expedition/doc/pdf_espadon.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/modules/expedition/doc/pdf_merou.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/expedition/doc/pdf_merou.modules.php' => ['PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/modules/expedition/doc/pdf_rouget.modules.php' => ['PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/modules/expensereport/doc/pdf_standard_expensereport.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/expensereport/mod_expensereport_jade.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/facture/doc/pdf_crabe.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_octopus.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/facture/doc/pdf_sponge.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
+        'htdocs/core/modules/fichinter/doc/pdf_soleil.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/fichinter/mod_arctic.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/holiday/mod_holiday_immaculate.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/hrm/doc/pdf_standard_evaluation.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/hrm/mod_evaluation_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/import/import_csv.modules.php' => ['PhanPossiblyUndeclaredVariable', 'PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchProperty'],
         'htdocs/core/modules/import/import_xlsx.modules.php' => ['PhanTypeMismatchProperty'],
-        'htdocs/core/modules/member/doc/pdf_standard_member.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/member/modules_cards.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/movement/doc/pdf_standard_movementstock.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/mrp/doc/pdf_vinci.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/mrp/mod_mo_advanced.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/oauth/github_oauthcallback.php' => ['PhanUndeclaredGlobalVariable'],
-        'htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/core/modules/printsheet/doc/pdf_tcpdflabel.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/project/doc/doc_generic_project_odt.modules.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/modules/project/doc/pdf_beluga.modules.php' => ['PhanTypeMismatchArgument'],
         'htdocs/core/modules/project/task/doc/doc_generic_task_odt.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_azur.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/propale/doc/pdf_cyan.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/core/modules/reception/doc/pdf_squille.modules.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
+        'htdocs/core/modules/reception/doc/pdf_squille.modules.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/core/modules/societe/doc/doc_generic_odt.modules.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/core/modules/stocktransfer/doc/pdf_eagle.modules.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/modules/stocktransfer/mod_stocktransfer_advanced.php' => ['PhanUndeclaredProperty'],

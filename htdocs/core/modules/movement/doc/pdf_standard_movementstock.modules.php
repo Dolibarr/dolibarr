@@ -720,7 +720,7 @@ class pdf_standard_movementstock extends ModelePDFMovement
 
 					// Total Qty
 					$pdf->SetXY($this->postotalht, $curY);
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, $totalunit, 0, 'R', false);
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, (string) $totalunit, 0, 'R', false);
 				} else {
 					dol_print_error($this->db);
 				}
