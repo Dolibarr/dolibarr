@@ -6,7 +6,7 @@
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2020      John BOTELLA
- * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -476,14 +476,14 @@ class pdf_storm extends ModelePDFDeliveryOrder
 
 					// Quantity
 					if ($this->getColumnStatus('qty_shipped')) {
-						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', $object->lines[$i]->qty_shipped);
+						$this->printStdColumnContent($pdf, $curY, 'qty_shipped', (string) $object->lines[$i]->qty_shipped);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
 					// Remaining to ship
 					if ($this->getColumnStatus('qty_remaining')) {
 						$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
-						$this->printStdColumnContent($pdf, $curY, 'qty_remaining', $qtyRemaining);
+						$this->printStdColumnContent($pdf, $curY, 'qty_remaining', (string) $qtyRemaining);
 						$nexY = max($pdf->GetY(), $nexY);
 					}
 
