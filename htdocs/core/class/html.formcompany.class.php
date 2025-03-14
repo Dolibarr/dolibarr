@@ -142,7 +142,7 @@ class FormCompany extends Form
 	/**
 	 *  Affiche formulaire de selection des modes de reglement
 	 *
-	 *  @param	int		$page        	Page
+	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
 	 *  @param  string	$htmlname   	Nom du formulaire select
 	 *	@param	int		$empty			Add empty value in list
@@ -194,7 +194,7 @@ class FormCompany extends Form
 	/**
 	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
 	 *
-	 *  @param	int		$page        	Page
+	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
 	 *  @param  string	$htmlname   	Nom du formulaire select
 	 *	@param	int		$empty			Add empty value in list

@@ -28,6 +28,12 @@ div.divsearchfield {
     vertical-align: top;
     width: 24%;
 }
+#category-tree-left .active{
+    background: var(--colorbacktitle1);
+    color: #999 !important;
+    border-radius: 3px;
+    padding: 0 10px;
+}
 #listing-content{
     box-sizing: border-box;
     display: inline-block;

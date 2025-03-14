@@ -6339,9 +6339,6 @@ table.jPicker {
 .jPicker td.Text {
 	white-space: nowrap;
 }
-.jPicker td.Text input {
-	height: 1em !important;
-}
 .jPicker .Preview div {
 	height: 36px !important;
 }

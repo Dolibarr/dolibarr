@@ -44,8 +44,8 @@
  * @param	string			$action				Action string
  * @param	array<array{type:string,sr:string,name:string,offsettz:int,color:string,default:string,buggedfile:string}>|int<-1,-1>		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|string[]	$actioncode			Preselected value(s) of actioncode for filter on event type
- * @param	int				$usergroupid		Id of group to filter on users
- * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
+ * @param	int|int[]		$usergroupid		Id of group to filter on users
+ * @param	''|'systemauto'|'system'	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
  * @param	int     		$search_categ_cus	Tag id
  * @return	void
