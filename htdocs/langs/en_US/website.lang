@@ -377,3 +377,6 @@ SecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
 ErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
 SecurityPolicySucesfullyAdded=Content Security Policy successfully added
 ErrorAddingSecurityPolicy=An error occurred when trying to add a Content Security Policy
+UnknowContentSecurityPolicyDirective=Unknown Content Security Policy directive syntax
+FillCSPDirective=Please fill Content Security Policy directive
+FillCSPSource=Please fill Content Security Policy source

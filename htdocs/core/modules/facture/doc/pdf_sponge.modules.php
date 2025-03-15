@@ -111,7 +111,7 @@ class pdf_sponge extends ModelePDFFactures
 
 
 	/**
-	 * @var array<string,array{rank:int,width:float|int,status:bool,title:array{textkey:string,label:string,align:string,padding:array{0:float,1:float,2:float,3:float}},content:array{align:string,padding:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
+	 * @var array<string,array{rank:int,width:float|false,status:bool|int<0,1>,border-left?:bool,title:array{textkey:string,label?:string,align?:string,padding?:array{0:float,1:float,2:float,3:float}},content?:array{align?:string,padding?:array{0:float,1:float,2:float,3:float}}}>	Array of document table columns
 	 */
 	public $cols;
 
@@ -563,7 +563,7 @@ class pdf_sponge extends ModelePDFFactures
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
 				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
 				}
 
 				$pagenb = $pdf->getPage();
@@ -1257,7 +1257,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *   @param		Facture		$object			Object to show
 	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
+	 *   @param  	?Translate	$outputlangsbis	Object lang for output bis
 	 *   @return	float						Pos y
 	 */
 	protected function drawInfoTable(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
@@ -1573,7 +1573,7 @@ class pdf_sponge extends ModelePDFFactures
 	 *	@param  float		$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
 	 *	@return float						Position pour suite
 	 */
 	protected function drawTotalTable(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
@@ -1672,7 +1672,7 @@ class pdf_sponge extends ModelePDFFactures
 				$index++;
 				$pdf->SetFillColor(255, 255, 255);
 				$pdf->SetXY($col1x, $posy);
-				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", $fac->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', true);
+				$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", (string) $fac->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', true);
 
 				$pdf->SetXY($col2x, $posy);
 
@@ -1694,7 +1694,7 @@ class pdf_sponge extends ModelePDFFactures
 			// Display current total
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($col1x, $posy);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", $object->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', true);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("PDFSituationTitle", (string) $object->situation_counter).' '.$outputlangs->transnoentities("TotalHT"), 0, 'L', true);
 
 			$pdf->SetXY($col2x, $posy);
 			$facSign = '';
@@ -1716,7 +1716,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetFont('', '', $default_font_size - 1);
 			$pdf->SetFillColor(255, 255, 255);
 			$pdf->SetXY($col1x, $posy);
-			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("SituationTotalProgress", $avancementGlobal), 0, 'L', true);
+			$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("SituationTotalProgress", (string) $avancementGlobal), 0, 'L', true);
 
 			$pdf->SetXY($col2x, $posy);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($total_a_payer * $avancementGlobal / 100, 0, $outputlangs), 0, 'R', true);
@@ -1921,13 +1921,13 @@ class pdf_sponge extends ModelePDFFactures
 							$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
 							$totalvat .= ' ';
 							if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
-								$totalvat .= vatrate($tvaval['vatrate'], true).$tvacompl;
+								$totalvat .= vatrate((string) $tvaval['vatrate'], true).$tvacompl;
 							} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
 								$totalvat .= $tvaval['vatcode'].$tvacompl;
 							} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 								$totalvat .= $tvacompl;
 							} else {
-								$totalvat .= vatrate($tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+								$totalvat .= vatrate((string) $tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
 							}
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
 
@@ -2526,7 +2526,7 @@ class pdf_sponge extends ModelePDFFactures
 				$thirdparty = $object->thirdparty;
 			}
 
-			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '';
 
 			$mode = 'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);

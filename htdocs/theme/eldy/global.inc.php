@@ -416,9 +416,11 @@ input[type=checkbox], input[type=radio] {
 	margin-top: 5px;
 }
 input {
-	line-height: 1.3em;
 	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	line-height: 1.3em;
 }
 .tableforfield input, .refidno input {
 	padding: 2px;
@@ -1078,7 +1080,7 @@ textarea.centpercent {
 	word-break: break-word !important;
 }
 .wordbreak {
-	word-break: break-word;	/* cut fist between word, inside word if not possible */
+	word-break: break-word;	/* cut first between word, inside word if not possible */
 }
 .wordbreakall {
 	word-break: break-all;
@@ -6406,9 +6408,6 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
-}
-.jPicker td.Text input {
-	height: 1em !important;
 }
 .jPicker .Preview div {
 	height: 36px !important;

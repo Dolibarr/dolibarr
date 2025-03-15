@@ -7,7 +7,7 @@
  * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017-2024  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024		    MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Nick Fragoulis
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -340,9 +340,9 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 		$sql .= ", vat_src_code = '" . $this->db->escape($this->vat_src_code) . "'";
 		$sql .= ', tva_tx = ' . price2num($this->tva_tx);
 		$sql .= ', localtax1_tx = ' . price2num($this->localtax1_tx);
-		$sql .= ", localtax1_type = '" . $this->db->escape($this->localtax1_type) . "'";
+		$sql .= ", localtax1_type = '" . $this->db->escape((string) $this->localtax1_type) . "'";
 		$sql .= ', localtax2_tx = ' . price2num($this->localtax2_tx);
-		$sql .= ", localtax2_type = '" . $this->db->escape($this->localtax2_type) . "'";
+		$sql .= ", localtax2_type = '" . $this->db->escape((string) $this->localtax2_type) . "'";
 		if (empty($this->skip_update_total)) {
 			$sql .= ', total_ht = ' . price2num($this->total_ht);
 			$sql .= ', total_tva = ' . price2num($this->total_tva);
@@ -356,7 +356,7 @@ class FactureFournisseurLigneRec extends CommonInvoiceLine
 		$sql .= ", info_bits = " . ((int) $this->info_bits);
 		$sql .= ', special_code =' . (int) $this->special_code;
 		$sql .= ', rang = ' . (int) $this->rang;
-		$sql .= ', fk_unit = ' .($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : 'null');
+		$sql .= ', fk_unit = ' .($this->fk_unit ? "'".$this->db->escape((string) $this->fk_unit)."'" : 'null');
 		$sql .= ', fk_user_modif = ' . (int) $user->id;
 		$sql .= ' WHERE rowid = ' . (int) $this->id;
 

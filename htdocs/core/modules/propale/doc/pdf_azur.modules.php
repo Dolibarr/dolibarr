@@ -428,7 +428,7 @@ class pdf_azur extends ModelePDFPropales
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
 				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
 				}
 				if (getDolGlobalString('MAIN_ADD_CREATOR_IN_NOTE') && $object->user_author_id > 0) {
 					$tmpuser = new User($this->db);
@@ -443,7 +443,7 @@ class pdf_azur extends ModelePDFPropales
 						$creator_info .= ', '.$langs->trans("Phone").': '.$tmpuser->office_phone;
 					}
 
-					$notetoshow = dol_concatdesc($notetoshow, $creator_info);
+					$notetoshow = dol_concatdesc((string) $notetoshow, $creator_info);
 				}
 
 				if ($notetoshow) {
@@ -1265,13 +1265,13 @@ class pdf_azur extends ModelePDFPropales
 						$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
 						$totalvat .= ' ';
 						if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
-							$totalvat .= vatrate($tvaval['vatrate'], true).$tvacompl;
+							$totalvat .= vatrate((string) $tvaval['vatrate'], true).$tvacompl;
 						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
 							$totalvat .= $tvaval['vatcode'].$tvacompl;
 						} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 							$totalvat .= $tvacompl;
 						} else {
-							$totalvat .= vatrate($tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+							$totalvat .= vatrate((string) $tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
 						}
 						$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
 
@@ -1537,7 +1537,7 @@ class pdf_azur extends ModelePDFPropales
 	 *  @param  Propal		$object     	Object to show
 	 *  @param  int	    	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
 	 *  @return	float|int                   Return topshift value
 	 */
 	protected function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $outputlangsbis = null)

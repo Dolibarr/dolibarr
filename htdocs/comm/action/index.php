@@ -109,7 +109,7 @@ $mode = GETPOST('mode', 'aZ09');
 if (empty($mode) && preg_match('/show_/', $action)) {
 	$mode = $action;	// For backward compatibility
 }
-$resourceid = GETPOST("search_resourceid", 'int');
+$resourceid = GETPOSTINT("search_resourceid");
 $year = GETPOSTINT("year") ? GETPOSTINT("year") : date("Y");
 $month = GETPOSTINT("month") ? GETPOSTINT("month") : date("m");
 $week = GETPOSTINT("week") ? GETPOSTINT("week") : date("W");
@@ -920,7 +920,7 @@ if ($resql) {
 		$event = new ActionComm($db);
 
 		$event->id = $obj->id;
-		$event->ref = $event->id;
+		$event->ref = (string) $event->id;
 
 		$event->fulldayevent = $obj->fulldayevent;
 
@@ -1076,7 +1076,7 @@ if ($showbirthday) {
 			$event = new ActionComm($db);
 
 			$event->id = $obj->rowid; // We put contact id in action id for birthdays events
-			$event->ref = $event->id;
+			$event->ref = (string) $event->id;
 
 			$datebirth = dol_stringtotime($obj->birthday, 1);
 			//print 'ee'.$obj->birthday.'-'.$datebirth;
@@ -1159,7 +1159,7 @@ if ($user->hasRight("holiday", "read")) {
 
 			// Need the id of the leave object for link to it
 			$event->id                      = $obj->rowid;
-			$event->ref                     = $event->id;
+			$event->ref                     = (string) $event->id;
 
 			$event->type_code = 'HOLIDAY';
 			$event->type_label = '';
@@ -1420,7 +1420,7 @@ if (count($listofextcals)) {
 
 				if ($addevent) {
 					$event->id = $icalevent['UID'];
-					$event->ref = $event->id;
+					$event->ref = (string) $event->id;
 					$userId = $userstatic->findUserIdByEmail($namecal);
 					if (!empty($userId) && $userId > 0) {
 						$event->userassigned[$userId] = $userId;
@@ -1861,7 +1861,7 @@ $db->close();
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
  * @param	int<-1,1>	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
- * @param	array{}|array{0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
+ * @param	array{}|array{help:'toreporttype',0:array{0:int,1:int,2:int},1:array{0:int,1:int,2:int},2:array{0:int,1:int,2:int}}	$bookcalcalendarsarray	 Used for Bookcal module array of calendar of bookcal
  * @return	void
  */
 function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint = 0, $maxnbofchar = 16, $newparam = '', $showinfo = 0, $minheight = 60, $nonew = 0, $bookcalcalendarsarray = array())

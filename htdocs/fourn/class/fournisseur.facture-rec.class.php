@@ -8,7 +8,7 @@
  * Copyright (C) 2013       Florian Henry		  	  <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2017-2024  Frédéric France       <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							      <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				      <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2023-2024  Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -333,10 +333,10 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *    Create a predefined supplier invoice
 	 *
-	 * @param 	User 	$user 			User object
-	 * @param 	int 	$facFournId		Id invoice
-	 * @param 	int 	$notrigger 		No trigger
-	 * @return	int                    	Return integer <0 if KO, id of invoice created if OK
+	 * @param 	User		$user 			User object
+	 * @param 	int			$facFournId		Id invoice
+	 * @param 	int<0,1> 	$notrigger 		No trigger
+	 * @return	int			            	Return integer <0 if KO, id of invoice created if OK
 	 */
 	public function create($user, $facFournId, $notrigger = 0)
 	{
@@ -403,7 +403,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', generate_pdf';
 			$sql .= ') VALUES (';
 			$sql .= "'".$this->db->escape($this->title)."'";
-			$sql .= ", ".($this->subtype ? "'".$this->db->escape($this->subtype)."'" : "null");
+			$sql .= ", ".($this->subtype ? "'".$this->db->escape((string) $this->subtype)."'" : "null");
 			$sql .= ", '".$this->db->escape($this->ref_supplier)."'";
 			$sql .= ", ".((int) $conf->entity);
 			$sql .= ", ".((int) $facfourn_src->socid);
@@ -565,8 +565,8 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * 	Update fourn_invoice_rec.
 	 *
-	 *  @param		User	$user					User
-	 *  @param		int		$notrigger				No trigger
+	 *  @param		User		$user				User
+	 *  @param		int<0,1>	$notrigger			No trigger
 	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
 	 */
 	public function update(User $user, $notrigger = 0)
@@ -575,7 +575,7 @@ class FactureFournisseurRec extends CommonInvoice
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_rec SET";
 		$sql .= " titre = '" . (!empty($this->title) ? $this->db->escape($this->title) : "")."'," ;
-		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape($this->subtype) : "null").",";
+		$sql .= " subtype=".(isset($this->subtype) ? $this->db->escape((string) $this->subtype) : "null").",";
 		$sql .= " ref_supplier = '". (!empty($this->ref_supplier) ? $this->db->escape($this->ref_supplier) : "")."',";
 		$sql .= " entity = ". (!empty($this->entity) ? ((int) $this->entity) : 1) . ',';
 		if (!empty($this->socid) && $this->socid > 0) {
@@ -884,10 +884,10 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * 	Delete template invoice
 	 *
-	 *	@param     	User	$user          	User that delete.
-	 *	@param		int		$notrigger		1=Does not execute triggers, 0= execute triggers
-	 *	@param		int		$idwarehouse	Id warehouse to use for stock change.
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@param     	User		$user          	User that delete.
+	 *	@param		int<0,1>	$notrigger		1=Does not execute triggers, 0= execute triggers
+	 *	@param		int			$idwarehouse	Id warehouse to use for stock change.
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function delete(User $user, $notrigger = 0, $idwarehouse = -1)
 	{
@@ -955,8 +955,8 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param float		$qty 			Quantity
 	 * @param float		$remise_percent Percentage discount of the line
 	 * @param float		$txtva 			Taux de tva force, sinon -1
-	 * @param int 		$txlocaltax1 	Local tax 1 rate (deprecated)
-	 * @param int 		$txlocaltax2 	Local tax 2 rate (deprecated)
+	 * @param float		$txlocaltax1 	Local tax 1 rate (deprecated)
+	 * @param float		$txlocaltax2 	Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type HT or TTC
 	 * @param int<0,1>	$type 			Type of line (0=product, 1=service)
 	 * @param int 		$date_start		Date start
@@ -964,8 +964,8 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$info_bits 		VAT npr or not ?
 	 * @param int 		$special_code 	Special code
 	 * @param int 		$rang 			Position of line
-	 * @param string 	$fk_unit 		Unit
-	 * @param int 		$pu_ht_devise 	Unit price in currency
+	 * @param ?int	 	$fk_unit 		Unit
+	 * @param float 	$pu_ht_devise 	Unit price in currency
 	 * @return int                  	Return integer <0 if KO, Id of line if OK
 	 * @throws Exception
 	 */
@@ -1018,7 +1018,7 @@ class FactureFournisseurRec extends CommonInvoice
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1079,7 +1079,7 @@ class FactureFournisseurRec extends CommonInvoice
 			$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
 			$sql .= ') VALUES (';
 			$sql .= ' ' . (int) $facid;   // source supplier invoice id
-			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape($fk_product) . "'" : 'null');
+			$sql .= ', ' . (!empty($fk_product) ? "'" . $this->db->escape((string) $fk_product) . "'" : 'null');
 			$sql .= ', ' . (!empty($ref) ? "'" . $this->db->escape($ref) . "'" : 'null');
 			$sql .= ', ' . (!empty($label) ? "'" . $this->db->escape($label) . "'" : 'null');
 			$sql .= ", '" . $this->db->escape($desc) . "'";
@@ -1150,7 +1150,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param int 		$txlocaltax1 		Local tax 1 rate (deprecated)
 	 * @param int 		$txlocaltax2 		Local tax 2 rate (deprecated)
 	 * @param string 	$price_base_type 	HT or TTC
-	 * @param int 		$type 				Type of line (0=product, 1=service)
+	 * @param int<0,1>	$type 				Type of line (0=product, 1=service)
 	 * @param int 		$date_start			Date start
 	 * @param int 		$date_end			Date end
 	 * @param int 		$info_bits 			Bits of type of lines
@@ -1214,7 +1214,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total((float) $qty, (float) $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, (float) $pu_ht_devise);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1289,9 +1289,9 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * Return next reference of invoice not already used (or last reference)
 	 *
-	 * @param	 Societe	$soc		Thirdparty object
-	 * @param    string		$mode		'next' for next value or 'last' for last value
-	 * @return   string					free ref or last ref
+	 * @param	 Societe		$soc		Thirdparty object
+	 * @param    'next'|'last'	$mode		'next' for next value or 'last' for last value
+	 * @return   string						free ref or last ref
 	 */
 	public function getNextNumRef($soc, $mode = 'next')
 	{
@@ -1315,7 +1315,7 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 * Return if maximum number of generation is reached
 	 *
-	 * @return	boolean			False by default, True if maximum number of generation is reached
+	 * @return	bool			False by default, True if maximum number of generation is reached
 	 */
 	public function isMaxNbGenReached()
 	{
@@ -1507,13 +1507,13 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Return clickable name (with picto eventually)
 	 *
-	 * @param	int		$withpicto       			Add picto into link
-	 * @param  string	$option          			Where point the link
-	 * @param  int		$max             			Maxlength of ref
-	 * @param  int		$short           			1=Return just URL
-	 * @param  string   $moretitle       			Add more text to title tooltip
-	 * @param	int  	$notooltip		 			1=Disable tooltip
-	 * @param  int		$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 * @param	int			$withpicto       			Add picto into link
+	 * @param	string		$option          			Where point the link
+	 * @param	int<0,max>	$max             			Maxlength of ref
+	 * @param	int<0,1>	$short           			1=Return just URL
+	 * @param	string		$moretitle       			Add more text to title tooltip
+	 * @param	int<0,1> 	$notooltip		 			1=Disable tooltip
+	 * @param	int<-1,1>	$save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values when clicking
 	 * @return string 			         			String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $max = 0, $short = 0, $moretitle = '', $notooltip = 0, $save_lastsearch_value = -1)
@@ -1585,8 +1585,8 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *  Return label of object status
 	 *
-	 *  @param      int		$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
-	 *  @param      integer	$alreadypaid    Not used on recurring invoices
+	 *  @param      int<0,6>	$mode			0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=Long label + picto
+	 *  @param      int<-1,1>	$alreadypaid    Not used on recurring invoices
 	 *  @return     string			        Label of status
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
@@ -1598,10 +1598,10 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param	int			$recur         	Is it a recurring invoice ?
+	 *	@param	int<0,1>	$recur         	Is it a recurring invoice ?
 	 *	@param	int			$status        	Id status (suspended or not)
 	 *	@param	int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param	int			$alreadypaid	Not used for recurring invoices
+	 *	@param	int<-1,1>	$alreadypaid	Not used for recurring invoices
 	 *	@param	int			$type			Type invoice
 	 *  @param	int			$nbofopendirectdebitorcredittransfer	@unused-param Nb of open direct debit or credit transfer
 	 *	@return	string						Label of status
@@ -1880,9 +1880,9 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Update frequency and unit
 	 *
-	 *	@param     	?int	$frequency		value of frequency
-	 *	@param     	string	$unit 			unit of frequency  (d, m, y)
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@param     	?int		$frequency		value of frequency
+	 *	@param     	'd'|'m'|'y'	$unit 			unit of frequency  (d, m, y)
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setFrequencyAndUnit($frequency, $unit)
 	{
@@ -1986,8 +1986,8 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Update the auto validate flag of invoice
 	 *
-	 *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@param     	int<0,1>	$validate		0 to create in draft, 1 to create and validate invoice
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setAutoValidate($validate)
 	{
@@ -2014,8 +2014,8 @@ class FactureFournisseurRec extends CommonInvoice
 	/**
 	 *	Update the auto generate documents
 	 *
-	 *	@param     	int		$validate		0 no document, 1 to generate document
-	 *	@return		int						Return integer <0 if KO, >0 if OK
+	 *	@param     	int<0,1>	$validate		0 no document, 1 to generate document
+	 *	@return		int							Return integer <0 if KO, >0 if OK
 	 */
 	public function setGeneratePdf($validate)
 	{

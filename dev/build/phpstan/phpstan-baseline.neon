@@ -1933,18 +1933,6 @@ parameters:
 			path: ../../../htdocs/admin/usergroup.php
 
 		-
-			message: '#^Variable \$arrayofparameters might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/webhook.php
-
-		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/admin/webhook.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 5
@@ -3241,12 +3229,6 @@ parameters:
 			path: ../../../htdocs/comm/action/class/cactioncomm.class.php
 
 		-
-			message: '#^Property CActionComm\:\:\$type_actions type has no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: ../../../htdocs/comm/action/class/cactioncomm.class.php
-
-		-
 			message: '#^Variable \$TSystem might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3274,18 +3256,6 @@ parameters:
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
-			path: ../../../htdocs/comm/action/index.php
-
-		-
-			message: '#^Parameter \#16 \$usergroupid of function print_actions_filter expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
-			path: ../../../htdocs/comm/action/index.php
-
-		-
-			message: '#^Parameter \#18 \$resourceid of function print_actions_filter expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 3
 			path: ../../../htdocs/comm/action/index.php
 
 		-
@@ -3625,12 +3595,6 @@ parameters:
 			path: ../../../htdocs/comm/mailing/card.php
 
 		-
-			message: '#^Parameter \#1 \$filenb of function dol_remove_file_process expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/comm/mailing/card.php
-
-		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
 			count: 2
@@ -3814,36 +3778,6 @@ parameters:
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 4
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/comm/propal/class/propal.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/comm/propal/class/propal.class.php
 
 		-
@@ -6817,24 +6751,6 @@ parameters:
 			path: ../../../htdocs/contrat/class/contrat.class.php
 
 		-
-			message: '#^Parameter \#1 \$qty of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/contrat/class/contrat.class.php
-
-		-
 			message: '#^Property CommonObject\:\:\$ref \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -6891,7 +6807,7 @@ parameters:
 		-
 			message: '#^Property Contrat\:\:\$statut \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 2
+			count: 1
 			path: ../../../htdocs/contrat/class/contrat.class.php
 
 		-
@@ -6909,12 +6825,6 @@ parameters:
 		-
 			message: '#^Offset ''label'' on array\{label\: non\-falsy\-string\} in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/contrat/class/contratligne.class.php
-
-		-
-			message: '#^Parameter \#4 \$txtva of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/contrat/class/contratligne.class.php
 
@@ -10111,12 +10021,6 @@ parameters:
 			path: ../../../htdocs/core/lib/emailing.lib.php
 
 		-
-			message: '#^Parameter \#4 \$head of function complete_head_from_modules expects array\<array\{string, string, string\}\>, array\{0\: array\{''//admin/confexped…'', mixed\}, 1\: array\{''//admin/expedition…'', mixed\}, 2\?\: array\{''//admin/delivery\.php'', mixed\}\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/lib/expedition.lib.php
-
-		-
 			message: '#^Call to function is_array\(\) with array\{file\: string, timestamp\: int\|false\} will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -10497,7 +10401,7 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
-			count: 18
+			count: 12
 			path: ../../../htdocs/core/lib/pdf.lib.php
 
 		-
@@ -10903,78 +10807,6 @@ parameters:
 			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
 
 		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1060, width\: 26, status\: true, title\: array\{textkey\: ''TotalHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 19, status\: false, title\: array\{textkey\: ''Progress''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 19, status\: true, title\: array\{textkey\: ''Progress''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
-			message: '#^Property pdf_standard_asset\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/asset/doc/pdf_standard_asset.modules.php
-
-		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -11029,6 +10861,12 @@ parameters:
 			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
 
 		-
+			message: '#^Parameter \#2 \$object of method BordereauChequeBlochet\:\:_pagefoot\(\) expects CommonObject, null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../../htdocs/core/modules/cheque/doc/pdf_blochet.class.php
+
+		-
 			message: '#^Property Commande\:\:\$availability \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -11062,96 +10900,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 5
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1065, width\: 26, status\: bool, title\: array\{textkey\: ''TotalHTShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int\<min, \-1\>\|int\<1, max\>, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int\<min, \-1\>\|int\<1, max\>, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 2075, width\: 26, status\: bool, title\: array\{textkey\: ''TotalTTCShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 25, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 25, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 35, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 35, width\: int\<21, max\>, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 45, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 5, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 55, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 55, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 65, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 65, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
-
-		-
-			message: '#^Property pdf_eratosthene\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\?\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{1, 0\.5, 1, 1\.5\}\|array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/core/modules/commande/doc/pdf_eratosthene.modules.php
 
 		-
@@ -11169,48 +10917,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: 50, status\: true, title\: array\{textkey\: ''Comments''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 20, status\: true, title\: array\{textkey\: ''QtyShippedShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 20, status\: 1, title\: array\{textkey\: ''KeepToShipShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: int, width\: float\|int\|false, status\: bool, title\: array\{textkey\: string, label\?\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\?\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/delivery/doc/pdf_storm.modules.php
 
@@ -11263,74 +10969,8 @@ parameters:
 			path: ../../../htdocs/core/modules/expedition/doc/doc_generic_shipment_odt.modules.php
 
 		-
-			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
 			message: '#^Parameter \#4 \$columnText of method CommonDocGenerator\:\:printStdColumnContent\(\) expects string, float\|int\<min, \-1\>\|int\<1, max\> given\.$#'
 			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 30, status\: true, title\: array\{textkey\: ''WeightVolShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 19, status\: 0\|1, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 26, status\: 0\|1, title\: array\{textkey\: ''TotalHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 30, status\: 0\|1, title\: array\{textkey\: ''QtyOrdered''\}, border\-left\: true, content\: array\{align\: ''C''\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 70, width\: 15, status\: 0\|1, title\: array\{textkey\: ''Unit''\}, border\-left\: true, content\: array\{align\: ''C''\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 80, width\: 30, status\: true, title\: array\{textkey\: ''QtyToShip''\}, border\-left\: true, content\: array\{align\: ''C''\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\?\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{1, 0\.5, 1, 1\.5\}\|array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
 
@@ -11403,7 +11043,7 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 13
+			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
@@ -11431,126 +11071,6 @@ parameters:
 			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
 
 		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: string, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: string, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 100, width\: 15, status\: true, title\: array\{textkey\: string\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 110, width\: 10, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 110, width\: 10, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 120, width\: 18, status\: true, title\: array\{textkey\: string\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, status\: false, width\: 10, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, status\: true, width\: 10, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 17, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: int\<19, max\>, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 10, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 2
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 18, status\: false, title\: array\{textkey\: ''Chantier''\}, border\-left\: true, overtitle\: array\{textkey\: ''Chantier'', align\: ''C'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}, width\: 18\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 18, status\: true, title\: array\{textkey\: ''Chantier''\}, border\-left\: true, overtitle\: array\{textkey\: ''Chantier'', align\: ''C'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}, width\: 18\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 70, width\: 10, status\: false, title\: array\{textkey\: string\}, border\-left\: true, overtitle\: array\{textkey\: non\-falsy\-string, align\: ''C'', padding\: array\{0\.5, 0\.2, 0\.5, 0\.2\}, width\: 25\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 70, width\: 10, status\: true, title\: array\{textkey\: string\}, border\-left\: true, overtitle\: array\{textkey\: non\-falsy\-string, align\: ''C'', padding\: array\{0\.5, 0\.2, 0\.5, 0\.2\}, width\: 25\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 80, width\: 15, status\: false, title\: array\{textkey\: string\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 80, width\: 15, status\: true, title\: array\{textkey\: string\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
-			message: '#^Property pdf_octopus\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 90, width\: 10, status\: true, title\: array\{textkey\: string\}, border\-left\: true, overtitle\: array\{textkey\: non\-falsy\-string, align\: ''C'', padding\: array\{0\.5, 0\.2, 0\.5, 0\.2\}, width\: 25\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_octopus.modules.php
-
-		-
 			message: '#^Variable \$hidetop in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 3
@@ -11559,7 +11079,7 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 14
+			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
@@ -11578,108 +11098,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 5
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1075, width\: 26, status\: bool, title\: array\{textkey\: ''TotalHTShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 2085, width\: 26, status\: bool, title\: array\{textkey\: ''TotalTTCShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 25, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 25, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 35, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 35, width\: int\<21, max\>, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 45, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 5, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 55, width\: 19, status\: false, title\: array\{textkey\: ''ProgressShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 55, width\: 19, status\: true, title\: array\{textkey\: ''ProgressShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 65, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 65, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 75, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 75, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
-
-		-
-			message: '#^Property pdf_sponge\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\?\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{1, 0\.5, 1, 1\.5\}\|array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
 			path: ../../../htdocs/core/modules/facture/doc/pdf_sponge.modules.php
 
 		-
@@ -11992,12 +11410,6 @@ parameters:
 			message: '#^Comparison operation "\>" between 1 and 0 is always true\.$#'
 			identifier: greater.alwaysTrue
 			count: 2
-			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
-
-		-
-			message: '#^Parameter \#6 \$epaisseur of method CommonStickerGenerator\:\:_Croix\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/modules/member/doc/pdf_standard_member.class.php
 
 		-
@@ -12565,36 +11977,6 @@ parameters:
 			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
 
 		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, status\: true, width\: 35, title\: array\{textkey\: ''Ref'', align\: ''L'', padding\: array\{0\.5, 1, 0\.5, 1\.5\}\}, border\-left\: true, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 1, 0\.5, 1\.5\}\}, border\-left\: true, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 11, status\: true, width\: 25, title\: array\{textkey\: ''Dimensions''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 21, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 31, width\: 25, status\: true, title\: array\{textkey\: ''QtyTot''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/mrp/doc/pdf_vinci.modules.php
-
-		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -12657,12 +12039,6 @@ parameters:
 		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
-
-		-
-			message: '#^Parameter \#6 \$epaisseur of method CommonStickerGenerator\:\:_Croix\(\) expects int, float given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/core/modules/printsheet/doc/pdf_standardlabel.class.php
 
@@ -12751,102 +12127,6 @@ parameters:
 			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
 
 		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1065, width\: 26, status\: bool, title\: array\{textkey\: ''TotalHTShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 15, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 2075, width\: 26, status\: bool, title\: array\{textkey\: ''TotalTTCShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 25, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 25, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 35, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 35, width\: int\<21, max\>, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 45, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 5, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 55, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 55, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 65, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 65, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
-			message: '#^Property pdf_cyan\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\?\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{1, 0\.5, 1, 1\.5\}\|array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/propale/doc/pdf_cyan.modules.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
@@ -12883,78 +12163,6 @@ parameters:
 			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
 
 		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 1, 0\.5, 1\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1060, width\: 26, status\: true, title\: array\{textkey\: ''TotalHTShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 19, status\: true, title\: array\{textkey\: ''PMPValueShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: int\<21, max\>, status\: true, title\: array\{textkey\: ''PMPValueShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/stocktransfer/doc/pdf_eagle_proforma.modules.php
-
-		-
 			message: '#^Property CommonObject\:\:\$multicurrency_tx \(array\<float\>\|float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -12981,96 +12189,6 @@ parameters:
 		-
 			message: '#^Property CommandeFournisseur\:\:\$multicurrency_tx \(float\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1070, width\: 26, status\: false, title\: array\{textkey\: ''TotalHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1070, width\: 26, status\: true, title\: array\{textkey\: ''TotalHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 19, status\: false, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 70, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 70, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\?\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{1, 0\.5, 1, 1\.5\}\|array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_order/doc/pdf_cornas.modules.php
 
@@ -13131,90 +12249,6 @@ parameters:
 		-
 			message: '#^Left side of \|\| is always false\.$#'
 			identifier: booleanOr.leftAlwaysFalse
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: int, status\: false, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, width\: int, status\: true, title\: array\{textkey\: ''Photo'', label\: '' ''\}, content\: array\{padding\: array\{0, 0, 0, 0\}\}, border\-left\: false\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1060, width\: 26, status\: false, title\: array\{textkey\: ''TotalHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1060, width\: 26, status\: true, title\: array\{textkey\: ''TotalHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 19, status\: false, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
-
-		-
-			message: '#^Property CommonDocGenerator\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 60, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/core/modules/supplier_proposal/doc/pdf_zenith.modules.php
 
@@ -14493,30 +13527,6 @@ parameters:
 		-
 			message: '#^Comparison operation "\>" between 0 and 1000 is always false\.$#'
 			identifier: greater.alwaysFalse
-			count: 1
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
-			message: '#^Parameter \#2 \$message_num of function imap_body expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
-			message: '#^Parameter \#2 \$message_num of function imap_fetchbody expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
-			message: '#^Parameter \#2 \$message_num of function imap_fetchstructure expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
-
-		-
-			message: '#^Parameter \#4 \$partno of method EmailCollector\:\:getpart\(\) expects string, \(float\|int\) given\.$#'
-			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/emailcollector/class/emailcollector.class.php
 
@@ -15859,37 +14869,7 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
 
 		-
-			message: '#^Parameter \#1 \$exclspec of method CommonObject\:\:update_price\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.commande.class.php
@@ -15985,42 +14965,6 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
 
 		-
-			message: '#^Parameter \#1 \$qty of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
-			message: '#^Parameter \#10 \$txlocaltax1 of method FactureFournisseurRec\:\:addline\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
-			message: '#^Parameter \#11 \$txlocaltax2 of method FactureFournisseurRec\:\:addline\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
-			message: '#^Parameter \#19 \$fk_unit of method FactureFournisseurRec\:\:addline\(\) expects string\|null, int\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.facture-rec.class.php
-
-		-
 			message: '#^Property CommonInvoice\:\:\$subtype \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -16069,55 +15013,7 @@ parameters:
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
 
 		-
-			message: '#^Parameter \#1 \$exclspec of method CommonObject\:\:update_price\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#1 \$qty of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 2
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#15 \$pu_devise of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#2 \$pu of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
 			message: '#^Parameter \#3 \$remise_percent_ligne of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#3 \$txtva of method FactureFournisseur\:\:addline\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#4 \$vatrate of method FactureFournisseur\:\:updateline\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#5 \$uselocaltax1_rate of function calcul_price_total expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
-
-		-
-			message: '#^Parameter \#6 \$uselocaltax2_rate of function calcul_price_total expects float, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/fourn/class/fournisseur.facture.class.php
@@ -17749,12 +16645,6 @@ parameters:
 			path: ../../../htdocs/imports/import.php
 
 		-
-			message: '#^Offset ''imported'' on array\{imported\: 0, example1\: mixed\} in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/imports/import.php
-
-		-
 			message: '#^Offset ''picto'' on array\{labelkey\: mixed, labelkeyarray\: list\<string\>, label\: string, required\: 0\|1, position\: mixed, picto\: ''''\} in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.offset
 			count: 1
@@ -18849,66 +17739,6 @@ parameters:
 		-
 			message: '#^Call to function is_object\(\) with object will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 0, width\: false, status\: true, title\: array\{textkey\: ''Designation'', align\: ''L'', padding\: array\{0\.5, 0\.5, 0\.5, 0\.5\}\}, content\: array\{align\: ''L'', padding\: array\{1, 0\.5, 1, 1\.5\}\}\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, status\: false, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 10, status\: true, width\: 16, title\: array\{textkey\: ''VAT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 1050, width\: 26, status\: true, title\: array\{textkey\: ''TotalHTShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 20, width\: 19, status\: true, title\: array\{textkey\: ''PriceUHT''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 30, width\: 16, status\: true, title\: array\{textkey\: ''Qty''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 11, status\: false, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 40, width\: 11, status\: true, title\: array\{textkey\: ''Unit''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 13, status\: false, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
-
-		-
-			message: '#^Property pdf_standard_myobject\:\:\$cols \(array\<string, array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\) does not accept non\-empty\-array\<string, array\{rank\: 50, width\: 13, status\: true, title\: array\{textkey\: ''ReductionShort''\}, border\-left\: true\}\|array\{rank\: int, width\: float\|int, status\: bool, title\: array\{textkey\: string, label\: string, align\: string, padding\: array\{float, float, float, float\}\}, content\: array\{align\: string, padding\: array\{float, float, float, float\}\}\}\>\.$#'
-			identifier: assign.propertyType
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/core/modules/mymodule/doc/pdf_standard_myobject.modules.php
 
@@ -22423,12 +21253,6 @@ parameters:
 			path: ../../../htdocs/public/onlinesign/newonlinesign.php
 
 		-
-			message: '#^Variable \$dolibarr_main_url_root might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/public/onlinesign/newonlinesign.php
-
-		-
 			message: '#^Variable \$mesg might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -23079,7 +21903,7 @@ parameters:
 		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
-			count: 4
+			count: 3
 			path: ../../../htdocs/public/webportal/webportal.main.inc.php
 
 		-

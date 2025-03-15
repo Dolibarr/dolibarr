@@ -2982,7 +2982,6 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 if ($action == 'removecspsource' && $usercanedit) {
 	$db->begin();
-
 	$sourcetype = "";
 	$sourcecsp = explode("_", GETPOST("sourcecsp"));
 	$directive = $sourcecsp[0];
@@ -2994,19 +2993,18 @@ if ($action == 'removecspsource' && $usercanedit) {
 	if (empty($directive)) {
 		$error++;
 	}
-	if ($error || (!isset($sourcekey) && $directivesarray[$directive]["data-directivetype"] != "none")) {
-		$error++;
-	}
 
-	$directivetype = (string) $directivesarray[$directive]["data-directivetype"];
-	if (isset($sourcekey)) {
-		$sourcetype = $sourcesarray[$directivetype][$sourcekey]["data-sourcetype"];
+	if (!empty($directivesarray[$directive])) {
+		$directivetype = (string) $directivesarray[$directive]["data-directivetype"];
+		if (isset($sourcekey)) {
+			$sourcetype = $sourcesarray[$directivetype][$sourcekey]["data-sourcetype"];
+		}
 	}
 
 	$securityspstring = "";
 	if (!$error && !empty($forceCSPArr)) {
 		if (isset($sourcekey) && !empty($forceCSPArr[$directive][$sourcekey])) {
-			if ($sourcetype == "data") {
+			if ($sourcetype == "data" || preg_match('/data/', $sourcekey)) {
 				$keydata = array_search($sourcedata, $forceCSPArr[$directive][$sourcekey]);
 				if ($keydata !== false) {
 					unset($forceCSPArr[$directive][$sourcekey][$keydata]);
@@ -4417,31 +4415,38 @@ if ($action == 'editsecurity') {
 
 	print '<div class="div-table-responsive-no-min">';
 
-	print '<input class="minwidth500 quatrevingtpercent" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"><br>';
+	print '<input class="minwidth500 quatrevingtpercent" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
 
 	print '<br>';
 
 	print '<div class="">';
 	print img_picto('', 'graph', 'class="pictofixedwidth"').$langs->trans("HierarchicView").'<br>';
-	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block');
+	print '<div id="selectaddcontentsecuritypolicy" class="hidden">';
+	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPDirective"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth350 inline-block');
 	print ' ';
 	print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
 	foreach ($selectarrayCSPSources as $key => $values) {
-		print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth200" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
-		print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block select_WEBSITE_SECURITY_FORCECSP');
+		print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth350" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
+		print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPSource"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block select_WEBSITE_SECURITY_FORCECSP');
 		print '</div>';
 	}
 	print ' ';
 	print '<div class="div_input_data_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth200"><input id="input_data_WEBSITE_SECURITY_FORCECSP" name="input_data_WEBSITE_SECURITY_FORCECSP"></div>';
 	print ' ';
-	print '<div class="div_btn_class_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth200"><input type="submit" id="btn_WEBSITE_SECURITY_FORCECSP" name="btn_WEBSITE_SECURITY_FORCECSP" class="butAction small smallpaddingimp" value="'.$langs->trans("Add").'"></div>';
+	print '<div class="div_btn_class_WEBSITE_SECURITY_FORCECSP inline-block maxwidth200"><input type="submit" id="btn_WEBSITE_SECURITY_FORCECSP" name="btn_WEBSITE_SECURITY_FORCECSP" class="butAction small smallpaddingimp" value="'.$langs->trans("Add").'" disabled></div>';
+	print '</div>';
 	print '</div>';
 
 	// Content Security Policy list of selected rules
 	print '<div class="div-table-responsive-no-min">';
 	print '<ul>';
 	foreach ($forceCSPArr as $directive => $sources) {
-		print '<li><span>'.$directive.'</span>';
+		print '<li>';
+		if (in_array($directive, array_keys($selectarrayCSPDirectives))) {
+			print '<span>'.$directive.'</span>';
+		} else {
+			print $form->textwithpicto($directive, $langs->trans("UnknowContentSecurityPolicyDirective"), 1, 'warning');
+		}
 		if (!empty($sources)) {
 			print '<ul>';
 			foreach ($sources as $key => $source) {
@@ -4477,7 +4482,7 @@ if ($action == 'editsecurity') {
 
 	print '<div class="center">';
 
-	print '<input type="submit" class="button small" name="addcontainer" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button small" name="updateandstay" value="'.$langs->trans("Save").'">';
 	print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
 
 	print '</div>';
@@ -4485,15 +4490,25 @@ if ($action == 'editsecurity') {
 
 	print '<script>
 		$(document).ready(function() {
+			$("#btnaddcontentsecuritypolicy").on("click", function(){
+				if($("#selectaddcontentsecuritypolicy").is(":visible")){
+					console.log("We hide select to add Content Security Policy");
+					$("#selectaddcontentsecuritypolicy").hide();
+				} else {
+					console.log("We show select to add Content Security Policy");
+					$("#selectaddcontentsecuritypolicy").show();
+				}
+			});
+
 			$("#select_identifier_WEBSITE_SECURITY_FORCECSP").on("change", function() {
 				key = $(this).find(":selected").data("directivetype");
 				console.log("We hide all select div");
 				$(".div_WEBSITE_SECURITY_FORCECSP").hide();
 				$(".select_WEBSITE_SECURITY_FORCECSP").val(null).trigger("change");
 				$(".div_input_data_WEBSITE_SECURITY_FORCECSP").hide();
-				$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+				$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",true);
 				if (key == "none"){
-					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").css("display", "inline-block");
+					$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",false);
 				} else {
 					console.log("We show div select with key "+key);
 					$("#div_"+key+"_WEBSITE_SECURITY_FORCECSP").css("display", "inline-block");
@@ -4510,9 +4525,9 @@ if ($action == 'editsecurity') {
 				 	$("#input_data_WEBSITE_SECURITY_FORCECSP").val("");
 					$(".div_input_data_WEBSITE_SECURITY_FORCECSP").hide();
 					if (keysource != undefined) {
-						$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").css("display", "inline-block");
+						$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",false);
 					} else {
-						$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+						$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",true);
 					}
 				}
 			});
@@ -4520,10 +4535,10 @@ if ($action == 'editsecurity') {
 			$("#input_data_WEBSITE_SECURITY_FORCECSP").on("change", function(){
 				if ($(this).val() != undefined) {
 					console.log("We show add button");
-					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").css("display", "inline-block");
+					$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",false);
 				} else {
 					console.log("We hide add button");
-					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+					$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",true);
 				}
 			});
 		});

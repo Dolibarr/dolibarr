@@ -4,7 +4,7 @@
  * Copyright (C) 2015       Ari Elbaz (elarifr)     <github@accedinfo.com>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2016-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,13 +155,13 @@ class FormAccounting extends Form
 	 *
 	 * @param	string[]	$selectedIds		Preselected journal code array
 	 * @param	string		$htmlname			Name of field in html form
-	 * @param	int			$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
+	 * @param	int<0,9>	$nature				Limit the list to a particular type of journals (1:various operations / 2:sale / 3:purchase / 4:bank / 9: has-new)
 	 * @param	int			$showempty			Add an empty field
 	 * @param	int			$select_in			0=selectid value is the journal rowid (default) or 1=selectid is journal code
 	 * @param	int			$select_out			Set value returned by select. 0=rowid (default), 1=code
 	 * @param	string		$morecss			More css non HTML object
 	 * @param	string		$usecache			Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param   int    		$disabledajaxcombo Disable ajax combo box.
+	 * @param   int<0,1> 	$disabledajaxcombo Disable ajax combo box.
 	 * @return	string|int<-1,-1>				String with HTML select, or -1 if error
 	 */
 	public function multi_select_journal($selectedIds = array(), $htmlname = 'journal', $nature = 0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss = '', $usecache = '', $disabledajaxcombo = 0)
@@ -233,12 +233,12 @@ class FormAccounting extends Form
 	 *	Return list of accounting category.
 	 * 	Use mysoc->country_id or mysoc->country_code so they must be defined.
 	 *
-	 *	@param	int		$selected       Preselected type
-	 *	@param  string	$htmlname       Name of field in form
-	 * 	@param	int		$useempty		Set to 1 if we want an empty value
-	 * 	@param	int		$maxlen			Max length of text in combo box
-	 * 	@param	int		$help			Add or not the admin help picto
-	 *  @param  int     $allcountries   All countries
+	 *	@param	int			$selected       Preselected type
+	 *	@param  string		$htmlname       Name of field in form
+	 * 	@param	int<0,1>	$useempty		Set to 1 if we want an empty value
+	 * 	@param	int			$maxlen			Max length of text in combo box
+	 * 	@param	int<0,1>	$help			Add or not the admin help picto
+	 *  @param  int<0,1>	$allcountries   All countries
 	 * 	@return	void|string				HTML component with the select
 	 */
 	public function select_accounting_category($selected = 0, $htmlname = 'account_category', $useempty = 0, $maxlen = 0, $help = 1, $allcountries = 0)
@@ -365,7 +365,7 @@ class FormAccounting extends Form
 	 * @param int      		$select_out        	Set value returned by select. 0=rowid (default), 1=account_number
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
-	 * @param string		$active				Filter on status active or not: '0', '1' or '' for no filter
+	 * @param '1'|'0'|''	$active				Filter on status active or not: '0', '1' or '' for no filter
 	 * @return string|int<-1,-1>               	String with HTML select, or -1 if error
 	 */
 	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')

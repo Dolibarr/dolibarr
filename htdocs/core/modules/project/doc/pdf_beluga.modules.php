@@ -521,7 +521,7 @@ class pdf_beluga extends ModelePDFProjects
 								$pageposbefore = $pdf->getPage();
 
 								// Description of line
-								$idofelement = $elementarray[$i];
+								$idofelement = (int) $elementarray[$i];
 								if ($classname == 'ExpenseReport') {
 									// We get id of expense report
 									$expensereportline = new ExpenseReportLine($this->db);
@@ -682,7 +682,7 @@ class pdf_beluga extends ModelePDFProjects
 									$outputstatut = $element->getLibStatut(1);
 								}
 								$pdf->SetXY($this->posxstatut, $curY);
-								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, '', '', true, 0, true);
+								$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxstatut, 3, $outputstatut, 1, 'R', false, 1, null, null, true, 0, true);
 
 								if ($qualifiedfortotal) {
 									$total_ht += $element->total_ht;
