@@ -2191,18 +2191,6 @@ parameters:
 			path: ../../../htdocs/asset/class/asset.class.php
 
 		-
-			message: '#^Parameter \#4 \$depreciation_ht of method Asset\:\:addDepreciationLine\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/asset/class/asset.class.php
-
-		-
-			message: '#^Parameter \#5 \$cumulative_depreciation_ht of method Asset\:\:addDepreciationLine\(\) expects float, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/asset/class/asset.class.php
-
-		-
 			message: '#^Property Asset\:\:\$date_start \(int\|string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 2
@@ -9049,12 +9037,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.formcompany.class.php
 
 		-
-			message: '#^Parameter \#1 \$selected of method FormCompany\:\:select_state\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.formcompany.class.php
-
-		-
 			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, array\<array\<string, int\>\|int\> given\.$#'
 			identifier: argument.type
 			count: 1
@@ -13693,12 +13675,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
 
 		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorbooth_card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -13791,12 +13767,6 @@ parameters:
 		-
 			message: '#^Property ConferenceOrBoothAttendee\:\:\$status \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
@@ -16453,12 +16423,6 @@ parameters:
 			path: ../../../htdocs/hrm/job_card.php
 
 		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/job_card.php
-
-		-
 			message: '#^Variable \$upload_dir might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -16562,12 +16526,6 @@ parameters:
 
 		-
 			message: '#^Variable \$result might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/hrm/skill_card.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/skill_card.php
@@ -18165,12 +18123,6 @@ parameters:
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/mrp/mo_movements.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/mrp/mo_movements.php
 
@@ -20042,12 +19994,6 @@ parameters:
 
 		-
 			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/product/stock/stocktransfer/stocktransfer_card.php
@@ -22669,12 +22615,6 @@ parameters:
 			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
 
 		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentcandidature_list.php
-
-		-
 			message: '#^Property RecruitmentJobPosition\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -22694,12 +22634,6 @@ parameters:
 
 		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/recruitment/recruitmentjobposition_applications.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/recruitment/recruitmentjobposition_applications.php

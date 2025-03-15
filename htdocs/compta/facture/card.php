@@ -4846,6 +4846,10 @@ if ($action == 'create') {
 				$s = str_replace('{s1}', $tmptemplate->getNomUrl(1, '', 32), $s);
 				print $s;
 				print '</span>';
+			} else {
+				print ' <span class="opacitymediumbycolor paddingleft">';
+				print $langs->transnoentities("GeneratedFromTemplate", $langs->trans("ObjectDeleted"));
+				print '</span>';
 			}
 		}
 		print '</td></tr>';
