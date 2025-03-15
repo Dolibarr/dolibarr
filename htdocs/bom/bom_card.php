@@ -2,7 +2,7 @@
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,7 +181,7 @@ if (empty($reshook)) {
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$fk_workstation = GETPOSTINT('idworkstations');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+		$fk_unit = GETPOSTINT('fk_unit');
 
 		$fk_default_workstation = 0;
 		if (!empty($idprod) && isModEnabled('workstation')) {
@@ -235,7 +235,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->addLine((int) $idprod, (float) $qty, (float) $qty_frozen, $disable_stock_change, (float) $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -264,7 +264,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+		$fk_unit = GETPOSTINT('fk_unit');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -291,7 +291,7 @@ if (empty($reshook)) {
 				$fk_default_workstation = GETPOSTINT('idworkstations');
 			}
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->updateLine($lineid, (float) $qty, (int) $qty_frozen, (int) $disable_stock_change, (float) $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
