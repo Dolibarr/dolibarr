@@ -10,10 +10,10 @@
 return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 460+ occurrences
-    // PhanTypeMismatchArgument : 320+ occurrences
-    // PhanTypeMismatchArgumentNullable : 120+ occurrences
+    // PhanTypeMismatchArgument : 280+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
+    // PhanTypeMismatchArgumentNullable : 90+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
@@ -37,35 +37,8 @@ return [
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
-        'htdocs/accountancy/admin/account.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/admin/categories.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/admin/categories_list.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/admin/productaccount.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/admin/subaccount.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/class/accountancycategory.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
-        'htdocs/accountancy/class/accountingjournal.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/class/lettering.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/closure/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/customer/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/customer/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/expensereport/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/expensereport/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/journal/bankjournal.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/journal/expensereportsjournal.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/journal/purchasesjournal.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/journal/sellsjournal.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/journal/variousjournal.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/accountancy/supplier/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/accountancy/supplier/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable'],
-        'htdocs/adherents/admin/member.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/adherents/class/adherent.class.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/adherents/class/adherent_type.class.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/adherents/list.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentNullable', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/adherents/stats/geo.php' => ['PhanTypeMismatchArgumentNullable'],
-        'htdocs/adherents/subscription.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/adherents/type.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/adherents/vcard.php' => ['PhanTypeMismatchArgument'],
+        'htdocs/accountancy/class/accountancyexport.class.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredProperty'],
+        'htdocs/adherents/list.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/admin/agenda_other.php' => ['PhanTypeMismatchArgumentProbablyReal'],
         'htdocs/admin/agenda_reminder.php' => ['PhanTypeMismatchArgumentNullable'],
         'htdocs/admin/barcode.php' => ['PhanTypeMismatchArgument'],

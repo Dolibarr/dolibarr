@@ -6,6 +6,7 @@
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,8 +78,8 @@ $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_s
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 
 // Define begin binding date
-if (empty($search_date_start) && getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$search_date_start = $db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'));
+if (empty($search_date_start) && getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$search_date_start = $db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'));
 }
 
 // Load variable for pagination
@@ -187,7 +188,7 @@ if ($massaction == 'ventil' && $user->hasRight('accounting', 'bind', 'write')) {
 		foreach ($mesCasesCochees as $maLigneCochee) {
 			$maLigneCourante = explode("_", $maLigneCochee);
 			$monId = $maLigneCourante[0];
-			$monCompte = GETPOST('codeventil'.$monId);
+			$monCompte = GETPOSTINT('codeventil'.$monId);
 
 			if ($monCompte <= 0) {
 				$msg .= '<div><span class="error">'.$langs->trans("Lineofinvoice").' '.$monId.' - '.$langs->trans("NoAccountSelected").'</span></div>';
@@ -393,7 +394,7 @@ if ($result) {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-	print_barre_liste($langs->trans("ExpenseReportLines").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilTodoExpenseReport").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
+	print_barre_liste($langs->trans("ExpenseReportLines").'<br><span class="opacitymedium small">'.$langs->trans("DescVentilTodoExpenseReport").'</span>', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num_lines, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit, 0, 0, 1);
 
 	if (!empty($msg)) {
 		print $msg.'<br>';

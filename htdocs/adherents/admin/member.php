@@ -604,7 +604,7 @@ if (isModEnabled('invoice')) {
 		print '<td>';
 		$selected = getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS');
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		$form->select_produits($selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
+		$form->select_produits((int) $selected, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', '', 0, 0, 1, 2, '', 0, [], 0, 1, 0, 'minwidth100 maxwidth500 widthcentpercentminusx');
 		print '</td>';
 	}
 	print "</tr>\n";

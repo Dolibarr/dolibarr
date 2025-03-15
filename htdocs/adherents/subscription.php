@@ -670,7 +670,7 @@ if ($action != 'editlogin' && $user->hasRight('adherent', 'creer')) {
 print '</tr></table>';
 print '</td><td colspan="2" class="valeur">';
 if ($action == 'editlogin') {
-	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
+	$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, (string) $object->user_id, 'userid', array());
 } else {
 	if ($object->user_id) {
 		$linkeduser = new User($db);
@@ -1070,7 +1070,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
+					$result = $prodtmp->fetch(getDolGlobalInt('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
@@ -1100,7 +1100,7 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 				}
 				if (getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && (isModEnabled('product') || isModEnabled('service'))) {
 					$prodtmp = new Product($db);
-					$result = $prodtmp->fetch(getDolGlobalString('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
+					$result = $prodtmp->fetch(getDolGlobalInt('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS'));
 					if ($result < 0) {
 						setEventMessage($prodtmp->error, 'errors');
 					}
