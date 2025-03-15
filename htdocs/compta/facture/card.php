@@ -801,32 +801,34 @@ if (empty($reshook)) {
 			$ventilExportCompta = $object->getVentilExportCompta();
 
 			// We check if no payment has been made
-			if ($ventilExportCompta == 0) {
-				if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == $object->total_ttc && empty($object->paye))) {
-					$result = $object->setDraft($user, $idwarehouse);
-					if ($result < 0) {
-						setEventMessages($object->error, $object->errors, 'errors');
-					}
+			if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
+				if ($ventilExportCompta == 0) {
+					if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == $object->total_ttc && empty($object->paye))) {
+						$result = $object->setDraft($user, $idwarehouse);
+						if ($result < 0) {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
 
-					// Define output language
-					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-							$newlang = GETPOST('lang_id', 'aZ09');
-						}
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-							$outputlangs->load('products');
-						}
-						$model = $object->model_pdf;
-						$ret = $object->fetch($id); // Reload to get new records
+						// Define output language
+						if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+							$outputlangs = $langs;
+							$newlang = '';
+							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+								$newlang = GETPOST('lang_id', 'aZ09');
+							}
+							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+								$newlang = $object->thirdparty->default_lang;
+							}
+							if (!empty($newlang)) {
+								$outputlangs = new Translate("", $conf);
+								$outputlangs->setDefaultLang($newlang);
+								$outputlangs->load('products');
+							}
+							$model = $object->model_pdf;
+							$ret = $object->fetch($id); // Reload to get new records
 
-						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+							$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						}
 					}
 				}
 			}
@@ -4468,6 +4470,10 @@ if ($action == 'create') {
 		}
 
 		$text = $langs->trans('ConfirmValidateBill', $numref);
+		if (getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
+			$text .= '<br><br>';
+			$text .= img_picto('', 'warning', 'class="pictofixedwidth"').' '.$langs->trans('WarningInvoiceCanNeverBeEdited');
+		}
 		if (isModEnabled('notification')) {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
@@ -4532,7 +4538,7 @@ if ($action == 'create') {
 		}
 
 		if (!$error) {
-			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), 2, 240);
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), 2, 260);
 		}
 	}
 
@@ -5880,22 +5886,24 @@ if ($action == 'create') {
 				// We check if lines of invoice are not already transferred into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
-				if ($ventilExportCompta == 0) {
-					if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
-						if (!$objectidnext && $object->is_last_in_cycle()) {
-							if ($usercanunvalidate) {
-								unset($params['attr']['title']);
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', true, $params);
+				if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
+					if ($ventilExportCompta == 0) {
+						if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
+							if (!$objectidnext && $object->is_last_in_cycle()) {
+								if ($usercanunvalidate) {
+									unset($params['attr']['title']);
+									print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', true, $params);
+								} else {
+									$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
+									print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', false, $params);
+								}
+							} elseif (!$object->is_last_in_cycle()) {
+								$params['attr']['title'] = $langs->trans('NotLastInCycle');
+								print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
 							} else {
-								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'].'?facid='.$object->id.'&action=modif&token='.newToken(), '', false, $params);
+								$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
+								print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
 							}
-						} elseif (!$object->is_last_in_cycle()) {
-							$params['attr']['title'] = $langs->trans('NotLastInCycle');
-							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
-						} else {
-							$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
-							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
 						}
 					}
 				} else {

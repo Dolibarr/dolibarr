@@ -2,7 +2,7 @@
 /* Copyright (C) 2019-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2023		Christian Humpel			<christian.humpel@gmail.com>
  * Copyright (C) 2023		Vincent de Grandpré			<vincent@de-grandpre.quebec>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -1962,7 +1962,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$.each(data, function (key, value) {
 
 							if(selectwarehouse.val() == -1) {
-								var label = key + " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
+								var label = key + " (<?php echo $langs->trans('TotalStock') ?> : " + value + ")";
 							} else {
 								var label = key + " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
 							}

@@ -86,7 +86,7 @@ if ($massaction == 'preclonetasks') {
 	$formquestion = array(
 		// TODO If list of project is long and project is not on a thirdparty, the combo may be very long.
 		// Solution: Allow only sameproject for cloning tasks ?
-		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects($object->id, 'projectid', '', 0, 1, '', 0, array(), $object->socid, '1', 1, '', array(), 1)),
+		array('type' => 'other', 'name' => 'projectid', 'label' => $langs->trans('Project') .': ', 'value' => $form->selectProjects((string) $object->id, 'projectid', '', 0, 1, '', 0, array(), $object->socid, '1', 1, '', array(), 1)),
 	);
 	print $form->formconfirm($_SERVER['PHP_SELF'] . '?id=' . $object->id . $selected, $langs->trans('ConfirmMassClone'), '', 'clonetasks', $formquestion, '', 1, 300, 590);
 }
@@ -165,7 +165,7 @@ if ($massaction == 'presetsupervisor') {
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
 	$valuefield .= img_picto('', 'user').' ';
-	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefield .= $form->select_dolusers('', 'supervisortoset', 1, $arrayofselected, 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 	$valuefield .= '</div>';
 
 	$formquestion[] = array(
@@ -183,7 +183,7 @@ if ($massaction == 'preaffectuser') {
 
 	$valuefielduser = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 165px; padding-bottom: 6px; gap: 5px">';
 	$valuefielduser .= img_picto('', 'user').' ';
-	$valuefielduser .= $form->select_dolusers('', 'usertoaffect', 1, $arrayofselected, 0, '', 0, $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+	$valuefielduser .= $form->select_dolusers('', 'usertoaffect', 1, $arrayofselected, 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 	$valuefielduser .= '</div>';
 
 	$valuefieldprojrole = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px; padding-bottom: 6px">';
@@ -392,7 +392,7 @@ if ($massaction == 'edit_extrafields') {
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
 			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
 			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp, $objecttmp->table_element);
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', '', $objecttmp, $objecttmp->table_element);
 			$outputShowOutputFields .= '</div>';
 		}
 		$outputShowOutputFields .= '<script>
