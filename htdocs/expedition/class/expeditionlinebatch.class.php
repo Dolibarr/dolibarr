@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013-2014 Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ class ExpeditionLineBatch extends CommonObject
 		$sql .= $id_line_expdet;
 		$sql .= ", ".(!isset($this->sellby) || dol_strlen($this->sellby) == 0 ? 'NULL' : ("'".$this->db->idate($this->sellby))."'");
 		$sql .= ", ".(!isset($this->eatby) || dol_strlen($this->eatby) == 0 ? 'NULL' : ("'".$this->db->idate($this->eatby))."'");
-		$sql .= ", ".($this->batch == '' ? 'NULL' : ("'".$this->db->escape($this->batch)."'"));
+		$sql .= ", ".($this->batch == '' ? 'NULL' : ("'".$this->db->escape((string) $this->batch)."'"));
 		$sql .= ", ".(!isset($this->qty) ? ((!isset($this->dluo_qty)) ? 'NULL' : $this->dluo_qty) : $this->qty); // dluo_qty deprecated, use qty
 		$sql .= ", ".((int) $this->fk_origin_stock);
 		$sql .= ", ".(empty($this->fk_warehouse) ? 'NULL' : $this->fk_warehouse);
