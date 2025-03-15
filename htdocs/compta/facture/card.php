@@ -3695,7 +3695,7 @@ if ($action == 'create') {
 				print '</td>';
 				if (($origin == 'propal') || ($origin == 'commande')) {
 					print '<td class="nowrap" style="padding-left: 15px">';
-					if (empty(getDolGlobalInt('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES'))) {
+					if (!getDolGlobalInt('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES')) {
 						$arraylist = array(
 							'amount' => $langs->transnoentitiesnoconv('FixAmount', $langs->transnoentitiesnoconv('Deposit')),
 							'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')),
