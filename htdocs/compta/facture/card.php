@@ -3713,7 +3713,7 @@ if ($action == 'create') {
 					}
 					print '<span class="marginleftonly">'.$form->selectarray('typedeposit', $arraylist, $typedeposit, 0, 0, 0, '', 1).'</span>';
 					//print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span>';
-					print '<input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.($valuedeposit ? $valuedeposit : '').'"'.($valudeposit ? '' : 'placeholder="'.$langs->getCurrencySymbol($conf->currency).'"').'>';
+					print '<input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.($valuedeposit ? $valuedeposit : '').'"'.($valuedeposit ? '' : 'placeholder="'.$langs->getCurrencySymbol($conf->currency).'"').'>';
 				}
 
 				print '</div></div>'."\n";
