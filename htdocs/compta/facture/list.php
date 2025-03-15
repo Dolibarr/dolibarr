@@ -2236,7 +2236,8 @@ if ($num > 0) {
 
 			// Customer ref
 			if (!empty($arrayfields['f.ref_client']['checked'])) {
-				print '<td class="nowrap '.(getDolGlobalInt('MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER') ? '' : 'tdoverflowmax200').'">';
+				$tdcss = (getDolGlobalInt('MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER') ? '' : 'class="nowrap tdoverflowmax200"');
+				print '<td title="'.dolPrintHtmlForAttribute($obj->ref_client).'" '.$tdcss.'>';
 				print dol_escape_htmltag($obj->ref_client);
 				print '</td>';
 				if (!$i) {
