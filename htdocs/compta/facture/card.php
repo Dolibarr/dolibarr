@@ -3640,7 +3640,7 @@ if ($action == 'create') {
 			print $form->selectarray('typestandard', $arraylist, GETPOST('typestandard', 'aZ09'), 0, 0, 0, '', 1);
 			print '</td>';*/
 			print '<td class="nowrap" style="padding-left: 15px">';
-			if (empty(getDolGlobalInt('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES'))) {
+			if (!getDolGlobalInt('INVOICE_DEPOSIT_INVOICE_ONLY_SAME_LINES')) {
 				print '<span class="opacitymedium">' . $langs->trans('PercentOfOriginalObject') . '</span>:<input class="right" placeholder="100%" type="text" id="valuestandardinvoice" name="valuestandardinvoice" size="3" value="' . (GETPOSTISSET('valuestandardinvoice') ? GETPOST('valuestandardinvoice', 'alpha') : '100%') . '"/>';
 			}
 			print '</td>';
