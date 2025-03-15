@@ -2678,7 +2678,7 @@ class Form
 	 *										            'warehouseopen' = count products from open warehouses,
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 *  @param 		?mixed[]	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param 		?array<string,mixed>	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		int<0,1> 	$nooutput				No print if 1, return the output into a string
 	 *  @param		int<-1,1>	$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @param		int 		$warehouseId 			Filter by Warehouses Id where there is real stock

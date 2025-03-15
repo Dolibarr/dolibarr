@@ -235,7 +235,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine((int) $idprod, (float) $qty, (float) $qty_frozen, $disable_stock_change, (float) $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->addLine((int) $idprod, (float) $qty, $qty_frozen, $disable_stock_change, (float) $efficiency, -1, $bom_child_id, null, (int) $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');

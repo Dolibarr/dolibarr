@@ -1304,7 +1304,6 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_list_array_fields.tpl.php';
 
 		$arrayfields = dol_sort_array($arrayfields, 'position');
-		// '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 		$param = '';
 		if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {

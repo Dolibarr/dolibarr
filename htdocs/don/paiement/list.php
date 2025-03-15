@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -104,12 +104,11 @@ $arrayfields = array(
 	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
 	'c.code'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
 	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (isModEnabled("bank"))),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (isModEnabled("bank"))),
+	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (int) (isModEnabled("bank"))),
 	'pd.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked:string,position?:int,help?:string,enabled?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
