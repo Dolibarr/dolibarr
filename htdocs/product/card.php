@@ -490,7 +490,7 @@ if (empty($reshook)) {
 
 	// Quick edit for extrafields
 	if ($action == 'update_extras' && $usercancreate) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -783,7 +783,7 @@ if (empty($reshook)) {
 		} else {
 			if ($object->id > 0) {
 				//Need dol_clone methode 1 (same object class) because update product use hasbatch() method on oldcopy
-				$object->oldcopy = dol_clone($object, 1);
+				$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
 					$object->ref                = (string) $ref;

@@ -2680,6 +2680,7 @@ class EmailCollector extends CommonObject
 											// Search into contacts of thirdparties to try to guess the thirdparty to use
 											$resultContact = $contactstatic->findNearest(0, '', '', '', (string) $emailtouseforthirdparty, '', 0);
 											if ($resultContact > 0) {
+												$contactstatic->fetch($resultContact);
 												$idtouseforthirdparty = $contactstatic->socid;
 												$result = $thirdpartystatic->fetch($idtouseforthirdparty);
 												if ($result > 0) {

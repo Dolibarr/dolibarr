@@ -6836,14 +6836,27 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								'@phan-var-force CommonObject $object';
+
+								$objectId = 0;
+
+								$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
 								if (is_numeric($value)) {
-									$res = $object->fetch($value); // Common case
+									$sqlFetchObject .= " WHERE rowid = " . (int) $value;
 								} else {
-									$res = $object->fetch(0, $value); // For compatibility
+									$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
+								}
+
+								$obj = $this->db->getRow($sqlFetchObject);
+
+								if ($obj !== false) {
+									$objectId = $obj->rowid;
+									$res = 1;
+								} else {
+									$res = -1;
 								}
 
 								if ($res > 0) {
-									$new_array_options[$key] = $object->id;
+									$new_array_options[$key] = $objectId;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
 									return -1;
