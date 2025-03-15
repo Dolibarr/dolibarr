@@ -1561,6 +1561,9 @@ table.paymenttable td.amountpaymentcomplete, table.paymenttable td.amountremaint
 /* Style used for full page tables with field selector and no content after table (priority before previous for such tables) */
 div.fiche>form>div.div-table-responsive, div.fiche>form>div.div-table-responsive-no-min {
 	overflow-x: auto;
+<?php if (getDolGlobalString('MAIN_TABLELINETITLE_STICKY') { ?>
+    overflow: initial !important;
+<?php } ?>
 }
 div.fiche>form>div.div-table-responsive {
 	min-height: 392px;
@@ -4368,6 +4371,13 @@ tr.liste_titre, tr.liste_titre_sel, form.liste_titre, form.liste_titre_sel, tabl
 {
 	height: 26px !important;
 }
+<?php if (getDolGlobalString('MAIN_TABLELINETITLE_STICKY') { ?>
+tr.liste_titre
+{
+       position: sticky ;top: 50px; z-index:100;
+}
+<?php } ?>
+
 div.colorback	/* for the form "assign user" on time spent view */
 {
 	background: #f8f8f8;
