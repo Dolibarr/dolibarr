@@ -682,3 +682,4 @@ PaymentMadeForSeveralInvoices=Payment made for several invoices
 SituationInvoiceProgressCurrent=Invoice progress
 CumulativeProgression=Cumulative progress
 INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
+LimitDepositInvoicePossibilityForConsistency=Limit deposit invoice type to keep consistencies between lines (from proposals or orders)

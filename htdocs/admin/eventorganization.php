@@ -234,7 +234,7 @@ if ($action == 'edit') {
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
-				print $formother->select_categories($tmp[1], getDolGlobalString($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
+				print $formother->select_categories($tmp[1], getDolGlobalInt($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
@@ -250,7 +250,7 @@ if ($action == 'edit') {
 				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
 			} elseif ($val['type'] == 'product') {
 				if (isModEnabled("product") || isModEnabled("service")) {
-					$selected = getDolGlobalString($constname);
+					$selected = getDolGlobalInt($constname);
 					print img_picto('', 'product', 'class="pictofixedwidth"');
 					print $form->select_produits($selected, $constname, '', 0, 0, 1, 2, '', 0, array(), 0, '1', 0, 'maxwidth500 widthcentpercentminusx', 0, '', null, 1);
 				}
@@ -295,7 +295,7 @@ if ($action == 'edit') {
 						$tmp = explode(':', $val['type']);
 						$labelemailtemplate = getDolGlobalString($constname);
 						if ($labelemailtemplate && $labelemailtemplate != '-1') {
-							$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalString($constname));
+							$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalInt($constname));
 							if (is_numeric($template) && $template < 0) {
 								setEventMessages($formmail->error, $formmail->errors, 'errors');
 							} else {
@@ -306,9 +306,9 @@ if ($action == 'edit') {
 						}
 					}
 				} elseif (preg_match('/category:/', $val['type'])) {
-					if (getDolGlobalString($constname)) {
+					if (getDolGlobalInt($constname)) {
 						$c = new Categorie($db);
-						$result = $c->fetch(getDolGlobalString($constname));
+						$result = $c->fetch(getDolGlobalInt($constname));
 						if ($result < 0) {
 							setEventMessages(null, $c->errors, 'errors');
 						}
@@ -331,7 +331,7 @@ if ($action == 'edit') {
 					}
 				} elseif ($val['type'] == 'product') {
 					$product = new Product($db);
-					$idproduct = getDolGlobalString($constname);
+					$idproduct = getDolGlobalInt($constname);
 					if ($idproduct > 0) {
 						$resprod = $product->fetch($idproduct);
 						if ($resprod > 0) {
