@@ -956,7 +956,7 @@ class AccountancyExport
 
 			$tab = array();
 			$tab['type_ligne'] = 'M';
-			$tab['num_compte'] = str_pad(self::trunc($code_compta, 8), 8);
+			$tab['num_compte'] = str_pad(self::trunc((string) $code_compta, 8), 8);
 			$tab['code_journal'] = str_pad(self::trunc($line->code_journal, 2), 2);
 			$tab['folio'] = '000';
 

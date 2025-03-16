@@ -7,7 +7,7 @@
 
 // TODO: Note, supposing $arrayfields is already set
 '
- @phan-var-force array $arrayfields;
+@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string,enabled?:string}> $arrayfields
 ';
 
 // Protection to avoid direct call of template
@@ -36,9 +36,9 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],
-					'checked'  => (((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? 0 : 1),
+					'checked'  => (((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1, 1, '1') <= 0) ? '0' : '1'),
 					'position' => $extrafields->attributes[$extrafieldsobjectkey]['pos'][$key],
-					'enabled'  => (abs((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3 && (int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1')),
+					'enabled'  => (string) (int) (abs((int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['list'][$key], 1)) != 3 && (int) dol_eval($extrafields->attributes[$extrafieldsobjectkey]['perms'][$key], 1, 1, '1')),
 					'langfile' => $extrafields->attributes[$extrafieldsobjectkey]['langfile'][$key],
 					'help'     => $extrafields->attributes[$extrafieldsobjectkey]['help'][$key],
 				);

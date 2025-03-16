@@ -7195,12 +7195,6 @@ parameters:
 			path: ../../../htdocs/core/actions_sendmails.inc.php
 
 		-
-			message: '#^Parameter \#1 \$filenb of function dol_remove_file_process expects int, array\<mixed\>\|string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/actions_sendmails.inc.php
-
-		-
 			message: '#^Variable \$contact might not be defined\.$#'
 			identifier: variable.undefined
 			count: 5
@@ -7927,18 +7921,6 @@ parameters:
 			path: ../../../htdocs/core/class/CMailFile.class.php
 
 		-
-			message: '#^Property CMailFile\:\:\$eol has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
-			message: '#^Property CMailFile\:\:\$eol2 has no type specified\.$#'
-			identifier: missingType.property
-			count: 1
-			path: ../../../htdocs/core/class/CMailFile.class.php
-
-		-
 			message: '#^Property CMailFile\:\:\$errors_to \(string\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -8339,12 +8321,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: ../../../htdocs/core/class/commonorder.class.php
-
-		-
-			message: '#^Parameter \#2 \$pt of method CommonStickerGenerator\:\:Set_Char_Size\(\) expects int, float given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/commonstickergenerator.class.php
 
 		-
 			message: '#^Property CommonStickerGenerator\:\:\$_Avery_Code has no type specified\.$#'
@@ -9417,7 +9393,7 @@ parameters:
 		-
 			message: '#^Parameter \#2 \$pere of method Menubase\:\:recur\(\) expects int, string given\.$#'
 			identifier: argument.type
-			count: 2
+			count: 1
 			path: ../../../htdocs/core/class/menubase.class.php
 
 		-
@@ -12141,7 +12117,7 @@ parameters:
 		-
 			message: '#^Variable \$contactstatic might not be defined\.$#'
 			identifier: variable.undefined
-			count: 3
+			count: 1
 			path: ../../../htdocs/core/modules/societe/doc/doc_generic_odt.modules.php
 
 		-
@@ -12637,21 +12613,9 @@ parameters:
 			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
 
 		-
-			message: '#^Variable \$object might not be defined\.$#'
-			identifier: variable.undefined
-			count: 5
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
 			message: '#^Variable \$resteapayer might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
-
-		-
-			message: '#^Variable \$thirdparty might not be defined\.$#'
-			identifier: variable.undefined
-			count: 7
 			path: ../../../htdocs/core/tpl/object_discounts.tpl.php
 
 		-
@@ -12685,12 +12649,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/objectline_create.tpl.php
 
 		-
-			message: '#^Variable \$buyer might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -12698,12 +12656,6 @@ parameters:
 
 		-
 			message: '#^Variable \$i might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/core/tpl/objectline_edit.tpl.php
-
-		-
-			message: '#^Variable \$seller might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
 			path: ../../../htdocs/core/tpl/objectline_edit.tpl.php

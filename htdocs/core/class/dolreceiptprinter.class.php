@@ -514,7 +514,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function to add a printer template in db
 	 *
 	 *  @param    string    $name           Template name
-	 *  @param    int       $template       Template
+	 *  @param    string    $template       Template
 	 *  @return   int                       0 if OK; >0 if KO
 	 */
 	public function addTemplate($name, $template)
@@ -523,7 +523,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
-		$sql .= ", '".$this->db->escape((string) $template)."', ".$conf->entity.")";
+		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -557,7 +557,7 @@ class dolReceiptPrinter extends Printer
 	 *  Function to Update a printer template in db
 	 *
 	 *  @param    string    $name           Template name
-	 *  @param    int       $template       Template
+	 *  @param    string    $template       Template
 	 *  @param    int       $templateid     Template id
 	 *  @return   int                       0 if OK; >0 if KO
 	 */
@@ -568,7 +568,7 @@ class dolReceiptPrinter extends Printer
 
 		$sql = "UPDATE ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " SET name='".$this->db->escape($name)."'";
-		$sql .= ", template='".$this->db->escape((string) $template)."'";
+		$sql .= ", template='".$this->db->escape($template)."'";
 		$sql .= " WHERE rowid=".((int) $templateid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {

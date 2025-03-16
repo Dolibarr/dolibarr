@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
@@ -234,7 +234,7 @@ if ($mode) {
 
 $head = member_stats_prepare_head($memberstatic);
 
-print dol_get_fiche_head($head, $tab, '', -1, '');
+print dol_get_fiche_head($head, (string) $tab, '', -1, '');
 
 
 // Print title

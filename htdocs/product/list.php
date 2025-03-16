@@ -239,67 +239,67 @@ $alias_product_perentity = !getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED') 
 $arraypricelevel = array();
 // Definition of array of fields for columns
 $arrayfields = array(
-	'p.rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
-	'p.ref' => array('label' => 'ProductRef', 'checked' => 1, 'position' => 5),
-	'p.ref_ext' => array('label' => 'RefExt', 'checked' => 1, 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
+	'p.rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
+	'p.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 5),
+	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '1', 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
-	'thumbnail' => array('label' => 'Photo', 'checked' => 0, 'position' => 10),
-	'p.description' => array('label' => 'Description', 'checked' => 0, 'position' => 10),
-	'p.label' => array('label' => "Label", 'checked' => 1, 'position' => 10),
-	'p.fk_product_type' => array('label' => "Type", 'checked' => 0, 'enabled' => (isModEnabled("product") && isModEnabled("service")), 'position' => 11),
-	'p.barcode' => array('label' => "Gencod", 'checked' => 1, 'enabled' => (isModEnabled('barcode')), 'position' => 12),
-	'p.duration' => array('label' => "Duration", 'checked' => ($contextpage != 'productlist'), 'enabled' => (isModEnabled("service") && (string) $type == '1'), 'position' => 13),
-	'pac.fk_product_parent' => array('label' => "ParentProductOfVariant", 'checked' => -1, 'enabled' => (isModEnabled('variants')), 'position' => 14),
-	'p.finished' => array('label' => "Nature", 'checked' => 0, 'enabled' => (isModEnabled("product") && $type != '1'), 'position' => 19),
-	'p.weight' => array('label' => 'Weight', 'checked' => 0, 'enabled' => (isModEnabled("product") && $type != '1'), 'position' => 20),
-	'p.weight_units' => array('label' => 'WeightUnits', 'checked' => 0, 'enabled' => (isModEnabled("product") && $type != '1'), 'position' => 21),
-	'p.length' => array('label' => 'Length', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 22),
-	'p.length_units' => array('label' => 'LengthUnits', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 23),
-	'p.width' => array('label' => 'Width', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 24),
-	'p.width_units' => array('label' => 'WidthUnits', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 25),
-	'p.height' => array('label' => 'Height', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 26),
-	'p.height_units' => array('label' => 'HeightUnits', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 27),
-	'p.surface' => array('label' => 'Surface', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $type != '1'), 'position' => 28),
-	'p.surface_units' => array('label' => 'SurfaceUnits', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $type != '1'), 'position' => 29),
-	'p.volume' => array('label' => 'Volume', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $type != '1'), 'position' => 30),
-	'p.volume_units' => array('label' => 'VolumeUnits', 'checked' => 0, 'enabled' => (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $type != '1'), 'position' => 31),
-	'cu.label' => array('label' => "DefaultUnitToShow", 'checked' => 0, 'enabled' => (isModEnabled("product") && getDolGlobalString('PRODUCT_USE_UNITS')), 'position' => 32),
-	'p.fk_default_workstation' => array('label' => 'DefaultWorkstation', 'checked' => 0, 'enabled' => isModEnabled('workstation') && $type == 1, 'position' => 33),
-	'p.sellprice' => array('label' => "SellingPrice", 'checked' => 1, 'enabled' => !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 40),
-	'p.tva_tx' => array('label' => "VATRate", 'checked' => 0, 'enabled' => !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 41),
-	'p.minbuyprice' => array('label' => "BuyingPriceMinShort", 'checked' => 1, 'enabled' => ($user->hasRight('fournisseur', 'lire')), 'position' => 42),
-	'p.numbuyprice' => array('label' => "BuyingPriceNumShort", 'checked' => 0, 'enabled' => ($user->hasRight('fournisseur', 'lire')), 'position' => 43),
-	'p.pmp' => array('label' => "PMPValueShort", 'checked' => 0, 'enabled' => ($user->hasRight('fournisseur', 'lire')), 'position' => 44),
-	'p.cost_price' => array('label' => "CostPrice", 'checked' => 0, 'enabled' => ($user->hasRight('fournisseur', 'lire')), 'position' => 45),
-	'p.seuil_stock_alerte' => array('label' => "StockLimit", 'checked' => 0, 'enabled' => (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 50),
-	'p.desiredstock' => array('label' => "DesiredStock", 'checked' => 1, 'enabled' => (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 51),
-	'p.stock' => array('label' => "PhysicalStock", 'checked' => 1, 'enabled' => (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 52),
-	'stock_virtual' => array('label' => "VirtualStock", 'checked' => 1, 'enabled' => (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $virtualdiffersfromphysical), 'position' => 53),
-	'p.tobatch' => array('label' => "ManageLotSerial", 'checked' => 0, 'enabled' => (isModEnabled('productbatch')), 'position' => 60),
-	'p.fk_country' => array('label' => "Country", 'checked' => 0, 'position' => 100),
-	'p.fk_state' => array('label' => "State", 'checked' => 0, 'position' => 101),
-	$alias_product_perentity . '.accountancy_code_sell' => array('label' => "ProductAccountancySellCode", 'checked' => 0, 'enabled' => !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 400),
-	$alias_product_perentity . '.accountancy_code_sell_intra' => array('label' => "ProductAccountancySellIntraCode", 'checked' => 0, 'enabled' => $isInEEC && !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 401),
-	$alias_product_perentity . '.accountancy_code_sell_export' => array('label' => "ProductAccountancySellExportCode", 'checked' => 0, 'enabled' => !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 402),
-	$alias_product_perentity . '.accountancy_code_buy' => array('label' => "ProductAccountancyBuyCode", 'checked' => 0, 'enabled' => !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 403),
-	$alias_product_perentity . '.accountancy_code_buy_intra' => array('label' => "ProductAccountancyBuyIntraCode", 'checked' => 0, 'enabled' => $isInEEC && !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 404),
-	$alias_product_perentity . '.accountancy_code_buy_export' => array('label' => "ProductAccountancyBuyExportCode", 'checked' => 0, 'enabled' => !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 405),
-	'p.datec' => array('label' => "DateCreation", 'checked' => 0, 'position' => 500),
-	'p.tms' => array('label' => "DateModificationShort", 'checked' => 0, 'position' => 500),
-	'p.tosell' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked' => 1, 'position' => 1000),
-	'p.tobuy' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked' => 1, 'position' => 1000),
-	'p.import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'index' => 0, 'checked' => -1, 'position' => 1100),
+	'thumbnail' => array('label' => 'Photo', 'checked' => '0', 'position' => 10),
+	'p.description' => array('label' => 'Description', 'checked' => '0', 'position' => 10),
+	'p.label' => array('label' => "Label", 'checked' => '1', 'position' => 10),
+	'p.fk_product_type' => array('label' => "Type", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && isModEnabled("service")), 'position' => 11),
+	'p.barcode' => array('label' => "Gencod", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('barcode')), 'position' => 12),
+	'p.duration' => array('label' => "Duration", 'checked' => ($contextpage != 'productlist'), 'enabled' => (string) (int) (isModEnabled("service") && (string) $type == '1'), 'position' => 13),
+	'pac.fk_product_parent' => array('label' => "ParentProductOfVariant", 'checked' => '-1', 'enabled' => (string) (int) (isModEnabled('variants')), 'position' => 14),
+	'p.finished' => array('label' => "Nature", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && $type != '1'), 'position' => 19),
+	'p.weight' => array('label' => 'Weight', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && $type != '1'), 'position' => 20),
+	'p.weight_units' => array('label' => 'WeightUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && $type != '1'), 'position' => 21),
+	'p.length' => array('label' => 'Length', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 22),
+	'p.length_units' => array('label' => 'LengthUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 23),
+	'p.width' => array('label' => 'Width', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 24),
+	'p.width_units' => array('label' => 'WidthUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 25),
+	'p.height' => array('label' => 'Height', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 26),
+	'p.height_units' => array('label' => 'HeightUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SIZE') && $type != '1'), 'position' => 27),
+	'p.surface' => array('label' => 'Surface', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $type != '1'), 'position' => 28),
+	'p.surface_units' => array('label' => 'SurfaceUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $type != '1'), 'position' => 29),
+	'p.volume' => array('label' => 'Volume', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $type != '1'), 'position' => 30),
+	'p.volume_units' => array('label' => 'VolumeUnits', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $type != '1'), 'position' => 31),
+	'cu.label' => array('label' => "DefaultUnitToShow", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled("product") && getDolGlobalString('PRODUCT_USE_UNITS')), 'position' => 32),
+	'p.fk_default_workstation' => array('label' => 'DefaultWorkstation', 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('workstation') && $type == 1), 'position' => 33),
+	'p.sellprice' => array('label' => "SellingPrice", 'checked' => '1', 'enabled' => (string) (int) !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 40),
+	'p.tva_tx' => array('label' => "VATRate", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUIT_MULTIPRICES'), 'position' => 41),
+	'p.minbuyprice' => array('label' => "BuyingPriceMinShort", 'checked' => '1', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 42),
+	'p.numbuyprice' => array('label' => "BuyingPriceNumShort", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 43),
+	'p.pmp' => array('label' => "PMPValueShort", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 44),
+	'p.cost_price' => array('label' => "CostPrice", 'checked' => '0', 'enabled' => (string) (int) ($user->hasRight('fournisseur', 'lire')), 'position' => 45),
+	'p.seuil_stock_alerte' => array('label' => "StockLimit", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 50),
+	'p.desiredstock' => array('label' => "DesiredStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 51),
+	'p.stock' => array('label' => "PhysicalStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))), 'position' => 52),
+	'stock_virtual' => array('label' => "VirtualStock", 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('stock') && $user->hasRight('stock', 'lire') && ($contextpage != 'servicelist' || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && $virtualdiffersfromphysical), 'position' => 53),
+	'p.tobatch' => array('label' => "ManageLotSerial", 'checked' => '0', 'enabled' => (string) (int) (isModEnabled('productbatch')), 'position' => 60),
+	'p.fk_country' => array('label' => "Country", 'checked' => '0', 'position' => 100),
+	'p.fk_state' => array('label' => "State", 'checked' => '0', 'position' => 101),
+	$alias_product_perentity . '.accountancy_code_sell' => array('label' => "ProductAccountancySellCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 400),
+	$alias_product_perentity . '.accountancy_code_sell_intra' => array('label' => "ProductAccountancySellIntraCode", 'checked' => '0', 'enabled' => (string) (int) ($isInEEC && !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')), 'position' => 401),
+	$alias_product_perentity . '.accountancy_code_sell_export' => array('label' => "ProductAccountancySellExportCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 402),
+	$alias_product_perentity . '.accountancy_code_buy' => array('label' => "ProductAccountancyBuyCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 403),
+	$alias_product_perentity . '.accountancy_code_buy_intra' => array('label' => "ProductAccountancyBuyIntraCode", 'checked' => '0', 'enabled' => (string) (int) ($isInEEC && !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')), 'position' => 404),
+	$alias_product_perentity . '.accountancy_code_buy_export' => array('label' => "ProductAccountancyBuyExportCode", 'checked' => '0', 'enabled' => (string) (int) !getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING'), 'position' => 405),
+	'p.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
+	'p.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 500),
+	'p.tosell' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Sell").')', 'checked' => '1', 'position' => 1000),
+	'p.tobuy' => array('label' => $langs->transnoentitiesnoconv("Status").' ('.$langs->transnoentitiesnoconv("Buy").')', 'checked' => '1', 'position' => 1000),
+	'p.import_key'    => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'notnull' => -1, 'index' => 0, 'checked' => '-1', 'position' => 1100),
 );
 
 if (! empty($conf->stock->enabled)) {
 	// service
 	if ($type == 1) {
 		if (! empty($conf->global->STOCK_SUPPORTS_SERVICES)) {
-			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
+			$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => '0', 'position' => 1001);
 		}
 	} else {
 		//product
-		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => 0, 'position' => 1001);
+		$arrayfields['p.stockable_product'] = array('label' => $langs->trans('StockableProduct'), 'checked' => '0', 'position' => 1001);
 	}
 }
 /*foreach ($object->fields as $key => $val) {
@@ -308,7 +308,7 @@ if (! empty($conf->stock->enabled)) {
 		$visible = dol_eval($val['visible'], 1, 1, '1');
 		$arrayfields['p.'.$key] = array(
 			'label'=>$val['label'],
-			'checked'=>(($visible < 0) ? 0 : 1),
+			'checked'=>(($visible < 0) ? '0' : '1'),
 			'enabled'=>(abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position'=>$val['position']
 		);
@@ -337,7 +337,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 // Note: forcing int for position, but in reality it is a float here.
-'@phan-var-force array<string,array{label:string,checked?:string,position?:int,enabled?:string,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 if ($search_type == '0') {
@@ -1231,7 +1230,7 @@ if (!empty($arrayfields['p.seuil_stock_alerte']['checked'])) {
 	print '</td>';
 }
 // Managed_in_stock
-$array = array('-1'=>'&nbsp;', '0'=>$langs->trans('No'), '1'=>$langs->trans('Yes'));
+$array = array('-1' => '&nbsp;', '0' => $langs->trans('No'), '1' => $langs->trans('Yes'));
 if (!empty($arrayfields['p.stockable_product']['checked'])) {
 	print '<td class="liste_titre center">'.Form::selectarray('search_stockable_product', $array, $search_stockable_product).'</td>';
 }
