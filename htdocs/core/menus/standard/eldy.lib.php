@@ -1563,6 +1563,12 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			}
 
 			$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_stats');
+
+			// Categories
+			if (isModEnabled('category')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=21", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+			}
 		}
 
 		// Orders
@@ -2164,7 +2170,7 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			// Categories
 			if (isModEnabled('category')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/index.php?leftmenu= 0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/list.php", $langs->trans("List"), 1, $user->hasRight('categorie',  'lire'));
 			}
 		}
