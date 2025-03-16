@@ -1,4 +1,6 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 
 // This tpl file is included into the init part of pages, so before action.
 // So no output must be done.
@@ -28,9 +30,9 @@ if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table
 			$enabled = true;
 			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['enabled'][$key])) {
 				// An enablement condition exist, it is evaluated.
-				$enabled = dol_eval($extrafields->attributes[$extrafieldsobjectkey]['enabled'][$key], 1);
+				$enabled = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['enabled'][$key], 1);
 			}
-			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) && $enabled ) {
+			if (!empty($extrafields->attributes[$extrafieldsobjectkey]['list'][$key]) && $enabled) {
 				$arrayfields[$extrafieldsobjectprefix.$key] = array(
 					'label'    => $extrafields->attributes[$extrafieldsobjectkey]['label'][$key],
 					'type'     => $extrafields->attributes[$extrafieldsobjectkey]['type'][$key],

@@ -49,6 +49,7 @@ if (empty($langs) || !is_object($langs)) {
 @phan-var-force int<0,1> $permissiontoadd
 @phan-var-force ?string $savingdocmask
 @phan-var-force ?string $param
+@phan-var-force CommonObject $object
 ';
 
 

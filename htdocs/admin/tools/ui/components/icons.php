@@ -83,7 +83,7 @@ $documentation->showSidebar(); ?>
 				}
 				?>
 
-				<h2 class="documentation-title"><?php echo $langs->trans('DocIconsList'); ?></h2>
+				<h2 class="documentation-title"><?php echo $langs->trans('DocIconsListImgPicto'); ?></h2>
 				<?php /* <p class="documentation-text"><?php echo $langs->trans('DocDocIconsListDescription'); ?></p>*/ ?>
 				<div class="documentation-example">
 					<div class="documentation-fontawesome-icon-list">
@@ -100,7 +100,7 @@ $documentation->showSidebar(); ?>
 										<div class="info-box-lines">
 											<div class="info-box-line spanoverflow nowrap">
 												<div class="inline-block nowraponall">
-													<div class="documentation-code"><pre>'.dol_htmlentities('img_picto(\''.$labelAlt.'\', '.$iconName.')').'</pre></div>
+													<div class="documentation-code"><pre>'.dol_htmlentities('img_picto(\''.$labelAlt.'\', \''.$iconName.'\')').'</pre></div>
 												</div>
 											</div>
 										</div><!-- /.info-box-lines -->
@@ -133,7 +133,7 @@ $documentation->showSidebar(); ?>
 				}
 				?>
 
-				<h2 class="documentation-title"><?php echo $langs->trans('DocIconsList'); ?></h2>
+				<h2 class="documentation-title"><?php echo $langs->trans('DocIconsListFontAwesome'); ?></h2>
 				<?php /* <p class="documentation-text"><?php echo $langs->trans('DocDocIconsListDescription'); ?></p>*/ ?>
 				<div class="documentation-example">
 

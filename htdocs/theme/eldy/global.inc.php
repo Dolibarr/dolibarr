@@ -416,9 +416,11 @@ input[type=checkbox], input[type=radio] {
 	margin-top: 5px;
 }
 input {
-	line-height: 1.3em;
 	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	line-height: 1.3em;
 }
 .tableforfield input, .refidno input {
 	padding: 2px;
@@ -1179,6 +1181,9 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.marginleftlarge {
+	margin-<?php print $left; ?>: 20px !important;
+}
 .paddinglarge {
 	padding: 6px !important;
 }
@@ -1376,8 +1381,12 @@ span.fa.fa-plus-circle.paddingleft {
 	font-size: 1em;
 }
 .listofinvoicetype {
-	height: 2.2em;
+	min-height: 1.8em;
 	vertical-align: middle;
+	padding-top: 7px;
+	padding-bottom: 1px;
+	display: flex;
+	align-items: center;
 }
 .divsocialnetwork:not(:last-child) {
 	padding-<?php print $right; ?>: 20px;
@@ -6406,9 +6415,6 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
-}
-.jPicker td.Text input {
-	height: 1em !important;
 }
 .jPicker .Preview div {
 	height: 36px !important;
