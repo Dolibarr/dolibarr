@@ -1286,7 +1286,7 @@ class FormSetupItem
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 			$bankaccount = new Account($this->db);
-			$resbank = $bankaccount->fetch((string) $this->fieldValue);
+			$resbank = $bankaccount->fetch((int) $this->fieldValue);
 			if ($resbank > 0) {
 				$out .= $bankaccount->label;
 			} elseif ($resbank < 0) {
@@ -1364,7 +1364,7 @@ class FormSetupItem
 		$default = $this->defaultFieldValue;
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 		$formother = new FormOther($this->db);
-		return $formother->selectColor(colorArrayToHex(colorStringToArray((string) $this->fieldAttr['value'], array()), ''), $this->fieldAttr['name'], '', 1, array(), '', '', $default).' ';
+		return $formother->selectColor(colorArrayToHex(colorStringToArray((string) $this->fieldAttr['value'], array()), ''), $this->fieldAttr['name'], '', 1, array(), '', '', (string) $default).' ';
 	}
 
 	/**

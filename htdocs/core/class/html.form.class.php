@@ -5192,7 +5192,8 @@ class Form
 
 		$langs->load('bills');
 
-		$opt = '<option value="" selected></option>';
+		$opt = '';
+
 		$sql = "SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc";
 		$sql .= ' FROM ' . $this->db->prefix() . 'facture';
 		$sql .= ' WHERE entity IN (' . getEntity('invoice') . ')';
@@ -5201,6 +5202,8 @@ class Form
 		$sql .= ' AND type <> 2';
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
+
+		$nbSituationInvoiceForThirdparty = 0;
 
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
@@ -5214,6 +5217,8 @@ class Form
 					if ($obj->situation_final != 1) {
 						//Not prov?
 						if (substr($obj->ref, 1, 4) != 'PROV') {
+							$nbSituationInvoiceForThirdparty++;
+
 							if ($selected == $obj->rowid) {
 								$opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->ref . '</option>';
 							} else {
@@ -5226,9 +5231,13 @@ class Form
 		} else {
 			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
-		if ($opt == '<option value ="" selected></option>') {
-			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
+
+		if ($nbSituationInvoiceForThirdparty > 0) {
+			$opt = '<option class="minwidth100" value="" selected>&nbsp;</option>'.$opt;
+		} else {
+			$opt = '<option class="minwidth100" value="-1" selected>'.$langs->trans('NoSituations').'</option>';
 		}
+
 		return $opt;
 	}
 

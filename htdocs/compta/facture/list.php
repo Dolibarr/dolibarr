@@ -137,8 +137,8 @@ $search_date_startyear = GETPOSTINT('search_date_startyear');
 $search_date_endday = GETPOSTINT('search_date_endday');
 $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endyear = GETPOSTINT('search_date_endyear');
-$search_date_start = GETPOSTDATE('search_date_valid_start', 'getpost'); // Use tzserver because date invoice is a date without hour
-$search_date_end = GETPOSTDATE('search_date_valid_end', 'getpostend');
+$search_date_start = GETPOSTDATE('search_date_start', 'getpost'); // Use tzserver because date invoice is a date without hour
+$search_date_end = GETPOSTDATE('search_date_end', 'getpostend');
 
 $search_date_valid_startday = GETPOSTINT('search_date_valid_startday');
 $search_date_valid_startmonth = GETPOSTINT('search_date_valid_startmonth');
