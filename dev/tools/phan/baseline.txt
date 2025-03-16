@@ -13,7 +13,6 @@ return [
     // PhanTypeMismatchArgument : 150+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanUndeclaredGlobalVariable : 100+ occurrences
-    // PhanTypeMismatchArgumentNullable : 50+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
