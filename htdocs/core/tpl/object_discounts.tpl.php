@@ -107,7 +107,7 @@ if ($absolute_discount > 0) {
 		// Discount available of type fixed amount (not credit note)
 		$more = $addabsolutediscount;
 		// TODO: Check $resteapayer - is '$maxvalue' in form_remise_dispo()
-		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOST('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filterabsolutediscount, $resteapayer, $more, 0, $discount_type);
+		$form->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$object->id, GETPOSTINT('discountid'), 'remise_id', $thirdparty->id, $absolute_discount, $filterabsolutediscount, $resteapayer, $more, 0, $discount_type);
 	}
 }
 

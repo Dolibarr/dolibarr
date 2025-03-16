@@ -2644,3 +2644,4 @@ itemFound=%s Items found
 SearchStringMinLength=Search string must be at least 2 characters
 RefWebsite=Website reference
 FileToConcatToGeneratedPDF=File to concat to the generated PDF
+UxComponentsDoc=UX Components Doc

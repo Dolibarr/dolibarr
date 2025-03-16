@@ -1182,7 +1182,7 @@ abstract class CommonInvoice extends CommonObject
 						$sql .= ", 'ban'";
 						$sql .= ", ".((int) $conf->entity);
 						if (!empty($bac->id)) {
-							$sql .= ", '".$this->db->escape($bac->id)."'";
+							$sql .= ", '".$this->db->escape((string) $bac->id)."'";
 						}
 						$sql .= ")";
 
@@ -1368,7 +1368,7 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
 							// This creates a record into llx_prelevement_bons and updates link with llx_prelevement_demande
-							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', 0, 0, $type, $did, $fk_bank_account);
+							$nbinvoices = $bon->create('0', '0', 'real', 'ALL', 0, 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;

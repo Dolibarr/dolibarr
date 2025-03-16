@@ -206,8 +206,8 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => (int) $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -221,7 +221,6 @@ $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $result = restrictedArea($user, 'adherent');
@@ -640,7 +639,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
-	$result = $membertype->fetch($search_type);
+	$result = $membertype->fetch((int) $search_type);
 	$title .= " (".$membertype->label.")";
 }
 
@@ -1348,7 +1347,7 @@ while ($i < $imaxinloop) {
 		}
 		// Company
 		if (!empty($arrayfields['d.company']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companyname).'">';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";
 		}

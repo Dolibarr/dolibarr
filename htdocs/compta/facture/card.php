@@ -3722,7 +3722,7 @@ if ($action == 'create') {
 					}
 					print '<span class="marginleftonly">'.$form->selectarray('typedeposit', $arraylist, $typedeposit, 0, 0, 0, '', 1).'</span>';
 					//print '<span class="opacitymedium paddingleft">'.$langs->trans("AmountOrPercent").'</span>';
-					print '<input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.($valuedeposit ? $valuedeposit : '').'"'.($valudeposit ? '' : 'placeholder="'.$langs->getCurrencySymbol($conf->currency).'"').'>';
+					print '<input type="text" id="valuedeposit" name="valuedeposit" class="width75 right" value="'.($valuedeposit ? $valuedeposit : '').'"'.($valuedeposit ? '' : 'placeholder="'.$langs->getCurrencySymbol($conf->currency).'"').'>';
 				}
 
 				print '</div></div>'."\n";
@@ -4854,6 +4854,10 @@ if ($action == 'create') {
 				$s = $langs->transnoentities("GeneratedFromTemplate", '{s1}');
 				$s = str_replace('{s1}', $tmptemplate->getNomUrl(1, '', 32), $s);
 				print $s;
+				print '</span>';
+			} else {
+				print ' <span class="opacitymediumbycolor paddingleft">';
+				print $langs->transnoentities("GeneratedFromTemplate", $langs->trans("ObjectDeleted"));
 				print '</span>';
 			}
 		}

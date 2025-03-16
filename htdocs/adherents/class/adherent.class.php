@@ -672,7 +672,7 @@ class Adherent extends CommonObject
 		// Check parameters
 		if (getDolGlobalString('ADHERENT_MAIL_REQUIRED') && !isValidEmail((string) $this->email)) {
 			$langs->load("errors");
-			$this->error = $langs->trans("ErrorBadEMail", $this->email);
+			$this->error = $langs->trans("ErrorBadEMail", (string) $this->email);
 			return -1;
 		}
 		if (!$this->datec) {

@@ -8,7 +8,7 @@
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,8 +134,8 @@ if (empty($date_endmonth)) {
 }
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
-	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+	$date_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
 $sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle as label, f.ref_supplier, f.date_lim_reglement as dlr, f.close_code, f.vat_reverse_charge,";
@@ -190,8 +190,8 @@ if ($date_start && $date_end) {
 	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already') {
