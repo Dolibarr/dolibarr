@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Andreu Bisquerra    <jove@bisquerra.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Abbes Bahfir        <bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -523,7 +523,7 @@ class dolReceiptPrinter extends Printer
 		$error = 0;
 		$sql = "INSERT INTO ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " (name, template, entity) VALUES ('".$this->db->escape($name)."'";
-		$sql .= ", '".$this->db->escape($template)."', ".$conf->entity.")";
+		$sql .= ", '".$this->db->escape((string) $template)."', ".$conf->entity.")";
 		$resql = $this->db->query($sql);
 		if (!$resql) {
 			$error++;
@@ -568,7 +568,7 @@ class dolReceiptPrinter extends Printer
 
 		$sql = "UPDATE ".$this->db->prefix()."printer_receipt_template";
 		$sql .= " SET name='".$this->db->escape($name)."'";
-		$sql .= ", template='".$this->db->escape($template)."'";
+		$sql .= ", template='".$this->db->escape((string) $template)."'";
 		$sql .= " WHERE rowid=".((int) $templateid);
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -902,10 +902,10 @@ class dolReceiptPrinter extends Printer
 						$this->printer->setTextSize(1, 1);
 						break;
 					case 'DOL_UNDERLINE':
-						$this->printer->setUnderline(true);
+						$this->printer->setUnderline(1);
 						break;
 					case 'DOL_UNDERLINE_DISABLED':
-						$this->printer->setUnderline(false);
+						$this->printer->setUnderline(0);
 						break;
 					case 'DOL_BEEP':
 						$this->printer->getPrintConnector() -> write("\x1e");

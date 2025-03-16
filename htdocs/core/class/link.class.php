@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -147,7 +147,7 @@ class Link extends CommonObject
 			}
 		} else {
 			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
-				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", $this->name);
+				$this->error = $langs->trans("ErrorCompanyNameAlreadyExists", (string) $this->name);
 				$result = -1;
 			} else {
 				$this->error = $this->db->lasterror();

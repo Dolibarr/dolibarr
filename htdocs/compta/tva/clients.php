@@ -5,7 +5,7 @@
  * Copyright (C) 2006		Yannick Warnier			<ywarnier@beeznest.org>
  * Copyright (C) 2014		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -454,7 +454,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$company_static->fetch($thirdparty_id);
 					print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
 				} else {
-					$tmpid = preg_replace('/userid_/', '', $thirdparty_id);
+					$tmpid = (int) preg_replace('/userid_/', '', $thirdparty_id);
 					$user_static->fetch($tmpid);
 					print $langs->trans("User").': '.$user_static->getNomUrl(1);
 				}
@@ -645,7 +645,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$company_static->fetch($thirdparty_id);
 					print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
 				} else {
-					$tmpid = preg_replace('/userid_/', '', $thirdparty_id);
+					$tmpid = (int) preg_replace('/userid_/', '', $thirdparty_id);
 					$user_static->fetch($tmpid);
 					print $langs->trans("User").': '.$user_static->getNomUrl(1);
 				}
