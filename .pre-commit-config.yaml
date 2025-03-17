@@ -3,7 +3,7 @@ exclude: (?x)^( htdocs/includes/ckeditor/.*|(\.(?!github/workflows)[^/]*/.*))$
 repos:
   # Several miscellaneous checks and fix (on yaml files, end of files fix)
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v5.0.0
     hooks:
       # This hook tests the name of the branch and return an error if the name is
       #  'develop' or an official version 'x.y'
@@ -60,13 +60,13 @@ repos:
 
   # Gitleaks is a SAST tool for detecting and preventing hardcoded secrets like passwords, api keys, and tokens in git repos
   - repo: https://github.com/gitleaks/gitleaks.git
-    rev: v8.16.1
+    rev: v8.24.0
     hooks:
       - id: gitleaks
 
   # Check github actions
   - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.3
+    rev: v1.7.7
     hooks:
       - id: actionlint
 
@@ -168,7 +168,7 @@ repos:
 
   # Prettier (format code, only for non common files)
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: v3.0.3
+    rev: v3.1.0
     hooks:
       - id: prettier
         stages: [manual]
@@ -191,7 +191,7 @@ repos:
 
   # Check format of yaml files
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.35.1
+    rev: v1.36.2
     hooks:
       - id: yamllint
         args:
@@ -251,7 +251,7 @@ repos:
 
   # Check sql file syntax
   - repo: https://github.com/sqlfluff/sqlfluff
-    rev: 3.1.0
+    rev: 3.3.1
     hooks:
       - id: sqlfluff-lint
         stages: [pre-commit, manual]  # manual needed for ci
