@@ -1086,7 +1086,6 @@ VirtualHost
 WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
 XSubsriptionError
-email
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 smsing
