@@ -1087,10 +1087,8 @@ WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
 XSubsriptionError
 email
-id
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
-ref
 smsing
 target
 titre
