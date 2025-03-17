@@ -801,8 +801,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
 						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
-						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
-						$sql .= " AND ed.fk_expedition =".(int) $object->id;
+						$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
+						$sql .= " AND ed.fk_expedition = ".(int) $object->id;
 						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
 
 						$resultsql = $db->query($sql);
@@ -1307,7 +1307,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			$out_js_line .= '				var dataSellByDate = objBatch.sellbydate;';
 			$out_js_line .= '				var optionLabel = key+" (";';
 			$out_js_line .= '				if (selectwarehouse.val() == -1) {';
-			$out_js_line .= '					optionLabel += "'.dol_escape_js($langs->trans('StockTotal')).': "+objBatch.qty;';
+			$out_js_line .= '					optionLabel += "'.dol_escape_js($langs->trans('TotalStock')).': "+objBatch.qty;';
 			$out_js_line .= '				} else {';
 			$out_js_line .= '					 optionLabel += "'.dol_escape_js($langs->trans('Stock')).': "+objBatch.qty;';
 			$out_js_line .= '				}';

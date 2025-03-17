@@ -2,7 +2,7 @@
 /* Copyright (C) 2021  		Open-Dsi  				<support@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024		José					<jose.martinez@pichinov.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ if (empty($reshook)) {
 			} else {
 				if ($field_key == 'lang') {
 					print img_picto('', 'language', 'class="pictofixedwidth"');
-					print $formadmin->select_language($value, $html_name, 0, null, 1, 0, 0, 'minwidth300', 2);
+					print $formadmin->select_language($value, $html_name, 0, array(), 1, 0, 0, 'minwidth300', 2);
 				} else {
 					print $assetdepreciationoptions->showInputField($field_info, $field_key, $value, '', '', $prefix_html_name, 0);
 				}

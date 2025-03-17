@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -862,7 +862,7 @@ class FormProduct
 						$label .= $arraytypes['batch'];
 						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
 						$optionLabel = ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']);
-						$optionLabel .= ' ('.$langs->trans('StockTotal').': '.$arraytypes['qty'];
+						$optionLabel .= ' ('.$langs->trans('TotalStock').': '.$arraytypes['qty'];
 						if (!empty($arraytypes['sellbydate'])) {
 							$optionLabel .= ' - '.$langs->trans('printSellby', $arraytypes['sellbydate']);
 						}

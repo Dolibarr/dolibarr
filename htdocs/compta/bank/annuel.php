@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013-2023  Charlene BENKE          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -79,7 +79,7 @@ $error = 0;
 // Get account information
 $object = new Account($db);
 if ($id > 0 && !preg_match('/,/', $id)) {	// if for a particular account and not a list
-	$result = $object->fetch($id);
+	$result = $object->fetch((int) $id);
 	$id = $object->id;
 }
 if (!empty($ref)) {
@@ -169,7 +169,7 @@ if (!empty($id)) {
 		$bankaccount = new Account($db);
 		$listid = explode(',', $id);
 		foreach ($listid as $key => $aId) {
-			$bankaccount->fetch($aId);
+			$bankaccount->fetch((int) $aId);
 			$bankaccount->label = $bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
 			if ($key < (count($listid) - 1)) {
@@ -374,7 +374,7 @@ if ($result < 0) {
 
 	$px1 = new DolGraph();
 	$px1->SetData($graph_datas);
-	$px1->SetLegend(array(($year - 2), ($year - 1), $year));
+	$px1->SetLegend(array((string) ($year - 2), (string) ($year - 1), (string) $year));
 	$px1->SetLegendWidthMin(180);
 	$px1->SetMaxValue($px1->GetCeilMaxValue() < 0 ? 0 : $px1->GetCeilMaxValue());
 	$px1->SetMinValue($px1->GetFloorMinValue() > 0 ? 0 : $px1->GetFloorMinValue());
@@ -456,7 +456,7 @@ if ($result < 0) {
 
 	$px2 = new DolGraph();
 	$px2->SetData($graph_datas);
-	$px2->SetLegend(array(($year - 2), ($year - 1), $year));
+	$px2->SetLegend(array((string) ($year - 2), (string) ($year - 1), (string) $year));
 	$px2->SetLegendWidthMin(180);
 	$px2->SetMaxValue($px2->GetCeilMaxValue() < 0 ? 0 : $px2->GetCeilMaxValue());
 	$px2->SetMinValue($px2->GetFloorMinValue() > 0 ? 0 : $px2->GetFloorMinValue());

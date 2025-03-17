@@ -3,7 +3,7 @@
  * Copyright (C) 2023	Benjamin Falière	<benjamin.faliere@altairis.fr>
  * Copyright (C) 2023	Charlene Benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -432,7 +432,7 @@ class BOM extends CommonObject
 	 * Load object lines in memory from the database by type of product
 	 *
 	 * @param int<0,1>	$typeproduct	0 type product, 1 type service
-
+	 *
 	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
@@ -580,7 +580,7 @@ class BOM extends CommonObject
 	 *
 	 * @param	int			$fk_product				Id of product
 	 * @param	float		$qty					Quantity
-	 * @param	int<0,1> 	$qty_frozen			If the qty is Frozen
+	 * @param	int<0,1> 	$qty_frozen				If the qty is Frozen
 	 * @param 	int			$disable_stock_change	Disable stock change on using in MO
 	 * @param	float		$efficiency				Efficiency in MO
 	 * @param	int<-1,max>	$position				Position of BOM-Line in BOM-Lines
@@ -1455,7 +1455,7 @@ class BOM extends CommonObject
 						$this->total_cost += $line->total_cost;
 					} else {
 						$bom_child = new BOM($this->db);
-						$res = $bom_child->fetch($line->fk_bom_child);
+						$res = $bom_child->fetch((int) $line->fk_bom_child);
 						if ($res > 0) {
 							$bom_child->calculateCosts();
 							$line->childBom[] = $bom_child;

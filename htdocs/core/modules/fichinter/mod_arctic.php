@@ -5,7 +5,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		}
 		$datec = '';
 		if (!empty($object->datec)) {
-			$datec = $object->datec;
+			$datec = (int) $object->datec;
 		}
 		$numFinal = get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $datec);
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -236,7 +236,7 @@ if ($object->id > 0) {
 
 			// Link to make payment now
 			print '<td class="minwidth75">';
-			print $tmpcontact->getNomUrl(1, -1);
+			print $tmpcontact->getNomUrl(1, '-1');
 			print '</td>';
 
 			print "</tr>\n";

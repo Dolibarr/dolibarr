@@ -204,3 +204,6 @@ UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_n
 INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = 1 AND c2.entity = c1.entity);
 UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 0;
 DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 1;
+
+ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
+ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
