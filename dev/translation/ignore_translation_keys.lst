@@ -1078,7 +1078,6 @@ ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
-Societe
 Stable
 Suggested
 TicketMessageMailSignatureText
@@ -1105,7 +1104,6 @@ multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 ref
 smsing
-societe
 target
 titre
 type
