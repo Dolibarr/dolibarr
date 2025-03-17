@@ -1366,9 +1366,6 @@ class Contrat extends CommonObject
 		if (isset($this->entity)) {
 			$this->entity = (int) $this->entity;
 		}
-		if (isset($this->statut)) {
-			$this->statut = (int) $this->statut;
-		}
 		if (isset($this->status)) {
 			$this->status = (int) $this->status;
 		}
@@ -2871,6 +2868,7 @@ class Contrat extends CommonObject
 								$actioncomm->authorid     = $user->id;   // User saving action
 								$actioncomm->userownerid  = $user->id;	// Owner of action
 								$actioncomm->fk_element   = $object->id;
+								$actioncomm->elementid    = $object->id;
 								$actioncomm->elementtype  = 'contract';
 								$actioncomm->note_private = $comment;
 

@@ -2351,7 +2351,7 @@ class FormFile
 	/**
 	 * Show detail icon with link for preview
 	 *
-	 * @param   array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string}     $file           Array with data of file. Example: array('name'=>...)
+	 * @param   array{name:string,path?:string,level1name?:string,relativename?:string,fullname:string,date?:string,size?:int,perm?:int,type?:string}     $file           Array with data of file. Example: array('name'=>...)
 	 * @param   string		$modulepart     propal, facture, facture_fourn, ...
 	 * @param   string		$relativepath   Relative path of docs
 	 * @param   int<min,1>	$ruleforpicto   Rule for picto: 0=Use the generic preview picto, 1=Use the picto of mime type of file). Use a negative value to show a generic picto even if preview not available.

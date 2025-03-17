@@ -460,8 +460,6 @@ class ExpenseReportLine extends CommonObjectLine
 	 */
 	public function update(User $user, $notrigger = 0)
 	{
-		global $langs;
-
 		$error = 0;
 
 		// Clean parameters
