@@ -142,7 +142,7 @@ $usercancreateinvoice = ($user->hasRight('facture', 'creer') == 1);
 $usercancreatecontract = ($user->hasRight('contrat', 'creer') == 1);
 $usercancreateintervention = ($user->hasRight('ficheinter', 'creer') == 1);
 $usercancreatepurchaseorder = ($user->hasRight('fournisseur', 'commande', 'creer') || $user->hasRight('supplier_order', 'creer'));
-$usercanreopen = ((!getDolGlobalBool('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalBool('MAIN_USE_ADVANCED_PERMS') && !empty($user->hasRight('propal', 'propal_advance', 'reopen'))));
+$usercanreopen = ((!getDolGlobalBool('MAIN_USE_ADVANCED_PERMS') && $usercancreate) || (getDolGlobalBool('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('propal', 'propal_advance', 'reopen')));
 if (getDolGlobalBool('PROPAL_DISALLOW_REOPEN')) {
 	$usercanreopen = false;
 }
