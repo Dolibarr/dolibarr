@@ -4,7 +4,7 @@
  * Copyright (C) 2006-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2012       J. Fernando Lagrange    <fernando@demo-tic.org>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -204,7 +204,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 	if (!GETPOST('societe')) {
 		$error++;
-		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("societe"))."<br>\n";
+		$errmsg .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ThirdParty"))."<br>\n";
 	}
 	if (!GETPOST('lastname')) {
 		$error++;
