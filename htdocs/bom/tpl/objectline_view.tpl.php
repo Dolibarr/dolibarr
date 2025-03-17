@@ -6,7 +6,7 @@
  * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2017		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,7 +119,7 @@ $coldisplay++;
 $tmpproduct = new Product($object->db);
 $tmpproduct->fetch($line->fk_product);
 $tmpbom = new BOM($object->db);
-$res = $tmpbom->fetch($line->fk_bom_child);
+$res = $tmpbom->fetch((int) $line->fk_bom_child);
 if ($tmpbom->id > 0) {
 	print $tmpproduct->getNomUrl(1);
 	print ' '.$langs->trans("or").' ';
@@ -134,7 +134,7 @@ if ($tmpbom->id > 0) {
 
 // Line extrafield
 if (!empty($extrafields)) {
-	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
+	$temps = $line->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
 		print $temps;

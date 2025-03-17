@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
  * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -96,15 +96,15 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'aa.account_number' => array('label' => "AccountNumber", 'checked' => 1),
-	'aa.label' => array('label' => "Label", 'checked' => 1),
-	'aa.labelshort' => array('label' => "LabelToShow", 'checked' => 1),
-	'aa.account_parent' => array('label' => "Accountparent", 'checked' => 1),
-	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => 1, 'help' => 'PcgtypeDesc'),
-	'categories' => array('label' => "AccountingCategories", 'checked' => -1, 'help' => 'AccountingCategoriesDesc'),
-	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => 1),
-	'aa.import_key' => array('label' => "ImportId", 'checked' => -1, 'help' => ''),
-	'aa.active' => array('label' => "Activated", 'checked' => 1)
+	'aa.account_number' => array('label' => "AccountNumber", 'checked' => '1'),
+	'aa.label' => array('label' => "Label", 'checked' => '1'),
+	'aa.labelshort' => array('label' => "LabelToShow", 'checked' => '1'),
+	'aa.account_parent' => array('label' => "Accountparent", 'checked' => '1'),
+	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => '1', 'help' => 'PcgtypeDesc'),
+	'categories' => array('label' => "AccountingCategories", 'checked' => '-1', 'help' => 'AccountingCategoriesDesc'),
+	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => '1'),
+	'aa.import_key' => array('label' => "ImportId", 'checked' => '-1', 'help' => ''),
+	'aa.active' => array('label' => "Activated", 'checked' => '1')
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -631,14 +631,14 @@ if ($resql) {
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
-				print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_edit();
-				print '</a>';
-				print '&nbsp;';
-				print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_delete();
-				print '</a>';
-				print '&nbsp;';
+			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_delete();
+			print '</a>';
+			print '&nbsp;';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {
@@ -787,14 +787,14 @@ if ($resql) {
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
 			// if ($permissiontoadd) { // test is always true
-				print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_edit();
-				print '</a>';
-				print '&nbsp;';
-				print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_delete();
-				print '</a>';
-				print '&nbsp;';
+			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_delete();
+			print '</a>';
+			print '&nbsp;';
 			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 				$selected = 0;
 				if (in_array($obj->rowid, $arrayofselected)) {

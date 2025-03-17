@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,9 @@
  * @var CommonObject $object
  */
 
+'
+@phan-var-force CommonObject $object
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -57,11 +61,11 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 					$value = $datenotinstring;
 				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
-					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0'  ? $obj->$tmpkey : '');
+					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0' ? $obj->$tmpkey : '');
 				} else {
 					// The key may be in $obj->array_options if not in $obj
 					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
-						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : '') );
+						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : ''));
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {

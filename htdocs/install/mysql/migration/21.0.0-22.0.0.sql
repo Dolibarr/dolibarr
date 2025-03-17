@@ -205,6 +205,9 @@ INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT
 UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 0;
 DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 1;
 
+ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
+ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
+
 -- Dispatcher for virtual products
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_product;
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);

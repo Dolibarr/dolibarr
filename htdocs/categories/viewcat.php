@@ -7,7 +7,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2023-2024	Charlene Benke				<charlene@patas-monkey.com>
@@ -189,11 +189,15 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$elementtype = 'supplier_order';
 	} else {
 		dol_print_error(null, "Not supported value of type = ".$type);
+		$result = -100;
 	}
 
-	$result = $object->del_type($tmpobject, $elementtype);
-	if ($result < 0) {
-		dol_print_error(null, $object->error);
+	if ($tmpobject !== null) {
+		// also enter here when item was not found to report error
+		$result = $object->del_type($tmpobject, $elementtype);
+		if ($result < 0) {
+			dol_print_error(null, $object->error);
+		}
 	}
 }
 
@@ -273,8 +277,10 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		$result = $newobject->fetch($elemid);
 	}
 
-	// Add into category
-	$result = $object->add_type($newobject, $elementtype);
+	if ($result >= 0 && $newobject !== null) {
+		// Add into category
+		$result = $object->add_type($newobject, $elementtype);
+	}
 	if ($result >= 0) {
 		setEventMessages($langs->trans("WasAddedSuccessfully", $newobject->ref), null, 'mesgs');
 	} else {
@@ -1015,7 +1021,7 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 
 					print "\t".'<tr class="oddeven">'."\n";
 					print '<td class="nowrap tdtop">';
-					print $account->getNomUrl(1, 0);
+					print $account->getNomUrl(1, '0');
 					print "</td>\n";
 					print '<td class="tdtop">'.$account->bank."</td>\n";
 					print '<td class="tdtop">'.$account->number."</td>\n";
@@ -1409,7 +1415,9 @@ if ($type == Categorie::TYPE_FICHINTER) {
 				$i = 0;
 				foreach ($fichinters as $fichinter) {
 					$i++;
-					if ($i > $limit) break;
+					if ($i > $limit) {
+						break;
+					}
 
 					print "\t".'<tr class="oddeven">'."\n";
 					print '<td class="nowrap tdtop">';
@@ -1477,7 +1485,10 @@ if ($type == Categorie::TYPE_ORDER) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+		$num = count($objects);
+		$nbtotalofrecords = '';
+		$newcardbutton = '';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("Orders"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit);
@@ -1555,7 +1566,10 @@ if ($type == Categorie::TYPE_INVOICE) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+		$num = count($objects);
+		$nbtotalofrecords = '';
+		$newcardbutton = '';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("BillsCustomers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'bill', 0, $newcardbutton, '', $limit);
@@ -1606,7 +1620,8 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 		dol_print_error($db, $object->error, $object->errors);
 	} else {
 		// Form to add record into a category
-		$showclassifyform = $user->hasRight('fournisseur', 'commande', 'creer');;
+		$showclassifyform = $user->hasRight('fournisseur', 'commande', 'creer');
+		;
 		if ($showclassifyform) {
 			print '<br>';
 			print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -1633,7 +1648,10 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 		print '<input type="hidden" name="action" value="list">';
 
 		print '<br>';
-		$param = '&limit='.$limit.'&id='.$id.'&type='.$type; $num = count($objects); $nbtotalofrecords = ''; $newcardbutton = '';
+		$param = '&limit='.$limit.'&id='.$id.'&type='.$type;
+		$num = count($objects);
+		$nbtotalofrecords = '';
+		$newcardbutton = '';
 
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 		print_barre_liste($langs->trans("SuppliersOrders"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'supplier_order', 0, $newcardbutton, '', $limit);

@@ -1082,6 +1082,27 @@ class pdf_espadon extends ModelePdfExpedition
 			$pdf->MultiCell($w, 4, $outputlangs->transnoentities("DateDeliveryPlanned")." : ".dol_print_date($object->date_delivery, "day", false, $outputlangs, true), '', 'R');
 		}
 
+		if (getDolGlobalInt('PDF_SHOW_PROJECT_TITLE')) {
+			$object->fetchProject();
+			if (!empty($object->project->ref)) {
+				$posy += 4;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("Project")." : ".(empty($object->project->title) ? '' : $object->project->title), '', 'R');
+			}
+		}
+
+		if (getDolGlobalInt('PDF_SHOW_PROJECT')) {
+			$object->fetchProject();
+			if (!empty($object->project->ref)) {
+				$outputlangs->load("projects");
+				$posy += 4;
+				$pdf->SetXY($posx, $posy);
+				$pdf->SetTextColor(0, 0, 60);
+				$pdf->MultiCell($w, 3, $outputlangs->transnoentities("RefProject")." : ".(empty($object->project->ref) ? '' : $object->project->ref), '', 'R');
+			}
+		}
+
 		if (!getDolGlobalString('MAIN_PDF_HIDE_CUSTOMER_CODE') && !empty($object->thirdparty->code_client)) {
 			$posy += 4;
 			$pdf->SetXY($posx, $posy);
