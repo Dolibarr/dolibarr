@@ -142,7 +142,7 @@ class FormCompany extends Form
 	/**
 	 *  Affiche formulaire de selection des modes de reglement
 	 *
-	 *  @param	int		$page        	Page
+	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
 	 *  @param  string	$htmlname   	Nom du formulaire select
 	 *	@param	int		$empty			Add empty value in list
@@ -194,7 +194,7 @@ class FormCompany extends Form
 	/**
 	 *  Affiche formulaire de selection des niveau de prospection pour les contacts
 	 *
-	 *  @param	int		$page        	Page
+	 *  @param	string	$page        	Page
 	 *  @param  int		$selected    	Id or code preselected
 	 *  @param  string	$htmlname   	Nom du formulaire select
 	 *	@param	int		$empty			Add empty value in list
@@ -250,14 +250,14 @@ class FormCompany extends Form
 	 *   Thus the links with the departments are done on a department independently of its name.
 	 *
 	 *   @param     string		$selected        	Code state preselected
-	 *   @param     int|string	$country_codeid     0=list for all countries, otherwise country code or country rowid to show
+	 *   @param     0|string	$country_codeid     0=list for all countries, otherwise country code or country rowid to show
 	 *   @param     string		$htmlname			Id of department
 	 *   @return	void
 	 */
 	public function select_departement($selected = '', $country_codeid = 0, $htmlname = 'state_id')
 	{
 		// phpcs:enable
-		print $this->select_state($selected, $country_codeid, $htmlname);
+		print $this->select_state((int) $selected, $country_codeid, $htmlname);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -524,7 +524,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code for juridical type
-	 *    @param    int			$country_codeid		0=All countries, else the code of the country to display
+	 *    @param    0|string	$country_codeid		0=All countries, else the code of the country to display
 	 *    @param    string		$filter          	Add a SQL filter on list
 	 *    @return	void
 	 *    @deprecated Use print xxx->select_juridicalstatus instead
@@ -542,7 +542,7 @@ class FormCompany extends Form
 	 *    A country separator is included in case the list for all countries is returned.
 	 *
 	 *    @param	int			$selected        	Preselected code of juridical type
-	 *    @param    int			$country_codeid     0=list for all countries, otherwise list only country requested
+	 *    @param    0|string	$country_codeid     0=list for all countries, otherwise list only country requested
 	 *    @param    string		$filter          	Add a SQL filter on list. Data must not come from user input.
 	 *    @param	string		$htmlname			HTML name of select
 	 *    @param	string		$morecss			More CSS
@@ -562,7 +562,7 @@ class FormCompany extends Form
 		$sql .= " WHERE f.fk_pays=c.rowid";
 		$sql .= " AND f.active = 1 AND c.active = 1";
 		if ($country_codeid) {
-			$sql .= " AND c.code = '" . $this->db->escape($country_codeid) . "'";
+			$sql .= " AND c.code = '" . $this->db->escape((string) $country_codeid) . "'";
 		}
 		if ($filter) {
 			$sql .= " " . $filter;

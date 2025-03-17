@@ -9,7 +9,7 @@
  * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -155,13 +155,11 @@ $arrayfields = array(
 	'fd.date' => array('label' => 'DateOfLine', 'checked' => '1', 'enabled' => getDolGlobalString('FICHINTER_DISABLE_DETAILS') != '1' ? '1' : '0'),
 	'fd.duree' => array('label' => 'DurationOfLine', 'type' => 'duration', 'checked' => '1', 'enabled' => !getDolGlobalString('FICHINTER_DISABLE_DETAILS') ? '1' : '0'), //type duration is here because in database, column 'duree' is double
 );
-'@phan-var-force array{label:string,type?:string,checked:string,position?:int,enabled?:string,langfile?:string,help:string} $arrayfields';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array{label:string,type?:string,checked:string,position?:int,enabled?:string,langfile?:string,help:string} $arrayfields'; // dol_sort_array looses type for Phan
 
 // Security check
 $id = GETPOSTINT('id');

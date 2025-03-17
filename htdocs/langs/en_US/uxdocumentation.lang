@@ -82,7 +82,9 @@ DocButtonIconsForTitle = Buttons for list title
 
 # Fontawesome icons
 DocIconsTitle = Icons used by Dolibarr
-DocIconsList = List of usable icons with img_picto function
+DocIconsList = List of usable icons
+DocIconsListImgPicto = List of usable icons with img_picto function
+DocIconsListFontAwesome = List of usable icons with Font Awesome
 DocIconsMainDescription = Dolibarr use a part of fontawesome 5 icons
 DocIconsFontAwesomeList = List of usable fontawesome icons
 

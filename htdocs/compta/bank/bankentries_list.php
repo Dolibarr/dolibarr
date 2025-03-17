@@ -10,7 +10,7 @@
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,21 +158,21 @@ $extrafields->fetch_name_optionals_label($extrafieldsobjectkey);
 $search_array_options = $extrafields->getOptionalsFromPost($extrafieldsobjectkey, '', 'search_');
 
 $arrayfields = array(
-	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
-	'b.label' => array('label' => $langs->trans("Description"), 'checked' => 1,'position' => 20),
-	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => -1,'position' => 30),
-	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => 1,'position' => 40),
-	'type' => array('label' => $langs->trans("Type"), 'checked' => 1,'position' => 50),
-	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 0,'position' => 60),
-	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 65),
-	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => 1, 'position' => 70),
-	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? 0 : 1), 'position' => 80),
-	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 90),
-	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => 1, 'position' => 100),
-	'balancebefore' => array('label' => $langs->trans("BalanceBefore"), 'checked' => 0, 'position' => 110),
-	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 120),
-	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => 1, 'position' => 130),
-	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => $object->rappro, 'checked' => ($action == 'reconcile' ? 1 : 0), 'position' => 140),
+	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => '1','position' => 10),
+	'b.label' => array('label' => $langs->trans("Description"), 'checked' => '1','position' => 20),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => '-1','position' => 30),
+	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => '1','position' => 40),
+	'type' => array('label' => $langs->trans("Type"), 'checked' => '1','position' => 50),
+	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => '0','position' => 60),
+	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => '0', 'position' => 65),
+	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => '1', 'position' => 70),
+	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? '0' : '1'), 'position' => 80),
+	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => '1', 'position' => 90),
+	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => '1', 'position' => 100),
+	'balancebefore' => array('label' => $langs->trans("BalanceBefore"), 'checked' => '0', 'position' => 110),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => '1', 'position' => 120),
+	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => '1', 'position' => 130),
+	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => (string) (int) $object->rappro, 'checked' => ($action == 'reconcile' ? '1' : '0'), 'position' => 140),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -271,7 +271,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 				if ($row > 0) {
 					$result = $bankline->fetch($row);
 					$bankline->num_releve = $num_releve; // GETPOST("num_releve");
-					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
+					$result = $bankline->update_conciliation($user, GETPOSTINT("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
 					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
@@ -391,7 +391,7 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 	if (!$error && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		$objecttmp = new Account($db);
 		$objecttmp->fetch($bankaccountid);
-		$insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
+		$insertid = $objecttmp->addline((int) $dateop, $operation, $label, (float) $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
 		if ($insertid > 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].($id ? "?id=".$id : ''));

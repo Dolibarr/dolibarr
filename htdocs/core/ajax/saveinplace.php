@@ -248,7 +248,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$object->fk_element = $fk_element;
 			$object->element = $element;
 
-			$ret = $object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
+			$ret = $object->$savemethodname($field, $newvalue, $table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {
 					$value = price($newvalue);

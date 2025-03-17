@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +79,9 @@ if ($action == 'setremise' && $user->hasRight('societe', 'lire')) {
 	$discount_type = GETPOSTINT('discount_type');
 
 	if (!empty($discount_type)) {
-		$result = $object->set_remise_supplier(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_supplier((float) price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	} else {
-		$result = $object->set_remise_client(price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
+		$result = $object->set_remise_client((float) price2num(GETPOST("remise")), GETPOST("note", "alphanohtml"), $user);
 	}
 
 	if ($result > 0) {

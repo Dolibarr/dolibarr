@@ -237,8 +237,8 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -246,16 +246,16 @@ foreach ($object->fields as $key => $val) {
 }
 
 // Add none object fields to fields for list
-$arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 66, 'checked' => 0);
+$arrayfields['country.code_iso'] = array('label' => "Country", 'position' => 66, 'checked' => '0');
 if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
-	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => 1);
-	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => 1);
+	$arrayfields['s.nom'] = array('label' => "ThirdParty", 'position' => 113, 'checked' => '1');
+	$arrayfields['s.name_alias'] = array('label' => "AliasNameShort", 'position' => 114, 'checked' => '1');
 }
 
 $arrayfields['unsubscribed'] = array(
 		'label' => 'No_Email',
-		'checked' => 0,
-		'enabled' => (isModEnabled('mailing')),
+		'checked' => '0',
+		'enabled' => (string) (int) (isModEnabled('mailing')),
 		'position' => 111);
 
 if (isModEnabled('socialnetworks')) {
@@ -263,7 +263,7 @@ if (isModEnabled('socialnetworks')) {
 		if ($value['active']) {
 			$arrayfields['p.'.$key] = array(
 				'label' => $value['label'],
-				'checked' => 0,
+				'checked' => '0',
 				'position' => 299
 			);
 		}
@@ -276,7 +276,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 
 if (($id > 0 || !empty($ref)) && $action != 'add') {

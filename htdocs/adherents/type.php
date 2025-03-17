@@ -8,7 +8,7 @@
  * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -225,7 +225,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$object->label = trim($label);
 	$object->morphy	= trim($morphy);
@@ -505,7 +505,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$colspan = 1;
 			foreach ($arrayfields as $key => $val) {
 				//if (!empty($val['checked'])) {
-					$colspan++;
+				$colspan++;
 				//}
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
@@ -654,7 +654,7 @@ if ($rowid > 0) {
 		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">';
 		print $object->duration_value > 0 ? $object->duration_value : '';
 		print '&nbsp;';
-		print (!empty($object->duration_unit) && isset($durationarray[$object->duration_unit]) ? $langs->trans($durationarray[$object->duration_unit]) : '');
+		print(!empty($object->duration_unit) && isset($durationarray[$object->duration_unit]) ? $langs->trans($durationarray[$object->duration_unit]) : '');
 		print '</td></tr>';
 
 		// Description
@@ -812,7 +812,7 @@ if ($rowid > 0) {
 
 			if ($type > 0) {
 				$membertype = new AdherentType($db);
-				$result = $membertype->fetch($type);
+				$result = $membertype->fetch((int) $type);
 				$titre .= " (".$membertype->label.")";
 			}
 
@@ -1076,7 +1076,7 @@ if ($rowid > 0) {
 
 		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print '<input name="amount" size="5" value="';
-		print ((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
+		print((is_null($object->amount) || $object->amount === '') ? '' : price($object->amount));
 		print '">';
 		print '</td></tr>';
 
