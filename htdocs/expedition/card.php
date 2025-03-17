@@ -2724,7 +2724,7 @@ if ($action == 'create') {
 									$child_warehouse = $conf->cache['warehouse'][$warehouse_id];
 								}
 
-								$detail .= $langs->trans('DetailChildrenFormat', $child_product_label, $child_warehouse->label, $total_qty).'<br>';
+								$detail .= $langs->trans('DetailChildrenFormat', $child_product_label, $child_warehouse->label, price2num($total_qty, 'MS')).'<br>';
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans('DetailWarehouseNumber'), $detail);
