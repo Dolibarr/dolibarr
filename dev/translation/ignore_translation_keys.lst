@@ -1085,7 +1085,6 @@ Vat
 VirtualHost
 WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
-XSubsriptionError
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
 smsing
