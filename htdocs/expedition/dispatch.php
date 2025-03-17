@@ -902,7 +902,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								// Qty to dispatch
 								print '<td class="right nowraponall">';
 								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty);
+								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTFLOAT('qty'.$suffix) : $objd->qty);
 								//var_dump($suggestedvalue);exit;
 								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
 								print '</td>';
