@@ -271,7 +271,7 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 		$newobject = new CommandeFournisseur($db);
 		$elementtype = 'supplier_order';
 	} elseif ($type == Categorie::TYPE_SUPPLIER_INVOICE && $user->hasRight('fournisseur', 'facture', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'fourn/class/fournisseur.facture.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$newobject = new FactureFournisseur($db);
 		$elementtype = 'supplier_invoice';
 	} else {
