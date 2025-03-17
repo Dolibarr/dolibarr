@@ -3,7 +3,7 @@
  * Copyright (C) 2016-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2020  Laurent Destailleur     <eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -491,7 +491,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 				}
 
 				// Set $cpts with array of accounts in the category/group
-				$cpts = $AccCat->getCptsCat($cat['rowid']);
+				$cpts = $AccCat->getCptsCat((int) $cat['rowid']);
 				// We should loop over empty $cpts array, else the category _code_ is used in the formula, which leads to wrong result if the code is a number.
 				if (empty($cpts)) {
 					$cpts[] = array();
@@ -546,7 +546,7 @@ if ($modecompta == 'CREANCES-DETTES') {
 
 						//var_dump($monthtoprocess.'_'.$yeartoprocess);
 						if (isset($cpt['account_number'])) {
-							$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+							$return = $AccCat->getSumDebitCredit((int) $cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
 							if ($return < 0) {
 								setEventMessages(null, $AccCat->errors, 'errors');
 								$resultM = 0;

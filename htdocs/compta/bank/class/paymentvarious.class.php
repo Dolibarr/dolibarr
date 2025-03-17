@@ -259,7 +259,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
-		$sql .= " fk_projet='".$this->db->escape($this->fk_project)."',";
+		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
@@ -509,9 +509,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= "'".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", '".$this->db->escape($this->sens)."'";
+		$sql .= ", '".$this->db->escape((string) $this->sens)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", '".$this->db->escape($this->type_payment)."'";
+		$sql .= ", '".$this->db->escape((string) $this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
@@ -552,7 +552,7 @@ class PaymentVarious extends CommonObject
 
 					$bank_line_id = $acc->addline(
 						$this->datep,
-						$this->type_payment,
+						(string) $this->type_payment,
 						$this->label,
 						$sign * abs($this->amount),
 						$this->num_payment,

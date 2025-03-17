@@ -7,7 +7,7 @@
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,16 +106,16 @@ if (!$sortorder) {
 $filtre = GETPOSTINT("filtre");
 
 $arrayfields = array(
-	'cs.rowid'		=> array('label' => "Ref", 'checked' => 1, 'position' => 10),
-	'cs.libelle'	=> array('label' => "Label", 'checked' => 1, 'position' => 20),
-	'cs.fk_type'	=> array('label' => "Type", 'checked' => 1, 'position' => 30),
-	'cs.date_ech'	=> array('label' => "Date", 'checked' => 1, 'position' => 40),
-	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
-	'p.ref'			=> array('label' => "ProjectRef", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled('project'))),
-	'cs.fk_user'	=> array('label' => "Employee", 'checked' => 1, 'position' => 70),
-	'cs.fk_mode_reglement'	=> array('checked' => -1, 'position' => 80, 'label' => "DefaultPaymentMode"),
-	'cs.amount'		=> array('label' => "Amount", 'checked' => 1, 'position' => 100),
-	'cs.paye'		=> array('label' => "Status", 'checked' => 1, 'position' => 110),
+	'cs.rowid'		=> array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'cs.libelle'	=> array('label' => "Label", 'checked' => '1', 'position' => 20),
+	'cs.fk_type'	=> array('label' => "Type", 'checked' => '1', 'position' => 30),
+	'cs.date_ech'	=> array('label' => "Date", 'checked' => '1', 'position' => 40),
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => '1', 'position' => 50),
+	'p.ref'			=> array('label' => "ProjectRef", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled('project'))),
+	'cs.fk_user'	=> array('label' => "Employee", 'checked' => '1', 'position' => 70),
+	'cs.fk_mode_reglement'	=> array('checked' => '-1', 'position' => 80, 'label' => "DefaultPaymentMode"),
+	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
+	'cs.paye'		=> array('label' => "Status", 'checked' => '1', 'position' => 110),
 );
 
 if (isModEnabled("bank")) {
@@ -123,7 +123,6 @@ if (isModEnabled("bank")) {
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('sclist'));
@@ -484,7 +483,7 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
 	print '<td class="liste_titre">';
-	$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
+	$formsocialcontrib->select_type_socialcontrib((int) $search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
 	print '</td>';
 }
 

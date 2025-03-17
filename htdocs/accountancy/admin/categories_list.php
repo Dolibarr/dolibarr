@@ -477,7 +477,7 @@ if ($listlimit) {
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
-print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag((string) $sortfield).'">';
 print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
 
 

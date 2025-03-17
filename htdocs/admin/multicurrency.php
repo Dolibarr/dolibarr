@@ -1,7 +1,7 @@
 <?php
 /* <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2015 ATM Consulting <support@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -96,7 +96,7 @@ if ($action == 'add_currency') {
 
 	if (!$error) {
 		if ($currency->create($user) > 0) {
-			if ($currency->addRate($rate)) {
+			if ($currency->addRate((float) $rate)) {
 				setEventMessages($langs->trans('RecordSaved'), array());
 			} else {
 				setEventMessages($langs->trans('ErrorAddRateFail'), array(), 'errors');
@@ -119,7 +119,7 @@ if ($action == 'add_currency') {
 		}
 		if (!$error) {
 			if ($currency->fetch($fk_multicurrency) > 0) {
-				$result = $currency->updateRate($rate);
+				$result = $currency->updateRate((float) $rate);
 				if ($result < 0) {
 					setEventMessages(null, $currency->errors, 'errors');
 				}

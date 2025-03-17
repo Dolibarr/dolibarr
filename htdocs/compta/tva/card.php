@@ -5,7 +5,7 @@
  * Copyright (C) 2015-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -493,7 +493,7 @@ if ($action == 'create') {
 
 	// Type payment
 	print '<tr><td class="fieldrequired" id="label_type_payment">'.$langs->trans("PaymentMode").'</td><td>';
-	print $form->select_types_paiements(GETPOSTINT("type_payment"), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
+	print $form->select_types_paiements((string) GETPOSTINT("type_payment"), "type_payment", '', 0, 1, 0, 0, 1, 'maxwidth500 widthcentpercentminusx', 1);
 	print "</td>\n";
 	print "</tr>";
 
@@ -617,7 +617,7 @@ if ($id > 0) {
 	print '</td></tr>';*/
 
 	print '<tr><td>';
-	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', (string) $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
 	print '</td><td>';
 	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->hasRight('tax', 'charges', 'creer'), 'day');
 	//print dol_print_date($object->datev,'day');
@@ -640,9 +640,9 @@ if ($id > 0) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
 	}
 	print '</td></tr>';
 
@@ -658,9 +658,9 @@ if ($id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 		}
 		print '</td>';
 		print '</tr>';

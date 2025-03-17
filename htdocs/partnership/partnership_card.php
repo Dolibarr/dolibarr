@@ -2,7 +2,7 @@
 /* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021      NextGestion			<contact@nextgestion.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +217,7 @@ if (empty($reshook)) {
 			$action = 'refuse';
 		} else {
 			// prevent browser refresh from closing proposal several times
-			if ($object->statut != $object::STATUS_REFUSED) {
+			if ($object->status != $object::STATUS_REFUSED) {
 				$db->begin();
 
 				$result = $object->refused($user, GETPOST('reason_decline_or_cancel', 'restricthtml'));
@@ -390,7 +390,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'reopen') {
 		// Create an array for form
 		$formquestion = array();
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToReopon'), $langs->trans('ConfirmReoponAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('PartnershipToReopen'), $langs->trans('PartnershipConfirmReOpenAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
 	}
 
 	// Refuse confirmation
@@ -429,37 +429,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$linkback = '<a href="'.dol_buildpath('/partnership/partnership_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	/*
-	 // Ref customer
-	 $morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-	 $morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
-	 // Thirdparty
-		$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1, 'customer');
-		if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->thirdparty->id.'&search_societe='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherOrders").'</a>)';
-		}
-	 // Project
-		if (isModEnabled('project')) {
-			$langs->load("projects");
-			$morehtmlref .= '<br>';
-			if ($permissiontoadd) {
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
-				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-			} else {
-				if (!empty($object->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
-					$morehtmlref .= $proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
-					}
-				}
-			}
-		}
-	*/
 	$morehtmlref .= '</div>';
 
 	if ($managedfor == 'member') {
@@ -495,12 +464,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		} else {
 			if (!$adht->subscription) {
 				print $langs->trans("SubscriptionNotRecorded");
-				if ($fadherent->statut > 0) {
+				if ($fadherent->status > 0) {
 					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 				}
 			} else {
 				print $langs->trans("SubscriptionNotReceived");
-				if ($fadherent->statut > 0) {
+				if ($fadherent->status > 0) {
 					print " ".img_warning($langs->trans("Late")); // Display a delay picto only if it is not a draft and is not canceled
 				}
 			}

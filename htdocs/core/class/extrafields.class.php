@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
  * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
@@ -507,7 +507,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
-			$sql .= " '".$this->db->escape($printable)."',";
+			$sql .= " '".$this->db->escape((string) $printable)."',";
 			$sql .= " ".($default ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
@@ -937,7 +937,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " ".((int) $pos).",";
-			$sql .= " '".$this->db->escape($alwayseditable)."',";
+			$sql .= " '".$this->db->escape((string) $alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."',";
 			$sql .= " ".((int) $printable).",";
@@ -1330,7 +1330,7 @@ class ExtraFields
 					$selected = explode(',', $value);
 				}
 
-				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2'));
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', (int) (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')));
 			} else {
 				if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';

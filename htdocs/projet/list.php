@@ -247,7 +247,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? '0' : '1'),
-			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -298,7 +298,6 @@ if ($contextpage == 'lead') {
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-// '@phan-var-force array<string,array{label:string,checked?:string,enabled?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Add a groupby field. Set $groupby and $groupbyvalues.
 // TODO Move this into a inc file
