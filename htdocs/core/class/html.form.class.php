@@ -87,6 +87,8 @@ class Form
 	public $cache_types_fees = array();
 	public $cache_vatrates = array();
 	public $cache_invoice_subtype = array();
+	/** @var array<string,string> */
+	public $cache_rule_for_lines_dates = array();
 
 
 	/**
@@ -2676,7 +2678,7 @@ class Form
 	 *										            'warehouseopen' = count products from open warehouses,
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 *  @param 		?mixed[]	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param 		?array<string,mixed>	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		int<0,1> 	$nooutput				No print if 1, return the output into a string
 	 *  @param		int<-1,1>	$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @param		int 		$warehouseId 			Filter by Warehouses Id where there is real stock
@@ -4386,7 +4388,28 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Load int a cache property th elist of possible delivery delays.
+	 * Loads into a cache property the list of possible rules for line dates
+	 *
+	 * @return -1|1		OK=1 ; Empty=-1
+	 */
+	public function load_cache_rule_for_lines_dates()
+	{
+		// phpcs:enable
+		$factureRec = new FactureRec($this->db);
+
+		$this->cache_rule_for_lines_dates = $factureRec->fields['rule_for_lines_dates']['arrayofkeyval'];
+
+		if (empty($this->cache_rule_for_lines_dates)) {
+			return -1;
+		}
+
+		return 1;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 *      Load int a cache property the list of possible delivery delays.
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -4748,6 +4771,46 @@ class Form
 					});
 				</script>';
 		}
+
+		return $out;
+	}
+
+
+	/**
+	 * Returns select with rule for lines dates
+	 *
+	 * @param string $selected Selected value
+	 * @param string $htmlname HTML element name
+	 * @param int $addempty Add empty option ?
+	 * @return string HTML string with all datas
+	 */
+	public function getSelectRuleForLinesDates($selected = '', $htmlname = 'rule_for_lines_dates', $addempty = 0)
+	{
+		global $langs;
+
+		$out = '';
+
+		$this->load_cache_rule_for_lines_dates();
+
+		$out .= '<select id="' . $htmlname . '" class="flat selectbillingterm" name="' . $htmlname . '">';
+		if ($addempty) {
+			$out .= '<option value="-1">&nbsp;</option>';
+		}
+
+
+		foreach ($this->cache_rule_for_lines_dates as $rule_for_lines_dates_key => $rule_for_lines_dates_name) {
+			if ($selected == $rule_for_lines_dates_key) {
+				$out .= '<option value="' . $rule_for_lines_dates_key . '" selected>';
+			} else {
+				$out .= '<option value="' . $rule_for_lines_dates_key . '">';
+			}
+
+			$out .= $langs->trans($rule_for_lines_dates_name);
+			$out .= '</option>';
+		}
+		$out .= '</select>';
+
+		$out .= ajax_combobox($htmlname);
 
 		return $out;
 	}
@@ -5129,7 +5192,8 @@ class Form
 
 		$langs->load('bills');
 
-		$opt = '<option value="" selected></option>';
+		$opt = '';
+
 		$sql = "SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc";
 		$sql .= ' FROM ' . $this->db->prefix() . 'facture';
 		$sql .= ' WHERE entity IN (' . getEntity('invoice') . ')';
@@ -5138,6 +5202,8 @@ class Form
 		$sql .= ' AND type <> 2';
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
+
+		$nbSituationInvoiceForThirdparty = 0;
 
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
@@ -5151,6 +5217,8 @@ class Form
 					if ($obj->situation_final != 1) {
 						//Not prov?
 						if (substr($obj->ref, 1, 4) != 'PROV') {
+							$nbSituationInvoiceForThirdparty++;
+
 							if ($selected == $obj->rowid) {
 								$opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->ref . '</option>';
 							} else {
@@ -5163,9 +5231,13 @@ class Form
 		} else {
 			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
-		if ($opt == '<option value ="" selected></option>') {
-			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
+
+		if ($nbSituationInvoiceForThirdparty > 0) {
+			$opt = '<option class="minwidth100" value="" selected>&nbsp;</option>'.$opt;
+		} else {
+			$opt = '<option class="minwidth100" value="-1" selected>'.$langs->trans('NoSituations').'</option>';
 		}
+
 		return $opt;
 	}
 
@@ -6201,6 +6273,51 @@ class Form
 			print $out;
 			return '';
 		}
+		return $out;
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+
+	/**
+	 * Form select for rule for lines dates
+	 *
+	 * @param string $page Page
+	 * @param string $selected Id condition pre-selectionne
+	 * @param string $htmlname Name of select html field
+	 * @param int $addempty Add empty entry
+	 * @param int $nooutput No print is done. String is returned.
+	 * @return string HTML output or ''
+	 */
+	public function form_rule_for_lines_dates($page, $selected = '', $htmlname = 'rule_for_lines_dates', $addempty = 0, $nooutput = 0): string
+	{
+		global $langs;
+
+		$out = '';
+
+		if ($htmlname != 'none') {
+			$out .= '<form method="POST" action="' . $page . '">';
+			$out .= '<input type="hidden" name="action" value="setruleforlinesdates">';
+			$out .= '<input type="hidden" name="token" value="' . newToken() . '">';
+			$out .= $this->getSelectRuleForLinesDates($selected, $htmlname, $addempty);
+			$out .= '<input type="submit" class="button valignmiddle smallpaddingimp" value="' . $langs->trans("Modify") . '">';
+			$out .= '</form>';
+		} else {
+			if (isset($selected)) {
+				$this->load_cache_rule_for_lines_dates();
+				if (isset($this->cache_rule_for_lines_dates[$selected])) {
+					$label = $this->cache_rule_for_lines_dates[$selected];
+					$out .= $langs->trans($label);
+				}
+			} else {
+				$out .= '&nbsp;';
+			}
+		}
+
+		if (empty($nooutput)) {
+			print $out;
+			return '';
+		}
+
 		return $out;
 	}
 
@@ -9324,7 +9441,7 @@ class Form
 	 * Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 * @param 	string 		$htmlname 		Name of select
-	 * @param 	array<string|int,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
+	 * @param 	array<string|int,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
 	 * @param 	string[]	$selected 		Array of keys preselected
 	 * @param 	int<0,1>	$key_in_label 	1 to show key like in "[key] value"
 	 * @param 	int<0,1>	$value_as_key 	1 to use value as key
@@ -9882,7 +9999,7 @@ class Form
 					'enabled' => isModEnabled('invoice'),
 					'perms' => 1,
 					'label' => 'LinkToTemplateInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : ''),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')',
 				),
 				'contrat' => array(
 					'enabled' => isModEnabled('contract'),
@@ -10664,7 +10781,7 @@ class Form
 	/**
 	 * Return select list of user groups
 	 *
-	 * @param int|object|object[] 	$selected 		Id group or group(s) preselected
+	 * @param int|object|array<int|object> 	$selected	Id group or group(s) preselected
 	 * @param string 				$htmlname 		Field name in form
 	 * @param int<0,1> 				$show_empty 	0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 * @param string|int[] 			$exclude 		Array list of groups id to exclude

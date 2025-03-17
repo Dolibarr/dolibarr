@@ -2,6 +2,7 @@
 /* Copyright (C) 2014	    Maxime Kohlhaas		<support@atm-consulting.fr>
  * Copyright (C) 2014	    Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2021-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,7 +265,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="hidden" name="attribute" value="'.$tmpkeyextra.'">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
 				print '<input type="hidden" name="'.$fieldid.'" value="'.$object->id.'">';
-				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', 0, $object, $object->table_element);
+				print $extrafields->showInputField($tmpkeyextra, $value, '', '', '', '', $object, $object->table_element);
 
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 

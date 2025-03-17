@@ -309,7 +309,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && $user->hasRight('holiday', 'approve')) {
 		$object->fetch($id);
 
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->fk_validator = GETPOSTINT('valideur');
 
@@ -468,7 +468,7 @@ if (empty($reshook)) {
 
 		// If draft and owner of leave
 		if ($object->status == Holiday::STATUS_DRAFT && $permissiontoadd) {
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->status = Holiday::STATUS_VALIDATED;
 
@@ -584,7 +584,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -612,7 +612,7 @@ if (empty($reshook)) {
 
 		// If status is waiting approval and approver is also user
 		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->date_approval = dol_now();
 			$object->fk_user_approve = $user->id;

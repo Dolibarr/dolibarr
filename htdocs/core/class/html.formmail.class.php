@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1954,7 +1954,7 @@ class FormMail extends Form
 						$extrafields = new ExtraFields($this->db);
 					}
 					$product = new Product($this->db);
-					$product->fetch($line->fk_product, '', '', 1);
+					$product->fetch($line->fk_product, '', '', '1');
 					$product->fetch_optionals();
 
 					$extrafields->fetch_name_optionals_label($product->table_element, true);

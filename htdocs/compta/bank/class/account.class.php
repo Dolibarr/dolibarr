@@ -686,7 +686,7 @@ class Account extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
+				$sql .= ((int) $accline->id).", '".$this->db->escape((string) $categorie)."'";
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -2327,7 +2327,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".(empty($this->amount_main_currency) ? "NULL" : price2num($this->amount_main_currency));
 		$sql .= ", ".($this->fk_user_author > 0 ? ((int) $this->fk_user_author) : "null");
 		$sql .= ", ".($this->num_chq ? "'".$this->db->escape($this->num_chq)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->fk_account)."'";
+		$sql .= ", '".$this->db->escape((string) $this->fk_account)."'";
 		$sql .= ", '".$this->db->escape($this->fk_type)."'";
 		$sql .= ", ".($this->emetteur ? "'".$this->db->escape($this->emetteur)."'" : "null");
 		$sql .= ", ".($this->bank_chq ? "'".$this->db->escape($this->bank_chq)."'" : "null");
@@ -2364,11 +2364,11 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * Delete bank transaction record
 	 *
-	 * @param	?User		$user		User object that delete
+	 * @param	User		$user		User object that delete
 	 * @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$nbko = 0;
 
