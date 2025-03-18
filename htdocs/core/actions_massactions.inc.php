@@ -422,7 +422,7 @@ if (!$error && $massaction == 'confirm_presend') {
 						$filepath = $fileparams['fullname'];
 					}
 
-					if (!empty($conf->global->MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND) && !dol_is_file($filepath)) {
+					if (getDolGlobalInt('MAIL_MASS_ACTION_SEARCH_MOST_RECENT_FILE_IF_NOT_FOUND') && !dol_is_file($filepath)) {
 						$fileparams = dol_most_recent_file($filedir, preg_quote($objectobj->ref, '/') . '([^\-])+');
 						if (isset($fileparams)) {
 							$filepath = $fileparams['fullname'];
