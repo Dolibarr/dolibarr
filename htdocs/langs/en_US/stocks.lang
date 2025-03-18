@@ -17,6 +17,7 @@ CancelSending=Cancel shipment
 DeleteSending=Delete shipment
 Stock=Stock
 Stocks=Stocks
+TotalStock=Total stock
 MissingStocks=Missing stocks
 StockAtDate=Stocks at date
 StockAtDateInPast=Date in the past

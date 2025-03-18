@@ -417,11 +417,6 @@ if ($projectid > 0) {
 	}
 	print '</td></tr>';
 
-	// Location event
-	print '<tr><td>'.$langs->trans("Location").'</td><td>';
-	print $project->location;
-	print '</td></tr>';
-
 	// Visibility
 	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 	if ($project->public == 0) {
@@ -431,6 +426,11 @@ if ($projectid > 0) {
 		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
 		print $langs->trans("SharedProject");
 	}
+	print '</td></tr>';
+
+	// Location event
+	print '<tr><td>'.$langs->trans("Location").'</td><td>';
+	print $project->location;
 	print '</td></tr>';
 
 	// Other attributes

@@ -264,15 +264,16 @@ if (isModEnabled('barcode')) {
 }
 // Personalized search criteria. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
 if (getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS')) {
-	$fieldstosearchall = dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
+	$fieldstosearchall = dolExplodeIntoArray(getDolGlobalString('THIRDPARTY_QUICKSEARCH_ON_FIELDS'));
 }
 
-$parameters = ['fieldstosearchall' => $fieldstosearchall];
-$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action);
-if ($reshook < 0) {
-	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+$parameters = array('fieldstosearchall'=>$fieldstosearchall);
+$reshook = $hookmanager->executeHooks('completeFieldsToSearchAll', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook > 0) {
+	$fieldstosearchall = empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall'];
+} elseif ($reshook == 0) {
+	$fieldstosearchall = array_merge($fieldstosearchall, empty($hookmanager->resArray['fieldstosearchall']) ? array() : $hookmanager->resArray['fieldstosearchall']);
 }
-$fieldstosearchall = array_merge($fieldstosearchall, $hookmanager->resArray);
 
 // Define list of fields to show into list
 $checkedcustomercode = (in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist', 'poslist')) ? '1' : '0');
@@ -344,7 +345,9 @@ $arrayfields['sales.representative'] = array('label' => $langs->trans("SalesRepr
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
+// @phpstan-ignore-next-line
 $object->fields = dol_sort_array($object->fields, 'position');
+// @phpstan-ignore-next-line
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // Security check
@@ -1195,22 +1198,27 @@ if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MU
 	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), [], 'warning', 1);
 }
 
-$newcardbutton   = '';
-
-// Show the new button only when this page is not opened from the Extended POS (pop-up window)
-// but allow it too, when a user has the rights to create a new customer
-if ($contextpage != 'poslist') {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+$newcardbutton = '';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printNewCardButton', $parameters, $object);
+if (empty($reshook)) {
+	// Show the new button only when this page is not opened from the Extended POS (pop-up window)
+	// but allow it too, when a user has the rights to create a new customer
+	if ($contextpage != 'poslist') {
+		$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+		if (!empty($socid)) {
+			$url .= '&socid='.$socid;
+		}
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
+	} elseif ($user->hasRight('societe', 'creer')) {
+		$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
+		$label = 'MenuNewCustomer';
+		$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
-} elseif ($user->hasRight('societe', 'creer')) {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
-	$label = 'MenuNewCustomer';
-	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+} else {
+	$newcardbutton = $hookmanager->resPrint;
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";

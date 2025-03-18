@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2018  Jean-François Ferry 	<hello@librethic.io>
  * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
  * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
@@ -2793,7 +2793,7 @@ class Ticket extends CommonObject
 							// Customer company infos
 							$message .= '<br><br>';
 							$message .= "==============================================";
-							$message .= !empty($object->thirdparty->name) ? '<br>'.$langs->trans('Thirdparty')." : ".$object->thirdparty->name : '';
+							$message .= !empty($object->thirdparty->name) ? '<br>'.$langs->trans('ThirdParty')." : ".$object->thirdparty->name : '';
 							$message .= !empty($object->thirdparty->town) ? '<br>'.$langs->trans('Town')." : ".$object->thirdparty->town : '';
 							$message .= !empty($object->thirdparty->phone) ? '<br>'.$langs->trans('Phone')." : ".$object->thirdparty->phone : '';
 
@@ -2845,7 +2845,7 @@ class Ticket extends CommonObject
 							// Data about customer
 							$message .= '<br><br>';
 							$message .= "==============================================<br>";
-							$message .= !empty($object->thirdparty->name) ? $langs->trans('Thirdparty')." : ".$object->thirdparty->name : '';
+							$message .= !empty($object->thirdparty->name) ? $langs->trans('ThirdParty')." : ".$object->thirdparty->name : '';
 							$message .= !empty($object->thirdparty->town) ? '<br>'.$langs->trans('Town')." : ".$object->thirdparty->town : '';
 							$message .= !empty($object->thirdparty->phone) ? '<br>'.$langs->trans('Phone')." : ".$object->thirdparty->phone : '';
 

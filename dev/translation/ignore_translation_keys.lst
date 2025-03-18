@@ -211,7 +211,6 @@ ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
-ConfirmReoponAsk
 ConnectingToStripeTerminal
 Constant
 ContactAddress
@@ -439,7 +438,6 @@ GlobalVariableUpdaterType
 GoOnTokenProviderToDeleteToken
 GoSourceInvoice
 Gzip
-H
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
@@ -595,8 +593,6 @@ Notify_
 Num
 NumberOfCopy
 NumberOfDonationsByMonth
-NumberOfOrders
-NumberOfProposals
 Numeric
 OK
 Object
@@ -799,12 +795,9 @@ SmsTestSubstitutionReplacedByGenericValues
 SomeShipmentExists
 SourceType
 Split
-SplitAllQuantity
 Standard
 StatsOnDonationsOnlyValidated
 StatusProspect
-Stock Total
-Stock total
 StockTransferLine
 Stripe
 StripeAutoSubscription
@@ -815,9 +808,6 @@ StripeCustomer
 Sub-projects
 SubscriptionStripe
 Success
-Sumup
-SumupAffiliate
-SumupAppId
 Supervisor
 SupplierDepositsAreNotIncluded
 SupplierMissingRef
@@ -841,7 +831,6 @@ Templates
 TestPrinterTemplate
 TestTemplateToPrinter
 Theme
-Thirdparty
 ThirdpartyHasNoDefaultBanAccount
 ThisIsInformationOnDocumentToSign
 ThisScreenAllowsYouToSignDocFrom
@@ -853,7 +842,6 @@ TimeOnly
 Timezone
 ToGetBack
 ToPay
-ToReopon
 Token
 Tooltip
 TooltipEditAndRevertStockMovement
@@ -909,7 +897,6 @@ WorkingBoard
 Workload
 WrongAmount
 XDebug
-XXX
 XmlCorrupted
 Y
 ZeroMeansEveryYear

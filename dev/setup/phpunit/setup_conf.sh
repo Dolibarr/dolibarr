@@ -1,7 +1,8 @@
 #!/usr/bin/bash -xv
-# Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+# Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
 # shellcheck disable=2050,2089,2090,2086
 
+ME=$(realpath "$0")
 TRAVIS_BUILD_DIR=${TRAVIS_BUILD_DIR:=$(realpath "$(dirname "$0")/../../..")}
 MYSQL=${MYSQL:=mysql}
 MYSQLDUMP=${MYSQLDUMP:="${MYSQL}dump"}
@@ -14,7 +15,6 @@ DB_PASSROOT=${DB_PASSROOT:=}
 DB_USER=${DB_USER:=travis}
 DB_PASS=${DB_PASS:=password}
 DB_CACHE_FILE="${TRAVIS_BUILD_DIR}/db_init.sql"
-DB_PREFIX="llx21_"
 
 TRAVIS_DOC_ROOT_PHP="${TRAVIS_DOC_ROOT_PHP:=$TRAVIS_BUILD_DIR/htdocs}"
 TRAVIS_DATA_ROOT_PHP="${TRAVIS_DATA_ROOT_PHP:=$TRAVIS_BUILD_DIR/documents}"
@@ -40,6 +40,44 @@ function save_db_cache() (
 	echo "${sum}" > "${DB_CACHE_FILE}".md5
 )
 
+{
+	# DETERMINE VERSION
+	cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
+
+	# Get the target version from the filefunc.inc.php file
+	target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../filefunc.inc.php) ; echo $target_version
+	# Default in case that failed
+	target_version=${target_version:=20.0.0}
+
+	# Sequence of versions for upgrade process (to be completed)
+	VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
+	VERSIONS+=("4.0.0")
+	# Next versions are automatic
+
+	# Append versions up to the current dolibarr version
+	last_version=${VERSIONS[-1]}
+
+	target_major=${target_version%%.*}
+	last_major=${last_version%%.*}
+
+	# Add versions up to target_version
+	while (( last_major < target_major )); do
+		((last_major++))
+		VERSIONS+=("${last_major}.0.0")
+	done
+
+	# Add target_version if it's not already in the list
+	last_version=${VERSIONS[-1]}
+	if [[ "${last_version}" != "${target_version}" ]]; then
+		VERSIONS+=("$target_version")
+	fi
+
+	last_version=${VERSIONS[-1]}  # Keep last_version up-to-date
+
+	# From here on, the DB_PREFIX can not be empty, set default value if empty
+}
+
+DB_PREFIX="${DB_PREFIX:=llx${last_major}_}"
 
 if [ "${DB_USER}" = travis ] && [ -r "${CONF_FILE}" ] ; then
 	# Cleanup configuration file in ci
@@ -82,9 +120,6 @@ else
 	cat $CONF_FILE
 	echo
 fi
-
-# From here on, the DB_PREFIX can not be empty, set default value if empty
-DB_PREFIX="${DB_PREFIX:=llx_}"
 
 load_cache=0
 echo "Setting up database '$DB'"
@@ -149,9 +184,9 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 	# Compute md5 based on install file contents, and on db prefix
 	# filefunc.inc.php holds the version, so include it"
 	# shellcheck disable=2046
-	sum=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
+	sum=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
 	# shellcheck disable=2046
-	cnt=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | wc)
+	cnt=$(md5sum "$ME" $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | wc)
 	echo "MD5SUM $sum COUNT:$cnt"
 	load_cache=0
 	if [ -r "$DB_CACHE_FILE".md5 ] && [ -r "$DB_CACHE_FILE" ] && [ -x "$(which "${MYSQLDUMP}")" ] ; then
@@ -194,6 +229,12 @@ echo "Setting up Dolibarr '$INSTALL_FORCED_FILE' to test installation"
 # Ensure we catch errors
 set +e
 {
+
+
+
+	#
+	# SETUP CONF.PHP
+	#
 	echo '<?php'
 	echo 'error_reporting(E_ALL);'
 	echo '$'force_install_noedit=2';'
@@ -218,39 +259,7 @@ set +e
 
 if [ "$load_cache" != "1" ] ; then
 	(
-		cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
 
-		# Get the target version from the filefunc.inc.php file
-		target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../filefunc.inc.php) ; echo $target_version
-		# Default in case that failed
-		target_version=${target_version:=20.0.0}
-
-		# Sequence of versions for upgrade process (to be completed)
-		VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
-		VERSIONS+=("4.0.0")
-		VERSIONS+=("5.0.0" "6.0.0" "7.0.0" "8.0.0" "9.0.0")
-		VERSIONS+=("10.0.0" "11.0.0" "12.0.0" "13.0.0" "14.0.0")
-		VERSIONS+=("15.0.0" "16.0.0" "18.0.0" "19.0.0" "20.0.0")
-
-		# Append versions up to the current dolibarr version
-		last_version=${VERSIONS[-1]}
-
-		target_major=${target_version%%.*}
-		last_major=${last_version%%.*}
-
-		# Add versions up to target_version
-		while (( last_major < target_major )); do
-			((last_major++))
-			VERSIONS+=("${last_major}.0.0")
-		done
-
-		# Add target_version if it's not already in the list
-		last_version=${VERSIONS[-1]}
-		if [[ "${last_version}" != "${target_version}" ]]; then
-			VERSIONS+=("$target_version")
-		fi
-
-		last_version=${VERSIONS[-1]}  # Keep last_version up-to-date
 
 		# Proceed with the upgrade process
 		pVer=${VERSIONS[0]}

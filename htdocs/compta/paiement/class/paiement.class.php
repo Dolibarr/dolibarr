@@ -13,7 +13,7 @@
  * Copyright (C) 2021       OpenDsi					<support@open-dsi.fr>
  * Copyright (C) 2023       Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2023       Sylvain Legrand			<technique@infras.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ class Paiement extends CommonObject
 	public $datepaye;
 
 	/**
-	 * @var int|string					same than $datepaye
+	 * @var int|string					same than `$datepaye`
 	 */
 	public $date;
 
@@ -153,7 +153,7 @@ class Paiement extends CommonObject
 	public $type_label;
 
 	/**
-	 * @var string							Type of payment code (seems duplicate with $paiementcode);
+	 * @var string							Type of payment code (seems duplicate with);
 	 */
 	public $type_code;
 
@@ -852,7 +852,7 @@ class Paiement extends CommonObject
 				$accountancycode,
 				0,
 				'',
-				$totalamount_main_currency
+				(float) $totalamount_main_currency
 			);
 
 			// Mise a jour fk_bank dans llx_paiement
@@ -895,7 +895,7 @@ class Paiement extends CommonObject
 									$bank_line_id,
 									$fac->thirdparty->id,
 									DOL_URL_ROOT.'/comm/card.php?socid=',
-									$fac->thirdparty->name,
+									(string) $fac->thirdparty->name,
 									'company'
 								);
 								if ($result <= 0) {
@@ -913,7 +913,7 @@ class Paiement extends CommonObject
 									$bank_line_id,
 									$fac->thirdparty->id,
 									DOL_URL_ROOT.'/fourn/card.php?socid=',
-									$fac->thirdparty->name,
+									(string) $fac->thirdparty->name,
 									'company'
 								);
 								if ($result <= 0) {

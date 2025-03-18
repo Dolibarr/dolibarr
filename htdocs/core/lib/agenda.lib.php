@@ -44,8 +44,8 @@
  * @param	string			$action				Action string
  * @param	array<array{type:string,sr:string,name:string,offsettz:int,color:string,default:string,buggedfile:string}>|int<-1,-1>		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
  * @param	string|string[]	$actioncode			Preselected value(s) of actioncode for filter on event type
- * @param	int				$usergroupid		Id of group to filter on users
- * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
+ * @param	int|int[]		$usergroupid		Id of group to filter on users
+ * @param	''|'systemauto'|'system'	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
  * @param	int     		$search_categ_cus	Tag id
  * @return	void
@@ -104,13 +104,13 @@ function print_actions_filter(
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, null, (int) !$canedit, '', '', '0', 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', array(), '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', (int) !$canedit, '', array(), '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		if (isModEnabled('resource')) {

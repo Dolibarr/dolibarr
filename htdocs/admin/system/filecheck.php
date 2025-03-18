@@ -4,7 +4,7 @@
  * Copyright (C) 2007-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -302,7 +302,7 @@ if (empty($error) && !empty($xml)) {
 				$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
 				$out .= '<td class="right">';
 				if (!empty($file['expectedsize'])) {
-					$out .= dol_print_size($file['expectedsize']);
+					$out .= dol_print_size((int) $file['expectedsize']);
 				}
 				$out .= '</td>'."\n";
 				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";
@@ -343,7 +343,7 @@ if (empty($error) && !empty($xml)) {
 				$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
 				$out .= '<td class="right">';
 				if ($file['expectedsize']) {
-					$out .= dol_print_size($file['expectedsize']);
+					$out .= dol_print_size((int) $file['expectedsize']);
 				}
 				$out .= '</td>'."\n";
 				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
@@ -396,7 +396,7 @@ if (empty($error) && !empty($xml)) {
 					$out .= ' '.$form->textwithpicto('', $htmltext, 1, 'help', '', 0, 2, 'helprm'.$i);
 				}
 				$out .= '</td>'."\n";
-				$out .= '<td class="center">'.dol_escape_htmltag($file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
+				$out .= '<td class="center">'.dol_escape_htmltag((string) $file['expectedmd5']).'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset
 				$out .= '<td class="center">'.dol_escape_htmltag($file['md5']).'</td>'."\n";
 				$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 				$totalsize += $size;

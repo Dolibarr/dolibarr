@@ -87,7 +87,7 @@ $config['suppress_issue_types'] = [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Not showing in cti.dolibarr until low count - Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=3800 cases (was: 12300+ before)
+		'PhanTypeMismatchArgument',			// Not showing in cti.dolibarr until low count - Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=1200 cases (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',
@@ -98,7 +98,7 @@ $config['suppress_issue_types'] = [
 		'PhanPluginDuplicateCatchStatementBody',  // Requires PHP7.1 - 50+ occurrences
 
 		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
-		'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_* at this time
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
 ];
 

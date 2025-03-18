@@ -295,6 +295,7 @@ if (empty($reshook)) {
 			$subtotalqty = 0;
 
 			$j = 0;
+
 			$batch = "batchl".$i."_0";
 			$stockLocation = "ent1".$i."_0";
 			$qty = "qtyl".$i;
@@ -410,7 +411,7 @@ if (empty($reshook)) {
 						$nbstockline = count($stockLine[$i]);
 						for ($j = 0; $j < $nbstockline; $j++) {
 							if ($stockLine[$i][$j]['qty'] > 0 || ($stockLine[$i][$j]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
-								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], $stockLine[$i][$j]['qty'], $array_options[$i]);
+								$ret = $object->addline($stockLine[$i][$j]['warehouse_id'], $stockLine[$i][$j]['ix_l'], (float) $stockLine[$i][$j]['qty'], $array_options[$i]);
 								if ($ret < 0) {
 									setEventMessages($object->error, $object->errors, 'errors');
 									$error++;
@@ -429,7 +430,7 @@ if (empty($reshook)) {
 								$entrepot_id = 0;
 							}
 
-							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), price2num(GETPOSTFLOAT($qty), 'MS'), $array_options[$i]);
+							$ret = $object->addline($entrepot_id, GETPOSTINT($idl), (float) price2num(GETPOSTFLOAT($qty), 'MS'), $array_options[$i]);
 							if ($ret < 0) {
 								setEventMessages($object->error, $object->errors, 'errors');
 								$error++;
@@ -1180,6 +1181,7 @@ if ($action == 'create') {
 
 			print '<br>';
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
 			// Load shipments already done for same order
@@ -1276,7 +1278,7 @@ if ($action == 'create') {
 						$text = $product_static->getNomUrl(1);
 						$text .= ' - '.(!empty($line->label) ? $line->label : $line->product_label);
 						$description = ($showdescinproductdesc ? '' : dol_htmlentitiesbr($line->desc));
-
+						$description .= empty($product->stockable_product) ? $langs->trans('StockDisabled') : $langs->trans('StockEnabled');
 						print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 						// Show range
@@ -1387,10 +1389,14 @@ if ($action == 'create') {
 										print '<!-- Show warehouse selection -->';
 
 										$stockMin = false;
-										if (!getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+										if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
-										print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										if ($product->stockable_product == Product::ENABLED_STOCK) {
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										} else {
+											print img_warning().' '.$langs->trans('StockDisabled');
+										}
 
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
 											//print $stock.' '.$quantityToBeDelivered;
@@ -1563,7 +1569,7 @@ if ($action == 'create') {
 							$nbofsuggested = 0;
 
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if ($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+								if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 									$nbofsuggested++;
 								}
 							}
@@ -1576,7 +1582,7 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if ($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) {
+								if ($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 									$stock = + $stock_warehouse->real; // Convert it to number
 									$deliverableQty = min($quantityToBeDelivered, $stock);
 									$deliverableQty = max(0, $deliverableQty);
@@ -1631,10 +1637,13 @@ if ($action == 'create') {
 									if (isModEnabled('stock')) {
 										print '<td class="left">';
 										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-											print $tmpwarehouseObject->getNomUrl(0).' ';
-
-											print '<!-- Show details of stock -->';
-											print '('.$stock.')';
+											if ($product->stockable_product == Product::ENABLED_STOCK) {
+												print $tmpwarehouseObject->getNomUrl(0).' ';
+												print '<!-- Show details of stock -->';
+												print '('.$stock.')';
+											} else {
+												print img_warning().' '.$langs->trans('StockDisabled');
+											}
 										} else {
 											print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
 										}
@@ -1691,7 +1700,7 @@ if ($action == 'create') {
 							// Define nb of lines suggested for this order line
 							$nbofsuggested = 0;
 							foreach ($product->stock_warehouse as $warehouse_id => $stock_warehouse) {
-								if (($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
 									$nbofsuggested += count($stock_warehouse->detail_batch);
 								}
 							}
@@ -1704,7 +1713,7 @@ if ($action == 'create') {
 								}
 
 								$tmpwarehouseObject->fetch($warehouse_id);
-								if (($stock_warehouse->real > 0 || !empty($conf->global->STOCK_ALLOW_NEGATIVE_TRANSFER)) && (count($stock_warehouse->detail_batch))) {
+								if (($stock_warehouse->real > 0 || !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) && (count($stock_warehouse->detail_batch))) {
 									foreach ($stock_warehouse->detail_batch as $dbatch) {
 										$batchStock = + $dbatch->qty; // To get a numeric
 										if (isset($alreadyQtyBatchSetted[$line->fk_product][$dbatch->batch][intval($warehouse_id)])) {
@@ -1798,8 +1807,12 @@ if ($action == 'create') {
 								if ($warehouse_selected_id <= 0) {		// We did not force a given warehouse, so we won't have no warehouse to change qty.
 									$disabled = 'disabled="disabled"';
 								}
+								// finally we overwrite the input with the product status stockable_product if it's disabled
+								if ($product->stockable_product == Product::DISABLED_STOCK) {
+									$disabled = '';
+								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="0"'.($disabled ? ' '.$disabled : '').'> ';
-								if (empty($disabled) && getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
 							} elseif ($line->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
@@ -1811,7 +1824,7 @@ if ($action == 'create') {
 									$disabled = 'disabled="disabled"';
 								}
 								print '<input class="qtyl right" name="qtyl'.$indiceAsked.'_'.$subj.'" id="qtyl'.$indiceAsked.'_'.$subj.'" type="text" size="4" value="'.$quantityToBeDelivered.'"'.($disabled ? ' '.$disabled : '').'> ';
-								if (empty($disabled) && getDolGlobalString('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+								if (empty($disabled) && !getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 									print '<input name="ent1' . $indiceAsked . '_' . $subj . '" type="hidden" value="' . $warehouse_selected_id . '">';
 								}
 							} else {
@@ -1827,7 +1840,11 @@ if ($action == 'create') {
 									print img_warning().' '.$langs->trans("NoProductToShipFoundIntoStock", $warehouseObject->label);
 								} else {
 									if ($line->fk_product) {
-										print img_warning().' '.$langs->trans("StockTooLow");
+										if ($product->stockable_product == Product::ENABLED_STOCK) {
+											print img_warning().' '.$langs->trans('StockTooLow');
+										} else {
+											print img_warning().' '.$langs->trans('StockDisabled');
+										}
 									} else {
 										print '';
 									}
@@ -1864,6 +1881,7 @@ if ($action == 'create') {
 			}
 
 			print "</table>";
+			print '</div>';
 
 			print '<br>';
 
@@ -2288,7 +2306,7 @@ if ($action == 'create') {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%" id="tablelines" >';
+	print '<table class="noborder centpercent" id="tablelines" >';
 	print '<thead>';
 	print '<tr class="liste_titre">';
 	// Adds a line numbering column
@@ -2312,15 +2330,15 @@ if ($action == 'create') {
 		}
 		print '<td class="center linecoleditlineotherinfo" colspan="'.$editColspan.'">';
 		if ($object->status <= 1) {
-			print $langs->trans("QtyToShip").' - ';
+			print $langs->trans("QtyToShip");
 		} else {
-			print $langs->trans("QtyShipped").' - ';
+			print $langs->trans("QtyShipped");
 		}
 		if (isModEnabled('stock')) {
-			print $langs->trans("WarehouseSource").' - ';
+			print ' - '.$langs->trans("WarehouseSource");
 		}
 		if (isModEnabled('productbatch')) {
-			print $langs->trans("Batch");
+			print ' - '.$langs->trans("Batch");
 		}
 		print '</td>';
 	} else {
@@ -2466,6 +2484,7 @@ if ($action == 'create') {
 				$product_static->surface_units = $lines[$i]->surface_units;
 				$product_static->volume = $lines[$i]->volume;
 				$product_static->volume_units = $lines[$i]->volume_units;
+				$product_static->stockable_product = $lines[$i]->stockable_product;
 
 				$text = $product_static->getNomUrl(1);
 				$text .= ' - '.$label;
@@ -2577,7 +2596,11 @@ if ($action == 'create') {
 							// Warehouse source
 							print '<td>'.$formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 							// Batch number management
-							print '<td> - '.$langs->trans("NA").'</td>';
+							print '<td>';
+							if (isModEnabled('productbatch')) {
+								print ' - '.$langs->trans("NA");
+							}
+							print '</td>';
 							print '</tr>';
 						} elseif (count($lines[$i]->details_entrepot) > 1) {
 							print '<!-- case edit 3 -->';
@@ -2588,7 +2611,11 @@ if ($action == 'create') {
 								// Warehouse source
 								print '<td>'.$formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 								// Batch number management
-								print '<td> - '.$langs->trans("NA").'</td>';
+								print '<td>';
+								if (isModEnabled('productbatch')) {
+									print ' - '.$langs->trans("NA");
+								}
+								print '</td>';
 								print '</tr>';
 							}
 						} elseif ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
@@ -2636,7 +2663,7 @@ if ($action == 'create') {
 					print '<td class="linecolwarehousesource tdoverflowmax200">';
 					if ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {
 						print '<span class="opacitymedium">('.$langs->trans("Service").')</span>';
-					} elseif ($lines[$i]->entrepot_id > 0) {
+					} elseif ($lines[$i]->entrepot_id > 0 && $lines[$i]->stockable_product == Product::ENABLED_STOCK) {
 						$warehouse_id = $lines[$i]->entrepot_id;
 						if (!isset($conf->cache['warehouse'][$warehouse_id])) {
 							$warehouse = new Entrepot($db);

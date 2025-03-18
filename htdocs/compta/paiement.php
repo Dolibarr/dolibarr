@@ -12,7 +12,7 @@
  * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ if (empty($reshook)) {
 		$tmpinvoice = new Facture($db);
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_' && GETPOST($key) != '') {
-				$cursorfacid = substr($key, 7);
+				$cursorfacid = (int) substr($key, 7);
 				$amounts[$cursorfacid] = price2num(GETPOST($key));
 				if (!empty($amounts[$cursorfacid])) {
 					$totalpayment += (float) $amounts[$cursorfacid];
@@ -147,7 +147,7 @@ if (empty($reshook)) {
 
 				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
-				$cursorfacid = substr($key, 21);
+				$cursorfacid = (int) substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
 				$multicurrency_totalpayment += (float) $multicurrency_amounts[$cursorfacid];
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
@@ -248,7 +248,7 @@ if (empty($reshook)) {
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
 			$tmpinvoice = new Facture($db);
-			$tmpinvoice->fetch($key);
+			$tmpinvoice->fetch((int) $key);
 			if ($tmpinvoice->type == Facture::TYPE_CREDIT_NOTE) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs((float) $newvalue);
@@ -346,8 +346,8 @@ $form = new Form($db);
 llxHeader('', $langs->trans("Payment"));
 
 
-	$facture = new Facture($db);
-	$result = $facture->fetch($facid);
+$facture = new Facture($db);
+$result = $facture->fetch($facid);
 
 if ($result >= 0) {
 	$facture->fetch_thirdparty();
@@ -922,10 +922,10 @@ if ($result >= 0) {
 		print '<br>';
 		$text = '';
 		if (!empty($totalpayment)) {
-			$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
+			$text = $langs->trans('ConfirmCustomerPayment', (string) $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
 		}
 		if (!empty($multicurrency_totalpayment)) {
-			$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
+			$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', (string) $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
 		}
 		if (GETPOST('closepaidinvoices')) {
 			$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");

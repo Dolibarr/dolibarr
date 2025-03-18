@@ -2,7 +2,7 @@
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -793,7 +793,7 @@ if ($account) {
 		$bankaccount = new Account($db);
 		$listid = explode(',', $account);
 		foreach ($listid as $key => $id) {
-			$bankaccount->fetch($id);
+			$bankaccount->fetch((int) $id);
 			$bankaccount->label = $bankaccount->ref;
 			print $bankaccount->getNomUrl(1);
 			if ($key < (count($listid) - 1)) {

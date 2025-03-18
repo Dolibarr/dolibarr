@@ -51,6 +51,8 @@ class MultiCurrencies extends DolibarrApi
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
 	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
+	 * @phan-return MultiCurrency[]
+	 * @phpstan-return MultiCurrency[]
 	 *
 	 * @throws RestException
 	 */
@@ -234,7 +236,7 @@ class MultiCurrencies extends DolibarrApi
 
 		// Add default rate if defined
 		if (isset($request_data['rate']) && $request_data['rate'] > 0) {
-			if ($multicurrency->addRate($request_data['rate']) < 0) {
+			if ($multicurrency->addRate((float) $request_data['rate']) < 0) {
 				throw new RestException(500, "Error adding currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 			}
 
@@ -349,7 +351,7 @@ class MultiCurrencies extends DolibarrApi
 		}
 
 		// Add rate
-		if ($multicurrency->addRate($request_data['rate']) < 0) {
+		if ($multicurrency->addRate((float) $request_data['rate']) < 0) {
 			throw new RestException(500, "Error updating currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 		}
 

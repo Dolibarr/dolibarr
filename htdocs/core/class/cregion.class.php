@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) Richard Rondu  <rondu.richard@lainwir3d.net>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ class Cregion extends CommonDict
 		$sql .= " ".(!isset($this->fk_pays) ? 'NULL' : (int) $this->fk_pays).",";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".(!isset($this->cheflieu) ? 'NULL' : "'".$this->db->escape($this->cheflieu)."'").",";
-		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape($this->active)."'");
+		$sql .= " ".(!isset($this->active) ? 'NULL' : "'".$this->db->escape((string) $this->active)."'");
 		$sql .= ")";
 
 		$this->db->begin();

@@ -5,7 +5,7 @@
  * Copyright (C) 2008      Chiptronik
  * Copyright (C) 2011-2021 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW					 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2024	   Nick Fragoulis
  *
@@ -414,12 +414,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					// Quantity
 					//$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 3, $object->lines[$i]->qty_shipped, 0, 'R');
+					$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 3, (string) $object->lines[$i]->qty_shipped, 0, 'R');
 
 					// Remaining to ship
 					$pdf->SetXY($this->posxremainingqty, $curY);
 					$qtyRemaining = $object->lines[$i]->qty_asked - $object->commande->expeditions[$object->lines[$i]->fk_origin_line];
-					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxremainingqty, 3, $qtyRemaining, 0, 'R');
+					$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxremainingqty, 3, (string) $qtyRemaining, 0, 'R');
 					/*
 					 // Remise sur ligne
 					 $pdf->SetXY($this->posxdiscount, $curY);
