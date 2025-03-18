@@ -8,7 +8,7 @@
  * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
- * Copyright (C) 2020-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -200,7 +200,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -225,7 +225,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -250,7 +250,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -275,7 +275,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -301,7 +301,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -622,7 +622,7 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -711,7 +711,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -744,7 +744,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -764,7 +764,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -786,7 +786,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {

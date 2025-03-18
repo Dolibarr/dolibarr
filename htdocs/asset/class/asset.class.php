@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Jose MARTINEZ           <jose.martinez@pichinov.com>
  *
@@ -1276,7 +1276,7 @@ class Asset extends CommonObject
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1341,7 +1341,7 @@ class Asset extends CommonObject
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {

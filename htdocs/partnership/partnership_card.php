@@ -2,7 +2,7 @@
 /* Copyright (C) 2017-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021      NextGestion			<contact@nextgestion.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -186,7 +186,7 @@ if (empty($reshook)) {
 				if (method_exists($object, 'generateDocument')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
