@@ -1718,6 +1718,9 @@ class Societe extends CommonObject
 					$sql .= ", accountancy_code_supplier_general = ".(!empty($this->accountancy_code_supplier_general) ? "'".$this->db->escape($this->accountancy_code_supplier_general)."'" : "null");
 					$sql .= ", code_compta_fournisseur = ".(($this->code_compta_fournisseur != "") ? "'".$this->db->escape($this->code_compta_fournisseur)."'" : "null");
 				}
+			} else {
+				$sql .= ", accountancy_code_buy = ''";
+				$sql .= ", accountancy_code_sell = ''";
 			}
 			$sql .= ",webservices_url = ".(!empty($this->webservices_url) ? "'".$this->db->escape($this->webservices_url)."'" : "null");
 			$sql .= ",webservices_key = ".(!empty($this->webservices_key) ? "'".$this->db->escape($this->webservices_key)."'" : "null");
