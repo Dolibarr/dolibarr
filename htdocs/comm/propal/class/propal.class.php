@@ -694,7 +694,7 @@ class Propal extends CommonObject
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if ($product->stockable_product && $product->stock_reel < $qty && getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL') && ($product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+				if ($product->stockable_product && $product->stock_reel < $qty && getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_PROPOSAL') && ($product_type == Product::TYPE_PRODUCT || ($product_type == Product::TYPE_SERVICE && getDolGlobalString('STOCK_SUPPORTS_SERVICES')))) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnProposal', $product->ref);
 					$this->db->rollback();
