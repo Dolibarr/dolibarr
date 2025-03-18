@@ -530,7 +530,7 @@ class Odf
 	 * @throws OdfException
 	 * @return odf
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -539,8 +539,8 @@ class Odf
 			throw new OdfException("Invalid image");
 		}
 		list ($width, $height) = $size;
-		$width *= self::PIXEL_TO_CM;
-		$height *= self::PIXEL_TO_CM;
+		$width *= self::PIXEL_TO_CM * $ratio;
+		$height *= self::PIXEL_TO_CM * $ratio;
 		$xml = <<<IMG
 			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="aschar" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
 IMG;
