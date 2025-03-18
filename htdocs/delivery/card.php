@@ -211,7 +211,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 
 // Update extrafields
 if ($action == 'update_extras' && $permissiontoadd) {
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));

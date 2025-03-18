@@ -56,7 +56,7 @@
  * @var ?string $diroutputmassaction
  * @var ?string $objectlabel
  * @var ?string $option
- * @var ?int $deliveryreceipt
+ * @var int $deliveryreceipt
  * @var string $action
  * @var string $massaction
  * @var string $objectclass
@@ -75,7 +75,7 @@
 @phan-var-force ?string $diroutputmassaction
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
-@phan-var-force ?string $deliveryreceipt
+@phan-var-force int $deliveryreceipt
 ';
 
 
@@ -639,7 +639,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
@@ -664,7 +664,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
-								$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
+								$actionmsg = $langs->transnoentities('MailSentByTo', $from, (string) $sendto);
 								if ($message) {
 									if ($sendtocc) {
 										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -733,12 +733,12 @@ if (!$error && $massaction == 'confirm_presend') {
 						} else {
 							$langs->load("other");
 							if ($mailfile->error) {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
 							} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 							} else {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
@@ -873,7 +873,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		dol_mkdir($diroutputmassaction);
 
 		// Defined name of merged file
-		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities((string) $objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
@@ -951,7 +951,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		dol_mkdir($diroutputmassaction);
 
 		// Defined name of merged file
-		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities((string) $objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
 
@@ -1451,7 +1451,7 @@ if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoad
 	$nbok = 0;
 	$db->begin();
 
-	$usertoaffect = GETPOST('usertoaffect');
+	$usertoaffect = GETPOSTINT('usertoaffect');
 	$projectrole = GETPOST('projectrole');
 	$tasksrole = GETPOST('tasksrole');
 	if (!empty($usertoaffect)) {
@@ -1822,7 +1822,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
-	$typeholiday = GETPOST('typeholiday', 'alpha');
+	$typeholiday = GETPOSTINT('typeholiday');
 	$nbdaysholidays = GETPOSTFLOAT('nbdaysholidays');	// May be 1.5
 
 	if ($nbdaysholidays <= 0) {

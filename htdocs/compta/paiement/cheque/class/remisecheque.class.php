@@ -771,7 +771,7 @@ class RemiseCheque extends CommonObject
 		global $db, $user;
 
 		$payment = new Paiement($db);
-		$payment->fetch(0, 0, $bank_id);
+		$payment->fetch(0, '0', $bank_id);
 
 		$bankline = new AccountLine($db);
 		$bankline->fetch($bank_id);
@@ -877,16 +877,16 @@ class RemiseCheque extends CommonObject
 	/**
 	 *      Set the ref of bordereau
 	 *
-	 *      @param	User		$user           Object user
-	 *      @param  int   $ref         ref of bordereau
-	 *      @return int                 		Return integer <0 if KO, >0 if OK
+	 *      @param	User			$user           Object user
+	 *      @param  int|string		$ref	        ref of bordereau
+	 *      @return int					     		Return integer <0 if KO, >0 if OK
 	 */
 	public function set_number($user, $ref)
 	{
 		// phpcs:enable
 		if ($user->hasRight('banque', 'cheque')) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-			$sql .= " SET ref = '".$this->db->escape($ref)."'";
+			$sql .= " SET ref = '".$this->db->escape((string) $ref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog("RemiseCheque::set_number", LOG_DEBUG);

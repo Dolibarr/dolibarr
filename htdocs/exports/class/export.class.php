@@ -964,7 +964,6 @@ class Export
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
@@ -1003,7 +1002,7 @@ class Export
 	public function list_export_model()
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model as em";

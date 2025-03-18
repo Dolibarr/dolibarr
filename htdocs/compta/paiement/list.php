@@ -9,7 +9,7 @@
  * Copyright (C) 2018-2021	Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018		Charlene Benke				<charlie@patas-monkey.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -111,19 +111,18 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'p.ref'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
-	'p.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
-	'c.libelle'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
-	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 50, 'enabled' => (isModEnabled("bank"))),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled("bank"))),
-	'p.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 70, 'tooltip' => "ChequeOrTransferNumber"),
-	'p.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 80),
-	'p.note'			=> array('label' => "Comment", 'checked' => -1, 'position' => 85),
-	'p.statut'			=> array('label' => "Status", 'checked' => 1, 'position' => 90, 'enabled' => (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
+	'p.ref'				=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
+	'p.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
+	'c.libelle'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
+	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 50, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'p.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 70, 'tooltip' => "ChequeOrTransferNumber"),
+	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
+	'p.note'			=> array('label' => "Comment", 'checked' => '-1', 'position' => 85),
+	'p.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 90, 'enabled' => (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentlist'));

@@ -565,7 +565,7 @@ class pdf_squille extends ModelePdfReception
 					if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 						$pdf->SetXY($this->posxqtyordered, $curY);
 						if ($object->lines[$i]->fk_commandefourndet != $fk_commandefourndet) {
-							$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, $object->lines[$i]->qty_asked, '', 'C');
+							$pdf->MultiCell(($this->posxqtytoship - $this->posxqtyordered), 3, (string) $object->lines[$i]->qty_asked, '', 'C');
 							$totalOrdered += $object->lines[$i]->qty_asked;
 						}
 						$fk_commandefourndet = $object->lines[$i]->fk_commandefourndet;
@@ -573,7 +573,7 @@ class pdf_squille extends ModelePdfReception
 
 					// Qty received
 					$pdf->SetXY($this->posxqtytoship, $curY);
-					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, $object->lines[$i]->qty, '', 'C');
+					$pdf->MultiCell(($this->posxpuht - $this->posxqtytoship), 3, (string) $object->lines[$i]->qty, '', 'C');
 
 					// Amount
 					if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {
@@ -772,12 +772,12 @@ class pdf_squille extends ModelePdfReception
 		// Total qty ordered
 		if (!getDolGlobalString('RECEPTION_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqtyordered, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, $totalOrdered, 0, 'C', true);
+			$pdf->MultiCell($this->posxqtytoship - $this->posxqtyordered, $tab2_hl, (string) $totalOrdered, 0, 'C', true);
 		}
 
 		// Total received
 		$pdf->SetXY($this->posxqtytoship, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, $totalToShip, 0, 'C', true);
+		$pdf->MultiCell($this->posxpuht - $this->posxqtytoship, $tab2_hl, (string) $totalToShip, 0, 'C', true);
 
 		// Amount
 		if (getDolGlobalString('MAIN_PDF_RECEPTION_DISPLAY_AMOUNT_HT')) {

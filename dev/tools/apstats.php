@@ -974,7 +974,7 @@ $html .= '</div>';
 $html .= '</div>';
 
 $html .= '<br>';
-$html .= 'Note:Search is git repository on regexstring #yogosha|CVE|Sec:|Sec\s<br>';
+$html .= 'Note:Search is done in git repository on regexstring #yogosha|CVE|Sec:|Sec\s<br>';
 $html .= 'You can use this URL for RSS notifications: <a href="/'.$outputfilerss.'">'.$outputfilerss.'</a><br><br>';
 
 $html .= '</section>';

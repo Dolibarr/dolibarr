@@ -1479,7 +1479,7 @@ if ((!empty($conf->browser->layout) && $conf->browser->layout == 'phone')
 	$conf->dol_optimize_smallscreen = 1;
 
 	if (getDolGlobalInt('PRODUIT_DESC_IN_FORM') == 1) {
-		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;
+		$conf->global->PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE = 0;	// This was set to PRODUIT_DESC_IN_FORM and is forced to 0 if smartphone in this case
 	}
 }
 // Replace themes bugged with jmobile with eldy

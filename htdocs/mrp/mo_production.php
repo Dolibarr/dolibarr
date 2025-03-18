@@ -1962,7 +1962,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						$.each(data, function (key, value) {
 
 							if(selectwarehouse.val() == -1) {
-								var label = key + " (<?php echo $langs->trans('Stock total') ?> : " + value + ")";
+								var label = key + " (<?php echo $langs->trans('TotalStock') ?> : " + value + ")";
 							} else {
 								var label = key + " (<?php echo $langs->trans('Stock') ?> : " + value + ")";
 							}

@@ -61,6 +61,8 @@
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * LICENSE
  * Redistribution and use in source and binary forms, with or without
@@ -336,7 +338,7 @@ class EvalMath
 				if (!preg_match("/^([a-z]\w*)\($/", $stack->last(2), $matches)) {
 					return $this->trigger(5, "unexpected ','", ",");
 				}
-				$stack->push($stack->pop() + 1); // increment the argument count
+				$stack->push((string) ($stack->pop() + 1)); // increment the argument count
 				$stack->push('('); // put the ( back on, we'll need to pop back to it again
 				$index++;
 				$expecting_op = false;
@@ -415,27 +417,27 @@ class EvalMath
 				}
 				switch ($token) {
 					case '+':
-						$stack->push($op1 + $op2);
+						$stack->push((string) ($op1 + $op2));
 						break;
 					case '-':
-						$stack->push($op1 - $op2);
+						$stack->push((string) ($op1 - $op2));
 						break;
 					case '*':
-						$stack->push($op1 * $op2);
+						$stack->push((string) ($op1 * $op2));
 						break;
 					case '/':
 						if ($op2 == 0) {
 							return $this->trigger(14, "division by zero");
 						}
-						$stack->push($op1 / $op2);
+						$stack->push((string) ($op1 / $op2));
 						break;
 					case '^':
-						$stack->push(pow($op1, $op2));
+						$stack->push((string) pow($op1, $op2));
 						break;
 				}
 				// if the token is a unary operator, pop one value off the stack, do the operation, and push it back on
 			} elseif ($token == "_") {
-				$stack->push(-1 * $stack->pop());
+				$stack->push((string) (-1 * $stack->pop()));
 				// if the token is a function, pop arguments off the stack, hand them to the function, and push the result back on
 			} elseif (preg_match("/^([a-z]\w*)\($/", $token, $matches)) { // it's a function!
 				$fnn = $matches[1];

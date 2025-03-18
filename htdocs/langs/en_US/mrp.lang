@@ -142,6 +142,7 @@ ProducedBy=Produced by
 QtyTot=Qty Total
 MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Quantity cannot be split
+SplitAllQuantity=Split all quantity
 NoRemainQtyToDispatch=No quantity remaining to divide
 THMOperatorEstimatedHelp=Estimated cost of operator per hour. Will be used to estimate cost of a BOM using this workstation.
 THMMachineEstimatedHelp=Estimated cost of machine per hour. Will be used to estimate cost of a BOM using this workstation.

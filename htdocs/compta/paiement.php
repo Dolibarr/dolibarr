@@ -147,7 +147,7 @@ if (empty($reshook)) {
 
 				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
-				$cursorfacid = substr($key, 21);
+				$cursorfacid = (int) substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
 				$multicurrency_totalpayment += (float) $multicurrency_amounts[$cursorfacid];
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
@@ -248,7 +248,7 @@ if (empty($reshook)) {
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
 			$tmpinvoice = new Facture($db);
-			$tmpinvoice->fetch($key);
+			$tmpinvoice->fetch((int) $key);
 			if ($tmpinvoice->type == Facture::TYPE_CREDIT_NOTE) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs((float) $newvalue);
@@ -922,10 +922,10 @@ if ($result >= 0) {
 		print '<br>';
 		$text = '';
 		if (!empty($totalpayment)) {
-			$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
+			$text = $langs->trans('ConfirmCustomerPayment', (string) $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
 		}
 		if (!empty($multicurrency_totalpayment)) {
-			$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
+			$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', (string) $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
 		}
 		if (GETPOST('closepaidinvoices')) {
 			$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
