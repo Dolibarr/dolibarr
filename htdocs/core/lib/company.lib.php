@@ -1303,18 +1303,10 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 		'u.user' => array('label' => "DolibarrLogin", 'checked' => '1', 'position' => 50, 'class' => 'center'),
 	);
 	// Extra fields
-	if (!empty($extrafields->attributes[$contactstatic->table_element]['label']) && is_array($extrafields->attributes[$contactstatic->table_element]['label']) && count($extrafields->attributes[$contactstatic->table_element]['label'])) {
-		foreach ($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val) {
-			if (!empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
-				$arrayfields["ef.".$key] = array(
-					'label' => $extrafields->attributes[$contactstatic->table_element]['label'][$key],
-					'checked' => (((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1, 1, '1') < 0) ? '0' : '1'),
-					'position' => 1000 + $extrafields->attributes[$contactstatic->table_element]['pos'][$key],
-					'enabled' => (string) (int) (abs((int) dol_eval($extrafields->attributes[$contactstatic->table_element]['list'][$key], 1)) != 3 && (int) dol_eval($extrafields->attributes[$contactstatic->table_element]['perms'][$key], 1, 1, '1'))
-				);
-			}
-		}
-	}
+	$extrafieldsobjectkey = $contactstatic->table_element;
+	$extrafieldsobjectprefix = 'ef.';
+	$extrafieldspositionoffset = 1000;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 	// Initialize array of search criteria
 	$search = array();

@@ -1551,7 +1551,6 @@ if ($action == 'create') {
 		print '</tr>';
 
 		// Other attributes
-		$cols = 3;
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
 
 		print "</table>";
