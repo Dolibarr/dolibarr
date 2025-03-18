@@ -450,7 +450,7 @@ if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
 		foreach ($tabfac as $invoice_id => $invoice_info) {
 			// Fix HT
 			$total_amount = 0;
-			if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && $tab_property == 'tabttc') {
+			if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && $tab_property == 'tabttc' && isset($tabwarranty[$invoice_id])) {
 				foreach ($tabwarranty[$invoice_id] as $compta_prod => $amount) {
 					// Fix precision
 					$amount = price2num($amount, 'MT');
@@ -458,19 +458,21 @@ if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
 					$tabwarranty[$invoice_id][$compta_prod] = $amount;
 				}
 			}
-			foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
-				// Fix precision
-				$amount = price2num($amount, 'MT');
-				$total_amount += $amount;
-				${$tab_property}[$invoice_id][$compta_prod] = $amount;
-			}
-			if (price2num($total_amount) != price2num($invoice_info[$total_property])) {
+			if (isset(${$tab_property}[$invoice_id])) {
 				foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
-					if (!empty($amount)) {
-						// Fix gap
-						$amount += $invoice_info[$total_property] - $total_amount;
-						${$tab_property}[$invoice_id][$compta_prod] = $amount;
-						break;
+					// Fix precision
+					$amount = price2num($amount, 'MT');
+					$total_amount += $amount;
+					${$tab_property}[$invoice_id][$compta_prod] = $amount;
+				}
+				if (isset($invoice_info[$total_property]) && price2num($total_amount) != price2num($invoice_info[$total_property])) {
+					foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
+						if (!empty($amount)) {
+							// Fix gap
+							$amount += $invoice_info[$total_property] - $total_amount;
+							${$tab_property}[$invoice_id][$compta_prod] = $amount;
+							break;
+						}
 					}
 				}
 			}
