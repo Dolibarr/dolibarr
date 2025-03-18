@@ -533,7 +533,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '</td>';
 	print '</tr></table>';
 
-	print '<br><center>';
+	print '<br><br><center>';
 	if (isModEnabled('barcode') || $is_mod_batch_enabled) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 	}

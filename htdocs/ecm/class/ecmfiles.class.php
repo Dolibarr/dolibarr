@@ -1012,6 +1012,8 @@ class EcmFiles extends CommonObject
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/facture\//', '', $this->filepath);
 			} elseif ($option == 'commande_fournisseur') {
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/commande\//', '', $this->filepath);
+			} elseif ($option == 'tax-vat') {	// Remove part "tax/vat/"
+				$tmppath = preg_replace('/^(\d+\/)?tax\/vat\//', '', $this->filepath);
 			} else {
 				if ((int) $this->entity > 1) {
 					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref
