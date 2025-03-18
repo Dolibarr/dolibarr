@@ -1642,7 +1642,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0 && $product->stock_reel < $qty) {
+				if ($product->stockable_product && $product->stock_reel < $qty && getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && ($product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
@@ -3183,7 +3183,7 @@ class Commande extends CommonOrder
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && $product_type == 0 && $product->stock_reel < $qty) {
+				if ($product->stockable_product && $product->stock_reel < $qty && getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_ORDER') && ($product_type == 0 || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
 					$langs->load("errors");
 					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnOrder', $product->ref);
 					$this->errors[] = $this->error;
