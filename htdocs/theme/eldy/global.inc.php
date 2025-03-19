@@ -319,7 +319,7 @@ th.liste_titre a div div:hover, th.liste_titre_sel a div div:hover { text-decora
 tr.liste_titre th.liste_titre_sel:not(.maxwidthsearch), tr.liste_titre td.liste_titre_sel:not(.maxwidthsearch),
 tr.liste_titre th.liste_titre:not(.maxwidthsearch), tr.liste_titre td.liste_titre:not(.maxwidthsearch) { opacity: 0.8; }
 /* th.liste_titre_sel a, th.liste_titre a, td.liste_titre_sel a, td.liste_titre a { color: #766; } */
-tr.liste_titre_filter th.liste_titre { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
 .liste_titre.trheight5em {
 	height: 4em !important;
 }
@@ -416,9 +416,11 @@ input[type=checkbox], input[type=radio] {
 	margin-top: 5px;
 }
 input {
-	line-height: 1.3em;
 	padding: 4px;
 	padding-left: 5px;
+}
+.liste_titre input {
+	line-height: 1.3em;
 }
 .tableforfield input, .refidno input {
 	padding: 2px;
@@ -1179,6 +1181,9 @@ td.wordbreak img, td.wordbreakimp img {
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
 }
+.marginleftlarge {
+	margin-<?php print $left; ?>: 20px !important;
+}
 .paddinglarge {
 	padding: 6px !important;
 }
@@ -1376,8 +1381,12 @@ span.fa.fa-plus-circle.paddingleft {
 	font-size: 1em;
 }
 .listofinvoicetype {
-	height: 2.2em;
+	min-height: 1.8em;
 	vertical-align: middle;
+	padding-top: 7px;
+	padding-bottom: 1px;
+	display: flex;
+	align-items: center;
 }
 .divsocialnetwork:not(:last-child) {
 	padding-<?php print $right; ?>: 20px;
@@ -2012,7 +2021,7 @@ maxscreenheightless200 {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 85px; }
+.maxwidthdate  { max-width: 95px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -6406,9 +6415,6 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
-}
-.jPicker td.Text input {
-	height: 1em !important;
 }
 .jPicker .Preview div {
 	height: 36px !important;

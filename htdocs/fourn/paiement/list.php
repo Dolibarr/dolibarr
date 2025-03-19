@@ -112,11 +112,10 @@ $arrayfields = array(
 	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
 	'c.libelle'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
 	'p.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enable' => (isModEnabled("bank"))),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
 	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 70),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('paymentsupplierlist'));

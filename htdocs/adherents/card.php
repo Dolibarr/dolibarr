@@ -305,7 +305,7 @@ if (empty($reshook)) {
 		}
 		// Create new object
 		if ($result > 0 && !$error) {
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			// Change values
 			$object->civility_id = trim(GETPOST("civility_id", 'alphanohtml'));
@@ -862,7 +862,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update_extras' && $user->hasRight('adherent', 'creer')) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$attribute_name = GETPOST('attribute', 'restricthtml');
 
 		// Fill array 'array_options' with data from update form
@@ -1484,7 +1484,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Login Dolibarr
 		print '<tr><td>'.$langs->trans("LinkedToDolibarrUser").'</td><td colspan="2" class="valeur">';
 		if ($object->user_id) {
-			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'none');
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, (string) $object->user_id, 'none');
 		} else {
 			print $langs->trans("NoDolibarrAccess");
 		}
@@ -1957,10 +1957,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Login Dolibarr - Link to user
 		print '<tr><td>';
 		$editenable = $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer');
-		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, $editenable);
+		print $form->editfieldkey('LinkedToDolibarrUser', 'login', '', $object, (int) $editenable);
 		print '</td><td colspan="2" class="valeur">';
 		if ($action == 'editlogin') {
-			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, $object->user_id, 'userid', array());
+			$form->form_users($_SERVER['PHP_SELF'].'?rowid='.$object->id, (string) $object->user_id, 'userid', array());
 		} else {
 			if ($object->user_id) {
 				$linkeduser = new User($db);

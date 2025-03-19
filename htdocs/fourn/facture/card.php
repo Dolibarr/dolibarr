@@ -13,7 +13,7 @@
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 // Common permissions
 $usercanread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 $usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-$usercandelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"));
+$usercandelete = (($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer")) || ($usercancreate && $object->is_erasable() == 1));
 $usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced permissions
@@ -253,7 +253,7 @@ if (empty($reshook)) {
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -279,7 +279,7 @@ if (empty($reshook)) {
 
 		$isErasable = $object->is_erasable();
 
-		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
+		if ($usercandelete && $isErasable > 0) {
 			$revertstock = GETPOST('revertstock');
 
 			if ($revertstock) {
@@ -396,7 +396,7 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -570,7 +570,7 @@ if (empty($reshook)) {
 		if (empty($error) && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1230,7 +1230,7 @@ if (empty($reshook)) {
 									}
 								}
 
-								$amount_ttc_diff = $amountdeposit[0];
+								$amount_ttc_diff = array_key_exists(0, $amountdeposit) ? $amountdeposit[0] : 0;
 							}
 
 							foreach ($amountdeposit as $tva => $amount) {
@@ -1581,7 +1581,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$date_start = dol_mktime(GETPOSTINT('date_start'.$predef.'hour'), GETPOSTINT('date_start'.$predef.'min'), GETPOSTINT('date_start'.$predef.'sec'), GETPOSTINT('date_start'.$predef.'month'), GETPOSTINT('date_start'.$predef.'day'), GETPOSTINT('date_start'.$predef.'year'));
 		$date_end = dol_mktime(GETPOSTINT('date_end'.$predef.'hour'), GETPOSTINT('date_end'.$predef.'min'), GETPOSTINT('date_end'.$predef.'sec'), GETPOSTINT('date_end'.$predef.'month'), GETPOSTINT('date_end'.$predef.'day'), GETPOSTINT('date_end'.$predef.'year'));
 
@@ -1741,15 +1741,12 @@ if (empty($reshook)) {
 					$desc = $productsupplier->desc_supplier;
 				}
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
-				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc = '';
-				}
-				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
-					$desc = $product_desc;
-				}
-				if (!empty($product_desc) && trim($product_desc) != trim($desc)) {
-					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
+					// 'DoNotAutofillButAutoConcat'
+					$desc = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+				} else {
+					//'AutoFillFormFieldBeforeSubmit' or 'DoNotUseDescriptionOfProdut' => User has already done the modification they want
+					$desc = $line_desc;
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
@@ -1839,7 +1836,7 @@ if (empty($reshook)) {
 			$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 			$tva_tx = str_replace('*', '', $tva_tx);
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-			$desc = $product_desc;
+			$desc = $line_desc;
 			$type = GETPOSTINT('type');
 			$ref_supplier = GETPOST('fourn_ref', 'alpha');
 
@@ -1862,7 +1859,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($product_desc, (float) $pu_ht, (float) $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
+			$result = $object->addline($line_desc, (float) $pu_ht, (float) $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -1873,7 +1870,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1973,7 +1970,7 @@ if (empty($reshook)) {
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -2038,7 +2035,7 @@ if (empty($reshook)) {
 		}
 	}
 	if ($action == 'update_extras' && $usercancreate) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -4175,8 +4172,9 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				$isErasable = $object->is_erasable();
-				if ($action != 'confirm_edit' && ($usercandelete || ($usercancreate && $isErasable == 1))) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
+				if ($action != 'confirm_edit' && $usercandelete) {
+					$isErasable = $object->is_erasable();
+
 					$enableDelete = false;
 					$htmltooltip = '';
 					$params = (empty($conf->use_javascript_ajax) ? array() : array('attr' => array('class' => 'reposition')));

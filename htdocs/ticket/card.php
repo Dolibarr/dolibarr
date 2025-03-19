@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -1528,7 +1528,7 @@ if ($action == 'create' || $action == 'presend') {
 
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			} elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;

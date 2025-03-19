@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Jose MARTINEZ           <jose.martinez@pichinov.com>
  *
@@ -930,8 +930,8 @@ class Asset extends CommonObject
 			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
 				$pastmonthyear = $dates['pastmonthyear'];
 				$pastmonth = $dates['pastmonth'];
-				$init_fiscal_period_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-				$init_fiscal_period_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+				$init_fiscal_period_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+				$init_fiscal_period_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 			}
 
 			foreach ($options->deprecation_options as $mode_key => $fields) {
@@ -1006,7 +1006,7 @@ class Asset extends CommonObject
 
 				// Get depreciation period
 				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
-				$depreciation_date_end = dol_time_plus_duree(dol_time_plus_duree((int) $depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y')), -1, 'd');
+				$depreciation_date_end = dol_time_plus_duree(dol_time_plus_duree((int) $depreciation_date_start, (float) $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y')), -1, 'd');
 				$depreciation_amount = $fields['amount_base_depreciation_ht'];
 				if ($fields['duration_type'] == 2) { // Daily
 					$fiscal_period_start = $depreciation_date_start;
@@ -1046,7 +1046,7 @@ class Asset extends CommonObject
 						}
 
 						$start_date = $this->reversal_date;
-						$result = $this->addDepreciationLine($mode_key, '', $start_date, $this->reversal_amount_ht, $this->reversal_amount_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
+						$result = $this->addDepreciationLine($mode_key, '', $start_date, (float) $this->reversal_amount_ht, (float) $this->reversal_amount_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
 						if ($result < 0) {
 							$error++;
 							break;
@@ -1129,7 +1129,7 @@ class Asset extends CommonObject
 							$cumulative_depreciation_ht += $depreciation_ht;
 						}
 
-						$result = $this->addDepreciationLine($mode_key, $ref, $fiscal_period_end, $depreciation_ht, $cumulative_depreciation_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
+						$result = $this->addDepreciationLine($mode_key, $ref, $fiscal_period_end, $depreciation_ht, (float) $cumulative_depreciation_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
 						if ($result < 0) {
 							$error++;
 							break;
@@ -1276,7 +1276,7 @@ class Asset extends CommonObject
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1341,7 +1341,7 @@ class Asset extends CommonObject
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {

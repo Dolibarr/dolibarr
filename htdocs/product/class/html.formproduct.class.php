@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2009  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015-2017  Francis Appels          <francis.appels@yahoo.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -861,7 +861,7 @@ class FormProduct
 						$label = $arraytypes['entrepot_label'] . ' - ';
 						$label .= $arraytypes['batch'];
 						// Notice: Chrome show 1 line with value and 1 for label. Firefox show only 1 line with label
-						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('Stock Total') . ': ' . $arraytypes['qty'] . ')</option>';
+						$out .= '<option data-warehouse="'.dol_escape_htmltag($label).'" value="' . $arraytypes['batch'] . '">' . ($conf->browser->name === 'chrome' ? '' : $arraytypes['batch']) . ' (' . $langs->trans('TotalStock') . ': ' . $arraytypes['qty'] . ')</option>';
 					}
 				}
 			}
