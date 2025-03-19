@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Lisää nykyinen sivu kirjanmerkkeihin
-Bookmark=Kirjanmerkki
-Bookmarks=Kirjanmerkit
-ListOfBookmarks=Luetteloosi
-EditBookmarks=Luettelo/muokkaa kirjanmerkkejä
-NewBookmark=Uusi kirjanmerkki
-ShowBookmark=Näytä kirjanmerkki
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Käyttäydy kun kirjanmerkki URL on valittu
-CreateBookmark=Luo kirjanmerkki
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Kirjanmerkkien hallinta
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Lisää nykyinen sivu kirjanmerkkeihin
+BehaviourOnClick = Käyttäytyminen, kun kirjanmerkki URL-osoite on valittu
+Bookmark = Kirjanmerkki
+Bookmarks = Kirjanmerkit
+BookmarkTargetNewWindowShort = Uusi välilehti
+BookmarkTargetReplaceWindowShort = Nykyinen välilehti
+BookmarkTitle = kirjanmerkki nimi
+BookmarksManagement = Kirjanmerkkien hallinta
+BookmarksMenuShortCut = Ctrl + vaihto + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Valitse, avautuuko linkitetty sivu nykyisessä välilehdessä vai uudessa välilehdessä
+CreateBookmark = Luo kirjanmerkki
+EditBookmarks = Luettelo/muokkaa kirjanmerkkejä
+ListOfBookmarks = Luetteloosi
+NewBookmark = Uusi kirjanmerkki
+NoBookmarkFound = kirjanmerkki ei löytynyt
+NoBookmarks = Kirjanmerkkejä ei ole määritetty
+OpenANewWindow = Avaa uusi välilehti
+ReplaceWindow = Vaihda nykyinen välilehti
+SetHereATitleForLink = Aseta nimi kirjanmerkki
+ShowBookmark = Näytä kirjanmerkki
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Käytä ulkoista/absoluuttista linkkiä (https://externalurl.com) tai sisäistä/suhteellista linkkiä (/mypage.php). Voit myös käyttää puhelinta, kuten puh:0123456.

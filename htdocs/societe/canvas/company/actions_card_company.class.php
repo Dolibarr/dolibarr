@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 *    Constructor
 	 *
-	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	DoliDB	$db				Handler access base de donnees
 	 *    @param	string	$dirmodule		Name of directory of module
 	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *    @param	string	$canvas			Name of canvas
@@ -88,7 +89,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	{
 		// phpcs:enable
 		global $conf, $langs, $user, $mysoc;
-		global $form, $formadmin, $formcompany;
+		global $form, $formcompany;
 
 		$ret = $this->getObject($id, $ref);
 
@@ -101,7 +102,7 @@ class ActionsCardCompany extends ActionsCardCommon
 		$this->tpl['profid3'] 	= $this->object->idprof3;
 		$this->tpl['profid4'] 	= $this->object->idprof4;
 
-		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_DISABLEVATCHECK)) {
+		if ($conf->use_javascript_ajax && !getDolGlobalString('MAIN_DISABLEVATCHECK')) {
 			$js = "\n";
 			$js .= '<script type="text/javascript">';
 			$js .= "function CheckVAT(a) {\n";
@@ -122,21 +123,21 @@ class ActionsCardCompany extends ActionsCardCommon
 			$this->tpl['select_companytype'] = $form->selectarray("typent_id", $formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
-			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_code);
+			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_id);
 
 			// Workforce
 			$this->tpl['select_workforce'] = $form->selectarray("effectif_id", $formcompany->effectif_array(0), $this->object->effectif_id);
 
 			// VAT intra
 			$s = '<input type="text" class="flat" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-			if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
+			if (!getDolGlobalString('MAIN_DISABLEVATCHECK')) {
 				$s .= ' ';
 
 				if ($conf->use_javascript_ajax) {
-					$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+					$s .= '<a href="#" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
-					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", (string) $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 				}
 			} else {
 				$this->tpl['tva_intra'] = $s;
@@ -157,14 +158,14 @@ class ActionsCardCompany extends ActionsCardCommon
 			if ($this->object->tva_intra) {
 				$s = $this->object->tva_intra;
 				$s .= '<input type="hidden" name="tva_intra" size="12" maxlength="20" value="'.$this->object->tva_intra.'">';
-				if (empty($conf->global->MAIN_DISABLEVATCHECK)) {
+				if (!getDolGlobalString('MAIN_DISABLEVATCHECK')) {
 					$s .= ' &nbsp; ';
 
 					if ($conf->use_javascript_ajax) {
-						$s .= '<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
+						$s .= '<a href="#" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					} else {
-						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", (string) $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 					}
 				} else {
 					$this->tpl['tva_intra'] = $s;

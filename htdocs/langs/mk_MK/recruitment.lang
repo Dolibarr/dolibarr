@@ -4,76 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = Регрутирање
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = Управувајте и следете кампањи за вработување за нови работни позиции
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-Settings = Подесувања
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = Поставување на регрутирање
+RecruitmentSetupPage = Внесете го тука поставувањето на главните опции за модулот за регрутирање
+RecruitmentArea=Област за регрутирање
+PublicInterfaceRecruitmentDesc=Јавните страници на работни места се јавни URL-адреси за прикажување и одговарање на отворените работни места. Постои една различна врска за секоја отворена работа, која се наоѓа на секоја работна евиденција.
+EnablePublicRecruitmentPages=Овозможете јавни страници на отворени работни места
 
-#
-# About page
-#
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
+NbOfEmployeesExpected=Очекувани nb на вработени
+JobLabel=Ознака на работната позиција
+WorkPlace=Работно место
+DateExpected=Очекуван датум
+FutureManager=Иден менаџер
+ResponsibleOfRecruitement=Одговорен за регрутирање
+IfJobIsLocatedAtAPartner=Ако работата се наоѓа на партнерско место
+PositionToBeFilled=Работна позиција
+PositionsToBeFilled=Работни позиции
+ListOfPositionsToBeFilled=Список на работни позиции
+NewPositionToBeFilled=Нови работни позиции
+JobOfferToBeFilled=Работно место кое треба да се пополни
+ThisIsInformationOnJobPosition=Информации за работното место кое треба да се пополни
+ContactForRecruitment=Контакт за регрутирање
+EmailRecruiter=Регрутер за е-пошта
+ToUseAGenericEmail=За да користите генеричка е-пошта. Доколку не е дефинирано, ќе се користи е-поштата на одговорниот за регрутирање
+NewCandidature=Нова апликација
+ListOfCandidatures=Список на апликации
 Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
+RequestedRemuneration=Побарана плата
+ProposedRemuneration=Предложена плата
+ContractProposed=Предложен договор
+ContractSigned=Потпишан договор
+ContractRefused=Договорот е одбиен
+RecruitmentCandidature=Апликација
+JobPositions=Работни позиции
+RecruitmentCandidatures=Апликации
+InterviewToDo=Контакти за следење
+AnswerCandidature=Одговор на апликацијата
+YourCandidature=Вашата апликација
+YourCandidatureAnswerMessage=Ви благодариме за вашата апликација.<br>...
+JobClosedTextCandidateFound=Работното место е затворено. Местото е пополнето.
+JobClosedTextCanceled=Работното место е затворено.
+ExtrafieldsJobPosition=Дополнителни атрибути (работни позиции)
+ExtrafieldsApplication=Дополнителни атрибути (апликации за работа)
+MakeOffer=Направи понуда
+WeAreRecruiting=Ние регрутираме. Ова е список на отворени позиции кои треба да се пополнат...
+NoPositionOpen=Во моментов нема отворени позиции
+ConfirmClose=Потврдете го откажувањето
+ConfirmCloseAsk=Дали сте сигурни дека сакате да ја откажете оваа кандидатура за вработување?
+Recruitment=Регрутирање

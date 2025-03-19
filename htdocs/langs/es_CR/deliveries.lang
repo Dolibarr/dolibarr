@@ -1,0 +1,23 @@
+# Dolibarr language file - Source file is en_US - deliveries
+Delivery=Entrega
+DeliveryRef=Ref. Entrega
+DeliveryCard=Comprobante de Entrega
+DeliveryOrder=Comprobante de Entrega
+CreateDeliveryOrder=Generar comprobante de entrega
+SetDeliveryDate=Establecer fecha de envío
+ValidateDeliveryReceipt=Validar comprobante de entrega
+ValidateDeliveryReceiptConfirm=¿Estás seguro que quieres validar este comprobante de entrega?
+DeleteDeliveryReceipt=Eliminar comprobante de entrega
+DeleteDeliveryReceiptConfirm=¿Estás seguro de que quieres eliminar el comprobante de entrega <b>%s</b>?
+DeliveryMethod=Método de entrega
+TrackingNumber=Código de seguimiento
+DeliveryNotValidated=Entrega no validada
+StatusDeliveryCanceled=Cancelado
+NameAndSignature=Nombre y firma:
+ToAndDate=Para___________________________________ en ____ / _____ / __________
+GoodStatusDeclaration=He recibido los productos mencionados en buenas condiciones,
+Deliverer=Quien entrega:
+Sender=Emisor
+NonShippable=No se puede enviar
+ShowReceiving=Mostrar comprobante de entrega
+NonExistentOrder=Orden inexistente

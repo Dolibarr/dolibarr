@@ -5,32 +5,34 @@ DeleteResource=Usuń zasoby
 ConfirmDeleteResourceElement=Potwierdź usunięcie zasobów dla tego elementu
 NoResourceInDatabase=Brak zasobów w bazie danych
 NoResourceLinked=Brak podliknowanych zasobów
-
+ActionsOnResource=Wydarzenia dotyczące tego zasobu
 ResourcePageIndex=Lista zasobów
 ResourceSingular=Zasoby
 ResourceCard=Karta zasobów
-AddResource=Utwórz zasoby
-ResourceFormLabel_ref=Nazwa zasobów
-ResourceType=Typ zasobów
+NewResource=Nowe zasoby
+AddResource=Utwórz nowy zasób
+ResourceFormLabel_ref=Nazwa zasobu
 ResourceFormLabel_description=Opis zasobów
-
+ResourceType=Typ zasobu
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Zasaby połączone z elementem
 
-ShowResource=Pokaż źródło
-
+ShowResource=Pokaż zasoby
 ResourceElementPage=Element zasobów
 ResourceCreatedWithSuccess=Zasoby poprawnie utworzone
 RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
 RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
 ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
-
 ConfirmDeleteResource=Potwierdź by usunąć te zasoby
 RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
 DictionaryResourceType=Typ zasobów
-
 SelectResource=Wybierz zasoby
-
-IdResource=Identyfikator zasobów
+IdResource=Identyfikator zasobu
 AssetNumber=Numer seryjny
-ResourceTypeCode=Kod rodzaju zasobów
+ResourceTypeCode=Kod rodzaju zasobu
 ImportDataset_resource_1=Zasoby
+ErrorResourcesAlreadyInUse=Niektóre zasoby są w użyciu
+ErrorResourceUseInEvent=%s używany w zdarzeniu %s
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

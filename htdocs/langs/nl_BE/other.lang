@@ -1,8 +1,18 @@
 # Dolibarr language file - Source file is en_US - other
 Tools=Gereedschap
 TMenuTools=Gereedschap
+BirthdayAlert=Verjaardagskennisgeving
+TextNextMonthOfInvoice=Volgende maand (tekst) factuurdatum
+DateNextInvoiceBeforeGen=Datum volgende factuur (vóór genereren)
+Notify_ORDER_VALIDATE=Verkooporder gevalideerd
+Notify_ORDER_SENTBYMAIL=Verkooporder verzonden per e-mail
+Notify_ORDER_CLOSE=Verkooporder geleverd
 Notify_COMPANY_CREATE=Third party aangemaakt
+Notify_BILL_PAYED=Klantfactuur betaald
 FileIsTooBig=Bestanden zijn te groot
 WebsiteSetup=Setup van de module website
 WEBSITE_PAGEURL=URL van de pagina
 WEBSITE_KEYWORDS=Trefwoorden
+ExternalSiteSetup=Setup link naar externe website
+ExternalSiteModuleNotComplete=Module ExternalSite werd niet correct geconfigureerd.
+FailedToGetFile=Mislukt om de bestanden te ontvangen %s

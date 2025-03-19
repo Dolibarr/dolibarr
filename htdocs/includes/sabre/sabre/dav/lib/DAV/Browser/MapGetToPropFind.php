@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Browser;
 
 use Sabre\DAV;
@@ -16,45 +18,41 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class MapGetToPropFind extends DAV\ServerPlugin {
-
+class MapGetToPropFind extends DAV\ServerPlugin
+{
     /**
-     * reference to server class
+     * reference to server class.
      *
      * @var DAV\Server
      */
     protected $server;
 
     /**
-     * Initializes the plugin and subscribes to events
-     *
-     * @param DAV\Server $server
-     * @return void
+     * Initializes the plugin and subscribes to events.
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
         $this->server->on('method:GET', [$this, 'httpGet'], 90);
     }
 
     /**
-     * This method intercepts GET requests to non-files, and changes it into an HTTP PROPFIND request
+     * This method intercepts GET requests to non-files, and changes it into an HTTP PROPFIND request.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
      * @return bool
      */
-    function httpGet(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpGet(RequestInterface $request, ResponseInterface $response)
+    {
         $node = $this->server->tree->getNodeForPath($request->getPath());
-        if ($node instanceof DAV\IFile) return;
+        if ($node instanceof DAV\IFile) {
+            return;
+        }
 
         $subRequest = clone $request;
         $subRequest->setMethod('PROPFIND');
 
         $this->server->invokeMethod($subRequest, $response);
+
         return false;
-
     }
-
 }

@@ -5,68 +5,52 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = ایونٹ آرگنائزیشن
 EventOrganizationDescription = ماڈیول پروجیکٹ کے ذریعے ایونٹ آرگنائزیشن
 EventOrganizationDescriptionLong= کسی پروگرام کی تنظیم کا نظم کریں (شو، کانفرنسز، شرکاء یا مقررین، تجویز، ووٹ یا رجسٹریشن کے لیے عوامی صفحات کے ساتھ)
-#
-# Menu
-#
 EventOrganizationMenuLeft = منظم تقریبات
 EventOrganizationConferenceOrBoothMenuLeft = کانفرنس یا بوتھ
-
 PaymentEvent=تقریب کی ادائیگی
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=اندراج
 EventOrganizationSetup=ایونٹ آرگنائزیشن سیٹ اپ
 EventOrganization=تقریب کی تنظیم
-Settings=ترتیبات
 EventOrganizationSetupPage = ایونٹ آرگنائزیشن سیٹ اپ صفحہ
 EVENTORGANIZATION_TASK_LABEL = پروجیکٹ کی توثیق ہونے پر خود بخود تخلیق کرنے کے لیے کاموں کا لیبل
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
-EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
+EVENTORGANIZATION_TASK_LABELTooltip2=اگر آپ کو خود بخود کام بنانے کی ضرورت نہیں ہے تو خالی رکھیں۔
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = فریق ثالث میں شامل کرنے کے لیے زمرہ خود بخود بن جاتا ہے جب کوئی کانفرنس تجویز کرتا ہے۔
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = تیسری پارٹیوں میں شامل کرنے کے لیے زمرہ خود بخود بن جاتا ہے جب وہ بوتھ تجویز کرتے ہیں۔
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = کانفرنس کی تجویز موصول ہونے کے بعد بھیجنے کے لیے ای میل کا سانچہ۔
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH = بوتھ کی تجویز موصول ہونے کے بعد بھیجنے کے لیے ای میل کا سانچہ۔
-EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = Template of email to send after a registration to a booth has been paid.
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH = بوتھ پر رجسٹریشن کے بعد بھیجنے کے لیے ای میل کا ٹیمپلیٹ ادا ہو چکا ہے۔
 EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT = کسی تقریب میں رجسٹریشن کے بعد بھیجنے کے لیے ای میل کا ٹیمپلیٹ ادا ہو چکا ہے۔
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Template of email to use when sending emails from the massaction "Send emails" to speakers
-EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Template of email to use when sending emails from the massaction "Send emails" on attendee list
-EVENTORGANIZATION_FILTERATTENDEES_CAT = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties in the category
-EVENTORGANIZATION_FILTERATTENDEES_TYPE = In the form to create/add an attendee, restricts the list of thirdparties to thirdparties with the nature
-
-#
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = ای میل کا ٹیمپلیٹ استعمال کرنے کے لیے جب مساجد "ای میل بھیجیں" سے ای میلز اسپیکر کو بھیجتے ہیں۔
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = ای میل کا ٹیمپلیٹ جس کو ای میل بھیجتے وقت استعمال کیا جا سکتا ہے "ای میلز بھیجیں" شرکت کنندگان کی فہرست میں
+EVENTORGANIZATION_FILTERATTENDEES_CAT = ایک شرکت کنندہ کو بنانے/شامل کرنے کے فارم میں، زمرہ میں فریق ثالث کی فہرست کو تیسرے فریق تک محدود کرتا ہے
+EVENTORGANIZATION_FILTERATTENDEES_TYPE = ایک شرکت کنندہ کو بنانے / شامل کرنے کے فارم میں، فطرت کے ساتھ تھرڈ پارٹیز کی فہرست کو تھرڈ پارٹیز تک محدود کرتا ہے۔
 # Object
-#
+OrganizedEvent=منظم تقریب
 EventOrganizationConfOrBooth= کانفرنس یا بوتھ
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = ایونٹ کی تنظیم کا نظم کریں۔
 ConferenceOrBooth = کانفرنس یا بوتھ
 ConferenceOrBoothTab = کانفرنس یا بوتھ
 AmountPaid = رقم ادا کر دی
 DateOfRegistration = رجسٹریشن کی تاریخ
 ConferenceOrBoothAttendee = کانفرنس یا بوتھ اٹینڈی
-ApplicantOrVisitor=Applicant or visitor
-Speaker=Speaker
-
-#
+ApplicantOrVisitor=درخواست دہندہ یا وزیٹر
+Speaker=اسپیکر
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = کانفرنس کے لیے آپ کی درخواست موصول ہو گئی۔
 YourOrganizationEventBoothRequestWasReceived = بوتھ کے لیے آپ کی درخواست موصول ہوئی تھی۔
 EventOrganizationEmailAskConf = کانفرنس کی درخواست
@@ -75,11 +59,8 @@ EventOrganizationEmailBoothPayment = اپنے بوتھ کی ادائیگی
 EventOrganizationEmailRegistrationPayment = ایک تقریب کے لیے رجسٹریشن
 EventOrganizationMassEmailAttendees = شرکاء کے لیے مواصلت
 EventOrganizationMassEmailSpeakers = مقررین سے مواصلت
-ToSpeakers=To speakers
-
-#
+ToSpeakers=بولنے والوں کو
 # Event
-#
 AllowUnknownPeopleSuggestConf=لوگوں کو کانفرنسیں تجویز کرنے دیں۔
 AllowUnknownPeopleSuggestConfHelp=نامعلوم لوگوں کو ایک کانفرنس تجویز کرنے کی اجازت دیں جو وہ کرنا چاہتے ہیں۔
 AllowUnknownPeopleSuggestBooth=لوگوں کو بوتھ کے لیے درخواست دینے کی اجازت دیں۔
@@ -88,42 +69,44 @@ PriceOfRegistration=رجسٹریشن کی قیمت
 PriceOfRegistrationHelp=رجسٹر کرنے یا ایونٹ میں شرکت کے لیے ادا کرنے کی قیمت
 PriceOfBooth=ایک بوتھ کھڑا کرنے کے لیے سبسکرپشن کی قیمت
 PriceOfBoothHelp=ایک بوتھ کھڑے کرنے کے لئے سبسکرپشن کی قیمت
-EventOrganizationICSLink=Link ICS for conferences
+EventOrganizationICSLinkProject=Link ICS for the event
+EventOrganizationICSLink=کانفرنسوں کے لیے ICS لنک کریں۔
 ConferenceOrBoothInformation=کانفرنس یا بوتھ کی معلومات
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=حاضرین
-ListOfAttendeesOfEvent=ایونٹ پروجیکٹ کے شرکاء کی فہرست
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ICS لنک ڈاؤن لوڈ کریں۔
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
+EVENTORGANIZATION_SECUREKEY = ایک کانفرنس تجویز کرنے کے لیے عوامی رجسٹریشن کے صفحے کی کلید کو محفوظ کرنے کے لیے بیج
 SERVICE_BOOTH_LOCATION = بوتھ کے مقام کے بارے میں انوائس قطار کے لیے استعمال کی جانے والی سروس
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = کسی تقریب میں شرکت کرنے والے کی رکنیت کے بارے میں انوائس قطار کے لیے استعمال ہونے والی سروس
 NbVotes=ووٹوں کی تعداد
-#
 # Status
-#
 EvntOrgDraft = مسودہ
 EvntOrgSuggested = تجویز کردہ
 EvntOrgConfirmed = تصدیق شدہ
 EvntOrgNotQualified = نا اہل
 EvntOrgDone = ہو گیا
 EvntOrgCancelled = منسوخ
-#
-# Public page
-#
+# Other
 SuggestForm = تجویز کا صفحہ
 SuggestOrVoteForConfOrBooth = تجویز یا ووٹ کے لیے صفحہ
 EvntOrgRegistrationHelpMessage = یہاں، آپ کانفرنس کے لیے ووٹ دے سکتے ہیں یا ایونٹ کے لیے ایک نیا تجویز کر سکتے ہیں۔ آپ ایونٹ کے دوران بوتھ رکھنے کے لیے بھی درخواست دے سکتے ہیں۔
 EvntOrgRegistrationConfHelpMessage = یہاں، آپ ایونٹ کے دوران متحرک ہونے کے لیے ایک نئی کانفرنس تجویز کر سکتے ہیں۔
 EvntOrgRegistrationBoothHelpMessage = یہاں، آپ ایونٹ کے دوران بوتھ رکھنے کے لیے درخواست دے سکتے ہیں۔
 ListOfSuggestedConferences = تجویز کردہ کانفرنسوں کی فہرست
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=تجویز کردہ بوتھ
+ListOfConferencesOrBooths=کانفرنسز یا ایونٹ پروجیکٹ کے بوتھ
 SuggestConference = ایک نئی کانفرنس تجویز کریں۔
 SuggestBooth = ایک بوتھ تجویز کریں۔
 ViewAndVote = تجویز کردہ واقعات کو دیکھیں اور ووٹ دیں۔
 PublicAttendeeSubscriptionGlobalPage = ایونٹ کی رجسٹریشن کے لیے پبلک لنک
 PublicAttendeeSubscriptionPage = صرف اس ایونٹ کی رجسٹریشن کے لیے پبلک لنک
 MissingOrBadSecureKey = سیکیورٹی کلید غلط یا غائب ہے۔
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = یہ فارم آپ کو ایونٹ میں ایک نئے شریک کے طور پر رجسٹر کرنے کی اجازت دیتا ہے۔
 EvntOrgDuration = یہ کانفرنس %s پر شروع ہوتی ہے اور %s پر ختم ہوتی ہے۔
 ConferenceAttendeeFee = ایونٹ کے لیے کانفرنس کے شرکاء کی فیس: '%s' %s سے %s تک ہوتی ہے۔
 BoothLocationFee = ایونٹ کے لیے بوتھ کا مقام: '%s' %s سے %s تک
@@ -131,9 +114,10 @@ EventType = واقعہ کی قسم
 LabelOfBooth=بوتھ لیبل
 LabelOfconference=کانفرنس کا لیبل
 ConferenceIsNotConfirmed=رجسٹریشن دستیاب نہیں ہے، کانفرنس کی ابھی تصدیق نہیں ہوئی ہے۔
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s %s سے پہلے ہونا ضروری ہے
 DateMustBeAfterThan=%s %s کے بعد ہونا چاہیے
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
+MaxNbOfAttendeesReached=شرکاء کی زیادہ سے زیادہ تعداد تک پہنچ گئی ہے۔
 NewSubscription=اندراج
 OrganizationEventConfRequestWasReceived=کانفرنس کے لیے آپ کی تجویز موصول ہوئی ہے۔
 OrganizationEventBoothRequestWasReceived=بوتھ کے لیے آپ کی درخواست موصول ہو گئی ہے۔
@@ -142,14 +126,9 @@ OrganizationEventPaymentOfRegistrationWasReceived=آپ کے ایونٹ کے رج
 OrganizationEventBulkMailToAttendees=یہ ایک حاضری کے طور پر ایونٹ میں آپ کی شرکت کے بارے میں ایک یاد دہانی ہے۔
 OrganizationEventBulkMailToSpeakers=یہ ایک مقرر کی حیثیت سے تقریب میں آپ کی شرکت کی یاد دہانی ہے۔
 OrganizationEventLinkToThirdParty=فریق ثالث سے لنک کریں (کسٹمر، سپلائر یا پارٹنر)
-OrganizationEvenLabelName=Public name of the conference or booth
-
+OrganizationEvenLabelName=کانفرنس یا بوتھ کا عوامی نام
 NewSuggestionOfBooth=بوتھ کے لیے درخواست
-NewSuggestionOfConference=کانفرنس کے لیے درخواست
-
-#
-# Vote page
-#
+NewSuggestionOfConference=کانفرنس منعقد کرنے کی درخواست
 EvntOrgRegistrationWelcomeMessage = کانفرنس یا بوتھ تجویز کے صفحے پر خوش آمدید۔
 EvntOrgRegistrationConfWelcomeMessage = کانفرنس کے تجویز والے صفحے پر خوش آمدید۔
 EvntOrgRegistrationBoothWelcomeMessage = بوتھ تجویز کے صفحے پر خوش آمدید۔
@@ -157,8 +136,8 @@ EvntOrgVoteHelpMessage = یہاں، آپ پروجیکٹ کے لیے تجویز �
 VoteOk = آپ کا ووٹ قبول کر لیا گیا ہے۔
 AlreadyVoted = آپ پہلے ہی اس ایونٹ کے لیے ووٹ دے چکے ہیں۔
 VoteError = ووٹنگ کے دوران ایک خرابی پیش آگئی، براہ کرم دوبارہ کوشش کریں۔
-
-SubscriptionOk=Your registration has been recorded
+SubscriptionOk=آپ کی رجسٹریشن ریکارڈ کر لی گئی ہے۔
+AmountOfRegistrationPaid=رجسٹریشن کی ادائیگی کی رقم
 ConfAttendeeSubscriptionConfirmation = کسی تقریب میں آپ کی رکنیت کی تصدیق
 Attendee = حاضری
 PaymentConferenceAttendee = کانفرنس کے شرکاء کی ادائیگی
@@ -166,9 +145,18 @@ PaymentBoothLocation = بوتھ کے مقام کی ادائیگی
 DeleteConferenceOrBoothAttendee=شرکت کنندہ کو ہٹا دیں۔
 RegistrationAndPaymentWereAlreadyRecorder=ای میل <b> %s </b> کے لیے رجسٹریشن اور ادائیگی پہلے ہی ریکارڈ کی گئی تھی۔
 EmailAttendee=حاضری کا ای میل
-EmailCompany=Company email
+EmailCompany=کمپنی کا ای میل
 EmailCompanyForInvoice=کمپنی کا ای میل (انوائس کے لیے، اگر حاضری کے ای میل سے مختلف ہو)
-ErrorSeveralCompaniesWithEmailContactUs=اس ای میل کے ساتھ کئی کمپنیاں مل گئی ہیں لہذا ہم آپ کی رجسٹریشن کو خودکار طور پر درست نہیں کر سکتے۔ براہ کرم دستی توثیق کے لیے ہم سے %s پر رابطہ کریں۔
-ErrorSeveralCompaniesWithNameContactUs=اس نام کی کئی کمپنیاں ملی ہیں اس لیے ہم آپ کی رجسٹریشن کو خودکار طور پر درست نہیں کر سکتے۔ براہ کرم دستی توثیق کے لیے ہم سے %s پر رابطہ کریں۔
+ErrorSeveralCompaniesWithEmailContactUs=اس ای میل کے ساتھ کئی کمپنیاں مل گئی ہیں اس لیے ہم آپ کی رجسٹریشن کی خود بخود توثیق نہیں کر سکتے۔ دستی توثیق کے لیے براہ کرم ہم سے %s پر رابطہ کریں
+ErrorSeveralCompaniesWithNameContactUs=اس نام کی کئی کمپنیاں ملی ہیں اس لیے ہم آپ کی رجسٹریشن کی خود بخود توثیق نہیں کر سکتے۔ دستی توثیق کے لیے براہ کرم ہم سے %s پر رابطہ کریں۔
 NoPublicActionsAllowedForThisEvent=اس تقریب کے لیے عوام کے لیے کوئی عوامی کارروائی نہیں ہے۔
-MaxNbOfAttendees=Max number of attendees
+MaxNbOfAttendees=حاضرین کی زیادہ سے زیادہ تعداد
+DateStartEvent=ایونٹ شروع ہونے کی تاریخ
+DateEndEvent=ایونٹ کی اختتامی تاریخ
+ModifyStatus=حالت میں ترمیم کریں۔
+ConfirmModifyStatus=حالت میں ترمیم کی تصدیق کریں۔
+ConfirmModifyStatusQuestion=کیا آپ واقعی %s منتخب ریکارڈ (ریکارڈز) میں ترمیم کرنا چاہتے ہیں؟
+RecordsUpdated=%s ریکارڈ اپ ڈیٹ
+RecordUpdated=ریکارڈ اپ ڈیٹ ہو گیا۔
+NoRecordUpdated=کوئی ریکارڈ اپ ڈیٹ نہیں ہوا۔
+ProfitPerValidatedAttendee=Profit per attendee

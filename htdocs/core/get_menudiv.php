@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -67,6 +69,13 @@ if (!defined('DISABLE_SELECT2')) {
 }
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -82,10 +91,10 @@ $left = ($langs->trans("DIRECTION") == 'rtl' ? 'right' : 'left');
  */
 
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
-if (empty($dolibarr_nocache) && GETPOST('cache', 'int')) {
-	header('Cache-Control: max-age='.GETPOST('cache', 'int').', public, must-revalidate');
+if (empty($dolibarr_nocache) && GETPOSTINT('cache')) {
+	header('Cache-Control: max-age='.GETPOSTINT('cache').', public, must-revalidate');
 	// For a .php, we must set an Expires to avoid to have it forced to an expired value by the web server
-	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOST('cache', 'int')).' GMT');
+	header('Expires: '.gmdate('D, d M Y H:i:s', dol_now('gmt') + GETPOSTINT('cache')).' GMT');
 	// HTTP/1.0
 	header('Pragma: token=public');
 } else {
@@ -101,12 +110,12 @@ $arrayofjs = array();
 $arrayofcss = array();
 top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
-print '<body>'."\n";
+print '<body class="getmenudiv">'."\n";
 
-// Javascript to make menu active like Jmobile did.
+// JavaScript to make menu active like Jmobile did.
 print '
 <style>
-    /*Lets hide the non active LIs by default*/
+    /* Hide the non active LIs by default*/
     body {
         font-size: 16px;
     }
@@ -122,7 +131,29 @@ print '
     }
 
 	ul li.lilevel2 {
-		padding-left: 42px;
+		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
+	}
+
+	.getmenudiv a:hover {
+		text-decoration: none;
+	}
+
+	.pictofixedwidth {
+    	text-align: left;
+    	padding-right: 10px !important;
+	}
+
+	li.lilevel1 > a, li.lilevel1 > i {
+		padding-left: 30px !important;
+	}
+	li.lilevel2 a {
+		padding-left: 60px !important;
+	}
+	li.lilevel3 a {
+		padding-left: 90px !important;
+	}
+	li.lilevel4 a {
+		padding-left: 120px !important;
 	}
 
     a.alilevel0, span.spanlilevel0 {
@@ -133,8 +164,8 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print '
-        background-position-y: 16px;
+print '
+        background-position-y: 18px;
         padding: 1em 15px 1em 40px;
 		display: block;
     }
@@ -169,9 +200,9 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print 'background-position-y: 1px;';
-	print 'padding-left: 20px;';
-	print '
+print 'background-position-y: 1px;';
+print 'padding-left: 20px;';
+print '
 	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;
@@ -216,7 +247,7 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 	}
 </style>
 
-<script type="text/javascript">
+<script nonce="'.getNonce().'" type="text/javascript">
 $(document).ready(function(){
     $("body ul").click(function(){
         console.log("We click on body ul");
@@ -225,7 +256,7 @@ $(document).ready(function(){
 
         $(this).find("li ul").slideToggle(200);
 
-        target = $(this);
+        var target = $(this);
         $(\'html, body\').animate({
           scrollTop: target.offset().top
         }, 300);
@@ -237,10 +268,9 @@ $(document).ready(function(){
 
 
 if (empty($user->socid)) {	// If internal user or not defined
-	$conf->standard_menu = (empty($conf->global->MAIN_MENU_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENU_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
-} else // If external user
-{
-	$conf->standard_menu = (empty($conf->global->MAIN_MENUFRONT_STANDARD_FORCED) ? (empty($conf->global->MAIN_MENUFRONT_STANDARD) ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
+	$conf->standard_menu = (!getDolGlobalString('MAIN_MENU_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENU_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENU_STANDARD) : $conf->global->MAIN_MENU_STANDARD_FORCED);
+} else { // If external user
+	$conf->standard_menu = (!getDolGlobalString('MAIN_MENUFRONT_STANDARD_FORCED') ? (!getDolGlobalString('MAIN_MENUFRONT_STANDARD') ? 'eldy_menu.php' : $conf->global->MAIN_MENUFRONT_STANDARD) : $conf->global->MAIN_MENUFRONT_STANDARD_FORCED);
 }
 
 // Load the menu manager (only if not already done)
@@ -252,7 +282,7 @@ if (!class_exists('MenuManager')) {
 	$menufound = 0;
 	$dirmenus = array_merge(array("/core/menus/"), (array) $conf->modules_parts['menus']);
 	foreach ($dirmenus as $dirmenu) {
-		$menufound = dol_include_once($dirmenu."standard/".$file_menu);
+		$menufound = dol_include_once($dirmenu."standard/".dol_sanitizeFileName($file_menu));
 		if ($menufound) {
 			break;
 		}
@@ -260,12 +290,15 @@ if (!class_exists('MenuManager')) {
 	if (!$menufound) {	// If failed to include, we try with standard
 		dol_syslog("You define a menu manager '".$file_menu."' that can not be loaded.", LOG_WARNING);
 		$file_menu = 'eldy_menu.php';
-		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".$file_menu;
+		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".dol_sanitizeFileName($file_menu);
 	}
 }
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->loadMenu('all', 'all'); // Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->showmenu('jmobile');
 
 print '</body>';

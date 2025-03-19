@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2017 ATM Consulting       <contact@atm-consulting.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +42,18 @@ if (!defined('NOREQUIREHTML')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $block = new BlockedLog($db);
 
-if ((!$user->admin && empty($user->rights->blockedlog->read)) || empty($conf->blockedlog->enabled)) {
+if ((!$user->admin && !$user->hasRight('blockedlog', 'read')) || empty($conf->blockedlog->enabled)) {
 	accessforbidden();
 }
 
@@ -57,7 +66,7 @@ $langs->loadLangs(array("admin"));
 
 top_httphead();
 
-print '<div id="pop-info"><table width="100%" height="80%" class="border"><thead><th width="50%" class="left">'.$langs->trans('Field').'</th><th class="left">'.$langs->trans('Value').'</th></thead>';
+print '<div id="pop-info"><table height="80%" class="border centpercent"><thead><th width="50%" class="left">'.$langs->trans('Field').'</th><th class="left">'.$langs->trans('Value').'</th></thead>';
 print '<tbody>';
 
 if ($block->fetch($id) > 0) {
@@ -77,7 +86,7 @@ $db->close();
 /**
  * formatObject
  *
- * @param 	Object	$objtoshow		Object to show
+ * @param 	Object|array<string,mixed>	$objtoshow		Object to show
  * @param	string	$prefix			Prefix of key
  * @return	string					String formatted
  */

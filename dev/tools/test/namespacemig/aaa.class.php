@@ -24,6 +24,7 @@ class Aaa
 
 	/**
 	 * do
+	 *
 	 * @return void
 	 */
 	public function do()

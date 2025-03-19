@@ -41,7 +41,7 @@ PartnershipAboutPage=Om Partnerskap-side
 partnershipforthirdpartyormember=Partnerstatus må settes på en "tredjepart" eller et "medlem"
 PARTNERSHIP_IS_MANAGED_FOR=Partnerskap administrert for
 PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks å sjekke
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antall dager før kanselleringsstatus for et partnerskap når et abonnement har utløpt
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Antall dager før kansellering av status for et partnerskap når en abonnement har utløpt
 ReferingWebsiteCheck=Sjekk av refererende nettsted
 ReferingWebsiteCheckDesc=Du kan aktivere en funksjon for å sjekke at partnerne dine har lagt til en tilbakekobling til nettsteddomenene dine på deres eget nettsted.
 PublicFormRegistrationPartnerDesc=Dolibarr kan gi deg en offentlig URL/nettside slik at eksterne besøkende kan be om å bli en del av partnerskapsprogrammet.
@@ -55,7 +55,7 @@ PartnershipDedicatedToThisMember=Partnerskap dedikert til dette medlemmet
 DatePartnershipStart=Startdato
 DatePartnershipEnd=Sluttdato
 ReasonDecline=Årsak til avslag
-ReasonDeclineOrCancel=Avvis grunn
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partnerskap eksisterer allerede
 ManagePartnership=Administrer partnerskap
 BacklinkNotFoundOnPartnerWebsite=Backlink ble ikke funnet på partnerens nettsted
@@ -82,15 +82,17 @@ YourPartnershipRefusedTopic=Partnerskap nektet
 YourPartnershipAcceptedTopic=Partnerskap akseptert
 YourPartnershipCanceledTopic=Partnerskapet kansellert
 
-YourPartnershipWillSoonBeCanceledContent=Vi informerer deg om at partnerskapet ditt snart vil bli kansellert (tilbakekobling ikke funnet)
-YourPartnershipRefusedContent=Vi informerer deg om at partnerskapsforespørselen din har blitt avslått.
-YourPartnershipAcceptedContent=Vi informerer deg om at din forespørsel om partnerskap er godtatt.
-YourPartnershipCanceledContent=Vi informerer deg om at partnerskapet ditt er kansellert.
+YourPartnershipWillSoonBeCanceledContent=Vi vil gjerne informere deg om at vårt samarbeid snart vil bli kansellert (vi fikk ikke fornyelse eller en forutsetning for vårt samarbeid er ikke oppfylt). Ta kontakt med oss dersom du mottok dette på grunn av en feil.
+YourPartnershipRefusedContent=Vi vil gjerne informere deg om at partnerskapsforespørselen din har blitt avvist. Forutsetningene er ikke oppfylt. Ta kontakt med oss hvis du trenger mer informasjon.
+YourPartnershipAcceptedContent=Vi vil gjerne informere deg om at partnerskapsforespørselen din er akseptert.
+YourPartnershipCanceledContent=Vi vil gjerne informere deg om at samarbeidet vårt er kansellert. Ta kontakt med oss hvis du trenger mer informasjon.
 
 CountLastUrlCheckError=Antall feil for siste URL-sjekk
 LastCheckBacklink=Dato for siste URL-sjekk
-ReasonDeclineOrCancel=Avvis grunn
 
 NewPartnershipRequest=Ny forespørsel om partnerskap
 NewPartnershipRequestDesc=Dette skjemaet lar deg be om å bli en del av et av våre partnerskapsprogram. Hvis du trenger hjelp til å fylle ut dette skjemaet, vennligst kontakt via e-post <b> %s </b> .
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Denne siden må inneholde minst én lenke til ett av følgende domener: %s
+
+IPOfApplicant=IP på søker
 

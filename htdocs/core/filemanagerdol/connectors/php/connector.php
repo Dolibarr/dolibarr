@@ -2,6 +2,7 @@
 /*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2010 Frederico Caldeira Knabben
+ * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
  *
  * == BEGIN LICENSE ==
  *
@@ -40,16 +41,13 @@ DoResponse();
  */
 function DoResponse()
 {
-	if (!isset($_GET)) {
-		global $_GET;
-	}
 	if (!isset($_GET['Command']) || !isset($_GET['Type']) || !isset($_GET['CurrentFolder'])) {
 		return;
 	}
 
-	// Get the main request informaiton.
-	$sCommand = $_GET['Command'];
-	$sResourceType = $_GET['Type'];
+	// Get the main request information.
+	$sCommand = GETPOST('Command');
+	$sResourceType = GETPOST('Type');
 	$sCurrentFolder = GetCurrentFolder();
 
 	// Check if it is an allowed command
@@ -64,7 +62,8 @@ function DoResponse()
 	// File Upload doesn't have to Return XML, so it must be intercepted before anything.
 	if ($sCommand == 'FileUpload') {
 		FileUpload($sResourceType, $sCurrentFolder, $sCommand);
-		return;
+		// @phan-suppress-next-line PhanPluginUnreachableCode
+		return;  // FileUpload exits @phpstan-ignore-line
 	}
 
 	CreateXmlHeader($sCommand, $sResourceType, $sCurrentFolder);

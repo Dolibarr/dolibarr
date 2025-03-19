@@ -4,89 +4,73 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
+ModulePartnershipName=Manažment partnerstva
+PartnershipDescription=Modul Manažment partnerstva
+PartnershipDescriptionLong= Modul Manažment partnerstva
+Partnership=partnerstvo
+Partnerships=partnerstvá
+AddPartnership=Pridajte partnerstvo
+CancelPartnershipForExpiredMembers=Partnerstvo: Zrušte partnerstvo členov s vypršanými predplatnými
+PartnershipCheckBacklink=Partnerstvo: Skontrolujte odkazujúci spätný odkaz
 # Menu
-#
-NewPartnership=New Partnership
-ListOfPartnerships=List of partnership
-
-#
+NewPartnership=Nové partnerstvo
+NewPartnershipbyWeb=Vaša žiadosť o partnerstvo bola úspešne pridaná. Čoskoro vás môžeme kontaktovať...
+ListOfPartnerships=Zoznam partnerstiev
 # Admin page
-#
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'thirdparty' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before cancelling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
-
-#
+PartnershipSetup=Nastavenie partnerstva
+PartnershipAbout=O partnerstve
+PartnershipAboutPage=Partnerstvo o stránke
+partnershipforthirdpartyormember=Status partnera musí byť nastavený na „tretia strana“ alebo „člen“
+PARTNERSHIP_IS_MANAGED_FOR=Partnerstvo riadené za
+PARTNERSHIP_BACKLINKS_TO_CHECK=Spätné odkazy na kontrolu
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb dní pred zrušením stavu partnerstva, keď predplatné vypršalo
+ReferingWebsiteCheck=Kontrola odkazujúcej webovej stránky
+ReferingWebsiteCheckDesc=Môžete povoliť funkciu na kontrolu, či vaši partneri pridali spätný odkaz na domény vašich webových stránok na ich vlastnej webovej lokalite.
+PublicFormRegistrationPartnerDesc=Dolibarr vám môže poskytnúť verejnú URL/webovú stránku, ktorá umožní externým návštevníkom požiadať o účasť v partnerskom programe.
 # Object
-#
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Odstrániť partnerstvo
+PartnershipDedicatedToThisThirdParty=Partnerstvo venované tejto tretej strane
+PartnershipDedicatedToThisMember=Partnerstvo venované tomuto členovi
 DatePartnershipStart=Dátum začatia
 DatePartnershipEnd=Dátum ukončenia
-ReasonDecline=Decline reason
-ReasonDeclineOrCancel=Decline reason
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-
-#
-# Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We inform you that your partnership will soon be canceled (Backlink not found)
-YourPartnershipRefusedContent=We inform you that your partnership request has been refused.
-YourPartnershipAcceptedContent=We inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We inform you that your partnership has been canceled.
-
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Decline reason
-
-#
-# Status
-#
+ReasonDecline=Dôvod odmietnutia
+ReasonDeclineOrCancel=Dôvod odmietnutia alebo zrušenia
+PartnershipAlreadyExist=Partnerstvo už existuje
+ManagePartnership=Riadiť partnerstvo
+BacklinkNotFoundOnPartnerWebsite=Spätný odkaz sa nenašiel na partnerskej webovej stránke
+ConfirmClosePartnershipAsk=Naozaj chcete zrušiť toto partnerstvo?
+PartnershipType=Typ partnerstva
+PartnershipRefApproved=Partnerstvo %s schválené
+KeywordToCheckInWebsite=Ak chcete skontrolovať, či sa dané kľúčové slovo nachádza na webovej stránke každého partnera, definujte ho tu
 PartnershipDraft=Návrh
 PartnershipAccepted=Akceptované
 PartnershipRefused=Odmietol
 PartnershipCanceled=Zrušený
-PartnershipManagedFor=Partners are
+PartnershipManagedFor=Partneri sú
+# Template Mail
+SendingEmailOnPartnershipWillSoonBeCanceled=Partnerstvo bude čoskoro zrušené
+SendingEmailOnPartnershipRefused=Partnerstvo odmietnuté
+SendingEmailOnPartnershipAccepted=Partnerstvo prijaté
+SendingEmailOnPartnershipCanceled=Partnerstvo zrušené
+YourPartnershipWillSoonBeCanceledTopic=Partnerstvo bude čoskoro zrušené
+YourPartnershipRefusedTopic=Partnerstvo odmietnuté
+YourPartnershipAcceptedTopic=Partnerstvo prijaté
+YourPartnershipCanceledTopic=Partnerstvo zrušené
+YourPartnershipWillSoonBeCanceledContent=Radi by sme vás informovali, že naše partnerstvo bude čoskoro zrušené (neobdržali sme obnovenie alebo neboli splnené predpoklady pre naše partnerstvo). Kontaktujte nás, ak ste to dostali kvôli chybe.
+YourPartnershipRefusedContent=Radi by sme vás informovali, že vaša žiadosť o partnerstvo bola zamietnutá. Predpoklady nie sú splnené. Ak potrebujete ďalšie informácie, kontaktujte nás.
+YourPartnershipAcceptedContent=Radi by sme vás informovali, že vaša žiadosť o partnerstvo bola prijatá.
+YourPartnershipCanceledContent=Radi by sme vás informovali, že naše partnerstvo bolo zrušené. Ak potrebujete ďalšie informácie, kontaktujte nás.
+CountLastUrlCheckError=Počet chýb pri poslednej kontrole webovej adresy
+LastCheckBacklink=Dátum poslednej kontroly webovej adresy
+NewPartnershipRequest=Nová žiadosť o partnerstvo
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Táto stránka musí obsahovať aspoň jeden odkaz na jednu z nasledujúcich domén: %s
+IPOfApplicant=IP žiadateľa

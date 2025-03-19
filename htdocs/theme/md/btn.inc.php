@@ -1,8 +1,35 @@
 <?php
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+/**
+ * @var Conf $conf
+ * @var User $user
+ *
+ * @var int $dol_optimize_smallscreen
+ * @var string $colortextlink
+ * @var string $butactionbg
+ * @var string $textbutaction
+ * @var string $fontlist
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $butactionbg
+@phan-var-force string $colortextlink
+@phan-var-force int $dol_optimize_smallscreen
+@phan-var-force string $fontlist
+@phan-var-force string $left
+@phan-var-force int $nbtopmenuentries
+@phan-var-force string $right
+@phan-var-force string $textbutaction
+';
+?>
+
+/* IDE Hack <style type="text/css"> */
 
 :root {
 			--btncolortext:rgb(<?php print $colortextlink; ?>);
@@ -15,9 +42,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 
 <?php
-if (!empty($conf->global->THEME_DARKMODEENABLED)) {
+if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
-	if ($conf->global->THEME_DARKMODEENABLED != 2) {
+	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
 	} else {
 		print "@media not print {";
@@ -79,8 +106,8 @@ span.butAction, span.butActionDelete {
 	font-weight: bold;
 	line-height: 1.8em;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	text-align: center;
@@ -101,7 +128,7 @@ span.butAction, span.butActionDelete {
 	font-weight: normal;
 
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
 	display: inline-block;
 	/* text-align: center; New button are on right of screen */
@@ -111,8 +138,8 @@ span.butAction, span.butActionDelete {
 .button {
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
-	padding: 0.4em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.4em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	text-align: center;
 	vertical-align: middle;
@@ -140,8 +167,8 @@ span.butAction, span.butActionDelete {
 	text-decoration: none;
 	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 	display: inline-block;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
 	line-height: 20px;
 	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
@@ -222,8 +249,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butAction:hover   {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
+	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
+	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
 }
 .butActionNew:hover   {
 	text-decoration: underline;
@@ -249,8 +276,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.9'); ?>em;
+	padding: 0.6em <?php echo($dol_optimize_smallscreen ? '0.6' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	text-align: center;
@@ -269,8 +296,8 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
+	margin: 0em <?php echo($dol_optimize_smallscreen ? '0.7' : '0.9'); ?>em;
+	padding: 0.2em <?php echo($dol_optimize_smallscreen ? '0.4' : '0.7'); ?>em;
 	font-family: <?php print $fontlist ?> !important;
 	display: inline-block;
 	/* text-align: center;  New button are on right of screen */
@@ -291,14 +318,16 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 TITLE BUTTON
  */
 
-div.pagination li:first-child a.btnTitle {
-	margin-left: 10px;
+div.pagination li:first-child a.btnTitle, div.pagination li.paginationafterarrows a.btnTitle,
+table.table-fiche-title tr.titre td.col-center div.nowraponall a.btnTitle,
+table.table-fiche-title tr.titre td.col-right a.btnTitle {
+	margin-<?php echo $left; ?>: 10px;
 }
 
 .btnTitle, a.btnTitle {
 	display: inline-block;
-	padding: 6px 12px;
-	font-size: 14px
+	padding: 4px 12px;
+	font-size: 14px;
 	font-weight: 400;
 	line-height: 1.4;
 	text-align: center;
@@ -315,13 +344,16 @@ div.pagination li:first-child a.btnTitle {
 	text-decoration: none;
 	position: relative;
 	margin: 0 0 0 10px;
-	min-width: 80px;
 	text-align: center;
-	color: rgb(<?php print $colortextlink; ?>);
+	color: var(--btncolortext);
 	border: none;
 	font-size: 12px;
 	font-weight: 300;
 	/* background-color: #fbfbfb; */
+}
+/* *:not(.paginationafterarrows) > .btnTitle, *:not(.paginationafterarrows) > a.btnTitle { */
+.btnTitle, a.btnTitle {
+	min-width: 60px;
 }
 
 a.btnTitle.btnTitleSelected {
@@ -368,20 +400,28 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 .btnTitle>.fa {
-	font-size: 20px;
+	font-size: 2em;
 	display: block;
 }
 
 .paginationafterarrows a.btnTitlePlus, .titre_right a.btnTitlePlus {
-	border: 1px solid var(--btncolorborder);
+	/* border: 1px solid var(--btncolorborder); */
+	border: unset;
+	background-color: unset;
 }
 .paginationafterarrows a.btnTitlePlus:hover, .titre_right a.btnTitlePlus:hover {
 	border-color: #ddd;
 }
 
+/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+.btnTitlePlus:hover {
+	max-width: 24px;
+	max-height: 40px;
+}
+
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2) ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
@@ -394,7 +434,7 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo empty($conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3) ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.9em;
@@ -410,7 +450,7 @@ div.pagination .btnTitle:hover .btnTitle-label{
 }
 
 
-<?php if (!empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (!$user->admin)) { ?>
+<?php if (getDolGlobalString('MAIN_BUTTON_HIDE_UNAUTHORIZED') && (!$user->admin)) { ?>
 .butActionRefused, .butActionNewRefused, .btnTitle.refused {
 	display: none !important;
 }
@@ -435,3 +475,60 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	border: 1px solid #ddd;
 }
 
+
+
+/*
+ * BUTTON With Low emphasis
+ */
+
+button.btn-low-emphasis{
+	text-align: center;
+	display: inline-block;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	margin: 0;
+	padding: 0;
+	width: auto;
+	min-width: 1.5em;
+	min-height: 1.5em;
+	line-height: 1.5em;
+
+	overflow: visible;
+	background: transparent;
+	background-position: center; /* used for hover ripple effect */
+	background-size: 0%;
+	color: var(--colortextlink, inherit);
+	font: inherit;
+	line-height: normal;
+
+	/* Corrects font smoothing for webkit */
+	-webkit-font-smoothing: inherit;
+	-moz-osx-font-smoothing: inherit;
+
+	/* Corrects inability to style clickable input types in iOS */
+	-webkit-appearance: none;
+
+
+	transition: background 0.8s;/* used for hover ripple effect */
+	background: transparent radial-gradient(circle, transparent 1%, hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1) 1%, transparent 10%) center/15000%;
+}
+
+button.btn-low-emphasis.--btn-icon{
+	border-radius: 100%;
+}
+
+button.btn-low-emphasis :is(.fa, .fas){
+	color: var(--colortextlink, inherit);
+	opacity: 0.4;
+}
+
+button.btn-low-emphasis:is(:focus,:hover) :is(.fa, .fas){
+	opacity: 0.8;
+}
+
+button.btn-low-emphasis.--btn-icon:active {
+	background-color:  hsla(var(--colortextlink-h),var(--colortextlink-s) ,var(--colortextlink-l) , 0.1);
+	background-size: 100%;
+	transition: background 0s;/* used for hover ripple effect */
+}

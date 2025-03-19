@@ -1,10 +1,29 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > */
+}
+/**
+ * @var string $badgeDanger
+ * @var string $badgeSuccess
+ * @var string $badgeWarning
+ * @var string $colorblind_deuteranopes_badgeDanger
+ * @var string $colorblind_deuteranopes_badgeSuccess
+ */
+'
+@phan-var-force string $badgeDanger
+@phan-var-force string $badgeSuccess
+@phan-var-force string $badgeWarning
+@phan-var-force string $colorblind_deuteranopes_badgeDanger
+@phan-var-force string $colorblind_deuteranopes_badgeSuccess
+'
+?>
+
+/* IDE Hack <style type="text/css"> */
+
 /*
- progress style is based on boostrap and admin lte framework
+ progress style is based on bootstrap and admin lte framework
  */
 
 
@@ -29,7 +48,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.progress.spaced{
+.progress.spaced {
 	margin-bottom: 20px;
 }
 
@@ -198,4 +217,3 @@ body[class*="colorblind-"] .progress-bar-red, body[class*="colorblind-"] .progre
 .progress-bar-consumed-late {
 	background-color: <?php echo colorAgressiveness($badgeDanger, -95, +70) ?>;
 }
-

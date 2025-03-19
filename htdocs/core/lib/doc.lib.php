@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2012		Christophe Battarel		<christophe.battarel@altairis.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +87,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 			$sourceref = !empty($discount->discount_type) ? $discount->ref_invoice_supplier_source : $discount->ref_facture_source;
 			$libelleproduitservice = $outputlangs->transnoentitiesnoconv("DiscountFromDeposit", $sourceref);
 			// Add date of deposit
-			if (!empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) {
+			if (getDolGlobalString('INVOICE_ADD_DEPOSIT_DATE')) {
 				$libelleproduitservice .= ' ('.dol_print_date($discount->datec, 'day', '', $outputlangs).')';
 			}
 		} elseif ($desc == '(EXCESS RECEIVED)' && $line->fk_remise_except) {
@@ -114,7 +115,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 		if ($prodser->ref) {
 			$prefix_prodserv = "";
 			$ref_prodserv = "";
-			if (!empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS)) {   // In standard mode, we do not show this
+			if (getDolGlobalString('PRODUCT_ADD_TYPE_IN_DOCUMENTS')) {   // In standard mode, we do not show this
 				if ($prodser->isService()) {
 					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
 				} else {
@@ -136,6 +137,7 @@ function doc_getlinedesc($line, $outputlangs, $hideref = 0, $hidedesc = 0, $issu
 
 	if (!empty($line->date_start) || !empty($line->date_end)) {
 		$format = 'day';
+		$period = '';
 		// Show duration if exists
 		if ($line->date_start && $line->date_end) {
 			$period = '('.$outputlangs->transnoentitiesnoconv('DateFromTo', dol_print_date($line->date_start, $format, false, $outputlangs), dol_print_date($line->date_end, $format, false, $outputlangs)).')';

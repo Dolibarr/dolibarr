@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2011	   Juanjo Menent		<jmenent@2byte.es>
+/* Copyright (C) 2004-2007  Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2006       Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2011	    Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
  */
 class Fournisseur extends Societe
 {
-	public $next_prev_filter = "te.fournisseur = 1"; // Used to add a filter in Form::showrefnav method
+	public $next_prev_filter = "(te.fournisseur:=:1)"; // Used to add a filter in Form::showrefnav method
 
 
 	/**
@@ -49,14 +51,39 @@ class Fournisseur extends Societe
 		$this->fournisseur = 1;
 	}
 
+	/**
+	 *    Load a third party from database into memory
+	 *
+	 *    @param	int		$rowid			Id of third party to load
+	 *    @param    string	$ref			Reference of third party, name (Warning, this can return several records)
+	 *    @param    string	$ref_ext       	External reference of third party (Warning, this information is a free field not provided by Dolibarr)
+	 *    @param    string	$barcode       	Barcode of third party to load
+	 *    @param    string	$idprof1		Prof id 1 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof2		Prof id 2 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof3		Prof id 3 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof4		Prof id 4 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof5		Prof id 5 of third party (Warning, this can return several records)
+	 *    @param    string	$idprof6		Prof id 6 of third party (Warning, this can return several records)
+	 *    @param    string	$email   		Email of third party (Warning, this can return several records)
+	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
+	 * 	  @param	int		$is_client		Is the thirdparty a client ?
+	 *    @param	int		$is_supplier	Is the thirdparty a supplier ?
+	 *    @return   int						>0 if OK, <0 if KO or if two records found for same ref or idprof, 0 if not found.
+	 */
+	public function fetch($rowid, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 1)
+	{
+		return parent::fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias, $is_client, $is_supplier);
+	}
 
 	/**
 	 * Return nb of orders
 	 *
-	 * @return 	int		Nb of orders
+	 * @return 	int		Nb of orders for current supplier
 	 */
 	public function getNbOfOrders()
 	{
+		$num = 0;
+
 		$sql = "SELECT rowid";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 		$sql .= " WHERE cf.fk_soc = ".((int) $this->id);
@@ -64,18 +91,13 @@ class Fournisseur extends Societe
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-
-			if ($num == 1) {
-				$row = $this->db->fetch_row($resql);
-
-				$this->single_open_commande = $row[0];
-			}
 		}
+
 		return $num;
 	}
 
 	/**
-	 * Returns number of ref prices (not number of products).
+	 * Returns number of ref prices (not number of products) for current supplier
 	 *
 	 * @return	int		Nb of ref prices, or <0 if error
 	 */
@@ -97,15 +119,13 @@ class Fournisseur extends Societe
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Load statistics indicators
 	 *
-	 * @return     int         <0 if KO, >0 if OK
+	 * @return     int         Return integer <0 if KO, >0 if OK
 	 */
-	public function load_state_board()
+	public function loadStateBoard()
 	{
-		// phpcs:enable
 		global $conf, $user, $hookmanager;
 
 		$this->nb = array();
@@ -113,7 +133,7 @@ class Fournisseur extends Societe
 
 		$sql = "SELECT count(s.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -147,7 +167,7 @@ class Fournisseur extends Societe
 	 *
 	 *  @param      User	$user       User asking creation
 	 *	@param		string	$name		Category name
-	 *  @return     int         		<0 if KO, 0 if OK
+	 *  @return     int         		Return integer <0 if KO, 0 if OK
 	 */
 	public function CreateCategory($user, $name)
 	{
@@ -172,7 +192,7 @@ class Fournisseur extends Societe
 	/**
 	 * 	Return the suppliers list
 	 *
-	 *	@return		array		Array of suppliers
+	 *	@return		array<int,string>	Array of suppliers
 	 */
 	public function ListArray()
 	{
@@ -184,12 +204,12 @@ class Fournisseur extends Societe
 
 		$sql = "SELECT s.rowid, s.nom as name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE s.fournisseur = 1";
 		$sql .= " AND s.entity IN (".getEntity('societe').")";
-		if (empty($user->rights->societe->client->voir) && !$user->socid) {
+		if (!$user->hasRight("societe", "client", "voir") && !$user->socid) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
@@ -209,17 +229,17 @@ class Fournisseur extends Societe
 	/**
 	 * Function used to replace a thirdparty id with another one.
 	 *
-	 * @param  DoliDB  $db             Database handler
-	 * @param  int     $origin_id      Old third-party id
-	 * @param  int     $dest_id        New third-party id
-	 * @return bool
+	 * @param 	DoliDB 	$dbs 		Database handler, because function is static we name it $dbs not $db to avoid breaking coding test
+	 * @param 	int 	$origin_id 	Old thirdparty id
+	 * @param 	int 	$dest_id 	New thirdparty id
+	 * @return 	bool
 	 */
-	public static function replaceThirdparty(DoliDB $db, $origin_id, $dest_id)
+	public static function replaceThirdparty(DoliDB $dbs, $origin_id, $dest_id)
 	{
 		$tables = array(
 			'facture_fourn'
 		);
 
-		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+		return CommonObject::commonReplaceThirdparty($dbs, $origin_id, $dest_id, $tables);
 	}
 }

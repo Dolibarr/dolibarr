@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Cyflwyno
 DeliveryRef=Cyf Cludiad
-DeliveryCard=Cerdyn derbynneb
+DeliveryCard=Delivery receipt
 DeliveryOrder=Derbynneb danfon
 DeliveryDate=Dyddiad dosbarthu
 CreateDeliveryOrder=Cynhyrchu derbynneb danfon

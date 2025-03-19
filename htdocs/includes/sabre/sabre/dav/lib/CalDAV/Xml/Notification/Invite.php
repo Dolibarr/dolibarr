@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Notification;
 
 use Sabre\CalDAV;
@@ -17,19 +19,19 @@ use Sabre\Xml\Writer;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Invite implements NotificationInterface {
-
+class Invite implements NotificationInterface
+{
     /**
-     * A unique id for the message
+     * A unique id for the message.
      *
      * @var string
      */
     protected $id;
 
     /**
-     * Timestamp of the notification
+     * Timestamp of the notification.
      *
-     * @var DateTime
+     * @var \DateTime
      */
     protected $dtStamp;
 
@@ -63,7 +65,7 @@ class Invite implements NotificationInterface {
     protected $hostUrl;
 
     /**
-     * Url to the sharer of the calendar
+     * Url to the sharer of the calendar.
      *
      * @var string
      */
@@ -91,21 +93,21 @@ class Invite implements NotificationInterface {
     protected $lastName;
 
     /**
-     * A description of the share request
+     * A description of the share request.
      *
      * @var string
      */
     protected $summary;
 
     /**
-     * The Etag for the notification
+     * The Etag for the notification.
      *
      * @var string
      */
     protected $etag;
 
     /**
-     * The list of supported components
+     * The list of supported components.
      *
      * @var CalDAV\Xml\Property\SupportedCalendarComponentSet
      */
@@ -138,8 +140,8 @@ class Invite implements NotificationInterface {
      *
      * @param array $values All the options
      */
-    function __construct(array $values) {
-
+    public function __construct(array $values)
+    {
         $required = [
             'id',
             'etag',
@@ -152,17 +154,16 @@ class Invite implements NotificationInterface {
         ];
         foreach ($required as $item) {
             if (!isset($values[$item])) {
-                throw new \InvalidArgumentException($item . ' is a required constructor option');
+                throw new \InvalidArgumentException($item.' is a required constructor option');
             }
         }
 
         foreach ($values as $key => $value) {
             if (!property_exists($this, $key)) {
-                throw new \InvalidArgumentException('Unknown option: ' . $key);
+                throw new \InvalidArgumentException('Unknown option: '.$key);
             }
             $this->$key = $value;
         }
-
     }
 
     /**
@@ -180,110 +181,99 @@ class Invite implements NotificationInterface {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
-        $writer->writeElement('{' . CalDAV\Plugin::NS_CALENDARSERVER . '}invite-notification');
-
+    public function xmlSerialize(Writer $writer)
+    {
+        $writer->writeElement('{'.CalDAV\Plugin::NS_CALENDARSERVER.'}invite-notification');
     }
 
     /**
      * This method serializes the entire notification, as it is used in the
      * response body.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerializeFull(Writer $writer) {
+    public function xmlSerializeFull(Writer $writer)
+    {
+        $cs = '{'.CalDAV\Plugin::NS_CALENDARSERVER.'}';
 
-        $cs = '{' . CalDAV\Plugin::NS_CALENDARSERVER . '}';
+        $this->dtStamp->setTimezone(new \DateTimeZone('GMT'));
+        $writer->writeElement($cs.'dtstamp', $this->dtStamp->format('Ymd\\THis\\Z'));
 
-        $this->dtStamp->setTimezone(new \DateTimezone('GMT'));
-        $writer->writeElement($cs . 'dtstamp', $this->dtStamp->format('Ymd\\THis\\Z'));
+        $writer->startElement($cs.'invite-notification');
 
-        $writer->startElement($cs . 'invite-notification');
-
-        $writer->writeElement($cs . 'uid', $this->id);
+        $writer->writeElement($cs.'uid', $this->id);
         $writer->writeElement('{DAV:}href', $this->href);
 
         switch ($this->type) {
-
-            case DAV\Sharing\Plugin::INVITE_ACCEPTED :
-                $writer->writeElement($cs . 'invite-accepted');
+            case DAV\Sharing\Plugin::INVITE_ACCEPTED:
+                $writer->writeElement($cs.'invite-accepted');
                 break;
-            case DAV\Sharing\Plugin::INVITE_NORESPONSE :
-                $writer->writeElement($cs . 'invite-noresponse');
+            case DAV\Sharing\Plugin::INVITE_NORESPONSE:
+                $writer->writeElement($cs.'invite-noresponse');
                 break;
-
         }
 
-        $writer->writeElement($cs . 'hosturl', [
-            '{DAV:}href' => $writer->contextUri . $this->hostUrl
+        $writer->writeElement($cs.'hosturl', [
+            '{DAV:}href' => $writer->contextUri.$this->hostUrl,
             ]);
 
         if ($this->summary) {
-            $writer->writeElement($cs . 'summary', $this->summary);
+            $writer->writeElement($cs.'summary', $this->summary);
         }
 
-        $writer->startElement($cs . 'access');
+        $writer->startElement($cs.'access');
         if ($this->readOnly) {
-            $writer->writeElement($cs . 'read');
+            $writer->writeElement($cs.'read');
         } else {
-            $writer->writeElement($cs . 'read-write');
+            $writer->writeElement($cs.'read-write');
         }
         $writer->endElement(); // access
 
-        $writer->startElement($cs . 'organizer');
+        $writer->startElement($cs.'organizer');
         // If the organizer contains a 'mailto:' part, it means it should be
         // treated as absolute.
-        if (strtolower(substr($this->organizer, 0, 7)) === 'mailto:') {
+        if ('mailto:' === strtolower(substr($this->organizer, 0, 7))) {
             $writer->writeElement('{DAV:}href', $this->organizer);
         } else {
-            $writer->writeElement('{DAV:}href', $writer->contextUri . $this->organizer);
+            $writer->writeElement('{DAV:}href', $writer->contextUri.$this->organizer);
         }
         if ($this->commonName) {
-            $writer->writeElement($cs . 'common-name', $this->commonName);
+            $writer->writeElement($cs.'common-name', $this->commonName);
         }
         if ($this->firstName) {
-            $writer->writeElement($cs . 'first-name', $this->firstName);
+            $writer->writeElement($cs.'first-name', $this->firstName);
         }
         if ($this->lastName) {
-            $writer->writeElement($cs . 'last-name', $this->lastName);
+            $writer->writeElement($cs.'last-name', $this->lastName);
         }
         $writer->endElement(); // organizer
 
         if ($this->commonName) {
-            $writer->writeElement($cs . 'organizer-cn', $this->commonName);
+            $writer->writeElement($cs.'organizer-cn', $this->commonName);
         }
         if ($this->firstName) {
-            $writer->writeElement($cs . 'organizer-first', $this->firstName);
+            $writer->writeElement($cs.'organizer-first', $this->firstName);
         }
         if ($this->lastName) {
-            $writer->writeElement($cs . 'organizer-last', $this->lastName);
+            $writer->writeElement($cs.'organizer-last', $this->lastName);
         }
         if ($this->supportedComponents) {
-            $writer->writeElement('{' . CalDAV\Plugin::NS_CALDAV . '}supported-calendar-component-set', $this->supportedComponents);
+            $writer->writeElement('{'.CalDAV\Plugin::NS_CALDAV.'}supported-calendar-component-set', $this->supportedComponents);
         }
 
         $writer->endElement(); // invite-notification
-
     }
 
     /**
-     * Returns a unique id for this notification
+     * Returns a unique id for this notification.
      *
      * This is just the base url. This should generally be some kind of unique
      * id.
      *
      * @return string
      */
-    function getId() {
-
+    public function getId()
+    {
         return $this->id;
-
     }
 
     /**
@@ -293,10 +283,8 @@ class Invite implements NotificationInterface {
      *
      * @return string
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return $this->etag;
-
     }
-
 }

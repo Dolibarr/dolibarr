@@ -1,8 +1,36 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
-} ?>
-/* <style type="text/css" > dont remove this line it's an ide hack */
+}
+
+// When no photo, we show the login name, so we need an offset to output picto at a fixed position.
+$atoploginusername = empty($user->photo) ? 52 : 0;
+
+/**
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinepair1
+ * @var string $colortextbackhmenu
+ * @var string $colortextlink
+ * @var int<0,1> $disableimages
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colortextbackhmenu
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $disableimages
+@phan-var-force string $left
+@phan-var-force string $right
+';
+
+?>
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -21,17 +49,22 @@ button.dropdown-item.global-search-item {
 }
 
 
-#topmenu-quickadd-dropdown a.login-dropdown-a, #topmenu-bookmark-dropdown a.login-dropdown-a {
-	color: #fff;
+#topmenu-global-search-dropdown a.login-dropdown-a,
+#topmenu-quickadd-dropdown a.login-dropdown-a,
+#topmenu-bookmark-dropdown a.login-dropdown-a,
+#topmenu-uploadfile-dropdown a.login-dropdown-a {
+	color: var(--colortextbackhmenu);
 }
-div#topmenu-quickadd-dropdown {
+
+div.login_block_tools > div {
 	position: fixed;
-	<?php echo $right; ?>: 55px;
+	<?php echo $right; ?>: <?php print !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') ? (55 + $atoploginusername) : 85; ?>px;
 	top: 0px;
 }
-div#topmenu-bookmark-dropdown {
+
+div#topmenu-login-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 20px;
+	<?php echo $right; ?>: 10px;
 	top: 0px;
 }
 
@@ -40,9 +73,9 @@ div#topmenu-bookmark-dropdown {
 	display: none;
 }
 
-#topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu {
-	min-width: 300px;
-	max-width: 360px;
+#topmenu-global-search-dropdown .dropdown-menu, #topmenu-quickadd-dropdown .dropdown-menu, #topmenu-bookmark-dropdown .dropdown-menu, #topmenu-login-dropdown .dropdown-menu {
+	min-width: 370px;
+	max-width: 400px;
 }
 
 button.dropdown-item.global-search-item {
@@ -125,10 +158,10 @@ button.dropdown-item.global-search-item {
 
 
 /* CSS to hide the arrow to show open/close */
-div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
+div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
 	padding-right: 2px;
 }
-div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
+div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	display: none;
 }
 
@@ -139,8 +172,9 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 
 .dropdown-toggle::after {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-size: 0.7em;
+	line-height: 1.7em;
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -162,8 +196,9 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 }
 
 /*
-* MENU Dropdown
-*/
+ * MENU Dropdown
+ */
+
 .login_block.usedropdown .logout-btn{
 	/* display: none; */
 }
@@ -209,8 +244,16 @@ div#topmenu-quickadd-dropdown a::after, div#topmenu-bookmark-dropdown a::after {
 	max-width: 100%;
 }
 
-div#topmenu-global-search-dropdown, div#topmenu-quickadd-dropdown, div#topmenu-bookmark-dropdown {
-	line-height: <?php echo (getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE') == 1 ? '35' : '46' ); ?>px;
+div#topmenu-global-search-dropdown,
+div#topmenu-quickadd-dropdown,
+div#topmenu-bookmark-dropdown,
+div#topmenu-uploadfile-dropdown,
+div#topmenu-login-dropdown {
+	<?php if ($disableimages) { ?>
+		line-height: 35px;
+	<?php } else { ?>
+		line-height: 46px;
+	<?php } ?>
 }
 a.top-menu-dropdown-link {
 	padding: 8px;
@@ -294,7 +337,11 @@ a.top-menu-dropdown-link {
 }
 
 
-#topmenu-login-dropdown, #topmenu-quickadd-dropdown, #topmenu-bookmark-dropdown, #topmenu-global-search-dropdown {
+#topmenu-login-dropdown,
+#topmenu-quickadd-dropdown,
+#topmenu-bookmark-dropdown,
+#topmenu-global-search-dropdown,
+#topmenu-uploadfile-dropdown {
 	padding: 0 5px 0 5px;
 }
 #topmenu-login-dropdown a:hover{
@@ -316,6 +363,14 @@ a.top-menu-dropdown-link {
 
 a.dropdown-item {
 	text-align: start;
+}
+.dropdown-item.bookmark-item {
+	padding-left: 14px;
+	padding-right: 14px;
+}
+.dropdown-item.bookmark-item:before {
+	width: 20px;
+	padding-left: 2px;
 }
 
 .button-top-menu-dropdown {
@@ -379,7 +434,7 @@ a.dropdown-item {
 
 .dropdown-item::before {
 	/* font part */
-	font-family: "Font Awesome 5 Free";
+	font-family: "<?php echo getDolGlobalString('MAIN_FONTAWESOME_FAMILY', 'Font Awesome 5 Free'); ?>";
 	font-weight: 900;
 	font-style: normal;
 	font-variant: normal;
@@ -400,15 +455,32 @@ a.dropdown-item {
 	content: "\f35d";
 }
 
-.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus  {
+.dropdown-item.active, .dropdown-item:hover, .dropdown-item:hover::before, .dropdown-item:hover span::before, .dropdown-item:focus, .dropdown-item:focus span::before  {
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	text-decoration: none;
 	background: rgb(<?php echo $colorbackhmenu1 ?>);
 }
 
+
 /*
-* SEARCH
-*/
+ * SELECT FIELDS
+ */
+
+li.liinputsearch {
+	position: sticky;
+	display: block;
+	top: 0;
+	background: var(--colorbackbody);
+}
+
+
+/*
+ * SEARCH
+ */
+
+#topmenu-global-search-dropdown .dropdown-menu {
+	width: 310px !important;
+}
 
 .dropdown-search-input {
 	width: 100%;
@@ -434,37 +506,263 @@ a.dropdown-item {
 
 }
 
+.search-dropdown-body {
+	padding: unset;
+}
+
+.global-search-item {
+	font-size: 1.1em;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.global-search-item:before {
+	content: none;
+}
+
+.global-search-header {
+	color: #444 !important;
+}
+
+
+/*
+ * QUICK ADD
+ */
+
+#topmenu-quickadd-dropdown .dropdown-menu {
+	width: 310px;
+	color: #444;
+}
+
+.quickadd-body.dropdown-body {
+	padding: unset;
+}
+
+.quickadd-item {
+	font-size: 1.1em;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}
+
+.quickadd-item:before {
+	content: none;
+}
+
+.quickadd-header {
+	color: #444 !important;
+}
+
+div.quickadd {
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: row;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	-webkit-flex-wrap: wrap;
+	-ms-flex-wrap: wrap;
+	flex-wrap: wrap;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-align-content: center;
+	-ms-flex-line-pack: center;
+	align-content: center;
+	-webkit-align-items: flex-start;
+	-ms-flex-align: start;
+	align-items: flex-start;
+}
+
+div.quickadd a {
+	color: #444;
+}
+
+div.quickadd a:hover, div.quickadd a:active {
+	color: #000000;
+}
+
+div.quickaddblock {
+	width: 95px;
+	height: 80px;
+}
+
+div.quickaddblock:hover,
+div.quickaddblock:active,
+div.quickaddblock:focus {
+	background: <?php print $colorbacklinepair1; ?>;
+}
+
+
+/* for the dropdown on action buttons */
+.dropdown-holder {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	z-index: 1;
+	width: 300px;
+	right:0;
+	bottom: 0;
+	transform: translateY(100%);
+
+	background: #fff;
+	border: 1px solid #bbb;
+	text-align: <?php echo $left; ?>;
+	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
+}
+
+/* dropdown --up variant */
+.dropdown-holder.--up .dropdown-content{
+	bottom: auto;
+	top: 0;
+	transform: translateY(-100%);
+}
+
+/* dropdown --left variant */
+.dropdown-holder.--left .dropdown-content{
+	right: auto;
+	left: 12px;
+}
+
+
+.dropdown-content a {
+	margin-right: auto !important;
+	margin-left: auto !important;
+}
+.dropdown-content .butAction {
+	background: none;
+	color: #000 !important;
+}
+.dropdown-content a:is(.butAction,.butActionDelete,.butActionRefused) {
+	display: flex;
+	border-radius: 0;
+}
+.dropdown-content .butAction:hover {
+	box-shadow: none;
+	background-color: var(--butactionbg);
+	color: var(--textbutaction) !important;
+	text-decoration: none;
+}
+
+.dropdown-content .butActionDelete{
+	background-color: transparent !important;
+	color: #633 !important;
+}
+.dropdown-content .butActionDelete:hover {
+	box-shadow: none;
+	background-color: var(--butactiondeletebg) !important;
+	color: #633 !important;
+	text-decoration: none;
+}
+
+.dropdown-content .butActionRefused {
+	margin-left: 0;
+	margin-right: 0;
+	border: none;
+}
+
+.dropdown-holder.open .dropdown-content {
+	display: block;
+}
+
+
+/** dropdown arrow used to clearly identify parent button of dropdown*/
+.dropdown-holder.open .dropdown-content::before {
+	--triangleBorderSize : 5px;
+	position: absolute;
+	content: "";
+	top: calc(var(--triangleBorderSize) * -1);
+	right: 12px;
+	width: 0px;
+	height: 0px;
+	border-style: solid;
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	border-color: transparent transparent #ffff transparent;
+	transform: rotate(0deg);
+}
+
+/* dropdown --up variant*/
+.dropdown-holder.--up.open .dropdown-content::before{
+	top: auto;
+	bottom: calc(var(--triangleBorderSize) * -1);
+	border-width: 0 var(--triangleBorderSize) var(--triangleBorderSize) var(--triangleBorderSize);
+	transform: rotate(180deg);
+}
+
+/* dropdown --left variant*/
+.dropdown-holder.--left.open .dropdown-content::before{
+	right: auto;
+	left: 12px;
+}
+
 
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
-	#topmenu-quickadd-dropdown .dropdown-menu {
-		min-width: 220px;
-		max-width: 235px;
+	div.login_block {
+		top: unset;
 	}
-	#topmenu-bookmark-dropdown .dropdown-menu {
+
+	.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {
+		width: 16px;
+		height: 16px;
+	}
+	div#topmenu-login-dropdown {
+		height: 20px;
+		line-height: 20px;
+	}
+
+	#topmenu-login-dropdown .dropdown-menu {
 		min-width: 220px;
 		max-width: 360px;
 	}
 
-	#topmenu-quickadd-dropdown a.login-dropdown-a,
-	#topmenu-bookmark-dropdown a.login-dropdown-a {
-		color: #000;
-	}
-	#topmenu-quickadd-dropdown .dropdown-menu,
-	#topmenu-bookmark-dropdown .dropdown-menu {
-		width: 230px;
+	div.login_block a .atoploginusername {
+		color: var(--colortextbackvmenu);
 	}
 
+
+	#topmenu-global-search-dropdown a.login-dropdown-a,
+	#topmenu-quickadd-dropdown a.login-dropdown-a,
+	#topmenu-bookmark-dropdown a.login-dropdown-a,
+	#topmenu-login-dropdown a.login-dropdown-a,
+	#topmenu-uploadfile-dropdown a.login-dropdown-a {
+		color: var(--colortextbackvmenu);
+	}
+
+	#topmenu-global-search-dropdown .dropdown-menu,
+	#topmenu-quickadd-dropdown .dropdown-menu,
+	#topmenu-bookmark-dropdown .dropdown-menu,
+	#topmenu-login-dropdown .dropdown-menu,
+	#topmenu-uploadfile-dropdown .dropdown-menu {
+		width: 100%;
+		min-width: unset;
+	}
+
+	div.login_block_tools > div {
+		position: unset;
+	}
+	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
-	div#topmenu-bookmark-dropdown {
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown,
+	div#topmenu-login-dropdown {
 		position: unset;
 	}
 
 	div#topmenu-global-search-dropdown,
 	div#topmenu-quickadd-dropdown,
-	div#topmenu-bookmark-dropdown {
+	div#topmenu-bookmark-dropdown,
+	div#topmenu-uploadfile-dropdown {
 		line-height: unset;
+	}
+
+	div.login_block_other {
+		padding-top: 2px;
 	}
 
 	ul.tmenu {

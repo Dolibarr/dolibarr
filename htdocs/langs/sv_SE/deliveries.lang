@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Leverans
 DeliveryRef=Er referens
-DeliveryCard=Kvitto
+DeliveryCard=Leveranskvitto
 DeliveryOrder=Leveranskvitto
 DeliveryDate=Leveransdatum
 CreateDeliveryOrder=Skapa orderbekräftelse

@@ -1,36 +1,41 @@
 # Dolibarr language file - Source file is en_US - resource
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+MenuResourceIndex=Rasilimali
+MenuResourceAdd=Rasilimali mpya
+DeleteResource=Futa rasilimali
+ConfirmDeleteResourceElement=Thibitisha kufuta rasilimali ya kipengele hiki
+NoResourceInDatabase=Hakuna rasilimali katika hifadhidata.
+NoResourceLinked=Hakuna rasilimali iliyounganishwa
+ActionsOnResource=Matukio kuhusu rasilimali hii
+ResourcePageIndex=Orodha ya rasilimali
+ResourceSingular=Rasilimali
+ResourceCard=Kadi ya rasilimali
+AddResource=Unda rasilimali
+ResourceFormLabel_ref=Jina la rasilimali
+ResourceType=Aina ya rasilimali
+ResourceFormLabel_description=Maelezo ya rasilimali
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Rasilimali zilizounganishwa na kipengele
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Onyesha rasilimali
 
-ShowResource=Show resource
+ResourceElementPage=Rasilimali za kipengele
+ResourceCreatedWithSuccess=Rasilimali imeundwa
+RessourceLineSuccessfullyDeleted=Mstari wa rasilimali umefutwa
+RessourceLineSuccessfullyUpdated=Mstari wa nyenzo umesasishwa
+ResourceLinkedWithSuccess=Nyenzo iliyounganishwa na mafanikio
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=Thibitisha ili kufuta rasilimali hii
+RessourceSuccessfullyDeleted=Rasilimali imefutwa
+DictionaryResourceType=Aina ya rasilimali
 
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=Chagua rasilimali
 
-SelectResource=Select resource
+IdResource=Nyenzo ya kitambulisho
+AssetNumber=Nambari ya serial
+ResourceTypeCode=Msimbo wa aina ya rasilimali
+ImportDataset_resource_1=Rasilimali
 
-IdResource=Id resource
-AssetNumber=Serial number
-ResourceTypeCode=Resource type code
-ImportDataset_resource_1=Resources
+ErrorResourcesAlreadyInUse=Baadhi ya rasilimali zinatumika
+ErrorResourceUseInEvent=%s imetumika katika %s tukio
+
+MaxUsers=Maximum users (places, seats, etc.)

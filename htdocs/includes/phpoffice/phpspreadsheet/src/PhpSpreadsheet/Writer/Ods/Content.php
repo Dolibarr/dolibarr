@@ -314,7 +314,7 @@ class Content extends WriterPart
             }
 
             if ($size = $font->getSize()) {
-                $writer->writeAttribute('fo:font-size', sprintf('%.1fpt', $size));
+                $writer->writeAttribute('fo:font-size', sprintf('%.1Fpt', $size));
             }
 
             if ($font->getUnderline() && $font->getUnderline() != Font::UNDERLINE_NONE) {
@@ -383,7 +383,7 @@ class Content extends WriterPart
         }
 
         $mergeRange = Coordinate::splitRange($cell->getMergeRange());
-        list($startCell, $endCell) = $mergeRange[0];
+        [$startCell, $endCell] = $mergeRange[0];
         $start = Coordinate::coordinateFromString($startCell);
         $end = Coordinate::coordinateFromString($endCell);
         $columnSpan = Coordinate::columnIndexFromString($end[0]) - Coordinate::columnIndexFromString($start[0]) + 1;

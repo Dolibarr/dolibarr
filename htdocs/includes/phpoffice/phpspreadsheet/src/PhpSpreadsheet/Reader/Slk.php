@@ -83,7 +83,7 @@ class Slk extends BaseReader
      *
      * @param string $pValue Input encoding, eg: 'ANSI'
      *
-     * @return Slk
+     * @return $this
      */
     public function setInputEncoding($pValue)
     {
@@ -384,7 +384,7 @@ class Slk extends BaseReader
 
                             break;
                         case 'W':
-                            list($startCol, $endCol, $columnWidth) = explode(' ', substr($rowDatum, 1));
+                            [$startCol, $endCol, $columnWidth] = explode(' ', substr($rowDatum, 1));
 
                             break;
                         case 'S':
@@ -485,7 +485,7 @@ class Slk extends BaseReader
      *
      * @param int $pValue Sheet index
      *
-     * @return Slk
+     * @return $this
      */
     public function setSheetIndex($pValue)
     {

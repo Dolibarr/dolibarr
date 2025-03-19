@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\Sharing;
 
 use Sabre\DAV\Exception\BadRequest;
@@ -14,7 +16,7 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * This plugin implements HTTP requests and properties related to:
+ * This plugin implements HTTP requests and properties related to:.
  *
  * draft-pot-webdav-resource-sharing
  *
@@ -24,8 +26,8 @@ use Sabre\HTTP\ResponseInterface;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends ServerPlugin {
-
+class Plugin extends ServerPlugin
+{
     const ACCESS_NOTSHARED = 0;
     const ACCESS_SHAREDOWNER = 1;
     const ACCESS_READ = 2;
@@ -52,10 +54,9 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['resource-sharing'];
-
     }
 
     /**
@@ -66,10 +67,9 @@ class Plugin extends ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'sharing';
-
     }
 
     /**
@@ -79,12 +79,9 @@ class Plugin extends ServerPlugin {
      * addPlugin is called.
      *
      * This method should set up the required event subscriptions.
-     *
-     * @param Server $server
-     * @return void
      */
-    function initialize(Server $server) {
-
+    public function initialize(Server $server)
+    {
         $this->server = $server;
 
         $server->xml->elementMap['{DAV:}share-resource'] = 'Sabre\\DAV\\Xml\\Request\\ShareResource';
@@ -94,12 +91,11 @@ class Plugin extends ServerPlugin {
             '{DAV:}share-mode'
         );
 
-        $server->on('method:POST',              [$this, 'httpPost']);
-        $server->on('propFind',                 [$this, 'propFind']);
+        $server->on('method:POST', [$this, 'httpPost']);
+        $server->on('propFind', [$this, 'propFind']);
         $server->on('getSupportedPrivilegeSet', [$this, 'getSupportedPrivilegeSet']);
-        $server->on('onHTMLActionsPanel',       [$this, 'htmlActionsPanel']);
-        $server->on('onBrowserPostAction',      [$this, 'browserPostAction']);
-
+        $server->on('onHTMLActionsPanel', [$this, 'htmlActionsPanel']);
+        $server->on('onBrowserPostAction', [$this, 'browserPostAction']);
     }
 
     /**
@@ -108,18 +104,15 @@ class Plugin extends ServerPlugin {
      * The sharees  array is a list of people that are to be added modified
      * or removed in the list of shares.
      *
-     * @param string $path
+     * @param string   $path
      * @param Sharee[] $sharees
-     * @return void
      */
-    function shareResource($path, array $sharees) {
-
+    public function shareResource($path, array $sharees)
+    {
         $node = $this->server->tree->getNodeForPath($path);
 
         if (!$node instanceof ISharedNode) {
-
             throw new Forbidden('Sharing is not allowed on this node');
-
         }
 
         // Getting ACL info
@@ -138,56 +131,43 @@ class Plugin extends ServerPlugin {
             $sharee->principal = $principal;
         }
         $node->updateInvites($sharees);
-
     }
 
     /**
      * This event is triggered when properties are requested for nodes.
      *
      * This allows us to inject any sharings-specific properties.
-     *
-     * @param PropFind $propFind
-     * @param INode $node
-     * @return void
      */
-    function propFind(PropFind $propFind, INode $node) {
-
+    public function propFind(PropFind $propFind, INode $node)
+    {
         if ($node instanceof ISharedNode) {
-
-            $propFind->handle('{DAV:}share-access', function() use ($node) {
-
+            $propFind->handle('{DAV:}share-access', function () use ($node) {
                 return new Property\ShareAccess($node->getShareAccess());
-
             });
-            $propFind->handle('{DAV:}invite', function() use ($node) {
-
+            $propFind->handle('{DAV:}invite', function () use ($node) {
                 return new Property\Invite($node->getInvites());
-
             });
-            $propFind->handle('{DAV:}share-resource-uri', function() use ($node) {
-
+            $propFind->handle('{DAV:}share-resource-uri', function () use ($node) {
                 return new Property\Href($node->getShareResourceUri());
-
             });
-
         }
-
     }
 
     /**
-     * We intercept this to handle POST requests on shared resources
+     * We intercept this to handle POST requests on shared resources.
      *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return null|bool
+     * @return bool|null
      */
-    function httpPost(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPost(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
         $contentType = $request->getHeader('Content-Type');
+        if (null === $contentType) {
+            return;
+        }
 
         // We're only interested in the davsharing content type.
-        if (strpos($contentType, 'application/davsharing+xml') === false) {
+        if (false === strpos($contentType, 'application/davsharing+xml')) {
             return;
         }
 
@@ -198,9 +178,7 @@ class Plugin extends ServerPlugin {
         );
 
         switch ($documentType) {
-
             case '{DAV:}share-resource':
-
                 $this->shareResource($path, $message->sharees);
                 $response->setStatus(200);
                 // Adding this because sending a response body may cause issues,
@@ -210,11 +188,9 @@ class Plugin extends ServerPlugin {
                 // Breaking the event chain
                 return false;
 
-            default :
-                throw new BadRequest('Unexpected document type: ' . $documentType . ' for this Content-Type');
-
+            default:
+                throw new BadRequest('Unexpected document type: '.$documentType.' for this Content-Type');
         }
-
     }
 
     /**
@@ -222,15 +198,12 @@ class Plugin extends ServerPlugin {
      * hat are supported on a particular node.
      *
      * We need to add a number of privileges for scheduling purposes.
-     *
-     * @param INode $node
-     * @param array $supportedPrivilegeSet
      */
-    function getSupportedPrivilegeSet(INode $node, array &$supportedPrivilegeSet) {
-
+    public function getSupportedPrivilegeSet(INode $node, array &$supportedPrivilegeSet)
+    {
         if ($node instanceof ISharedNode) {
             $supportedPrivilegeSet['{DAV:}share'] = [
-                'abstract'   => false,
+                'abstract' => false,
                 'aggregates' => [],
             ];
         }
@@ -247,27 +220,26 @@ class Plugin extends ServerPlugin {
      *
      * @return array
      */
-    function getPluginInfo() {
-
+    public function getPluginInfo()
+    {
         return [
-            'name'        => $this->getPluginName(),
+            'name' => $this->getPluginName(),
             'description' => 'This plugin implements WebDAV resource sharing',
-            'link'        => 'https://github.com/evert/webdav-sharing'
+            'link' => 'https://github.com/evert/webdav-sharing',
         ];
-
     }
 
     /**
      * This method is used to generate HTML output for the
      * DAV\Browser\Plugin.
      *
-     * @param INode $node
      * @param string $output
      * @param string $path
+     *
      * @return bool|null
      */
-    function htmlActionsPanel(INode $node, &$output, $path) {
-
+    public function htmlActionsPanel(INode $node, &$output, $path)
+    {
         if (!$node instanceof ISharedNode) {
             return;
         }
@@ -293,7 +265,6 @@ class Plugin extends ServerPlugin {
              <input type="submit" value="share" />
             </form>
             </td></tr>';
-
     }
 
     /**
@@ -302,11 +273,11 @@ class Plugin extends ServerPlugin {
      *
      * @param string $path
      * @param string $action
-     * @param array $postVars
+     * @param array  $postVars
      */
-    function browserPostAction($path, $action, $postVars) {
-
-        if ($action !== 'share') {
+    public function browserPostAction($path, $action, $postVars)
+    {
+        if ('share' !== $action) {
             return;
         }
 
@@ -319,7 +290,7 @@ class Plugin extends ServerPlugin {
 
         $accessMap = [
             'readwrite' => self::ACCESS_READWRITE,
-            'read'      => self::ACCESS_READ,
+            'read' => self::ACCESS_READ,
             'no-access' => self::ACCESS_NOACCESS,
         ];
 
@@ -327,7 +298,7 @@ class Plugin extends ServerPlugin {
             throw new BadRequest('The "access" POST must be readwrite, read or no-access');
         }
         $sharee = new Sharee([
-            'href'   => $postVars['href'],
+            'href' => $postVars['href'],
             'access' => $accessMap[$postVars['access']],
         ]);
 
@@ -335,8 +306,7 @@ class Plugin extends ServerPlugin {
             $path,
             [$sharee]
         );
+
         return false;
-
     }
-
 }

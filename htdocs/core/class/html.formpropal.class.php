@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2022 Josep Lluís Amador	<joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ class FormPropal
 	}
 
 	/**
-	 *    Return combo list of differents status of a proposal
+	 *    Return combo list of different statuses of a proposal
 	 *    Values are id of table c_propalst
 	 *
 	 *    @param	string	$selected   	Preselected value
@@ -131,6 +132,16 @@ class FormPropal
 			}
 			print '</option>';
 			$i++;
+		}
+		// Option for Signed+Billed
+		if ($mode == 'customer') {
+			if ($selected != '' && $selected == "2,4") {
+				print '<option value="2,4" selected>';
+			} else {
+				print '<option value="2,4">';
+			}
+			print($langs->trans($prefix.'Signed'.($short ? 'Short' : '')).' '.$langs->trans("or").' '.$langs->trans($prefix.'Billed'.($short ? 'Short' : '')));
+			print '</option>';
 		}
 		print '</select>';
 

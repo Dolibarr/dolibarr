@@ -1,7 +1,3 @@
 # Dolibarr language file - Source file is en_US - companies
 Zip=Postcode
-ProfId3CM=Id. prof. 3 (Decree of creation)
-ProfId4CM=Id. prof. 4 (Certificate of deposits)
-ProfId3ShortCM=Decree of creation
-ProfId4ShortCM=Certificate of deposits
 AccountancyCode=Account

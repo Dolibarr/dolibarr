@@ -3,7 +3,7 @@
 //use \Aaa as Aaa;
 
 use Dolibarr\Aaa as Aaa;
-use function Dolibarr\faaa as faaa;	// Need php 5.6+
+use function Dolibarr\faaa as faaa; // Need php 5.6+
 
 //use const Dolibarr\AAA;
 

@@ -19,7 +19,8 @@
 ModulePartnershipName=Zarządzanie partnerstwem
 PartnershipDescription=Moduł Zarządzania partnerstwem
 PartnershipDescriptionLong= Moduł Zarządzania partnerstwem
-Partnership=Partnership
+Partnership=Współpraca
+Partnerships=Związki partnerskie
 AddPartnership=Dodaj partnerstwo
 CancelPartnershipForExpiredMembers=Partnerstwo: Anuluj partnerstwo członków z wygasłymi subskrypcjami
 PartnershipCheckBacklink=Partnerstwo: Sprawdź odsyłający link zwrotny
@@ -28,6 +29,7 @@ PartnershipCheckBacklink=Partnerstwo: Sprawdź odsyłający link zwrotny
 # Menu
 #
 NewPartnership=Nowe partnerstwo
+NewPartnershipbyWeb=Twoja prośba o partnerstwo została pomyślnie dodana. Być może wkrótce się z Tobą skontaktujemy...
 ListOfPartnerships=Lista partnerstw
 
 #
@@ -36,12 +38,13 @@ ListOfPartnerships=Lista partnerstw
 PartnershipSetup=Konfiguracja partnerstwa
 PartnershipAbout=O partnerstwie
 PartnershipAboutPage=Strona informacyjna o partnerstwie
-partnershipforthirdpartyormember=Status partnera musi być ustawiony na „osobę trzecią” lub „członek”
+partnershipforthirdpartyormember=Status partnera musi być ustawiony na „osobę trzecią” lub „członka”
 PARTNERSHIP_IS_MANAGED_FOR=Partnerstwo zarządzane przez
 PARTNERSHIP_BACKLINKS_TO_CHECK=Linki wsteczne do sprawdzenia
 PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Liczba dni przed anulowaniem statusu partnerstwa po wygaśnięciu subskrypcji
 ReferingWebsiteCheck=Sprawdzenie odsyłającej strony internetowej
 ReferingWebsiteCheckDesc=Możesz włączyć funkcję, aby sprawdzić, czy Twoi partnerzy dodali link zwrotny do domen Twojej witryny we własnej witrynie.
+PublicFormRegistrationPartnerDesc=Dolibarr może udostępnić Ci publiczny adres URL/stronę internetową, aby umożliwić odwiedzającym z zewnątrz złożenie wniosku o dołączenie do programu partnerskiego.
 
 #
 # Object
@@ -52,13 +55,19 @@ PartnershipDedicatedToThisMember=Partnerstwo dedykowane temu członkowi
 DatePartnershipStart=Data rozpoczęcia
 DatePartnershipEnd=Data zakończenia
 ReasonDecline=Odrzuć powód
-ReasonDeclineOrCancel=Odrzuć powód
+ReasonDeclineOrCancel=Reason for refusal or cancellation
 PartnershipAlreadyExist=Partnerstwo już istnieje
 ManagePartnership=Zarządzaj partnerstwem
 BacklinkNotFoundOnPartnerWebsite=Nie znaleziono linku zwrotnego w witrynie partnera
 ConfirmClosePartnershipAsk=Czy na pewno chcesz anulować to partnerstwo?
 PartnershipType=Rodzaj partnerstwa
-PartnershipRefApproved=Partnership %s approved
+PartnershipRefApproved=Partnerstwo %s zatwierdzone
+KeywordToCheckInWebsite=Jeśli chcesz sprawdzić, czy dane słowo kluczowe występuje na stronie każdego partnera, zdefiniuj je tutaj
+PartnershipDraft=Szkic
+PartnershipAccepted=Zaakceptowane
+PartnershipRefused=Odrzucony
+PartnershipCanceled=Anulowany
+PartnershipManagedFor=Partnerami są
 
 #
 # Template Mail
@@ -73,20 +82,16 @@ YourPartnershipRefusedTopic=Partnerstwo odrzucone
 YourPartnershipAcceptedTopic=Partnerstwo zaakceptowane
 YourPartnershipCanceledTopic=Partnerstwo anulowane
 
-YourPartnershipWillSoonBeCanceledContent=Informujemy, że Twoje partnerstwo zostanie wkrótce anulowane (nie znaleziono linku zwrotnego)
-YourPartnershipRefusedContent=Informujemy, że Twoja prośba o partnerstwo została odrzucona.
-YourPartnershipAcceptedContent=Informujemy, że Twoja prośba o partnerstwo została zaakceptowana.
-YourPartnershipCanceledContent=Informujemy, że Twoje partnerstwo zostało anulowane.
+YourPartnershipWillSoonBeCanceledContent=Pragniemy poinformować, że wkrótce nasze partnerstwo zostanie rozwiązane (nie otrzymaliśmy przedłużenia partnerstwa lub nie zostały spełnione warunki wstępne naszego partnerstwa). Jeśli otrzymałeś to z powodu błędu, skontaktuj się z nami.
+YourPartnershipRefusedContent=Chcielibyśmy poinformować, że Twoja prośba o partnerstwo została odrzucona. Warunki wstępne nie zostały spełnione. Skontaktuj się z nami, jeśli potrzebujesz więcej informacji.
+YourPartnershipAcceptedContent=Chcielibyśmy poinformować, że Twoja prośba o partnerstwo została zaakceptowana.
+YourPartnershipCanceledContent=Pragniemy poinformować, że nasza współpraca została rozwiązana. Skontaktuj się z nami, jeśli potrzebujesz więcej informacji.
 
-CountLastUrlCheckError=Number of errors for last URL check
-LastCheckBacklink=Date of last URL check
-ReasonDeclineOrCancel=Odrzuć powód
+CountLastUrlCheckError=Liczba błędów podczas ostatniego sprawdzania adresu URL
+LastCheckBacklink=Data ostatniego sprawdzenia adresu URL
 
-#
-# Status
-#
-PartnershipDraft=Szkic
-PartnershipAccepted=Zaakceptowane
-PartnershipRefused=Odrzucony
-PartnershipCanceled=Anulowany
-PartnershipManagedFor=Partnerami są
+NewPartnershipRequest=Nowa prośba o partnerstwo
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Ta strona musi zawierać co najmniej jeden link do jednej z następujących domen: %s
+
+IPOfApplicant=Adres IP wnioskodawcy

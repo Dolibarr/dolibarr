@@ -1,6 +1,9 @@
 <?php
-/* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Jose MARTINEZ           <jose.martinez@pichinov.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +20,9 @@
  */
 
 /**
- * \file        asset/class/asset.class.php
- * \ingroup     asset
- * \brief       This file is a CRUD class file for Asset (Create/Read/Update/Delete)
+ * \file	asset/class/asset.class.php
+ * \ingroup	asset
+ * \brief	This file is a CRUD class file for Asset (Create/Read/Update/Delete)
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
@@ -35,25 +38,14 @@ class Asset extends CommonObject
 	public $module = 'asset';
 
 	/**
-	 * @var string ID to identify managed object.
+	 * @var string ID to identify a managed object.
 	 */
 	public $element = 'asset';
 
 	/**
-	 * @var string Name of table without prefix where object is stored. This is also the key used for extrafields management.
+	 * @var string Name of table without prefix where an object is stored. This is also the key used for extrafields management.
 	 */
 	public $table_element = 'asset';
-
-	/**
-	 * @var int  Does this object support multicompany module ?
-	 * 0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
 
 	/**
 	 * @var string String with name of icon for asset. Must be the part after the 'object_' into object_asset.png
@@ -68,131 +60,205 @@ class Asset extends CommonObject
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
 	 *  'picto' is code of a picto to show before value in forms
-	 *  'enabled' is a condition when the field must be managed (Example: 1 or '$conf->global->MY_SETUP_PARAM)
+	 *  'enabled' is a condition when the field must be managed (Example: 1 or 'getDolGlobalString("MY_SETUP_PARAM")'
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
 	 *  'visible' says if field is visible in list (Examples: 0=Not visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only (not list), 4=Visible on list and update/view form only (not create). 5=Visible on list and view only (not create/not update). Using a negative value means field is not shown by default on list but can be selected for viewing)
 	 *  'noteditable' says if field is not editable (1 or 0)
-	 *  'default' is a default value for creation (can still be overwrote by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
+	 *  'default' is a default value for creation (can still be overwritten by the Setup of Default Values if field is editable in creation form). Note: If default is set to '(PROV)' and the field is 'ref', the default value will be set to '(PROVid)' where id is rowid when a new record is created.
 	 *  'index' if we want an index in database.
-	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommanded to name the field fk_...).
+	 *  'foreignkey'=>'tablename.field' if the field is a foreign key (it is recommended to name the field fk_...).
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
-	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into list (for example for percentage)
-	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example: 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
+	 *  'isameasure' must be set to 1 or 2 if field can be used for measure. Field type must be summable like integer or double(24,8). Use 1 in most cases, or 2 if you don't want to see the column total into a list (for example for percentage)
+	 *  'css' and 'cssview' and 'csslist' is the CSS style to use on field. 'css' is used in creation and update. 'cssview' is used in view mode. 'csslist' is used for columns in lists. For example, 'css'=>'minwidth300 maxwidth500 widthcentpercentminusx', 'cssview'=>'wordbreak', 'csslist'=>'tdoverflowmax200'
 	 *  'help' is a 'TranslationString' to use to show a tooltip on field. You can also use 'TranslationString:keyfortooltiponlick' for a tooltip on click.
-	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
+	 *  'showoncombobox' if the value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arrayofkeyval' to set a list of values if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
-	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
+	 *  'arrayofkeyval' to set a list of values if a type is a list of predefined values. For example, array("0"=>"Draft","1"=>"Active","-1"=>"Cancel"). Note that type can be 'integer' or 'varchar'
+	 *  'autofocusoncreate' to have field having the focus on a creation form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *	'validate' is 1 if need to validate with $this->validateField()
-	 *  'copytoclipboard' is 1 or 2 to allow to add a picto to copy value into clipboard (1=picto after label, 2=picto after value)
+	 *	'validate' is 1 if you need to validate with $this->validateField()
+	 *  'copytoclipboard' is 1 or 2 to allow adding a picto to copy value into clipboard (1=picto after label, 2=picto after value)
 	 *
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 
 	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>20, 'notnull'=>1, 'visible'=>1, 'noteditable'=>'0', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'validate'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'cssview'=>'wordbreak', 'showoncombobox'=>'2', 'validate'=>'1',),
-		'fk_asset_model' => array('type'=>'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label'=>'AssetModel', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'validate'=>'1',),
-		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>0, 'default'=>'1', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'validate'=>'1',),
-		'acquisition_type' => array('type'=>'smallint', 'label'=>'AssetAcquisitionType', 'enabled'=>'1', 'position'=>60, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetAcquisitionTypeNew', '1'=>'AssetAcquisitionTypeOccasion'), 'validate'=>'1',),
-		'asset_type' => array('type'=>'smallint', 'label'=>'AssetType', 'enabled'=>'1', 'position'=>70, 'notnull'=>1, 'visible'=>1, 'arrayofkeyval'=>array('0'=>'AssetTypeIntangible', '1'=>'AssetTypeTangible', '2'=>'AssetTypeInProgress', '3'=>'AssetTypeFinancial'), 'validate'=>'1',),
-		'not_depreciated' => array('type'=>'boolean', 'label'=>'AssetNotDepreciated', 'enabled'=>'1', 'position'=>80, 'notnull'=>0, 'default'=>'0', 'visible'=>1, 'validate'=>'1',),
-		'date_acquisition' => array('type'=>'date', 'label'=>'AssetDateAcquisition', 'enabled'=>'1', 'position'=>90, 'notnull'=>1, 'visible'=>1,),
-		'date_start' => array('type'=>'date', 'label'=>'AssetDateStart', 'enabled'=>'1', 'position'=>100, 'notnull'=>0, 'visible'=>-1,),
-		'acquisition_value_ht' => array('type'=>'price', 'label'=>'AssetAcquisitionValueHT', 'enabled'=>'1', 'position'=>110, 'notnull'=>1, 'visible'=>1, 'isameasure'=>'1', 'validate'=>'1',),
-		'recovered_vat' => array('type'=>'price', 'label'=>'AssetRecoveredVAT', 'enabled'=>'1', 'position'=>120, 'notnull'=>0, 'visible'=>1, 'isameasure'=>'1', 'validate'=>'1',),
-		'reversal_date' => array('type'=>'date', 'label'=>'AssetReversalDate', 'enabled'=>'1', 'position'=>130, 'notnull'=>0, 'visible'=>1,),
-		'reversal_amount_ht' => array('type'=>'price', 'label'=>'AssetReversalAmountHT', 'enabled'=>'1', 'position'=>140, 'notnull'=>0, 'visible'=>1, 'isameasure'=>'1', 'validate'=>'1',),
-		'disposal_date' => array('type'=>'date', 'label'=>'AssetDisposalDate', 'enabled'=>'1', 'position'=>200, 'notnull'=>0, 'visible'=>-2,),
-		'disposal_amount_ht' => array('type'=>'price', 'label'=>'AssetDisposalAmount', 'enabled'=>'1', 'position'=>210, 'notnull'=>0, 'visible'=>-2, 'default'=>'0', 'isameasure'=>'1', 'validate'=>'1',),
-		'fk_disposal_type' => array('type'=>'sellist:c_asset_disposal_type:label:rowid::active=1', 'label'=>'AssetDisposalType', 'enabled'=>'1', 'position'=>220, 'notnull'=>0, 'visible'=>-2, 'index'=>1, 'validate'=>'1',),
-		'disposal_depreciated' => array('type'=>'boolean', 'label'=>'AssetDisposalDepreciated', 'enabled'=>'1', 'position'=>230, 'notnull'=>0, 'default'=>'0', 'visible'=>-2, 'validate'=>'1',),
-		'disposal_subject_to_vat' => array('type'=>'boolean', 'label'=>'AssetDisposalSubjectToVat', 'enabled'=>'1', 'position'=>240, 'notnull'=>0, 'default'=>'0', 'visible'=>-2, 'validate'=>'1',),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>300, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>301, 'notnull'=>0, 'visible'=>0, 'validate'=>'1',),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'default'=>'0', 'visible'=>2, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'), 'validate'=>'1',),
+	public $fields = array(
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
+		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 1, 'noteditable' => 0, 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'validate' => 1, 'comment' => "Reference of object", "css" => "maxwidth150"),
+		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax125', 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'showoncombobox' => 2, 'validate' => 1,),
+		'fk_asset_model' => array('type' => 'integer:AssetModel:asset/class/assetmodel.class.php:1:((status:=:1) and (entity:IN:__SHARED_ENTITIES__))', 'label' => 'AssetModel', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'validate' => 1, 'csslist' => 'tdoverflowmax75', 'css' => 'maxwidth300'),
+		'qty' => array('type' => 'real', 'label' => 'Qty', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 0, 'default' => '1', 'isameasure' => 1, 'css' => 'maxwidth75imp', 'validate' => 1,),
+		'acquisition_type' => array('type' => 'smallint', 'label' => 'AssetAcquisitionType', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetAcquisitionTypeNew', 1 => 'AssetAcquisitionTypeOccasion'), 'validate' => 1, 'csslist' => 'tdoverflowmax75'),
+		'asset_type' => array('type' => 'smallint', 'label' => 'AssetType', 'enabled' => 1, 'position' => 70, 'notnull' => 1, 'visible' => 1, 'arrayofkeyval' => array(0 => 'AssetTypeIntangible', 1 => 'AssetTypeTangible', 2 => 'AssetTypeInProgress', 3 => 'AssetTypeFinancial'), 'validate' => 1, 'csslist' => 'tdoverflowmax75'),
+		'not_depreciated' => array('type' => 'boolean', 'label' => 'AssetNotDepreciated', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'default' => '0', 'visible' => 1, 'validate' => 1, 'csslist' => 'maxwidth50 tdoverflowmax50', 'css' => 'maxwidth50imp'),
+		'date_acquisition' => array('type' => 'date', 'label' => 'AssetDateAcquisition', 'enabled' => 1, 'position' => 90, 'notnull' => 1, 'visible' => 1,),
+		'date_start' => array('type' => 'date', 'label' => 'AssetDateStart', 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1,),
+		'acquisition_value_ht' => array('type' => 'price', 'label' => 'AssetAcquisitionValueHT', 'enabled' => 1, 'position' => 110, 'notnull' => 1, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
+		'recovered_vat' => array('type' => 'price', 'label' => 'AssetRecoveredVAT', 'enabled' => 1, 'position' => 120, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1,),
+		'reversal_date' => array('type' => 'date', 'label' => 'AssetReversalDate', 'enabled' => 1, 'position' => 130, 'notnull' => 0, 'visible' => 1,),
+		'reversal_amount_ht' => array('type' => 'price', 'label' => 'AssetReversalAmountHT', 'enabled' => 1, 'position' => 140, 'notnull' => 0, 'visible' => 1, 'isameasure' => 1, 'validate' => 1, 'csslist' => 'maxwidth50'),
+		'disposal_date' => array('type' => 'date', 'label' => 'AssetDisposalDate', 'enabled' => 1, 'position' => 200, 'notnull' => 0, 'visible' => -2,),
+		'disposal_amount_ht' => array('type' => 'price', 'label' => 'AssetDisposalAmount', 'enabled' => 1, 'position' => 210, 'notnull' => 0, 'visible' => -2, 'default' => '0', 'isameasure' => 1, 'validate' => 1,),
+		'fk_disposal_type' => array('type' => 'sellist:c_asset_disposal_type:label:rowid::active=1', 'label' => 'AssetDisposalType', 'enabled' => 1, 'position' => 220, 'notnull' => 0, 'visible' => -2, 'index' => 1, 'validate' => 1,),
+		'disposal_depreciated' => array('type' => 'boolean', 'label' => 'AssetDisposalDepreciated', 'enabled' => 1, 'position' => 230, 'notnull' => 0, 'default' => '0', 'visible' => -2, 'validate' => 1,),
+		'disposal_subject_to_vat' => array('type' => 'boolean', 'label' => 'AssetDisposalSubjectToVat', 'enabled' => 1, 'position' => 240, 'notnull' => 0, 'default' => '0', 'visible' => -2, 'validate' => 1,),
+		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 300, 'notnull' => 0, 'visible' => 0, 'validate' => 1,),
+		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 301, 'notnull' => 0, 'visible' => 0, 'validate' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => -2,),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
+		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
+		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'default' => '0', 'visible' => 2, 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Canceled'), 'validate' => 1,),
 	);
-	public $rowid;
-	public $ref;
-	public $label;
-	public $fk_asset_model;
-	public $reversal_amount_ht;
-	public $acquisition_value_ht;
-	public $recovered_vat;
-	public $reversal_date;
-	public $date_acquisition;
-	public $date_start;
-	public $qty;
-	public $acquisition_type;
-	public $asset_type;
-	public $not_depreciated;
-	public $disposal_date;
-	public $disposal_amount_ht;
-	public $fk_disposal_type;
-	public $disposal_depreciated;
-	public $disposal_subject_to_vat;
-	public $supplier_invoice_id;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
-	public $tms;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $last_main_doc;
-	public $import_key;
-	public $model_pdf;
-	public $status;
-	public $user_cloture_id;
 
-	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
-	//  */
-	// public $fk_element = 'fk_asset';
-	// /**
-	//  * @var array	List of child tables. To test if we can delete object.
-	//  */
-	// protected $childtables = array();
-	// /**
-	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
-	//  */
-	// protected $childtablesoncascade = array('asset_assetdet');
+	/**
+	 * @var int
+	 */
+	public $rowid;
+	/**
+	 * @var string
+	 */
+	public $ref;
+	/**
+	 * @var string
+	 */
+	public $label;
+	/**
+	 * @var int
+	 */
+	public $fk_asset_model;
+	/**
+	 * @var string
+	 */
+	public $reversal_amount_ht;
+	/**
+	 * @var string
+	 */
+	public $acquisition_value_ht;
+	/**
+	 * @var string
+	 */
+	public $recovered_vat;
+	/**
+	 * @var int|''
+	 */
+	public $reversal_date;
+	/**
+	 * @var int|''
+	 */
+	public $date_acquisition;
+	/**
+	 * @var int|''
+	 */
+	public $date_start;
+	/**
+	 * @var float
+	 */
+	public $qty;
+	/**
+	 * @var int
+	 */
+	public $acquisition_type;
+	/**
+	 * @var int
+	 */
+	public $asset_type;
+	/**
+	 * @var int<0,1>
+	 */
+	public $not_depreciated;
+	/**
+	 * @var ?string
+	 */
+	public $disposal_date;
+	/**
+	 * @var null|string|int  Is string, but asset/Card.php assigns int.
+	 */
+	public $disposal_amount_ht;
+	/**
+	 * @var ?int
+	 */
+	public $fk_disposal_type;
+	/**
+	 * @var int<0,1>
+	 */
+	public $disposal_depreciated;
+	/**
+	 * @var int<0,1>
+	 */
+	public $disposal_subject_to_vat;
+	/**
+	 * @var int
+	 */
+	public $supplier_invoice_id;
+	/**
+	 * @var string
+	 */
+	public $note_public;
+	/**
+	 * @var string
+	 */
+	public $note_private;
+	/**
+	 * @var int
+	 */
+	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
+	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
+	public $last_main_doc;
+	/**
+	 * @var string
+	 */
+	public $import_key;
+	/**
+	 * @var string
+	 */
+	public $model_pdf;
+	/**
+	 * @var int
+	 */
+	public $status;
 
 	/**
 	 * @var AssetDepreciationOptions	Used for computed fields of depreciation options class.
 	 */
 	public $asset_depreciation_options;
 	/**
-	 * @var array	List of depreciation lines for each mode (sort by depreciation date).
+	 * @var AssetAccountancyCodes
+	 */
+	public $asset_accountancy_codes;
+	/**
+	 * @var array<string,array<array{id:int,ref:string,depreciation_date:string,depreciation_ht:string,cumulative_depreciation_ht:string,bookkeeping:Bookkeeping}>>	List of depreciation lines for each mode (sort by depreciation date).
 	 */
 	public $depreciation_lines = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param DoliDb $db Database handler
+	 * @param DoliDB $db Database handler
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 
-		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) {
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
+		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
@@ -221,20 +287,26 @@ class Asset extends CommonObject
 	/**
 	 * Create object into database
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  User		$user		User that creates
+	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,max>			Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = false)
+	public function create(User $user, $notrigger = 0)
 	{
-		if (!isset($this->date_start) || $this->date_start === "") $this->date_start = $this->date_acquisition;
+		if (!isset($this->date_start) || $this->date_start === "") {
+			$this->date_start = $this->date_acquisition;
+		}
 
 		$this->db->begin();
 
 		$result = $result_create = $this->createCommon($user, $notrigger);
-		if ($result > 0 && $this->fk_asset_model > 0) $result = $this->setDataFromAssetModel($user, $notrigger);
+		if ($result > 0 && $this->fk_asset_model > 0) {
+			$result = $this->setDataFromAssetModel($user, $notrigger);
+		}
 		if ($result > 0) {
-			if ($this->supplier_invoice_id > 0) $this->add_object_linked('invoice_supplier', $this->supplier_invoice_id);
+			if ($this->supplier_invoice_id > 0) {
+				$this->add_object_linked('invoice_supplier', $this->supplier_invoice_id);
+			}
 		}
 
 		if ($result < 0) {
@@ -249,9 +321,9 @@ class Asset extends CommonObject
 	/**
 	 * Clone an object into another one
 	 *
-	 * @param  	User 	$user      	User that creates
-	 * @param  	int 	$fromid     Id of object to clone
-	 * @return 	mixed 				New object created, <0 if KO
+	 * @param  	User 	$user		User that creates
+	 * @param  	int 	$fromid		Id of object to clone
+	 * @return 	Object|int<-1,-1>	New object created, <0 if KO
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
@@ -266,13 +338,7 @@ class Asset extends CommonObject
 		//
 		//      // Load source object
 		//      $result = $object->fetchCommon($fromid);
-		//      if ($result > 0 && !empty($object->table_element_line)) {
-		//          $object->fetchLines();
-		//      }
 		//
-		//      // get lines so they will be clone
-		//      //foreach($this->lines as $line)
-		//      //  $line->fetch_optionals();
 		//
 		//      // Reset some properties
 		//      unset($object->id);
@@ -343,65 +409,52 @@ class Asset extends CommonObject
 		//          $this->db->rollback();
 		//          return -1;
 		//      }
+
 		return -1;
 	}
 
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id   Id object
-	 * @param string $ref  Ref
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 * @param	int		$id	Id object
+	 * @param	string	$ref	Ref
+	 * @return	int<-1,max>	Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetch($id, $ref = null)
 	{
 		$result = $this->fetchCommon($id, $ref);
 		if ($result > 0) {
-			if (!empty($this->table_element_line)) $this->fetchLines();
-
 			$res = $this->hasDepreciationLinesInBookkeeping();
 			if ($res < 0) {
 				return -1;
 			} elseif ($res > 0) {
-				$this->fields['date_acquisition']['noteditable'] = '1';
-				$this->fields['date_start']['noteditable'] = '1';
-				$this->fields['acquisition_value_ht']['noteditable'] = '1';
-				$this->fields['recovered_vat']['noteditable'] = '1';
-				$this->fields['reversal_date']['noteditable'] = '1';
-				$this->fields['reversal_amount_ht']['noteditable'] = '1';
+				$this->fields['date_acquisition']['noteditable'] = 1;
+				$this->fields['date_start']['noteditable'] = 1;
+				$this->fields['acquisition_value_ht']['noteditable'] = 1;
+				$this->fields['recovered_vat']['noteditable'] = 1;
+				$this->fields['reversal_date']['noteditable'] = 1;
+				$this->fields['reversal_amount_ht']['noteditable'] = 1;
 			}
 		}
+
 		return $result;
-	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		return 1;
 	}
 
 
 	/**
 	 * Load list of objects in memory from the database.
 	 *
-	 * @param  string      $sortorder    Sort Order
-	 * @param  string      $sortfield    Sort field
-	 * @param  int         $limit        limit
-	 * @param  int         $offset       Offset
-	 * @param  array       $filter       Filter array. Example array('field'=>'valueforlike', 'customurl'=>...)
-	 * @param  string      $filtermode   Filter mode (AND or OR)
-	 * @return array|int                 int <0 if KO, array of pages if OK
+	 * @param  string      	$sortorder    	Sort Order
+	 * @param  string      	$sortfield    	Sort field
+	 * @param  int         	$limit        	limit
+	 * @param  int         	$offset       	Offset
+	 * @param  string		$filter       	Filter as an Universal Search string.
+	 * 										Example: '((client:=:1) OR ((client:>=:2) AND (client:<=:3))) AND (client:!=:8) AND (nom:like:'a%')'
+	 * @param  string      	$filtermode   	No more used
+	 * @return self[]|int                 	int <0 if KO, array of pages if OK
 	 */
-	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
-		global $conf;
-
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
@@ -414,25 +467,15 @@ class Asset extends CommonObject
 		} else {
 			$sql .= " WHERE 1 = 1";
 		}
+
 		// Manage filter
-		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-				}
-			}
-		}
-		if (count($sqlwhere) > 0) {
-			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
+		$errormessage = '';
+		$sql .= forgeSQLFromUniversalSearchCriteria($filter, $errormessage);
+		if ($errormessage) {
+			$this->errors[] = $errormessage;
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+
+			return -1;
 		}
 
 		if (!empty($sortfield)) {
@@ -461,7 +504,7 @@ class Asset extends CommonObject
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
-			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
 
 			return -1;
 		}
@@ -471,12 +514,14 @@ class Asset extends CommonObject
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
+	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = false)
+	public function update(User $user, $notrigger = 0)
 	{
-		if (!isset($this->date_start) || $this->date_start === "") $this->date_start = $this->date_acquisition;
+		if (!isset($this->date_start) || $this->date_start === "") {
+			$this->date_start = $this->date_acquisition;
+		}
 
 		$this->db->begin();
 
@@ -485,12 +530,12 @@ class Asset extends CommonObject
 			$result = $this->setDataFromAssetModel($user, $notrigger);
 		}
 		if ($result > 0 && (
-				$this->date_start != $this->oldcopy->date_start ||
+			$this->date_start != $this->oldcopy->date_start ||
 				$this->acquisition_value_ht != $this->oldcopy->acquisition_value_ht ||
 				$this->reversal_date != $this->oldcopy->reversal_date ||
 				$this->reversal_amount_ht != $this->oldcopy->reversal_amount_ht ||
 				($this->fk_asset_model > 0 && $this->fk_asset_model != $this->oldcopy->fk_asset_model)
-			)
+		)
 		) {
 			$result = $this->calculationDepreciation();
 		}
@@ -507,11 +552,11 @@ class Asset extends CommonObject
 	/**
 	 * Delete object in database
 	 *
-	 * @param User $user       User that deletes
-	 * @param bool $notrigger  false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, >0 if OK
+	 * @param User 	$user       User that deletes
+	 * @param int	$notrigger  0=launch triggers after, 1=disable triggers
+	 * @return int  			Return integer <0 if KO, >0 if OK
 	 */
-	public function delete(User $user, $notrigger = false)
+	public function delete(User $user, $notrigger = 0)
 	{
 		return $this->deleteCommon($user, $notrigger);
 		//return $this->deleteCommon($user, $notrigger, 1);
@@ -520,11 +565,11 @@ class Asset extends CommonObject
 	/**
 	 * Set asset model
 	 *
-	 * @param  User $user      User that creates
-	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
-	 * @return int             <0 if KO, Id of created object if OK
+	 * @param  User $user      	User that creates
+	 * @param  int $notrigger 	0=launch triggers after, 1=disable triggers
+	 * @return int             	Return integer <0 if KO, Id of created object if OK
 	 */
-	public function setDataFromAssetModel(User $user, $notrigger = false)
+	public function setDataFromAssetModel(User $user, $notrigger = 0)
 	{
 		global $langs;
 		$langs->load('assets');
@@ -631,7 +676,7 @@ class Asset extends CommonObject
 	/**
 	 * Fetch depreciation lines for each mode in $this->depreciation_lines (sort by depreciation date)
 	 *
-	 * @return	int							<0 if KO, Id of created object if OK
+	 * @return	int							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function fetchDepreciationLines()
 	{
@@ -668,7 +713,7 @@ class Asset extends CommonObject
 		*/
 
 		$sql = "SELECT ad.rowid, ad.depreciation_mode, ad.ref, ad.depreciation_date, ad.depreciation_ht, ad.cumulative_depreciation_ht";
-		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', 1, 0) . " AS bookkeeping";
+		$sql .= ", " . $this->db->ifsql('iab.fk_docdet IS NOT NULL', '1', '0') . " AS bookkeeping";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "asset_depreciation AS ad";
 		$sql .= " LEFT JOIN (SELECT DISTINCT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset') AS iab ON iab.fk_docdet = ad.rowid";
 		$sql .= " WHERE ad.fk_asset = " . (int) $this->id;
@@ -681,7 +726,9 @@ class Asset extends CommonObject
 		}
 
 		while ($obj = $this->db->fetch_object($resql)) {
-			if (!isset($this->depreciation_lines[$obj->depreciation_mode])) $this->depreciation_lines[$obj->depreciation_mode] = array();
+			if (!isset($this->depreciation_lines[$obj->depreciation_mode])) {
+				$this->depreciation_lines[$obj->depreciation_mode] = array();
+			}
 			$this->depreciation_lines[$obj->depreciation_mode][] = array(
 				'id' => $obj->rowid,
 				'ref' => $obj->ref,
@@ -698,7 +745,7 @@ class Asset extends CommonObject
 	/**
 	 * If has depreciation lines in bookkeeping
 	 *
-	 * @return	int			<0 if KO, 0 if NO, 1 if Yes
+	 * @return	int			Return integer <0 if KO, 0 if NO, 1 if Yes
 	 */
 	public function hasDepreciationLinesInBookkeeping()
 	{
@@ -757,11 +804,11 @@ class Asset extends CommonObject
 	 * @param	string		$mode							Depreciation mode (economic, accelerated_depreciation, ...)
 	 * @param	string		$ref							Ref line
 	 * @param	int			$depreciation_date				Depreciation date
-	 * @param	double		$depreciation_ht				Depreciation amount HT
-	 * @param	double		$cumulative_depreciation_ht		Depreciation cumulative amount HT
+	 * @param	float		$depreciation_ht				Depreciation amount HT
+	 * @param	float		$cumulative_depreciation_ht		Depreciation cumulative amount HT
 	 * @param	string		$accountancy_code_debit			Accountancy code Debit
 	 * @param	string		$accountancy_code_credit		Accountancy code Credit
-	 * @return	int											<0 if KO, Id of created line if OK
+	 * @return	int											Return integer <0 if KO, Id of created line if OK
 	 */
 	public function addDepreciationLine($mode, $ref, $depreciation_date, $depreciation_ht, $cumulative_depreciation_ht, $accountancy_code_debit, $accountancy_code_credit)
 	{
@@ -791,8 +838,8 @@ class Asset extends CommonObject
 		$sql .= ", '" . $this->db->escape($mode) . "'";
 		$sql .= ", '" . $this->db->escape($ref) . "'";
 		$sql .= ", '" . $this->db->idate($depreciation_date) . "'";
-		$sql .= ", " . (double) $depreciation_ht;
-		$sql .= ", " . (double) $cumulative_depreciation_ht;
+		$sql .= ", " . (float) $depreciation_ht;
+		$sql .= ", " . (float) $cumulative_depreciation_ht;
 		$sql .= ", '" . $this->db->escape($accountancy_code_debit) . "'";
 		$sql .= ", '" . $this->db->escape($accountancy_code_credit) . "'";
 		$sql .= ")";
@@ -809,7 +856,7 @@ class Asset extends CommonObject
 	/**
 	 * Calculation depreciation lines (reversal and future) for each mode
 	 *
-	 * @return	int							<0 if KO, Id of created object if OK
+	 * @return	int							Return integer <0 if KO, Id of created object if OK
 	 */
 	public function calculationDepreciation()
 	{
@@ -827,6 +874,10 @@ class Asset extends CommonObject
 		}
 		if ($error) {
 			return -1;
+		}
+
+		if (! empty($this->not_depreciated)) {
+			return 1;
 		}
 
 		// Get depreciation options
@@ -872,14 +923,15 @@ class Asset extends CommonObject
 			// Get fiscal period
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
-			$dates = getDefaultDatesForTransfer();
+			// @FIXME getCurrentPeriodOfFiscalYear return the first period found. What if there is several ? And what if not closed ? And what if end date not yet defined.
+			$dates = getCurrentPeriodOfFiscalYear($this->db, $conf, $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition);
 			$init_fiscal_period_start = $dates['date_start'];
 			$init_fiscal_period_end = $dates['date_end'];
 			if (empty($init_fiscal_period_start) || empty($init_fiscal_period_end)) {
 				$pastmonthyear = $dates['pastmonthyear'];
 				$pastmonth = $dates['pastmonth'];
-				$init_fiscal_period_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-				$init_fiscal_period_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+				$init_fiscal_period_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+				$init_fiscal_period_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 			}
 
 			foreach ($options->deprecation_options as $mode_key => $fields) {
@@ -942,7 +994,9 @@ class Asset extends CommonObject
 				$sql .= " WHERE " . MAIN_DB_PREFIX . "asset_depreciation.fk_asset = " . (int) $this->id;
 				$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.depreciation_mode = '" . $this->db->escape($mode_key) . "'";
 				$sql .= " AND ab.fk_docdet IS NULL";
-				if ($last_depreciation_date !== "") $sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+				if ($last_depreciation_date !== "") {
+					$sql .= " AND " . MAIN_DB_PREFIX . "asset_depreciation.ref != ''";
+				}
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$this->errors[] = $langs->trans('AssetErrorClearDepreciationLines') . ': ' . $this->db->lasterror();
@@ -952,21 +1006,21 @@ class Asset extends CommonObject
 
 				// Get depreciation period
 				$depreciation_date_start = $this->date_start > $this->date_acquisition ? $this->date_start : $this->date_acquisition;
-				$depreciation_date_end = dol_time_plus_duree($depreciation_date_start, $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y'));
+				$depreciation_date_end = dol_time_plus_duree(dol_time_plus_duree((int) $depreciation_date_start, (float) $fields['duration'], $fields['duration_type'] == 1 ? 'm' : ($fields['duration_type'] == 2 ? 'd' : 'y')), -1, 'd');
 				$depreciation_amount = $fields['amount_base_depreciation_ht'];
 				if ($fields['duration_type'] == 2) { // Daily
 					$fiscal_period_start = $depreciation_date_start;
 					$fiscal_period_end = $depreciation_date_start;
 				} elseif ($fields['duration_type'] == 1) { // Monthly
-					$date_temp = dol_getdate($depreciation_date_start);
+					$date_temp = dol_getdate((int) $depreciation_date_start);
 					$fiscal_period_start = dol_get_first_day($date_temp['year'], $date_temp['mon'], false);
 					$fiscal_period_end = dol_get_last_day($date_temp['year'], $date_temp['mon'], false);
 				} else { // Annually
 					$fiscal_period_start = $init_fiscal_period_start;
 					$fiscal_period_end = $init_fiscal_period_end;
 				}
-				$cumulative_depreciation_ht = $last_cumulative_depreciation_ht;
-				$depreciation_period_amount = $depreciation_amount - $this->reversal_amount_ht;
+				$cumulative_depreciation_ht = (float) $last_cumulative_depreciation_ht;
+				$depreciation_period_amount = $depreciation_amount - (float) $this->reversal_amount_ht;
 				$start_date = $depreciation_date_start;
 				$disposal_date = isset($this->disposal_date) && $this->disposal_date !== "" ? $this->disposal_date : "";
 				$finish_date = $disposal_date !== "" ? $disposal_date : $depreciation_date_end;
@@ -992,7 +1046,7 @@ class Asset extends CommonObject
 						}
 
 						$start_date = $this->reversal_date;
-						$result = $this->addDepreciationLine($mode_key, '', $start_date, $this->reversal_amount_ht, $this->reversal_amount_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
+						$result = $this->addDepreciationLine($mode_key, '', $start_date, (float) $this->reversal_amount_ht, (float) $this->reversal_amount_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
 						if ($result < 0) {
 							$error++;
 							break;
@@ -1006,10 +1060,11 @@ class Asset extends CommonObject
 
 				// futures depreciation lines
 				//-----------------------------------------------------
-				$nb_days_in_year = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_YEAR : 365;
-				$nb_days_in_month = !empty($conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH) ? $conf->global->ASSET_DEPRECIATION_DURATION_PER_MONTH : 30;
-				$period_amount = (double) price2num($depreciation_period_amount / $fields['duration'], 'MT');
+				$nb_days_in_year = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_YEAR', 360);
+				$nb_days_in_month = getDolGlobalInt('ASSET_DEPRECIATION_DURATION_PER_MONTH', 30);
+				$period_amount = (float) price2num($depreciation_period_amount / $fields['duration'], 'MT');
 				$first_period_found = false;
+				// TODO fix declaration of $begin_period
 				$first_period_date = isset($begin_period) && $begin_period > $fiscal_period_start ? $begin_period : $fiscal_period_start;
 
 				$ref_date_format = "%Y" . ($fields['duration_type'] == 1 || $fields['duration_type'] == 2 ? '-%m' : '') . ($fields['duration_type'] == 2 ? '-%d' : '');
@@ -1020,7 +1075,9 @@ class Asset extends CommonObject
 				do {
 					// Loop security
 					$idx_loop++;
-					if ($idx_loop > $max_loop) break;
+					if ($idx_loop > $max_loop) {
+						break;
+					}
 
 					if ($last_depreciation_date < $fiscal_period_end && ($first_period_date <= $start_date || $first_period_found)) {
 						// Disposal not depreciated
@@ -1049,20 +1106,30 @@ class Asset extends CommonObject
 									$nb_days = 30;
 								}
 							}
-							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
-						} else { // Annually
-							$nb_days = min($nb_days_in_year, num_between_day($begin_date, $end_date, 1));
-							$depreciation_ht = (double) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_month, 'MT');
+						} else { // Annually, taking care for adjustments to shortened or extended periods (e.g., fiscal years of 9 or 15 months)
+							$nb_days_real = num_between_day($begin_date, $end_date, 1);
+							if (($nb_days_real > 366) || (num_between_day($fiscal_period_start, $fiscal_period_end, 1) < $nb_days_in_year)) { // FY Period changed
+								$nb_days = $nb_days_real;
+							} else {
+								$nb_days = min($nb_days_in_year, $nb_days_real);
+							}
+							$depreciation_ht = (float) price2num($period_amount * $nb_days / $nb_days_in_year, 'MT');
+						}
+						if (getDolGlobalInt('ASSET_ROUND_INTEGER_NUMBER_UPWARDS') == 1) {
+							if ($idx_loop < $max_loop) { // avoid last depreciation value
+								$depreciation_ht = ceil($depreciation_ht);
+							}
 						}
 
 						if ($fiscal_period_start <= $depreciation_date_end && $depreciation_date_end <= $fiscal_period_end) { // last period
-							$depreciation_ht = (double) price2num($depreciation_amount - $cumulative_depreciation_ht, 'MT');
+							$depreciation_ht = (float) price2num($depreciation_amount - (float) $cumulative_depreciation_ht, 'MT');
 							$cumulative_depreciation_ht = $depreciation_amount;
 						} else {
 							$cumulative_depreciation_ht += $depreciation_ht;
 						}
 
-						$result = $this->addDepreciationLine($mode_key, $ref, $fiscal_period_end, $depreciation_ht, $cumulative_depreciation_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
+						$result = $this->addDepreciationLine($mode_key, $ref, $fiscal_period_end, $depreciation_ht, (float) $cumulative_depreciation_ht, $accountancy_code_depreciation_debit, $accountancy_code_credit);
 						if ($result < 0) {
 							$error++;
 							break;
@@ -1071,12 +1138,13 @@ class Asset extends CommonObject
 
 					// Next fiscal period (+1 day/month/year)
 					$fiscal_period_start = dol_time_plus_duree($fiscal_period_end, 1, 'd');
+					$dates_fiscal_period = getCurrentPeriodOfFiscalYear($this->db, $conf, $fiscal_period_start, 'gmt');
 					if ($fields['duration_type'] == 2) { // Daily
 						$fiscal_period_end = $fiscal_period_start;
 					} elseif ($fields['duration_type'] == 1) { // Monthly
 						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'm'), -1, 'd');
 					} else { // Annually
-						$fiscal_period_end = dol_time_plus_duree(dol_time_plus_duree($fiscal_period_start, 1, 'y'), -1, 'd');
+						$fiscal_period_end = $dates_fiscal_period['date_end'];
 					}
 					$last_period_date = $disposal_date !== "" && $disposal_date < $depreciation_date_end ? $disposal_date : $depreciation_date_end;
 				} while ($fiscal_period_start < $last_period_date);
@@ -1100,7 +1168,7 @@ class Asset extends CommonObject
 	 * Set last cumulative depreciation for each mode
 	 *
 	 * @param	int		$asset_depreciation_id		Asset depreciation line ID
-	 * @return	int									<0 if KO, >0 if OK
+	 * @return	int									Return integer <0 if KO, >0 if OK
 	 */
 	public function setLastCumulativeDepreciation($asset_depreciation_id)
 	{
@@ -1165,7 +1233,7 @@ class Asset extends CommonObject
 	 *	@param	User	$user						Object user that dispose
 	 *	@param	int		$disposal_invoice_id		Disposal invoice ID
 	 *  @param	int		$notrigger					1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int									<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int									Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function dispose($user, $disposal_invoice_id, $notrigger = 0)
 	{
@@ -1187,10 +1255,14 @@ class Asset extends CommonObject
 			$this->fields[$field]['notnull'] = 0;
 		}
 		if ($result > 0) {
-			if ($disposal_invoice_id > 0) $this->add_object_linked('facture', $disposal_invoice_id);
+			if ($disposal_invoice_id > 0) {
+				$this->add_object_linked('facture', $disposal_invoice_id);
+			}
 			$result = $this->setStatusCommon($user, self::STATUS_DISPOSED, $notrigger, 'ASSET_DISPOSED');
 		}
-		if ($result > 0) $result = $this->calculationDepreciation();
+		if ($result > 0) {
+			$result = $this->calculationDepreciation();
+		}
 
 		if ($result < 0) {
 			$this->db->rollback();
@@ -1199,12 +1271,12 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1229,7 +1301,7 @@ class Asset extends CommonObject
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						<0 if KO, 0=Nothing done, >0 if OK
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -1246,14 +1318,16 @@ class Asset extends CommonObject
 		$this->disposal_date = null;
 		$this->disposal_amount_ht = null;
 		$this->fk_disposal_type = null;
-		$this->disposal_depreciated = null;
-		$this->disposal_subject_to_vat = null;
+		$this->disposal_depreciated = 0;
+		$this->disposal_subject_to_vat = 0;
 		$result = $this->update($user, 1);
 		if ($result > 0) {
 			$this->deleteObjectLinked(null, 'facture');
 			$result = $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'ASSET_REOPEN');
 		}
-		if ($result > 0) $result = $this->calculationDepreciation();
+		if ($result > 0) {
+			$result = $this->calculationDepreciation();
+		}
 
 		if ($result < 0) {
 			$this->db->rollback();
@@ -1262,12 +1336,12 @@ class Asset extends CommonObject
 		}
 
 		// Define output language
-		if ($result > 0 && empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+		if ($result > 0 && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			if (method_exists($this, 'generateDocument')) {
 				global $hidedetails, $hidedesc, $hideref;
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1288,7 +1362,7 @@ class Asset extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the object card (with optionaly the picto)
+	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 * @param	int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
 	 * @param	string  $option                     On what the link point to ('nolink', ...)
@@ -1322,7 +1396,7 @@ class Asset extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -1332,11 +1406,11 @@ class Asset extends CommonObject
 
 		$linkclose = '';
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAsset");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1372,7 +1446,7 @@ class Asset extends CommonObject
 					$pospoint = strpos($filearray[0]['name'], '.');
 
 					$pathtophoto = $class.'/'.$this->ref.'/thumbs/'.substr($filename, 0, $pospoint).'_mini'.substr($filename, $pospoint);
-					if (empty($conf->global->{strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS'})) {
+					if (!getDolGlobalString(strtoupper($module.'_'.$class).'_FORMATLISTPHOTOSASUSERS')) {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><div class="photoref"><img class="photo'.$module.'" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div></div>';
 					} else {
 						$result .= '<div class="floatleft inline-block valignmiddle divphotoref"><img class="photouserphoto userphoto" alt="No photo" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$module.'&entity='.$conf->entity.'&file='.urlencode($pathtophoto).'"></div>';
@@ -1387,8 +1461,11 @@ class Asset extends CommonObject
 
 		if ($withpicto != 2) {
 			$name = $this->ref;
-			if ($option == 'label') $name = $this->label;
-			elseif ($option == 'with_label') $name .= ' - ' . $this->label;
+			if ($option == 'label') {
+				$name = $this->label;
+			} elseif ($option == 'with_label') {
+				$name .= ' - ' . $this->label;
+			}
 			$result .= dol_escape_htmltag($maxlen ? dol_trunc($name, $maxlen) : $name);
 		}
 
@@ -1397,7 +1474,7 @@ class Asset extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array($this->element . 'dao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -1442,7 +1519,7 @@ class Asset extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("asset@asset");
+			//$langs->load("assets");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
 			$this->labelStatus[self::STATUS_DISPOSED] = $langs->transnoentitiesnoconv('AssetDisposed');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('AssetInProgress');
@@ -1476,12 +1553,10 @@ class Asset extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->rowid;
 
-				$this->user_creation_id = $obj->fk_user_author;
-				$this->user_validation_id = $obj->fk_user_valid;
-				$this->user_cloture_id = $obj->fk_user_cloture;
+				$this->user_creation_id = $obj->fk_user_creat;
+				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation     = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
-				$this->date_validation   = $this->db->jdate($obj->datev);
 			}
 
 			$this->db->free($result);
@@ -1494,7 +1569,7 @@ class Asset extends CommonObject
 	 * Initialise object with example values
 	 * Id must be 0 if object instance is a specimen
 	 *
-	 * @return void
+	 * @return int
 	 */
 	public function initAsSpecimen()
 	{
@@ -1502,19 +1577,7 @@ class Asset extends CommonObject
 		// $this->property1 = ...
 		// $this->property2 = ...
 
-		$this->initAsSpecimenCommon();
-	}
-
-	/**
-	 * 	Create an array of lines
-	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
-	 */
-	public function getLinesArray()
-	{
-		$this->lines = array();
-
-		return $this->lines;
+		return $this->initAsSpecimenCommon();
 	}
 
 	/**
@@ -1525,17 +1588,17 @@ class Asset extends CommonObject
 	public function getNextNumRef()
 	{
 		global $langs, $conf;
-		$langs->load("asset@asset");
+		$langs->load("assets");
 
-		if (empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (!getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$conf->global->ASSET_ASSET_ADDON = 'mod_asset_standard';
 		}
 
-		if (!empty($conf->global->ASSET_ASSET_ADDON)) {
+		if (getDolGlobalString('ASSET_ASSET_ADDON')) {
 			$mybool = false;
 
-			$file = $conf->global->ASSET_ASSET_ADDON.".php";
-			$classname = $conf->global->ASSET_ASSET_ADDON;
+			$file = getDolGlobalString('ASSET_ASSET_ADDON') . ".php";
+			$classname = getDolGlobalString('ASSET_ASSET_ADDON');
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -1543,16 +1606,19 @@ class Asset extends CommonObject
 				$dir = dol_buildpath($reldir."core/modules/asset/");
 
 				// Load file with numbering class (if found)
-				$mybool |= @include_once $dir.$file;
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
-				dol_print_error('', "Failed to include file ".$file);
+			if (!$mybool) {
+				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+
+				'@phan-var-force ModeleNumRefAsset $obj';
+
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1571,43 +1637,4 @@ class Asset extends CommonObject
 			return "";
 		}
 	}
-
-	/**
-	 *  Create a document onto disk according to template module.
-	 *
-	 *  @param	    string		$modele			Force template to use ('' to not force)
-	 *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
-	 *  @return     int         				0 if KO, 1 if OK
-	 */
-	//  public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
-	//  {
-	//      global $conf, $langs;
-	//
-	//      $result = 0;
-	//      $includedocgeneration = 1;
-	//
-	//      $langs->load("asset@asset");
-	//
-	//      if (!dol_strlen($modele)) {
-	//          $modele = 'standard_asset';
-	//
-	//          if (!empty($this->model_pdf)) {
-	//              $modele = $this->model_pdf;
-	//          } elseif (!empty($conf->global->ASSET_ADDON_PDF)) {
-	//              $modele = $conf->global->ASSET_ADDON_PDF;
-	//          }
-	//      }
-	//
-	//      $modelpath = "core/modules/asset/doc/";
-	//
-	//      if ($includedocgeneration && !empty($modele)) {
-	//          $result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
-	//      }
-	//
-	//      return $result;
-	//  }
 }

@@ -11,7 +11,8 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 
 /*
@@ -145,6 +146,7 @@ a.timeline-btn:hover
 	padding: 10px;
 }
 .timeline > li > .fa,
+.timeline > li > .fas,
 .timeline > li > .glyphicon,
 .timeline > li > .ion {
 	width: 30px;
@@ -204,12 +206,38 @@ a.timeline-btn:hover
 	color: #fff !important;
 }
 
+.timeline-item .messaging-title {
+	word-break: break-all;
+}
+
 .timeline-documents-container{
 
 }
 
 .timeline-documents{
 	margin-right: 5px;
+}
+
+.messaging-author {
+	width: 100px;
+}
+
+.readmore-block.--closed .readmore-block__full-text, .readmore-block.--open .readmore-block__excerpt{
+	display: none;
+}
+
+.read-less-link, .read-more-link{
+	font-weight: bold;
+}
+
+.read-less-link{
+	display: block;
+	text-align: center;
+}
+
+
+	.read-less-link .fa, .read-more-link .fa{
+	color: inherit;
 }
 
 /* Force values for small screen 767 */

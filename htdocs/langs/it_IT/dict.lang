@@ -247,6 +247,7 @@ CountryJE=Jersey
 CountryME=Montenegro
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Sig.ra
@@ -294,8 +295,8 @@ CurrencyXPF=Franchi CFP
 CurrencySingXPF=Franco CFP
 CurrencyCentEUR=cents
 CurrencyCentSingEUR=centesimo
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=Millesimo
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

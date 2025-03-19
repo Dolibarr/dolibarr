@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
- * The ICollection Interface
+ * The ICollection Interface.
  *
  * This interface should be implemented by each class that represents a collection
  *
@@ -11,10 +13,10 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface ICollection extends INode {
-
+interface ICollection extends INode
+{
     /**
-     * Creates a new file in the directory
+     * Creates a new file in the directory.
      *
      * Data will either be supplied as a stream resource, or in certain cases
      * as a string. Keep in mind that you may have to support either.
@@ -33,44 +35,45 @@ interface ICollection extends INode {
      * return the same contents of what was submitted here, you are strongly
      * recommended to omit the ETag.
      *
-     * @param string $name Name of the file
+     * @param string          $name Name of the file
      * @param resource|string $data Initial payload
-     * @return null|string
+     *
+     * @return string|null
      */
-    function createFile($name, $data = null);
+    public function createFile($name, $data = null);
 
     /**
-     * Creates a new subdirectory
+     * Creates a new subdirectory.
      *
      * @param string $name
-     * @return void
      */
-    function createDirectory($name);
+    public function createDirectory($name);
 
     /**
-     * Returns a specific child node, referenced by its name
+     * Returns a specific child node, referenced by its name.
      *
      * This method must throw Sabre\DAV\Exception\NotFound if the node does not
      * exist.
      *
      * @param string $name
+     *
      * @return INode
      */
-    function getChild($name);
+    public function getChild($name);
 
     /**
-     * Returns an array with all the child nodes
+     * Returns an array with all the child nodes.
      *
      * @return INode[]
      */
-    function getChildren();
+    public function getChildren();
 
     /**
-     * Checks if a child-node with the specified name exists
+     * Checks if a child-node with the specified name exists.
      *
      * @param string $name
+     *
      * @return bool
      */
-    function childExists($name);
-
+    public function childExists($name);
 }

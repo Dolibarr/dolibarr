@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2019	Laurent Destailleur (eldy)	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,8 +45,23 @@ if (!defined('NOREQUIREAJAX')) {
 require '../../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 
-$idbom = GETPOST('idbom', 'alpha');
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
+$idbom = GETPOSTINT('idbom');
 //$action = GETPOST('action', 'aZ09');
+
+$object = new BOM($db);
+$result = $object->fetch($idbom);
+
+// Security check
+$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
+$result = restrictedArea($user, 'bom', $object, $object->table_element, '', '', 'rowid', $isdraft);
 
 
 /*
@@ -53,8 +70,6 @@ $idbom = GETPOST('idbom', 'alpha');
 
 top_httphead('application/json');
 
-$object = new BOM($db);
-$result = $object->fetch($idbom);
 if ($result > 0) {
 	// We remove properties we don't need in answer
 	unset($object->fields);

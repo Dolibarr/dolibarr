@@ -22,7 +22,7 @@
 
 /**
  * 		\defgroup   tax		Module taxes
- * 		\brief      Module pour inclure des fonctions de saisies des taxes (tva) et charges sociales
+ * 		\brief      Module pour inclure des functions de saisies des taxes (tva) et charges sociales
  *      \file       htdocs/core/modules/modTax.class.php
  *      \ingroup    tax
  *      \brief      Description and activation file for the module taxes
@@ -35,7 +35,6 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
  */
 class modTax extends DolibarrModules
 {
-
 	/**
 	 *   Constructor. Define names, constants, directories, boxes, permissions
 	 *
@@ -87,7 +86,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 91;
-		$this->rights[$r][1] = 'Lire les charges';
+		$this->rights[$r][1] = 'Read social contibutions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -95,7 +94,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 92;
-		$this->rights[$r][1] = 'Creer/modifier les charges';
+		$this->rights[$r][1] = 'Create/modify social contributions';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -103,7 +102,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 93;
-		$this->rights[$r][1] = 'Supprimer les charges';
+		$this->rights[$r][1] = 'Delete social contributions';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';
@@ -111,7 +110,7 @@ class modTax extends DolibarrModules
 
 		$r++;
 		$this->rights[$r][0] = 94;
-		$this->rights[$r][1] = 'Exporter les charges';
+		$this->rights[$r][1] = 'Export social contributions';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'charges';

@@ -2,6 +2,7 @@
 /* Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2015      Francis Appels       <francis.appels@z-application.com>
  * Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +39,15 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
-$idprod = GETPOST('idprod', 'int');
+$idprod = GETPOSTINT('idprod');
 
 $prices = array();
 
@@ -67,6 +75,10 @@ if ($idprod > 0) {
 	$productSupplierArray = $producttmp->list_product_fournisseur_price($idprod, $sorttouse); // We list all price per supplier, and then firstly with the lower quantity. So we can choose first one with enough quantity into list.
 	if (is_array($productSupplierArray)) {
 		foreach ($productSupplierArray as $productSupplier) {
+			if (getDolGlobalInt("DISABLE_BAD_REPUTATION_PRODUCT_PRICE") && $productSupplier->supplier_reputation == "DONOTORDER") {
+				continue;
+			}
+
 			$price = $productSupplier->fourn_price * (1 - $productSupplier->fourn_remise_percent / 100);
 			$unitprice = $productSupplier->fourn_unitprice * (1 - $productSupplier->fourn_remise_percent / 100);
 
@@ -96,7 +108,7 @@ if ($idprod > 0) {
 	if (isModEnabled('stock')) {
 		// Add price for pmp
 		$price = $producttmp->pmp;
-		if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
+		if (empty($price) && getDolGlobalString('PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY')) {
 			// get pmp for subproducts if any
 			$producttmp->get_sousproduits_arbo();
 			$prods_arbo=$producttmp->get_arbo_each_prod();
@@ -115,7 +127,7 @@ if ($idprod > 0) {
 
 	// Add price for costprice (at end)
 	$price = $producttmp->cost_price;
-	if (empty($price) && !empty($conf->global->PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY)) {
+	if (empty($price) && getDolGlobalString('PRODUCT_USE_SUB_COST_PRICES_IF_COST_PRICE_EMPTY')) {
 		// get costprice for subproducts if any
 		$producttmp->get_sousproduits_arbo();
 		$prods_arbo=$producttmp->get_arbo_each_prod();

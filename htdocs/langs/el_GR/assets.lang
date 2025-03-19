@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Νέα εγγραφή ενεργητικού
 AccountancyCodeAsset=Λογιστικός Κωδικός (Ενεργητικό)
 AccountancyCodeDepreciationAsset=Λογιστικός κωδικός (λογαριασμού απόσβεσης ενεργητικού)
@@ -25,50 +21,34 @@ DeleteType=Διαγραφή
 DeleteAnAssetType=Διαγραφή ενός τύπου ενεργητικού
 ConfirmDeleteAssetType=Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό τον τύπο ενεργητικού;
 ShowTypeCard=Εμφάνιση τύπου "%s"
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Ενεργητικό(Περιουσιακά στοιχεία)
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Περιγραφή ενεργητικού
-
-#
 # Admin page
-#
 AssetSetup=Ρύθμιση ενεργητικού
 AssetSetupPage=Σελίδα ρυθμίσης ενεργητικού
 ExtraFieldsAssetModel=Συμπληρωματικά χαρακτηριστικά (τύπος ενεργητικού)
-
 AssetsType=Τύπος ενεργητικού
 AssetsTypeId=Αναγνωριστικό τύπου ενεργητικού
 AssetsTypeLabel=Ετικέτα τύπου ενεργητικού
 AssetsTypes=Τύποι ενεργητικού
 ASSET_ACCOUNTANCY_CATEGORY=Λογιστική ομάδα παγίων ενεργητικού
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Περίοδος σε ημέρες κατ' αναλογία για τον υπολογισμό των αποσβέσεων άνω του ενός έτους
 # Menu
-#
 MenuAssets=Ενεργητικό
 MenuNewAsset=Νέα εγγραφή ενεργητικού
 MenuAssetModels=Τύποι ενεργητικού
 MenuListAssets=Λίστα
 MenuNewAssetModel=Νεος Τύπος ενεργητικού
 MenuListAssetModels=Λίστα
-
-#
 # Module
-#
 ConfirmDeleteAsset=Θέλετε πραγματικά να καταργήσετε αυτό το στοιχείο;
-
-#
 # Tab
-#
 AssetDepreciationOptions=Επιλογές απόσβεσης
 AssetAccountancyCodes=Λογαριασμοί Λογιστικής
 AssetDepreciation=Απόσβεση
-
-#
 # Asset
-#
 Asset=Ενεργητικό
 Assets=Ενεργητικό
 AssetReversalAmountHT=Ποσό αντιστροφής (χωρίς φόρους)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Δεν αποσβέστηκε
 AssetDisposal=Διάθεση
 AssetConfirmDisposalAsk=Είστε σίγουροι ότι θέλετε να διαθέσετε αυτό το περιουσιακό στοιχείο <b> %s </b>;
 AssetConfirmReOpenAsk=Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά αυτό το στοιχείο <b> %s </b>;
-
-#
 # Asset status
-#
 AssetInProgress=Σε εξέλιξη
 AssetDisposed=Διατεθειμένο
 AssetRecorded=Καταγεγραμμένο
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Ημερομηνία διάθεσης
 AssetDisposalAmount=Αξία διάθεσης
 AssetDisposalType=Τύπος διάθεσης
 AssetDisposalDepreciated=Απόσβεση του έτους μεταφοράς
 AssetDisposalSubjectToVat=Η διάθεση υπόκειται σε ΦΠΑ
-
-#
 # Asset model
-#
 AssetModel=Τύπος ενεργητικού
 AssetModels=Τύποι ενεργητικού
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Οικονομική απόσβεση
 AssetDepreciationOptionAcceleratedDepreciation=Ταχεία απόσβεση (φόρος)
 AssetDepreciationOptionDepreciationType=Μέθοδος απόσβεσης
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Γραμμική
 AssetDepreciationOptionDepreciationTypeDegressive=Προοδευτική
 AssetDepreciationOptionDepreciationTypeExceptional=Εξαιρετική
 AssetDepreciationOptionDegressiveRate=Φθίνων συντελεστής
-AssetDepreciationOptionAcceleratedDepreciation=Ταχεία απόσβεση (φόρος)
 AssetDepreciationOptionDuration=Διάρκεια
 AssetDepreciationOptionDurationType=Τύπος διάρκειας
 AssetDepreciationOptionDurationTypeAnnual=Ετήσια
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Ποσοστό (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Βάση απόσβεσης (χωρίς ΦΠΑ)
 AssetDepreciationOptionAmountBaseDeductibleHT=Εκπιπτόμενη βάση (χωρίς ΦΠΑ)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Συνολικό ποσό τελευταίας απόσβεσης (χωρίς ΦΠΑ)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Οικονομική απόσβεση
 AssetAccountancyCodeAsset=Ενεργητικό στοιχείο
 AssetAccountancyCodeDepreciationAsset=Απόσβεση
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Ταχεία απόσβ�
 AssetAccountancyCodeAcceleratedDepreciation=Λογαριασμός
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Δαπάνες απόσβεσης
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Ανάκτηση/Παροχή
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Βάση απόσβεσης (χωρίς ΦΠΑ)
 AssetDepreciationBeginDate=Έναρξη απόσβεσης στις
 AssetDepreciationDuration=Διάρκεια
@@ -164,11 +125,8 @@ AssetResidualHT=Υπολειμματική αξία (χωρίς ΦΠΑ)
 AssetDispatchedInBookkeeping=Η απόσβεση καταγράφηκε
 AssetFutureDepreciationLine=Μελλοντική απόσβεση
 AssetDepreciationReversal=Αντιστροφή
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Το αναγνωριστικό του στοιχείου ή του τύπου δεν έχει παρασχεθεί
+AssetErrorAssetOrAssetModelIDNotProvide=Το αναγνωριστικό του ενεργητικού στοιχείου ή του μοντέλου που βρέθηκε δεν έχει παρασχεθεί
 AssetErrorFetchAccountancyCodesForMode=Σφάλμα κατά την ανάκτηση των λογιστικών λογαριασμών για τη λειτουργία απόσβεσης '%s'
 AssetErrorDeleteAccountancyCodesForMode=Σφάλμα κατά τη διαγραφή λογιστικών λογαριασμών από τη λειτουργία απόσβεσης '%s'
 AssetErrorInsertAccountancyCodesForMode=Σφάλμα κατά την εισαγωγή των λογιστικών λογαριασμών του τρόπου απόσβεσης '%s'

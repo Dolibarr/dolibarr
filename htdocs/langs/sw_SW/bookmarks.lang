@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
-Bookmark=Bookmark
-Bookmarks=Bookmarks
-ListOfBookmarks=List of bookmarks
-EditBookmarks=List/edit bookmarks
-NewBookmark=New bookmark
-ShowBookmark=Show bookmark
-OpenANewWindow=Open a new tab
-ReplaceWindow=Replace current tab
-BookmarkTargetNewWindowShort=New tab
-BookmarkTargetReplaceWindowShort=Current tab
-BookmarkTitle=Bookmark name
-UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
-CreateBookmark=Create bookmark
-SetHereATitleForLink=Set a name for the bookmark
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if the linked page should open in the current tab or a new tab
-BookmarksManagement=Bookmarks management
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Ongeza ukurasa wa sasa kwenye vialamisho
+BehaviourOnClick = Behavior when a bookmark URL is selected
+Bookmark = Alamisho
+Bookmarks = Alamisho
+BookmarkTargetNewWindowShort = Kichupo kipya
+BookmarkTargetReplaceWindowShort = Kichupo cha sasa
+BookmarkTitle = Jina la alamisho
+BookmarksManagement = Usimamizi wa vialamisho
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Chagua ikiwa ukurasa uliounganishwa unapaswa kufunguliwa kwenye kichupo cha sasa au kichupo kipya
+CreateBookmark = Unda alamisho
+EditBookmarks = Orodhesha/hariri alamisho
+ListOfBookmarks = Orodha ya vialamisho
+NewBookmark = Alamisho mpya
+NoBookmarkFound = Hakuna alamisho iliyopatikana
+NoBookmarks = Hakuna alamisho zilizofafanuliwa
+OpenANewWindow = Fungua kichupo kipya
+ReplaceWindow = Badilisha kichupo cha sasa
+SetHereATitleForLink = Weka jina la alamisho
+ShowBookmark = Onyesha alamisho
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Tumia kiungo cha nje/kabisa (https://externalurl.com) au kiungo cha ndani/jamaa (/mypage.php). Unaweza pia kutumia simu kama tel:0123456.

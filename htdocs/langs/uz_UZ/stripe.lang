@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=Shartnoma liniyasi uchun %s onlayn to
 ToOfferALinkForOnlinePaymentOnFreeAmount=Mavjud ob'ekti bo'lmagan har qanday miqdordagi %s onlayn to'lov sahifasini taqdim etish uchun URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=Ro'yxatdan obuna uchun %s onlayn to'lov sahifasini taqdim etish uchun URL
 ToOfferALinkForOnlinePaymentOnDonation=Xayr-ehson to'lash uchun %s onlayn to'lov sahifasini taqdim etadigan URL
-YouCanAddTagOnUrl=O'zingizning to'lov izoh yorlig'ingizni qo'shish uchun url parametrini <b> & tag = <i> </i> </b> URL-ni qo'shishingiz mumkin (faqat ob'ekt bilan bog'lanmagan to'lov uchun majburiy). <br> Mavjud ob'ekti bo'lmagan to'lovlar URL manzili uchun siz <strong> & noidempotency = 1 </strong> parametrini qo'shishingiz mumkin, shuning uchun bir xil teg bilan bir xil havoladan bir necha marta foydalanish mumkin (ba'zi to'lov rejimi har bir boshqa havola uchun to'lovni 1 ga cheklashi mumkin) parametr)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Stripe-ni url bilan sozlang <b> %s </b> Stripe tomonidan tasdiqlanganda to'lov avtomatik ravishda yaratiladi.
 AccountParameter=Hisob parametrlari
 UsageParameter=Foydalanish parametrlari
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook jonli kaliti
 ONLINE_PAYMENT_WAREHOUSE=Onlayn to'lov amalga oshirilganda aktsiyalarni pasaytirish uchun foydalaniladigan zaxiralar
 StripeLiveEnabled=Stripe jonli yoqilgan (aks holda sinov / sandbox rejimi)
 StripeImportPayment=Stripe to'lovlarini import qilish
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Sinov toʻlovi uchun kredit karta misoli: %s => toʻgʻri, %s => xato CVC, %s => muddati tugadi, %s => to‘lov amalga oshmadi
+ExampleOfTestBankAcountForSEPA=To'g'ridan-to'g'ri debet testi uchun bank hisobining BANiga misol: %s
 StripeGateways=Stripe shlyuzlari
 OAUTH_STRIPE_TEST_ID=Stripe Connect mijoz identifikatori (taxminan _...)
 OAUTH_STRIPE_LIVE_ID=Stripe Connect mijoz identifikatori (taxminan _...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe hisob qaydnomasi
 StripeChargeList=Stripe to'lovlari ro'yxati
 StripeTransactionList=Stripe operatsiyalari ro'yxati
 StripeCustomerId=Stripe mijoz identifikatori
+StripePaymentId=Stripe toʻlov identifikatori
 StripePaymentModes=Stripe to'lov rejimlari
 LocalID=Mahalliy identifikator
 StripeID=Stripe ID
@@ -62,7 +64,7 @@ DeleteACard=Kartani o'chirish
 ConfirmDeleteCard=Ushbu Kredit yoki Debet kartani o'chirishni xohlaysizmi?
 CreateCustomerOnStripe=Stripe-da mijoz yarating
 CreateCardOnStripe=Stripe-da karta yarating
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Stripe-da bank yarating
 ShowInStripe=Stripe-da ko'rsatish
 StripeUserAccountForActions=Stripe voqealari (Stripe to'lovlari) haqida elektron pochta orqali xabar berish uchun foydalanuvchi hisob qaydnomasi
 StripePayoutList=Stripe to'lovlari ro'yxati
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni o'rn
 ToOfferALinkForLiveWebhook=IPH-ga qo'ng'iroq qilish uchun Stripe WebHook-ni sozlash uchun havola (jonli rejim)
 PaymentWillBeRecordedForNextPeriod=To'lov keyingi davr uchun qayd etiladi.
 ClickHereToTryAgain= <a href="%s"> Qayta urinish uchun shu erni bosing ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Mijozlarni kuchli autentifikatsiya qilish qoidalari tufayli kartani yaratish Stripe backoffice-da amalga oshirilishi kerak. Stripe mijozlar yozuvini yoqish uchun bu erni bosishingiz mumkin: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Kuchli mijozlarni autentifikatsiya qilish qoidalariga ko'ra, kartani yaratish Stripe orqa ofisidan amalga oshirilishi kerak. Stripe mijozlar rekordini yoqish uchun shu yerni bosing: %s
+STRIPE_CARD_PRESENT=Stripe terminallari uchun karta sovg'asi
+TERMINAL_LOCATION=Stripe terminallari uchun joy (manzil).
+RequestDirectDebitWithStripe=Stripe bilan to'g'ridan-to'g'ri debetni talab qiling
+RequesCreditTransferWithStripe=Stripe bilan kredit o'tkazmasini talab qiling
+STRIPE_SEPA_DIRECT_DEBIT=Stripe orqali to'g'ridan-to'g'ri debet to'lovlarini yoqing
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect rejimi
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

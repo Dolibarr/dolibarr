@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\HTTP;
 
 use Sabre\Event\EventEmitter;
@@ -24,7 +26,7 @@ use Sabre\Uri;
  * request before it's done, such as adding authentication headers.
  *
  * The afterRequest event will be emitted after the request is completed
- * succesfully.
+ * successfully.
  *
  * If a HTTP error is returned (status code higher than 399) the error event is
  * triggered. It's possible using this event to retry the request, by setting
@@ -41,17 +43,17 @@ use Sabre\Uri;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Client extends EventEmitter {
-
+class Client extends EventEmitter
+{
     /**
-     * List of curl settings
+     * List of curl settings.
      *
      * @var array
      */
     protected $curlSettings = [];
 
     /**
-     * Wether or not exceptions should be thrown when a HTTP error is returned.
+     * Whether exceptions should be thrown when a HTTP error is returned.
      *
      * @var bool
      */
@@ -64,53 +66,61 @@ class Client extends EventEmitter {
      */
     protected $maxRedirects = 5;
 
+    protected $headerLinesMap = [];
+
     /**
      * Initializes the client.
-     *
-     * @return void
      */
-    function __construct() {
+    public function __construct()
+    {
+        // See https://github.com/sabre-io/http/pull/115#discussion_r241292068
+        // Preserve compatibility for sub-classes that implements their own method `parseCurlResult`
+        $separatedHeaders = __CLASS__ === get_class($this);
 
         $this->curlSettings = [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HEADER         => true,
-            CURLOPT_NOBODY         => false,
-            CURLOPT_USERAGENT      => 'sabre-http/' . Version::VERSION . ' (http://sabre.io/)',
+            CURLOPT_NOBODY => false,
+            CURLOPT_USERAGENT => 'sabre-http/'.Version::VERSION.' (http://sabre.io/)',
         ];
+        if ($separatedHeaders) {
+            $this->curlSettings[CURLOPT_HEADERFUNCTION] = [$this, 'receiveCurlHeader'];
+        } else {
+            $this->curlSettings[CURLOPT_HEADER] = true;
+        }
+    }
 
+    protected function receiveCurlHeader($curlHandle, $headerLine)
+    {
+        $this->headerLinesMap[(int) $curlHandle][] = $headerLine;
+
+        return strlen($headerLine);
     }
 
     /**
      * Sends a request to a HTTP server, and returns a response.
-     *
-     * @param RequestInterface $request
-     * @return ResponseInterface
      */
-    function send(RequestInterface $request) {
-
+    public function send(RequestInterface $request): ResponseInterface
+    {
         $this->emit('beforeRequest', [$request]);
 
         $retryCount = 0;
         $redirects = 0;
 
         do {
-
             $doRedirect = false;
             $retry = false;
 
             try {
-
                 $response = $this->doRequest($request);
 
-                $code = (int)$response->getStatus();
+                $code = $response->getStatus();
 
                 // We are doing in-PHP redirects, because curl's
                 // FOLLOW_LOCATION throws errors when PHP is configured with
                 // open_basedir.
                 //
                 // https://github.com/fruux/sabre-http/issues/12
-                if (in_array($code, [301, 302, 307, 308]) && $redirects < $this->maxRedirects) {
-
+                if ($redirects < $this->maxRedirects && in_array($code, [301, 302, 307, 308])) {
                     $oldLocation = $request->getUrl();
 
                     // Creating a new instance of the request object.
@@ -123,20 +133,15 @@ class Client extends EventEmitter {
                     ));
 
                     $doRedirect = true;
-                    $redirects++;
-
+                    ++$redirects;
                 }
 
                 // This was a HTTP error
                 if ($code >= 400) {
-
                     $this->emit('error', [$request, $response, &$retry, $retryCount]);
-                    $this->emit('error:' . $code, [$request, $response, &$retry, $retryCount]);
-
+                    $this->emit('error:'.$code, [$request, $response, &$retry, $retryCount]);
                 }
-
             } catch (ClientException $e) {
-
                 $this->emit('exception', [$request, $e, &$retry, $retryCount]);
 
                 // If retry was still set to false, it means no event handler
@@ -145,13 +150,11 @@ class Client extends EventEmitter {
                 if (!$retry) {
                     throw $e;
                 }
-
             }
 
             if ($retry) {
-                $retryCount++;
+                ++$retryCount;
             }
-
         } while ($retry || $doRedirect);
 
         $this->emit('afterRequest', [$request, $response]);
@@ -161,7 +164,6 @@ class Client extends EventEmitter {
         }
 
         return $response;
-
     }
 
     /**
@@ -172,20 +174,13 @@ class Client extends EventEmitter {
      *
      * After calling sendAsync, you must therefore occasionally call the poll()
      * method, or wait().
-     *
-     * @param RequestInterface $request
-     * @param callable $success
-     * @param callable $error
-     * @return void
      */
-    function sendAsync(RequestInterface $request, callable $success = null, callable $error = null) {
-
+    public function sendAsync(RequestInterface $request, callable $success = null, callable $error = null)
+    {
         $this->emit('beforeRequest', [$request]);
         $this->sendAsyncInternal($request, $success, $error);
         $this->poll();
-
     }
-
 
     /**
      * This method checks if any http requests have gotten results, and if so,
@@ -193,11 +188,9 @@ class Client extends EventEmitter {
      *
      * This method will return true if there are still requests waiting to
      * return, and false if all the work is done.
-     *
-     * @return bool
      */
-    function poll() {
-
+    public function poll(): bool
+    {
         // nothing to do?
         if (!$this->curlMultiMap) {
             return false;
@@ -208,10 +201,10 @@ class Client extends EventEmitter {
                 $this->curlMultiHandle,
                 $stillRunning
             );
-        } while ($r === CURLM_CALL_MULTI_PERFORM);
+        } while (CURLM_CALL_MULTI_PERFORM === $r);
 
+        $messagesInQueue = 0;
         do {
-
             messageQueue:
 
             $status = curl_multi_info_read(
@@ -219,26 +212,25 @@ class Client extends EventEmitter {
                 $messagesInQueue
             );
 
-            if ($status && $status['msg'] === CURLMSG_DONE) {
-
-                $resourceId = intval($status['handle']);
+            if ($status && CURLMSG_DONE === $status['msg']) {
+                $resourceId = (int) $status['handle'];
                 list(
                     $request,
                     $successCallback,
                     $errorCallback,
-                    $retryCount,
-                ) = $this->curlMultiMap[$resourceId];
+                    $retryCount) = $this->curlMultiMap[$resourceId];
                 unset($this->curlMultiMap[$resourceId]);
-                $curlResult = $this->parseCurlResult(curl_multi_getcontent($status['handle']), $status['handle']);
+
+                $curlHandle = $status['handle'];
+                $curlResult = $this->parseResponse(curl_multi_getcontent($curlHandle), $curlHandle);
                 $retry = false;
 
-                if ($curlResult['status'] === self::STATUS_CURLERROR) {
-
+                if (self::STATUS_CURLERROR === $curlResult['status']) {
                     $e = new ClientException($curlResult['curl_errmsg'], $curlResult['curl_errno']);
                     $this->emit('exception', [$request, $e, &$retry, $retryCount]);
 
                     if ($retry) {
-                        $retryCount++;
+                        ++$retryCount;
                         $this->sendAsyncInternal($request, $successCallback, $errorCallback, $retryCount);
                         goto messageQueue;
                     }
@@ -248,18 +240,14 @@ class Client extends EventEmitter {
                     if ($errorCallback) {
                         $errorCallback($curlResult);
                     }
-
-                } elseif ($curlResult['status'] === self::STATUS_HTTPERROR) {
-
+                } elseif (self::STATUS_HTTPERROR === $curlResult['status']) {
                     $this->emit('error', [$request, $curlResult['response'], &$retry, $retryCount]);
-                    $this->emit('error:' . $curlResult['http_code'], [$request, $curlResult['response'], &$retry, $retryCount]);
+                    $this->emit('error:'.$curlResult['http_code'], [$request, $curlResult['response'], &$retry, $retryCount]);
 
                     if ($retry) {
-
-                        $retryCount++;
+                        ++$retryCount;
                         $this->sendAsyncInternal($request, $successCallback, $errorCallback, $retryCount);
                         goto messageQueue;
-
                     }
 
                     $curlResult['request'] = $request;
@@ -267,37 +255,29 @@ class Client extends EventEmitter {
                     if ($errorCallback) {
                         $errorCallback($curlResult);
                     }
-
                 } else {
-
                     $this->emit('afterRequest', [$request, $curlResult['response']]);
 
                     if ($successCallback) {
                         $successCallback($curlResult['response']);
                     }
-
                 }
             }
-
         } while ($messagesInQueue > 0);
 
         return count($this->curlMultiMap) > 0;
-
     }
 
     /**
      * Processes every HTTP request in the queue, and waits till they are all
      * completed.
-     *
-     * @return void
      */
-    function wait() {
-
+    public function wait()
+    {
         do {
             curl_multi_select($this->curlMultiHandle);
             $stillRunning = $this->poll();
         } while ($stillRunning);
-
     }
 
     /**
@@ -309,14 +289,10 @@ class Client extends EventEmitter {
      *
      * This only works for the send() method. Throwing exceptions for
      * sendAsync() is not supported.
-     *
-     * @param bool $throwExceptions
-     * @return void
      */
-    function setThrowExceptions($throwExceptions) {
-
+    public function setThrowExceptions(bool $throwExceptions)
+    {
         $this->throwExceptions = $throwExceptions;
-
     }
 
     /**
@@ -324,40 +300,34 @@ class Client extends EventEmitter {
      *
      * These settings will be included in every HTTP request.
      *
-     * @param int $name
      * @param mixed $value
-     * @return void
      */
-    function addCurlSetting($name, $value) {
-
+    public function addCurlSetting(int $name, $value)
+    {
         $this->curlSettings[$name] = $value;
-
     }
 
     /**
      * This method is responsible for performing a single request.
-     *
-     * @param RequestInterface $request
-     * @return ResponseInterface
      */
-    protected function doRequest(RequestInterface $request) {
-
+    protected function doRequest(RequestInterface $request): ResponseInterface
+    {
         $settings = $this->createCurlSettingsArray($request);
 
         if (!$this->curlHandle) {
             $this->curlHandle = curl_init();
+        } else {
+            curl_reset($this->curlHandle);
         }
 
         curl_setopt_array($this->curlHandle, $settings);
         $response = $this->curlExec($this->curlHandle);
-        $response = $this->parseCurlResult($response, $this->curlHandle);
-
-        if ($response['status'] === self::STATUS_CURLERROR) {
+        $response = $this->parseResponse($response, $this->curlHandle);
+        if (self::STATUS_CURLERROR === $response['status']) {
             throw new ClientException($response['curl_errmsg'], $response['curl_errno']);
         }
 
         return $response['response'];
-
     }
 
     /**
@@ -389,55 +359,53 @@ class Client extends EventEmitter {
 
     /**
      * Turns a RequestInterface object into an array with settings that can be
-     * fed to curl_setopt
-     *
-     * @param RequestInterface $request
-     * @return array
+     * fed to curl_setopt.
      */
-    protected function createCurlSettingsArray(RequestInterface $request) {
-
+    protected function createCurlSettingsArray(RequestInterface $request): array
+    {
         $settings = $this->curlSettings;
 
         switch ($request->getMethod()) {
-            case 'HEAD' :
+            case 'HEAD':
                 $settings[CURLOPT_NOBODY] = true;
                 $settings[CURLOPT_CUSTOMREQUEST] = 'HEAD';
-                $settings[CURLOPT_POSTFIELDS] = '';
-                $settings[CURLOPT_PUT] = false;
                 break;
-            case 'GET' :
+            case 'GET':
                 $settings[CURLOPT_CUSTOMREQUEST] = 'GET';
-                $settings[CURLOPT_POSTFIELDS] = '';
-                $settings[CURLOPT_PUT] = false;
                 break;
-            default :
+            default:
                 $body = $request->getBody();
                 if (is_resource($body)) {
+                    $bodyStat = fstat($body);
+
                     // This needs to be set to PUT, regardless of the actual
                     // method used. Without it, INFILE will be ignored for some
                     // reason.
                     $settings[CURLOPT_PUT] = true;
-                    $settings[CURLOPT_INFILE] = $request->getBody();
+                    $settings[CURLOPT_INFILE] = $body;
+                    if (false !== $bodyStat && array_key_exists('size', $bodyStat)) {
+                        $settings[CURLOPT_INFILESIZE] = $bodyStat['size'];
+                    }
                 } else {
                     // For security we cast this to a string. If somehow an array could
                     // be passed here, it would be possible for an attacker to use @ to
                     // post local files.
-                    $settings[CURLOPT_POSTFIELDS] = (string)$body;
+                    $settings[CURLOPT_POSTFIELDS] = (string) $body;
                 }
                 $settings[CURLOPT_CUSTOMREQUEST] = $request->getMethod();
                 break;
-
         }
 
         $nHeaders = [];
         foreach ($request->getHeaders() as $key => $values) {
-
             foreach ($values as $value) {
-                $nHeaders[] = $key . ': ' . $value;
+                $nHeaders[] = $key.': '.$value;
             }
-
         }
-        $settings[CURLOPT_HTTPHEADER] = $nHeaders;
+
+        if ([] !== $nHeaders) {
+            $settings[CURLOPT_HTTPHEADER] = $nHeaders;
+        }
         $settings[CURLOPT_URL] = $request->getUrl();
         // FIXME: CURLOPT_PROTOCOLS is currently unsupported by HHVM
         if (defined('CURLOPT_PROTOCOLS')) {
@@ -449,12 +417,31 @@ class Client extends EventEmitter {
         }
 
         return $settings;
-
     }
 
     const STATUS_SUCCESS = 0;
     const STATUS_CURLERROR = 1;
     const STATUS_HTTPERROR = 2;
+
+    private function parseResponse(string $response, $curlHandle): array
+    {
+        $settings = $this->curlSettings;
+        $separatedHeaders = isset($settings[CURLOPT_HEADERFUNCTION]) && (bool) $settings[CURLOPT_HEADERFUNCTION];
+
+        if ($separatedHeaders) {
+            $resourceId = (int) $curlHandle;
+            if (isset($this->headerLinesMap[$resourceId])) {
+                $headers = $this->headerLinesMap[$resourceId];
+            } else {
+                $headers = [];
+            }
+            $response = $this->parseCurlResponse($headers, $response, $curlHandle);
+        } else {
+            $response = $this->parseCurlResult($response, $curlHandle);
+        }
+
+        return $response;
+    }
 
     /**
      * Parses the result of a curl call in a format that's a bit more
@@ -471,12 +458,10 @@ class Client extends EventEmitter {
      *   * http_code - HTTP status code, as an int. Only set if Only set if
      *                 status is STATUS_SUCCESS, or STATUS_HTTPERROR
      *
-     * @param string $response
      * @param resource $curlHandle
-     * @return Response
      */
-    protected function parseCurlResult($response, $curlHandle) {
-
+    protected function parseCurlResponse(array $headerLines, string $body, $curlHandle): array
+    {
         list(
             $curlInfo,
             $curlErrNo,
@@ -485,8 +470,63 @@ class Client extends EventEmitter {
 
         if ($curlErrNo) {
             return [
-                'status'      => self::STATUS_CURLERROR,
-                'curl_errno'  => $curlErrNo,
+                'status' => self::STATUS_CURLERROR,
+                'curl_errno' => $curlErrNo,
+                'curl_errmsg' => $curlErrMsg,
+            ];
+        }
+
+        $response = new Response();
+        $response->setStatus($curlInfo['http_code']);
+        $response->setBody($body);
+
+        foreach ($headerLines as $header) {
+            $parts = explode(':', $header, 2);
+            if (2 === count($parts)) {
+                $response->addHeader(trim($parts[0]), trim($parts[1]));
+            }
+        }
+
+        $httpCode = $response->getStatus();
+
+        return [
+            'status' => $httpCode >= 400 ? self::STATUS_HTTPERROR : self::STATUS_SUCCESS,
+            'response' => $response,
+            'http_code' => $httpCode,
+        ];
+    }
+
+    /**
+     * Parses the result of a curl call in a format that's a bit more
+     * convenient to work with.
+     *
+     * The method returns an array with the following elements:
+     *   * status - one of the 3 STATUS constants.
+     *   * curl_errno - A curl error number. Only set if status is
+     *                  STATUS_CURLERROR.
+     *   * curl_errmsg - A current error message. Only set if status is
+     *                   STATUS_CURLERROR.
+     *   * response - Response object. Only set if status is STATUS_SUCCESS, or
+     *                STATUS_HTTPERROR.
+     *   * http_code - HTTP status code, as an int. Only set if Only set if
+     *                 status is STATUS_SUCCESS, or STATUS_HTTPERROR
+     *
+     * @deprecated Use parseCurlResponse instead
+     *
+     * @param resource $curlHandle
+     */
+    protected function parseCurlResult(string $response, $curlHandle): array
+    {
+        list(
+            $curlInfo,
+            $curlErrNo,
+            $curlErrMsg
+        ) = $this->curlStuff($curlHandle);
+
+        if ($curlErrNo) {
+            return [
+                'status' => self::STATUS_CURLERROR,
+                'curl_errno' => $curlErrNo,
                 'curl_errmsg' => $curlErrMsg,
             ];
         }
@@ -495,7 +535,7 @@ class Client extends EventEmitter {
         // In the case of 204 No Content, strlen($response) == $curlInfo['header_size].
         // This will cause substr($response, $curlInfo['header_size']) return FALSE instead of NULL
         // An exception will be thrown when calling getBodyAsString then
-        $responseBody = substr($response, $curlInfo['header_size']) ?: null;
+        $responseBody = substr($response, $curlInfo['header_size']) ?: '';
 
         unset($response);
 
@@ -510,26 +550,7 @@ class Client extends EventEmitter {
         // Splitting headers
         $headerBlob = explode("\r\n", $headerBlob);
 
-        $response = new Response();
-        $response->setStatus($curlInfo['http_code']);
-
-        foreach ($headerBlob as $header) {
-            $parts = explode(':', $header, 2);
-            if (count($parts) == 2) {
-                $response->addHeader(trim($parts[0]), trim($parts[1]));
-            }
-        }
-
-        $response->setBody($responseBody);
-
-        $httpCode = intval($response->getStatus());
-
-        return [
-            'status'    => $httpCode >= 400 ? self::STATUS_HTTPERROR : self::STATUS_SUCCESS,
-            'response'  => $response,
-            'http_code' => $httpCode,
-        ];
-
+        return $this->parseCurlResponse($headerBlob, $responseBody, $curlHandle);
     }
 
     /**
@@ -537,14 +558,9 @@ class Client extends EventEmitter {
      *
      * We keep this in a separate method, so we can call it without triggering
      * the beforeRequest event and don't do the poll().
-     *
-     * @param RequestInterface $request
-     * @param callable $success
-     * @param callable $error
-     * @param int $retryCount
      */
-    protected function sendAsyncInternal(RequestInterface $request, callable $success, callable $error, $retryCount = 0) {
-
+    protected function sendAsyncInternal(RequestInterface $request, callable $success, callable $error, int $retryCount = 0)
+    {
         if (!$this->curlMultiHandle) {
             $this->curlMultiHandle = curl_multi_init();
         }
@@ -554,29 +570,36 @@ class Client extends EventEmitter {
             $this->createCurlSettingsArray($request)
         );
         curl_multi_add_handle($this->curlMultiHandle, $curl);
-        $this->curlMultiMap[intval($curl)] = [
+
+        $resourceId = (int) $curl;
+        $this->headerLinesMap[$resourceId] = [];
+        $this->curlMultiMap[$resourceId] = [
             $request,
             $success,
             $error,
-            $retryCount
+            $retryCount,
         ];
-
     }
 
     // @codeCoverageIgnoreStart
 
     /**
-     * Calls curl_exec
+     * Calls curl_exec.
      *
      * This method exists so it can easily be overridden and mocked.
      *
      * @param resource $curlHandle
-     * @return string
      */
-    protected function curlExec($curlHandle) {
+    protected function curlExec($curlHandle): string
+    {
+        $this->headerLinesMap[(int) $curlHandle] = [];
 
-        return curl_exec($curlHandle);
+        $result = curl_exec($curlHandle);
+        if (false === $result) {
+            $result = '';
+        }
 
+        return $result;
     }
 
     /**
@@ -585,17 +608,15 @@ class Client extends EventEmitter {
      * This method exists so it can easily be overridden and mocked.
      *
      * @param resource $curlHandle
-     * @return array
      */
-    protected function curlStuff($curlHandle) {
-
+    protected function curlStuff($curlHandle): array
+    {
         return [
             curl_getinfo($curlHandle),
             curl_errno($curlHandle),
             curl_error($curlHandle),
         ];
-
     }
-    // @codeCoverageIgnoreEnd
 
+    // @codeCoverageIgnoreEnd
 }

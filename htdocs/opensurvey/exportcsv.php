@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2013      Laurent Destailleur        <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García              <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,13 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $action = GETPOST('action', 'aZ09');
 $numsondage = '';
@@ -38,13 +47,13 @@ if (GETPOST('id')) {
 
 // Initialize Objects
 $object = new Opensurveysondage($db);
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
-	dol_print_error('', 'Failed to get survey id '.$numsondage);
+	dol_print_error(null, 'Failed to get survey id '.$numsondage);
 }
 
 // Security check
-if (empty($user->rights->opensurvey->read)) {
+if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 
@@ -68,9 +77,9 @@ $somme = array();
 $input = $langs->trans("Name").";";
 for ($i = 0; $toutsujet[$i]; $i++) {
 	if ($object->format == "D") {
-		$input .= ''.dol_print_date($toutsujet[$i], 'dayhour').';';
+		$input .= dol_print_date($toutsujet[$i], 'dayhour').';';
 	} else {
-		$input .= ''.$toutsujet[$i].';';
+		$input .= $toutsujet[$i].';';
 	}
 }
 
@@ -80,7 +89,7 @@ if (strpos($object->sujet, '@') !== false) {
 	$input .= ";";
 	for ($i = 0; $toutsujet[$i]; $i++) {
 		$heures = explode("@", $toutsujet[$i]);
-		$input .= ''.$heures[1].';';
+		$input .= $heures[1].';';
 	}
 
 	$input .= "\r\n";

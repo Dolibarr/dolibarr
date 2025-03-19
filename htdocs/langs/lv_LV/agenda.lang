@@ -8,8 +8,6 @@ LocalAgenda=Noklusējuma kalendārs
 ActionsOwnedBy=Notikums pieder
 ActionsOwnedByShort=Īpašnieks
 AffectedTo=Piešķirts
-Event=Notikums
-Events=Notikumi
 EventsNb=Notikumu skaits
 ListOfActions=Notikumu saraksts
 EventReports=Pasākumu atskaites
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mani izbeigtie notikumi
 ListOfEvents=Notikumu saraksts (noklusējuma kalendārs)
 ActionsAskedBy=Notikumu ziņoja
 ActionsToDoBy=Pasākums piešķirts
-ActionsDoneBy=Pasākumi, ko veikuši
 ActionAssignedTo=Notikums piešķirts
 ViewCal=Mēneša skats
 ViewDay=Dienas skats
@@ -62,7 +59,7 @@ MemberSubscriptionAddedInDolibarr=Abonements %s dalībniekam %s pievienots
 MemberSubscriptionModifiedInDolibarr=Abonements %s biedram %s ir labots
 MemberSubscriptionDeletedInDolibarr=Abonements %s dalībniekam %s dzēsts
 ShipmentValidatedInDolibarr=Sūtījums %s apstiprināts
-ShipmentClassifyClosedInDolibarr=Sūtījums %s, kas klasificēts kā rēķins
+ShipmentClassifyClosedInDolibarr=Sūtījums %s klasificēts kā slēgts
 ShipmentUnClassifyCloseddInDolibarr=Sūtījums %s klasificēts atkārtoti atvērts
 ShipmentBackToDraftInDolibarr=Sūtījums %s dodas atpakaļ uz melnraksta statusu
 ShipmentDeletedInDolibarr=Sūtījums %s dzēsts
@@ -89,6 +86,8 @@ ShippingSentByEMail=Sūtījums %s nosūtīts pa e-pastu
 ShippingValidated= Sūtījums %s apstiprināts
 InterventionSentByEMail=Intervence %s nosūtīta pa e-pastu
 ProjectSentByEMail=Projekts %s nosūtīts pa e-pastu
+ProjectDeletedInDolibarr=Projekts %s dzēsts
+ProjectClosedInDolibarr=Projekts %s ir slēgts
 ProposalDeleted=Piedāvājums dzēsts
 OrderDeleted=Pasūtījums dzēsts
 InvoiceDeleted=Rēķins dzēsts
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO ražots
 MRP_MO_DELETEInDolibarr=MO ir izdzēsts
 MRP_MO_CANCELInDolibarr=MO atcelts
 PAIDInDolibarr=%s samaksāts
+ENABLEDISABLEInDolibarr=Lietotājs iespējots vai atspējots
+CANCELInDolibarr=Atcelts
 ##### End agenda events #####
 AgendaModelModule=Dokumentu veidnes notikumam
 DateActionStart=Sākuma datums
 DateActionEnd=Beigu datums
 AgendaUrlOptions1=Jūs varat pievienot arī šādus parametrus, lai filtrētu produkciju:
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina =! %s</b>, lai ierobežotu izvadi darbībām, kas nav lietotāja īpašumā <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b>, lai ierobežotu izvadi ar darbībām, kas pieder lietotājam <b>%s</b> (izmantojiet 3f0873f65 logina=!%s</b> pasākumiem, kas nepieder lietotājam).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b>, lai ierobežotu izlaidi darbībām, kas saistītas ar projektu <b> __ PROJECT_ID __ </ b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </b>, lai izslēgtu automātiskus notikumus.
+AgendaUrlOptionsType=<b>actiontype=%s</b>, lai iegūtu automātiskus vai manuālus notikumus
+AgendaUrlOptionsCode=<b>actioncode=%s</b>, lai iegūtu tikai notikumus ar noteiktu kodu
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b>, lai iekļautu svētku pasākumus.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b>, lai ierobežotu līdz pēdējiem 50 notikumiem (noklusējuma un maksimālā vērtība ir b0ecb2fz87f4 ).
 AgendaShowBirthdayEvents=Kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts
@@ -177,5 +180,28 @@ ReminderType=Atzvanīšanas tips
 AddReminder=Izveidojiet automātisku atgādinājumu par šo notikumu
 ErrorReminderActionCommCreation=Izveidojot atgādinājumu par šo notikumu, radās kļūda
 BrowserPush=Paziņojums par pārlūkprogrammas uznirstošo logu
+Reminders=Atgādinājumi
 ActiveByDefault=Pēc noklusējuma iespējots
 Until=līdz
+DataFromWasMerged=Dati no %s tika apvienoti
+AgendaShowBookcalCalendar=Rezervēšanas kalendārs: %s
+MenuBookcalIndex=Tiešsaistes tikšanās
+BookcalLabelAvailabilityHelp=Pieejamības diapazona etiķete. Piemēram:<br>Vispārēja pieejamība<br>Pieejamība Ziemassvētku brīvdienās
+DurationOfRange=Diapazonu ilgums
+BookCalSetup = Tiešsaistes tikšanās iestatīšana
+BookCalSetupPage = Tiešsaistes tikšanās iestatīšanas lapa
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interfeisa virsraksts
+BookCalAbout = Par BookCal
+BookCalAboutPage = BookCal par lapu
+Calendars=Kalendāri
+Availabilities=Pieejamība
+NewAvailabilities=Jaunas pieejamības
+NewCalendar=Jauns kalendārs
+ThirdPartyBookCalHelp=Šajā kalendārā rezervētais pasākums tiks automātiski saistīts ar šo trešo pusi.
+AppointmentDuration = Tikšanās ilgums : %s
+BookingSuccessfullyBooked=Jūsu rezervācija ir saglabāta
+BookingReservationHourAfter=Mēs apstiprinām mūsu tikšanās rezervāciju šajā datumā: %s
+BookcalBookingTitle=Tiešsaistes tikšanās
+Transparency = Pārredzamība
+ReadMore = Lasīt vairāk
+ReadLess = Lasi mazāk

@@ -1,0 +1,34 @@
+---
+networks:
+    internal-pod:
+        internal: true
+    external-pod:
+        internal: false
+
+services:
+    mariadb:
+        image: mariadb:latest
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpassfordev
+            MYSQL_DATABASE: dolibarr
+        ports:
+            - "3306:3306"
+        networks:
+            - internal-pod
+            - external-pod
+    web:
+        depends_on:
+            - mariadb
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        environment:
+            PMA_HOST: mariadb
+        depends_on:
+            - mariadb
+        ports:
+            - "8080:80"
+        networks:
+            - internal-pod
+            - external-pod
+
+

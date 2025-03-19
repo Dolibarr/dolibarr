@@ -2,7 +2,7 @@
 ContractsArea=Τομέας συμβάσεων
 ListOfContracts=Λίστα συμβάσεων
 AllContracts=Όλες οι συμβάσεις
-ContractCard=Καρτέλα  Σύμβασης
+ContractCard=Σύμβαση
 ContractStatusNotRunning=Ανενεργή
 ContractStatusDraft=Προσχέδιο
 ContractStatusValidated=Επικυρώθηκε
@@ -47,6 +47,7 @@ DateContract=Ημερομηνία σύμβασης
 DateServiceActivate=Ημερομηνία ενεργοποίησης υπηρεσίας
 ListOfServices=Λίστα υπηρεσιών
 ListOfInactiveServices=Λίστα μη ενεργών υπηρεσιών
+ListOfNotExpiredServices=Λίστα ενεργών υπηρεσιών που δεν έχουν λήξει
 ListOfExpiredServices=Λίστα ενεργών υπηρεσιών που έχουν λήξει
 ListOfClosedServices=Λίστα τερματισμένων υπηρεσιών
 ListOfRunningServices=Λίστα ενεργών υπηρεσιών

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2012 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,69 @@ abstract class CommonOrder extends CommonObject
 {
 	use CommonIncoterm;
 
+
+	/**
+	 *	Return clickable link of object (with eventually picto)
+	 *
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs, $conf;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<div class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', 'order');
+		$return .= '</div>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'thirdparty') && is_object($this->thirdparty)) {
+			$return .= '<br><div class="info-box-ref tdoverflowmax150">'.$this->thirdparty->getNomUrl(1).'</div>';
+		}
+		if (property_exists($this, 'total_ht')) {
+			$return .= '<div class="info-box-ref amount">'.price($this->total_ht, 0, $langs, 0, -1, -1, $conf->currency).' '.$langs->trans('HT').'</div>';
+		}
+		if (method_exists($this, 'getLibStatut')) {
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
+	}
+
+	/** return nb of fines of order where products or services that can be bought
+	 *
+	 * @param	boolean		$ignoreFree		Ignore free lines
+	 * @return	int							number of products or services on buy in a command
+	 */
+	public function getNbLinesProductOrServiceOnBuy($ignoreFree = false)
+	{
+		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		$product = new Product($this->db);
+		$return = 0;
+		foreach ($this->lines as $line) {
+			if (empty($line->fk_product) && !$ignoreFree) {
+				$return++;
+			} elseif ((int) $line->fk_product > 0) {
+				if ($product->fetch($line->fk_product) > 0) {
+					if ($product->status_buy) {
+						$return++;
+					}
+				}
+			}
+		}
+		return $return;
+	}
+
 	/**
 	 * @var string code
 	 */
@@ -45,14 +110,15 @@ abstract class CommonOrderLine extends CommonObjectLine
 {
 	/**
 	 * Custom label of line. Not used by default.
-	 * @deprecated
+	 * @deprecated Use $product_label
+	 * @var string
 	 */
 	public $label;
 
 	/**
 	 * Product ref
 	 * @var string
-	 * @deprecated Use product_ref
+	 * @deprecated Use $product_ref
 	 * @see $product_ref
 	 */
 	public $ref;
@@ -81,23 +147,23 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Boolean that indicates whether the product is available for sale '1' or not '0'
 	 * @var int
 	 */
-	public $product_tosell=0;
+	public $product_tosell = 0;
 
 	/**
 	 * Boolean that indicates whether the product is available for purchase '1' or not '0'
 	 * @var int
 	 */
-	public $product_tobuy=0;
+	public $product_tobuy = 0;
 
 	/**
 	 * Product description
 	 * @var string
 	 */
-	 public $product_desc;
+	public $product_desc;
 
 	/**
 	 * Product use lot
-	 * @var string
+	 * @var int
 	 */
 	public $product_tobatch;
 
@@ -117,6 +183,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 * Unit price
 	 * @deprecated
 	 * @see $subprice
+	 * @var float
 	 */
 	public $price;
 
@@ -128,15 +195,9 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Type of the product. 0 for product 1 for service
-	 * @var int
+	 * @var int<0,1>
 	 */
 	public $product_type = 0;
-
-	/**
-	 * Description of the line
-	 * @var string
-	 */
-	public $desc;
 
 	/**
 	 * Id of corresponding product
@@ -146,7 +207,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * Percent line discount
-	 * @var float
+	 * @var float|string
 	 */
 	public $remise_percent;
 
@@ -158,7 +219,7 @@ abstract class CommonOrderLine extends CommonObjectLine
 
 	/**
 	 * VAT %
-	 * @var float
+	 * @var float|string
 	 */
 	public $tva_tx;
 
@@ -174,7 +235,13 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $localtax2_tx;
 
+	/**
+	 * @var string
+	 */
 	public $localtax1_type;
+	/**
+	 * @var string
+	 */
 	public $localtax2_type;
 
 	/**
@@ -185,12 +252,33 @@ abstract class CommonOrderLine extends CommonObjectLine
 	 */
 	public $info_bits = 0;
 
+	/**
+	 * @var int special code
+	 */
 	public $special_code = 0;
 
+	/**
+	 * @var int
+	 */
 	public $fk_multicurrency;
+	/**
+	 * @var string
+	 */
 	public $multicurrency_code;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_subprice;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ht;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_tva;
+	/**
+	 * @var float
+	 */
 	public $multicurrency_total_ttc;
 }

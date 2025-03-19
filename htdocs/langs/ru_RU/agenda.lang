@@ -8,8 +8,6 @@ LocalAgenda=Календарь по умолчанию
 ActionsOwnedBy=Событие принадлежит
 ActionsOwnedByShort=Владелец
 AffectedTo=Ответств.
-Event=Событие
-Events=События
 EventsNb=Количество событий
 ListOfActions=Список событий
 EventReports=События
@@ -23,7 +21,6 @@ MenuDoneMyActions=Мои прекращенные события
 ListOfEvents=Список событий (календарь по умолчанию)
 ActionsAskedBy=События созданы
 ActionsToDoBy=события назначены
-ActionsDoneBy=Действия, проделанную
 ActionAssignedTo=Событие назначено для
 ViewCal=Просмотр календаря
 ViewDay=Обзор дня
@@ -57,16 +54,18 @@ MemberValidatedInDolibarr=Участник %s  подтверждён
 MemberModifiedInDolibarr=Участник %sизменён
 MemberResiliatedInDolibarr=Участник %s завершен
 MemberDeletedInDolibarr=Участник  %s удалён
+MemberExcludedInDolibarr=член %s исключен
 MemberSubscriptionAddedInDolibarr=Подписка %s для участника %s добавлена
 MemberSubscriptionModifiedInDolibarr=Подписка %s для участника %s изменена
 MemberSubscriptionDeletedInDolibarr=Подписка %s для участника %s удалена
 ShipmentValidatedInDolibarr=Отправка %s подтверждена
-ShipmentClassifyClosedInDolibarr=Отправка %sотмечена "оплачено"
+ShipmentClassifyClosedInDolibarr=Отгрузка %s закрыта
 ShipmentUnClassifyCloseddInDolibarr=Отправка %s классифицированна как повторно открытая
 ShipmentBackToDraftInDolibarr=Отгрузка %s возвращена в статус черновика
 ShipmentDeletedInDolibarr=Отправка %s удалена
 ShipmentCanceledInDolibarr=Отгрузка %s отменена
 ReceptionValidatedInDolibarr=Прием %s подтвержден
+ReceptionDeletedInDolibarr=Прием %s удален.
 ReceptionClassifyClosedInDolibarr=Прием %s закрыт
 OrderCreatedInDolibarr=Заказ %s создан
 OrderValidatedInDolibarr=Заказ %s проверен
@@ -86,6 +85,9 @@ SupplierInvoiceSentByEMail=Счет поставщика %s отправлен �
 ShippingSentByEMail=Отгрузка %s отправлена по электронной почте
 ShippingValidated= Отправка %s  подтверждена
 InterventionSentByEMail=Посредничество %s отправлено по электронной почте
+ProjectSentByEMail=проект %s отправлено по электронной почте
+ProjectDeletedInDolibarr=Проект %s удален
+ProjectClosedInDolibarr=Project %s closed
 ProposalDeleted=Предложение удалено
 OrderDeleted=Заказ удалён
 InvoiceDeleted=Счёт удалён
@@ -125,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=Заказ на производство выполн�
 MRP_MO_DELETEInDolibarr=Заказ на производство удален
 MRP_MO_CANCELInDolibarr=Заказ на производство отменен
 PAIDInDolibarr=%s платный
+ENABLEDISABLEInDolibarr=пользователь включен или Отключено
+CANCELInDolibarr=Отменена
 ##### End agenda events #####
 AgendaModelModule=Шаблоны документов для события
 DateActionStart=Начальная дата
 DateActionEnd=Конечная дата
 AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
-AgendaUrlOptions3=<b>logina=%s</b>, чтобы ограничить вывод действий, принадлежащих пользователю <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina =!%s</b> для ограничения вывода действий, не принадлежащих пользователю <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> для ограничения вывода действий, назначенных пользователю <b>%s</b> (владелец и другие).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID __</b>, чтобы ограничить вывод действий, связанных с проектом <b>__ PROJECT_ID __</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, чтобы исключить автоматические события.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> для включения событий праздников.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Дни рождения контактов
 AgendaHideBirthdayEvents=Скрыть дни рождения контактов
 Busy=Занят
@@ -159,6 +165,7 @@ DateActionBegin=Дата начала события
 ConfirmCloneEvent=Вы действительно хотите клонировать событие <b>%s</b>?
 RepeatEvent=Повторять событие
 OnceOnly=Только однажды
+EveryDay=Каждый день
 EveryWeek=Каждую неделю
 EveryMonth=Каждый месяц
 DayOfMonth=День месяца
@@ -173,4 +180,28 @@ ReminderType=Тип обратного звонка
 AddReminder=Создать автоматическое напоминание для этого события
 ErrorReminderActionCommCreation=Не удалось создать напоминание об этом мероприятии.
 BrowserPush=Всплывающее уведомление в браузере
+Reminders=Напоминания
 ActiveByDefault=Включено по умолчанию
+Until=до
+DataFromWasMerged=Данные из %s объединены
+AgendaShowBookcalCalendar=Календарь бронирования: %s
+MenuBookcalIndex=Онлайн-запись
+BookcalLabelAvailabilityHelp=метка диапазона доступности. Для Пример:<br>Общая доступность <br>Доступно во время рождественских каникул
+DurationOfRange=Продолжительность диапазонов
+BookCalSetup = Онлайн-встреча настройка
+BookCalSetupPage = Онлайн-встреча на странице настройка
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Название интерфейса
+BookCalAbout = О BookCal
+BookCalAboutPage = BookCal о странице
+Calendars=Календари
+Availabilities=Наличие
+NewAvailabilities=Новые возможности
+NewCalendar=Новый календарь
+ThirdPartyBookCalHelp=Мероприятие, забронированное в этом календаре, будет автоматически связано с этим сторонним мероприятием.
+AppointmentDuration = Продолжительность встречи: %s
+BookingSuccessfullyBooked=Ваше бронирование сохранено
+BookingReservationHourAfter=Мы подтверждаем бронирование нашей встречи в дата %s
+BookcalBookingTitle=Онлайн-запись
+Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

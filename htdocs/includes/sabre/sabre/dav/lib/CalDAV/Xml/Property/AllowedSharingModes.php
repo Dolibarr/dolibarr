@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Xml\Property;
 
 use Sabre\CalDAV\Plugin;
@@ -7,7 +9,7 @@ use Sabre\Xml\Writer;
 use Sabre\Xml\XmlSerializable;
 
 /**
- * AllowedSharingModes
+ * AllowedSharingModes.
  *
  * This property encodes the 'allowed-sharing-modes' property, as defined by
  * the 'caldav-sharing-02' spec, in the http://calendarserver.org/ns/
@@ -18,14 +20,15 @@ use Sabre\Xml\XmlSerializable;
  * such as VEVENT, VTODO
  *
  * @see https://trac.calendarserver.org/browser/CalendarServer/trunk/doc/Extensions/caldav-sharing-02.txt
+ *
  * @copyright Copyright (C) fruux GmbH (https://fruux.com/)
  * @author Evert Pot (http://www.rooftopsolutions.nl/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class AllowedSharingModes implements XmlSerializable {
-
+class AllowedSharingModes implements XmlSerializable
+{
     /**
-     * Whether or not a calendar can be shared with another user
+     * Whether or not a calendar can be shared with another user.
      *
      * @var bool
      */
@@ -39,17 +42,15 @@ class AllowedSharingModes implements XmlSerializable {
     protected $canBePublished;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param bool $canBeShared
      * @param bool $canBePublished
-     * @return void
      */
-    function __construct($canBeShared, $canBePublished) {
-
+    public function __construct($canBeShared, $canBePublished)
+    {
         $this->canBeShared = $canBeShared;
         $this->canBePublished = $canBePublished;
-
     }
 
     /**
@@ -67,21 +68,14 @@ class AllowedSharingModes implements XmlSerializable {
      * This allows serializers to be re-used for different element names.
      *
      * If you are opening new elements, you must also close them again.
-     *
-     * @param Writer $writer
-     * @return void
      */
-    function xmlSerialize(Writer $writer) {
-
+    public function xmlSerialize(Writer $writer)
+    {
         if ($this->canBeShared) {
-            $writer->writeElement('{' . Plugin::NS_CALENDARSERVER . '}can-be-shared');
+            $writer->writeElement('{'.Plugin::NS_CALENDARSERVER.'}can-be-shared');
         }
         if ($this->canBePublished) {
-            $writer->writeElement('{' . Plugin::NS_CALENDARSERVER . '}can-be-published');
+            $writer->writeElement('{'.Plugin::NS_CALENDARSERVER.'}can-be-published');
         }
-
     }
-
-
-
 }

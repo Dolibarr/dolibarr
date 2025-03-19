@@ -1,2 +1,13 @@
 # Dolibarr language file - Source file is en_US - donations
+DeleteADonation=Ein Spende löschen
+ConfirmDeleteADonation=Willst du diese Spende wirklich löschen?
+PublicDonation=Öffentliche Spenden
+DonationsArea=Spenden - Übersicht
+DonationStatusPromiseNotValidated=Zugesagt (nicht freigegeben)
+DonationStatusPromiseValidated=Zugesagt (freigegeben)
+DonationStatusPaid=Spende bezahlt
+DonationsModels=Spendenvorlagen
+LastModifiedDonations=%s zuletzt geänderte Spenden
+DonationRecipient=Spenden Empfänger
 FreeTextOnDonations=Freier Text der in der Fusszeile angezeigt wird
+DonationValidated=Die Spende %s ist validiert.

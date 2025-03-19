@@ -5,97 +5,75 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Jegyek
 Module56000Desc=Jegyrendszer, probléma- vagy kéréskezeléshez
-
 Permission56001=Lásd a jegyeket
 Permission56002=Jegyek módosítása
 Permission56003=Jegyek törlése
 Permission56004=Jegyek kezelése
 Permission56005=Minden harmadik fél jegyeinek megtekintése (külső felhasználókra nem érvényes, mindig csak arra a harmadik félre korlátozódjon, akitől függnek)
-Permission56006=Export tickets
-
+Permission56006=Export jegyek
 Tickets=Jegyek
 TicketDictType=Jegy - típusok
 TicketDictCategory=Jegy - Csoportok
 TicketDictSeverity=Jegy – Súlyosságok
 TicketDictResolution=Jegy - Felbontás
-
 TicketTypeShortCOM=Kereskedelmi kérdés
-TicketTypeShortHELP=Funkcionális segítségkérés
+TicketTypeShortHELP=Funkcionális segítség kérése
 TicketTypeShortISSUE=Probléma vagy hiba
 TicketTypeShortPROBLEM=Probléma
 TicketTypeShortREQUEST=Módosítási vagy bővítési kérelem
 TicketTypeShortPROJET=Projekt
 TicketTypeShortOTHER=Egyéb
-
 TicketSeverityShortLOW=Alacsony
 TicketSeverityShortNORMAL=Normál
 TicketSeverityShortHIGH=Magas
 TicketSeverityShortBLOCKING=Kritikus, blokkoló
-
 TicketCategoryShortOTHER=Egyéb
-
 ErrorBadEmailAddress=A '%s' mező hibás
 MenuTicketMyAssign=Jegyeim
 MenuTicketMyAssignNonClosed=Nyitott jegyeim
 MenuListNonClosed=Nyitott jegyek
-
 TypeContact_ticket_internal_CONTRIBUTOR=Közreműködő
 TypeContact_ticket_internal_SUPPORTTEC=Hozzárendelt felhasználó
 TypeContact_ticket_external_SUPPORTCLI=Ügyfél kapcsolatfelvétel/incidens nyomon követése
 TypeContact_ticket_external_CONTRIBUTOR=Külső közreműködő
-
 OriginEmail=Jelentés e-mail
+EmailReplyto=Válasz e-mailben
+EmailReferences=Referenciák az e-mailekben
 Notify_TICKET_SENTBYMAIL=Jegy üzenet küldése e-mailben
-
 ExportDataset_ticket_1=Jegyek
-
 # Status
 Read=Olvasás
 Assigned=Hozzárendelve
-InProgress=Folyamatban
 NeedMoreInformation=Várakozás a riporter visszajelzésére
 NeedMoreInformationShort=Visszajelzésre vár
-Answered=Válaszolt
 Waiting=Várakozás
 SolvedClosed=Megoldva
 Deleted=Törölve
-
 # Dict
-Type=Típus
 Severity=Súlyosság
 TicketGroupIsPublic=A csoport nyilvános
 TicketGroupIsPublicDesc=Ha egy jegycsoport nyilvános, akkor látható lesz az űrlapon, amikor jegyet hoz létre a nyilvános felületről
-
 # Email templates
 MailToSendTicketMessage=E-mail küldése jegyüzenetből
-
-#
 # Admin page
-#
 TicketSetup=Jegy modul beállítása
 TicketSettings=Beállítások
-TicketSetupPage=
 TicketPublicAccess=A következő URL-címen elérhető egy nyilvános interfész, amely nem igényel azonosítást
 TicketSetupDictionaries=A jegy típusa, súlyossága és az analitikai kódok szótárakból konfigurálhatók
 TicketParamModule=Modulváltozó beállítása
 TicketParamMail=E-mail beállítása
 TicketEmailNotificationFrom=E-mail küldése a válaszokról
-TicketEmailNotificationFromHelp=Küldő e-mail, amellyel értesítő e-mailt küldhet, ha válasz érkezik a háttérirodán belül. Például noreply@example.com
+TicketEmailNotificationFromHelp=Küldő e-mail, amellyel értesítő e-mailt küldhet, ha a háttérirodán belül megérkezik a válasz. Például noreply@example.com
 TicketEmailNotificationTo=Értesítés a jegy létrehozásáról erre az e-mail címre
 TicketEmailNotificationToHelp=Ha van, ez az e-mail cím értesítést kap a jegy létrehozásáról
 TicketNewEmailBodyLabel=Szöveges üzenet a jegy létrehozása után
@@ -103,11 +81,11 @@ TicketNewEmailBodyHelp=Az itt megadott szöveg bekerül az új jegy létrehozás
 TicketParamPublicInterface=Nyilvános felület beállítása
 TicketsEmailMustExist=Meglévő e-mail cím szükséges a jegy létrehozásához
 TicketsEmailMustExistHelp=A nyilvános felületen az e-mail címnek már ki kell töltenie az adatbázist egy új jegy létrehozásához.
+TicketsShowProgression=Jelenítse meg a jegy előrehaladását a nyilvános felületen
+TicketsShowProgressionHelp=Engedélyezze ezt az opciót a jegy folyamatának elrejtéséhez a nyilvános felület oldalain
 TicketCreateThirdPartyWithContactIfNotExist=Ismeretlen e-mailek esetén kérdezze meg a nevét és a cég nevét.
-TicketCreateThirdPartyWithContactIfNotExistHelp=Ellenőrizze, hogy létezik-e harmadik fél vagy kapcsolattartó a megadott e-mail-címhez. Ha nem, kérjen egy nevet és egy cégnevet egy harmadik fél létrehozásához a kapcsolattartóval.
+TicketCreateThirdPartyWithContactIfNotExistHelp=Ellenőrizze, hogy létezik-e partner vagy kapcsolattartó a megadott e-mail-címhez. Ha nem, kérjen egy nevet és egy cégnevet a partner létrehozásához a kapcsolattartóval.
 PublicInterface=Nyilvános felület
-TicketUrlPublicInterfaceLabelAdmin=Alternatív URL nyilvános felülethez
-TicketUrlPublicInterfaceHelpAdmin=Lehetőség van álnevet megadni a webszerver számára, és így elérhetővé tenni a nyilvános felületet egy másik URL-lel (a szervernek proxyként kell működnie ezen az új URL-en)
 TicketPublicInterfaceTextHomeLabelAdmin=A nyilvános felület üdvözlő szövege
 TicketPublicInterfaceTextHome=Létrehozhat támogatási jegyet, vagy megtekintheti a meglévőt az azonosító nyomkövető jegyéből.
 TicketPublicInterfaceTextHomeHelpAdmin=Az itt meghatározott szöveg megjelenik a nyilvános felület kezdőlapján.
@@ -125,7 +103,9 @@ TicketParams=Paraméterek
 TicketsShowModuleLogo=A modul logójának megjelenítése a nyilvános felületen
 TicketsShowModuleLogoHelp=Engedélyezze ezt az opciót a logó modul elrejtéséhez a nyilvános felület oldalain
 TicketsShowCompanyLogo=A cég logójának megjelenítése a nyilvános felületen
-TicketsShowCompanyLogoHelp=Engedélyezze ezt az opciót a fő cég logójának elrejtéséhez a nyilvános felület oldalain
+TicketsShowCompanyLogoHelp=Engedélyezze ezt az opciót, hogy a fő cég logója megjelenjen a nyilvános felület oldalain
+TicketsShowCompanyFooter=Jelenítse meg a cég láblécét a nyilvános felületen
+TicketsShowCompanyFooterHelp=Engedélyezze ezt az opciót, ha a fő cég lábléce megjelenik a nyilvános felület oldalain
 TicketsEmailAlsoSendToMainAddress=Értesítés küldése a fő e-mail címre is
 TicketsEmailAlsoSendToMainAddressHelp=Engedélyezve e-mailt is küldhet a "%s" beállításban megadott címre (lásd a "%s" lapot)
 TicketsLimitViewAssignedOnly=A megjelenítés korlátozása az aktuális felhasználóhoz rendelt jegyekre (külső felhasználókra nem érvényes, mindig az általuk függő harmadik félre korlátozódik)
@@ -142,23 +122,22 @@ TicketsPublicNotificationNewMessage=E-mail(ek) küldése, ha új üzenetet/megje
 TicketsPublicNotificationNewMessageHelp=E-mail(ek) küldése, ha új üzenetet adnak hozzá a nyilvános felületről (a hozzárendelt felhasználónak vagy az értesítési e-mail címre (frissítés) és/vagy az értesítési e-mail címre)
 TicketPublicNotificationNewMessageDefaultEmail=Értesítési e-mail címre (frissítés)
 TicketPublicNotificationNewMessageDefaultEmailHelp=E-mail küldése erre a címre minden új üzenetért, ha a jegyhez nincs hozzárendelve felhasználó, vagy ha a felhasználónak nincs ismert e-mail címe.
-TicketsAutoReadTicket=A jegy automatikus megjelölése olvasottként (ha backoffice-ból hozta létre)
-TicketsAutoReadTicketHelp=A jegy automatikus megjelölése olvasottként, amikor a backoffice-ból hozták létre. Amikor jegyet hoz létre a nyilvános felületről, a jegy "Nem olvasott" állapotú marad.
+TicketsAutoReadTicket=A jegy automatikus megjelölése olvasottként (ha back office-ból hozta létre)
+TicketsAutoReadTicketHelp=A jegy automatikus megjelölése olvasottként, amikor a háttérirodában hozza létre. Amikor jegyet hoz létre a nyilvános felületről, a jegy "Nem olvasott" állapotú marad.
 TicketsDelayBeforeFirstAnswer=Az új jegyre az első válasz előtt (óra):
 TicketsDelayBeforeFirstAnswerHelp=Ha egy új jegyre ezen időn belül (órában) nem érkezett válasz, a listanézetben egy fontos figyelmeztető ikon jelenik meg.
 TicketsDelayBetweenAnswers=A feloldatlan jegy nem lehet inaktív a következő időszakban: (óra):
 TicketsDelayBetweenAnswersHelp=Ha egy feloldatlan jegy, amelyre már választ kapott, ezen időtartam letelte után (órában) nem történt további interakció, akkor a listanézetben figyelmeztető ikon jelenik meg.
-TicketsAutoNotifyClose=A jegy lezárásakor automatikusan értesíti a harmadik felet
-TicketsAutoNotifyCloseHelp=A jegy lezárásakor a rendszer javasolni fogja, hogy küldjön üzenetet harmadik fél kapcsolattartóinak. Tömeges záráskor üzenetet küldenek a jegyhez kapcsolódó harmadik fél egyik kapcsolattartójának.
+TicketsAutoNotifyClose=Automatikusan értesítse a partner címet a jegy lezárásakor
+TicketsAutoNotifyCloseHelp=A jegy lezárásakor a rendszer javasolni fogja, hogy küldjön üzenetet valamelyik harmadik félnek. A tömeges záráskor üzenetet küldenek a jegyhez kapcsolódó partner egyik kapcsolattartójának.
 TicketWrongContact=A megadott elérhetőség nem része az aktuális jegykapcsolatoknak. Az e-mailt nem küldték el.
 TicketChooseProductCategory=Termékkategória a jegytámogatáshoz
 TicketChooseProductCategoryHelp=Válassza ki a jegytámogatás termékkategóriáját. Ez arra szolgál, hogy egy szerződést automatikusan egy jegyhez kapcsoljanak.
-TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
-TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
-
-#
+TicketUseCaptchaCode=Jegy létrehozásakor használjon grafikus kódot (CAPTCHA).
+TicketUseCaptchaCodeHelp=Új jegy létrehozásakor hozzáadja a CAPTCHA ellenőrzést.
+TicketsAllowClassificationModificationIfClosed=Lehetővé teszi a zárt jegyek besorolásának módosítását
+TicketsAllowClassificationModificationIfClosedHelp=Lehetővé teszi a besorolás (típus, jegycsoport, súlyosság) módosítását akkor is, ha a jegyek zárva vannak.
 # Index & list page
-#
 TicketsIndex=Jegyek területe
 TicketList=Jegyek listája
 TicketAssignedToMeInfos=Ez az oldal az aktuális felhasználó által létrehozott vagy hozzárendelt jegylistát jeleníti meg
@@ -173,10 +152,7 @@ ShowAsConversation=Megjelenítés beszélgetési listaként
 MessageListViewType=Megjelenítés táblázatlistaként
 ConfirmMassTicketClosingSendEmail=Automatikus e-mailek küldése a jegyek lezárásakor
 ConfirmMassTicketClosingSendEmailQuestion=Értesíteni szeretné a harmadik feleket a jegyek lezárásakor?
-
-#
 # Ticket card
-#
 Ticket=Jegy
 TicketCard=Jegykártya
 CreateTicket=Jegy létrehozása
@@ -186,7 +162,7 @@ CreatedBy=Létrehozta
 NewTicket=Új jegy
 SubjectAnswerToTicket=Jegy válasz
 TicketTypeRequest=Kérés típusa
-TicketCategory=Ticket group
+TicketCategory=Jegycsoport
 SeeTicket=Lásd a jegyet
 TicketMarkedAsRead=A jegy olvasottként meg lett jelölve
 TicketReadOn=Olvass tovább
@@ -198,7 +174,8 @@ TicketAssigned=A jegy most hozzá van rendelve
 TicketChangeType=Típus módosítása
 TicketChangeCategory=Analitikai kód módosítása
 TicketChangeSeverity=Súlyosság módosítása
-TicketAddMessage=Add private message
+TicketAddMessage=Üzenet hozzáadása vagy küldése
+TicketAddPrivateMessage=Privát üzenet hozzáadása
 MessageSuccessfullyAdded=Jegy hozzáadva
 TicketMessageSuccessfullyAdded=Az üzenet sikeresen hozzáadva
 TicketMessagesList=Üzenetlista
@@ -209,32 +186,32 @@ TicketSeverity=Súlyosság
 ShowTicket=Lásd a jegyet
 RelatedTickets=Kapcsolódó jegyek
 TicketAddIntervention=Beavatkozás létrehozása
-CloseTicket=Close|Solve
-AbandonTicket=Abandon
+CloseTicket=Bezárás | Megoldás
+AbandonTicket=Elhagyott
 CloseATicket=Bezárás|Jegy megoldása
 ConfirmCloseAticket=Jegyzárás megerősítése
 ConfirmAbandonTicket=Megerősíti, hogy a jegy 'Elhagyott' állapotba zárta
 ConfirmDeleteTicket=Kérjük, erősítse meg a jegy törlését
 TicketDeletedSuccess=A jegy sikeresen törölve
 TicketMarkedAsClosed=A jegy zártként megjelölve
-TicketDurationAuto=Kiszámított időtartam
-TicketDurationAutoInfos=Az időtartam automatikusan számítódik ki a beavatkozással kapcsolatosan
+TicketDurationAuto=Duration of interventions
+TicketDurationAutoInfos=Duration calculated automatically from related interventions
 TicketUpdated=Jegy frissítve
 SendMessageByEmail=Üzenet küldése e-mailben
 TicketNewMessage=Új üzenet
 ErrorMailRecipientIsEmptyForSendTicketMessage=A címzett üres. Nincs e-mail küldés
 TicketGoIntoContactTab=Kérjük, lépjen a "Kapcsolatok" fülre a kiválasztásához
-TicketMessageMailIntro=Message header
+TicketMessageMailIntro=Üzenet fejléce
 TicketMessageMailIntroHelp=Ez a szöveg csak az e-mail elejére kerül hozzáadásra, és nem kerül mentésre.
 TicketMessageMailIntroText=Üdvözöljük, <br> Új válasz került az Ön által követett jegyhez. Íme az üzenet: <br>
 TicketMessageMailIntroHelpAdmin=Ez a szöveg a válasz elé kerül beszúrásra, amikor a Dolibarr jegyére válaszol
-TicketMessageMailFooter=Message footer
-TicketMessageMailFooterHelp=This text is added only at the end of the message sent by email and will not be saved.
+TicketMessageMailFooter=Üzenet lábléce
+TicketMessageMailFooterHelp=Ez a szöveg csak az e-mailben küldött üzenet végére kerül hozzáadásra, és nem kerül mentésre.
 TicketMessageMailFooterText=Az üzenetet küldte: <b> %s </b> a Dolibarron keresztül
 TicketMessageMailFooterHelpAdmin=Ez a szöveg a válaszüzenet után lesz beszúrva.
 TicketMessageHelp=Csak ez a szöveg kerül mentésre a jegykártya üzenetlistájába.
 TicketMessageSubstitutionReplacedByGenericValues=A helyettesítési változókat általános értékek váltják fel.
-ForEmailMessageWillBeCompletedWith=For email messages sent to external users, the message will be completed with
+ForEmailMessageWillBeCompletedWith=Külső felhasználóknak küldött e-mailek esetén az üzenet a következővel lesz kiegészítve
 TimeElapsedSince=Azóta eltelt idő
 TicketTimeToRead=Az olvasás előtt eltelt idő
 TicketTimeElapsedBeforeSince=Előtte / azóta eltelt idő
@@ -244,9 +221,14 @@ ConfirmReOpenTicket=Megerősíti a jegy újbóli megnyitását?
 TicketMessageMailIntroAutoNewPublicMessage=Új üzenet került a jegyre %s tárggyal:
 TicketAssignedToYou=Jegy hozzárendelve
 TicketAssignedEmailBody=A(z) #%s jegyet %s rendelte hozzá
+TicketAssignedCustomerEmail=Jegyét feldolgozásra rendelték hozzá.
+TicketAssignedCustomerBody=Ez egy automatikus e-mail, amely megerősíti, hogy jegye hozzá lett rendelve feldolgozásra.
 MarkMessageAsPrivate=Üzenet megjelölése privátként
-TicketMessageSendEmailHelp=An email will be sent to all assigned contact (internal contacts, but also external contacts except if the option "%s" is checked)
-TicketMessagePrivateHelp=Ez az üzenet nem jelenik meg külső felhasználók számára
+TicketMessageSendEmailHelp=A rendszer minden hozzárendelt kapcsolattartónak e-mailt küld
+TicketMessageSendEmailHelp2a=(belső, de külső névjegyek is, kivéve ha a „%s” opció be van jelölve)
+TicketMessageSendEmailHelp2b=(belső, de külső érintkezők is)
+TicketMessagePrivateHelp=Ez az üzenet nem lesz látható a külső felhasználók számára
+TicketMessageRecipientsHelp=A címzett mező kitöltve a jegyhez kapcsolt aktív kapcsolattartókkal
 TicketEmailOriginIssuer=A jegyek kibocsátója
 InitialMessage=Kezdő üzenet
 LinkToAContract=Link egy szerződéshez
@@ -269,20 +251,15 @@ TicketsDelayForFirstResponseTooLong=Túl sok idő telt el a jegyfelbontás óta 
 TicketsDelayFromLastResponseTooLong=Túl sok idő telt el az utolsó válasz óta ezen a jegyen.
 TicketNoContractFoundToLink=Nem találtunk olyan szerződést, amely automatikusan kapcsolódik ehhez a jegyhez. Kérjük, kapcsolja össze a szerződést manuálisan.
 TicketManyContractsLinked=Sok szerződést automatikusan ehhez a jegyhez kapcsoltak. Ügyeljen arra, hogy ellenőrizze, melyiket válassza.
-
-#
+TicketRefAlreadyUsed=A [%s] hivatkozás már használatban van, az új hivatkozás: [%s]
 # Logs
-#
 TicketLogMesgReadBy=%s jegyet olvasott: %s
 NoLogForThisTicket=Még nincs napló ehhez a jegyhez
 TicketLogAssignedTo=%s jegy hozzárendelve a következőhöz: %s
 TicketLogPropertyChanged=%s jegy módosítva: besorolás %s-ról %s-ra
 TicketLogClosedBy=%s jegyet %s zárt
 TicketLogReopen=%s jegy újra nyitva
-
-#
 # Public pages
-#
 TicketSystem=Jegyrendszer
 ShowListTicketWithTrackId=Jegylista megjelenítése a számazonosítóból
 ShowTicketWithTrackId=Jegy megjelenítése a számazonosítóból
@@ -297,13 +274,13 @@ TicketNewEmailBodyCustomer=Ez egy automatikus e-mail, amely megerősíti, hogy �
 TicketNewEmailBodyInfosTicket=Információ a jegy figyeléséhez
 TicketNewEmailBodyInfosTrackId=Jegykövetési szám: %s
 TicketNewEmailBodyInfosTrackUrl=A jegy folyamatát az alábbi linkre kattintva tekintheti meg
-TicketNewEmailBodyInfosTrackUrlCustomer=A következő linkre kattintva megtekintheti a jegy folyamatát az adott felületen
+TicketNewEmailBodyInfosTrackUrlCustomer=Az alábbi linkre kattintva megtekintheti a jegy folyamatát a nyilvános jegyportálon
 TicketCloseEmailBodyInfosTrackUrlCustomer=A jegy történetét a következő linkre kattintva tekintheti meg
 TicketEmailPleaseDoNotReplyToThisEmail=Kérjük, ne válaszoljon közvetlenül erre az e-mailre! A hivatkozás segítségével válaszoljon a felületre.
 TicketPublicInfoCreateTicket=Ez az űrlap lehetővé teszi támogatási jegy rögzítését kezelőrendszerünkben.
-TicketPublicPleaseBeAccuratelyDescribe=Kérjük, pontosan írja le kérdését. Adja meg a lehető legtöbb információt, hogy helyesen azonosíthassuk kérelmét.
+TicketPublicPleaseBeAccuratelyDescribe=Kérjük, pontosan írja le kérését. Adja meg a lehető legtöbb információt, hogy helyesen azonosíthassuk kérelmét.
 TicketPublicMsgViewLogIn=Kérjük, adja meg a jegykövetési azonosítót
-TicketTrackId=Nyilvános követési azonosító
+TicketTrackId=Követési Azonosító
 OneOfTicketTrackId=Az egyik követőazonosítód
 ErrorTicketNotFound=%s nyomkövetési azonosítójú jegy nem található!
 Subject=Tárgy
@@ -319,6 +296,8 @@ OldUser=Régi felhasználó
 NewUser=Új felhasználó
 NumberOfTicketsByMonth=Jegyek száma havonta
 NbOfTickets=Jegyek száma
+ExternalContributors=Külső közreműködők
+AddContributor=Külső közreműködő hozzáadása
 # notifications
 TicketCloseEmailSubjectCustomer=Jegy lezárva
 TicketCloseEmailBodyCustomer=Ez egy automatikus üzenet, amely értesíti Önt, hogy az %s jegyet nemrég zárták le.
@@ -330,12 +309,8 @@ TicketNotificationRecipient=Értesítés címzettje
 TicketNotificationLogMessage=Naplóüzenet
 TicketNotificationEmailBodyInfosTrackUrlinternal=Jegy megtekintése a felületen
 TicketNotificationNumberEmailSent=Értesítési e-mail elküldve: %s
-
 ActionsOnTicket=Rendezvények jegyre
-
-#
 # Boxes
-#
 BoxLastTicket=Utoljára létrehozott jegyek
 BoxLastTicketDescription=A legutóbbi %s jegyek
 BoxLastTicketContent=
@@ -355,3 +330,4 @@ BoxNewTicketVSClose=Jegyek száma a zárt jegyekhez képest (ma)
 TicketCreatedToday=Jegy ma készült
 TicketClosedToday=A jegy ma zárva tart
 KMFoundForTicketGroup=Találtunk olyan témákat és GYIK-ket, amelyek választ adhatnak kérdésére, hála, hogy ellenőrizzük őket a jegy elküldése előtt
+SetTitle=Set title

@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Fórum/Wiki podpora
 EMailSupport=E-mailová podpora
-RemoteControlSupport=Online real-time vzdálená podpora
+RemoteControlSupport=Online podpora v reálném čase / vzdálená podpora
 OtherSupport=Další podpora
 ToSeeListOfAvailableRessources=Pro kontaktování/zobrazení dostupných zdrojů:
 HelpCenter=Centrum nápovědy
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+DolibarrHelpCenter=Centrum nápovědy a podpory Dolibarr
+ToGoBackToDolibarr=V opačném případě <a href="%s"> klikněte zde a pokračujte v práci Dolibarr </a>.
+TypeOfSupport=Typ podpory
 TypeSupportCommunauty=Komunita (zdarma)
 TypeSupportCommercial=Obchodní
 TypeOfHelp=Typ
-NeedHelpCenter=Potřebujete pomoc nebo podporu?
+NeedHelpCenter=Need support?
 Efficiency=Účinnost
 TypeHelpOnly=Pouze nápověda
 TypeHelpDev=Nápověda + Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=Nápověda + Vývoj + Školení
+BackToHelpCenter=V opačném případě se <a href="%s"> vrátíte zpět na domovskou stránku centra nápovědy </a>.
+LinkToGoldMember=Můžete volat některého z instruktorů vybraných společností Dolibarr pro váš jazyk (%s) kliknutím na jejich Widget (stav a maximální cena se automaticky aktualizují):
 PossibleLanguages=Podporované jazyky
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=Pro oficiální support Dolibarru ve Vaší zemi: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Pomozte projektu Dolibarr, přihlaste se k nadaci
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

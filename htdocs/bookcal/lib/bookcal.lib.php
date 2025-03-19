@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2022 Alice Adminson <aadminson@example.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +18,7 @@
  */
 
 /**
- * \file    bookcal/lib/bookcal.lib.php
+ * \file    htdocs/bookcal/lib/bookcal.lib.php
  * \ingroup bookcal
  * \brief   Library files with common functions for BookCal
  */
@@ -24,33 +26,28 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function bookcalAdminPrepareHead()
 {
 	global $langs, $conf;
 
-	$langs->load("bookcal@bookcal");
+	$langs->load("agenda");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/bookcal/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/bookcal/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
 
 	/*
-	$head[$h][0] = dol_buildpath("/bookcal/admin/myobject_extrafields.php", 1);
+	$head[$h][0] = DOL_URL_ROOT.'/bookcal/admin/myobject_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'myobject_extrafields';
 	$h++;
 	*/
-
-	$head[$h][0] = dol_buildpath("/bookcal/admin/about.php", 1);
-	$head[$h][1] = $langs->trans("About");
-	$head[$h][2] = 'about';
-	$h++;
 
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line

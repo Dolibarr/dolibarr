@@ -2,7 +2,7 @@
 ContractsArea=ஒப்பந்த பகுதி
 ListOfContracts=ஒப்பந்தங்களின் பட்டியல்
 AllContracts=அனைத்து ஒப்பந்தங்களும்
-ContractCard=ஒப்பந்த அட்டை
+ContractCard=Contract
 ContractStatusNotRunning=ஓடவில்லை
 ContractStatusDraft=வரைவு
 ContractStatusValidated=சரிபார்க்கப்பட்டது

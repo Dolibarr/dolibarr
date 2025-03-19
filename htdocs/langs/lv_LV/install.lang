@@ -88,7 +88,7 @@ LoginAlreadyExists=Jau eksistē
 DolibarrAdminLogin=Dolibarr administratora lietotāja vārds
 AdminLoginAlreadyExists=Dolibarr administratora konts '<b>%s</b>' jau pastāv. Atgriezieties, ja vēlaties izveidot vēl vienu.
 FailedToCreateAdminLogin=Neizdevās izveidot Dolibarr administratora kontu.
-WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
+WarningRemoveInstallDir=Brīdinājums! Drošības apsvērumu dēļ, kad instalēšanas process ir pabeigts, Dolibarr dokumentu direktorijā jāpievieno fails ar nosaukumu <b> install.lock </b>, lai novērstu instalēšanas rīku nejaušu/ļaunprātīgu izmantošanu.
 FunctionNotAvailableInThisPHP=Nav pieejams šajā PHP
 ChoosedMigrateScript=Izvēlieties migrācijas skriptu
 DataMigration=Datubāzes migrācijas (dati)
@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Pārsūtīt sūtījumus pārdošanas pasūtījumu
 MigrationShippingDelivery=Uzlabot pārvadājumu krātuvi
 MigrationShippingDelivery2=Piegādes modernizēšana 2
 MigrationFinished=Migrācija pabeigta
-LastStepDesc=<strong>Pēdējais solis</strong>: šeit norādiet lietotāja vārdu un paroli, kuru vēlaties izmantot, lai izveidotu savienojumu ar Dolibarr. <b>Nepazaudējiet to, jo tas ir galvenais konts, lai pārvaldītu visus pārējos/papildus lietotāju kontus.</b>
+LastStepDesc=<strong>Pēdējā darbība</strong>: šeit definējiet pieteikumvārdu un paroli, ko vēlaties izmantot, lai izveidotu savienojumu ar Dolibarr. <b>Nepazaudējiet šo kontu, jo tas ir galvenais konts visu citu/papildu lietotāju kontu administrēšanai.</b>
 ActivateModule=Aktivizēt moduli %s
 ShowEditTechnicalParameters=Noklikšķiniet šeit, lai parādītu/rediģēt papildu parametrus (ekspertu režīms)
 WarningUpgrade=Brīdinājums:\nVai vispirms izmantojāt datu bāzi?\nTas ir ļoti ieteicams. Šajā procesā var būt iespējama datu zudums (piemēram, kļūdas mysql versijā 5.5.40 / 41/42/43), tāpēc pirms migrēšanas sākuma ir svarīgi veikt pilnīgu datplūsmas noņemšanu.\n\nNoklikšķiniet uz OK, lai sāktu migrācijas procesu ...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Jūs izmantojāt Dolibarr iestatīšanas vedni no Linux pak
 KeepDefaultValuesMamp=Jūs izmantojāt Dolibarr iestatīšanas vedni no DoliMamp, tāpēc šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
 KeepDefaultValuesProxmox=Jūs izmantojāt Dolbyarr iestatīšanas vedni no Proxmox virtuālās ierīces, tāpēc šeit piedāvātās vērtības jau ir optimizētas. Mainiet tos tikai tad, ja zināt, ko jūs darāt.
 UpgradeExternalModule=Darbiniet ārējo moduļa ārējo jaunināšanas procesu
-SetAtLeastOneOptionAsUrlParameter=Iestatiet vismaz vienu opciju kā parametru URL. Piemēram: "... repair.php? Standard = apstiprināts"
+SetAtLeastOneOptionAsUrlParameter=Iestatiet vismaz vienu opciju kā parametru URL ar vērtību “test” vai “confirmed”. Piemēram: '...remonts.php?standard=confirmed'
 NothingToDelete=Nav ko tīrīt / dzēst
 NothingToDo=Nav ko darīt
 #########
@@ -208,10 +208,10 @@ HideNotAvailableOptions=Slēpt nepieejamās iespējas
 ErrorFoundDuringMigration=Migrēšanas laikā tika ziņots par kļūdu (-ēm), tāpēc nākamais solis nav pieejams. Lai ignorētu kļūdas, varat <a href="%s"> noklikšķināt šeit </a>, bet lietojumprogramma vai dažas funkcijas var nedarboties pareizi, līdz kļūdas nav atrisinātas.
 YouTryInstallDisabledByDirLock=Pieteikums mēģināja pašupjaunināt, bet instalēšanas / jaunināšanas lapas tika atspējotas drošībai (direktorija nosaukums tika pārdēvēts ar .lock sufiksu). <br>
 YouTryInstallDisabledByFileLock=Lietojumprogramma mēģināja pašatjaunināties, bet instalēšanas/atjaunināšanas lapas tika bloķētas drošībai (ar bloķēšanas failu <strong>install.lock</strong> Dolibarr dokumentu direktorijā). <br>
-YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
+YouTryUpgradeDisabledByMissingFileUnLock=Lietojumprogramma mēģināja veikt pašjaunināšanu, taču jaunināšanas process pašlaik nav atļauts. <br>
 ClickHereToGoToApp=Noklikšķiniet šeit, lai pārietu uz savu pieteikumu
 ClickOnLinkOrRemoveManualy=Ja notiek jaunināšana, lūdzu, uzgaidiet. Ja nē, noklikšķiniet uz šīs saites. Ja vienmēr redzat šo pašu lapu, dokumentu direktorijā ir jānoņem/jāpārdēvē fails install.lock.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=Ja notiek jaunināšana, lūdzu, uzgaidiet... Ja nē, jums ir jānoņem fails install.lock (vai jāizveido fails upgrade.unlock jaunināšanai) Dolibarr dokumentu direktorijā.
 Loaded=Iekrauts
 FunctionTest=Funkcijas pārbaude
 NodoUpgradeAfterDB=Pēc datu bāzes jaunināšanas ārējie moduļi neprasa nekādas darbības

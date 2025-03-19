@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV\PartialUpdate;
 
 use Sabre\DAV;
@@ -7,7 +9,7 @@ use Sabre\HTTP\RequestInterface;
 use Sabre\HTTP\ResponseInterface;
 
 /**
- * Partial update plugin (Patch method)
+ * Partial update plugin (Patch method).
  *
  * This plugin provides a way to modify only part of a target resource
  * It may bu used to update a file chunk, upload big a file into smaller
@@ -20,32 +22,28 @@ use Sabre\HTTP\ResponseInterface;
  * @author Jean-Tiare LE BIGOT (http://www.jtlebi.fr/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Plugin extends DAV\ServerPlugin {
-
+class Plugin extends DAV\ServerPlugin
+{
     const RANGE_APPEND = 1;
     const RANGE_START = 2;
     const RANGE_END = 3;
 
     /**
-     * Reference to server
+     * Reference to server.
      *
      * @var DAV\Server
      */
     protected $server;
 
     /**
-     * Initializes the plugin
+     * Initializes the plugin.
      *
      * This method is automatically called by the Server class after addPlugin.
-     *
-     * @param DAV\Server $server
-     * @return void
      */
-    function initialize(DAV\Server $server) {
-
+    public function initialize(DAV\Server $server)
+    {
         $this->server = $server;
         $server->on('method:PATCH', [$this, 'httpPatch']);
-
     }
 
     /**
@@ -56,10 +54,9 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return string
      */
-    function getPluginName() {
-
+    public function getPluginName()
+    {
         return 'partialupdate';
-
     }
 
     /**
@@ -74,10 +71,11 @@ class Plugin extends DAV\ServerPlugin {
      *     - the node implements our partial update interface
      *
      * @param string $uri
+     *
      * @return array
      */
-    function getHTTPMethods($uri) {
-
+    public function getHTTPMethods($uri)
+    {
         $tree = $this->server->tree;
 
         if ($tree->nodeExists($uri)) {
@@ -86,8 +84,8 @@ class Plugin extends DAV\ServerPlugin {
                 return ['PATCH'];
             }
         }
-        return [];
 
+        return [];
     }
 
     /**
@@ -95,25 +93,20 @@ class Plugin extends DAV\ServerPlugin {
      *
      * @return array
      */
-    function getFeatures() {
-
+    public function getFeatures()
+    {
         return ['sabredav-partialupdate'];
-
     }
 
     /**
-     * Patch an uri
+     * Patch an uri.
      *
      * The WebDAV patch request can be used to modify only a part of an
      * existing resource. If the resource does not exist yet and the first
      * offset is not 0, the request fails
-     *
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
-     * @return void
      */
-    function httpPatch(RequestInterface $request, ResponseInterface $response) {
-
+    public function httpPatch(RequestInterface $request, ResponseInterface $response)
+    {
         $path = $request->getPath();
 
         // Get the node. Will throw a 404 if not found
@@ -129,53 +122,55 @@ class Plugin extends DAV\ServerPlugin {
         }
 
         $contentType = strtolower(
-            $request->getHeader('Content-Type')
+            (string) $request->getHeader('Content-Type')
         );
 
-        if ($contentType != 'application/x-sabredav-partialupdate') {
-            throw new DAV\Exception\UnsupportedMediaType('Unknown Content-Type header "' . $contentType . '"');
+        if ('application/x-sabredav-partialupdate' != $contentType) {
+            throw new DAV\Exception\UnsupportedMediaType('Unknown Content-Type header "'.$contentType.'"');
         }
 
         $len = $this->server->httpRequest->getHeader('Content-Length');
-        if (!$len) throw new DAV\Exception\LengthRequired('A Content-Length header is required');
-
+        if (!$len) {
+            throw new DAV\Exception\LengthRequired('A Content-Length header is required');
+        }
         switch ($range[0]) {
-            case self::RANGE_START :
+            case self::RANGE_START:
                 // Calculate the end-range if it doesn't exist.
                 if (!$range[2]) {
                     $range[2] = $range[1] + $len - 1;
                 } else {
                     if ($range[2] < $range[1]) {
-                        throw new DAV\Exception\RequestedRangeNotSatisfiable('The end offset (' . $range[2] . ') is lower than the start offset (' . $range[1] . ')');
+                        throw new DAV\Exception\RequestedRangeNotSatisfiable('The end offset ('.$range[2].') is lower than the start offset ('.$range[1].')');
                     }
                     if ($range[2] - $range[1] + 1 != $len) {
-                        throw new DAV\Exception\RequestedRangeNotSatisfiable('Actual data length (' . $len . ') is not consistent with begin (' . $range[1] . ') and end (' . $range[2] . ') offsets');
+                        throw new DAV\Exception\RequestedRangeNotSatisfiable('Actual data length ('.$len.') is not consistent with begin ('.$range[1].') and end ('.$range[2].') offsets');
                     }
                 }
                 break;
         }
 
-        if (!$this->server->emit('beforeWriteContent', [$path, $node, null]))
+        if (!$this->server->emit('beforeWriteContent', [$path, $node, null])) {
             return;
+        }
 
         $body = $this->server->httpRequest->getBody();
-
 
         $etag = $node->patch($body, $range[0], isset($range[1]) ? $range[1] : null);
 
         $this->server->emit('afterWriteContent', [$path, $node]);
 
         $response->setHeader('Content-Length', '0');
-        if ($etag) $response->setHeader('ETag', $etag);
+        if ($etag) {
+            $response->setHeader('ETag', $etag);
+        }
         $response->setStatus(204);
 
         // Breaks the event chain
         return false;
-
     }
 
     /**
-     * Returns the HTTP custom range update header
+     * Returns the HTTP custom range update header.
      *
      * This method returns null if there is no well-formed HTTP range request
      * header. It returns array(1) if it was an append request, array(2,
@@ -191,25 +186,27 @@ class Plugin extends DAV\ServerPlugin {
      * [2,10,null] - update bytes 10 until the end of the patch body
      * [3,-5] - update from 5 bytes from the end of the file.
      *
-     * @param RequestInterface $request
      * @return array|null
      */
-    function getHTTPUpdateRange(RequestInterface $request) {
-
+    public function getHTTPUpdateRange(RequestInterface $request)
+    {
         $range = $request->getHeader('X-Update-Range');
-        if (is_null($range)) return null;
+        if (is_null($range)) {
+            return null;
+        }
 
         // Matching "Range: bytes=1234-5678: both numbers are optional
 
-        if (!preg_match('/^(append)|(?:bytes=([0-9]+)-([0-9]*))|(?:bytes=(-[0-9]+))$/i', $range, $matches)) return null;
-
-        if ($matches[1] === 'append') {
-            return [self::RANGE_APPEND];
-        } elseif (strlen($matches[2]) > 0) {
-            return [self::RANGE_START, $matches[2], $matches[3] ?: null];
-        } else {
-            return [self::RANGE_END, $matches[4]];
+        if (!preg_match('/^(append)|(?:bytes=([0-9]+)-([0-9]*))|(?:bytes=(-[0-9]+))$/i', $range, $matches)) {
+            return null;
         }
 
+        if ('append' === $matches[1]) {
+            return [self::RANGE_APPEND];
+        } elseif (strlen($matches[2]) > 0) {
+            return [self::RANGE_START, (int) $matches[2], (int) $matches[3] ?: null];
+        } else {
+            return [self::RANGE_END, (int) $matches[4]];
+        }
     }
 }

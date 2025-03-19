@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - productbatch
+ManageLotSerial=Usar el número de lote/serie
+ProductStatusOnBatch=Sí (lote/serie) requerido
+ProductStatusOnSerial=Sí (número de serie único requerido)
+ProductStatusNotOnBatch=No (lote/serie no usado)
+BatchSellOrEatByMandatoryNone=Ninguno
+atleast1batchfield=Fecha de caducidad o Fecha de venta o número de Lote/serie
+batch_number=Número de Lote/Serie
+SellByDate=Fecha de venta
+DetailBatchNumber=Detalles del Lote/Serie
+printBatch=Lote/Serie: %s
+printEatby=Consumido-por: %s
+printSellby=Vendido-por: %s
+printQty=Cantidad: %d
+AddDispatchBatchLine=Agregar una linea de Vida Útil para despacho
+WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/serie este activado la disminución automática de las existencias se ve obligada a %sy el modo de aumento automático se ve obligado a %salgunas opciones pueden no estar disponibles. otras opciones se pueden definir como desee.
+ProductDoesNotUseBatchSerial=Este producto no utiliza el número de lote/serie
+ProductLotSetup=Configuración del módulo lote/serie
+ShowCurrentStockOfLot=Mostrar las existencias actuales para la relación producto/lote
+ShowLogOfMovementIfLot=Mostrar el registro de los movimientos para la  relación producto/lote
+SerialNumberAlreadyInUse=El número de serie %s ya se encuentra utilizado por el producto %s
+EndOfLife=Vida útil
+OutOfOrder=Fuera de orden
+ToReplace=Reemplazo
+CantMoveNonExistantSerial=Error. Pides un movimiento en un registro de un serial que ya no existe. Puede ser que tome el mismo serial en el mismo almacén varias veces en el mismo envío o que haya sido utilizado por otro envío. Retire este envío y prepare otro.

@@ -22,6 +22,7 @@ clover.xml
 # Ignore PHP CS Fixer local config and cache
 .php_cs
 .php_cs.cache
+.php-cs-fixer.cache
 
 # Ignore PHPStan local config
 .phpstan.neon
@@ -29,3 +30,6 @@ clover.xml
 # Ignore phpDocumentor's local config and artifacts
 .phpdoc/*
 phpdoc.xml
+
+# Ignore cached PHPUnit results.
+.phpunit.result.cache

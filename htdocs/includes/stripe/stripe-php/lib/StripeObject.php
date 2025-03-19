@@ -149,6 +149,11 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
         $this->_unsavedValues->add($k);
     }
 
+    /**
+     * @param mixed $k
+     *
+     * @return bool
+     */
     public function __isset($k)
     {
         return isset($this->_values[$k]);
@@ -187,34 +192,58 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
         return $nullval;
     }
 
-    // Magic method for var_dump output. Only works with PHP >= 5.6
+    /**
+     * Magic method for var_dump output. Only works with PHP >= 5.6.
+     *
+     * @return array
+     */
     public function __debugInfo()
     {
         return $this->_values;
     }
 
     // ArrayAccess methods
+
+    /**
+     * @return void
+     */
+    #[\ReturnTypeWillChange]
     public function offsetSet($k, $v)
     {
         $this->{$k} = $v;
     }
 
+    /**
+     * @return bool
+     */
+    #[\ReturnTypeWillChange]
     public function offsetExists($k)
     {
         return \array_key_exists($k, $this->_values);
     }
 
+    /**
+     * @return void
+     */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($k)
     {
         unset($this->{$k});
     }
 
+    /**
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
     public function offsetGet($k)
     {
         return \array_key_exists($k, $this->_values) ? $this->_values[$k] : null;
     }
 
-    // Countable method
+    /**
+     * @return int
+     */
+    #[\ReturnTypeWillChange]
     public function count()
     {
         return \count($this->_values);
@@ -419,6 +448,10 @@ class StripeObject implements \ArrayAccess, \Countable, \JsonSerializable
         }
     }
 
+    /**
+     * @return mixed
+     */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->toArray();

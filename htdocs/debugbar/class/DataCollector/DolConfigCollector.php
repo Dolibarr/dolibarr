@@ -1,6 +1,28 @@
 <?php
+/* Copyright (C) 2023	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 
-use \DebugBar\DataCollector\ConfigCollector;
+/**
+ *	\file       htdocs/debugbar/class/DataCollector/DolConfigCollector.php
+ *	\brief      Class for debugbar collection
+ *	\ingroup    debugbar
+ */
+
+use DebugBar\DataCollector\ConfigCollector;
 
 /**
  * DolConfigCollector class
@@ -11,7 +33,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return widget settings
 	 *
-	 *  @return array      Array
+	 *  @return array<string,array{icon?:string,widget?:string,tooltip?:string,map:string,default:string}>      Array
 	 */
 	public function getWidgets()
 	{
@@ -30,7 +52,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 *	Return collected data
 	 *
-	 *  @return    array   Array
+	 *  @return    array{count:int,messages:string[]}   Array of collected data
 	 */
 	public function collect()
 	{
@@ -42,7 +64,7 @@ class DolConfigCollector extends ConfigCollector
 	/**
 	 * Returns an array with config data
 	 *
-	 * @return array       Array of config
+	 * @return array<string,array<string,string|mixed[]>>       Array of config
 	 */
 	protected function getConfig()
 	{
@@ -72,7 +94,7 @@ class DolConfigCollector extends ConfigCollector
 	 * Convert an object to array
 	 *
 	 * @param  mixed   $obj        Object
-	 * @return array               Array
+	 * @return array<string,mixed> Array
 	 */
 	protected function objectToArray($obj)
 	{

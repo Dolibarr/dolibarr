@@ -2,6 +2,8 @@
 /* Copyright (C) 2005-2018  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +51,10 @@ if (!defined('NOREQUIREAJAX')) {
 session_cache_limiter('public');
 
 require_once '../../main.inc.php';
-
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ */
 
 /*
  * View
@@ -175,8 +180,8 @@ jQuery(function($){
 		dayNamesMin: tradDaysMin,
 		weekHeader: '<?php echo $langs->trans("Week"); ?>',
 		dateFormat: '<?php echo $langs->trans("FormatDateShortJQuery"); ?>',	/* Note dd/mm/yy means year on 4 digit in jquery format */
-		firstDay: <?php echo (isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
-		isRTL: <?php echo ($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
+		firstDay: <?php echo(isset($conf->global->MAIN_START_WEEK) ? $conf->global->MAIN_START_WEEK : '1'); ?>,
+		isRTL: <?php echo($langs->trans("DIRECTION") == 'rtl' ? 'true' : 'false'); ?>,
 		showMonthAfterYear: false,  	/* TODO add specific to country	*/
 		 yearSuffix: ''			/* TODO add specific to country */
 	};
@@ -194,8 +199,7 @@ var select2arrayoflanguage = {
 	noResults: function () { return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2NotFound")); ?>"; },
 	inputTooShort: function (input) {
 		var n = input.minimum;
-		/*console.log(input);
-		console.log(input.minimum);*/
+		/*console.log(input); console.log(input.minimum);*/
 		if (n > 1) return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacters")); ?>";
 			else return "<?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2Enter")); ?> " + n + " <?php echo dol_escape_js($langs->transnoentitiesnoconv("Select2MoreCharacter")); ?>"
 		},
@@ -218,49 +222,72 @@ function getObjectFromID(id){
 	return theObject;
 }
 
-// Called after selection of a date to save details into detailed fields
+// Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
 	//showDP.datefieldID=dateFieldID;
 	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
-	var thefield=getObjectFromID(dateFieldID);
-	var thefieldday=getObjectFromID(dateFieldID+"day");
-	var thefieldmonth=getObjectFromID(dateFieldID+"month");
-	var thefieldyear=getObjectFromID(dateFieldID+"year");
+	var thefield = getObjectFromID(dateFieldID);
+	var thefieldday = getObjectFromID(dateFieldID+"day");
+	var thefieldmonth = getObjectFromID(dateFieldID+"month");
+	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value, format);
+	var date = getDateFromFormat(thefield.value, format);
 	//console.log(date);
 	if (date)
 	{
-		thefieldday.value=date.getDate();
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value=date.getMonth()+1;
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value=date.getFullYear();
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+		thefieldday.value = date.getDate();
+		if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value = date.getMonth()+1;
+		if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value = date.getFullYear();
+		if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+		return 1;
 	}
-	else
-	{
-		thefieldday.value='';
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value='';
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value='';
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	// Replace yyyy into yy
+	newformat = format.replace(/yyyy/g, 'yy');
+	if (newformat != format) {
+		console.log("dpChangeDay, we try now from format = "+newformat);
+
+		var date = getDateFromFormat(thefield.value, newformat);
+		//console.log(date);
+		if (date)
+		{
+			thefieldday.value = date.getDate();
+			if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+			thefieldmonth.value = date.getMonth()+1;
+			if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+			thefieldyear.value = date.getFullYear();
+			if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+			return 2;
+		}
 	}
+
+	thefieldday.value = '';
+	if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+	thefieldmonth.value = '';
+	if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+	thefieldyear.value = '';
+	if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	return 0;
 }
 
 /*
  * =================================================================
- * Function:
- * formatDate (javascript object Date(), format) Purpose: Returns a date in the
- * output format specified. The format string can use the following tags: Field |
- * Tags -------------+------------------------------- Year | yyyy (4 digits), yy
- * (2 digits) Month | MM (2 digits) Day of Month | dd (2 digits) Hour (1-12) |
- * hh (2 digits) Hour (0-23) | HH (2 digits) Minute | mm (2 digits) Second | ss
- * (2 digits) Author: Laurent Destailleur Author: Matelli (see
- * http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
+ * Function: formatDate(javascript object Date(), format)
+ * Purpose: Returns a date in the output format specified. The format string can use the following tags:
+ * Year | yyyy (4 digits), yy (2 digits)
+ * Month | MM (2 digits)
+ * Day of Month | dd (2 digits)
+ * Hour (1-12) | hh (2 digits) Hour (0-23) | HH (2 digits)
+ * Minute | mm (2 digits)
+ * Second | ss (2 digits)
+ * Author: Laurent Destailleur Author: Matelli (see http://matelli.fr/showcases/patchs-dolibarr/update-date-input-in-action-form.html)
  * Licence: GPL
  * ==================================================================
  */
@@ -268,12 +295,12 @@ function formatDate(date,format)
 {
 	// alert('formatDate date='+date+' format='+format);
 
-	// Force parametres en chaine
+	// Force parameters en chaine
 	format=format+"";
 
 	var result="";
 
-	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
+	var year=date.getFullYear();
 	var month=date.getMonth()+1;
 	var day=date.getDate();
 	var hour=date.getHours();
@@ -284,7 +311,7 @@ function formatDate(date,format)
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
-		substr="";
+		var substr = '';
 		j=i;
 		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
 		{
@@ -332,18 +359,18 @@ function formatDate(date,format)
  * Licence: GPL
  * ==================================================================
  */
-function getDateFromFormat(val,format)
+function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
-	// Force parametres en chaine
-	val=val+"";
-	format=format+"";
+	// Force parameters en chaine
+	val = val+"";
+	format = format+"";
 
 	if (val == '') return 0;
 
 	var now=new Date();
-	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
+	var year=now.getFullYear();
 	var month=now.getMonth()+1;
 	var day=now.getDate();
 	var hour=now.getHours();
@@ -351,24 +378,21 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
-	var d=0;    // -d- follows the date string while -i- follows the format
-				// string
+	var d=0;    // -d- follows the date string while -i- follows the format string
 
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Get successive similar characters
 		{
 			substr += format.charAt(j++);
 		}
 
 		// alert('substr='+substr);
 		if (substr == "yyyy") year=getIntegerInString(val,d,4,4);
-		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+1900);
+		if (substr == "yy")   year=""+(getIntegerInString(val,d,2,2)-0+2000); /*  #28334 */
 		if (substr == "MM" ||substr == "M")
 		{
 			month=getIntegerInString(val,d,1,2);
@@ -456,15 +480,15 @@ function getIntegerInString(str,i,minlength,maxlength)
  * ==================================================================
  */
 function urlencode(s) {
-	news=s;
-	news=news.replace(/\+/gi,'%2B');
-	news=news.replace(/&/gi,'%26');
+	var news = s;
+	news = news.replace(/\+/gi,'%2B');
+	news = news.replace(/&/gi,'%26');
 	return news;
 }
 
 /*
  * =================================================================
- * Purpose: Clean string to have it url encoded
+ * Purpose: Clean string to get a HTML coded string.
  * Input:   s
  * Author:  Laurent Destailleur
  * Licence: GPL
@@ -472,16 +496,16 @@ function urlencode(s) {
  */
 function htmlEntityDecodeJs(inp){
 	var replacements = {'&lt;':'<','&gt;':'>','&sol;':'/','&quot;':'"','&apos;':'\'','&amp;':'&','&nbsp;':' '};
-	if (inp)
-	{
+	if (inp) {
 	  for(var r in replacements){
 		inp = inp.replace(new RegExp(r,'g'),replacements[r]);
 	  }
 	  return inp.replace(/&#(\d+);/g, function(match, dec) {
 		return String.fromCharCode(dec);
 	  });
+	} else {
+		return '';
 	}
-	else { return ''; }
 }
 
 
@@ -509,7 +533,9 @@ function htmlEntityDecodeJs(inp){
  * ==================================================================
  */
 function cleanSerialize(expr) {
-	if (typeof(expr) != 'string') return '';
+	if (typeof(expr) != 'string') {
+		return '';
+	}
 	var reg = new RegExp("(&)", "g");
 	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
@@ -558,22 +584,26 @@ function hideMessage(fieldId,message) {
  *
  * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	int		entity		Entity
- * @param	int		strict		Strict
+ * @param	int		strict		Strict (0=?, 1=?)
  * @param   int     forcereload Force reload
  * @param   int     userid      User id
- * @param	int		value       Value to set
  * @param   string  token       Token
+ * @param	int		value       Value to set
+ * @param	int		userconst	1=On/Off of user constant instead of global const
+ * @return   boolean
  */
-function setConstant(url, code, input, entity, strict, forcereload, userid, token, value) {
+function setConstant(url, code, input, entity, strict, forcereload, userid, token, value, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "set",
 		name: code,
 		entity: entity,
 		token: token,
-		value: value
+		value: value,
+		userconst: userconst
 	},
 	function() {	/* handler for success of post */
 		console.log("Ajax url request to set constant is a success. Make complementary actions and then forcereload="+forcereload+" value="+value);
@@ -654,28 +684,34 @@ function setConstant(url, code, input, entity, strict, forcereload, userid, toke
 			return false;
 		}
 	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+
+	return true;
 }
 
 /*
  * Used by button to set on/off
  * Call url then make complementary action (like show/hide, enable/disable or set another option).
  *
- * @param	string	url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
- * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
- * @param	int		entity		Entity
- * @param	int		strict		Strict
- * @param   int     forcereload Force reload
- * @param   int     userid      User id
- * @param   string  token       Token
+ * @param	string		url			Url (warning: as any url called in ajax mode, the url called here must not renew the token)
+ * @param	string		code		Code
+ * @param	string		input		Array of complementary actions to do if success
+ * @param	int			entity		Entity
+ * @param	int			strict		Strict
+ * @param   int     	forcereload Force reload
+ * @param   int     	userid      User id
+ * @param   string  	token       Token
+ * @param	int			userconst	1=On/Off of user constant instead of global const
+ * @return  boolean
  */
-function delConstant(url, code, input, entity, strict, forcereload, userid, token) {
+function delConstant(url, code, input, entity, strict, forcereload, userid, token, userconst) {
 	var saved_url = url; /* avoid undefined url */
+
 	$.post( url, {
 		action: "del",
 		name: code,
 		entity: entity,
-		token: token
+		token: token,
+		userconst: userconst
 	},
 	function() {
 		console.log("Ajax url request to delete constant is success. Make complementary actions and then forcereload="+forcereload);
@@ -747,6 +783,8 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
 			return false;
 		}
 	}).fail(function(error) { console.log("Error, we force reload"); location.reload(); });	/* When it fails, we always force reload to have setEventErrorMessages in session visible */
+
+	return true;
 }
 
 /*
@@ -756,7 +794,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	string	action		Action
  * @param	string	url			Url
  * @param	string	code		Code
- * @param	string	intput		Array of complementary actions to do if success
+ * @param	string	input		Array of complementary actions to do if success
  * @param	string	box			Box
  * @param	int		entity		Entity
  * @param	int		yesButton	yesButton
@@ -764,6 +802,7 @@ function delConstant(url, code, input, entity, strict, forcereload, userid, toke
  * @param	int		strict		Strict
  * @param   int     userid      User id
  * @param   string  token       Token
+ * @return  boolean
  */
 function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict, userid, token) {
 	var boxConfirm = box;
@@ -809,6 +848,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 	if (boxConfirm.info) {
 		$("#noButton_" + code).button().hide();
 	}
+
+	return true;
 }
 
 
@@ -872,7 +913,7 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 								}
 							});
 							if ( !valid ) {
-								// remove invalid value, as it didnt match anything
+								// remove invalid value, as it didn't match anything
 								$( this ).val( "" );
 								select.val( "" );
 								input.data("ui-autocomplete").term = "";
@@ -931,8 +972,8 @@ function confirmConstantAction(action, url, code, input, box, entity, yesButton,
 /**
  * Function to output a dialog box for copy/paste
  *
- * @param	string	text	Text to put into copy/paste area
- * @param	string	text2	Text to put under the copy/paste area
+ * @param	text	Text to put into copy/paste area
+ * @param	text2	Text to put under the copy/paste area
  */
 function copyToClipboard(text,text2)
 {
@@ -942,6 +983,7 @@ function copyToClipboard(text,text2)
 	$("#dialogforpopup").html(newElem);
 	$("#dialogforpopup").dialog();
 	$("#coordsforpopup").select();
+
 	return false;
 }
 
@@ -949,22 +991,23 @@ function copyToClipboard(text,text2)
 /**
  * Show a popup HTML page. Use the "window.open" function.
  *
- * @param	string	url		Url
- * @param	string	title  	Title of popup
- * @return	boolean			False
- * @see document_preview
+ * @param	url			Url
+ * @param	title  		Title of popup
+ * @return	boolean		False
+ * @see document_preview()
  */
 function newpopup(url, title) {
 	var argv = newpopup.arguments;
 	var argc = newpopup.arguments.length;
-	tmp=url;
+	var tmp = url;
 	console.log("newpopup "+argv[2]+" "+argv[3]);
 	var l = (argc > 2) ? argv[2] : 600;
 	var h = (argc > 3) ? argv[3] : 400;
 	var left = (screen.width - l)/2;
 	var top = (screen.height - h)/2;
-	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
-	fen=window.open(tmp,title,wfeatures);
+	var wfeatures = "directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,location=0,width=" + l +",height=" + h + ",left=" + left + ",top=" + top;
+	fen = window.open(tmp, title, wfeatures);
+
 	return false;
 }
 
@@ -972,18 +1015,18 @@ function newpopup(url, title) {
  * Function show document preview. It uses the "dialog" function.
  * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
- * @param 	string file 		Url
- * @param 	string type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
- * @param 	string title		Title of popup
+ * @param 	file 		Url
+ * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
+ * @param 	title		Title of popup
  * @return	void
- * @see newpopup
+ * @see newpopup()
  */
 function document_preview(file, type, title)
 {
 	var ValidImageTypes = ["image/gif", "image/jpeg", "image/png", "image/webp"];
 	var showOriginalSizeButton = false;
 
-	console.log("document_preview A click was done. file="+file+", type="+type+", title="+title);
+	console.log("document_preview A click was done: file="+file+", type="+type+", title="+title);
 
 	if ($.inArray(type, ValidImageTypes) < 0) {
 		/* Not an image */
@@ -1026,18 +1069,20 @@ function document_preview(file, type, title)
 
 		};
 		img.src = file;
-
 	}
 
+	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
 		if (mode == 'image' && showOriginalSizeButton)
 		{
+			var curRot = 0;
 			optionsbuttons = {
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("OriginalSize")); ?>": function() { console.log("Click on original size"); jQuery(".ui-dialog-content.ui-widget-content > object").css({ "max-height": "none" }); },
+				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("RotateImage")); ?>": function() { curRot += 90; jQuery(".ui-dialog-content.ui-widget-content > object").css("transform","rotate(" + curRot + "deg)"); },
 				"<?php echo dol_escape_js($langs->transnoentitiesnoconv("CloseWindow")); ?>": function() { $( this ).dialog( "close" ); }
 				};
 		}
@@ -1064,9 +1109,9 @@ function document_preview(file, type, title)
 /*
  * Provide a function to get an URL GET parameter in javascript
  *
- * @param 	string	name				Name of parameter
- * @param	mixed	valueifnotfound		Value if not found
- * @return	string						Value
+ * @param 	name				Name of parameter
+ * @param	valueifnotfound		Value if not found
+ * @return	string				Value
  */
 function getParameterByName(name, valueifnotfound)
 {
@@ -1076,6 +1121,145 @@ function getParameterByName(name, valueifnotfound)
 	return results === null ? valueifnotfound : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+/**
+ * Get the list of possible operators for a given field type that we can use in the generic filter.
+ */
+function getOperatorsForFieldType(type, maybenull = 0) {
+	console.log('Get list of operators for type='+type);
+
+	// Define the list of operators for each general field category
+	const operatorList = {
+		selectlink: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+		},
+		text: {
+			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
+			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			StartsWith: '<?php print dol_escape_js($langs->trans('StartsWith')); ?>',
+			EndsWith: '<?php print dol_escape_js($langs->trans('EndsWith')); ?>'
+		},
+		number: {
+			'=': '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			'!=': '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			'<': '<?php print dol_escape_js($langs->trans('IsLowerThan')); ?>',
+			'>': '<?php print dol_escape_js($langs->trans('IsHigherThan')); ?>',
+			'<=': '<?php print dol_escape_js($langs->trans('IsLowerThanOrEqual')); ?>',
+			'>=': '<?php print dol_escape_js($langs->trans('IsHigherThanOrEqual')); ?>',
+		},
+		date: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+			IsBefore: '<?php print dol_escape_js($langs->trans('IsBefore')); ?>',
+			IsAfter: '<?php print dol_escape_js($langs->trans('IsAfter')); ?>',
+			IsOnOrBefore: '<?php print dol_escape_js($langs->trans('IsOnOrBefore')); ?>',
+			IsOnOrAfter: '<?php print dol_escape_js($langs->trans('IsOnOrAfter')); ?>'
+		},
+		html: {
+			Contains: '<?php print $langs->trans('Contains'); ?>'
+		}
+	};
+
+	// Determine the general category for the given type using regex
+	let generalType = "";
+
+	if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		generalType = "selectlink";
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar|mail|phone|ip)$/i.test(type)) {
+		generalType = "text";
+	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
+		generalType = "number";
+	} else if (/^(date|datetime|timestamp)$/i.test(type)) {
+		generalType = "date";
+	} else if (/^(tinyint|smallint)\(\d+\)$/i.test(type)) {
+		generalType = "number";
+	} else if (/^html$/i.test(type)) {
+		generalType = "html";
+	} else {
+		// Handle unknown or unsupported types
+		console.log("The type of field "+type+" is not supported");
+		return [];
+	}
+
+	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
+	if (maybenull === 1) {
+		operatorList[generalType]["IsDefined"] = '<?php print dol_escape_js($langs->trans('IsDefined')); ?>';
+		operatorList[generalType]["IsNotDefined"] = '<?php print dol_escape_js($langs->trans('IsNotDefined')); ?>';
+	}
+
+	// Return the operators for the general type, or an empty array if not found
+	return operatorList[generalType] || [];
+}
+
+/**
+ * Generate a filter string based on the given column, operator, context and field type
+ */
+function generateFilterString(column, operator, context, fieldType) {
+	let filter = "";
+
+	switch (operator) {
+		case "Contains":
+			filter = column + " like \'%" + context + "%\'";
+			break;
+		case "DoesNotContain":
+			filter = column + " notlike \'%" + context + "%\'";
+			break;
+		case "Is":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "IsNot":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "StartsWith":
+			filter = column + " like \'" + context + "%\'";
+			break;
+		case "EndsWith":
+			filter = column + " like \'%" + context + "\'";
+			break;
+		case "IsDefined":
+			filter = column + ":isnot:null";
+			break;
+		case "IsNotDefined":
+			filter = column + ":is:null";
+			break;
+		case "=":
+			filter = column + " = \'" + context + "\'";
+			break;
+		case "!=":
+			filter = column + " != \'" + context + "\'";
+			break;
+		case "<":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case ">":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "<=":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case ">=":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		case "IsBefore":
+			filter = column + " < \'" + context + "\'";
+			break;
+		case "IsAfter":
+			filter = column + " > \'" + context + "\'";
+			break;
+		case "IsOnOrBefore":
+			filter = column + " <= \'" + context + "\'";
+			break;
+		case "IsOnOrAfter":
+			filter = column + " >= \'" + context + "\'";
+			break;
+		default:
+			filter = "";
+	}
+
+	return filter;
+}
 
 // Code in the public domain from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/round
 (function() {
@@ -1147,9 +1331,9 @@ function dolroundjs(number, decimals) { return +(Math.round(number + "e+" + deci
  *
  */
 function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 	var main_decimal_separator = <?php echo json_encode($dec) ?>;
 	var main_thousand_separator = <?php echo json_encode($thousand) ?>;
 	var locale_code = force_locale || <?php echo json_encode($langs->defaultlang) ?>;
@@ -1216,7 +1400,7 @@ function pricejs(amount, mode = 'MT', currency_code = '', force_locale = '') {
  * Function similar to PHP price2num()
  *
  * @param  {number|string} amount    The amount to convert/clean
- * @return {string}                  The amount in universal numeric format (Example: '99.99999')
+ * @return {number}                  The amount in universal numeric format (Example: '99.99999')
  * @todo Implement rounding parameter
  */
 function price2numjs(amount) {
@@ -1225,9 +1409,9 @@ function price2numjs(amount) {
 	var dec = <?php echo json_encode($dec) ?>;
 	var thousand = <?php echo json_encode($thousand) ?>;
 
-	var main_max_dec_shown = <?php echo (int) str_replace('.', '', $conf->global->MAIN_MAX_DECIMALS_SHOWN); ?>;
-	var main_rounding_unit = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_UNIT; ?>;
-	var main_rounding_tot = <?php echo (int) $conf->global->MAIN_MAX_DECIMALS_TOT; ?>;
+	var main_max_dec_shown = <?php echo (int) str_replace('.', '', getDolGlobalString('MAIN_MAX_DECIMALS_SHOWN')); ?>;
+	var main_rounding_unit = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT'); ?>;
+	var main_rounding_tot = <?php echo (int) getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'); ?>;
 
 	var amount = amount.toString();
 
@@ -1235,31 +1419,37 @@ function price2numjs(amount) {
 	var rounding = main_rounding_unit;
 	var pos = amount.indexOf(dec);
 	var decpart = '';
-	if (pos >= 0) decpart = amount.substr(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	if (pos >= 0) {
+		decpart = amount.substring(pos + 1).replace('/0+$/i', '');    // Remove 0 for decimal part
+	}
 	var nbdec = decpart.length;
-	if (nbdec > rounding) rounding = nbdec;
+	if (nbdec > rounding) {
+		rounding = nbdec;
+	}
 	// If rounding higher than max shown
 	if (rounding > main_max_dec_shown) rounding = main_max_dec_shown;
 	if (thousand != ',' && thousand != '.') amount = amount.replace(',', '.');
 	amount = amount.replace(' ', '');             // To avoid spaces
 	amount = amount.replace(thousand, '');        // Replace of thousand before replace of dec to avoid pb if thousand is .
 	amount = amount.replace(dec, '.');
-	//console.log("amount before="+amount+" rouding="+rounding)
+
+	//console.log("amount before="+amount+" rounding="+rounding)
 	var res = Math.round10(amount, - rounding);
 	// Other solution is
 	// var res = dolroundjs(amount, rounding)
+
 	console.log("price2numjs text="+amount+" return="+res);
+
 	return res;
 }
 
 
 <?php
-if (empty($conf->global->MAIN_DISABLE_JQUERY_JNOTIFY) && !defined('DISABLE_JQUERY_JNOTIFY')) {
+if (!getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && !defined('DISABLE_JQUERY_JNOTIFY')) {
 	?>
 // Defined properties for JNotify
 $(document).ready(function() {
-	if (typeof $.jnotify == 'function')
-	{
+	if (typeof $.jnotify == 'function') {
 		$.jnotify.setup({
 			delay: 3000									// the default time to show each notification (in milliseconds)
 			, sticky: false								// determines if the message should be considered "sticky" (user must manually close notification)
@@ -1268,20 +1458,23 @@ $(document).ready(function() {
 			, fadeSpeed: 1000							// the speed to fade messages out (in milliseconds)
 			, slideSpeed: 250                           // the speed used to slide messages out (in milliseconds)
 			, classContainer: "jnotify-container"
-				, classNotification: "jnotify-notification"
-					, classBackground: "jnotify-background"
-						, classClose: "jnotify-close"
-							, classMessage: "jnotify-message"
-								, init: null                                // callback that occurs when the main jnotify container is created
-								, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
-								, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
+			, classNotification: "jnotify-notification"
+			, classBackground: "jnotify-background"
+			, classClose: "jnotify-close"
+			, classMessage: "jnotify-message"
+			, init: null                                // callback that occurs when the main jnotify container is created
+			, create: null                              // callback that occurs when when the note is created (occurs just before appearing in DOM)
+			, beforeRemove: null                        // callback that occurs when before the notification starts to fade away
 		});
 	}
 });
-<?php } ?>
+	<?php
+} ?>
 
-// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
-$(document).ready(function() {
+
+
+jQuery(document).ready(function() {
+	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
 	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
@@ -1289,30 +1482,93 @@ $(document).ready(function() {
 		jQuery(".id-container").css('width', '100%');
 
 	}
+
+	// Code to set tooltip on search field
+	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
 });
 
 
+jQuery(document).ready(function() {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
+		console.log("Click on .butAction.dropdown-toggle");
+		let parentHolder = jQuery(event.target).parent();
+		let dropDownContent = parentHolder.children(".dropdown-content");
+		let offset = parentHolder.offset();
+		let widthDocument = $(document).width();
+		let heightDocument = $(document).height();
+		let right = widthDocument - offset.left - parentHolder.width();
+		let widthPopup = parentHolder.children(".dropdown-content").width();
+		if (widthPopup + right >= widthDocument) {
+			//right = 10;
+		}
+
+		parentHolder.toggleClass("open");	/* If open, it closes, if closed, it opens */
+
+		// Check tooltip is in viewport
+		let dropDownContentTop = dropDownContent.offset().top;
+		let dropDownContentLeft = dropDownContent.offset().left;
+		let dropDownContentHeight = dropDownContent.outerHeight();
+		let dropDownContentBottom = dropDownContentTop + dropDownContentHeight;
+		let viewportBottom = $(window).scrollTop() + $(window).height();
+
+		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
+		if(parentHolder.hasClass('open')
+			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
+			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
+		){
+			parentHolder.addClass("--up");
+		}else{
+			parentHolder.removeClass("--up");
+		}
+
+		// Change dropdown left/right offset if dropdown is close to left viewport
+		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+			parentHolder.addClass("--left");
+		}else{
+			parentHolder.removeClass("--left");
+		}
+	});
+
+	// Close drop down
+	jQuery(document).on("click", function(event) {
+		// search if click was outside drop down
+		if (!$(event.target).closest('.butAction.dropdown-toggle').length) {
+			/* console.log("click close butAction - we click outside"); */
+			let parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown.open");
+			if (parentholder){
+				// Hide the menus.
+				parentholder.removeClass("open --up --left");
+			}
+		}
+	});
+});
+
+
+<?php
+if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
+	?>
 /*
- * Hacky fix for a bug in select2 with jQuery 3.6.0's new nested-focus "protection"
+ * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
+ * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
-<?php
-if (empty($conf->global->MAIN_DISABLE_SELECT2_FOCUS_PROTECTION) && !defined('DISABLE_SELECT2_FOCUS_PROTECTION')) {
-	?>
 $(document).on('select2:open', (e) => {
-	console.log("Execute the focus (click on combo or use space when on component");
+	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
 	if (target && target.length) {
 		let id = target[0].id || target[0].name;
-		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		if (id.substr(-2) == "[]") {
+			id = id.substr(0,id.length-2);
+		}
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });
 	<?php
 }
 ?>
+
 
 // End of lib_head.js.php

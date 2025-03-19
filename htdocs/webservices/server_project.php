@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016      Ion Agorria          <ion@agorria.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +23,29 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (!defined("NOCSRFCHECK")) {
-	define("NOCSRFCHECK", '1');
+if (!defined('NOCSRFCHECK')) {
+	define('NOCSRFCHECK', '1'); // Do not check anti CSRF attack test
+}
+if (!defined('NOTOKENRENEWAL')) {
+	define('NOTOKENRENEWAL', '1'); // Do not check anti POST attack test
+}
+if (!defined('NOREQUIREMENU')) {
+	define('NOREQUIREMENU', '1'); // If there is no need to load and show top and left menu
+}
+if (!defined('NOREQUIREHTML')) {
+	define('NOREQUIREHTML', '1'); // If we don't need to load the html.form.class.php
+}
+if (!defined('NOREQUIREAJAX')) {
+	define('NOREQUIREAJAX', '1'); // Do not load ajax.lib.php library
+}
+if (!defined("NOLOGIN")) {
+	define("NOLOGIN", '1'); // If this page is public (can be called outside logged session)
+}
+if (!defined("NOSESSION")) {
+	define("NOSESSION", '1');
 }
 
-require '../master.inc.php';
+require '../main.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ws.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -33,13 +53,17 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
 $langs->load("main");
 
 // Enable and test if module web services is enabled
-if (empty($conf->global->MAIN_MODULE_WEBSERVICES)) {
+if (!getDolGlobalString('MAIN_MODULE_WEBSERVICES')) {
 	$langs->load("admin");
 	dol_syslog("Call Dolibarr webservices interfaces with module webservices disabled");
 	print $langs->trans("WarningModuleNotActive", 'WebServices').'.<br><br>';
@@ -81,11 +105,11 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'dolibarrkey' => array('name'=>'dolibarrkey', 'type'=>'xsd:string'),
-		'sourceapplication' => array('name'=>'sourceapplication', 'type'=>'xsd:string'),
-		'login' => array('name'=>'login', 'type'=>'xsd:string'),
-		'password' => array('name'=>'password', 'type'=>'xsd:string'),
-		'entity' => array('name'=>'entity', 'type'=>'xsd:string'),
+		'dolibarrkey' => array('name' => 'dolibarrkey', 'type' => 'xsd:string'),
+		'sourceapplication' => array('name' => 'sourceapplication', 'type' => 'xsd:string'),
+		'login' => array('name' => 'login', 'type' => 'xsd:string'),
+		'password' => array('name' => 'password', 'type' => 'xsd:string'),
+		'entity' => array('name' => 'entity', 'type' => 'xsd:string'),
 	)
 );
 
@@ -97,8 +121,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'result_code' => array('name'=>'result_code', 'type'=>'xsd:string'),
-		'result_label' => array('name'=>'result_label', 'type'=>'xsd:string'),
+		'result_code' => array('name' => 'result_code', 'type' => 'xsd:string'),
+		'result_label' => array('name' => 'result_label', 'type' => 'xsd:string'),
 	)
 );
 
@@ -110,8 +134,8 @@ $server->wsdl->addComplexType(
 	'all',
 	'',
 	array(
-		'id' => array('name'=>'id', 'type'=>'xsd:int'),
-		'user' => array('name'=>'user', 'type'=>'xsd:int'),
+		'id' => array('name' => 'id', 'type' => 'xsd:int'),
+		'user' => array('name' => 'user', 'type' => 'xsd:int'),
 	)
 );
 
@@ -133,7 +157,7 @@ $server->wsdl->addComplexType(
 
 $project_elements = array();
 foreach ($listofreferent as $key => $label) {
-	$project_elements[$key] = array('name'=>$key, 'type'=>'tns:elementsArray');
+	$project_elements[$key] = array('name' => $key, 'type' => 'tns:elementsArray');
 }
 $server->wsdl->addComplexType(
 	'elements',
@@ -146,17 +170,17 @@ $server->wsdl->addComplexType(
 
 // Define project
 $project_fields = array(
-	'id' => array('name'=>'id', 'type'=>'xsd:string'),
-	'ref' => array('name'=>'ref', 'type'=>'xsd:string'),
-	'label' => array('name'=>'label', 'type'=>'xsd:string'),
-	'thirdparty_id' => array('name'=>'thirdparty_id', 'type'=>'xsd:int'),
-	'public' => array('name'=>'public', 'type'=>'xsd:int'),
-	'status' => array('name'=>'status', 'type'=>'xsd:int'),
-	'date_start' => array('name'=>'date_start', 'type'=>'xsd:date'),
-	'date_end' => array('name'=>'date_end', 'type'=>'xsd:date'),
-	'budget' => array('name'=>'budget', 'type'=>'xsd:int'),
-	'description' => array('name'=>'description', 'type'=>'xsd:string'),
-	'elements' => array('name'=>'elements', 'type'=>'tns:elements')
+	'id' => array('name' => 'id', 'type' => 'xsd:string'),
+	'ref' => array('name' => 'ref', 'type' => 'xsd:string'),
+	'label' => array('name' => 'label', 'type' => 'xsd:string'),
+	'thirdparty_id' => array('name' => 'thirdparty_id', 'type' => 'xsd:int'),
+	'public' => array('name' => 'public', 'type' => 'xsd:int'),
+	'status' => array('name' => 'status', 'type' => 'xsd:int'),
+	'date_start' => array('name' => 'date_start', 'type' => 'xsd:date'),
+	'date_end' => array('name' => 'date_end', 'type' => 'xsd:date'),
+	'budget' => array('name' => 'budget', 'type' => 'xsd:int'),
+	'description' => array('name' => 'description', 'type' => 'xsd:string'),
+	'elements' => array('name' => 'elements', 'type' => 'tns:elements')
 );
 
 $elementtype = 'project';
@@ -166,7 +190,7 @@ $elementtype = 'project';
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($elementtype, true);
 $extrafield_array = null;
-if (is_array($extrafields) && count($extrafields) > 0) {
+if (is_array($extrafields->attributes) && $extrafields->attributes[$elementtype]['count'] > 0) {
 	$extrafield_array = array();
 }
 if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafields->attributes[$elementtype]['label']) && count($extrafields->attributes[$elementtype]['label'])) {
@@ -178,7 +202,7 @@ if (isset($extrafields->attributes[$elementtype]['label']) && is_array($extrafie
 		} else {
 			$type = 'xsd:string';
 		}
-		$extrafield_array['options_'.$key] = array('name'=>'options_'.$key, 'type'=>$type);
+		$extrafield_array['options_'.$key] = array('name' => 'options_'.$key, 'type' => $type);
 	}
 }
 if (is_array($extrafield_array)) {
@@ -205,9 +229,9 @@ $styleuse = 'encoded'; // encoded/literal/literal wrapped
 $server->register(
 	'createProject',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'project'=>'tns:project'),
+	array('authentication' => 'tns:authentication', 'project' => 'tns:project'),
 	// Exit values
-	array('result'=>'tns:result', 'id'=>'xsd:string', 'ref'=>'xsd:string'),
+	array('result' => 'tns:result', 'id' => 'xsd:string', 'ref' => 'xsd:string'),
 	$ns,
 	$ns.'#createProject',
 	$styledoc,
@@ -219,9 +243,9 @@ $server->register(
 $server->register(
 	'getProject',
 	// Entry values
-	array('authentication'=>'tns:authentication', 'id'=>'xsd:string', 'ref'=>'xsd:string'),
+	array('authentication' => 'tns:authentication', 'id' => 'xsd:string', 'ref' => 'xsd:string'),
 	// Exit values
-	array('result'=>'tns:result', 'project'=>'tns:project'),
+	array('result' => 'tns:result', 'project' => 'tns:project'),
 	$ns,
 	$ns.'#getProject',
 	$styledoc,
@@ -233,9 +257,9 @@ $server->register(
 /**
  * Create project
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$project			Project info
- * @return	int								Id of new order
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array{id:string,ref:string,label:string,thirdparty_id:int,public:int,status:int,date_start:string,date_end:string,budget:int,description:string,elements:array<array{id:int,user:int}>}		$project			Project info
+ * @return array{id?:int,ref?:string,result:array{result_code:string,result_label:string}} Array result
  */
 function createProject($authentication, $project)
 {
@@ -249,19 +273,22 @@ function createProject($authentication, $project)
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (empty($project['ref'])) {
-		$error++; $errorcode = 'KO'; $errorlabel = "Name is mandatory.";
+		$error++;
+		$errorcode = 'KO';
+		$errorlabel = "Name is mandatory.";
 	}
 
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		if ($fuser->rights->projet->creer) {
+		if ($fuser->hasRight('projet', 'creer')) {
 			$newobject = new Project($db);
 			$newobject->ref = $project['ref'];
 			$newobject->title = $project['label'];
@@ -301,7 +328,7 @@ function createProject($authentication, $project)
 
 			if (!$error) {
 				$db->commit();
-				$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''), 'id'=>$newobject->id, 'ref'=>$newobject->ref);
+				$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref);
 			} else {
 				$db->rollback();
 				$error++;
@@ -310,12 +337,13 @@ function createProject($authentication, $project)
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
@@ -324,10 +352,10 @@ function createProject($authentication, $project)
 /**
  * Get a project
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	string		$id		    		internal id
  * @param	string		$ref		    	internal reference
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getProject($authentication, $id = '', $ref = '')
 {
@@ -341,21 +369,23 @@ function getProject($authentication, $id = '', $ref = '')
 
 	// Init and check authentication
 	$objectresp = array();
-	$errorcode = ''; $errorlabel = '';
+	$errorcode = '';
+	$errorlabel = '';
 	$error = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	// Check parameters
 	if (!$error && (($id && $ref))) {
 		$error++;
-		$errorcode = 'BAD_PARAMETERS'; $errorlabel = "Parameter id and ref can't be both provided. You must choose one or other but not both.";
+		$errorcode = 'BAD_PARAMETERS';
+		$errorlabel = "Parameter id and ref can't be both provided. You must choose one or other but not both.";
 	}
 
 	if (!$error) {
-		$fuser->getrights();
+		$fuser->loadRights();
 
-		if ($fuser->rights->projet->lire) {
+		if ($fuser->hasRight('projet', 'lire')) {
 			$project = new Project($db);
-			$result = $project->fetch($id, $ref);
+			$result = $project->fetch((int) $id, $ref);
 			if ($result > 0) {
 				$project_result_fields = array(
 					'id' => $project->id,
@@ -390,7 +420,7 @@ function getProject($authentication, $id = '', $ref = '')
 				foreach ($listofreferent as $key => $tablename) {
 					$elements[$key] = array();
 					$element_array = $project->get_element_list($key, $tablename);
-					if (count($element_array) > 0 && is_array($element_array)) {
+					if (is_array($element_array) && count($element_array) > 0) {
 						foreach ($element_array as $element) {
 							$tmp = explode('_', $element);
 							$idofelement = count($tmp) > 0 ? $tmp[0] : "";
@@ -403,21 +433,23 @@ function getProject($authentication, $id = '', $ref = '')
 
 				//Result
 				$objectresp = array(
-					'result'=>array('result_code'=>'OK', 'result_label'=>''),
-					'project'=>$project_result_fields
+					'result' => array('result_code' => 'OK', 'result_label' => ''),
+					'project' => $project_result_fields
 				);
 			} else {
 				$error++;
-				$errorcode = 'NOT_FOUND'; $errorlabel = 'Object not found for id='.$id.' nor ref='.$ref;
+				$errorcode = 'NOT_FOUND';
+				$errorlabel = 'Object not found for id='.$id.' nor ref='.$ref;
 			}
 		} else {
 			$error++;
-			$errorcode = 'PERMISSION_DENIED'; $errorlabel = 'User does not have permission for this request';
+			$errorcode = 'PERMISSION_DENIED';
+			$errorlabel = 'User does not have permission for this request';
 		}
 	}
 
 	if ($error) {
-		$objectresp = array('result'=>array('result_code' => $errorcode, 'result_label' => $errorlabel));
+		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	}
 
 	return $objectresp;
