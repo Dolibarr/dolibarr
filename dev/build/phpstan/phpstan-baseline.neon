@@ -601,19 +601,7 @@ parameters:
 			path: ../../../htdocs/accountancy/class/lettering.class.php
 
 		-
-			message: '#^Parameter \#1 \$document_ids of method Lettering\:\:getBankLinesFromFkDocAndDocType\(\) expects array\<string, array\<int\>\>, array\<int, int\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
 			message: '#^Parameter \#1 \$link_by_element of method Lettering\:\:getGroupElements\(\) expects array\<array\<string, int\>\>, array\<array\<string, string\>\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/accountancy/class/lettering.class.php
-
-		-
-			message: '#^Parameter \#3 \$link_key of method Lettering\:\:getGroupElements\(\) expects string, int given\.$#'
 			identifier: argument.type
 			count: 1
 			path: ../../../htdocs/accountancy/class/lettering.class.php
@@ -1720,12 +1708,6 @@ parameters:
 			message: '#^Left side of && is always true\.$#'
 			identifier: booleanAnd.leftAlwaysTrue
 			count: 1
-			path: ../../../htdocs/admin/system/filecheck.php
-
-		-
-			message: '#^Parameter \#1 \$size of function dol_print_size expects int, string given\.$#'
-			identifier: argument.type
-			count: 2
 			path: ../../../htdocs/admin/system/filecheck.php
 
 		-
@@ -4708,12 +4690,6 @@ parameters:
 			message: '#^Variable \$socid might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
-			path: ../../../htdocs/compta/clients.php
-
-		-
-			message: '#^Variable \$sql might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/compta/clients.php
 
 		-
