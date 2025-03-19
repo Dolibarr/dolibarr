@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent   <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
  * Copyright (C) 2013-2020	Charlene BENKE	<charlie@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	echo '<tr class="'.$trclass.'" >';
 	echo '<td class="linkedcol-element tdoverflowmax100">'.$langs->trans("Bom");
 	if (!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) {
-		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, 1).'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
+		print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0, '', 0, '1').'&amp;action=selectlines&amp;token='.newToken().'" data-element="'.$objectlink->element.'" data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';
 	}
 	echo '</td>';
 	echo '<td class="linkedcol-name tdoverflowmax150" >'.$objectlink->getNomUrl(1).'</td>';

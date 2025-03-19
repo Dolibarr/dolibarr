@@ -119,9 +119,11 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
-					$errors++;
 					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
-					$this->errors[] = $errormsg;
+					if ($tmpobject->type == Target::TYPE_BLOCKING) {
+						$errors++;
+						$this->errors[] = $errormsg;
+					}
 					/*if (!empty($response['content'])) {
 						$this->errors[] = dol_trunc($response['content'], 200);
 					}*/

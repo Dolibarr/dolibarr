@@ -4,7 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,7 +248,7 @@ class Deplacement extends CommonObject
 		$sql .= " SET km = ".((float) $this->km); // This is a distance or amount
 		$sql .= " , dated = '".$this->db->idate($this->date)."'";
 		$sql .= " , type = '".$this->db->escape($this->type)."'";
-		$sql .= " , fk_statut = '".$this->db->escape($this->statut)."'";
+		$sql .= " , fk_statut = '".$this->db->escape((string) $this->statut)."'";
 		$sql .= " , fk_user = ".((int) $this->fk_user);
 		$sql .= " , fk_user_modif = ".((int) $user->id);
 		$sql .= " , fk_soc = ".($this->socid > 0 ? $this->socid : 'null');

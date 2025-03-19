@@ -212,7 +212,15 @@ if (!empty($hashp)) {
 				$modulepart = $moduleparttocheck;
 				$original_file = (($tmp[1] ? $tmp[1] . '/' : '') . $ecmfile->filename); // this is relative to module dir
 			}
-			$entity = $ecmfile->entity;
+
+      $entity = $ecmfile->entity;
+		  if (isModEnabled('multicompany') && !empty($ecmfile->src_object_type) && $ecmfile->src_object_id > 0) {
+			  $object = fetchObjectByElement($ecmfile->src_object_id, $ecmfile->src_object_type);
+			  if (is_object($object) && $object->id > 0) {
+				  $entity = $object->entity;
+			  }
+		  }
+      
 			if ($entity != $conf->entity) {
 				$conf->entity = $entity;
 				$conf->setValues($db);

@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			if ($lipre->fetch($id) == 0) {
 				$rej = new RejetPrelevement($db, $user, $type);
 
-				$result = $rej->create($user, $id, GETPOSTINT('motif'), $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
+				$result = $rej->create($user, $id, GETPOSTINT('motif'), (int) $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
 
 				if ($result > 0) {
 					header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));

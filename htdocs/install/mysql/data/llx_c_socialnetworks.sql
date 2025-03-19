@@ -1,7 +1,7 @@
--- Copyright (C) 2024	Laurent Destailleur	<eldy@users.sourceforge.net>
--- Copyright (C) 2024	Frédéric France		<frederic.france@free.fr>
--- Copyright (C) 2024	Udo Tamm			<dev@dolibit.de>
--- Copyright (C) 2024	Regis Houssin		<regis.houssin@inodbox.com>
+-- Copyright (C) 2024		Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2024-2025	Frédéric France		<frederic.france@free.fr>
+-- Copyright (C) 2024		Udo Tamm			<dev@dolibit.de>
+-- Copyright (C) 2024		Regis Houssin		<regis.houssin@inodbox.com>
 --
 
 -- License
@@ -38,7 +38,7 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'github', 'GitHub', 'https://www.github.com/{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'instagram', 'Instagram', 'https://www.instagram.com/{socialid}', 'fa-instagram', 1);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'linkedin', 'LinkedIn', 'https://www.linkedin.com/in/{socialid}', 'fa-linkedin', 1);
-INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'mastodon', 'Mastodon', '{socialid}', '', 0);
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'mastodon', 'Mastodon', '{socialid}', 'fa-mastodon', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'meetup', 'Meetup', '{socialid}', 'fa-meetup', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'periscope', 'Periscope', '{socialid}', '', 0);
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pinterest', 'Pinterest', '{socialid}', 'fa-pinterest', 0);

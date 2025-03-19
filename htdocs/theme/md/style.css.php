@@ -2160,7 +2160,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 85px; }
+.maxwidthdate  { max-width: 95px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -4984,7 +4984,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
 
 /*
 div.liste_titre {
