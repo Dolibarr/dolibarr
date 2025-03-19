@@ -400,7 +400,7 @@ function dolSqlDateFilter($datefield, $day_date, $month_date, $year_date, $exclu
 			$sqldate .= "' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date, $day_date, $year_date, $gm))."'";
 		} else {
 			// This case is not reliable on TZ, but we should not need it.
-			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape($month_date)."'";
+			$sqldate .= ($excludefirstand ? "" : " AND ")." date_format( ".$datefield.", '%c') = '".$db->escape((string) $month_date)."'";
 		}
 	} elseif ($year_date > 0) {
 		$sqldate .= ($excludefirstand ? "" : " AND ").$datefield." BETWEEN '".$db->idate(dol_get_first_day($year_date, 1, $gm));
@@ -832,6 +832,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		$jour  = (int) gmdate("d", $timestampStart);
 		$mois  = (int) gmdate("m", $timestampStart);
 		$annee = (int) gmdate("Y", $timestampStart);
+		$jour_semaine = (int) gmdate("w", $timestampStart);		// sunday = 0, monday = 1, ...
 
 		//print "jour=".$jour." month=".$mois." year=".$annee." includesaturday=".$includesaturday." includesunday=".$includesunday."\n";
 		foreach ($arrayOfPublicHolidays as $entrypublicholiday) {
@@ -976,8 +977,6 @@ function num_public_holiday($timestampStart, $timestampEnd, $country_code = '', 
 		// If we have to include Friday, Saturday and Sunday
 		if (!$ferie) {
 			if ($includefriday || $includesaturday || $includesunday || $includemonday) {
-				$jour_julien = unixtojd($timestampStart);
-				$jour_semaine = jddayofweek($jour_julien, 0);
 				//Monday (1), Friday (5), Saturday (6) and Sunday (0)
 				if ($includefriday && $jour_semaine == 5) {
 					$ferie = true;

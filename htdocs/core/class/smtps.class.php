@@ -890,7 +890,6 @@ class SMTPs
 	 *
 	 * @param string $_path Path to the sendmail executable
 	 * @return boolean
-	 *
 	 */
 	public function setMailPath($_path)
 	{
@@ -1086,7 +1085,6 @@ class SMTPs
 	 *
 	 * @param string $_strTransEncodeType Content-Transfer-Encoding
 	 * @return void
-	 *
 	 */
 	public function setTransEncodeType($_strTransEncodeType)
 	{
@@ -1230,7 +1228,6 @@ class SMTPs
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
 	 * @return void
-	 *
 	 */
 	private function _buildAddrList($_type, $_addrList)
 	{
@@ -2300,5 +2297,4 @@ class SMTPs
  * Revision 1.1  2005/03/01 19:22:49  walter
  *  - initial commit
  *  - basic shell with some comments
- *
  */

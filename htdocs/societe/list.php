@@ -1198,22 +1198,27 @@ if ($contextpage == 'poslist' && $type == 't' && (getDolGlobalString('PRODUIT_MU
 	print get_htmloutput_mesg(img_warning('default').' '.$langs->trans("BecarefullChangeThirdpartyBeforeAddProductToInvoice"), [], 'warning', 1);
 }
 
-$newcardbutton   = '';
-
-// Show the new button only when this page is not opened from the Extended POS (pop-up window)
-// but allow it too, when a user has the rights to create a new customer
-if ($contextpage != 'poslist') {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
-	if (!empty($socid)) {
-		$url .= '&socid='.$socid;
+$newcardbutton = '';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printNewCardButton', $parameters, $object);
+if (empty($reshook)) {
+	// Show the new button only when this page is not opened from the Extended POS (pop-up window)
+	// but allow it too, when a user has the rights to create a new customer
+	if ($contextpage != 'poslist') {
+		$url = DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter;
+		if (!empty($socid)) {
+			$url .= '&socid='.$socid;
+		}
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
+		$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
+	} elseif ($user->hasRight('societe', 'creer')) {
+		$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
+		$label = 'MenuNewCustomer';
+		$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
-	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url, '', $user->hasRight('societe', 'creer'));
-} elseif ($user->hasRight('societe', 'creer')) {
-	$url = DOL_URL_ROOT.'/societe/card.php?action=create&type=t&contextpage=poslist&optioncss=print&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type=t&contextpage=poslist&nomassaction=1&optioncss=print&place='.$place);
-	$label = 'MenuNewCustomer';
-	$newcardbutton = dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
+} else {
+	$newcardbutton = $hookmanager->resPrint;
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">'."\n";

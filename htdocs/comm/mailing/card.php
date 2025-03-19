@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021		Waël Almoman            <info@almoman.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,7 +153,7 @@ if (empty($reshook)) {
 		if (!GETPOST("clone_content", 'alpha') && !GETPOST("clone_receivers", 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content", 'alpha'), GETPOST("clone_receivers", 'alpha'));
+			$result = $object->createFromClone($user, $object->id, GETPOSTINT("clone_content"), GETPOSTINT("clone_receivers"));
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 				exit;
@@ -452,14 +452,14 @@ if (empty($reshook)) {
 				// Loop finished, set global statut of mail
 				if ($nbko > 0) {
 					$statut = 2; // Status 'sent partially' (because at least one error)
-					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", (string) $nbok), null, 'mesgs');
 				} else {
 					if ($nbok >= $num) {
 						$statut = 3; // Send to everybody
 					} else {
 						$statut = 2; // Status 'sent partially' (because not send to everybody)
 					}
-					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", $nbok), null, 'mesgs');
+					setEventMessages($langs->transnoentitiesnoconv("EMailSentToNRecipients", (string) $nbok), null, 'mesgs');
 				}
 
 				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid = ".((int) $object->id);
@@ -640,18 +640,18 @@ if (empty($reshook)) {
 	}
 
 	// Action of file remove
-	if (GETPOST("removedfile") && $permissiontocreate) {
+	if (GETPOSTINT("removedfile") && $permissiontocreate) {
 		$upload_dir = $conf->mailing->dir_output."/".get_exdir($object->id, 2, 0, 1, $object, 'mailing');
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-		dol_remove_file_process(GETPOST('removedfile'), 0, 0); // We really delete file linked to mailing
+		dol_remove_file_process(GETPOSTINT('removedfile'), 0, 0); // We really delete file linked to mailing
 
 		$action = "edit";
 	}
 
 	// Action of emailing update
-	if ($action == 'update' && !GETPOST("removedfile") && !$cancel && $permissiontocreate) {
+	if ($action == 'update' && !GETPOSTINT("removedfile") && !$cancel && $permissiontocreate) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$isupload = 0;
@@ -1030,7 +1030,7 @@ if ($action == 'create') {	// aaa
 
 			// From
 			print '<tr><td class="titlefield">';
-			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+			print $form->editfieldkey("MailFrom", 'email_from', $object->email_from, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 			print '</td><td>';
 			print $form->editfieldval("MailFrom", 'email_from', $object->email_from, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 			$email = CMailFile::getValidAddress($object->email_from, 2);
@@ -1047,13 +1047,13 @@ if ($action == 'create') {	// aaa
 			// Errors to
 			if ($object->messtype != 'sms') {
 				print '<tr><td>';
-				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+				print $form->editfieldkey("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailErrorsTo", 'email_errorsto', $object->email_errorsto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 				foreach ($emailarray as $email => $name) {
 					if ($name != $email) {
-						print dol_escape_htmltag($name).' &lt;'.$email;
+						print dol_escape_htmltag((string) $name).' &lt;'.$email;
 						print '&gt;';
 						if ($email && !isValidEmail($email)) {
 							$langs->load("errors");
@@ -1072,7 +1072,7 @@ if ($action == 'create') {	// aaa
 			// Reply to
 			if ($object->messtype != 'sms') {
 				print '<tr><td>';
-				print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+				print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 				print '</td><td>';
 				print $form->editfieldval("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 				$email = CMailFile::getValidAddress($object->email_replyto, 2);
@@ -1102,19 +1102,19 @@ if ($action == 'create') {	// aaa
 			print '</td><td>';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
-				$text = '';
+				$htmltooltip = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+						$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
-						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
+						$htmltooltip .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
 				}
 				if (empty($nbemail)) {
 					$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 				}
-				if ($text) {
-					print $form->textwithpicto($nbemail, $text, 1, 'warning');
+				if ($htmltooltip) {
+					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
 				} else {
 					print $nbemail;
 				}
@@ -1410,19 +1410,19 @@ if ($action == 'create') {	// aaa
 			print '</td><td>';
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
-				$text = '';
+				$htmltooltip = '';
 				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || $object->status == 2)) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-						$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+						$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
-						$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
+						$htmltooltip .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 					}
 				}
 				if (empty($nbemail)) {
 					$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 				}
-				if ($text) {
-					print $form->textwithpicto($nbemail, $text, 1, 'warning');
+				if ($htmltooltip) {
+					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
 				} else {
 					print $nbemail;
 				}

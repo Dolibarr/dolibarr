@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ $userstatic = new User($db);
 $salarystatic = new Salary($db);
 
 $i = 0;
-while ($i < min($num, $limit)) {
+while ($i < min($num, $limit) && $resql !== null) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen

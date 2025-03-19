@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
  * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
@@ -507,7 +507,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
-			$sql .= " '".$this->db->escape($printable)."',";
+			$sql .= " '".$this->db->escape((string) $printable)."',";
 			$sql .= " ".($default ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
@@ -759,6 +759,7 @@ class ExtraFields
 
 			dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 			if ($type != 'separate') { // No table update when separate type
+				// TODO: Verify, adjust - field_desc has 'value' (not expected), and is missing 'label','enabled','position','visible'
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
@@ -937,7 +938,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " ".((int) $pos).",";
-			$sql .= " '".$this->db->escape($alwayseditable)."',";
+			$sql .= " '".$this->db->escape((string) $alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."',";
 			$sql .= " ".((int) $printable).",";
@@ -1046,7 +1047,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name] = ((is_null($tab->perms) || strlen($tab->perms) == 0) ? 1 : $tab->perms);
+					$this->attributes[$tab->elementtype]['perms'][$tab->name] = $tab->perms;
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
 					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
@@ -1330,7 +1331,7 @@ class ExtraFields
 					$selected = explode(',', $value);
 				}
 
-				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2'));
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', (int) (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')));
 			} else {
 				if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';

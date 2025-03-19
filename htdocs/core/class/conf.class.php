@@ -974,7 +974,7 @@ class Conf extends stdClass
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
-				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;	// Try to have it enabled by default with v21+
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1331,13 +1331,6 @@ class Conf extends stdClass
 			if (!empty($this->global->MAIN_TZUSERINPUTKEY)) {
 				$this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 			}
-
-			if (!empty($this->global->PRODUIT_AUTOFILL_DESC)) {
-				$this->global->MAIN_NO_CONCAT_DESCRIPTION = 1;
-			} else {
-				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
-			}
-
 
 			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 

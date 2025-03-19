@@ -2960,7 +2960,7 @@ class Societe extends CommonObject
 		}
 
 		if (!empty($this->address)) {
-			$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ' ', $langs); // Address + country
+			$datas['address'] = '<br><b>'.$langs->trans("Address").':</b> '.dol_format_address($this, 1, ', ', $langs); // Address + country
 		} elseif (!empty($this->country_code)) {
 			$datas['address'] = '<br><b>'.$langs->trans('Country').':</b> '.$this->country_code;
 		}
@@ -4689,6 +4689,8 @@ class Societe extends CommonObject
 		// Define if company use local taxes
 		$this->localtax1_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX1_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')) ? 1 : 0);
 		$this->localtax2_assuj = ((isset($conf->global->FACTURE_LOCAL_TAX2_OPTION) && (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == '1' || getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on')) ? 1 : 0);
+
+		$this->termsofsale = getDolGlobalString('MAIN_INFO_SOCIETE_TERMSOFSALE');
 	}
 
 	/**
@@ -4706,7 +4708,6 @@ class Societe extends CommonObject
 		$this->id = 0;
 		$this->entity = 1;
 		$this->name = 'THIRDPARTY SPECIMEN '.dol_print_date($now, 'dayhourlog');
-		$this->nom = $this->name; // For backward compatibility
 		$this->ref_ext = 'Ref ext';
 		$this->specimen = 1;
 		$this->address = '21 jump street';

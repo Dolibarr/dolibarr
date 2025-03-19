@@ -44,6 +44,8 @@ $langs->loadLangs(array('trips', 'companies'));
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$hookmanager->initHooks(array('expensereportstats', 'globalcard'));
+
 $mode = GETPOSTISSET("mode") ? GETPOST("mode", 'aZ09') : 'customer';
 $object_status = GETPOST('object_status', 'intcomma');
 
@@ -63,6 +65,12 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 $result = restrictedArea($user, 'expensereport', $id, '');
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $nowyear = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOST('year') > 0 ? GETPOSTINT('year') : $nowyear;

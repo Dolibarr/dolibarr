@@ -449,7 +449,7 @@ class MouvementStock extends CommonObject
 		// Check if stock is enough when qty is < 0.
 		// THIS MUST BE DONE AT END OF MOVEMENTS
 		// Note that qty should be > 0 with type 0 or 3, < 0 with type 1 or 2.
-		if ($movestock && $qty < 0 && !getDolGlobalInt('STOCK_ALLOW_NEGATIVE_TRANSFER')) {
+		if ($movestock && $qty < 0 && getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 			if (isModEnabled('productbatch') && $product->hasbatch() && !$skip_batch) {
 				$foundforbatch = 0;
 				$qtyisnotenough = 0;
@@ -478,7 +478,7 @@ class MouvementStock extends CommonObject
 					return -8;
 				}
 			} else {
-				if (empty($product->stock_warehouse[$entrepot_id]) || empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty)) {
+				if ($product->stockable_product == Product::ENABLED_STOCK && (empty($product->stock_warehouse[$entrepot_id]) || empty($product->stock_warehouse[$entrepot_id]->real) || $product->stock_warehouse[$entrepot_id]->real < abs($qty))) {
 					$langs->load("stocks");
 					$this->error = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
 					$this->errors[] = $langs->trans('qtyToTranferIsNotEnough').' : '.$product->ref;
@@ -488,7 +488,7 @@ class MouvementStock extends CommonObject
 			}
 		}
 
-		if ($movestock) {	// Change stock for current product, change for subproduct is done after
+		if ($movestock && $product->stockable_product == Product::ENABLED_STOCK) {	// Change stock for current product, change for subproduct is done after
 			// Set $origin_type, origin_id and fk_project
 			$fk_project = $this->fk_project;
 			if (!empty($this->origin_type)) {			// This is set by caller for tracking reason
@@ -665,9 +665,11 @@ class MouvementStock extends CommonObject
 
 		if ($movestock && !$error) {
 			// Call trigger
-			$result = $this->call_trigger('STOCK_MOVEMENT', $user);
-			if ($result < 0) {
-				$error++;
+			if ($product->stockable_product != Product::DISABLED_STOCK ) {
+				$result = $this->call_trigger('STOCK_MOVEMENT', $user);
+				if ($result < 0) {
+					$error++;
+				}
 			}
 			// End call triggers
 			// Check unicity for serial numbered equipment once all movement were done.

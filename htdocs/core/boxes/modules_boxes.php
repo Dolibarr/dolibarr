@@ -341,7 +341,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 					if (!empty($head['graph'])) {
 						$label .= ' <span class="opacitymedium fas fa-chart-bar"></span>';
 					}
-					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
+					$out .= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dolPrintHTMLForAttribute($label).'">';
 					$out .= '</div>';
 				}
 
@@ -388,7 +388,7 @@ class ModeleBoxes // Can't be abstract as it is instantiated to build "empty" bo
 							if (!empty($contents[$i][$j]['url']) && empty($contents[$i][$j]['logo'])) {
 								$out .= '<a href="'.$contents[$i][$j]['url'].'"';
 								if (!empty($tooltip)) {
-									$out .= ' title="'.dol_escape_htmltag($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
+									$out .= ' title="'.dolPrintHTMLForAttribute($langs->trans("Show").' '.$tooltip, 1).'" class="classfortooltip"';
 								}
 								//$out.= ' alt="'.$textwithnotags.'"';      // Pas de alt sur un "<a href>"
 								$out .= isset($contents[$i][$j]['target']) ? ' target="'.$contents[$i][$j]['target'].'"' : '';

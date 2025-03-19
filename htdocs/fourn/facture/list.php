@@ -177,7 +177,7 @@ if (empty($user->socid)) {
 	$fieldstosearchall["f.note_private"] = "NotePrivate";
 }
 
-$checkedtypetiers = 0;
+$checkedtypetiers = '0';
 $arrayfields = array(
 	'f.ref' => array('label' => "Ref", 'checked' => '1', 'position' => 5),
 	'f.ref_supplier' => array('label' => "RefSupplier", 'checked' => '1', 'position' => 7),
@@ -198,18 +198,18 @@ $arrayfields = array(
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 50),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 105),
 	'f.total_vat' => array('label' => "AmountVAT", 'checked' => '0', 'position' => 110),
-	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => $mysoc->localtax1_assuj == "1", 'position' => 95),
-	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => '0', 'enabled' => $mysoc->localtax2_assuj == "1", 'position' => 100),
+	'f.total_localtax1' => array('label' => $langs->transcountry("AmountLT1", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax1_assuj == "1"), 'position' => 95),
+	'f.total_localtax2' => array('label' => $langs->transcountry("AmountLT2", $mysoc->country_code), 'checked' => '0', 'enabled' => (string) (int) ($mysoc->localtax2_assuj == "1"), 'position' => 100),
 	'f.total_ttc' => array('label' => "AmountTTC", 'checked' => '1', 'position' => 115),
 	'dynamount_payed' => array('label' => "Paid", 'checked' => '0', 'position' => 116),
 	'rtp' => array('label' => "Rest", 'checked' => '0', 'position' => 117),
-	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'position' => 205, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'position' => 206, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'position' => 207, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'position' => 208, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'position' => 209, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'position' => 210, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)),
-	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => '0', 'position' => 211, 'enabled' => (!isModEnabled("multicurrency") ? 0 : 1)), // Not enabled by default because slow
+	'f.multicurrency_code' => array('label' => 'Currency', 'checked' => '0', 'position' => 205, 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'f.multicurrency_tx' => array('label' => 'CurrencyRate', 'checked' => '0', 'position' => 206, 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'f.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'position' => 207, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'f.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'position' => 208, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'f.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'position' => 209, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'position' => 210, 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
+	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => '0', 'position' => 211, 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')), // Not enabled by default because slow
 	'u.login' => array('label' => "Author", 'checked' => '-1', 'position' => 500),
 	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 501),
 	'f.tms' => array('label' => "DateModificationShort", 'checked' => '0', 'position' => 502),
@@ -226,7 +226,6 @@ if (empty($subtypearray)) {
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 if (!isModEnabled('supplier_invoice')) {
 	accessforbidden();
@@ -433,7 +432,6 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
-$bankaccountstatic = new Account($db);
 $facturestatic = new FactureFournisseur($db);
 $formcompany = new FormCompany($db);
 $thirdparty = new Societe($db);
@@ -455,9 +453,6 @@ $help_url = 'EN:Suppliers_Invoices|FR:FactureFournisseur|ES:Facturas_de_proveedo
 // Build and execute select
 // --------------------------------------------------------------------
 $sql = "SELECT";
-if ($search_all) {
-	$sql = 'SELECT DISTINCT';
-}
 $sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement as datelimite, f.fk_mode_reglement, f.fk_cond_reglement,";
 $sql .= " f.total_ht, f.total_ttc, f.total_tva as total_vat, f.paye as paye, f.close_code, f.fk_statut as fk_statut, f.libelle as label, f.datec as date_creation, f.tms as date_modification,";
 $sql .= " f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,";
@@ -482,12 +477,6 @@ $reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $obje
 $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/,\s*$/', '', $sql);
 
-// We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
-// TODO Better solution to be able to sort on already paid or remain to pay is to store amount_payed in a denormalized field.
-if (!$search_all) {
-	$sql .= ', SUM(pf.amount) as dynamount_payed';
-}
-
 $sqlfields = $sql; // $sql fields to remove for count total
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -497,12 +486,6 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = 
 $sql .= ', '.MAIN_DB_PREFIX.'facture_fourn as f';
 if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (f.rowid = ef.fk_object)";
-}
-if (!$search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
-}
-if ($search_all) {
-	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det as pd ON f.rowid=pd.fk_facture_fourn';
 }
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user AS u ON f.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = f.fk_projet";
@@ -735,10 +718,16 @@ if ($filter && $filter != -1) {
 		$sql .= " AND ".$db->escape(trim($filt[0]))." = '".$db->escape(trim($filt[1]))."'";
 	}
 }
-/*
-if ($search_sale > 0) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $search_sale);
-}*/
+
+if ($search_all) {
+	unset($fieldstosearchall['pd.description']);
+	$sql .= "AND (";
+	$sql .= natural_search(array_keys($fieldstosearchall), $search_all, 0, 1);
+	$sql .= " OR EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."facture_fourn_det as pd WHERE f.rowid = pd.fk_facture_fourn AND pd.description LIKE '%".$db->escape($db->escapeforlike($search_all))."%')";
+	$sql .= ")";
+	$fieldstosearchall['pd.description'] = 'Description';
+}
+
 if ($search_user > 0) {
 	$sql .= " AND ec.fk_c_type_contact = tc.rowid AND tc.element='invoice_supplier' AND tc.source='internal' AND ec.element_id = f.rowid AND ec.fk_socpeople = ".((int) $search_user);
 }
@@ -748,33 +737,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-if (!$search_all) {
-	$sql .= " GROUP BY f.rowid, f.ref, f.ref_supplier, f.type, f.subtype, f.datef, f.date_lim_reglement, f.fk_mode_reglement, f.fk_cond_reglement,";
-	$sql .= " f.total_ht, f.total_ttc, f.total_tva, f.paye, f.close_code, f.fk_statut, f.libelle, f.datec, f.tms,";
-	$sql .= " f.localtax1, f.localtax2,";
-	$sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc,';
-	$sql .= " f.note_public, f.note_private,";
-	$sql .= " f.fk_user_author,";
-	$sql .= ' s.rowid, s.nom, s.name_alias, s.email, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur,';
-	$sql .= " typent.code,";
-	$sql .= " state.code_departement, state.nom,";
-	$sql .= ' country.code,';
-	$sql .= " p.rowid, p.ref, p.title,";
-	$sql .= " u.login, u.lastname, u.firstname, u.email, u.statut, u.entity, u.photo, u.office_phone, u.office_fax, u.user_mobile, u.job, u.gender";
-	if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-			//prevent error with sql_mode=only_full_group_by
-			$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ",ef.".$key : '');
-		}
-	}
-	// Add GroupBy from hooks
-	$parameters = array('all' => $search_all, 'fieldstosearchall' => $fieldstosearchall);
-	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-	$sql .= $hookmanager->resPrint;
-} else {
-	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
-}
 
 // Add HAVING from hooks
 $parameters = array();
@@ -786,8 +748,6 @@ $nbtotalofrecords = '';
 if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 	/* The fast and low memory method to get and count full list converts the sql into a sql count */
 	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
-	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
-	$sqlforcount = preg_replace('/LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid/', '', $sqlforcount);
 
 	$resql = $db->query($sqlforcount);
 	if ($resql) {

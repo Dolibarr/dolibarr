@@ -2,7 +2,7 @@
 /* Copyright (C) 2005-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -68,15 +68,14 @@ $object = new stdClass();
 
 // Definition of fields for lists
 $arrayfields = array(
-	'name' => array('label' => $langs->trans("Modules"), 'checked' => 1, 'position' => 10),
-	'version' => array('label' => $langs->trans("Version"), 'checked' => 1, 'position' => 20),
-	'id' => array('label' => $langs->trans("IdModule"), 'checked' => 1, 'position' => 30),
-	'module_position' => array('label' => $langs->trans("Position"), 'checked' => 1, 'position' => 35),
-	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => 1, 'position' => 40)
+	'name' => array('label' => $langs->trans("Modules"), 'checked' => '1', 'position' => 10),
+	'version' => array('label' => $langs->trans("Version"), 'checked' => '1', 'position' => 20),
+	'id' => array('label' => $langs->trans("IdModule"), 'checked' => '1', 'position' => 30),
+	'module_position' => array('label' => $langs->trans("Position"), 'checked' => '1', 'position' => 35),
+	'permission' => array('label' => $langs->trans("IdPermissions"), 'checked' => '1', 'position' => 40)
 );
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked:int<0,1>,position:int}> $arrayfields';
 
 $param = '';
 $info_admin = '';

@@ -159,7 +159,7 @@ if ($id > 0 || !empty($ref)) {
 			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client,";
 			$sql .= " c.rowid, d.total_ht as total_ht, c.ref,";
 			$sql .= " c.date_livraison as delivery_date,";
-			$sql .= " c.date_commande, c.fk_statut as statut, c.rowid as commandeid, d.rowid, d.qty, d.subprice as unitprice";
+			$sql .= " c.date_commande, c.fk_statut as status, c.billed, c.rowid as commandeid, d.rowid, d.qty, d.subprice as unitprice";
 			if (!$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			}
@@ -279,7 +279,10 @@ if ($id > 0 || !empty($ref)) {
 
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
-						$supplierorderstatic->statut = $objp->statut;
+						$supplierorderstatic->statut = $objp->status;
+						$supplierorderstatic->status = $objp->status;
+						$supplierorderstatic->billed = $objp->billed;
+
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';

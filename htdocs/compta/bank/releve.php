@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,12 @@ $hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'dvnext' && !empty($dvid)) {
 	$al = new AccountLine($db);
-	$al->datev_next($dvid);
+	$al->datev_next((int) $dvid);
 }
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'dvprev' && !empty($dvid)) {
 	$al = new AccountLine($db);
-	$al->datev_previous($dvid);
+	$al->datev_previous((int) $dvid);
 }
 
 

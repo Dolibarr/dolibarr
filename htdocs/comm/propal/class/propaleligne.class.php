@@ -19,7 +19,7 @@
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
  * Copyright (C) 2022      	Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -551,12 +551,12 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ' date_start, date_end';
 		$sql .= ', fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc)';
 		$sql .= " VALUES (".$this->fk_propal.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape($this->fk_parent_line)."'" : "null").",";
+		$sql .= " ".($this->fk_parent_line > 0 ? "'".$this->db->escape((string) $this->fk_parent_line)."'" : "null").",";
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".($this->fk_product ? "'".$this->db->escape($this->fk_product)."'" : "null").",";
-		$sql .= " '".$this->db->escape($this->product_type)."',";
-		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape($this->fk_remise_except)."'" : "null").",";
+		$sql .= " ".($this->fk_product ? "'".$this->db->escape((string) $this->fk_product)."'" : "null").",";
+		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
+		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape((string) $this->fk_remise_except)."'" : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).",";
@@ -572,7 +572,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".price2num($this->total_localtax1, 'MT').",";
 		$sql .= " ".price2num($this->total_localtax2, 'MT').",";
 		$sql .= " ".price2num($this->total_ttc, 'MT').",";
-		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null").",";
+		$sql .= " ".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null").",";
 		$sql .= " ".(isset($this->pa_ht) ? "'".price2num($this->pa_ht)."'" : "null").",";
 		$sql .= ' '.((int) $this->special_code).',';
 		$sql .= ' '.((int) $this->rang).',';
@@ -768,7 +768,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= ", remise_percent=".price2num($this->remise_percent);
 		$sql .= ", price=".(float) price2num($this->price); // TODO A virer
 		$sql .= ", remise=".(float) price2num($this->remise); // TODO A virer
-		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
+		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
 		if (empty($this->skip_update_total)) {
 			$sql .= ", total_ht=".price2num($this->total_ht);
 			$sql .= ", total_tva=".price2num($this->total_tva);
@@ -776,7 +776,7 @@ class PropaleLigne extends CommonObjectLine
 			$sql .= ", total_localtax1=".price2num($this->total_localtax1);
 			$sql .= ", total_localtax2=".price2num($this->total_localtax2);
 		}
-		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
+		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape((string) $this->fk_fournprice)."'" : "null");
 		$sql .= ", buy_price_ht=".price2num($this->pa_ht);
 		$sql .= ", special_code=".((int) $this->special_code);
 		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? (int) $this->fk_parent_line : "null");

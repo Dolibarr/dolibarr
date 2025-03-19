@@ -6,7 +6,7 @@
  * Copyright (C) 2006-2013 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Francis Appels  		<francis.appels@yahoo.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
