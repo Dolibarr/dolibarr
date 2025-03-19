@@ -374,9 +374,176 @@ if ($id > 0 || !empty($ref)) {
 
 		print '<div class="fichecenter">';
 
-		$atleastonenotdefined = 0;
-		print load_fiche_titre($langs->trans("ProductAssociationList"), '', '');
+		$atleastonenotdefined = 0;	// at least on buying price not defined
 
+		$tmpurlforbutton = 'javascript:console.log("click to add a product in kit");jQuery(".formtoaddinkit").toggle();';
+		$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $usercancreate);
+
+		print load_fiche_titre($langs->trans("ProductAssociationList"), $morehtmlright, '');
+
+
+		// Form with product to add
+		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
+			//print '<br>';
+
+			$rowspan = 1;
+			if (isModEnabled('category')) {
+				$rowspan++;
+			}
+
+			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST" class="formtoaddinkit'.($action != 'search' ?' hideobject' : '').'" name="formtoaddinkit" id="formtoaddinkit">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="search">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
+
+			print '<div class="inline-block">';
+			print $langs->trans("KeywordFilter").': ';
+			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
+			print '</div>';
+			if (isModEnabled('category')) {
+				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
+				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
+				print ajax_combobox('parent');
+			}
+			print '<div class="inline-block">';
+			print '<input type="submit" class="button small" value="'.$langs->trans("Search").'">';
+			print '</div><br><br>';
+
+			print '</form>';
+		}
+
+
+		// List of products found to add
+		if ($action == 'search') {
+			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="post" class="formtoaddinkit">';
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="add_prod">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
+
+			print '<table class="noborder centpercent">';
+			print '<tr class="liste_titre">';
+			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';
+			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
+			//print '<th class="liste_titre center">'.$langs->trans("IsInPackage").'</td>';
+			print '<th class="liste_titre right">'.$langs->trans("Qty").'</td>';
+			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
+			print '</tr>';
+			if ($resql) {
+				$num = $db->num_rows($resql);
+				$i = 0;
+
+				if ($num == 0) {
+					print '<tr><td colspan="4"><span class="opacitymedium">'.$langs->trans("NoMatchFound").'</span></td></tr>';
+				}
+
+				$MAX = 100;
+
+				while ($i < min($num, $MAX)) {
+					$objp = $db->fetch_object($resql);
+					if ($objp->rowid != $id) {
+						// check if a product is not already a parent product of this one
+						$prod_arbo = new Product($db);
+						$prod_arbo->id = $objp->rowid;
+						// This type is not supported (not required to have virtual products working).
+						if (getDolGlobalString('PRODUCT_USE_DEPRECATED_ASSEMBLY_AND_STOCK_KIT_TYPE')) {
+							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
+								$is_pere = 0;
+								$prod_arbo->get_sousproduits_arbo();
+								// associations sousproduits
+								$prods_arbo = $prod_arbo->get_arbo_each_prod();
+								if (count($prods_arbo) > 0) {
+									foreach ($prods_arbo as $key => $value) {
+										// @phan-suppress-next-line PhanTypeInvalidDimOffset
+										if ($value[1] == $id) {
+											$is_pere = 1;
+										}
+									}
+								}
+								if ($is_pere == 1) {
+									$i++;
+									continue;
+								}
+							}
+						}
+
+						print "\n";
+						print '<tr class="oddeven">';
+
+						$productstatic->id = $objp->rowid;
+						$productstatic->ref = $objp->ref;
+						$productstatic->label = $objp->label;
+						$productstatic->type = $objp->type;
+						$productstatic->entity = $objp->entity;
+						$productstatic->status = $objp->status;
+						$productstatic->status_buy = $objp->status_buy;
+						$productstatic->status_batch = $objp->tobatch;
+
+						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
+						$labeltoshow = $objp->label;
+						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->labelm)) {
+							$labeltoshow = $objp->labelm;
+						}
+
+						print '<td>'.$labeltoshow.'</td>';
+
+
+						if ($object->is_sousproduit($id, $objp->rowid)) {
+							//$addchecked = ' checked';
+							$qty = $object->is_sousproduit_qty;
+							$incdec = $object->is_sousproduit_incdec;
+						} else {
+							//$addchecked = '';
+							$qty = 0;
+							$incdec = 0;
+						}
+						// Contained into package
+						/*print '<td class="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
+						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';*/
+						// Qty
+						print '<td class="right"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.($qty ? $qty : '').'"></td>';
+
+						// Inc Dec
+						print '<td class="center">';
+						if ($qty) {
+							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec ? 'checked' : '').'>';
+						} else {
+							// TODO Hide field and show it when setting a qty
+							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
+							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
+						}
+						print '</td>';
+
+						print '</tr>';
+					}
+					$i++;
+				}
+				if ($num > $MAX) {
+					print '<tr class="oddeven">';
+					print '<td><span class="opacitymedium">'.$langs->trans("More").'...</span></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '<td></td>';
+					print '</tr>';
+				}
+			} else {
+				dol_print_error($db);
+			}
+			print '</table>';
+			print '<input type="hidden" name="max_prod" value="'.$i.'">';
+
+			if ($num > 0) {
+				print '<div class="center">';
+				print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
+				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
+				print '</div><br><br>';
+			}
+
+			print '</form>';
+		}
+
+
+		// Section of existing products in kit
 		print '<form name="formComposedProduct" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 		print '<input type="hidden" name="token" value="'.newToken().'" />';
 		print '<input type="hidden" name="action" value="save_composed_product" />';
@@ -433,7 +600,7 @@ if ($id > 0 || !empty($ref)) {
 					print '<td title="'.dol_escape_htmltag($productstatic->label).'" class="tdoverflowmax150">'.dol_escape_htmltag($productstatic->label).'</td>';
 
 					// Best buying price
-					print '<td class="right">';
+					print '<td class="right"><span class="small">';
 					if ($product_fourn->find_min_price_product_fournisseur($productstatic->id) > 0) {
 						print $langs->trans("BuyingPriceMinShort").': ';
 						if ($product_fourn->product_fourn_price_id > 0) {
@@ -444,6 +611,7 @@ if ($id > 0 || !empty($ref)) {
 							$atleastonenotdefined++;
 						}
 					}
+					print '</span>';
 					print '</td>';
 
 					// For avoid a non-numeric value
@@ -627,168 +795,6 @@ if ($id > 0 || !empty($ref)) {
 
 		print '</form>';
 		print '</div>';
-
-
-
-		// Form with product to add
-		if ((empty($action) || $action == 'view' || $action == 'edit' || $action == 'search' || $action == 're-edit') && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-			print '<br>';
-
-			$rowspan = 1;
-			if (isModEnabled('category')) {
-				$rowspan++;
-			}
-
-			print load_fiche_titre($langs->trans("ProductToAddSearch"), '', '');
-			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="POST">';
-			print '<input type="hidden" name="action" value="search">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-			print '<div class="inline-block">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print $langs->trans("KeywordFilter").': ';
-			print '<input type="text" name="key" value="'.$key.'"> &nbsp; ';
-			print '</div>';
-			if (isModEnabled('category')) {
-				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
-				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
-				print ajax_combobox('parent');
-			}
-			print '<div class="inline-block">';
-			print '<input type="submit" class="button small" value="'.$langs->trans("Search").'">';
-			print '</div>';
-			print '</form>';
-		}
-
-
-		// List of products
-		if ($action == 'search') {
-			print '<br>';
-			print '<form action="'.DOL_URL_ROOT.'/product/composition/card.php?id='.$id.'" method="post">';
-			print '<input type="hidden" name="token" value="'.newToken().'">';
-			print '<input type="hidden" name="action" value="add_prod">';
-			print '<input type="hidden" name="id" value="'.$id.'">';
-
-			print '<table class="noborder centpercent">';
-			print '<tr class="liste_titre">';
-			print '<th class="liste_titre">'.$langs->trans("ComposedProduct").'</td>';
-			print '<th class="liste_titre">'.$langs->trans("Label").'</td>';
-			//print '<th class="liste_titre center">'.$langs->trans("IsInPackage").'</td>';
-			print '<th class="liste_titre right">'.$langs->trans("Qty").'</td>';
-			print '<th class="center">'.$langs->trans('ComposedProductIncDecStock').'</th>';
-			print '</tr>';
-			if ($resql) {
-				$num = $db->num_rows($resql);
-				$i = 0;
-
-				if ($num == 0) {
-					print '<tr><td colspan="4">'.$langs->trans("NoMatchFound").'</td></tr>';
-				}
-
-				$MAX = 100;
-
-				while ($i < min($num, $MAX)) {
-					$objp = $db->fetch_object($resql);
-					if ($objp->rowid != $id) {
-						// check if a product is not already a parent product of this one
-						$prod_arbo = new Product($db);
-						$prod_arbo->id = $objp->rowid;
-						// This type is not supported (not required to have virtual products working).
-						if (getDolGlobalString('PRODUCT_USE_DEPRECATED_ASSEMBLY_AND_STOCK_KIT_TYPE')) {
-							if ($prod_arbo->type == 2 || $prod_arbo->type == 3) {
-								$is_pere = 0;
-								$prod_arbo->get_sousproduits_arbo();
-								// associations sousproduits
-								$prods_arbo = $prod_arbo->get_arbo_each_prod();
-								if (count($prods_arbo) > 0) {
-									foreach ($prods_arbo as $key => $value) {
-										// @phan-suppress-next-line PhanTypeInvalidDimOffset
-										if ($value[1] == $id) {
-											$is_pere = 1;
-										}
-									}
-								}
-								if ($is_pere == 1) {
-									$i++;
-									continue;
-								}
-							}
-						}
-
-						print "\n";
-						print '<tr class="oddeven">';
-
-						$productstatic->id = $objp->rowid;
-						$productstatic->ref = $objp->ref;
-						$productstatic->label = $objp->label;
-						$productstatic->type = $objp->type;
-						$productstatic->entity = $objp->entity;
-						$productstatic->status = $objp->status;
-						$productstatic->status_buy = $objp->status_buy;
-						$productstatic->status_batch = $objp->tobatch;
-
-						print '<td>'.$productstatic->getNomUrl(1, '', 24).'</td>';
-						$labeltoshow = $objp->label;
-						if (getDolGlobalInt('MAIN_MULTILANGS') && !empty($objp->labelm)) {
-							$labeltoshow = $objp->labelm;
-						}
-
-						print '<td>'.$labeltoshow.'</td>';
-
-
-						if ($object->is_sousproduit($id, $objp->rowid)) {
-							//$addchecked = ' checked';
-							$qty = $object->is_sousproduit_qty;
-							$incdec = $object->is_sousproduit_incdec;
-						} else {
-							//$addchecked = '';
-							$qty = 0;
-							$incdec = 0;
-						}
-						// Contained into package
-						/*print '<td class="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
-						print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';*/
-						// Qty
-						print '<td class="right"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="text" size="2" name="prod_qty_'.$i.'" value="'.($qty ? $qty : '').'"></td>';
-
-						// Inc Dec
-						print '<td class="center">';
-						if ($qty) {
-							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" '.($incdec ? 'checked' : '').'>';
-						} else {
-							// TODO Hide field and show it when setting a qty
-							print '<input type="checkbox" name="prod_incdec_'.$i.'" value="1" checked>';
-							//print '<input type="checkbox" disabled name="prod_incdec_'.$i.'" value="1" checked>';
-						}
-						print '</td>';
-
-						print '</tr>';
-					}
-					$i++;
-				}
-				if ($num > $MAX) {
-					print '<tr class="oddeven">';
-					print '<td><span class="opacitymedium">'.$langs->trans("More").'...</span></td>';
-					print '<td></td>';
-					print '<td></td>';
-					print '<td></td>';
-					print '</tr>';
-				}
-			} else {
-				dol_print_error($db);
-			}
-			print '</table>';
-			print '<input type="hidden" name="max_prod" value="'.$i.'">';
-
-			if ($num > 0) {
-				print '<div class="center">';
-				print '<input type="submit" class="button button-save" name="save" value="'.$langs->trans("Add").'/'.$langs->trans("Update").'">';
-				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
-				print '</div>';
-			}
-
-			print '</form>';
-		}
 	}
 }
 
