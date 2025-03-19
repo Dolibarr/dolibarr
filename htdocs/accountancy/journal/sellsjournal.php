@@ -445,12 +445,12 @@ if ($result) {
 
 if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
 	// Fix amount precision and gap
-	$tab_list = array('tabht' => 'total_ht', 'tabtva' => 'total_tva', 'tablocaltax1' => 'total_localtax1', 'tablocaltax2' => 'total_localtax2', 'tabttc' => 'total_ttc');
-	foreach ($tab_list as $tab_property => $total_property) {
+	$tab_list = array('total_ht' => &$tabht, 'total_tva' => &$tabtva, 'total_localtax1' => &$tablocaltax1, 'total_localtax2' => &$tablocaltax2, 'total_ttc' => &$tabttc);
+	foreach ($tab_list as $total_property => $tab) {
 		foreach ($tabfac as $invoice_id => $invoice_info) {
 			// Fix HT
 			$total_amount = 0;
-			if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && $tab_property == 'tabttc' && isset($tabwarranty[$invoice_id])) {
+			if (getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY') && $total_property == 'total_ttc' && isset($tabwarranty[$invoice_id])) {
 				foreach ($tabwarranty[$invoice_id] as $compta_prod => $amount) {
 					// Fix precision
 					$amount = price2num($amount, 'MT');
@@ -458,19 +458,19 @@ if (getDolGlobalInt('ACCOUNTANCY_SELL_JOURNAL_FIX_PRECISION_AND_GAP')) {
 					$tabwarranty[$invoice_id][$compta_prod] = $amount;
 				}
 			}
-			if (isset(${$tab_property}[$invoice_id])) {
-				foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
+			if (isset($tab[$invoice_id])) {
+				foreach ($tab[$invoice_id] as $compta_prod => $amount) {
 					// Fix precision
 					$amount = price2num($amount, 'MT');
 					$total_amount += $amount;
-					${$tab_property}[$invoice_id][$compta_prod] = $amount;
+					$tab[$invoice_id][$compta_prod] = $amount;
 				}
 				if (isset($invoice_info[$total_property]) && price2num($total_amount) != price2num($invoice_info[$total_property])) {
-					foreach (${$tab_property}[$invoice_id] as $compta_prod => $amount) {
+					foreach ($tab[$invoice_id] as $compta_prod => $amount) {
 						if (!empty($amount)) {
 							// Fix gap
 							$amount += $invoice_info[$total_property] - $total_amount;
-							${$tab_property}[$invoice_id][$compta_prod] = $amount;
+							$tab[$invoice_id][$compta_prod] = $amount;
 							break;
 						}
 					}
