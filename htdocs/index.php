@@ -456,7 +456,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'stats' =>
 					array('holiday'),
 			),
-		'mrp' =>
+		'cubes' =>
 			array(
 				'groupName' => 'Mo',
 				'globalStatsKey' => 'mrp',

@@ -2000,27 +2000,58 @@ class Mo extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$langs->load("mrp");
-
 			$response = new WorkboardResponse();
-			$response->warning_delay = $conf->mrp->workboard->warning_delay / 60 / 60 / 24;
+			$warning_delay = $conf->mrp->progress->warning_delay ;
+			$response->warning_delay = $warning_delay / 86400;
 			$response->label = $langs->trans("MOProgress");
 			$response->labelShort = $langs->trans("MOProgress");
-			$response->url = DOL_URL_ROOT.'/mrp/mo_list.php';
+			$response->url = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2';
 			$response->img = img_object('', "mrp");
+
+			$now = dol_now();
+			$delay_threshold = $now + $warning_delay;
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
-				if (!empty($obj->date_end_planned) && $this->db->jdate($obj->date_end_planned) < $now) {
-					$response->nbtodolate++;
+
+				if (!empty($obj->date_end_planned)) {
+					$date_end_planned = $this->db->jdate($obj->date_end_planned);
+
+					// Vérifier si la tâche est en retard
+					if ($date_end_planned > $delay_threshold) {
+						$response->nbtodolate++;
+						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
+					}
 				}
 			}
+
 			return $response;
 		} else {
 			dol_print_error($this->db);
 			$this->error = $this->db->error();
 			return -1;
 		}
+
 	}
+
+	/**
+	 * Is the manufactured delayed?
+	 *
+	 * @return bool
+	 */
+	public function hasDelay()
+	{
+		global $conf;
+
+		$now = dol_now();
+
+		// Paid invoices have status STATUS_CLOSED
+		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
+			return false;
+		}
+		return $this->date_end_planned > ($now + $conf->mrp->progress->warning_delay) ? true : false;
+	}
+
 
 	/**
 	 *	Return clickable link of object (with eventually picto)

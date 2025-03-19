@@ -87,6 +87,8 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
+$search_option = GETPOST('search_option', 'alphanohtml');
+
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
 	$sortfield = "t.ref"; // Set here default search field. By default 1st field in definition.
@@ -107,7 +109,6 @@ foreach ($object->fields as $key => $val) {
 		$search[$key.'_dtend'] = dol_mktime(23, 59, 59, GETPOSTINT('search_'.$key.'_dtendmonth'), GETPOSTINT('search_'.$key.'_dtendday'), GETPOSTINT('search_'.$key.'_dtendyear'));
 	}
 }
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach ($object->fields as $key => $val) {
@@ -265,6 +266,13 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -1) {
 			continue;
 		}
+		if ($key == 'status' && $search[$key] == -2) {
+			$sql .= ' AND (t.status IN ('.$object::STATUS_VALIDATED.','.$object::STATUS_INPROGRESS.'))';
+			if ($search_option == 'late') {
+				$sql .= ' AND (t.date_end_planned > \''.$db->idate(dol_now() + $conf->mrp->progress->warning_delay).'\')';
+			}
+			continue;
+		}
 		if ($key == 'fk_parent_line' && $search[$key] != '') {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
 			continue;
@@ -274,7 +282,6 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search('t.status', (string) $search[$key], 0);
 			continue;
 		}
-
 
 		$mode_search = (($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key])) ? 1 : 0);
 		if ((strpos($object->fields[$key]['type'], 'integer:') === 0) || (strpos($object->fields[$key]['type'], 'sellist:') === 0) || !empty($object->fields[$key]['arrayofkeyval'])) {
@@ -355,7 +362,6 @@ $sql .= $db->order($sortfield, $sortorder);
 if ($limit) {
 	$sql .= $db->plimit($limit + 1, $offset);
 }
-
 $resql = $db->query($sql);
 if (!$resql) {
 	dol_print_error($db);
@@ -526,6 +532,9 @@ foreach ($object->fields as $key => $val) {
 			continue;
 		}
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
+			if ($key == 'status') {
+				$val['arrayofkeyval'][-2] = $langs->trans("StatusMrpValidated").'+'.$langs->trans("StatusMrpProgress");
+			}
 			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), $val['notnull'], 0, 0, '', 1, 0, 0, '', 'maxwidth100', 1);
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', 'maxwidth125', 1);
@@ -723,6 +732,9 @@ while ($i < $imaxinloop) {
 					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
 					print $object->showOutputField($val, $key, (string) $object->$key, '');
+					if ($key == 'date_end_planned' && $object->hasDelay()) {
+						print img_warning($langs->trans('Alert').' - '.$langs->trans('Late'));
+					}
 				}
 				print '</td>';
 				if (!$i) {
