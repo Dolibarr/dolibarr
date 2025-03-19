@@ -2085,7 +2085,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 
 		// Now add events of emailing module
-		if (is_array($actioncode)) {
+		if (is_array($actioncode) && $objcon !== null) {
 			foreach ($actioncode as $code) {
 				$sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
 				if (!empty($sql2)) {

@@ -5,7 +5,7 @@
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (c) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2016-2020 	Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  *
@@ -346,7 +346,7 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ' total_ht, total_tva, total_ttc,';
 		$sql .= ' total_localtax1, total_localtax2,';
 		$sql .= ' date, rule_warning_message, fk_c_exp_tax_cat, fk_ecm_files)';
-		$sql .= " VALUES (".$this->db->escape($this->fk_expensereport).",";
+		$sql .= " VALUES (".$this->db->escape((string) $this->fk_expensereport).",";
 		$sql .= " ".((int) $this->fk_c_type_fees).",";
 		$sql .= " ".((int) (!empty($this->fk_project) && $this->fk_project > 0) ? $this->fk_project : ((!empty($this->fk_projet) && $this->fk_projet > 0) ? $this->fk_projet : 'null')).",";
 		$sql .= " ".((float) $this->vatrate).",";
@@ -490,7 +490,7 @@ class ExpenseReportLine extends CommonObjectLine
 		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
 		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
 		$sql .= ", rule_warning_message='".$this->db->escape($this->rule_warning_message)."'";
-		$sql .= ", fk_c_exp_tax_cat=".$this->db->escape($this->fk_c_exp_tax_cat);
+		$sql .= ", fk_c_exp_tax_cat=".$this->db->escape((string) $this->fk_c_exp_tax_cat);
 		$sql .= ", fk_ecm_files=".($this->fk_ecm_files > 0 ? ((int) $this->fk_ecm_files) : 'null');
 		if ($this->fk_c_type_fees) {
 			$sql .= ", fk_c_type_fees = ".((int) $this->fk_c_type_fees);
