@@ -1033,6 +1033,11 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				foreach ($_facrec->lines as $i => $val) {
+					// Reset fk_parent_line for no child products and special product
+					if (($_facrec->lines[$i]->product_type != 9 && empty($_facrec->lines[$i]->fk_parent_line)) || $_facrec->lines[$i]->product_type == 9) {
+						$fk_parent_line = 0;
+					}
+
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
 					$tva_npr = $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
@@ -1115,41 +1120,37 @@ class Facture extends CommonInvoice
 
 			if (!$error) {
 				$result = $this->update_price(1, 'auto', 0, $mysoc);
-				if ($result > 0) {
-					$action = 'create';
-
-					// Actions on extra fields
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
-					}
-
-					if (!$error && !$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('BILL_CREATE', $user);
-						if ($result < 0) {
-							$error++;
-						}
-					}
-
-					if (!$error) {
-						$this->db->commit();
-						return $this->id;
-					} else {
-						$this->db->rollback();
-						return -4;
-					}
-				} else {
+				if ($result <= 0) {
 					$this->error = $langs->trans('FailedToUpdatePrice');
 					$this->db->rollback();
 					return -3;
 				}
+			}
+
+			$action = 'create';
+
+			// Actions on extra fields
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILL_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
 			} else {
-				dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 				$this->db->rollback();
-				return -2;
+				return -4;
 			}
 		} else {
 			$this->error = $this->db->error();
@@ -3764,7 +3765,7 @@ class Facture extends CommonInvoice
 	public function setDraft($user, $idwarehouse = -1)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
