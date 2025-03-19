@@ -383,7 +383,7 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 	$object = $api;
 	$action = $api->r->requestMethod;
 	// Note that $action and $object may be modified by some hooks
-	$reshook = $hookmanager->executeHooks('beforeapicall', $parameters, $object, $action);
+	$reshook = $hookmanager->executeHooks('beforeApiCall', $parameters, $object, $action);
 	if ($reshook < 0) {
 		dol_syslog('beforeapicall Failed to call hook '.$hookmanager->error, LOG_ERR);
 	}
