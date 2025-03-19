@@ -2925,23 +2925,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 						print "</td></tr>\n";
 					}
-					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
-						// Brut Surface
-						print '<tr><td>'.$langs->trans("Surface").'</td><td>';
-						if ($object->surface != '') {
+					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') || !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
+						// Brut Surface / Volume
+						print '<tr><td>';
+						print (getDolGlobalString('PRODUCT_DISABLE_SURFACE') ? '' : $langs->trans("Surface"));
+						print (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) ? ' / ' : '';
+						print (getDolGlobalString('PRODUCT_DISABLE_VOLUME') ? '' : $langs->trans("Volume")).'</td><td>';
+						if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $object->surface != '') {
 							print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
-						} else {
-							print '&nbsp;';
 						}
-						print "</td></tr>\n";
-					}
-					if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
-						// Brut Volume
-						print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-						if ($object->volume != '') {
+						print (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $object->surface && $object->volume) ? ' / ' : '';
+						if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $object->volume != '') {
 							print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
-						} else {
-							print '&nbsp;';
 						}
 						print "</td></tr>\n";
 					}

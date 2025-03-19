@@ -957,6 +957,7 @@ class Notify
 							}
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
+							// Note the substitution array should contains __REF__, __NEWREF__ ....
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {

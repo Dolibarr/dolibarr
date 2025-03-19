@@ -416,7 +416,7 @@ if (empty($reshook)) {
 
 	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object = new Contact($db);
-		$result = $object->fetch(GETPOST('stcommcontactid'));
+		$result = $object->fetch(GETPOSTINT('stcommcontactid'));
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcommcontact');
 		$result = $object->update($object->id, $user);
 		if ($result < 0) {
@@ -991,7 +991,7 @@ if ($contextpage != 'poslist') {
 	$newcardbutton .= dolGetButtonTitle($langs->trans($label), '', 'fa fa-plus-circle', $url);
 }
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, (string) $massactionbutton, $num, $nbtotalofrecords, 'address', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 $topicmail = "Information";
 $modelmail = "contact";
@@ -1028,7 +1028,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ContactCategoriesShort');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-	$moreforfilter .= $formother->select_categories(Categorie::TYPE_CONTACT, $search_categ, 'search_categ', 1, $tmptitle);
+	$moreforfilter .= $formother->select_categories(Categorie::TYPE_CONTACT, (int) $search_categ, 'search_categ', 1, $tmptitle);
 	$moreforfilter .= '</div>';
 	if (empty($type) || $type == 'c' || $type == 'p') {
 		$moreforfilter .= '<div class="divsearchfield">';
@@ -1041,7 +1041,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			$tmptitle .= $langs->trans('CustomersProspectsCategoriesShort');
 		}
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, $search_categ_thirdparty, 'search_categ_thirdparty', 1, $tmptitle);
+		$moreforfilter .= $formother->select_categories(Categorie::TYPE_CUSTOMER, (int) $search_categ_thirdparty, 'search_categ_thirdparty', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 
@@ -1049,7 +1049,7 @@ if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 		$moreforfilter .= '<div class="divsearchfield">';
 		$tmptitle = $langs->trans('SuppliersCategoriesShort');
 		$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"');
-		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, $search_categ_supplier, 'search_categ_supplier', 1, $tmptitle);
+		$moreforfilter .= $formother->select_categories(Categorie::TYPE_SUPPLIER, (int) $search_categ_supplier, 'search_categ_supplier', 1, $tmptitle);
 		$moreforfilter .= '</div>';
 	}
 }
