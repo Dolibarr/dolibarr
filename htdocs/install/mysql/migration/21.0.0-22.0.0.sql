@@ -217,3 +217,5 @@ ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
 UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM llx_commandedet as cd WHERE cd.rowid = ed.fk_elementdet AND ed.element_type = 'commande') AND ed.fk_product IS NULL;
 
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
+
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
