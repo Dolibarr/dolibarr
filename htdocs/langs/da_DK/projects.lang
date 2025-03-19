@@ -312,3 +312,7 @@ TaskMergeSuccess=Opgaver er blevet slået sammen
 ErrorTaskIdIsMandatory=Fejl: Opgave-id er obligatorisk
 ErrorsTaskMerge=Der opstod en fejl under sammenlægning af opgaver
 Billable = Klar til Fakturer
+ConfirmCloseTask=Er du sikker på, at du vil lukke denne opgave?
+ConfirmClosed=Bekræft opgaven lukket
+TaskStatus=Opgavestatus
+TaskReopened=Opgaven genåbnet

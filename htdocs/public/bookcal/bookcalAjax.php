@@ -62,10 +62,16 @@ $result = "{}";
  * Actions
  */
 
+// None
+
+
+/*
+ * View
+ */
+
 top_httphead('application/json');
 
-
-if ($action == 'verifyavailability') {
+if ($action == 'verifyavailability') {		// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$response = array();
 	if (empty($id)) {
 		$error++;
@@ -175,9 +181,5 @@ if ($action == 'verifyavailability') {
 	$result = $response;
 }
 
-
-/*
- * View
- */
 
 echo json_encode($result);

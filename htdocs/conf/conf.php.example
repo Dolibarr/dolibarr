@@ -172,6 +172,7 @@ $dolibarr_main_db_character_set='utf8';
 // Default value: depends on database driver
 // Examples:
 // $dolibarr_main_db_collation='utf8_unicode_ci';
+// $dolibarr_main_db_collation='utf8mb4_unicode_ci';
 //
 $dolibarr_main_db_collation='utf8_unicode_ci';
 

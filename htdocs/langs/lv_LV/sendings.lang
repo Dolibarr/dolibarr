@@ -8,13 +8,12 @@ Shipments=Sūtījumi
 ShowSending=Rādīt sūtījumus
 Receivings=Piegāde kvītis
 SendingsArea=Sūtījumu sadaļa
-ListOfSendings=Sūtījumu saraksts
 SendingMethod=Sūtīšanas metode
 LastSendings=Pēdējie %s sūtījumi
 StatisticsOfSendings=Sūtījumu statistika
 NbOfSendings=Sūtījumu skaits
 NumberOfShipmentsByMonth=Sūtījumu skaits pa mēnešiem
-SendingCard=Piegādes kartiņa
+SendingCard=Sūtījums
 NewSending=Jauns sūtījums
 CreateShipment=Izveidot sūtījumu
 QtyShipped=Daudzums kas nosūtīts
@@ -44,6 +43,7 @@ ConfirmCancelSending=Vai esat pārliecināts, ka vēlaties atcelt šo sūtījumu
 DocumentModelMerou=Merou A5 modelis
 WarningNoQtyLeftToSend=Uzmanību, nav produktu kuri gaida nosūtīšanu.
 StatsOnShipmentsOnlyValidated=Statistika attiecas tikai uz apstiprinātiem sūtījumiem. Izmantotais datums ir sūtījuma apstiprināšanas datums (plānotais piegādes datums ne vienmēr ir zināms)
+DateShipping=Sending date
 DateDeliveryPlanned=Plānotais piegādes datums
 RefDeliveryReceipt=Ref piegādes kvīts
 StatusReceipt=Piegādes kvīts statuss
@@ -63,9 +63,10 @@ NoProductToShipFoundIntoStock=Noliktavā nav atrasts neviens produkts, kas pared
 WeightVolShort=Svars / tilp.
 ValidateOrderFirstBeforeShipment=Vispirms jums ir jāapstiprina pasūtījums, lai varētu veikt sūtījumus.
 NoLineGoOnTabToAddSome=Nav rindiņas, atveriet cilni %s, lai pievienotu
-CreateInvoiceForThisCustomerFromSendings=Create Bills
+CreateInvoiceForThisCustomerFromSendings=Izveidojiet rēķinus
 IfValidateInvoiceIsNoSendingStayUnbilled=Ja rēķina apstiprināšana ir “Nē”, nosūtīšanas statuss būs “Bez rēķina”, līdz rēķins tiks apstiprināts.
 OptionToSetSendingBilledNotEnabled=Nav iespējota opcija no moduļa Workflow, lai pēc rēķina apstiprināšanas automātiski iestatītu sūtīšanu uz 'Rēķins', tāpēc pēc rēķina ģenerēšanas jums būs manuāli jāiestata sūtījumu statuss uz 'Rēķins'.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Sūtījumu sadale
 ErrorTooManyCombinationBatchcode=Rindai %s netika nosūtīts, jo tika atrasts pārāk daudz noliktavas, produkta, partijas koda kombināciju (%s).
 ErrorNoCombinationBatchcode=Nevarēja saglabāt rindu %s kā kombināciju warehouse-product-lot/serial (%s, %s, %s) krājumā netika atrasts.
 ErrorTooMuchShipped=Nosūtītais daudzums nedrīkst būt lielāks par pasūtīto daudzumu rindā %s.
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Pārstāvis turpinot darboties kuģniecības
+TypeContact_shipping_external_BILLING=Klienta rēķina kontakts
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Klienta kontaktpersona piegādei
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

@@ -50,3 +50,4 @@ ToReplace=Replace
 CantMoveNonExistantSerial=Error. You ask a move on a record for a serial that does not exists anymore. May be you take the same serial on same warehouse several times in same shipment or it was used by another shipment. Remove this shipment and prepare another one.
 TableLotIncompleteRunRepairWithParamStandardEqualConfirmed=Lot table incomplete run repair with parameter '...repair.php?standard=confirmed'
 IlligalQtyForSerialNumbers= Stock correction required because unique serial number.
+ErrorBatchesNeedStockManagement=Error. A product with batch/lot management must be managed in stock.

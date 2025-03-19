@@ -5,6 +5,8 @@
  * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
  * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("main", "categories", "takepos", "printing"));
 
 $id = GETPOSTINT('id');
@@ -43,8 +53,10 @@ $printer1 = GETPOST('printer1', 'alpha');
 $printer2 = GETPOST('printer2', 'alpha');
 $printer3 = GETPOST('printer3', 'alpha');
 
+$categstatic = new Categorie($db);
+
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type]; // For backward compatibility
+	$type = array_search($type, $categstatic->MAP_ID);	// For backward compatibility
 }
 
 if (!$user->hasRight('categorie', 'lire')) {
@@ -154,7 +166,7 @@ $fulltree = $cate_arbo;
 
 // Define data (format for treeview)
 $data = array();
-$data[] = array('rowid'=>0, 'fk_menu'=>-1, 'title'=>"racine", 'mainmenu'=>'', 'leftmenu'=>'', 'fk_mainmenu'=>'', 'fk_leftmenu'=>'');
+$data[] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 foreach ($fulltree as $key => $val) {
 	$categstatic->id = $val['id'];
 	$categstatic->ref = $val['label'];

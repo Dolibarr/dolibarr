@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur         <eldy@users.sourceforge.net>
+/* Copyright (C) 2010 		Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,9 @@ class GoogleAPI
 	 */
 	public $error = '';
 
+	/**
+	 * @var string google key
+	 */
 	public $key;
 
 	/**
@@ -80,7 +84,7 @@ class GoogleAPI
 		//print $code;
 		//print "<br>";
 		$latitude = substr($code, 0, strpos($code, ","));
-		$longitude = substr($code, strpos($code, ",") + 1, dol_strlen(strpos($code, ",")) - 3);
+		$longitude = substr($code, strpos($code, ",") + 1, dol_strlen((string) strpos($code, ",")) - 3);
 
 		// Output the coordinates
 		//echo "Longitude: $longitude ',' Latitude: $latitude";

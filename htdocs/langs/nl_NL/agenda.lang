@@ -44,6 +44,7 @@ PropalClosedRefusedInDolibarr=Voorstel %s afgewezen
 PropalValidatedInDolibarr=Voorstel %s gevalideerd
 PropalBackToDraftInDolibarr=Voorstel %s ga terug naar conceptstatus
 PropalClassifiedBilledInDolibarr=Voorstel %s geclassificeerd als gefactureerd
+InvoiceCreatedInDolibarr=Factuur %s gemaakt
 InvoiceValidatedInDolibarr=Factuur %s gevalideerd
 InvoiceValidatedInDolibarrFromPos=Factuur %s gevalideerd in verkooppunt
 InvoiceBackToDraftInDolibarr=Factuur %s ga terug naar ontwerp van de status van

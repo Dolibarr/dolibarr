@@ -34,6 +34,7 @@ AssetsTypeId=Asset model id
 AssetsTypeLabel=Asset model label
 AssetsTypes=Assets models
 ASSET_ACCOUNTANCY_CATEGORY=Fixed asset accounting group
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
 MenuAssets=Assets
 MenuNewAsset=New asset

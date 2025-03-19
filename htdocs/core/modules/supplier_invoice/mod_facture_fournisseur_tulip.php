@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2016-2021  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -98,7 +99,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").')';
 		$texte .= ':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("SUPPLIER_INVOICE_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipstandardtulip').'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("SUPPLIER_INVOICE_TULIP_MASK").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipstandardtulip').'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -106,19 +107,19 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 		// Prefix setting of credit note
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcredit" value="'.getDolGlobalString("SUPPLIER_CREDIT_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipcredittuplie').'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcredit" value="'.getDolGlobalString("SUPPLIER_CREDIT_TULIP_MASK").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipcredittuplie').'</td>';
 		$texte .= '</tr>';
 
 		if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 			// Prefix setting of replacement
 			$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</td>';
-			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("SUPPLIER_REPLACEMENT_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipreplacementtulip').'</td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("SUPPLIER_REPLACEMENT_TULIP_MASK").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipreplacementtulip').'</td>';
 			$texte .= '</tr>';
 		}
 
 		// Prefix setting of deposit
 		$texte .= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("SUPPLIER_DEPOSIT_TULIP_MASK").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipdownpaymenttulip').'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("SUPPLIER_DEPOSIT_TULIP_MASK").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipdownpaymenttulip').'</td>';
 		$texte .= '</tr>';
 
 		$texte .= '</table>';
@@ -138,7 +139,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
+		$numExample = $this->getNextValue($mysoc, null);
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
@@ -150,10 +151,10 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 	/**
 	 * Return next value
 	 *
-	 * @param	Societe				$objsoc     Object third party
-	 * @param  	FactureFournisseur	$object		Object invoice
-	 * @param	string				$mode       'next' for next value or 'last' for last value
-	 * @return 	string|int  					Value if OK, 0 if KO
+	 * @param	?Societe			$objsoc		Object third party
+	 * @param  	?FactureFournisseur	$object		Object invoice
+	 * @param   string				$mode		'next' for next value or 'last' for last value
+	 * @return 	string|int<-1,0>				Value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc, $object, $mode = 'next')
 	{

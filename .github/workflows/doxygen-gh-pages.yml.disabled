@@ -8,7 +8,7 @@ on:
       - develop
 permissions:
   contents: write
-  
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,16 +18,16 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          folder: build/html
-          config_file: build/doxygen/dolibarr-doxygen.doxyfile
+          folder: dev/build/html
+          config_file: dev/build/doxygen/dolibarr-doxygen.doxyfile
 
 #      - name: Deploy
 #        uses: JamesIves/github-pages-deploy-action@v4
 #        with:
 #          branch: gh-pages
-#          folder: build/html # The folder the action should deploy.
+#          folder: dev/build/html # The folder the action should deploy.
 #          target-folder: docs/html2
-          
+
 #jobs:
 #  doxygen:
 #    runs-on: ubuntu-latest

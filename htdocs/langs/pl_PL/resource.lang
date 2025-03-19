@@ -9,31 +9,30 @@ ActionsOnResource=Wydarzenia dotyczące tego zasobu
 ResourcePageIndex=Lista zasobów
 ResourceSingular=Zasoby
 ResourceCard=Karta zasobów
+NewResource=Nowe zasoby
 AddResource=Utwórz nowy zasób
 ResourceFormLabel_ref=Nazwa zasobu
-ResourceType=Typ zasobu
 ResourceFormLabel_description=Opis zasobów
-
+ResourceType=Typ zasobu
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Zasaby połączone z elementem
 
 ShowResource=Pokaż zasoby
-
 ResourceElementPage=Element zasobów
 ResourceCreatedWithSuccess=Zasoby poprawnie utworzone
 RessourceLineSuccessfullyDeleted=Linia zasobów poprawnie usunięta
 RessourceLineSuccessfullyUpdated=Linia zasobów poprawnie uaktualniona
 ResourceLinkedWithSuccess=Zasoby podlinkowane poprawnie
-
 ConfirmDeleteResource=Potwierdź by usunąć te zasoby
 RessourceSuccessfullyDeleted=Zasoby usunięte poprawnie
 DictionaryResourceType=Typ zasobów
-
 SelectResource=Wybierz zasoby
-
 IdResource=Identyfikator zasobu
 AssetNumber=Numer seryjny
 ResourceTypeCode=Kod rodzaju zasobu
 ImportDataset_resource_1=Zasoby
-
 ErrorResourcesAlreadyInUse=Niektóre zasoby są w użyciu
 ErrorResourceUseInEvent=%s używany w zdarzeniu %s
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

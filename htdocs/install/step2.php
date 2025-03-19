@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,6 +95,13 @@ dolibarr_install_syslog("--- step2: entering step2.php page");
 
 
 /*
+ * Actions
+ */
+
+// None
+
+
+/*
  *	View
  */
 
@@ -107,7 +114,7 @@ if (!is_writable($conffile)) {
 	exit;
 }
 
-if ($action == "set") {
+if ($action == "set") {		// Test on permission not required. Already managed by test in inc.php
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
 	print '<table cellspacing="0" style="padding: 4px 4px 4px 0" border="0" width="100%">';
@@ -134,6 +141,7 @@ if ($action == "set") {
 	}
 
 
+	$versionarray = array();
 	// Display version / Affiche version
 	if ($ok) {
 		$version = $db->getVersion();
@@ -159,7 +167,7 @@ if ($action == "set") {
 
 	// To say that SQL we pass to query are already escaped for mysql, so we need to unescape them
 	if (property_exists($db, 'unescapeslashquot')) {
-		$db->unescapeslashquot = true;
+		$db->unescapeslashquot = true;  // @phan-suppress-current-line PhanUndeclaredProperty
 	}
 
 	/**************************************************************************************
@@ -389,6 +397,7 @@ if ($action == "set") {
 	 ***************************************************************************************/
 	if ($ok && $createfunctions) {
 		// For this file, we use a directory according to database type
+		$dir = null;
 		if ($choix == 1) {
 			$dir = "mysql/functions/";
 		} elseif ($choix == 2) {
@@ -401,11 +410,11 @@ if ($action == "set") {
 
 		// Creation of data
 		$file = "functions.sql";
-		if (file_exists($dir.$file)) {
+		if ($dir !== null && file_exists($dir.$file)) {
 			$fp = fopen($dir.$file, "r");
 			dolibarr_install_syslog("step2: open function file ".$dir.$file." handle=".(is_bool($fp) ? json_encode($fp) : $fp));
+			$buffer = '';
 			if ($fp) {
-				$buffer = '';
 				while (!feof($fp)) {
 					$buf = fgets($fp, 4096);
 					if (substr($buf, 0, 2) != '--') {

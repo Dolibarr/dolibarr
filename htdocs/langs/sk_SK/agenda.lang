@@ -5,7 +5,7 @@ Agenda=Program rokovania
 TMenuAgenda=Program rokovania
 Agendas=Program
 LocalAgenda=Predvolený kalendár
-ActionsOwnedBy=Udalosť vytvorená:
+ActionsOwnedBy=Udalosť vytvorená: 
 ActionsOwnedByShort=Majiteľ
 AffectedTo=Priradené
 EventsNb=Počet udalostí
@@ -21,8 +21,7 @@ MenuDoneMyActions=Moje ukončených akcií
 ListOfEvents=Zoznam udalostí (predvolený kalendár)
 ActionsAskedBy=Akcia hlásené
 ActionsToDoBy=Akcia priradené
-ActionsDoneBy=Akcie vykonané
-ActionAssignedTo=Udalosť priradená na
+ActionAssignedTo=Udalosť priradená na 
 ViewCal=Mesačný pohľad
 ViewDay=Denné zobrazenie
 ViewWeek=Zobraziť týždeň
@@ -135,12 +134,14 @@ AgendaModelModule=Šablóny dokumentov pre udalosť
 DateActionStart=Dátum začatia
 DateActionEnd=Dátum ukončenia
 AgendaUrlOptions1=Môžete tiež pridať nasledujúce parametre filtrovania výstupu:
-AgendaUrlOptions3=<b>logina=%s</b> pre obmedzenie výstupu akciam ktoré vlastní užívateľ <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> na obmedzenie výstupu na akcie, ktoré nie sú vlastnené používateľ <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> na vylúčenie automatických udalostí.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> na zahrnutie udalostí sviatkov.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Narodeniny kontaktov
 AgendaHideBirthdayEvents=Skryť naroodeniny kontaktov
 Busy=Zaneprázdnený
@@ -201,4 +202,6 @@ AppointmentDuration = Trvanie stretnutia : %s
 BookingSuccessfullyBooked=Vaša rezervácia bola uložená
 BookingReservationHourAfter=Potvrdzujeme rezerváciu nášho stretnutia na dátum %s
 BookcalBookingTitle=Online stretnutie
-Transparency = Transparency
+Transparency = Transparentnosť
+ReadMore = Read more
+ReadLess = Read less

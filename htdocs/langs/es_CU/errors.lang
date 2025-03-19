@@ -95,7 +95,6 @@ ErrorLoginDoesNotExists=No se pudo encontrar el usuario con inicio de sesión <b
 ErrorLoginHasNoEmail=Este usuario no tiene dirección de correo electrónico. Proceso abortado.
 ErrorBadValueForCode=Mal valor para el código de seguridad. Inténtalo de nuevo con un valor nuevo...
 ErrorLinesCantBeNegativeForOneVATRate=El total de líneas (sin impuestos) no puede ser negativo para una tasa de IVA no nula determinada (se encontró un total negativo para la tasa de IVA <b> %s </b> %%).
-ErrorLinesCantBeNegativeOnDeposits=Las líneas no pueden ser negativas en un depósito. Tendrá problemas cuando necesite consumir el depósito en la factura final si lo hace.
 ErrorQtyForCustomerInvoiceCantBeNegative=La cantidad de la línea en las facturas de los clientes no puede ser negativa
 ErrorWebServerUserHasNotPermission=La cuenta de usuario <b> %s </b> utilizada para ejecutar el servidor web no tiene permiso para eso
 ErrorNoActivatedBarcode=Ningún tipo de código de barras activado

@@ -8,13 +8,12 @@ Shipments=Пратки
 ShowSending=Показване на пратка
 Receivings=Разписки за доставка
 SendingsArea=Секция с пратки
-ListOfSendings=Списък на пратки
 SendingMethod=Начин на доставка
 LastSendings=Пратки: %s последни
 StatisticsOfSendings=Статистика за пратки
 NbOfSendings=Брой пратки
 NumberOfShipmentsByMonth=Брой пратки на месец
-SendingCard=Карта на пратка
+SendingCard=Shipment
 NewSending=Нова пратка
 CreateShipment=Създаване на пратка
 QtyShipped=Изпратено кол.
@@ -39,21 +38,22 @@ StatusSendingValidatedShort=Валидирана
 StatusSendingProcessedShort=Обработена
 SendingSheet=Стокова разписка
 ConfirmDeleteSending=Сигурни ли сте, че искате да изтриете тази пратка?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Сигурни ли сте, че искате до Потвърждавам тази пратка с референтен номер <b>%s</b>?
 ConfirmCancelSending=Сигурни ли сте, че ли искате да анулирате тази пратка?
 DocumentModelMerou=Шаблон А5 размер
 WarningNoQtyLeftToSend=Внимание, няма продукти чакащи да бъдат изпратени.
-StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+StatsOnShipmentsOnlyValidated=Статистиката е само за валидирани пратки. Използваният Дата е Дата за валидиране на пратката (планираната доставка Дата е не винаги се знае)
+DateShipping=Sending date
 DateDeliveryPlanned=Планирана дата за доставка
 RefDeliveryReceipt=Разписка за доставка №
 StatusReceipt=Статус
 DateReceived=Дата на получаване
-ClassifyReception=Classify Received
+ClassifyReception=Класифициране Получено
 SendShippingByEMail=Изпращане на пратка по имейл
 SendShippingRef=Изпращане на пратка %s
 ActionsOnShipping=Свързани събития
 LinkToTrackYourPackage=Връзка за проследяване на вашата пратка
-ShipmentCreationIsDoneFromOrder=For the moment, creation of a new shipment is done from the Sales Order record.
+ShipmentCreationIsDoneFromOrder=За момента създаването на нова пратка се извършва от записа на Поръчка за продажба.
 ShipmentLine=Ред на пратка
 ProductQtyInCustomersOrdersRunning=Количество продукт в активни поръчки за продажба
 ProductQtyInSuppliersOrdersRunning=Количество продукт в активни поръчки за покупка
@@ -62,25 +62,33 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Количество продукт
 NoProductToShipFoundIntoStock=Не е намерен продукт за изпращане в склад <b>%s</b>. Коригирайте наличността или се върнете, за да изберете друг склад.
 WeightVolShort=Тегло / Обем
 ValidateOrderFirstBeforeShipment=Първо трябва да валидирате поръчката, преди да може да извършвате доставки.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Няма ред, отидете на раздела „%s“, за да добавите
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
 DocumentModelTyphon=Шаблон на разписка за доставка (лого, ...)
-DocumentModelStorm=More complete document model for delivery receipts and extrafields compatibility (logo...)
+DocumentModelStorm=По-пълен модел на документи за разписки за доставка и съвместимост на допълнителни полета (лого...)
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Константата EXPEDITION_ADDON_NUMBER не е дефинирана
 SumOfProductVolumes=Общ обем на продуктите
 SumOfProductWeights=Общо тегло на продуктите
-
 # warehouse details
 DetailWarehouseNumber= Детайли за склада
 DetailWarehouseFormat= Тегло: %s (Кол.: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
-ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Показване на последния Дата запис в наличност по време на създаване на пратка за сериен номер или партида
+CreationOptions=Налични опции по време на създаване на пратка
+ShipmentDistribution=Разпределение на пратката
+ErrorTooManyCombinationBatchcode=Няма изпращане за ред %s, тъй като бяха открити твърде много комбинации от склад, продукт, партиден код (%s).
+ErrorNoCombinationBatchcode=Не може да се запише редът %s като комбинация от warehouse-product-lot/serial (%s, %s, %s) не беше намерено в наличност.
+ErrorTooMuchShipped=Доставеното количество не трябва да бъде по-голямо от поръчаното за ред %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
+TypeContact_shipping_external_BILLING=Получател на фактура
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Получател на доставка
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

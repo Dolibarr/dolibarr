@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +39,23 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  */
 class PartnershipUtils
 {
+	/**
+	 * @var DoliDB
+	 */
 	public $db; //!< To store db handler
+	/**
+	 * @var string
+	 */
 	public $error; //!< To return error code (or message)
+	/**
+	 * @var string[]
+	 */
 	public $errors = array(); //!< To return several error codes (or messages)
 
-	public $output;	// To store output of some cron methods
+	/**
+	 * @var string To store output of some cron methods
+	 */
+	public $output;
 
 
 	/**
@@ -107,6 +120,7 @@ class PartnershipUtils
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
+		$numofexpiredmembers = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numofexpiredmembers = $this->db->num_rows($resql);
@@ -164,7 +178,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (!empty($newlang)) {
@@ -326,6 +340,7 @@ class PartnershipUtils
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
+		$numofexpiredmembers = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numofexpiredmembers = $this->db->num_rows($resql);
@@ -389,7 +404,7 @@ class PartnershipUtils
 									// Define output language
 									$outputlangs = $langs;
 									$newlang = '';
-									if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+									if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 										$newlang = GETPOST('lang_id', 'aZ09');
 									}
 									if (!empty($newlang)) {
@@ -538,12 +553,14 @@ class PartnershipUtils
 
 			$xpath = new DOMXPath($dom);
 			$hrefs = $xpath->evaluate("//a");
+			'@phan-var-force DOMNodeList $hrefs';
 
 			for ($i = 0; $i < $hrefs->length; $i++) {
 				$href = $hrefs->item($i);
+				'@phan-var-force DOMElement $href';
 				$url = $href->getAttribute('href');
 				$url = filter_var($url, FILTER_SANITIZE_URL);
-				if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
+				if (!(!filter_var($url, FILTER_VALIDATE_URL))) {
 					$webcontent .= $url;
 				}
 			}

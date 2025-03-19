@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1週間
 AvailabilityTypeAV_2W=2週間
 AvailabilityTypeAV_3W=3週間
 AvailabilityTypeAV_1M=1ヶ月
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=代表的なフォローアップの提案書
 TypeContact_propal_external_BILLING=顧客の請求書の連絡先
 TypeContact_propal_external_CUSTOMER=顧客の連絡先フォローアップ提案書
 TypeContact_propal_external_SHIPPING=配達のための顧客の連絡先
-
 # Document models
 CantBeNoSign=署名せずに設定することはできない
 CaseFollowedBy=ケースに続いて
@@ -122,3 +120,5 @@ SignSociete_rib=委任状に署名する
 SignPropal=提案を受諾
 Signed=署名
 SignedOnly=署名のみ
+ExpeditionSigned=発送署名済み
+SignExpedition=出荷に署名する

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021 John BOTELLA <john.botella@atm-consulting.fr>
+ * Copyright (C) 2024-2025	MDW		<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class Validate
 	public $db;
 
 	/**
-	 * @var Translate $outputLang
+	 * @var Translate
 	 */
 	public $outputLang;
 
@@ -246,8 +247,8 @@ class Validate
 	/**
 	 * Check for boolean validity
 	 *
-	 * @param boolean $bool Boolean to validate
-	 * @return boolean Validity is ok or not
+	 * @param mixed		$bool	Value to validate, may not be bool
+	 * @return bool				Validity is ok or not
 	 */
 	public function isBool($bool)
 	{
@@ -261,7 +262,7 @@ class Validate
 	/**
 	 * Check for all values in db
 	 *
-	 * @param array  $values Boolean to validate
+	 * @param string[]  $values Boolean to validate
 	 * @param string $table  the db table name without $this->db->prefix()
 	 * @param string $col    the target col
 	 * @return boolean Validity is ok or not
@@ -313,6 +314,7 @@ class Validate
 				if ($classname && class_exists($classname)) {
 					/** @var CommonObject $object */
 					$object = new $classname($this->db);
+					'@phan-var-force CommonObject|User $object';  // User provided to propose a class with 'fetch'
 
 					if (!is_callable(array($object, 'fetch')) || !is_callable(array($object, 'isExistingObject'))) {
 						$this->error = $this->outputLang->trans('BadSetupOfFieldFetchNotCallable');
@@ -340,9 +342,9 @@ class Validate
 	 * Check for all values in db for an element
 	 * @see self::isFetchable()
 	 *
-	 * @param integer  $id of element
-	 * @param string $element_type the element type
-	 * @return boolean Validity is ok or not
+	 * @param int		$id				Element Id
+	 * @param string	$element_type	The element type
+	 * @return bool						Validity is ok or not
 	 * @throws Exception
 	 */
 	public function isFetchableElement($id, $element_type)
