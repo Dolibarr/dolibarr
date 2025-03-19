@@ -759,6 +759,7 @@ class ExtraFields
 
 			dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 			if ($type != 'separate') { // No table update when separate type
+				// TODO: Verify, adjust - field_desc has 'value' (not expected), and is missing 'label','enabled','position','visible'
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {

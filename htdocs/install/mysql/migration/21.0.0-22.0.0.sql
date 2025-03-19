@@ -208,9 +208,12 @@ DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 1
 ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
 ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
 
+
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_product;	-- for sublines
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
 --ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
 --ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
 
 UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM llx_commandedet as cd WHERE cd.rowid = ed.fk_elementdet AND ed.element_type = 'commande') AND ed.fk_product IS NULL;
+
+ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;

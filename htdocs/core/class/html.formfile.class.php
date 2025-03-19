@@ -2222,7 +2222,7 @@ class FormFile
 			$sortfield = '';
 		}
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
-		$param .= (isset($object->id) ? '&id='.$object->id : '');
+		$param .= (isset($object->id) && !preg_match('/&id='.$object->id.'/i', $param) ? '&id='.$object->id : '');
 
 		$permissiontoedit = $permissiontodelete;
 
@@ -2289,6 +2289,7 @@ class FormFile
 			'',
 			'center '
 		);
+		// Shared or not - Hash of file
 		print_liste_field_titre('', '', '');
 		print '</tr>';
 		$nboflinks = count($links);
@@ -2298,7 +2299,7 @@ class FormFile
 		foreach ($links as $link) {
 			print '<tr class="oddeven">';
 			//edit mode
-			if ($action == 'update' && $selected === (int) $link->id && $permissiontoedit) {
+			if ($action == 'update' && (int) $selected === (int) $link->id && $permissiontoedit) {
 				print '<td>';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="linkid" value="'.$link->id.'">';
@@ -2309,7 +2310,10 @@ class FormFile
 				print $langs->trans('Label').': <input type="text" name="label" value="'.dol_escape_htmltag($link->label).'">';
 				print '</td>';
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
-				print '<td class="right"></td>';
+				print '<td class="right">';
+				print '<label for="idshareenabled'.$key.'">'.$langs->trans("LinkSharedViaALink").'</label> ';
+				print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($link->share ? ' checked="checked"' : '').' /> ';
+				print '</td>';
 				print '<td class="right">';
 				print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
@@ -2323,7 +2327,17 @@ class FormFile
 				print '</td>'."\n";
 				print '<td class="right"></td>';
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
-				print '<td class="center"></td>';
+				print '<td class="center">';
+				if ($link->share) {
+					global $dolibarr_main_url_root;
+					$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
+					$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT; // This is to use external domain name found into config file
+					$fulllink = $urlwithroot.'/document.php?type=link&hashp=' . $link->share;
+
+					print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
+					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+				}
+				print '</td>';
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'&token='.newToken().'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
