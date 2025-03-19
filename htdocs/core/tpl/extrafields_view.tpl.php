@@ -28,7 +28,7 @@
  * @var User $user
  *
  * @var string	$action
- * @var array 	$parameters
+ * @var	array<string,mixed>	$parameters		Array of parameters
  * @var int 	$cols
  */
 

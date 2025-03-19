@@ -652,7 +652,7 @@ class Contact extends CommonObject
 		$sql .= ", name_alias='".$this->db->escape($this->name_alias)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
-		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
@@ -675,7 +675,7 @@ class Contact extends CommonObject
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
 		$sql .= ", statut = ".((int) $this->statut);
-		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
+		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
 		$sql .= " WHERE rowid = ".((int) $id);
@@ -923,8 +923,8 @@ class Contact extends CommonObject
 	 *  Update field alert birthday
 	 *
 	 *  @param      int			$id         Id of contact
-	 *  @param      User		$user		User asking to change alert or birthday
-	 *  @param      int		    $notrigger	0=no, 1=yes
+	 *  @param      ?User		$user		User asking to change alert or birthday
+	 *  @param      int<0,1>    $notrigger	0=no, 1=yes
 	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
@@ -978,15 +978,15 @@ class Contact extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 			}
-		}
 
-		if (!$error && !$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('CONTACT_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('CONTACT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 		}
 
 		if (!$error) {

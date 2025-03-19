@@ -1038,7 +1038,7 @@ if (empty($reshook)) {
 	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && $usercancreate) {		// Add line
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 
 		$price_ht = '';
 		$price_ht_devise = '';
@@ -1100,7 +1100,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("UnitPriceHT")), null, 'errors');
 			$error++;
 		}
-		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Description")), null, 'errors');
 			$error++;
 		}
@@ -1120,7 +1120,7 @@ if (empty($reshook)) {
 		}
 
 		$propal_qty_requirement = (getDolGlobalString('PROPAL_ENABLE_NEGATIVE_QTY') ? ($qty >= 0 || $qty <= 0) : $qty >= 0);
-		if (!$error && $propal_qty_requirement && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && $propal_qty_requirement && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$pu_ht = 0;
 			$pu_ttc = 0;
 			$pu_ht_devise = 0;
@@ -1343,15 +1343,12 @@ if (empty($reshook)) {
 					$desc = $prod->description;
 				}
 
-				//If text set in desc is the same as product description (as now it's preloaded) we add it only one time
-				if ($product_desc == $desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc = '';
-				}
-
-				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
-					$desc = $product_desc;
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
+					// 'DoNotAutofillButAutoConcat'
+					$desc = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+					//'AutoFillFormFieldBeforeSubmit' or 'DoNotUseDescriptionOfProdut' => User has already done the modification they want
+					$desc = $line_desc;
 				}
 
 				// Add custom code and origin country into description
@@ -1407,7 +1404,7 @@ if (empty($reshook)) {
 				}
 				$tva_tx = str_replace('*', '', $tva_tx);
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-				$desc = $product_desc;
+				$desc = $line_desc;
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
 				$pu_ht_devise = price2num($price_ht_devise, 'MU');

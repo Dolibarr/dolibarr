@@ -1,11 +1,11 @@
 BackToDolibarr=Go back to Dolibarr
-WelcomeToDocumentation=Welcome to UI Documentation. This section is under developpement,
+WelcomeToDocumentation=Welcome to UI Documentation. This section is under development,
 DocumentationHome=UI Documentation
 DocBasicUsage=Basic usage
 
 # Components
 DocComponentsTitle=Components
-DocComponentsMainDescription=Components section description is under developpment
+DocComponentsMainDescription=Components section description is under development
 
 # Badges
 DocBadgeTitle=Badges
@@ -97,5 +97,5 @@ DocSelectInputsDescription = Select input to enter one value
 DocMultiSelectInputsDescription = Multiselect input to enter several values
 DocEditorInputsDescription = Editor input to enter text with HTML
 DocDateSelectInputsDescription = Date input to enter a date with or without hours
-DocInputsMainDescription = Documentation and exemples for inputs
+DocInputsMainDescription = Documentation and examples for inputs
 DocInputsTitle = Inputs

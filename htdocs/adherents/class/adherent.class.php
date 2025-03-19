@@ -7,7 +7,7 @@
  * Copyright (C) 2009-2017	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2018	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
- * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2016		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2019	Thibault FOUCART			<support@ptibogxiv.net>
@@ -546,8 +546,8 @@ class Adherent extends CommonObject
 		if ($this->civility_id) {
 			$infos .= $langs->transnoentities("UserTitle").": ".$this->getCivilityLabel()."\n";
 		}
-		$infos .= $langs->transnoentities("id").": ".$this->id."\n";
-		$infos .= $langs->transnoentities("ref").": ".$this->ref."\n";
+		$infos .= $langs->transnoentities("Id").": ".$this->id."\n";
+		$infos .= $langs->transnoentities("Ref").": ".$this->ref."\n";
 		$infos .= $langs->transnoentities("Lastname").": ".$this->lastname."\n";
 		$infos .= $langs->transnoentities("Firstname").": ".$this->firstname."\n";
 		$infos .= $langs->transnoentities("Company").": ".$this->company."\n";

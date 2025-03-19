@@ -377,7 +377,7 @@ if ($id > 0 || !empty($ref)) {
 		$atleastonenotdefined = 0;	// at least on buying price not defined
 
 		$tmpurlforbutton = 'javascript:console.log("click to add a product in kit");jQuery(".formtoaddinkit").toggle();';
-		$morehtmlright .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $usercancreate);
+		$morehtmlright = dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $tmpurlforbutton, '', $usercancreate ? 1 : 0);
 
 		print load_fiche_titre($langs->trans("ProductAssociationList"), $morehtmlright, '');
 
