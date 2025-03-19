@@ -1119,11 +1119,9 @@ class Facture extends CommonInvoice
 					$action = 'create';
 
 					// Actions on extra fields
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
+					$result = $this->insertExtraFields();
+					if ($result < 0) {
+						$error++;
 					}
 
 					if (!$error && !$notrigger) {
