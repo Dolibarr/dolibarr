@@ -30,3 +30,4 @@ BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry=Gebaseerd 
 SameCountryCustomersWithVAT=Nationaal klantenrapport
 BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry=Gebaseerd op de eerste 2 letters van het BTW-nummer, overeenkomstig met die van uw eigen landcode
 ImportDataset_tax_contrib=Sociale bijdragen/belastingen
+FiscalYearClosedShort=Afgesloten

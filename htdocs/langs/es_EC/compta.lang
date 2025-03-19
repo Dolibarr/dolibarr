@@ -23,6 +23,7 @@ Profit=Ganacias
 Debit=Débito
 Credit=Crédito
 AccountingDebit=Débito
+AccountingCredit=Crédito
 Piece=Documentos Contables
 AmountHTVATRealReceived=Neto recaudado
 AmountHTVATRealPaid=Neto pagado

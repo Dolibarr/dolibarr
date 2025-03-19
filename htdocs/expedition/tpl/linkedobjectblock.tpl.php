@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012       Regis Houssin   <regis.houssin@inodbox.com>
  * Copyright (C) 2014       Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,9 @@ print "<!-- BEGIN PHP TEMPLATE expedition/tpl/linkedobjectblock.tpl.php -->\n";
 global $user;
 
 $langs = $GLOBALS['langs'];
+'@phan-var-force Translate $langs';
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
+'@phan-var-force CommonObject[] $linkedObjectBlock';
 
 // Load translation files required by the page
 $langs->load("sendings");
@@ -50,7 +53,7 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 		<td class="center"><?php echo dol_print_date($objectlink->date_delivery, 'day'); ?></td>
 		<td class="right"><?php
 		if ($user->hasRight('expedition', 'lire')) {
-			$total = $total + $objectlink->total_ht;
+			$total += $objectlink->total_ht;
 			echo price($objectlink->total_ht);
 		} ?></td>
 		<td class="right"><?php echo $objectlink->getLibStatut(3); ?></td>

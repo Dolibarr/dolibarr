@@ -16,8 +16,24 @@ class SegmentException extends Exception
  */
 class Segment implements IteratorAggregate, Countable
 {
+	/**
+	 * @var string
+	 */
 	protected $xml;
+
+	/**
+	 * @var string
+	 */
+	protected $savxml;
+
+	/**
+	 * @var string
+	 */
 	protected $xmlParsed = '';
+
+	/**
+	 * @var string
+	 */
 	protected $name;
 	protected $children = array();
 	protected $vars = array();
@@ -30,7 +46,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @param string $name  name of the segment to construct
 	 * @param string $xml   XML tree of the segment
-	 * @param string $odf   odf
+	 * @param Odf    $odf   odf
 	 */
 	public function __construct($name, $xml, $odf)
 	{
@@ -64,6 +80,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return int
 	 */
+	#[\ReturnTypeWillChange]
 	public function count()
 	{
 		return count($this->children);
@@ -73,6 +90,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @return Iterator
 	 */
+	#[\ReturnTypeWillChange]
 	public function getIterator()
 	{
 		return new RecursiveIteratorIterator(new SegmentIterator($this->children), 1);
@@ -165,7 +183,7 @@ class Segment implements IteratorAggregate, Countable
 	*
 	* Miguel Erill 09/04/2017
 	*
-	* @param	string	$value	String to convert
+	* @param	string	$text	String to convert
 	*/
 	public function macroReplace($text)
 	{

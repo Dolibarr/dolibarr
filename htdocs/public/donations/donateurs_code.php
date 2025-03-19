@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,18 +37,28 @@ if (!defined('NOIPCHECK')) {
 /**
  * Header function
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge()
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '<html><title>List of donators</title><body>';
 }
 /**
- * Header function
+ * Footer function
+ *
+ * Note: also called by functions.lib:recordNotFound
  *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</body></html>';
 }
@@ -69,7 +80,7 @@ $langs->load("donations");
  * View
  */
 
-llxHeaderVierge();
+llxHeaderVierge("");
 
 $sql = "SELECT d.datedon as datedon, d.lastname, d.firstname, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";

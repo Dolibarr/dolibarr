@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2010       Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class mod_project_universal extends ModeleNumRefProjects
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -91,7 +92,7 @@ class mod_project_universal extends ModeleNumRefProjects
 
 		// Prefix settings
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.getDolGlobalString('PROJECT_UNIVERSAL_MASK').'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskproject" value="'.getDolGlobalString('PROJECT_UNIVERSAL_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -110,29 +111,35 @@ class mod_project_universal extends ModeleNumRefProjects
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $db, $langs;
 
-		$old_code_client = $mysoc->code_client;
-		$mysoc->code_client = 'CCCCCCCCCC';
-		$numExample = $this->getNextValue($mysoc, '');
-		$mysoc->code_client = $old_code_client;
+		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+
+		$project = new Project($db);
+		$project->initAsSpecimen();
+		$thirdparty = new Societe($db);
+		$thirdparty->initAsSpecimen();
+
+		$numExample = $this->getNextValue($thirdparty, $project);
 
 		if (!$numExample) {
 			$numExample = $langs->trans('NotConfigured');
 		}
+
 		return $numExample;
 	}
 
 	/**
 	 *  Return next value
 	 *
-	 *  @param   Societe			$objsoc		Object third party
-	 *  @param   Project			$project	Object project
-	 *  @return  string|int					Value if OK, 0 if KO
+	 *  @param   ?Societe		$objsoc		Object third party
+	 *  @param   Project		$project	Object project
+	 *  @return  string|int<-1,0>			Value if OK, 0 if KO
 	 */
 	public function getNextValue($objsoc, $project)
 	{
-		global $db, $conf;
+		global $db, $langs;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -140,7 +147,7 @@ class mod_project_universal extends ModeleNumRefProjects
 		$mask = getDolGlobalString('PROJECT_UNIVERSAL_MASK');
 
 		if (!$mask) {
-			$this->error = 'NotConfigured';
+			$this->error = $langs->trans('NotConfigured');
 			return 0;
 		}
 

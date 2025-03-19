@@ -36,7 +36,6 @@ DatabasePrefix=Prefijo de tabla de base de datos
 AdminLogin=Cuenta de usuario para el propietario de la base de datos Dolibarr.
 AdminPassword=Contraseña para el propietario de la base de datos de Dolibarr.
 CreateDatabase=Crear base de datos
-CreateUser=Cree una cuenta de usuario o otorgue permiso de cuenta de usuario en la base de datos de Dolibarr
 DatabaseSuperUserAccess=Servidor de base de datos - Acceso de superusuario
 CheckToCreateDatabase=Marque la casilla si la base de datos aún no existe y, por lo tanto, debe crearse. <br>En este caso, también debe ingresar el nombre de usuario y la contraseña de la cuenta de superusuario en la parte inferior de esta página.
 CheckToCreateUser=Marque la casilla si: <br>la cuenta de usuario de la base de datos aún no existe y, por lo tanto, debe crearse, o <br>si la cuenta de usuario existe pero la base de datos no existe y se deben otorgar permisos. <br>En este caso, debe ingresar la cuenta de usuario y la contraseña y <b>también</b> el nombre de usuario y la contraseña del superusuario en la parte inferior de esta página. Si esta casilla no está marcada, el propietario de la base de datos y la contraseña ya deben existir.

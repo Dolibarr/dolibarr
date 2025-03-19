@@ -145,7 +145,7 @@ class AccountingAccount extends CommonObject
 	public $reconcilable;
 
 	/**
-	 * @var array cache array
+	 * @var array<string,int> cache array
 	 */
 	private $accountingaccount_codetotid_cache = array();
 
@@ -164,7 +164,7 @@ class AccountingAccount extends CommonObject
 		$this->db = $db;
 
 		$this->ismultientitymanaged = 1;
-		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".MAIN_DB_PREFIX."accounting_system WHERE rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS')).")"; // Used to add a filter in Form::showrefnav method
+		$this->next_prev_filter = "fk_pcg_version IN (SELECT pcg_version FROM ".$this->db->prefix()."accounting_system WHERE rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS')).")"; // Used to add a filter in Form::showrefnav method
 	}
 
 	/**
@@ -183,8 +183,8 @@ class AccountingAccount extends CommonObject
 		if ($rowid || $account_number) {
 			$sql  = "SELECT a.rowid as rowid, a.datec, a.tms, a.fk_pcg_version, a.pcg_type, a.account_number, a.account_parent, a.label, a.labelshort, a.fk_accounting_category, a.fk_user_author, a.fk_user_modif, a.active, a.reconcilable";
 			$sql .= ", ca.label as category_label";
-			$sql .= " FROM ".MAIN_DB_PREFIX."accounting_account as a";
-			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
+			$sql .= " FROM ".$this->db->prefix().$this->table_element." as a";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_accounting_category as ca ON a.fk_accounting_category = ca.rowid";
 			$sql .= " WHERE";
 			if ($rowid) {
 				$sql .= " a.rowid = ".(int) $rowid;
@@ -193,7 +193,7 @@ class AccountingAccount extends CommonObject
 				$sql .= " AND a.entity = ".$conf->entity;
 			}
 			if (!empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.MAIN_DB_PREFIX.'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
+				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM '.$this->db->prefix().'accounting_system WHERE rowid = '.((int) getDolGlobalInt('CHARTOFACCOUNTS')).')';
 			}
 			if (!empty($limittoachartaccount)) {
 				$sql .= " AND a.fk_pcg_version = '".$this->db->escape($limittoachartaccount)."'";
@@ -276,7 +276,7 @@ class AccountingAccount extends CommonObject
 		// Put here code to add control on parameters values
 
 		// Insert request
-		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_account(";
+		$sql = "INSERT INTO " . $this->db->prefix() . $this->table_element . " (";
 		$sql .= "datec";
 		$sql .= ", entity";
 		$sql .= ", fk_pcg_version";
@@ -314,7 +314,7 @@ class AccountingAccount extends CommonObject
 		}
 
 		if (!$error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . "accounting_account");
+			$this->id = $this->db->last_insert_id($this->db->prefix() . $this->table_element);
 
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action to call a trigger.
@@ -356,7 +356,7 @@ class AccountingAccount extends CommonObject
 
 		$this->db->begin();
 
-		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account ";
+		$sql = "UPDATE " . $this->db->prefix() . $this->table_element;
 		$sql .= " SET fk_pcg_version = " . ($this->fk_pcg_version ? "'" . $this->db->escape($this->fk_pcg_version) . "'" : "null");
 		$sql .= " , pcg_type = " . ($this->pcg_type ? "'" . $this->db->escape($this->pcg_type) . "'" : "null");
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
@@ -397,10 +397,10 @@ class AccountingAccount extends CommonObject
 		global $langs;
 
 		// TODO Looks a stupid check
-		$sql = "(SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facturedet";
+		$sql = "(SELECT fk_code_ventilation FROM ".$this->db->prefix()."facturedet";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 		$sql .= "UNION";
-		$sql .= " (SELECT fk_code_ventilation FROM ".MAIN_DB_PREFIX."facture_fourn_det";
+		$sql .= " (SELECT fk_code_ventilation FROM ".$this->db->prefix()."facture_fourn_det";
 		$sql .= " WHERE fk_code_ventilation=".((int) $this->id).")";
 
 		dol_syslog(get_class($this)."::checkUsage", LOG_DEBUG);
@@ -437,7 +437,7 @@ class AccountingAccount extends CommonObject
 			$this->db->begin();
 
 			if (!$error) {
-				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "accounting_account";
+				$sql = "DELETE FROM " . $this->db->prefix() . $this->table_element;
 				$sql .= " WHERE rowid=" . ((int) $this->id);
 
 				dol_syslog(get_class($this) . "::delete sql=" . $sql);
@@ -466,7 +466,7 @@ class AccountingAccount extends CommonObject
 	}
 
 	/**
-	 * Return clicable name (with picto eventually)
+	 * Return clickable name (with picto eventually)
 	 *
 	 * @param int $withpicto 0=No picto, 1=Include picto into link, 2=Only picto
 	 * @param int $withlabel 0=No label, 1=Include label of account
@@ -586,7 +586,7 @@ class AccountingAccount extends CommonObject
 	public function info($id)
 	{
 		$sql = 'SELECT a.rowid, a.datec, a.fk_user_author, a.fk_user_modif, a.tms as date_modification';
-		$sql .= ' FROM ' . MAIN_DB_PREFIX . 'accounting_account as a';
+		$sql .= ' FROM ' . $this->db->prefix() . $this->table_element . ' as a';
 		$sql .= ' WHERE a.rowid = ' . ((int) $id);
 
 		dol_syslog(get_class($this) . '::info sql=' . $sql);
@@ -628,8 +628,8 @@ class AccountingAccount extends CommonObject
 		if ($result > 0) {
 			$this->db->begin();
 
-			$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account ";
-			$sql .= "SET ".$this->db->sanitize($fieldtouse)." = 0";
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET ".$this->db->sanitize($fieldtouse)." = 0";
 			$sql .= " WHERE rowid = ".((int) $id);
 
 			dol_syslog(get_class($this)."::accountDeactivate ".$fieldtouse, LOG_DEBUG);
@@ -666,7 +666,7 @@ class AccountingAccount extends CommonObject
 			$fieldtouse = 'reconcilable';
 		}
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_account";
+		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET ".$this->db->sanitize($fieldtouse)." = 1";
 		$sql .= " WHERE rowid = ".((int) $id);
 
@@ -729,9 +729,9 @@ class AccountingAccount extends CommonObject
 	 * @param 	Product 							$product 			Product object sell or buy
 	 * @param 	Facture|FactureFournisseur 			$facture 			Facture
 	 * @param 	FactureLigne|SupplierInvoiceLine	$factureDet 		Facture Det
-	 * @param 	array 								$accountingAccount 	Array of Accounting account
+	 * @param 	array<string,int>					$accountingAccount 	Array of Accounting account
 	 * @param 	string 								$type 				Customer / Supplier
-	 * @return	array|int      											Array of accounting accounts suggested or < 0 if technical error.
+	 * @return	array{suggestedaccountingaccountbydefaultfor:string,suggestedaccountingaccountfor:string,suggestedid:?int,code_l:string,code_p:string,code_t:string}|int<-1,-1>	Array of accounting accounts suggested or < 0 if technical error.
 	 * 																	'suggestedaccountingaccountbydefaultfor'=>Will be used for the label to show on tooltip for account by default on any product
 	 * 																	'suggestedaccountingaccountfor'=>Is the account suggested for this product
 	 */
@@ -745,6 +745,7 @@ class AccountingAccount extends CommonObject
 		$parameters = array('buyer' => $buyer, 'seller' => $seller, 'product' => $product, 'facture' => $facture, 'factureDet' => $factureDet ,'accountingAccount' => $accountingAccount, 0 => $type);
 		$reshook = $hookmanager->executeHooks('accountancyBindingCalculation', $parameters); // Note that $action and $object may have been modified by some hooks
 
+		$result = -1;  // Init for static analysis
 		if (empty($reshook)) {
 			$const_name = '';
 			if ($type == 'customer') {

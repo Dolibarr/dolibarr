@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2019-2021  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021 SuperAdmin
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -251,6 +251,11 @@ class modKnowledgeManagement extends DolibarrModules
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'Validate articles'; // Permission label
+		$this->rights[$r][4] = 'knowledgerecord_advance'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
+		$this->rights[$r][5] = 'validate'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
+		$r++;
+		$this->rights[$r][0] = $this->numero + $r + 1; // Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete articles'; // Permission label
 		$this->rights[$r][4] = 'knowledgerecord'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->knowledgemanagement->level1->level2)
@@ -447,9 +452,6 @@ class modKnowledgeManagement extends DolibarrModules
 		$myTmpObjects['KnowledgeRecord'] = array('includerefgeneration' => 0, 'includedocgeneration' => 0);
 
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'KnowledgeRecord') {
-				continue;
-			}
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/knowledgemanagement/template_knowledgerecords.odt';
 				$dirodt = DOL_DATA_ROOT.'/doctemplates/knowledgemanagement';
@@ -458,7 +460,7 @@ class modKnowledgeManagement extends DolibarrModules
 				if (file_exists($src) && !file_exists($dest)) {
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 					dol_mkdir($dirodt);
-					$result = dol_copy($src, $dest, 0, 0);
+					$result = dol_copy($src, $dest, '0', 0);
 					if ($result < 0) {
 						$langs->load("errors");
 						$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

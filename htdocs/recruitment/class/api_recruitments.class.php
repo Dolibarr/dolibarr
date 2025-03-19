@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Thibault FOUCART  <support@ptibogxiv.net>
+ * Copyright (C) 2024-2025	MDW			<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,11 +38,11 @@ dol_include_once('/recruitment/class/recruitmentcandidature.class.php');
 class Recruitments extends DolibarrApi
 {
 	/**
-	 * @var RecruitmentJobPosition $jobposition {@type RecruitmentJobPosition}
+	 * @var RecruitmentJobPosition {@type RecruitmentJobPosition}
 	 */
 	public $jobposition;
 	/**
-	 * @var RecruitmentCandidature $candidature {@type RecruitmentCandidature}
+	 * @var RecruitmentCandidature {@type RecruitmentCandidature}
 	 */
 	public $candidature;
 
@@ -50,7 +51,6 @@ class Recruitments extends DolibarrApi
 	 * Constructor
 	 *
 	 * @url     GET /
-	 *
 	 */
 	public function __construct()
 	{
@@ -123,7 +123,6 @@ class Recruitments extends DolibarrApi
 		return $this->_cleanObjectDatas($this->candidature);
 	}
 
-
 	/**
 	 * List jobpositions
 	 *
@@ -135,13 +134,16 @@ class Recruitments extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
+	 * @phan-return array<string,mixed>
+	 * @phpstan-return array<string,mixed>
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /jobposition/
 	 */
-	public function indexJobPosition($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '')
+	public function indexJobPosition($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$obj_ret = array();
 		$tmpobject = new RecruitmentJobPosition($this->db);
@@ -186,6 +188,9 @@ class Recruitments extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -212,6 +217,23 @@ class Recruitments extends DolibarrApi
 			throw new RestException(503, 'Error when retrieving jobposition list: '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -225,13 +247,17 @@ class Recruitments extends DolibarrApi
 	 * @param int			   $limit				Limit for list
 	 * @param int			   $page				Page number
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of order objects
+	 * @phan-return array<string,mixed>
+	 * @phpstan-return array<string,mixed>
 	 *
 	 * @throws RestException
 	 *
 	 * @url	GET /candidature/
 	 */
-	public function indexCandidature($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+	public function indexCandidature($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -278,6 +304,9 @@ class Recruitments extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -296,12 +325,29 @@ class Recruitments extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$tmp_object = new RecruitmentCandidature($this->db);
 				if ($tmp_object->fetch($obj->rowid)) {
-					$obj_ret[] = $this->_cleanObjectDatas($tmp_object);
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($tmp_object), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieving candidature list: '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -310,7 +356,9 @@ class Recruitments extends DolibarrApi
 	/**
 	 * Create jobposition object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return int  ID of jobposition
 	 *
 	 * @throws RestException
@@ -339,22 +387,24 @@ class Recruitments extends DolibarrApi
 		// Clean data
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
-		if ($this->jobposition->create(DolibarrApiAccess::$user)<0) {
+		if ($this->jobposition->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating jobposition", array_merge(array($this->jobposition->error), $this->jobposition->errors));
 		}
 		return $this->jobposition->id;
 	}
 
 	/**
-	* Create candidature object
-	*
-	* @param array $request_data   Request datas
-	* @return int  ID of candidature
-	*
-	* @throws RestException
-	*
-	* @url	POST candidature/
-	*/
+	 * Create candidature object
+	 *
+	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return int  ID of candidature
+	 *
+	 * @throws RestException
+	 *
+	 * @url	POST candidature/
+	 */
 	public function postCandidature($request_data = null)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('recruitment', 'recruitmentjobposition', 'write')) {
@@ -377,7 +427,7 @@ class Recruitments extends DolibarrApi
 		// Clean data
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
-		if ($this->candidature->create(DolibarrApiAccess::$user)<0) {
+		if ($this->candidature->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating candidature", array_merge(array($this->candidature->error), $this->candidature->errors));
 		}
 		return $this->candidature->id;
@@ -387,7 +437,9 @@ class Recruitments extends DolibarrApi
 	 * Update jobposition
 	 *
 	 * @param int   $id						Id of jobposition to update
-	 * @param array $request_data			Datas
+	 * @param array $request_data			Data
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return		Object					Object with cleaned properties
 	 *
 	 * @throws RestException
@@ -425,7 +477,7 @@ class Recruitments extends DolibarrApi
 		// Clean data
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
-		if ($this->jobposition->update(DolibarrApiAccess::$user, false) > 0) {
+		if ($this->jobposition->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->getJobPosition($id);
 		} else {
 			throw new RestException(500, $this->jobposition->error);
@@ -437,6 +489,8 @@ class Recruitments extends DolibarrApi
 	 *
 	 * @param	int		$id             Id of candidature to update
 	 * @param	array	$request_data   Datas
+	 * @phan-param ?array<string,mixed> $request_data
+	 * @phpstan-param ?array<string,mixed> $request_data
 	 * @return  Object					Object with cleaned properties
 	 *
 	 * @throws RestException
@@ -474,7 +528,7 @@ class Recruitments extends DolibarrApi
 		// Clean data
 		// $this->jobposition->abc = sanitizeVal($this->jobposition->abc, 'alphanohtml');
 
-		if ($this->candidature->update(DolibarrApiAccess::$user, false) > 0) {
+		if ($this->candidature->update(DolibarrApiAccess::$user, 0) > 0) {
 			return $this->getCandidature($id);
 		} else {
 			throw new RestException(500, $this->candidature->error);
@@ -487,6 +541,8 @@ class Recruitments extends DolibarrApi
 	 *
 	 * @param   int     $id   jobposition ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 *
@@ -523,6 +579,8 @@ class Recruitments extends DolibarrApi
 	 *
 	 * @param   int     $id   candidature ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 *
@@ -621,13 +679,16 @@ class Recruitments extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param	array		$data   Array of data to validate
-	 * @return	array
+	 * @param	?array<string,mixed>		$data   Array of data to validate
+	 * @return	array<string,mixed>
 	 *
 	 * @throws	RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$jobposition = array();
 		foreach ($this->jobposition->fields as $field => $propfield) {
 			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || $propfield['notnull'] != 1) {

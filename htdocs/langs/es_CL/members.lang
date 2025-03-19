@@ -75,6 +75,7 @@ DocForLabels=Generar hojas de direcciones
 MembersStatisticsByState=Estadísticas de miembros por estado / provincia
 MembersStatisticsByTown=Estadísticas de miembros por ciudad
 NoValidatedMemberYet=No se encontraron miembros validados
+MembersByCountryDesc=This screen shows you the statistics of members by country.
 MembersStatisticsDesc=Elija las estadísticas que quiere leer ...
 MenuMembersStats=Estadística
 NewMemberbyWeb=Nuevo miembro agregado. Esperando aprobacion

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
@@ -76,7 +88,7 @@ if (!$urlfile) {
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result = $ecmdir->fetch(GETPOST("section", 'alpha'));
+$result = $ecmdir->fetch(GETPOSTINT("section"));
 if (!($result > 0)) {
 	dol_print_error($db, $ecmdir->error);
 	exit;
@@ -238,7 +250,7 @@ if ($action == 'update' && $permissiontoadd) {
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-ecm page-file_card');
 
 $object->section_id = $ecmdir->id;
 $object->label = $urlfile;

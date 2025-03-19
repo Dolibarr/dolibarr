@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2018-2020  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +18,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 /**
  * API class for contracts
@@ -30,7 +31,7 @@
 class Contracts extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -40,7 +41,7 @@ class Contracts extends DolibarrApi
 	);
 
 	/**
-	 * @var Contrat $contract {@type Contrat}
+	 * @var Contrat {@type Contrat}
 	 */
 	public $contract;
 
@@ -82,8 +83,6 @@ class Contracts extends DolibarrApi
 		return $this->_cleanObjectDatas($this->contract);
 	}
 
-
-
 	/**
 	 * List contracts
 	 *
@@ -96,12 +95,15 @@ class Contracts extends DolibarrApi
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter contracts of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array                               Array of contract objects
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                               Array of order objects
+	 * @phan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Contrat[]|array{data:Contrat[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		global $db, $conf;
 
@@ -143,6 +145,9 @@ class Contracts extends DolibarrApi
 			}
 		}
 
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -172,6 +177,23 @@ class Contracts extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve contrat list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -179,6 +201,8 @@ class Contracts extends DolibarrApi
 	 * Create contract object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of contrat
 	 */
 	public function post($request_data = null)
@@ -220,6 +244,8 @@ class Contracts extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return ContratLigne[]
+	 * @phpstan-return ContratLigne[]
 	 */
 	public function getLines($id)
 	{
@@ -248,6 +274,8 @@ class Contracts extends DolibarrApi
 	 *
 	 * @param int   $id             Id of contrat to update
 	 * @param array $request_data   Contractline data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -306,6 +334,8 @@ class Contracts extends DolibarrApi
 	 * @param int   $id             Id of contrat to update
 	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   Contractline data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
@@ -389,7 +419,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$updateRes = $this->contract->active_line(DolibarrApiAccess::$user, $lineid, $datestart, $dateend, $comment);
+		$updateRes = $this->contract->active_line(DolibarrApiAccess::$user, $lineid, (int) $datestart, $dateend, $comment);
 
 		if ($updateRes > 0) {
 			$result = $this->get($id);
@@ -427,7 +457,7 @@ class Contracts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, $datestart, $comment);
+		$updateRes = $this->contract->close_line(DolibarrApiAccess::$user, $lineid, (int) $datestart, $comment);
 
 		if ($updateRes > 0) {
 			$result = $this->get($id);
@@ -481,7 +511,9 @@ class Contracts extends DolibarrApi
 	 * Update contract general fields (won't touch lines of contract)
 	 *
 	 * @param 	int   	$id             	Id of contract to update
-	 * @param 	array 	$request_data   	Datas
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
@@ -509,7 +541,7 @@ class Contracts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);;
+					$this->contract->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contract);
 				}
 				continue;
 			}
@@ -530,6 +562,8 @@ class Contracts extends DolibarrApi
 	 * @param   int     $id         Contract ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -566,6 +600,9 @@ class Contracts extends DolibarrApi
 	 * @url POST    {id}/validate
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -612,6 +649,9 @@ class Contracts extends DolibarrApi
 	 * @url POST    {id}/close
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
 	 * FIXME An error 403 is returned if the request has an empty body.
 	 * Error message: "Forbidden: Content type `text/plain` is not supported."
 	 * Workaround: send this in the body
@@ -672,12 +712,15 @@ class Contracts extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$contrat = array();
 		foreach (Contracts::$FIELDS as $field) {
 			if (!isset($data[$field])) {
