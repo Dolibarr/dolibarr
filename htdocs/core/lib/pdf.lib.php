@@ -2541,11 +2541,20 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 	foreach ($object->linkedObjects as $objecttype => $objects) {
 		if ($objecttype == 'facture') {
 			// For invoice, we don't want to have a reference line on document. Image we are using recurring invoice, we will have a line longer than document width.
-		} elseif ($objecttype == 'propal' || $objecttype == 'supplier_proposal') {
+		} elseif ($objecttype == 'propal') {
 			$outputlangs->load('propal');
 
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefProposal");
+				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
+				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
+				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
+			}
+		} elseif ($objecttype == 'supplier_proposal') {
+			    $outputlangs->load('supplier_proposal');
+			
+			foreach ($objects as $elementobject) {
+				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSupplierProposal");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
 				$linkedobjects[$objecttype]['date_title'] = $outputlangs->transnoentities("DatePropal");
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
