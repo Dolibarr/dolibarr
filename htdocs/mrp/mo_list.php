@@ -269,7 +269,7 @@ foreach ($search as $key => $val) {
 		if ($key == 'status' && $search[$key] == -2) {
 			$sql .= ' AND (t.status IN ('.$object::STATUS_VALIDATED.','.$object::STATUS_INPROGRESS.'))';
 			if ($search_option == 'late') {
-				$sql .= ' AND (t.date_end_planned > \''.$db->idate(dol_now() + $conf->mrp->progress->warning_delay).'\')';
+				$sql .= ' AND (t.date_end_planned < \''.$db->idate(dol_now() - $conf->mrp->progress->warning_delay).'\')';
 			}
 			continue;
 		}
@@ -277,7 +277,6 @@ foreach ($search as $key => $val) {
 			$sql .= natural_search('moparent.ref', $search[$key], 0);
 			continue;
 		}
-
 		if ($key == 'status') {
 			$sql .= natural_search('t.status', (string) $search[$key], 0);
 			continue;
@@ -307,9 +306,14 @@ foreach ($search as $key => $val) {
 		}
 	}
 }
+
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
+
+
+
 //$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
@@ -317,7 +321,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
 /* If a group by is required
 $sql.= " GROUP BY ";
 foreach($object->fields as $key => $val) {
