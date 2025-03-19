@@ -6738,7 +6738,7 @@ class Product extends CommonObject
 	 */
 	public function isStockManaged()
 	{
-		return ($this->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
+		return (($this->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) && ($this->stockable_product > 0));
 	}
 
 	/**

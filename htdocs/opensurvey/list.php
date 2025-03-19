@@ -95,13 +95,6 @@ if (!$user->hasRight('opensurvey', 'read')) {
 
 // Definition of fields for list
 $arrayfields = array();
-// TODO
-/* foreach ($arrayfields as $key => $val) {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) {
-		$arrayfields['t.'.$key] = array('label' => $val['label'], 'checked' => (($val['visible'] < 0) ? 0 : 1), 'enabled' => $val['enabled'], 'position' => $val['position']);
-	}
-} */
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
@@ -540,7 +533,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 // If no record found
 if ($num == 0) {
 	$colspan = 8;
-	foreach ($arrayfields as $key => $val) {
+	foreach ($arrayfields as $key => $val) {	//
 		if (!empty($val['checked'])) {
 			$colspan++;
 		}

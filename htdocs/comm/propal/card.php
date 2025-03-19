@@ -325,7 +325,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -370,7 +370,7 @@ if (empty($reshook)) {
 			} elseif (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -395,7 +395,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -699,7 +699,7 @@ if (empty($reshook)) {
 						if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1373,7 +1373,7 @@ if (empty($reshook)) {
 							$outputlangs->load('products');
 						}
 						if (!empty($prod->customcode)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 						}
 						if (!empty($prod->customcode) && !empty($prod->country_code)) {
 							$tmptxt .= ' - ';
@@ -1383,7 +1383,7 @@ if (empty($reshook)) {
 						}
 					} else {
 						if (!empty($prod->customcode)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+							$tmptxt .= $langs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 						}
 						if (!empty($prod->customcode) && !empty($prod->country_code)) {
 							$tmptxt .= ' - ';
@@ -2106,7 +2106,7 @@ if ($action == 'create') {
 		print '</td></tr>';
 
 		// Validaty duration
-		print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="pictofixedwidth"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : $conf->global->PROPALE_VALIDITY_DURATION).'"> '.$langs->trans("days").'</td></tr>';
+		print '<tr class="field_duree_validitee"><td class="titlefieldcreate fieldrequired">'.$langs->trans("ValidityDuration").'</td><td class="valuefieldcreate">'.img_picto('', 'clock', 'class="pictofixedwidth"').'<input name="duree_validite" class="width50" value="'.(GETPOSTISSET('duree_validite') ? GETPOST('duree_validite', 'alphanohtml') : getDolGlobalString('PROPALE_VALIDITY_DURATION')).'"> '.$langs->trans("days").'</td></tr>';
 
 		// Terms of payment
 		print '<tr class="field_cond_reglement_id"><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
