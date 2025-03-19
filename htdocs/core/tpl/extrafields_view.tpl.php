@@ -27,9 +27,9 @@
  * @var Translate $langs
  * @var User $user
  *
- * @var string	$action
- * @var array 	$parameters
- * @var int 	$cols
+ * @var string $action
+ * @var array<string,mixed> $parameters
+ * @var int $cols
  */
 
 // Protection to avoid direct call of template
