@@ -1036,10 +1036,9 @@ class ImportXlsx extends ModeleImports
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
-
-
-								
-								$keyfield = 'rowid';
+								if (empty($keyfield)) {
+									$keyfield = 'rowid';
+								}
 								
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
