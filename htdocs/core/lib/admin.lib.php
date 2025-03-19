@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1056,13 +1056,18 @@ function defaultvalues_prepare_head()
 /**
  * 	Return list of session
  *
- *  @return array<string,array{login:string,age:int,creation:int,modification:int,raw:string}>	Array list of sessions
+ *  @return array<string,array{login:string,age:int,creation:null|int|false,modification:int|false,raw:string,remote_ip:?string,user_agent:?string}>	Array list of sessions
  */
 function listOfSessions()
 {
-	global $conf;
+	global $conf, $php_session_save_handler;
 
 	$arrayofSessions = array();
+	// Set the handler of session
+	if (!empty($php_session_save_handler) && $php_session_save_handler == 'db') {
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/phpsessionin'.$php_session_save_handler.'.lib.php';
+		return dolListSessions();
+	}
 	// session.save_path can be returned empty so we set a default location and work from there
 	$sessPath = '/tmp';
 	$iniPath = ini_get("session.save_path");
@@ -1090,13 +1095,16 @@ function listOfSessions()
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
 						$regs = array();
+						$arrayofSessions[$idsess]["login"] = '';
 						$loginfound = preg_match('/dol_login\|s:[0-9]+:"([A-Za-z0-9]+)"/i', $sessValues, $regs);
 						if ($loginfound) {
-							$arrayofSessions[$idsess]["login"] = $regs[1];
+							$arrayofSessions[$idsess]["login"] = (string) $regs[1];
 						}
 						$arrayofSessions[$idsess]["age"] = time() - filectime($fullpath);
 						$arrayofSessions[$idsess]["creation"] = filectime($fullpath);
 						$arrayofSessions[$idsess]["modification"] = filemtime($fullpath);
+						$arrayofSessions[$idsess]["user_agent"] = null;
+						$arrayofSessions[$idsess]["remote_ip"] = null;
 						$arrayofSessions[$idsess]["raw"] = $sessValues;
 					}
 				}

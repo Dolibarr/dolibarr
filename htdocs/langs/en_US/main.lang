@@ -1124,6 +1124,7 @@ AssignedTo=Assigned to
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft mass delete confirmation
 FileSharedViaALink=Public file shared via link
+LinkSharedViaALink=Public link shared via link
 SelectAThirdPartyFirst=Select a third party first...
 YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 Inventory=Inventory

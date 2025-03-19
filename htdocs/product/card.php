@@ -782,7 +782,7 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			if ($object->id > 0) {
-				//Need dol_clone methode 1 (same object class) because update product use hasbatch() method on oldcopy
+				// Need dol_clone methode 1 (same object class) because update product use hasbatch() method on oldcopy
 				$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
@@ -2252,7 +2252,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Stock
 				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
 					if (isModEnabled('productbatch') && $object->hasbatch()) {
-						print '<td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td></tr>';
+						print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
 					} else {
 						print '<tr><td><label for="stockable_product">' . $langs->trans("StockableProduct") . '</label></td>';
 						$checked = empty($object->stockable_product) ? "" : "checked";
