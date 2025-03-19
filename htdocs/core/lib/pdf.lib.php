@@ -2551,7 +2551,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				$linkedobjects[$objecttype]['date_value'] = dol_print_date($elementobject->date, 'day', '', $outputlangs);
 			}
 		} elseif ($objecttype == 'supplier_proposal') {
-			    $outputlangs->load('supplier_proposal');
+			$outputlangs->load('supplier_proposal');
 			
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSupplierProposal");
