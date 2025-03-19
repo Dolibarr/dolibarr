@@ -1,3 +1,5 @@
+---
+# This run the script to update the phpstan baseline file dev/build/phpstan/phpstan-baseline.neon
 name: 'PHPStan baseline'
 
 on:
