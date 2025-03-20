@@ -1986,7 +1986,6 @@ class Mo extends CommonObject
 	public function load_board($user)
 	{
 		global $conf, $langs;
-
 		if ($user->socid) {
 			return -1; // Protection pour éviter appel par utilisateur externe
 		}
@@ -2016,9 +2015,8 @@ class Mo extends CommonObject
 
 				if (!empty($obj->date_end_planned)) {
 					$date_end_planned = $this->db->jdate($obj->date_end_planned);
-
 					// Vérifier si la tâche est en retard
-					if ($date_end_planned > $delay_threshold) {
+					if ($date_end_planned < $delay_threshold) {
 						$response->nbtodolate++;
 						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
 					}
@@ -2049,6 +2047,7 @@ class Mo extends CommonObject
 		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
 			return false;
 		}
+
 		return $this->date_end_planned < ($now - $conf->mrp->progress->warning_delay) ? true : false;
 	}
 
