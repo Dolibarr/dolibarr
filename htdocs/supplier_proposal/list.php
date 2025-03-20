@@ -780,7 +780,6 @@ if ($resql) {
 		print '<input type="text" class="flat" name="search_project_ref" value="'.$search_project_ref.'">';
 		print '</td>';
 	}
-	
 	if (!empty($arrayfields['s.nom']['checked'])) {
 		print '<td class="liste_titre left">';
 		print '<input class="flat" type="text" size="12" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
