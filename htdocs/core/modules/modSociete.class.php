@@ -928,6 +928,8 @@ class modSociete extends DolibarrModules
 		$this->import_updatekeys_array[$r] = array(
 			's.rowid' => 'Id',
 			's.lastname' => "Lastname",
+			's.zip' => "Zip",
+			's.email' => "Email",
 		);
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
