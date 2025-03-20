@@ -174,10 +174,10 @@ class modCategorie extends DolibarrModules
 		if (isModEnabled('invoice')) {
 			$typeexample .= ($typeexample ? " / " : "")."17=Invoice";
 		}
-		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('fournisseur'))) {
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			$typeexample .= ($typeexample ? " / " : "")."20=Supplier order";
 		}
-		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('fournisseur'))) {
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
 			$typeexample .= ($typeexample ? " / " : "")."21=Supplier invoice";
 		}
 
@@ -521,13 +521,13 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 20 Supplier order
-		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('fournisseur'))) {
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			++$r;
 			$this->exportTagLinks(
 				$r,
 				'supplier_order',
 				'CommandeFournisseur',
-				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("fournisseur"))',
+				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_order"))',
 				['fournisseur', 'commande', 'export'],
 				[
 					'rowid' => [
@@ -539,13 +539,13 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 21 Supplier invoice
-		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('fournisseur'))) {
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
 			++$r;
 			$this->exportTagLinks(
 				$r,
 				'supplier_invoice',
 				'FactureFournisseur',
-				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("fournisseur"))',
+				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_invoice"))',
 				['fournisseur', 'facture', 'export'],
 				[
 					'rowid' => [
@@ -768,7 +768,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 20 Supplier order
-		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('fournisseur'))) {
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			++$r;
 			$this->importTagLinks(
 				$r,
@@ -780,7 +780,7 @@ class modCategorie extends DolibarrModules
 		}
 
 		// 21 Supplier invoice
-		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('fournisseur'))) {
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
 			++$r;
 			$this->importTagLinks(
 				$r,
