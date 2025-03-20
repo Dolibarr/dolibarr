@@ -593,7 +593,20 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
+
+					$dateOrder = '';
+					if ($board->id == 'mo') {
+						$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
+					} else {
+						$dateOrder = $langs->trans("DateReference") . " > " . $langs->trans("DateToday");
+					}
+					$warningDelay = ceil(empty($board->warning_delay) ? 0 : $board->warning_delay);
+					$sign = '';
+					if ($warningDelay >= 0) {
+						$sign = '+';
+					}
+
+					$textLateTitle .= " (" . $langs->trans("Late") . " = $dateOrder $sign$warningDelay " . $langs->trans("days") . ")";
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';

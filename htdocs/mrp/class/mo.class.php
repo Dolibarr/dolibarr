@@ -2007,16 +2007,13 @@ class Mo extends CommonObject
 			$response->url = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2';
 			$response->img = img_object('', "mrp");
 
-			$now = dol_now();
-			$delay_threshold = $now + $warning_delay;
 
 			while ($obj = $this->db->fetch_object($resql)) {
 				$response->nbtodo++;
 
 				if (!empty($obj->date_end_planned)) {
 					$date_end_planned = $this->db->jdate($obj->date_end_planned);
-					// Vérifier si la tâche est en retard
-					if ($date_end_planned < $delay_threshold) {
+					if ($now > ($date_end_planned + $warning_delay)) {
 						$response->nbtodolate++;
 						$response->url_late = DOL_URL_ROOT.'/mrp/mo_list.php?search_status=-2&search_option=late';
 					}
@@ -2041,14 +2038,10 @@ class Mo extends CommonObject
 	{
 		global $conf;
 
-		$now = dol_now();
-
-		// Paid invoices have status STATUS_CLOSED
 		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
 			return false;
 		}
-
-		return $this->date_end_planned < ($now - $conf->mrp->progress->warning_delay) ? true : false;
+		return dol_now() > $this->date_end_planned + $conf->mrp->progress->warning_delay ? true : false;
 	}
 
 

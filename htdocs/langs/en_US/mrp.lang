@@ -149,5 +149,5 @@ THMMachineEstimatedHelp=Estimated cost of machine per hour. Will be used to esti
 BadValueForquantityToConsume=Quantity to consume for a material cannot be 0 or negative
 MOProgress = In progress
 Mo=Manufacturing
-StatusMrpValidated=Validée
+StatusMrpValidated=Validé
 StatusMrpProgress=En cours
