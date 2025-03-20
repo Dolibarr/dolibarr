@@ -296,6 +296,9 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo($alwayseditable ? ' checked' : ''); ?>></td></tr>
 
+<!-- Permission to edit -->
+<tr class="extra_perms"><td><?php echo $form->textwithpicto($langs->trans("PermissionOnField"), $langs->trans("PermissionToEditField")); ?></td><td class="valeur"><input id="perms" type="text" name="perms" value="<?php echo $perms; ?>"></td></tr>
+
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo($list != '' ? $list : '1'); ?>"></td></tr>
@@ -326,7 +329,7 @@ if (in_array($type, array_keys($typewecanchangeinto))) {
 
 <!-- Show Enabled property when value is not a common value -->
 <?php if ($enabled != '1') { ?>
-	<tr class="help"><td><?php echo $langs->trans("EnabledCondition"); ?></td><td class="valeur">
+	<tr class="help"><td><?php echo $form->textwithpicto($langs->trans("EnabledCondition"), $langs->trans("EnabledConditionHelp")); ?></td><td class="valeur">
 	<?php echo dol_escape_htmltag((string) $enabled); ?>
 <?php } ?>
 </td></tr>

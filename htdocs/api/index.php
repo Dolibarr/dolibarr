@@ -3,8 +3,8 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2017	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -377,6 +377,15 @@ if (!empty($reg[1]) && ($reg[1] != 'explorer' || ($reg[2] != '/swagger.json' && 
 			//session_destroy();
 			exit(0);
 		}
+	}
+
+	$parameters = array('url' => $url, 'ip' => getUserRemoteIP(), 'moduleobject' => $moduleobject, 'classfile' => $classfile, 'classname' => $classname);
+	$object = $api;
+	$action = $api->r->requestMethod;
+	// Note that $action and $object may be modified by some hooks
+	$reshook = $hookmanager->executeHooks('beforeApiCall', $parameters, $object, $action);
+	if ($reshook < 0) {
+		dol_syslog('beforeapicall Failed to call hook '.$hookmanager->error, LOG_ERR);
 	}
 
 	dol_syslog('Search api file /'.$moduledirforclass.'/class/api_'.$classfile.'.class.php => dir_part_file='.$dir_part_file.', classname='.$classname);

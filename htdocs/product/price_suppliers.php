@@ -153,7 +153,7 @@ if (empty($reshook)) {
 		if ($id) {
 			$result = $object->fetch($id);
 			//Need dol_clone methode 1 (same object class) because update product use hasbatch method on oldcopy
-			$object->oldcopy = dol_clone($object, 1);
+			$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$object->cost_price = $cost_price;
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {

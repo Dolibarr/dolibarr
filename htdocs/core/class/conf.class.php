@@ -1332,13 +1332,6 @@ class Conf extends stdClass
 				$this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 			}
 
-			if (!empty($this->global->PRODUIT_AUTOFILL_DESC)) {
-				$this->global->MAIN_NO_CONCAT_DESCRIPTION = 1;
-			} else {
-				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
-			}
-
-
 			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 
 			// product is new use
