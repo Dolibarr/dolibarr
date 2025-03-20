@@ -219,3 +219,7 @@ UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM ll
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
 
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
+
+-- Delete old table intracommreport if exist, create when the module will be activated
+DELETE FROM llx_const WHERE name IN ('MAIN_MODULE_INTRACOMMREPORT');
+DROP TABLE IF EXISTS llx_intracommreport;
