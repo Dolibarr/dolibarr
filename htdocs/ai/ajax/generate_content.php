@@ -77,7 +77,7 @@ $ai = new Ai($db);
 // Get parameters
 $function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['function'];	// Default value. Can also be 'textgeneration', 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', 'videogeneration', ...
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
-$format = empty($jsonData['format']) ? '' : $jsonData['format'];
+$format = empty($jsonData['format']) ? '' : $jsonData['format'];	// Can be '' for text, 'html', ...
 
 if ($function == 'texttranslation') {
 	$instructions = $jsonData['instructions'];

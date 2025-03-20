@@ -8443,12 +8443,36 @@ table.jPicker {
 }
 
 
+
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.ai_dropdown {
+	min-width: 400px;
+	padding: 12px;
+	left: inherit !important;
+	top: inherit !important;
+}
+.ai_feature {
+	background-color: var(--colorbackgrey);
+	padding: 10px;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	border-radius: 4px;
+}
+
+
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
 @media only screen and (max-width: 767px)
 {
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 
 	#tooltip {
