@@ -700,10 +700,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'code_journal,';
 		$sql .= 'journal_label,';
 		$sql .= 'piece_num,';
-		// Do not set ref in tmp table
-		if (!$mode) {
-			$sql .= 'ref,';
-		}
+		$sql .= 'ref,';
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'NULL').',';
@@ -727,9 +724,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
-		if (!$mode) {
-			$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
-		}
+		$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
@@ -802,10 +797,11 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
+		$sql .= " t.ref,";
 		$sql .= " t.date_creation,";
-		// In llx_accounting_bookkeeping_tmp, date_export and ref fields doesn't exist
+		// In llx_accounting_bookkeeping_tmp, date_export
 		if (!$mode) {
-			$sql .= " t.date_export,t.ref,";
+			$sql .= " t.date_export,";
 		}
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.$mode.' as t';
@@ -850,8 +846,8 @@ class BookKeeping extends CommonObject
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				if (!$mode) {
 					$this->date_export = $this->db->jdate($obj->date_export);
-					$this->ref = $obj->ref;
 				}
+				$this->ref = $obj->ref;
 				$this->date_validation = isset($obj->date_validation) ? $this->db->jdate($obj->date_validation) : '';
 			}
 			$this->db->free($resql);
@@ -2181,10 +2177,12 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$tmpBookkeeping = new self($this->db);
-		$tmpData = $this->db->getRow("SELECT doc_date, code_journal FROM {$this->db->prefix()}accounting_bookkeeping_tmp WHERE piece_num = '{$this->db->escape($piece_num)}' AND entity = {$conf->entity}");
+		$tmpData = $this->db->getRow("SELECT doc_date, code_journal, ref FROM {$this->db->prefix()}accounting_bookkeeping_tmp WHERE piece_num = '{$this->db->escape($piece_num)}' AND entity = {$conf->entity}");
 		$tmpBookkeeping->doc_date = $this->db->jdate($tmpData->doc_date);
 		$tmpBookkeeping->code_journal = $tmpData->code_journal;
-		$ref = $tmpBookkeeping->getNextNumRef();
+
+		// Ref is copied from tmp only if defined => free num ref model has been used
+		$ref = $tmpData->ref ?: $tmpBookkeeping->getNextNumRef();
 		if ($direction == 0) {
 			$next_piecenum = $this->getNextNumMvt();
 			$now = dol_now();
