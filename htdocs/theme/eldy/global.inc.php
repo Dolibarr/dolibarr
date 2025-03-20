@@ -8600,10 +8600,34 @@ table.jPicker {
 	margin-bottom: 15px;
 }
 
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.ai_dropdown{
+	min-width:300px;
+	padding: 5px;
+	left:inherit !important;
+	top:inherit !important;
+}
+.ai_feature{
+	background-color: #ddd;
+	padding-left: 5px;
+	border-radius: 4px;
+}
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
+
+@media only screen
+{
+	.ai_dropdown{
+		min-width : 250px !important;
+	}
+}
+
+
 
 .topmenuimage {
 	background-size: 22px auto;
