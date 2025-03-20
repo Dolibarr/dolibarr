@@ -8460,7 +8460,7 @@ abstract class CommonObject
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
 		}
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (isset($val['type']) && preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 		}
 
@@ -8474,7 +8474,7 @@ abstract class CommonObject
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			$param['options'] = $val['arrayofkeyval'];
 		}
-		if (preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
+		if (isset($val['type']) && preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
 			// Special case: Force addition of getnomurlparam1 to -1 for users
@@ -8482,19 +8482,19 @@ abstract class CommonObject
 				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1] => 'N');
 			$type = 'chkbxlst';
-		} elseif (preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
 			$type = 'stars';
 			$size = $reg[1];
