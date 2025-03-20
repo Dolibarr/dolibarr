@@ -145,7 +145,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 * Returns the prefix for current Bookkeeping object
 	 * Year used in prefix is the beginning fiscal year.
 	 *
-	 * @param BookKeeping $object
+	 * @param BookKeeping $object	Book keeping record
 	 * @return string
 	 */
 	private function getPrefix(BookKeeping $object): string
