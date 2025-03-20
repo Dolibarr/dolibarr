@@ -570,7 +570,7 @@ if ($step == 2 && $datatoexport) {
 	print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
 	print '<div class="valignmiddle marginbottomonly">';
 	print '<span class="opacitymedium">'.$langs->trans("SelectExportFields").'</span> ';
-	$htmlother->select_export_model($exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
+	$htmlother->select_export_model((string) $exportmodelid, 'exportmodelid', $datatoexport, 1, $user->id);
 	print ' ';
 	print '<input type="submit" class="button small" value="'.$langs->trans("Select").'">';
 	print '</div>';

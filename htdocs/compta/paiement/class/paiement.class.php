@@ -899,6 +899,7 @@ class Paiement extends CommonObject
 									'company'
 								);
 								if ($result <= 0) {
+									$error++;
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
 								$linkaddedforthirdparty[$fac->thirdparty->id] = $fac->thirdparty->id; // Mark as done for this thirdparty
@@ -917,6 +918,7 @@ class Paiement extends CommonObject
 									'company'
 								);
 								if ($result <= 0) {
+									$error++;
 									dol_syslog(get_class($this).'::addPaymentToBank '.$this->db->lasterror());
 								}
 								$linkaddedforthirdparty[$fac->thirdparty->id] = $fac->thirdparty->id; // Mark as done for this thirdparty

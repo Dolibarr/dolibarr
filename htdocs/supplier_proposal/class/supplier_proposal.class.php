@@ -1542,6 +1542,13 @@ class SupplierProposal extends CommonObject
 				$this->datev = $now;
 				$this->date_validation = $now;
 
+				if (getDolGlobalString('SUPPLIER_PROPOSAL_AUTOADD_USER_CONTACT')) {
+					$result = $this->add_contact($user->id, 'SALESREPFOLL', 'internal', 1);
+					if ($result < 0 && $result != -2) {	// -2 means already exists
+						$error++;
+					}
+				}
+
 				$this->db->commit();
 				return 1;
 			} else {
