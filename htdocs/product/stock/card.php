@@ -158,7 +158,7 @@ if (empty($reshook)) {
 		$object->country_id   = GETPOSTINT("country_id");
 		$object->phone        = (string) GETPOST("phone", "alpha");
 		$object->fax          = (string) GETPOST("fax", "alpha");
-		$object->warehouse_usage = (string) GETPOST("warehouse_usage", "alpha");
+		$object->warehouse_usage = GETPOSTINT("warehouse_usage");
 
 		if (!empty($object->label)) {
 			// Fill array 'array_options' with data from add form
