@@ -488,6 +488,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $need_dolibarr_version;
 
 	/**
+	 * @var int[] Maximum version of Dolibarr required by module.
+	 * e.g.: Dolibarr ≤ 3.6 = array(3, 6)
+	 */
+	public $max_dolibarr_version;
+
+	/**
 	 * @var int<0,1>
 	 */
 	public $need_javascript_ajax;

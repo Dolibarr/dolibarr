@@ -7,7 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,11 +90,11 @@ class CMailFile
 	/** @var ?int<1,1> When 1, there is at least one file */
 	public $atleastonefile;
 
-	/** @var string $msg Message to send */
+	/** @var string Message to send */
 	public $msg;
-	/** @var string $msg End of line sequence */
+	/** @var string End of line sequence */
 	public $eol;
-	/** @var string $msg End of line sequence (header ?) */
+	/** @var string End of line sequence (header ?) */
 	public $eol2;
 
 	/**
@@ -539,7 +539,7 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Add attachments to text_encoded
-			if (!empty($this->atleastonefile)) {
+			if (!empty($this->atleastonefile) && $filename_list !== null && $mimetype_list !== null && $mimefilename_list !== null) {
 				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list, $cid_list);
 			}
 
@@ -1690,8 +1690,8 @@ class CMailFile
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
-	 * @param	string[]	$filename_list			Array of filenames
-	 * @param 	string[]	$mimefilename_list		Array of mime types
+	 * @param	?string[]	$filename_list			Array of filenames
+	 * @param 	?string[]	$mimefilename_list		Array of mime types
 	 * @return	string							mime headers
 	 */
 	public function write_mimeheaders($filename_list, $mimefilename_list)
@@ -1700,7 +1700,7 @@ class CMailFile
 		$mimedone = 0;
 		$out = "";
 
-		if (is_array($filename_list)) {
+		if (is_array($filename_list) && is_array($mimefilename_list)) {
 			$filename_list_size = count($filename_list);
 			for ($i = 0; $i < $filename_list_size; $i++) {
 				if ($filename_list[$i]) {

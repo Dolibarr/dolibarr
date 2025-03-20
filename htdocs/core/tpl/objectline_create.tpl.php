@@ -277,9 +277,9 @@ if ($nolinesbefore) {
 				}
 				if (getDolGlobalString('ENTREPOT_EXTRA_STATUS')) {
 					// hide products in closed warehouse, but show products for internal transfer
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 0, $statuswarehouse, GETPOST('combinations', 'array'));
 				} else {
-					$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
+					$form->select_produits(GETPOSTINT('idprod'), 'idprod', $filtertype, getDolGlobalInt('PRODUIT_LIMIT_SIZE'), $buyer->price_level, $statustoshow, 2, '', 1, array(), $buyer->id, $labelforradio, 0, 'maxwidth500 widthcentpercentminusx', 0, '', GETPOST('combinations', 'array'));
 				}
 				if (getDolGlobalString('MAIN_AUTO_OPEN_SELECT2_ON_FOCUS_FOR_CUSTOMER_PRODUCTS')) {
 					?>
@@ -447,7 +447,7 @@ if ($nolinesbefore) {
 			echo '</div>';
 		}
 		if (is_object($objectline)) {
-			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
+			$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 			if (!empty($temps)) {
 				print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';
@@ -545,8 +545,8 @@ if ($nolinesbefore) {
 							$coldisplay++;
 						}
 						if (getDolGlobalString('DISPLAY_MARK_RATES')) {
-								echo '<td class="nobottom nowraponall margininfos right"><input class="flat right width40" type="text" id="np_markRate" name="np_markRate" value="'.(GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : '').'"><span class="np_markRate opacitymedium hideonsmartphone">%</span></td>';
-								$coldisplay++;
+									echo '<td class="nobottom nowraponall margininfos right"><input class="flat right width40" type="text" id="np_markRate" name="np_markRate" value="'.(GETPOSTISSET("np_markRate") ? GETPOST("np_markRate", 'alpha', 2) : '').'"><span class="np_markRate opacitymedium hideonsmartphone">%</span></td>';
+									$coldisplay++;
 						}
 		}
 	}
@@ -824,7 +824,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 				}
 			}
 		});
-							<?php
+											<?php
 		} ?>
 
 		/* When changing predefined product, we reload list of supplier prices required for margin combo */
@@ -948,7 +948,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 								if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 1) {
 									if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) { ?>
 							var proddesc = data.desc_trans;
-														<?php
+																		<?php
 									} else { ?>
 							var proddesc = data.desc;
 										<?php
@@ -963,7 +963,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 									editor.setData(proddesc);
 								}
 							}
-														<?php
+																		<?php
 									} else { ?>
 							jQuery('#dp_desc').text(proddesc);
 										<?php
@@ -975,7 +975,7 @@ if (!empty($usemargins) && $user->hasRight('margins', 'creer')) {
 								jQuery.each(data.array_options, function( key, value ) {
 									jQuery('div[class*="det'+key.replace('options_','_extras_')+'"] > #'+key).val(value);
 								});
-													<?php
+																									<?php
 								} ?>
 						},
 						'json'

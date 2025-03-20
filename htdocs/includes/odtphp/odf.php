@@ -405,6 +405,7 @@ class Odf
 
 		while (strlen($tempHtml) > 0) {
 			// Check if the string includes a html tag
+			$matches = array();
 			if (preg_match_all(self::FIND_TAGS_REGEX, $tempHtml, $matches)) {
 				$tagOffset = strpos($tempHtml, $matches[0][0]);
 				// Check if the string starts with the html tag
@@ -417,6 +418,7 @@ class Odf
 					$tempHtml = substr($tempHtml, $tagOffset);
 				}
 				// Extract the attribute data from the html tag
+				$explodedAttributes = array();
 				preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;\#]*")?)+/', $matches[2][0], $explodedAttributes);
 				$explodedAttributes = array_filter($explodedAttributes[0]);
 				$attributes = array();
@@ -832,7 +834,10 @@ IMG;
 	public function exportAsAttachedFile($name = "")
 	{
 		$this->_save();
-		if (headers_sent($filename, $linenum)) {
+
+		$filename = '';
+		$linenum = 0;
+		if (headers_sent($filename, $linenum)) {	// this fills $filename and $linenum variables
 			throw new OdfException("headers already sent ($filename at $linenum)");
 		}
 
@@ -863,7 +868,7 @@ IMG;
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
-		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+		$execmethod = (getDolGlobalString('MAIN_EXEC_USE_POPEN') ? 2 : 1);	// 1 or 2
 		// Method 1 sometimes hang the server.
 
 

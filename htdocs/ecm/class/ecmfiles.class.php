@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class EcmFiles extends CommonObject
 	public $entity;
 
 	/**
-	 * @var string filename, Note: Into ecm database record, the entry $filename never ends with .noexe
+	 * @var string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;
 
@@ -756,7 +756,7 @@ class EcmFiles extends CommonObject
 			$sql .= ' content = '.(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").',';
 		}
 		$sql .= ' cover = '.(isset($this->cover) ? "'".$this->db->escape($this->cover)."'" : "null").',';
-		$sql .= ' position = '.(isset($this->position) ? $this->db->escape($this->position) : "0").',';
+		$sql .= ' position = '.(isset($this->position) ? $this->db->escape((string) $this->position) : "0").',';
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
 		$sql .= ' extraparams = '.(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
@@ -1012,6 +1012,8 @@ class EcmFiles extends CommonObject
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/facture\//', '', $this->filepath);
 			} elseif ($option == 'commande_fournisseur') {
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/commande\//', '', $this->filepath);
+			} elseif ($option == 'tax-vat') {	// Remove part "tax/vat/"
+				$tmppath = preg_replace('/^(\d+\/)?tax\/vat\//', '', $this->filepath);
 			} else {
 				if ((int) $this->entity > 1) {
 					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref

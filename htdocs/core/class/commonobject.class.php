@@ -5981,7 +5981,7 @@ abstract class CommonObject
 		} else {
 			// TODO: Try to set type above again
 			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);  // @phan-suppress-line-PhanTypeMismatchArgument
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -6271,8 +6271,10 @@ abstract class CommonObject
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
+			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
+			$langs->load("main");
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
@@ -6836,14 +6838,27 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								'@phan-var-force CommonObject $object';
+
+								$objectId = 0;
+
+								$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
 								if (is_numeric($value)) {
-									$res = $object->fetch($value); // Common case
+									$sqlFetchObject .= " WHERE rowid = " . (int) $value;
 								} else {
-									$res = $object->fetch(0, $value); // For compatibility
+									$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
+								}
+
+								$obj = $this->db->getRow($sqlFetchObject);
+
+								if ($obj !== false) {
+									$objectId = $obj->rowid;
+									$res = 1;
+								} else {
+									$res = -1;
 								}
 
 								if ($res > 0) {
-									$new_array_options[$key] = $object->id;
+									$new_array_options[$key] = $objectId;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
 									return -1;

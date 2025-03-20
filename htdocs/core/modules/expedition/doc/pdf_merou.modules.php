@@ -328,12 +328,12 @@ class pdf_merou extends ModelePdfExpedition
 
 					if (!getDolGlobalString('SHIPPING_PDF_HIDE_ORDERED')) {
 						$pdf->SetXY(140, $curY);
-						$pdf->MultiCell(30, 3, $object->lines[$i]->qty_asked, 0, 'C', false);
+						$pdf->MultiCell(30, 3, (string) $object->lines[$i]->qty_asked, 0, 'C', false);
 					}
 
 					if (!getDolGlobalString('SHIPPING_PDF_HIDE_QTYTOSHIP')) {
 						$pdf->SetXY(170, $curY);
-						$pdf->MultiCell(30, 3, $object->lines[$i]->qty_shipped, 0, 'C', false);
+						$pdf->MultiCell(30, 3, (string) $object->lines[$i]->qty_shipped, 0, 'C', false);
 					}
 
 					// Add line
@@ -631,7 +631,7 @@ class pdf_merou extends ModelePdfExpedition
 			if (!empty($object->tracking_url)) {
 				if ($object->shipping_method_id > 0) {
 					// Get code using getLabelFromKey
-					$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+					$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 
 					$label = '';
 					$label .= $outputlangs->trans("SendingMethod").": ".$outputlangs->trans("SendingMethod".strtoupper($code));

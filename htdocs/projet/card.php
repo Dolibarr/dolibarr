@@ -315,7 +315,7 @@ if (empty($reshook)) {
 		$db->begin();
 		$old_start_date = 0;
 		if (!$error) {
-			$object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$old_start_date = $object->date_start;
 
@@ -384,7 +384,7 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			if (GETPOST("reportdate") && ($object->date_start != $old_start_date)) {
-				$result = $object->shiftTaskDate($old_start_date);
+				$result = $object->shiftTaskDate((int) $old_start_date);
 				if ($result < 0) {
 					$error++;
 					setEventMessages($langs->trans("ErrorShiftTaskDate").':'.$object->error, $object->errors, 'errors');
@@ -561,7 +561,7 @@ if (empty($reshook)) {
 
 	// Quick edit for extrafields
 	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
