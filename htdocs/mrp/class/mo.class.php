@@ -1977,7 +1977,7 @@ class Mo extends CommonObject
 			return $MoParent;
 		}
 	}
-	
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
