@@ -2787,9 +2787,9 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 /**
  * Function to extract metadata from a PDF file by doing a binary parsing of the PDF file
  *
- * @param string $file		Path of file
- * @param string $field		Key to extract
- * @return int|string
+ * @param 	string	$file		Path of file
+ * @param 	string	$field		Key to extract
+ * @return 	string				String of the extracted key or string started with 'ERROR:' if error.
  */
 function pdfExtractMetadata($file, $field = 'Keywords')
 {
