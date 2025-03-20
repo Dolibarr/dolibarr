@@ -530,7 +530,7 @@ class Odf
 	 * @throws OdfException
 	 * @return odf
 	 */
-	public function setImage($key, $value, $ratio=1)
+	public function setImage($key, $value, float $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);

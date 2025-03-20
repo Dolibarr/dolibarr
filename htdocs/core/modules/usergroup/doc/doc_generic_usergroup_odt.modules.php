@@ -415,7 +415,7 @@ class doc_generic_usergroup_odt extends ModelePDFUserGroup
 
 				// retrieve the constant to apply a ratio for image size or set the ratio to 1
 				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
-					$ratio = getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO') * 1;
+					$ratio = floatval( getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
 				} else {
 					$ratio = 1;
 				}
