@@ -260,7 +260,7 @@ class Segment implements IteratorAggregate, Countable
 	 * @throws OdfException
 	 * @return Segment
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -270,8 +270,8 @@ class Segment implements IteratorAggregate, Countable
 		}
 		// Set the width and height of the page
 		list ($width, $height) = $size;
-		$width *= Odf::PIXEL_TO_CM;
-		$height *= Odf::PIXEL_TO_CM;
+		$width *= Odf::PIXEL_TO_CM * $ratio;
+		$height *= Odf::PIXEL_TO_CM * $ratio;
 		// Fix local-aware issues (eg: 12,10 -> 12.10)
 		$width = sprintf("%F", $width);
 		$height = sprintf("%F", $height);
