@@ -1165,7 +1165,7 @@ class Account extends CommonObject
 				$this->min_allowed    = $obj->min_allowed;
 				$this->min_desired    = $obj->min_desired;
 				$this->comment        = $obj->comment;
-
+				$this->solde		  = $this->solde(1);
 				$this->date_creation  = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
 
