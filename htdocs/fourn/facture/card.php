@@ -3054,6 +3054,50 @@ if ($action == 'create') {
 			} else {
 				$numref = $object->ref;
 			}
+		// InfraS add begin
+			//Règle de saisie de facture
+			if (getDolGlobalInt('SUPPLIER_INVOICE_CHECK_DATE', 0)) {
+				$dateButoir		= getDolGlobalInt('SUPPLIER_INVOICE_CHECK_DATE', 0);
+				$currentDay		= (int) dol_print_date( dol_now(), '%d');
+				$currentMonth 	= (int) dol_print_date(dol_now(),'%m');
+				$currentYear	= (int) dol_print_date(dol_now(), '%Y');
+				$invoiceMonth	= (int) dol_print_date($object->date, '%m');
+
+				$previousMonth	= dol_get_prev_month($currentMonth, $currentYear);
+				$previous_Month = $previousMonth['month'];
+
+				if ($currentDay < $dateButoir) {
+					//avant la date butoir
+					if ($invoiceMonth == $currentMonth || $invoiceMonth == $previous_Month ){
+						$result = 1;
+					} else{
+						//Facture trop ancien => mettre à jour la date au 1er du mois précedent
+						$result = 3;
+					}
+				} else {
+					//après la date butoir
+					if ($invoiceMonth == $currentMonth){
+						//facture du mois en cours => validation
+						$result = 1;
+					}else{
+						//Facture trop ancienne => mise à jour au 1er du mois actuel
+						$result = 2;
+					}
+				}
+				$newdate = '';
+				if ($result == 2) {
+					$newdate = dol_mktime(0, 0, 0, $currentMonth, 1, $currentYear, 'tzserver');
+				} elseif($result == 3){
+					$newdate = dol_mktime(0, 0, 0, $currentMonth - 1, 1, $currentYear, 'tzserver');
+				}
+				if (!empty($newdate)) {
+					$object->fetch($id);
+					$object->date = $newdate;
+					$result = $object->update($user);
+					setEventMessages($langs->trans('factureDateChangeWarning'), array(), 'warnings');
+				}
+			}
+			// InfraS add end
 
 			if ($numref < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -4179,7 +4223,18 @@ if ($action == 'create') {
 					$htmltooltip = '';
 					$params = (empty($conf->use_javascript_ajax) ? array() : array('attr' => array('class' => 'reposition')));
 					//var_dump($isErasable); var_dump($params);
-					if ($isErasable == -4) {
+					// InfraS add begin
+					if (preg_match('/^-5(\d+)/',$isErasable, $reg)) {
+						$tmprefbon = '';
+						if ((int) $reg[1] > 0) {
+							require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
+							$tmpbon = new BonPrelevement($db);
+							$tmpbon->fetch((int) $reg[1]);
+							$tmprefbon = '('.$tmpbon->getNomUrl(0, 'nolink', 1).')';
+						}
+						$htmltooltip = $langs->trans("DisabledBecauseInvoiceHasPrelevement", $tmprefbon);
+						// InfraS add end
+					}  elseif ($isErasable == -4) {	// InfraS change
 						$htmltooltip = $langs->trans("DisabledBecausePayments");
 					} elseif ($isErasable == -3) {	// Should never happen with supplier invoice
 						$htmltooltip = $langs->trans("DisabledBecauseNotLastSituationInvoice");
