@@ -28,7 +28,7 @@
  *  \file			htdocs/core/modules/accountancy/modules_accountancy.php
  *  \ingroup		accountancy
  *  \brief			File that contains parent class for orders models
- *                  and parent class for orders numbering models
+ *                  and parent class for accountancy numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';

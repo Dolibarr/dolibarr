@@ -821,7 +821,7 @@ print '<div class="center"><input type="submit" class="button reposition" value=
 print '</form>';
 
 /*
- * Orders Numbering model
+ * Accountancy Numbering model
  */
 
 $dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
@@ -854,7 +854,7 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file($db);
 
-					'@phan-var-force ModeleNumRefCommandes $module';
+					'@phan-var-force ModeleNumRefBookkeeping $module';
 
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
