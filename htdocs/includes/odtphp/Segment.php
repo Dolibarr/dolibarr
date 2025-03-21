@@ -257,6 +257,7 @@ class Segment implements IteratorAggregate, Countable
 	 *
 	 * @param string $key name of the variable within the template
 	 * @param string $value path to the picture
+	 * @param float $ratio   Ratio for image
 	 * @throws OdfException
 	 * @return Segment
 	 */
