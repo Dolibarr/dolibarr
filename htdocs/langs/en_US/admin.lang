@@ -407,6 +407,7 @@ DescWeather=The following images will be shown on the dashboard when the number 
 KeyForWebServicesAccess=Key to use Web Services (parameter "dolibarrkey" in webservices)
 TestSubmitForm=Input test form
 ThisForceAlsoTheme=Using this menu manager will also use its own theme whatever the user choice. Also this menu manager specialized for smartphones does not work on all smartphone. Use another menu manager if you experience problems with yours.
+AITestText=AI Test (text generation or transformation)
 ThemeDir=Skins directory
 ConnectionTimeout=Connection timeout
 ResponseTimeout=Response timeout

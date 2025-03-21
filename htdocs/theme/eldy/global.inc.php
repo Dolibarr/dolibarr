@@ -8600,17 +8600,42 @@ table.jPicker {
 	margin-bottom: 15px;
 }
 
+.topmenuimage {
+	background-size: 22px auto;
+	top: 2px;
+}
+
+
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.ai_dropdown {
+	min-width: 400px !important;
+	padding: 12px;
+	left: inherit !important;
+	top: inherit !important;
+	border-radius: 5px !important;
+}
+.ai_feature {
+	background-color: var(--colorbackgrey);
+	padding: 10px;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	border-radius: 5px;
+}
+
 
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
-.topmenuimage {
-	background-size: 22px auto;
-	top: 2px;
-}
 @media only screen and (max-width: 768px)
 {
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 
 	.fiche > .listactionsfilter .table-fiche-title .col-title .titre {
