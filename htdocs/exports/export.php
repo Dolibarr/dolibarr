@@ -631,7 +631,7 @@ if ($step == 2 && $datatoexport) {
 			$entityicon = $tmparray[0];
 			$entitylang = $tmparray[1];
 		}
-		print img_object('', $entityicon).' '.$langs->transno((string) $entitylang);
+		print img_object('', $entityicon).' '.$langs->trans((string) $entitylang);
 		print '</td>';
 
 		$text = (empty($objexport->array_export_special[0][$code]) ? '' : '<i>');
