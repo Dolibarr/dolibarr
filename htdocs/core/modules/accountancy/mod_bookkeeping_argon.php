@@ -90,6 +90,10 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 
 		$max = '';
 
+		if (get_class($object) !== 'BookKeeping') {
+			return false;
+		}
+
 		$prefix = $this->getPrefix($object);
 		// If prefix size is not 7, prefix is not correct (YYYYCCC)
 		if (!empty($prefix) || strlen($prefix) !== 7) {
@@ -145,10 +149,10 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 * Returns the prefix for current Bookkeeping object
 	 * Year used in prefix is the beginning fiscal year.
 	 *
-	 * @param CommonObject $object	Book keeping record
+	 * @param BookKeeping $object	Book keeping record
 	 * @return string
 	 */
-	private function getPrefix(CommonObject $object): string
+	private function getPrefix(BookKeeping $object): string
 	{
 		$fiscalStartMonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ?: 1;
 		$docYear = (int) dol_print_date($object->doc_date, '%Y');
