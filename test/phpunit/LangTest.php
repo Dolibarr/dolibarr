@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -26,7 +26,7 @@
  *		\remarks	To run this script as CLI:  phpunit filename.php
  */
 
-global $conf,$user,$langs,$db;
+global $conf, $user, $langs, $db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
@@ -104,7 +104,7 @@ class LangTest extends CommonClassTest
 	}
 
 	/**
-	 * testLang
+	 * testTransWithHTMLInParam
 	 *
 	 * @return 	void
 	 */
@@ -139,6 +139,44 @@ class LangTest extends CommonClassTest
 	}
 
 	/**
+	 * testTransWithPercent
+	 *
+	 * @return 	void
+	 */
+	public function testTransWithPercent(): void
+	{
+		global $conf,$user,$langs,$db;
+		$conf = $this->savconf;
+		$user = $this->savuser;
+		$langs = $this->savlangs;
+		$db = $this->savdb;
+
+		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
+
+		$newlang = new Translate('', $conf);
+		$newlang->setDefaultLang('fr_FR');
+		$newlang->load("main");
+
+		$result = $newlang->trans("DatabaseConnection");
+		print "result=".$result.PHP_EOL;
+		$this->assertEquals('Connexion &agrave; la base', $result);
+
+		$result = $newlang->transnoentities("FormatDateHourSecShort");
+		print "result=".$result.PHP_EOL;
+		$this->assertEquals('%d/%m/%Y %H:%M:%S', $result);
+
+		$newlang = new Translate('', $conf);
+		$newlang->setDefaultLang('en_US');
+		$newlang->load("main");
+
+		$result = $newlang->transnoentities("FormatDateHourText");
+		print "result=".$result.PHP_EOL;
+		$this->assertEquals('%B %d, %Y, %I:%M %p', $result);
+
+		return;
+	}
+
+	/**
 	 * testLang
 	 * @dataProvider langDataProvider
 	 *
@@ -156,14 +194,14 @@ class LangTest extends CommonClassTest
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 
-
 		$prefix = __METHOD__."($code) ";
 		$tmplangs = new Translate('', $conf);
 		$langcode = $code;
 		$tmplangs->setDefaultLang($langcode);
 		$tmplangs->load("main");
 
-		print PHP_EOL.$prefix."Check language file".PHP_EOL;
+		print PHP_EOL.$prefix."Check language files".PHP_EOL;
+
 		$result = $tmplangs->transnoentitiesnoconv("FONTFORPDF");
 		print $prefix."FONTFORPDF=".$result.PHP_EOL;
 		$this->assertTrue(in_array($result, array('msungstdlight', 'stsongstdlight', 'helvetica', 'DejaVuSans', 'cid0jp', 'cid0kr', 'freemono', 'freeserif')), 'Error bad value '.$result.' for FONTFORPDF in main.lang file '.$code);
@@ -193,14 +231,14 @@ class LangTest extends CommonClassTest
 
 		unset($tmplangs);
 
-		print $prefix."Check some syntax rules in the language file".PHP_EOL;
+		print $prefix."Check syntax rules in the language files".PHP_EOL;
 		$filesarray2 = scandir(DOL_DOCUMENT_ROOT.'/langs/'.$code);
 		foreach ($filesarray2 as $key => $file) {
 			if (! preg_match('/\.lang$/', $file)) {
 				continue;
 			}
 
-			//print 'Check lang file '.$file.PHP_EOL;
+			//print $prefix.'Check lang file '.$file.PHP_EOL;
 			$filecontent = file_get_contents(DOL_DOCUMENT_ROOT.'/langs/'.$code.'/'.$file);
 
 			$result = preg_match('/=--$/m', $filecontent);	// A special % char we don't want. We want the common one.
@@ -222,7 +260,7 @@ class LangTest extends CommonClassTest
 			$reg = array();
 			$result = preg_match('/(.*)\'notranslate\'/im', $filecontent, $reg);	// A sequence of char we don't want
 			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
-			$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' in the translation file '.$code.'/'.$file.' in line '.empty($reg[1]) ? '' : $reg[1]);
+			$this->assertTrue($result == 0, 'Found a sequence tag \'notranslate\' in the translation file '.$code.'/'.$file.' in line '.(empty($reg[1]) ? '' : $reg[1]));
 
 			if (!in_array($code, array('ar_SA'))) {
 				$reg = array();

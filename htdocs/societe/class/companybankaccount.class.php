@@ -5,7 +5,7 @@
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ class CompanyBankAccount extends Account
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
@@ -212,7 +212,7 @@ class CompanyBankAccount extends Account
 	public $country_code;
 
 	/**
-	 * @var int $default_rib  1 = this object is the third party's default bank information, 0 if not
+	 * @var int  1 = this object is the third party's default bank information, 0 if not
 	 */
 	public $default_rib;
 
@@ -356,11 +356,11 @@ class CompanyBankAccount extends Account
 	/**
 	 * Create bank information record.
 	 *
-	 * @param   ?User		$user		User
+	 * @param   User		$user		User
 	 * @param   int<0,1>   	$notrigger  1=Disable triggers
 	 * @return	int						Return integer <0 if KO, > 0 if OK (ID of newly created company bank account information)
 	 */
-	public function create($user = null, $notrigger = 0)
+	public function create($user, $notrigger = 0)
 	{
 		$now = dol_now();
 
@@ -431,11 +431,11 @@ class CompanyBankAccount extends Account
 	/**
 	 *	Update bank account
 	 *
-	 *	@param	?User		$user	     Object user
+	 *	@param	User		$user	     Object user
 	 *  @param  int<0,1>   	$notrigger   1=Disable triggers
 	 *	@return	int					     Return integer <=0 if KO, >0 if OK
 	 */
-	public function update($user = null, $notrigger = 0)
+	public function update($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -599,11 +599,11 @@ class CompanyBankAccount extends Account
 	/**
 	 *  Delete a rib from database
 	 *
-	 *	@param		?User		$user		User deleting
+	 *	@param		User		$user		User deleting
 	 *	@param  	int<0,1>	$notrigger	1=Disable triggers
 	 *  @return		int		    	        Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 

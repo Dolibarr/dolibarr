@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2016 Xebax Christy <xebax@wanadoo.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW		<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,6 +62,8 @@ class BankAccounts extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.import_key:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                List of account objects
+	 * @phan-return Account[]
+	 * @phpstan-return Account[]
 	 *
 	 * @throws RestException
 	 */
@@ -148,6 +150,8 @@ class BankAccounts extends DolibarrApi
 	 * Create account object
 	 *
 	 * @param	array $request_data		Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of account
 	 */
 	public function post($request_data = null)
@@ -194,6 +198,8 @@ class BankAccounts extends DolibarrApi
 	 * @url POST    /transfer
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
+	 * @phpstan-return array{success:array{code:int,message:string,bank_id_from:int,bank_id_to:int}}
 	 *
 	 * @status 201
 	 *
@@ -267,14 +273,14 @@ class BankAccounts extends DolibarrApi
 		 */
 
 		if (!$error) {
-			$bank_line_id_from = $accountfrom->addline($date, $typefrom, $description, -1 * (float) price2num($amount), '', '', $user, $cheque_number);
+			$bank_line_id_from = $accountfrom->addline((int) $date, $typefrom, $description, -1 * (float) price2num($amount), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_from > 0)) {
 			$error++;
 		}
 
 		if (!$error) {
-			$bank_line_id_to = $accountto->addline($date, $typeto, $description, price2num($amount_to), '', '', $user, $cheque_number);
+			$bank_line_id_to = $accountto->addline((int) $date, $typeto, $description, (float) price2num($amount_to), '', 0, $user, $cheque_number);
 		}
 		if (!($bank_line_id_to > 0)) {
 			$error++;
@@ -324,6 +330,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param	int    $id              ID of account
 	 * @param	array  $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -348,6 +356,12 @@ class BankAccounts extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+				}
+				continue;
+			}
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 
@@ -363,6 +377,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int    $id    ID of account
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -390,13 +406,16 @@ class BankAccounts extends DolibarrApi
 	/**
 	 * Validate fields before creating an object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$account = array();
 		foreach (BankAccounts::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -429,6 +448,8 @@ class BankAccounts extends DolibarrApi
 	 *
 	 * @param int $id ID of account
 	 * @return array Array of AccountLine objects
+	 * @phan-return AccountLine[]
+	 * @phpstan-return AccountLine[]
 	 *
 	 * @throws RestException
 	 *
@@ -521,7 +542,7 @@ class BankAccounts extends DolibarrApi
 		$num_releve = sanitizeVal($num_releve);
 
 		$result = $account->addline(
-			$date,
+			(int) $date,
 			$type,
 			$label,
 			$amount,
@@ -531,7 +552,7 @@ class BankAccounts extends DolibarrApi
 			$cheque_writer,
 			$cheque_bank,
 			$accountancycode,
-			$datev,
+			(int) $datev,
 			$num_releve
 		);
 		if ($result < 0) {
@@ -588,11 +609,12 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array Array of links
+	 * @phan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
+	 * @phpstan-return array<int,array{url:string,url_id:int,label:string,type:string,fk_bank:int}>
 	 *
 	 * @throws RestException
 	 *
 	 * @url GET {id}/lines/{line_id}/links
-	 *
 	 */
 	public function getLinks($id, $line_id)
 	{
@@ -659,6 +681,8 @@ class BankAccounts extends DolibarrApi
 	 * @param int    $id    		ID of account
 	 * @param int    $line_id       ID of account line
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url DELETE {id}/lines/{line_id}
 	 */

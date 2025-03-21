@@ -23,7 +23,6 @@ ListMouvementStockProject=Lista de movimientos de stock asociados al proyecto
 StocksArea=Zona de almacenes
 IncludeEmptyDesiredStock=Incluya también stock negativo con stock deseado indefinido
 IncludeAlsoDraftOrders=Incluir también borradores de pedidos
-Location=Localización
 NumberOfProducts=Número total de productos
 StockCorrection=Corrección de stock
 CorrectStock=Stock correcto

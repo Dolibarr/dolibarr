@@ -405,6 +405,7 @@ class doc_generic_bom_odt extends ModelePDFBom
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var BOMLine $line */
 						$linenumber++;
 
 						if ($line->fk_product > 0) {

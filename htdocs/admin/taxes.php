@@ -6,7 +6,7 @@
  * Copyright (C) 2015-2022  Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2023  		Joachim Kueter			<git-jk@bloxera.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,10 +110,10 @@ if ($action == 'update') {
 			$valuebuyservice = 'payment';
 			break;
 		default:
-			$valuesellproduct = null;
-			$valuebuyproduct = null;
-			$valuesellservice = null;
-			$valuebuyservice = null;
+			$valuesellproduct = '';
+			$valuebuyproduct = '';
+			$valuesellservice = '';
+			$valuebuyservice = '';
 			break;
 	}
 
@@ -180,7 +180,7 @@ if (empty($mysoc->tva_assuj)) {
 
 	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td><label for="intra_vat">'.$langs->trans("VATIntra").'</label></td><td>';
 	print '<input name="tva" id="intra_vat" class="minwidth200" value="'.getDolGlobalString('MAIN_INFO_TVAINTRA').'">';

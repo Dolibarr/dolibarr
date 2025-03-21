@@ -194,3 +194,5 @@ SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformation=SEPA fi
 SEPAXMLPlacePaymentTypeInformationInCreditTransfertransactionInformationHelp=Yes = Store 'Payment Type' in 'Credit Transfer' section of SEPA file<br><br>When generating a SEPA XML file for Credit transfers, the section "PaymentTypeInformation" can now be placed inside the "CreditTransferTransactionInformation" section (instead of "Payment" section). We strongly recommend to keep this unchecked to place PaymentTypeInformation at Payment level, as all banks will not necessarily accept it at CreditTransferTransactionInformation level. Contact your bank before placing PaymentTypeInformation at CreditTransferTransactionInformation level.
 ToCreateRelatedRecordIntoBank=To create missing related bank record
 XNewLinesConciliated=%s new line(s) conciliated
+InSepa=SEPA Area
+CountryIsInSepa=Countries in Sepa area

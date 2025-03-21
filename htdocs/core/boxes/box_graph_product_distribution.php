@@ -222,6 +222,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
+
 					$data3 = array(array(0 => $langs->trans("None"), 1 => 1));
 				}
 

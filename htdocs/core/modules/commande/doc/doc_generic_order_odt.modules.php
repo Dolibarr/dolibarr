@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 
 /**
  *	Class to build documents using ODF templates generator
+ *
+ *  This files is called by the "$obj = new $classname($this->db);" found into
+ *  the commobject.class.php->commonGenerateDocument() called by $object->generateDocument()
  */
 class doc_generic_order_odt extends ModelePDFCommandes
 {
@@ -423,6 +426,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var OrderLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

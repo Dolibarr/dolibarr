@@ -2,6 +2,7 @@
 /* Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/api_projects.class.php';
 class Categories extends DolibarrApi
 {
 	/**
-	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
@@ -46,27 +47,7 @@ class Categories extends DolibarrApi
 	);
 
 	/**
-	 * @var array<int,string> Code mapping from ID
-	 */
-	public static $TYPES = array(
-		0 => 'product',
-		1 => 'supplier',
-		2 => 'customer',
-		3 => 'member',
-		4 => 'contact',
-		5 => 'account',
-		6 => 'project',
-		7 => 'user',
-		8 => 'bank_line',
-		9 => 'warehouse',
-		10 => 'actioncomm',
-		11 => 'website_page',
-		12 => 'ticket',
-		13 => 'knowledgemanagement'
-	);
-
-	/**
-	 * @var Categorie $category {@type Categorie}
+	 * @var Categorie {@type Categorie}
 	 */
 	public $category;
 
@@ -88,7 +69,9 @@ class Categories extends DolibarrApi
 	 *
 	 * @param	int		$id ID of category
 	 * @param	bool	$include_childs Include child categories list (true or false)
-	 * @return	array|mixed data without useless information
+	 * @return	array   Data without useless information
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
 	 *
 	 * @throws	RestException
 	 */
@@ -124,7 +107,7 @@ class Categories extends DolibarrApi
 	/**
 	 * List categories
 	 *
-	 * Get a list of categories
+	 * Get a list of categories according to filters
 	 *
 	 * @param string	$sortfield	Sort field
 	 * @param string	$sortorder	Sort order
@@ -134,6 +117,8 @@ class Categories extends DolibarrApi
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of category objects
+	 * @phan-return Categorie[]
+	 * @phpstan-return Categorie[]
 	 *
 	 * @throws RestException
 	 */
@@ -149,8 +134,14 @@ class Categories extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie AS t LEFT JOIN ".MAIN_DB_PREFIX."categories_extrafields AS ef ON (ef.fk_object = t.rowid)"; // Modification VMR Global Solutions to include extrafields as search parameters in the API GET call, so we will be able to filter on extrafields
 		$sql .= ' WHERE t.entity IN ('.getEntity('category').')';
 		if (!empty($type)) {
-			$sql .= ' AND t.type='.array_search($type, Categories::$TYPES);
+			$category_static = new Categorie($this->db);
+			if (is_numeric($type)) {
+				$sql .= ' AND t.type = '.((int) $type);
+			} else {
+				$sql .= ' AND t.type = '.((int) (array_key_exists($type, $category_static->MAP_ID) ? $category_static->MAP_ID[$type] : -1));
+			}
 		}
+
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -194,6 +185,8 @@ class Categories extends DolibarrApi
 	 * Create category object
 	 *
 	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of category
 	 */
 	public function post($request_data = null)
@@ -224,8 +217,12 @@ class Categories extends DolibarrApi
 	 * Update category
 	 *
 	 * @param 	int   		$id             Id of category to update
-	 * @param 	array 		$request_data   Datas
+	 * @param 	array 		$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -252,6 +249,13 @@ class Categories extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+				}
+				continue;
+			}
+
 			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
 		}
 
@@ -267,6 +271,8 @@ class Categories extends DolibarrApi
 	 *
 	 * @param int $id   Category ID
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -306,6 +312,8 @@ class Categories extends DolibarrApi
 	 * @param int		$limit		Limit for list
 	 * @param int		$page		Page number
 	 * @return array                Array of category objects
+	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
+	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 *
 	 * @throws RestException
 	 *
@@ -360,6 +368,8 @@ class Categories extends DolibarrApi
 	 * @param int      $object_id ID of object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url POST {id}/objects/{type}/{object_id}
@@ -441,6 +451,8 @@ class Categories extends DolibarrApi
 	 * @param string   $object_ref Reference of object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url POST {id}/objects/{type}/ref/{object_ref}
@@ -522,6 +534,8 @@ class Categories extends DolibarrApi
 	 * @param int      $object_id ID of the object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url DELETE {id}/objects/{type}/{object_id}
@@ -601,6 +615,8 @@ class Categories extends DolibarrApi
 	 * @param string   $object_ref Reference of the object
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 * @throws RestException
 	 *
 	 * @url DELETE {id}/objects/{type}/ref/{object_ref}
@@ -733,13 +749,16 @@ class Categories extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data   Data to validate
-	 * @return array				Return array with validated mandatory fields and their value
+	 * @param ?array<string,string>    $data	Data to validate
+	 * @return array<string,string>				Return array with validated mandatory fields and their value
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$category = array();
 		foreach (Categories::$FIELDS as $field) {
 			if (!isset($data[$field])) {

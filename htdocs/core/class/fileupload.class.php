@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +162,7 @@ class FileUpload
 				'options' => &$options,
 				'element' => $element
 			),
-			$object,
+			$object,  // @phan-suppress-current-line PhanTypeMismatchArgumentNullable
 			$action
 		);
 
@@ -522,7 +523,7 @@ class FileUpload
 					isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
 					isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
 					$upload['error'][$index],
-					$index
+					(string) $index
 				);
 				if (!empty($tmpres->error)) {
 					$error++;

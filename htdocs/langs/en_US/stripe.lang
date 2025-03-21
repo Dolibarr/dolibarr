@@ -12,6 +12,7 @@ YourEMail=Email to receive payment confirmation
 STRIPE_PAYONLINE_SENDEMAIL=Email notification after a payment attempt (success or fail)
 Creditor=Creditor
 PaymentCode=Payment code
+StripeAutoRecordPayout=Enable the auto recording of payout (when Stripe do a payout and call the webhook IPN payout.create/payout.paid)
 StripeDoPayment=Pay with Stripe
 YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
 Continue=Next

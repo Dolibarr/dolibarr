@@ -7,7 +7,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,7 +167,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= ")";
 	}
 	if (preg_match('/^(cs?|pct?)\./', (string) $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->order((string) $sortfield, (string) $sortorder);
 	}
 	//$sql.= $db->plimit($limit+1,$offset);
 	//print $sql;
@@ -311,7 +311,7 @@ if (isModEnabled('tax') && $user->hasRight('tax', 'charges', 'lire')) {
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
 	if (preg_match('/^(pv|ptva)\./', (string) $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->order((string) $sortfield, (string) $sortorder);
 	}
 
 	$result = $db->query($sql);
@@ -466,7 +466,7 @@ while ($j < $numlt) {
 		$sql .= " AND pv.datev between '".$db->idate(dol_get_first_day($year, 1, false))."' AND '".$db->idate(dol_get_last_day($year, 12, false))."'";
 	}
 	if (preg_match('/^pv/', (string) $sortfield)) {
-		$sql .= $db->order($sortfield, $sortorder);
+		$sql .= $db->order((string) $sortfield, (string) $sortorder);
 	}
 
 	$result = $db->query($sql);

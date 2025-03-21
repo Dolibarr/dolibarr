@@ -37,11 +37,185 @@
 ALTER TABLE llx_societe_rib MODIFY COLUMN label varchar(180);
 ALTER TABLE llx_societe_rib MODIFY COLUMN iban_prefix varchar(100);
 
+ALTER TABLE llx_societe_account DROP INDEX uk_societe_account_login_website_soc;
+ALTER TABLE llx_societe_account ADD UNIQUE INDEX uk_societe_account_login_website(entity, login, site, fk_website);
+
 
 -- V22 migration
+
+ALTER TABLE llx_c_country ADD COLUMN sepa tinyint DEFAULT 0 NOT NULL;
+UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GR','HR','HU','IE','IT','LT','LU','LV','MC','MT','NL','PL','PT','RO','SE','SI','SK','SM','VA');
+
+-- fix element
+UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
+-- Shipment / Expedition
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'internal', 'SALESREPFOLL',  'Representative following-up shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'BILLING',       'Customer invoice contact', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'CUSTOMER',      'Customer shipping contact', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'SHIPPING',      'Loading facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
 
 ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
 ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (entity, name);
 
 ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
+
+ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
+
+
+ALTER TABLE llx_categorie_member ADD COLUMN import_key varchar(14);
+ALTER TABLE llx_category_bankline ADD COLUMN import_key varchar(14);
+
+
+create table llx_categorie_order
+(
+  fk_categorie integer NOT NULL,
+  fk_order     integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_order ADD PRIMARY KEY pk_categorie_order(fk_categorie, fk_order);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_order ADD INDEX idx_categorie_order_fk_order (fk_order);
+
+ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_order ADD CONSTRAINT fk_categorie_order_fk_order_rowid FOREIGN KEY (fk_order) REFERENCES llx_commande (rowid);
+
+
+create table llx_categorie_invoice
+(
+  fk_categorie integer NOT NULL,
+  fk_invoice   integer NOT NULL,
+  import_key   varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_invoice ADD PRIMARY KEY pk_categorie_invoice(fk_categorie, fk_invoice);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_invoice ADD INDEX idx_categorie_invoice_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_invoice ADD INDEX idx_categorie_invoice_fk_invoice (fk_invoice);
+
+ALTER TABLE llx_categorie_invoice ADD CONSTRAINT fk_categorie_invoice_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_invoice ADD CONSTRAINT fk_categorie_invoice_fk_invoice_rowid FOREIGN KEY (fk_invoice) REFERENCES llx_facture (rowid);
+
+
+create table llx_categorie_supplier_order
+(
+  fk_categorie      integer NOT NULL,
+  fk_supplier_order integer NOT NULL,
+  import_key        varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_supplier_order ADD PRIMARY KEY pk_categorie_supplier_order(fk_categorie, fk_supplier_order);
+--noqa:enable=PRS
+ALTER TABLE llx_categorie_supplier_order ADD INDEX idx_categorie_supplier_order_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_order ADD INDEX idx_categorie_supplier_order_fk_supplier_order (fk_supplier_order);
+
+ALTER TABLE llx_categorie_supplier_order ADD CONSTRAINT fk_categorie_supplier_order_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_order ADD CONSTRAINT fk_categorie_supplier_order_fk_supplier_order_rowid FOREIGN KEY (fk_supplier_order) REFERENCES llx_commande_fournisseur (rowid);
+
+
+create table llx_categorie_supplier_invoice
+(
+  fk_categorie        integer NOT NULL,
+  fk_supplier_invoice integer NOT NULL,
+  import_key          varchar(14)
+)ENGINE=innodb;
+
+--noqa:disable=PRS
+ALTER TABLE llx_categorie_supplier_invoice ADD PRIMARY KEY pk_categorie_supplier_invoice(fk_categorie, fk_supplier_invoice);
+--noqa:enable=PRS
+
+ALTER TABLE llx_categorie_supplier_invoice ADD INDEX idx_categorie_supplier_invoice_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_supplier_invoice ADD INDEX idx_categorie_supplier_invoice_fk_supplier_invoice (fk_supplier_invoice);
+
+ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_supplier_invoice ADD CONSTRAINT fk_categorie_supplier_invoice_fk_supplier_invoice_rowid FOREIGN KEY (fk_supplier_invoice) REFERENCES llx_facture_fourn (rowid);
+
+
+CREATE TABLE llx_bank_record
+(
+  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
+  ref 				varchar(50) NOT NULL,
+  fk_bank			integer		NOT NULL,
+  dt_from			date		NOT NULL,
+  dt_to				date		NOT NULL,
+  date_creation datetime NOT NULL,
+  date_valid datetime NULL,
+  tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+)ENGINE=innodb;
+
+ALTER TABLE llx_bank_record ADD CONSTRAINT bank_record_fk_bank FOREIGN KEY (fk_bank) REFERENCES llx_bank_account (rowid);
+
+CREATE TABLE llx_bank_record_link
+(
+  rowid             integer     AUTO_INCREMENT PRIMARY KEY,
+  fk_bank_record	integer		NOT NULL,
+  fk_bank_import	integer		NOT NULL
+)ENGINE=innodb;
+
+ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_record_bank_record FOREIGN KEY (fk_bank_record) REFERENCES llx_bank_record (rowid);
+ALTER TABLE llx_bank_record_link ADD CONSTRAINT fk_bank_import_bank_import FOREIGN KEY (fk_bank_import) REFERENCES llx_bank_import (rowid);
+
+ALTER TABLE llx_commandedet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_commande_fournisseurdet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_contratdet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_deliverydet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_expeditiondet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facturedet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facturedet_rec ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facture_fourn_det ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_facture_fourn_det_rec ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_fichinterdet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_fichinterdet_rec ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_propaldet ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_receptiondet_batch ADD COLUMN extraparams varchar(255);
+ALTER TABLE llx_supplier_proposaldet ADD COLUMN extraparams varchar(255);
+
+ALTER TABLE llx_facture_rec ADD COLUMN rule_for_lines_dates varchar(255) DEFAULT 'prepaid';
+
+ALTER TABLE llx_product_customer_price ADD COLUMN date_begin date AFTER ref_customer;
+ALTER TABLE llx_product_customer_price ADD COLUMN date_end date AFTER date_begin;
+ALTER TABLE llx_product_customer_price ADD COLUMN discount_percent real DEFAULT 0 AFTER localtax2_type;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN date_begin date AFTER ref_customer;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN date_end date AFTER date_begin;
+ALTER TABLE llx_product_customer_price_log ADD COLUMN discount_percent real DEFAULT 0 AFTER localtax2_type;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_product_customer_price_fk_product;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_product_customer_price_fk_soc;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_customer_price_fk_product;
+ALTER TABLE llx_product_customer_price DROP FOREIGN KEY fk_customer_price_fk_soc;
+ALTER TABLE llx_product_customer_price DROP INDEX uk_customer_price_fk_product_fk_soc;
+ALTER TABLE llx_product_customer_price ADD UNIQUE INDEX uk_customer_price_fk_product_fk_soc (fk_product, fk_soc, date_begin);
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product(rowid);
+ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
+UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
+
+ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
+
+ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
+UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));
+
+-- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
+UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
+DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
+
+ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
+ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
+
+
+ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_product;	-- for sublines
+ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
+--ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+--ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
+
+UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM llx_commandedet as cd WHERE cd.rowid = ed.fk_elementdet AND ed.element_type = 'commande') WHERE ed.fk_product IS NULL;
+
+ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
+
+INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);

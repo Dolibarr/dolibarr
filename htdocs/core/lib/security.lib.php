@@ -1,8 +1,9 @@
 <?php
+
 /* Copyright (C) 2008-2021 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2021 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2020	   Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,15 +235,15 @@ function dolDecrypt($chain, $key = '')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorithm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash:
- *                                      'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
- *                                      'sha1' or '1': sha1
- *                                      'sha1md5' or '2': sha1md5
- *                                      'md5' or '3': md5
- *                                      'openldapxxx' or '4': for OpenLdap
- *                                      'sha256' or '5': sha256
- *                                      'password_hash' or '6': password_hash
- * 										Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
+ * 	@param		'auto'|'0'|'sha1'|'1'|'sha1md5'|'2'|'md5'|'3'|'openldap'|'4'|'sha256'|'5'|'password_hash'|'6'	$type		Type of hash:
+ *                                                                                                                          'auto' or '0': will use MAIN_SECURITY_HASH_ALGO else md5
+ *                                                                                                                          'sha1' or '1': sha1
+ *                                                                                                                          'sha1md5' or '2': sha1md5
+ *                                                                                                                          'md5' or '3': md5
+ *                                                                                                                          'openldapxxx' or '4': for OpenLdap
+ *                                                                                                                          'sha256' or '5': sha256
+ *                                                                                                                          'password_hash' or '6': password_hash
+ *                                                                                                                          Use 'md5' if hash is not needed for security purpose. For security need, prefer 'auto'.
  * 	@param 		int 		$nosalt		Do not include any salt
  *  @param		int			$mode		0=Return encoded password, 1=Return array with encoding password + encoding algorithm
  * 	@return		string|array{pass_encrypted:string,pass_encoding:string}	Hash of string or array with pass_encrypted and pass_encoding
@@ -1112,10 +1113,10 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			}
 			$checkonentitydone = 1;
 		}
-		if (in_array($feature, $checktask) && $objectid > 0) {
+		if (in_array($feature, $checktask) && (int) $objectid > 0) {
 			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$task = new Task($db);
-				$task->fetch($objectid);
+				$task->fetch((int) $objectid);
 				$projectid = $task->fk_project;
 
 				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -1186,12 +1187,12 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		}
 
 		// For events, check on users assigned to event
-		if ($feature === 'agenda' && $objectid > 0) {
+		if ($feature === 'agenda' && ((int) $objectid) > 0) {
 			// Also check owner or attendee for users without allactions->read
-			if ($objectid > 0 && !$user->hasRight('agenda', 'allactions', 'read')) {
+			if (/* $objectid > 0 && */ !$user->hasRight('agenda', 'allactions', 'read')) {
 				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$action = new ActionComm($db);
-				$action->fetch($objectid);
+				$action->fetch((int) $objectid);
 				if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
 					return false;
 				}

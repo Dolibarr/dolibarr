@@ -52,7 +52,7 @@ DatePropal=Дата предложения
 DateEndPropal=Дата окончания действия
 ValidityDuration=Срок действия
 SetAcceptedRefused=Набор принят / отклонен
-ErrorPropalNotFound=Пропал% не найдены
+ErrorPropalNotFound=Пропал %s не найден
 AddToDraftProposals=Добавить проект коммерческого предложения
 NoDraftProposals=Нет проектов коммерческих дредложений
 CopyPropalFrom=Создание коммерческого предложения, копируя существующие предложения
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 неделя
 AvailabilityTypeAV_2W=2 недели
 AvailabilityTypeAV_3W=3 недели
 AvailabilityTypeAV_1M=1 месяц
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Представитель следующие меры предложение
 TypeContact_propal_external_BILLING=свяжитесь со счета
 TypeContact_propal_external_CUSTOMER=Абонентский отдел следующие меры предложение
 TypeContact_propal_external_SHIPPING=Контактное лицо для доставки
-
 # Document models
 CantBeNoSign=нельзя установить не подписанным
 CaseFollowedBy=Дело, за которым следует
@@ -122,3 +120,5 @@ SignSociete_rib=Sign mandate
 SignPropal=Принять предложение
 Signed=подписал
 SignedOnly=Только подписано
+ExpeditionSigned=Shipment signed
+SignExpedition=Sign shipment

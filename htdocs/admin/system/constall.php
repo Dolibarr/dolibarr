@@ -55,7 +55,7 @@ llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-system_constall');
 print load_fiche_titre($langs->trans("SummaryConst"), '', 'title_setup');
 
 
-print load_fiche_titre($langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')');
+print load_fiche_titre($langs->trans("ConfigurationFile").' ('.basename($conffile).')');
 // Parameters in conf.php file (when a parameter start with ?, it is shown only if defined)
 $configfileparameters = array(
 							'dolibarr_main_url_root',

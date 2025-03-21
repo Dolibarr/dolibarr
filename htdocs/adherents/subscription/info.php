@@ -80,7 +80,7 @@ print '<br>';
 
 $object->info($rowid);
 
-print '<table width="100%"><tr><td>';
+print '<table class="centpercent"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 

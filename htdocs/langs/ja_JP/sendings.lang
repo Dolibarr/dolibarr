@@ -8,13 +8,12 @@ Shipments=出荷
 ShowSending=出荷を表示
 Receivings=配達領収書
 SendingsArea=出荷エリア
-ListOfSendings=出荷のリスト
 SendingMethod=配送方法
 LastSendings=最新の%s出荷
 StatisticsOfSendings=出荷の統計
 NbOfSendings=出荷数
 NumberOfShipmentsByMonth=月ごとの出荷数
-SendingCard=出荷カード
+SendingCard=出荷
 NewSending=新規出荷
 CreateShipment=出荷を作成
 QtyShipped=出荷済数量
@@ -44,6 +43,7 @@ ConfirmCancelSending=この出荷をキャンセルしてもよいか？
 DocumentModelMerou=メロウA5モデル
 WarningNoQtyLeftToSend=警告、出荷待ちの製品はない。
 StatsOnShipmentsOnlyValidated=統計は、検証済の出荷のみを対象としている。使用日は出荷の検証済日（配達予定日は常にわかっているわけではない）
+DateShipping=送信日
 DateDeliveryPlanned=配達予定日
 RefDeliveryReceipt=参照納品書
 StatusReceipt=状態納品書
@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=行がありません。タブ「%s」に移動して追�
 CreateInvoiceForThisCustomerFromSendings=請求書を作成する
 IfValidateInvoiceIsNoSendingStayUnbilled=請求書の検証が「いいえ」の場合、請求書が検証されるまで送信は「未請求」のステータスのままになる。
 OptionToSetSendingBilledNotEnabled=請求書が検証されたときに送信を「請求済み」に設定するモジュール ワークフローのオプション 自動的に が有効になっていないため、請求書が生成された後、送信のステータスを手動で「請求済み」に設定する必要がある。
+ShipmentUpdated=発送は正常に更新済
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=出荷配信
 ErrorTooManyCombinationBatchcode=明細  %s は送達されない。ウェアハウス、製品、バッチ コード の多すぎる組合せ (%s) が見つかったため。
 ErrorNoCombinationBatchcode=行 %s を、warehouse-製品-lot/serial の組合せとして保存できず。( %s、%s、%s）は在庫に見つからない。
 ErrorTooMuchShipped=出荷される数量は、明細行 %s の注文数量を超えてはならない
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=代表的なフォローアップ出荷
+TypeContact_shipping_external_BILLING=顧客の請求書連絡先
+TypeContact_shipping_external_CUSTOMER=顧客連絡、出荷後のフォローアップ
+TypeContact_shipping_external_SHIPPING=発送に関する顧客連絡先
+TypeContact_shipping_external_DELIVERY=配送に関する顧客連絡先
+CloseShipment=出荷終了
+ConfirmCloseShipment=確定 出荷終了

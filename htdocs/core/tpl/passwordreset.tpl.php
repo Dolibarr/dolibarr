@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022 	Laurent Destailleur 	<eldy@users.sourceforge.net>
  * Copyright (C) 2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,11 +41,27 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var string $passworduidhash
  * @var string $title
  * @var string $urllogo
- * @var string $user
+ * @var User $user
  * @var string $username
  *
  * @var int $setnewpassword
  */
+// Only vars provided by including page - htdocs/user/passwordforgotten.php:
+// $newpass1 and $newpass2 are not set!!!
+'
+@phan-var-force string $captcha
+@phan-var-force string $disabled
+@phan-var-force string $dol_url_root
+@phan-var-force string $focus_element
+@phan-var-force string $mode
+@phan-var-force string $message
+@phan-var-force string $title
+@phan-var-force string $urllogo
+@phan-var-force User $user
+@phan-var-force string $username
+@phan-var-force string $setnewpassword
+@phan-var-force string $passworduidhash
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -163,10 +180,10 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-		$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
-		// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
-		$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
-		print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
+	$backstyle = 'background: linear-gradient('.($conf->browser->layout == 'phone' ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
+	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
+	print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
 }
 ?>>
 <div class="login_vertical_align">

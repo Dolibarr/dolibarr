@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Account (from the Chart of Account) used by default for "users" on salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, but also as the default value of Subledger accounting if no dedicated user accounting account is defined on the user.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Račun (iz Kontnog plana) koji se standardno koristi za "korisnike" na plaćama
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Namjenski račun definiran na korisničkoj kartici koristit će se samo za računovodstvo pomoćne knjige. Ovaj će se koristiti za Glavna knjiga, ali i kao zadana vrijednost računovodstva podknjižbe ako za korisnika nije definiran namjenski korisnički račun za računovodstvo.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standardni računovodstveni račun za isplate plaća
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=Prema zadanim postavkama ostavite praznu opciju "Automatski izradi ukupna isplata" prilikom kreiranja plaće
 Salary=Plaća
@@ -9,6 +9,8 @@ NewSalary=Nova plaća
 AddSalary=Dodajte plaću
 NewSalaryPayment=Nova platna kartica
 AddSalaryPayment=Dodajte isplatu plaće
+SalaryID=ID plaće
+SalaryAmount=Iznos plaće
 SalaryPayment=Isplata plaće
 SalariesPayments=Isplate plaća
 SalariesPaymentsOf=Isplate plaća od %s
@@ -27,7 +29,7 @@ FillFieldFirst=Prvo ispunite polje zaposlenika
 UpdateAmountWithLastSalary=Postavite iznos zadnje plaće
 MakeTransferRequest=Podnesite zahtjev za prijenos
 VirementOrder=Zahtjev za prijenos kredita
-BankTransferAmount=Iznos kreditnog prijenosa
 WithdrawalReceipt=Nalog za prijenos kredita
 OrderWaiting=Narudžba na čekanju
 FillEndOfMonth=Ispunite do kraja mjeseca
+UserPaySlip=Isplatni listić

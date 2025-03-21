@@ -87,7 +87,7 @@ class modContrat extends DolibarrModules
 			[
 				"CONTRACT_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/contracts",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/contracts",
 				"",
 				0,
 			],
@@ -231,7 +231,7 @@ class modContrat extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/contracts/template_contract.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/contracts';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/contracts';
 		$dest = $dirodt.'/template_contract.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

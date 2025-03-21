@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,23 +114,23 @@ $extrafields->fetch_name_optionals_label($object->table_element);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 $arrayfields = array(
-	'm.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1),
-	'm.datem' => array('label' => $langs->trans("Date"), 'checked' => 1),
-	'p.ref' => array('label' => $langs->trans("ProductRef"), 'checked' => 1, 'css' => 'maxwidth100'),
-	'p.label' => array('label' => $langs->trans("ProductLabel"), 'checked' => 1),
-	'm.batch' => array('label' => $langs->trans("BatchNumberShort"), 'checked' => 1, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.eatby' => array('label' => $langs->trans("EatByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'pl.sellby' => array('label' => $langs->trans("SellByDate"), 'checked' => 0, 'position' => 10, 'enabled' => (isModEnabled('productbatch'))),
-	'e.ref' => array('label' => $langs->trans("Warehouse"), 'checked' => 1, 'enabled' => (!($id > 0))), // If we are on specific warehouse, we hide it
-	'm.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => 0),
-	'm.inventorycode' => array('label' => $langs->trans("InventoryCodeShort"), 'checked' => 1),
-	'm.label' => array('label' => $langs->trans("MovementLabel"), 'checked' => 1),
-	'm.type_mouvement' => array('label' => $langs->trans("TypeMovement"), 'checked' => 1),
-	'origin' => array('label' => $langs->trans("Origin"), 'checked' => 1),
-	'm.value' => array('label' => $langs->trans("Qty"), 'checked' => 1),
-	'm.price' => array('label' => $langs->trans("UnitPurchaseValue"), 'checked' => 0),
-	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
-	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
+	'm.rowid' => array('label' => $langs->trans("Ref"), 'checked' => '1'),
+	'm.datem' => array('label' => $langs->trans("Date"), 'checked' => '1'),
+	'p.ref' => array('label' => $langs->trans("ProductRef"), 'checked' => '1', 'css' => 'maxwidth100'),
+	'p.label' => array('label' => $langs->trans("ProductLabel"), 'checked' => '1'),
+	'm.batch' => array('label' => $langs->trans("BatchNumberShort"), 'checked' => '1', 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.eatby' => array('label' => $langs->trans("EatByDate"), 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'pl.sellby' => array('label' => $langs->trans("SellByDate"), 'checked' => '0', 'position' => 10, 'enabled' => (string) (int) (isModEnabled('productbatch'))),
+	'e.ref' => array('label' => $langs->trans("Warehouse"), 'checked' => '1', 'enabled' => (string) (int) (!($id > 0))), // If we are on specific warehouse, we hide it
+	'm.fk_user_author' => array('label' => $langs->trans("Author"), 'checked' => '0'),
+	'm.inventorycode' => array('label' => $langs->trans("InventoryCodeShort"), 'checked' => '1'),
+	'm.label' => array('label' => $langs->trans("MovementLabel"), 'checked' => '1'),
+	'm.type_mouvement' => array('label' => $langs->trans("TypeMovement"), 'checked' => '1'),
+	'origin' => array('label' => $langs->trans("Origin"), 'checked' => '1'),
+	'm.value' => array('label' => $langs->trans("Qty"), 'checked' => '1'),
+	'm.price' => array('label' => $langs->trans("UnitPurchaseValue"), 'checked' => '0'),
+	//'m.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked' => '0', 'position'=>500),
+	//'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked' => '0', 'position'=>500)
 );
 
 $usercanread = (($user->hasRight('stock', 'mouvement', 'lire')));
@@ -218,10 +218,10 @@ if ($action == "correct_stock" && !$cancel && $usercancreate) {
 			$result = $product->correct_stock_batch(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
+				GETPOSTFLOAT("nbpiece"),
 				GETPOSTINT("mouvement"),
 				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice', 'alpha'),
+				GETPOSTFLOAT('unitprice'),
 				$eatby,
 				$sellby,
 				$batch,
@@ -233,10 +233,10 @@ if ($action == "correct_stock" && !$cancel && $usercancreate) {
 			$result = $product->correct_stock(
 				$user,
 				$id,
-				GETPOSTINT("nbpiece"),
-				GETPOST("mouvement", 'alpha'),
+				GETPOSTFLOAT("nbpiece"),
+				GETPOSTINT("mouvement"),
 				GETPOST("label", 'san_alpha'),
-				GETPOST('unitprice', 'alpha'),
+				GETPOSTFLOAT('unitprice'),
 				GETPOST('inventorycode', 'alpha'),
 				$origin_element,
 				$origin_id
@@ -276,7 +276,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Product")), null, 'errors');
 		$action = 'transfert';
 	}
-	if (!GETPOSTINT("nbpiece")) {
+	if (!GETPOSTFLOAT("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';
@@ -314,14 +314,22 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 			}
 			$pricedest = $pricesrc;
 
+			$result1 = -1;
+			$result2 = -1;
+
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
+
+				$batch = '';
+				$eatby = 0;
+				$sellby = 0;
+				$srcwarehouseid = 0;
 
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {
 						$srcwarehouseid = $pdluo->warehouseid;
-						$batch = $pdluo->batch;
+						$batch = (string) $pdluo->batch;
 						$eatby = $pdluo->eatby;
 						$sellby = $pdluo->sellby;
 					} else {
@@ -330,7 +338,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 					}
 				} else {
 					$srcwarehouseid = $id;
-					$batch = GETPOST('batch_number', 'alpha');
+					$batch = (string) GETPOST('batch_number', 'alpha');
 					$eatby = $d_eatby;
 					$sellby = $d_sellby;
 				}
@@ -340,7 +348,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 					$result1 = $product->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						1,
 						GETPOST("label", 'san_alpha'),
 						$pricesrc,
@@ -353,7 +361,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 					$result2 = $product->correct_stock_batch(
 						$user,
 						GETPOSTINT("id_entrepot_destination"),
-						GETPOSTINT("nbpiece"),
+						GETPOSTFLOAT("nbpiece"),
 						0,
 						GETPOST("label", 'san_alpha'),
 						$pricedest,
@@ -368,7 +376,7 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 				$result1 = $product->correct_stock(
 					$user,
 					$id,
-					GETPOSTINT("nbpiece"),
+					GETPOSTFLOAT("nbpiece"),
 					1,
 					GETPOST("label", 'alpha'),
 					$pricesrc,
@@ -378,8 +386,8 @@ if ($action == "transfert_stock" && !$cancel && $usercancreate) {
 				// Add stock
 				$result2 = $product->correct_stock(
 					$user,
-					GETPOST("id_entrepot_destination"),
-					GETPOSTINT("nbpiece"),
+					GETPOSTINT("id_entrepot_destination"),
+					GETPOSTFLOAT("nbpiece"),
 					0,
 					GETPOST("label", 'alpha'),
 					$pricedest,
@@ -632,6 +640,7 @@ if ($resql) {
 		$sql = "SELECT MAX(m.datem) as datem";
 		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 		$sql .= " WHERE m.fk_entrepot = ".(int) $object->id;
+		$lastmovementdate = 0;
 		$resqlbis = $db->query($sql);
 		if ($resqlbis) {
 			$obj = $db->fetch_object($resqlbis);
@@ -1218,7 +1227,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id > 0) 
 	$genallowed = $user->hasRight('stock', 'lire');
 	$delallowed = $user->hasRight('stock', 'creer');
 
-	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', 0, '', $object->default_lang, '', $object);
+	print $formfile->showdocuments($modulepart, $objectref, $filedir, $urlsource, $genallowed, $delallowed, '', 0, 0, 0, 28, 0, '', '', '', $object->default_lang, '', $object);
 	$somethingshown = $formfile->numoffiles;
 
 	print '</div><div class="fichehalfright">';

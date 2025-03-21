@@ -160,3 +160,5 @@ RecordsUpdated=%s Records updated
 RecordUpdated=Record updated
 NoRecordUpdated=No Record updated
 ProfitPerValidatedAttendee=Profit per attendee
+Confirmed=Confirmed
+NotSelected=Not selected
