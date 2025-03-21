@@ -81,7 +81,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *  @param  BookKeeping	$object		Object we need next value for
+	 *  @param  CommonObject	$object		Object we need next value for
 	 *  @return boolean     				false if conflict, true if ok
 	 */
 	public function canBeActivated($object): bool
@@ -91,8 +91,8 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 		$max = '';
 
 		$prefix = $this->getPrefix($object);
-		// If prefix smaller than 6, prefix is not correct (should be 6 or 7, YYYYCC OR YYYYCCC)
-		if (!empty($prefix) || strlen($prefix) < 6) {
+		// If prefix size is not 7, prefix is not correct (YYYYCCC)
+		if (!empty($prefix) || strlen($prefix) !== 7) {
 			$langs->load("errors");
 			$this->error = $langs->trans('ErrorNumRefModel', $max);
 			return false;
@@ -145,10 +145,10 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 * Returns the prefix for current Bookkeeping object
 	 * Year used in prefix is the beginning fiscal year.
 	 *
-	 * @param BookKeeping $object	Book keeping record
+	 * @param CommonObject $object	Book keeping record
 	 * @return string
 	 */
-	private function getPrefix(BookKeeping $object): string
+	private function getPrefix(CommonObject $object): string
 	{
 		$fiscalStartMonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ?: 1;
 		$docYear = (int) dol_print_date($object->doc_date, '%Y');
