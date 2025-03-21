@@ -607,6 +607,7 @@ $sql .= " t.label_operation,";
 $sql .= " t.debit,";
 $sql .= " t.credit,";
 $sql .= " t.lettering_code,";
+$sql .= " t.lettering_year,";
 $sql .= " t.montant as amount,";
 $sql .= " t.sens,";
 $sql .= " t.fk_user_author,";
@@ -1120,6 +1121,7 @@ while ($i < min($num, $limit)) {
 	$line->amount = $obj->amount;
 	$line->sens = $obj->sens;
 	$line->lettering_code = $obj->lettering_code;
+	$line->lettering_year = $obj->lettering_year;
 	$line->fk_user_author = $obj->fk_user_author;
 	$line->import_key = $obj->import_key;
 	$line->code_journal = $obj->code_journal;
@@ -1321,7 +1323,7 @@ while ($i < min($num, $limit)) {
 
 	// Lettering code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center">'.$line->lettering_code.'</td>';
+		print '<td class="center classfortooltip" title="'.$langs->trans('LetteringYearTooltip', $line->lettering_year).'">'.$line->lettering_code.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

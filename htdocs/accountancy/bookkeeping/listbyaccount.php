@@ -1389,7 +1389,7 @@ while ($i < min($num, $limit)) {
 
 	// Lettering code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
+		print '<td class="center classfortooltip" title="'.$langs->trans('LetteringYearTooltip', $line->lettering_year).'">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

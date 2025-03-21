@@ -299,6 +299,8 @@ class Lettering extends BookKeeping
 	 */
 	public function updateLettering($ids = array(), $notrigger = 0, $partial = false)
 	{
+		global $langs;
+
 		$now = dol_now();
 		$error = 0;
 		$affected_rows = 0;
@@ -306,14 +308,26 @@ class Lettering extends BookKeeping
 		// Generate a string with n char 'A' (for manual/auto reconcile) or 'a' (for partial reconcile) where n is ACCOUNTING_LETTERING_NBLETTERS (So 'AA'/'aa', 'AAA'/'aaa', ...) @phan-suppress-next-line PhanParamSuspiciousOrder
 		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
+		// Get fiscal year range using the older doc date.
+		$sql = "SELECT doc_date FROM {$this->db->prefix()}accounting_bookkeeping " .
+			"WHERE rowid IN ({$this->db->sanitize(implode(',', $ids))}) " .
+			"ORDER BY doc_date";
+		$docDate = $this->db->getRow($sql)->doc_date ?? null;
+
+		if (!$docDate) {
+			$this->errors[] = $langs->trans("ErrorDocDateNotFound");
+			return -1;
+		}
+		list($fiscalYearStart, $fiscalYearEnd) = $this->fiscalYearRange($docDate);
+
 		$this->db->begin();
 
 		// Check partial / normal lettering case
-		$sql = "SELECT ab.lettering_code, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
+		$sql = "SELECT ab.lettering_code, ab.lettering_year, GROUP_CONCAT(DISTINCT ab.rowid SEPARATOR ',') AS bookkeeping_ids";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
-		$sql .= " GROUP BY ab.lettering_code";
-		$sql .= " ORDER BY ab.lettering_code DESC";
+		$sql .= " GROUP BY ab.lettering_code, ab.lettering_year";
+		$sql .= " ORDER BY ab.lettering_code DESC, ab.lettering_year DESC";
 
 		dol_syslog(__METHOD__ . " - Check partial / normal lettering case", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -332,9 +346,11 @@ class Lettering extends BookKeeping
 					// Delete partial lettering code if set normal lettering
 					$sql2 = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 					$sql2 .= " lettering_code = NULL";
+					$sql2 .= ", lettering_year = NULL";
 					$sql2 .= ", date_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
+					$sql2 .= " AND lettering_year = " . $this->db->escape($obj->lettering_year);
 
 					dol_syslog(__METHOD__ . " - Remove partial lettering", LOG_DEBUG);
 					$resql2 = $this->db->query($sql2);
@@ -358,6 +374,7 @@ class Lettering extends BookKeeping
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
 			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
 			$sql .= " AND ab2.lettering_code != ''";
+			$sql .= " AND ab2.doc_date BETWEEN '{$fiscalYearStart}' AND '{$fiscalYearEnd}'";
 			$sql .= " ORDER BY ab2.lettering_code DESC";
 
 			dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
@@ -404,6 +421,7 @@ class Lettering extends BookKeeping
 			if (!$error) {
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
+				$sql .= " lettering_year=YEAR('{$this->db->escape($fiscalYearStart)}')";
 				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
 				$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
 
@@ -443,6 +461,7 @@ class Lettering extends BookKeeping
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
 		$sql .= " lettering_code = NULL";
+		$sql .= ", lettering_year = NULL";
 		$sql .= ", date_lettering = NULL";
 		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
 		$sql .= " AND subledger_account != ''";
@@ -970,5 +989,33 @@ class Lettering extends BookKeeping
 		}
 
 		return $grouped_elements;
+	}
+
+	/**
+	 * Get the fiscal year range for a given date (usually the doc_date).
+	 * Returns an array with 2 elements : start date and end date
+	 *
+	 * @param string $date YYYY-MM-DD date (sql format)
+	 * @param string $format DateTime output format
+	 * @return array
+	 */
+	private function fiscalYearRange(string $date, string $format = 'Y-m-d'): array
+	{
+		$fiscalStartMonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ?: 1;
+		$invoiceDate = DateTime::createFromFormat($format, $date);
+
+		$fiscalYearStart = clone $invoiceDate;
+		if ($invoiceDate->format('n') < $fiscalStartMonth) {
+			$fiscalYearStart->modify('-1 year');
+		}
+		$fiscalYearStart->setDate($fiscalYearStart->format('Y'), $fiscalStartMonth, 1);
+
+		$fiscalYearEnd = clone $fiscalYearStart;
+		$fiscalYearEnd->modify('+1 year -1 day');
+
+		return [
+			$fiscalYearStart->format($format),
+			$fiscalYearEnd->format($format)
+		];
 	}
 }

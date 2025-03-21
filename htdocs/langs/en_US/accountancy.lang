@@ -214,6 +214,8 @@ LabelOperation=Label operation
 Sens=Direction
 AccountingDirectionHelp=For an accounting account of a customer, use Credit to record a payment you have received<br>For an accounting account of a supplier, use Debit to record a payment you made
 LetteringCode=Lettering code
+LetteringYear=Year related to lettering code
+LetteringYearTooltip=Year related to lettering code: %s
 Lettering=Lettering
 Codejournal=Journal
 JournalLabel=Journal label
@@ -473,6 +475,8 @@ ErrorArchiveAddFile=Can't put "%s" file in archive
 ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
+ErrorDocDateNotFound=No bookkeeping doc date found
+
 ## Import
 ImportAccountingEntries=Accounting entries
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format

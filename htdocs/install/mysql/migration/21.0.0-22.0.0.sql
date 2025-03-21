@@ -211,11 +211,14 @@ ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
 
 ALTER TABLE llx_expeditiondet ADD COLUMN fk_parent integer NULL AFTER fk_product;	-- for sublines
 ALTER TABLE llx_expeditiondet ADD INDEX idx_expeditiondet_fk_parent (fk_parent);
---ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
---ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
+-- ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_product FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
+-- ALTER TABLE llx_expeditiondet ADD CONSTRAINT fk_expeditiondet_fk_parent FOREIGN KEY (fk_parent) REFERENCES llx_expeditiondet (rowid);
 
 UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM llx_commandedet as cd WHERE cd.rowid = ed.fk_elementdet AND ed.element_type = 'commande') WHERE ed.fk_product IS NULL;
 
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
 
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
+
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_year INTEGER UNSIGNED AFTER lettering_code;
+UPDATE llx_accounting_bookkeeping SET lettering_year = (CASE WHEN MONTH(doc_date) >= (SELECT IFNULL((SELECT IF(value = '', NULL, value) FROM llx_const WHERE name = 'SOCIETE_FISCAL_MONTH_START' AND entity = __ENTITY__), 1)) THEN YEAR(doc_date) ELSE YEAR(doc_date) - 1 END) WHERE lettering_code IS NOT NULL AND lettering_year IS NULL;

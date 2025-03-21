@@ -40,6 +40,7 @@ CREATE TABLE llx_accounting_bookkeeping
   multicurrency_amount  double(24,8),				-- FEC:Montantdevise
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
+  lettering_year        integer UNSIGNED,				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
   date_lim_reglement    datetime DEFAULT NULL,		-- FEC_suppl:DateLimitReglmt    | payment deadline
   fk_user_author        integer NOT NULL,			-- 					| user creating
