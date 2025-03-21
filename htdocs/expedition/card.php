@@ -1178,7 +1178,7 @@ if ($action == 'create') {
 			print '});'."\n";
 			print '</script>'."\n";
 
-			if (getDolGlobalString("SHIPPING_SELECT_VIA_LOT_SN")) { // activate parts selection via lot / serial number
+			if (getDolGlobalString("ShippingSelectViaLotSN")) { // activate parts selection via lot / serial number
 				print '<script>
 				function auto_sn_filler() {
 					var text = $("#auto_sn_filler_text");
