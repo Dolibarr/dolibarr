@@ -541,8 +541,7 @@ class AccountancyExport
 				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset);
-				// file contents will be created in the hooked function via print
+				$parameters = array('format' => $formatexportset, 'exportFile' => $exportFile);
 				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {
 					$this->errors[] = $langs->trans('accountancy_error_modelnotfound');
