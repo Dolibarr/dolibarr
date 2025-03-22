@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +78,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
-		curl_setopt($ch, CURLOPT_SSLVERSION, getDolGlobalString('MAIN_CURL_SSLVERSION'));
+		$sslversion = is_numeric(getDolGlobalString('MAIN_CURL_SSLVERSION')) ? getDolGlobalInt('MAIN_CURL_SSLVERSION') : constant(getDolGlobalString('MAIN_CURL_SSLVERSION'));
+		curl_setopt($ch, CURLOPT_SSLVERSION, (int) $sslversion);
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 

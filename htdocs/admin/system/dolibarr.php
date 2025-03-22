@@ -3,7 +3,7 @@
  * Copyright (C) 2007		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2007-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
  * @var User $user
  *
  * @var string $dolibarr_main_document_root_alt
+ * @var string $conffile
  */
 
 // Load translation files required by the page
