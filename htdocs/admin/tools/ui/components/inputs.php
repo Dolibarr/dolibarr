@@ -351,7 +351,7 @@ $documentation->showSidebar(); ?>
 				'	<input ',
 				'	 type="search"',
 				'	 name=""',
-				'	 autofocus=""',
+				'	 autofocus="" <? // To use only if search is in top of page ?> ',
 				'	 value=""',
 				'	 class="search-tool-input"  <? // optional for js filter you can use custom class ?> ',
 				'	 placeholder="Search"',

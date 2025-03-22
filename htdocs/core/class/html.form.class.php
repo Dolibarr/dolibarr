@@ -12197,7 +12197,6 @@ class Form
 		$attr = array(
 			'type' => 'search',
 			'name' => $htmlName,
-			'autofocus' => '',
 			'value' => $value,
 			'class' => "search-tool-input",
 			'placeholder' => $langs->trans('Search'),
@@ -12205,6 +12204,7 @@ class Form
 		);
 
 		// Optional data attr
+		// 'autofocus' : will set auto focus on field ,
 		// data-counter-target : will get count results
 		// data-no-item-target : will be display if count results is 0
 
