@@ -326,7 +326,7 @@ $documentation->showSidebar(); ?>
 				?>
 
 				<div id="demo-search-filter-tool-container-01">
-					<p>Counter : <strong class="counter"></strong></p>
+					<p>Counter : <strong class="counter">12</strong></p>
 					<ul>
 						<li class="search-item">France</li>
 						<li class="search-item">Italy</li>
@@ -362,7 +362,7 @@ $documentation->showSidebar(); ?>
 				'	>',
 				'</div>',
 				'<div id="demo-filter">',
-				'	<p>Counter : <strong class="counter"></strong></p>',
+				'	<p>Counter : <strong class="counter">4</strong></p>',
 				'	<ul>',
 				'		<li class="search-item">France</li>',
 				'		<li class="search-item">Italy</li>',
@@ -389,7 +389,7 @@ $documentation->showSidebar(); ?>
 				'?>',
 				'',
 				'<div id="demo-filter">',
-				'	<p>Counter : <strong class="counter"></strong></p>',
+				'	<p>Counter : <strong class="counter">4</strong></p>',
 				'	<ul>',
 				'		<li class="search-item">France</li>',
 				'		<li class="search-item">Italy</li>',

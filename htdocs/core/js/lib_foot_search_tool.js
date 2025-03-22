@@ -48,6 +48,7 @@ $(function() {
 			});
 		} else {
 			$(target).removeClass('hidden-search-result');
+			count = $(target).length;
 		}
 
 		if(targetCounter != undefined &&  $(targetCounter)){
