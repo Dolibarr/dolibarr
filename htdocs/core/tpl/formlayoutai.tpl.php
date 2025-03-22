@@ -93,10 +93,10 @@ if ($showlinktoai) {
   							$("#linkforaiprompt'.$showlinktoai.'").click(function() {
 								console.log("formlayoutai.tpl: We click on linkforaiprompt'.$showlinktoai.', we toggle .ai_input'.$showlinktoai.'");
 								event.preventDefault();
-								jQuery(".ai_input'.$htmlname.'").toggle();
+								jQuery(".ai_dropdown'.$htmlname.'").toggle();
 								jQuery(".template-selector").hide();
 								jQuery(".email-layout-container").hide();
-								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
+								if (!jQuery("#ai_dropdown'.$htmlname.'").is(":hidden")) {
 									console.log("Set focus on input field #ai_instructions'.$htmlname.'");
 									jQuery("#ai_instructions'.$htmlname.'").focus();
 									if (!jQuery("pageContent").is(":hidden")) {		// May exists for website page only
@@ -119,7 +119,7 @@ if ($showlinktolayout) {
 }
 if ($showlinktoai) {
 	$out .= $formai->getAjaxAICallFunction();
-	$out .= $formai->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }
