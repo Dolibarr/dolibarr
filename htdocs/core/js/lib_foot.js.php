@@ -416,3 +416,7 @@ print '
 		});
 	});
 '."\n";
+
+
+// JS CODE USED by form::getSearchFilterToolInput
+include __DIR__ . '/lib_foot_search_tool.js';

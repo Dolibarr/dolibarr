@@ -53,6 +53,7 @@ class Documentation
 	 */
 	public $db;
 
+	public $baseUrl = 'admin/tools/ui';
 
 	/**
 	 *    Constructor
@@ -82,8 +83,6 @@ class Documentation
 
 		$hookmanager->initHooks(array('uidocumentation'));
 
-		$baseUrl = 'admin/tools/ui';
-
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
 			'url' => DOL_URL_ROOT,
@@ -93,18 +92,18 @@ class Documentation
 
 		// Home for Ui documentation
 		$this->menu['DocumentationHome'] = array(
-			'url' => dol_buildpath($baseUrl.'/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/index.php', 1),
 			'icon' => 'fas fa-book',
 			'submenu' => array(),
 		);
 
 		// Components
 		$this->menu['Components'] = array(
-			'url' => dol_buildpath($baseUrl.'/components/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/components/index.php', 1),
 			'icon' => 'fas fa-th-large',
 			'submenu' => array(
 				'Badges' => array(
-					'url' => dol_buildpath($baseUrl.'/components/badges.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/badges.php', 1),
 					'icon' => 'fas fa-certificate pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -118,7 +117,7 @@ class Documentation
 					),
 				),
 				'Buttons' => array(
-					'url' => dol_buildpath($baseUrl.'/components/buttons.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/buttons.php', 1),
 					'icon' => 'fas fa-mouse pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -128,7 +127,7 @@ class Documentation
 					),
 				),
 				'Icons' => array(
-					'url' => dol_buildpath($baseUrl.'/components/icons.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/icons.php', 1),
 					'icon' => 'far fa-flag pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -137,7 +136,7 @@ class Documentation
 					),
 				),
 				'Progress' => array(
-					'url' => dol_buildpath($baseUrl.'/components/progress-bars.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/progress-bars.php', 1),
 					'icon' => 'fas fa-battery-half pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -147,7 +146,7 @@ class Documentation
 					),
 				),
 				'Event Message' => array(
-					'url' => dol_buildpath($baseUrl.'/components/event-message.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/event-message.php', 1),
 					'icon' => 'fas fa-comments pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -156,7 +155,7 @@ class Documentation
 					)
 				),
 				'Inputs' => array(
-					'url' => dol_buildpath($baseUrl.'/components/inputs.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/inputs.php', 1),
 					'icon' => 'fas fa-comments pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -172,7 +171,7 @@ class Documentation
 
 		// Elements
 		$this->menu['Content'] = array(
-			'url' => dol_buildpath($baseUrl.'/content/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
 			'icon' => 'fas fa-th-large',
 			'submenu' => array(
 				'Tables' => array(
@@ -188,7 +187,7 @@ class Documentation
 		);
 
 		$parameters = array(
-			'baseUrl' => $baseUrl,
+			'baseUrl' => $this->baseUrl,
 		);
 		$action = '';
 

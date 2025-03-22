@@ -506,23 +506,6 @@ li.liinputsearch {
 
 }
 
-.search-dropdown-body {
-	padding: unset;
-}
-
-.global-search-item {
-	font-size: 1.1em;
-	padding-top: 8px;
-	padding-bottom: 8px;
-}
-
-.global-search-item:before {
-	content: none;
-}
-
-.global-search-header {
-	color: #444 !important;
-}
 
 
 /*
