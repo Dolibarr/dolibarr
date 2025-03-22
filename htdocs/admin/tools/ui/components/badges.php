@@ -292,6 +292,7 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
+					"<?php ",
 					"/**",
 					" * Function dolGetBadge",
 					" *",
@@ -301,12 +302,13 @@ $documentation->showSidebar(); ?>
 					" * @param  string  \$mode   Default '' , 'pill', 'dot'",
 					" * @param  string  \$url    the url for link",
 					" * ... See more: core/lib/functions.lib.php ",
+					"*/",
 					"",
-					"<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'primary'); ?>",
-					"<?php print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill'); ?>",
-					"<?php print dolGetBadge('your label for accessibility', 'your label', 'warning', 'dot'); ?>",
+					"print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'primary');",
+					"print dolGetBadge('your label for accessibility', 'your label <u>with</u> <em>html</em>', 'danger', 'pill');",
+					"print dolGetBadge('your label for accessibility', 'your label', 'warning', 'dot');",
 				);
-				echo $documentation->showCode($lines); ?>
+				echo $documentation->showCode($lines, 'php'); ?>
 			</div>
 
 			<!--  -->

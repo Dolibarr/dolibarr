@@ -93,9 +93,12 @@ DocClassicInputsDescription = Classic input to enter string values, integer valu
 DocCheckboxInputsDescription = Checkbox input to enter boolean values
 DocRadioInputsDescription = Radio input to enter boolean values
 DocHelperFunctionsInputUsage = Helper functions usage
+DocHelperFunctionsGetSearchFilterToolInput = Helper functions for search input + dynamic js filter
 DocSelectInputsDescription = Select input to enter one value
 DocMultiSelectInputsDescription = Multiselect input to enter several values
 DocEditorInputsDescription = Editor input to enter text with HTML
 DocDateSelectInputsDescription = Date input to enter a date with or without hours
 DocInputsMainDescription = Documentation and examples for inputs
 DocInputsTitle = Inputs
+DocSearchInputUsage = Helper functions for search input + dynamic js filter
+DocSearchInputUsageDescription = The attribute values `data-search-tool-target`, `data-counter-target`, and `data-no-item-target` are CSS selectors, allowing you to target multiple search areas. Example: `data-search-tool-target=".zone01, .zone02, .zone03"`

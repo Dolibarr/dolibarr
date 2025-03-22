@@ -12195,6 +12195,7 @@ class Form
 		global $langs;
 
 		$attr = array(
+			'type' => 'search',
 			'name' => $htmlName,
 			'autofocus' => '',
 			'value' => $value,
