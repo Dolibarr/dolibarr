@@ -55,7 +55,7 @@ $(function() {
 		}
 
 		if(targetNoResultTarget != undefined && $(targetNoResultTarget)){
-			if (count == 0 || search.length === 0) {
+			if (count == 0 && search.length !== 0) {
 				$(targetNoResultTarget).removeClass("hidden-search-result");
 			} else {
 				$(targetNoResultTarget).addClass("hidden-search-result");
