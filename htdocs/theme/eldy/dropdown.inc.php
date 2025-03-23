@@ -134,7 +134,7 @@ button.dropdown-item.global-search-item {
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid rgba(0,0,0,.15);
+	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -700,7 +700,7 @@ div.quickaddblock:focus {
 	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 		width: 300px;
 	}
-	.dropdown-menu {
+	.dropdown-menu:not(#ai_dropdownmessage) {
 		border: none;
 		-webkit-box-shadow: none;
 		box-shadow: none;

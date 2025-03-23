@@ -65,7 +65,7 @@ if (!isset($out)) {	// Init to empty string if not defined
 if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktolayoutlabel, 'layout', 'class="paddingrightonly"');
-	$out .= $showlinktolayoutlabel.'...';
+	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktolayoutlabel.'...</span>';
 	$out .= '</a> &nbsp; &nbsp; ';
 
 	$out .= '<script>
@@ -85,7 +85,7 @@ if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 if ($showlinktoai) {
 	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
-	$out .= $showlinktoailabel.'...';
+	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
 	$out .= '</a>';
 
 	$out .= '<script>

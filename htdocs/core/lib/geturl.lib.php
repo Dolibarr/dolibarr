@@ -77,7 +77,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
-		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
+		curl_setopt($ch, CURLOPT_SSLVERSION, getDolGlobalString('MAIN_CURL_SSLVERSION'));
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 

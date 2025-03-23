@@ -393,7 +393,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td class="titlefieldcreate">'.$langs->trans("Parameters").' ';
-print $langs->trans("ConfigurationFile").' ('.$conffiletoshowshort.')';
+print $langs->trans("ConfigurationFile").' ('.basename($conffile).')';
 print '</td>';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td></td>';

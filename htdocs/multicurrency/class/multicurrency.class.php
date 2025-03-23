@@ -93,6 +93,14 @@ class MultiCurrency extends CommonObject
 	 */
 	public $rate;
 
+	/**
+	 * @var string			URL endpoint for update of currency
+	 */
+	public $urlendpoint;
+
+
+	const MULTICURRENCY_APP_ENDPOINT_DEFAULT = 'https://api.currencylayer.com/live?access_key=__MULTICURRENCY_APP_KEY__&source=__MULTICURRENCY_APP_SOURCE__';
+
 
 	/**
 	 * Constructor
@@ -102,6 +110,12 @@ class MultiCurrency extends CommonObject
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$key = getDolGlobalString("MULTICURRENCY_APP_KEY");
+		$source = getDolGlobalString('MULTICURRENCY_APP_SOURCE', 'USD');
+		$urlendpoint = getDolGlobalString("MULTICURRENCY_APP_ENDPOINT", self::MULTICURRENCY_APP_ENDPOINT_DEFAULT);
+
+		$this->urlendpoint = str_replace(array('__MULTICURRENCY_APP_KEY__', '__MULTICURRENCY_APP_SOURCE__'), array($key, $source), $urlendpoint);
 	}
 
 	/**
@@ -485,6 +499,7 @@ class MultiCurrency extends CommonObject
 		$sql .= " WHERE cr2.entity IN (".getEntity($this->element).") AND cr2.fk_multicurrency = ".((int) $this->id).")";
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
+
 		$resql = $this->db->query($sql);
 		if ($resql && ($obj = $this->db->fetch_object($resql))) {
 			$this->rate = new CurrencyRate($this->db);
@@ -530,7 +545,6 @@ class MultiCurrency extends CommonObject
 	public static function getIdAndTxFromCode($dbs, $code, $date_document = 0)
 	{
 		$sql1 = "SELECT m.rowid, mc.rate FROM ".MAIN_DB_PREFIX."multicurrency m";
-
 		$sql1 .= ' LEFT JOIN '.MAIN_DB_PREFIX.'multicurrency_rate mc ON (m.rowid = mc.fk_multicurrency)';
 		$sql1 .= " WHERE m.code = '".$dbs->escape($code)."'";
 		$sql1 .= " AND m.entity IN (".getEntity('multicurrency').")";
@@ -643,14 +657,14 @@ class MultiCurrency extends CommonObject
 	/**
 	 * Sync rates from API
 	 *
-	 * @param 	string  $key                Key to use. Come from getDolGlobalString("MULTICURRENCY_APP_ID")
+	 * @param 	string  $key                No more used
 	 * @param   int     $addifnotfound      Add if not found
 	 * @param   string  $mode				"" for standard use, "cron" to use it in a cronjob
 	 * @return  int							Return integer <0 if KO, >0 if OK, if mode = "cron" OK is 0
 	 */
-	public function syncRates($key, $addifnotfound = 0, $mode = "")
+	public function syncRates($key = '', $addifnotfound = 0, $mode = "")
 	{
-		global $conf, $db, $langs;
+		global $db, $langs;
 
 		if (getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 			if ($mode == "cron") {
@@ -661,20 +675,22 @@ class MultiCurrency extends CommonObject
 			return -1;
 		}
 
-		if (empty($key)) {
-			$key = getDolGlobalString("MULTICURRENCY_APP_ID");
-		}
-
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-		$urlendpoint = 'http://api.currencylayer.com/live?access_key='.$key;
-		$urlendpoint .= '&source=' . (!getDolGlobalString('MULTICURRENCY_APP_SOURCE') ? 'USD' : $conf->global->MULTICURRENCY_APP_SOURCE);
+		$urlendpoint = $this->urlendpoint;
 
 		dol_syslog("Call url endpoint ".$urlendpoint);
 
-		$resget = getURLContent($urlendpoint);
+		$addheaders = array('apikey: '.getDolGlobalString('MULTICURRENCY_APP_KEY'));
 
-		if ($resget['content']) {
+		$resget = getURLContent($urlendpoint, 'GET', '', 1, $addheaders);
+
+		// Example of result with https://currencylayer.com/live and https://api.apilayer.com/currency_data/live
+		// 'content' => string '{"success":true,"terms":"https:\/\/currencylayer.com\/terms","privacy":"https:\/\/currencylayer.com\/privacy","timestamp":1742562251,"source":"USD","quotes":{"USDAED":3.67302,"USDAFN":70.6213,"USDALL":91.042287,"USDAMD":390.984233,"USDANG":1.802039,"USDAOA":913.498241,"USDARS":1068.745088,"USDAUD":1.591824,"USDAWG":1.8,"USDAZN":1.699323,"USDBAM":1.80224,"USDBBD":2.018881,"USDBDT":121.488567,"USDBGN":1.802745,"USDBHD":0.376878,"USDBIF":2963.403228,"USDBMD":1,"USDBND":1.333573,"USDBOB":6.909262,"USDBRL":5.721'... (length=3337)
+		//var_dump($urlendpoint);
+		//var_dump($resget);
+
+		if (!empty($resget['content'])) {
 			$response = $resget['content'];
 			$response = json_decode($response);
 
@@ -704,18 +720,22 @@ class MultiCurrency extends CommonObject
 					$error_info = $error_info_syslog;
 				} else {
 					$error_info_syslog = json_encode($response);
-					$error_info = "No error information found (see syslog)";
+					if (empty($resget['content'])) {
+						$error_info = "No error information found (see syslog)";
+					} else {
+						$error_info = $resget['content'];
+					}
 				}
 
 				dol_syslog("Failed to call endpoint ".$error_info_syslog, LOG_WARNING);
-				if ($mode == "cron") {
-					$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
-				} else {
-					setEventMessages($langs->trans('multicurrency_syncronize_error', $error_info), null, 'errors');
-				}
+
+				$this->output = $langs->trans('multicurrency_syncronize_error', $error_info);
+
 				return -1;
 			}
 		} else {
+			$this->output = $resget['curl_error_msg'];
+
 			return -1;
 		}
 	}

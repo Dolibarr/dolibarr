@@ -37,17 +37,17 @@ class MenuManager
 	public $db;
 
 	/**
-	 * @var int Put 0 for internal users, 1 for external users
+	 * @var int<0,1>	0 for internal users, 1 for external users
 	 */
-	public $type_user;
+	public $type_user = 0;
 
 	/**
-	 * @var string To store default target to use onto links
+	 * @var string 		To save the default target to use onto links
 	 */
 	public $atarget = "";
 
 	/**
-	 * @var string Menu name
+	 * @var string 		Menu name
 	 */
 	public $name = "eldy";
 
@@ -93,8 +93,6 @@ class MenuManager
 	 */
 	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
-		global $conf, $user, $langs;
-
 		// We save into session the main menu selected
 		if (GETPOSTISSET("mainmenu")) {
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
@@ -145,7 +143,7 @@ class MenuManager
 
 
 	/**
-	 *  Show menu.
+	 *  Output menu on screen.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
 	 *	@param	'top'|'topnb'|'left'|'leftdropdown'|'jmobile'	$mode			'top', 'topnb', 'left', 'leftdropdown', 'jmobile' (used to get full xml ul/li menu)
@@ -260,7 +258,7 @@ class MenuManager
 
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
-								print $langs->trans("Access");
+								print $langs->trans("aaaAccess");
 							} else {
 								print $langs->trans("Dashboard");
 							}
@@ -332,12 +330,12 @@ class MenuManager
 							}
 							print $disabled.'">'; // ui-btn to highlight on clic
 							if ($relurl2) {
-								if ($val2['enabled']) {	// Allowed
-									print '<a href="'.$relurl2.'"';
-									//print ' data-ajax="false"';
-									print '>';
+								if ($val2['enabled']) {
+									// Allowed
+									print '<a href="'.$relurl2.'">';
 									$lastlevel2[$val2['level']] = 'enabled';
-								} else { // Not allowed but visible (greyed)
+								} else {
+									// Not allowed but visible (greyed)
 									print '<a href="#" class="vsmenudisabled">';
 									$lastlevel2[$val2['level']] = 'greyed';
 								}
@@ -352,6 +350,8 @@ class MenuManager
 							// Add font-awesome (if $val2['level'] == 0, we are on level2
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
+							} else {
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth"></i>';
 							}
 
 							print $val2['titre'];

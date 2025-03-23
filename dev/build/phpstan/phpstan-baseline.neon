@@ -18139,12 +18139,6 @@ parameters:
 			path: ../../../htdocs/multicurrency/multicurrency_rate.php
 
 		-
-			message: '#^Empty array passed to foreach\.$#'
-			identifier: foreach.emptyArray
-			count: 1
-			path: ../../../htdocs/opcachepreload.php
-
-		-
 			message: '#^Variable \$id might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
