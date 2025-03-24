@@ -7692,7 +7692,8 @@ dl.dropdown {
 	/* color: var(--colortext); */
 	color: var(--colortext);
 }
-.dropdown dd ul li:hover {
+
+dropdown dd ul li:hover:not(.linputsearch) {
 	background: #eee;
 }
 .dropdown dd ul li input[type="checkbox"] {
