@@ -1438,6 +1438,7 @@ BrowserIsOK=You are using the %s web browser. This browser is ok for security an
 BrowserIsKO=You are using the %s web browser. This browser is known to be a bad choice for security, performance and reliability. We recommend using Firefox, Chrome, Opera or Safari.
 PHPModuleLoaded=PHP component %s is loaded
 PreloadOPCode=Preloaded OPCode is used
+APCCacheInstalledButDisabled=APCCache installed but is disabled
 AddRefInList=Display Customer/Vendor ref. into combo lists.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
 AddVatInList=Display Customer/Vendor VAT number into combo lists.
 AddAdressInList=Display Customer/Vendor address into combo lists.<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
