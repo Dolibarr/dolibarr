@@ -1,13 +1,14 @@
 <?php
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
- * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2015		    Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		    Charlie BENKE				    <charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				  <frederic.france@free.fr>
+ * Copyright (C) 2021		    Gauthier VERDOL				  <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		    Maxime Nicolas				  <maxime@oarces.com>
+ * Copyright (C) 2023		    Benjamin GREMBI				  <benjamin@oarces.com>
+ * Copyright (C) 2024-2025	MDW							        <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025		Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -761,21 +762,67 @@ if ($id > 0) {
 		);
 
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		if (!empty($object->dateep)) {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => ($object->dateep) + 86400);
+		} else {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		}
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 
-		//Add fill with end of month button
+		//Add buttons to fill start and end dates
 		$formconfirm .= "<script>
+			// Buttons for start date: previous month, current month, previous week, current week
+			$('#clone_date_start').after(
+				$('<button id=\"start_prev_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousMonthShort')."</button>')
+				.add('<button id=\"start_curr_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentMonthShort')."</button>')
+				.add('<button id=\"start_prev_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousWeekShort')."</button>')
+				.add('<button id=\"start_curr_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentWeekShort')."</button>')
+			);
+
+			$('#start_prev_month').click(function(){
+				var now = new Date();
+				var startPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+				setStartDate(startPrevMonth);
+			});
+
+			$('#start_curr_month').click(function(){
+				var now = new Date();
+				var startCurrMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+			setStartDate(startCurrMonth);
+			});
+
+			$('#start_prev_week').click(function(){
+				var now = new Date();
+				var startPrevWeek = new Date(now.setDate(now.getDate() - now.getDay() - 7));
+				startPrevWeek.setDate(startPrevWeek.getDate() + 1);
+				setStartDate(startPrevWeek);
+			});
+
+			$('#start_curr_week').click(function(){
+				var now = new Date();
+				var startCurrWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+				setStartDate(startCurrWeek);
+			});
+
+			function setStartDate(date) {
+				$('#clone_date_start').val(formatDate(date, '".$langs->trans("FormatDateShortJavaInput")."'));
+				$('#clone_date_startday').val(date.getDate());
+				$('#clone_date_startmonth').val(date.getMonth() + 1);
+				$('#clone_date_startyear').val(date.getFullYear());
+			}
+
+   			// Button for end date
 			$('#clone_date_end').after($('<button id=\"fill_end_of_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('FillEndOfMonth')."</button>'));
 			$('#fill_end_of_month').click(function(){
 				var clone_date_startmonth = +$('#clone_date_startmonth').val();
 				var clone_date_startyear = +$('#clone_date_startyear').val();
 				var end_date;
+
 				if (clone_date_startmonth && clone_date_startyear) {
-					end_date = new Date(clone_date_startyear, clone_date_startmonth , 0);
+					end_date = new Date(clone_date_startyear, clone_date_startmonth, 0);
 				} else {
 					var currentDate = new Date();
 					var currentDay = currentDate.getDate();
@@ -784,7 +831,8 @@ if ($id > 0) {
 					} else {
 						end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 					}
-	 			}
+				}
+
 				$('#clone_date_end').val(formatDate(end_date,'".$langs->trans("FormatDateShortJavaInput")."'));
 				$('#clone_date_endday').val(end_date.getDate());
 				$('#clone_date_endmonth').val(end_date.getMonth() + 1);

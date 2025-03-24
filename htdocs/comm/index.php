@@ -302,7 +302,6 @@ if (isModEnabled('supplier_proposal') && $user->hasRight("supplier_proposal", "l
 				$companystatic->name = $obj->name;
 				$companystatic->name_alias = $obj->name_alias;
 				$companystatic->code_client = $obj->code_client;
-				$companystatic->code_compta = $obj->code_compta;
 				$companystatic->code_compta_client = $obj->code_compta_client;
 				$companystatic->client = $obj->client;
 				$companystatic->code_fournisseur = $obj->code_fournisseur;

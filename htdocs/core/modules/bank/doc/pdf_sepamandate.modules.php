@@ -331,8 +331,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 				$pdf->MultiCell($this->page_largeur - $this->marge_gauche - $this->marge_droite, 3, $sepaname, 0, 'L');
 
 				$sepavatid = '__________________________________________________';
-				if (!empty($thirdparty->idprof1)) {
-					$sepavatid = $thirdparty->idprof1;
+				if (!is_null($thirdparty->idprof1) && !empty($thirdparty->idprof1)) {
+					$sepavatid = (string) $thirdparty->idprof1;
 				}
 				$posY = $pdf->GetY();
 				$posY += 1;

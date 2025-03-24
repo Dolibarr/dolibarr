@@ -1478,7 +1478,7 @@ if ($ispaymentok) {
 							$sendto = $attendeetovalidate->email;
 							$cc = '';
 							if ($thirdparty->email) {
-								$cc = $thirdparty->email;
+								$cc = $thirdparty->email ?? '';
 							}
 							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;

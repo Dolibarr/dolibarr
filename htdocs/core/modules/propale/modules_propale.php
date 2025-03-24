@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012      Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -148,7 +148,7 @@ abstract class ModeleNumRefPropales extends CommonNumRefGenerator
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe		$objsoc     Object third party
+	 *  @param	?Societe	$objsoc     Object third party
 	 * 	@param	Propal		$propal		Object commercial proposal
 	 *  @return string|int<-1,0>		Next value, <=0 if KO
 	 */

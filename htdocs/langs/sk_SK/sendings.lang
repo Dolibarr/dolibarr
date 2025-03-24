@@ -8,13 +8,12 @@ Shipments=Zásielky
 ShowSending=Zobraziť zásielku
 Receivings=Dodacie listy
 SendingsArea=Zásielky oblasť
-ListOfSendings=Zoznam zásielok
 SendingMethod=Spôsob dopravy
 LastSendings=Najnovšie %s expedované
 StatisticsOfSendings=Štatistika zásielok
 NbOfSendings=Počet zásielok
 NumberOfShipmentsByMonth=Počet zásielok podľa mesiaca
-SendingCard=Zasielková karta
+SendingCard=Zásielka
 NewSending=Nová zásielka
 CreateShipment=Vytvoriť zásielku
 QtyShipped=Odoslané množstvo
@@ -44,6 +43,7 @@ ConfirmCancelSending=Určite chcete zrušiť túto zásielku ?
 DocumentModelMerou=Mero A5 modelu
 WarningNoQtyLeftToSend=Varovanie: žiadny tovar majú byť dodané.
 StatsOnShipmentsOnlyValidated=Štatistiky sú len pre overené zásielky. Použitý dátum je dátum overenia zásielky (plánovaný dátum doručenia nie je vždy známy)
+DateShipping=Sending date
 DateDeliveryPlanned=Plánovaný dátum doručenia
 RefDeliveryReceipt=Ref. potvrdenie o doručení
 StatusReceipt=Stav potvrdenia o doručení
@@ -63,6 +63,10 @@ NoProductToShipFoundIntoStock=V sklade sa nenašiel žiadny produkt na odoslanie
 WeightVolShort=Váha/Objem
 ValidateOrderFirstBeforeShipment=Najprv musíte overiť objednávku pred vytvorením zásielky.
 NoLineGoOnTabToAddSome=Žiadny riadok, prejdite na kartu „%s“ a pridajte
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Kompletnejší model dokumentu pre potvrdenie o doručení a 
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konštantná EXPEDITION_ADDON_NUMBER nie je definované
 SumOfProductVolumes=Súčet objemov produktov
 SumOfProductWeights=Súčet hmotností produktov
-
 # warehouse details
 DetailWarehouseNumber= Detaily skladu
 DetailWarehouseFormat= W:%s (množstvo: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Zobrazte posledný dátum vstupu na sklade počas vytvárania zásielky pre sériové číslo alebo šaržu
 CreationOptions=Dostupné možnosti pri vytváraní zásielky
-
 ShipmentDistribution=Distribúcia zásielok
-
 ErrorTooManyCombinationBatchcode=Žiadne odoslanie pre riadok %s, pretože sa našlo príliš veľa kombinácií kódu skladu, produktu, šarže (%s).
 ErrorNoCombinationBatchcode=Nepodarilo sa uložiť riadok %s ako kombináciu sklad-produkt-šarža/sériový (%s, %s, %s) nebol nájdený na sklade.
-
 ErrorTooMuchShipped=Dodané množstvo by nemalo byť väčšie ako objednané množstvo pre riadok %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Zástupca nasledujúce-up doprava
+TypeContact_shipping_external_BILLING=Zákazník faktúra kontakt
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

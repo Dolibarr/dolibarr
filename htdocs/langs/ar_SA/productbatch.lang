@@ -1,12 +1,12 @@
 # ProductBATCH language file - Source file is en_US - ProductBATCH
-ManageLotSerial=استخدم رقم الدُفعة/السيريال
+ManageLotSerial=استخدم الحصة/الرقم التسلسلي
 ProductStatusOnBatch=نعم (الحصة مطلوبة)
 ProductStatusOnSerial=نعم (رقم تسلسلي فريد من نوعه مطلوب)
 ProductStatusNotOnBatch=رقم (حصة / الرقم التسلسلي لم يستخدم)
 ProductStatusOnBatchShort=حصة
 ProductStatusOnSerialShort=الرقم التسلسلي
 ProductStatusNotOnBatchShort=لا
-BatchSellOrEatByMandatoryList=%s or %s is mandatory
+BatchSellOrEatByMandatoryList=%s أو %s إلزامي
 BatchSellOrEatByMandatoryNone=لا أحد
 BatchSellOrEatByMandatoryAll=%s و %s
 Batch=الكثير / المسلسل

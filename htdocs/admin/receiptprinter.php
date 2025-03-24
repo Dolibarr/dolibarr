@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2024  Frédéric France       <frederic.france@free.fr>
  * Copyright (C) 2016      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2020      Andreu Bisquerra Gaya <jove@bisquerra.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Abbes Bahfir		 <contact@ab1consult.com><bafbes@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -379,9 +379,9 @@ if ($mode == 'config' && $user->admin) {
 			if ($action == 'editprinter' && $printer->listprinters[$line]['rowid'] == $printerid) {
 				print '<input type="hidden" name="printerid" value="'.$printer->listprinters[$line]['rowid'].'">';
 				print '<td><input type="text" class="minwidth200" name="printername" value="'.$printer->listprinters[$line]['name'].'"></td>';
-				$ret = $printer->selectTypePrinter($printer->listprinters[$line]['fk_type']);
+				$ret = $printer->selectTypePrinter((string) $printer->listprinters[$line]['fk_type']);
 				print '<td>'.$printer->resprint.'</td>';
-				$ret = $printer->selectProfilePrinter($printer->listprinters[$line]['fk_profile']);
+				$ret = $printer->selectProfilePrinter((string) $printer->listprinters[$line]['fk_profile']);
 				print '<td>'.$printer->profileresprint.'</td>';
 				print '<td><input size="60" type="text" name="parameter" value="'.$printer->listprinters[$line]['parameter'].'"></td>';
 				print '<td>';

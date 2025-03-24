@@ -110,10 +110,6 @@ AdvTgtUse
 Agents
 AllFilesDidAlreadyExist
 AlreadyInV7
-AmountOfOrders
-AmountOfOrdersHT
-AmountOfProposals
-AmountOfProposalsHT
 AmountOfReceptions
 AmountOfReceptionsByMonthHT
 AmountOfShipments
@@ -215,7 +211,6 @@ ConfirmDeleteAdherent
 ConfirmDeleteIndividual
 ConfirmDeleteReport
 ConfirmDeleteWebsiteAccount
-ConfirmReoponAsk
 ConnectingToStripeTerminal
 Constant
 ContactAddress
@@ -443,7 +438,6 @@ GlobalVariableUpdaterType
 GoOnTokenProviderToDeleteToken
 GoSourceInvoice
 Gzip
-H
 HTTPBasicPassword
 HelpAbandonProductReturned
 HideVersionLink
@@ -599,8 +593,6 @@ Notify_
 Num
 NumberOfCopy
 NumberOfDonationsByMonth
-NumberOfOrders
-NumberOfProposals
 Numeric
 OK
 Object
@@ -803,12 +795,9 @@ SmsTestSubstitutionReplacedByGenericValues
 SomeShipmentExists
 SourceType
 Split
-SplitAllQuantity
 Standard
 StatsOnDonationsOnlyValidated
 StatusProspect
-Stock Total
-Stock total
 StockTransferLine
 Stripe
 StripeAutoSubscription
@@ -819,9 +808,6 @@ StripeCustomer
 Sub-projects
 SubscriptionStripe
 Success
-Sumup
-SumupAffiliate
-SumupAppId
 Supervisor
 SupplierDepositsAreNotIncluded
 SupplierMissingRef
@@ -845,7 +831,6 @@ Templates
 TestPrinterTemplate
 TestTemplateToPrinter
 Theme
-Thirdparty
 ThirdpartyHasNoDefaultBanAccount
 ThisIsInformationOnDocumentToSign
 ThisScreenAllowsYouToSignDocFrom
@@ -857,7 +842,6 @@ TimeOnly
 Timezone
 ToGetBack
 ToPay
-ToReopon
 Token
 Tooltip
 TooltipEditAndRevertStockMovement
@@ -913,7 +897,6 @@ WorkingBoard
 Workload
 WrongAmount
 XDebug
-XXX
 XmlCorrupted
 Y
 ZeroMeansEveryYear
@@ -992,12 +975,10 @@ Analytic
 AnalyticLabel
 BankId
 Bcc
-Birthdate
 Candidature
 ClientCollation
 Collation
 Config
-Confirmed
 Creation
 CronLib
 CronModuleNotEnabledInThisEntity
@@ -1006,14 +987,10 @@ Dimension
 Don
 ECM
 EmptyMessageNotAllowedError
-ErrorBarcodeNotFoundForProductWarehouse
-ErrorCodeScannedIsBothProductAndSerial
 ErrorInputRequired
 ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
-Exceptions
 Extra
-Facture
 FailedToConnectToSFTPAfterSSHAuthentication
 FailedToLogin
 First
@@ -1028,7 +1005,6 @@ INVOICE_USE_RETAINED_WARRANTY
 INVOICE_USE_SITUATION
 INVOICE_USE_SITUATION_CREDIT_NOTE
 ImpossibleToContactAuthority
-InputValueIsNotAnNumber
 InterDate
 Inventory Code
 InvoiceReplace
@@ -1071,9 +1047,7 @@ MultiCompany
 MyWidget
 NO_PARAM_JUST_TEXT
 NewSection
-NoPreviousBillForCustomer
 Normal
-NotSelected
 Null
 Obsolete
 Off
@@ -1092,10 +1066,8 @@ ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
-Societe
 Stable
 Suggested
-TaskModifieddInDolibarr
 TicketMessageMailSignatureText
 TicketSetupPage
 Tiers
@@ -1113,16 +1085,9 @@ Vat
 VirtualHost
 WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
-XSubsriptionError
-centimes
-email
-id
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
-ref
-sendEmailsReminder
 smsing
-societe
 target
 titre
 type

@@ -494,12 +494,12 @@ class AdherentType extends CommonObject
 		$sql .= "statut = ".((int) $this->status).",";
 		$sql .= "libelle = '".$this->db->escape($this->label)."',";
 		$sql .= "morphy = '".$this->db->escape($this->morphy)."',";
-		$sql .= "subscription = '".$this->db->escape($this->subscription)."',";
+		$sql .= "subscription = '".$this->db->escape((string) $this->subscription)."',";
 		$sql .= "amount = ".((empty($this->amount) && $this->amount == '') ? "null" : ((float) $this->amount)).",";
 		$sql .= "caneditamount = ".((int) $this->caneditamount).",";
 		$sql .= "duration = '".$this->db->escape($this->duration_value.$this->duration_unit)."',";
 		$sql .= "note = '".$this->db->escape($this->note_public)."',";
-		$sql .= "vote = ".(int) $this->db->escape($this->vote).",";
+		$sql .= "vote = ".(int) $this->db->escape((string) $this->vote).",";
 		$sql .= "mail_valid = '".$this->db->escape($this->mail_valid)."'";
 		$sql .= " WHERE rowid =".((int) $this->id);
 

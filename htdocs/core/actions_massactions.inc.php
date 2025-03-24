@@ -4,7 +4,7 @@
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
+ * @var ?string $permissiontoadd
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
@@ -55,7 +56,7 @@
  * @var ?string $diroutputmassaction
  * @var ?string $objectlabel
  * @var ?string $option
- * @var ?int $deliveryreceipt
+ * @var int $deliveryreceipt
  * @var string $action
  * @var string $massaction
  * @var string $objectclass
@@ -74,7 +75,7 @@
 @phan-var-force ?string $diroutputmassaction
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
-@phan-var-force ?string $deliveryreceipt
+@phan-var-force int $deliveryreceipt
 ';
 
 
@@ -572,7 +573,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$attachedfiles = array('paths' => array(), 'names' => array(), 'mimes' => array());
 					if ($oneemailperrecipient) {
 						// if "one email per recipient" is check we must collate $attachedfiles by thirdparty
-						if (is_array($attachedfilesThirdpartyObj[$thirdparty->id]) && count($attachedfilesThirdpartyObj[$thirdparty->id])) {
+						if (is_array($attachedfilesThirdpartyObj[$thirdparty->id]) && count($attachedfilesThirdpartyObj[$thirdparty->id])) {	// @phpstan-ignore-line
 							foreach ($attachedfilesThirdpartyObj[$thirdparty->id] as $keyObjId => $objAttachedFiles) {
 								// Create form object
 								$attachedfiles = array(
@@ -638,7 +639,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
@@ -663,7 +664,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
-								$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
+								$actionmsg = $langs->transnoentities('MailSentByTo', $from, (string) $sendto);
 								if ($message) {
 									if ($sendtocc) {
 										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -732,12 +733,12 @@ if (!$error && $massaction == 'confirm_presend') {
 						} else {
 							$langs->load("other");
 							if ($mailfile->error) {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
 							} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 							} else {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
@@ -856,7 +857,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	// Define output language (Here it is not used because we do only merging existing PDF)
 	$outputlangs = $langs;
 	$newlang = '';
-	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
 	//elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
@@ -872,7 +873,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		dol_mkdir($diroutputmassaction);
 
 		// Defined name of merged file
-		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities((string) $objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
@@ -950,7 +951,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		dol_mkdir($diroutputmassaction);
 
 		// Defined name of merged file
-		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities((string) $objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
 
@@ -1063,7 +1064,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($objecttmp, 'thirdparty')) {
@@ -1226,7 +1227,7 @@ EOPHAN;
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) {
@@ -1450,7 +1451,7 @@ if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoad
 	$nbok = 0;
 	$db->begin();
 
-	$usertoaffect = GETPOST('usertoaffect');
+	$usertoaffect = GETPOSTINT('usertoaffect');
 	$projectrole = GETPOST('projectrole');
 	$tasksrole = GETPOST('tasksrole');
 	if (!empty($usertoaffect)) {
@@ -1821,7 +1822,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
-	$typeholiday = GETPOST('typeholiday', 'alpha');
+	$typeholiday = GETPOSTINT('typeholiday');
 	$nbdaysholidays = GETPOSTFLOAT('nbdaysholidays');	// May be 1.5
 
 	if ($nbdaysholidays <= 0) {

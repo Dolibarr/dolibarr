@@ -82,7 +82,7 @@ class Ai
 	{
 		global $dolibarr_main_data_root;
 
-		if (empty($this->apiKey)) {
+		if (empty($this->apiKey) && in_array($this->apiService, array('chatgpt', 'groq'))) {
 			return array('error' => true, 'message' => 'API key is not defined for the AI enabled service ('.$this->apiService.')');
 		}
 
@@ -158,7 +158,7 @@ class Ai
 				} elseif ($this->apiService == 'groq') {
 					$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSCRIPT', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
 				} elseif ($this->apiService == 'custom') {
-					$model = getDolGlobalString('AI_API_CUSTOM_TRANSCRIPT', 'whisper-1');
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_TRANSCRIPT', 'whisper-1');
 				}
 			} elseif ($function == 'translation') {
 				if ($this->apiService == 'chatgpt') {
@@ -166,7 +166,7 @@ class Ai
 				} elseif ($this->apiService == 'groq') {
 					$model = getDolGlobalString('AI_API_GROK_MODEL_TRANSLATE', 'mixtral-8x7b-32768');	// 'llama3-8b-8192', 'gemma-7b-it'
 				} elseif ($this->apiService == 'custom') {
-					$model = getDolGlobalString('AI_API_CUSTOM_TRANSLATE', 'whisper-1');
+					$model = getDolGlobalString('AI_API_CUSTOM_MODEL_TRANSLATE', 'whisper-1');
 				}
 			} else {	// else textgeneration...
 				if ($this->apiService == 'chatgpt') {
@@ -293,12 +293,20 @@ class Ai
 				}
 			}
 
+
 			// Decode JSON response
 			$decodedResponse = json_decode($response['content'], true);
 
 			// Extraction content
-			$generatedContent = $decodedResponse['choices'][0]['message']['content'];
-
+			if (!empty($decodedResponse['error'])) {
+				if (is_scalar($decodedResponse['error'])) {
+					$generatedContent = $decodedResponse['error'];
+				} else {
+					$generatedContent = var_export($decodedResponse['error'], true);
+				}
+			} else {
+				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
+			}
 			dol_syslog("generatedContent=".dol_trunc($generatedContent, 50));
 
 			// If content is not HTML, we convert it into HTML
@@ -331,7 +339,7 @@ class Ai
 				'error' => true,
 				'message' => $errormessage,
 				'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
-				'curl_error_no' => (!empty($response['curl_error_no']) ? $response['curl_error_no'] : ''),
+				'curl_error_no' => (empty($response['curl_error_no']) ? 0 : $response['curl_error_no']),
 				'format' => $format,
 				'service' => $this->apiService,
 				'function' => $function

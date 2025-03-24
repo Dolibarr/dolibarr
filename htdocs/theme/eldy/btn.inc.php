@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
@@ -12,9 +13,21 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $colortextlink
  * @var int $dol_optimize_smallscreen
  * @var string $textbutaction
+ * @var int<0,max> $nbtopmenuentries
  * @var string $right
  * @var string $left
  */
+
+'
+@phan-var-force string $butactionbg
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $dol_optimize_smallscreen
+@phan-var-force string $fontlist
+@phan-var-force string $left
+@phan-var-force int<0,max> $nbtopmenuentries
+@phan-var-force string $right
+@phan-var-force string $textbutaction
+';
 ?>
 
 /* IDE Hack <style type="text/css"> */

@@ -17,9 +17,9 @@ Module4100Name = سياسة خصوصية البيانات
 Module4100Desc = نموذج لإدارة خصوصية البيانات (التوافق مع اللائحة العامة لحماية البيانات)
 # Administration page
 datapolicySetup = نموذج إعداد سياسة خصوصية البيانات
-DataDeletion=Deletion of data
-DataAnonymization=Anonymization of data
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
+DataDeletion=حذف البيانات
+DataAnonymization=إخفاء هوية البيانات
+datapolicySetupPage = اعتمادًا على قوانين بلدك (مثلاً <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external"> المادة 5</a> من اللائحة العامة لحماية البيانات -GDPR-)، يجب الاحتفاظ بالبيانات الشخصية لفترة لا تتجاوز المدة اللازمة للبيانات للغرض الذي تم جمعها من أجله، باستثناء أغراض الأرشفة.<br> ستقوم هذه الوحدة بإجراء إخفاء الهوية تلقائيًا بعد مدة معينة بدون أحداث (المدة التي ستشير إليها أدناه) وإذا لم يكن للكائن أي علاقة أو عمل موجودين.
 NB_MONTHS = %s شهر
 ONE_YEAR = 1 سنة
 NB_YEARS = %s سنة
@@ -34,14 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = احتمال/العميل
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ولا احتمال/ ولا العميل
 DATAPOLICY_CONTACT_FOURNISSEUR = المورد
 DATAPOLICY_ADHERENT = عضو
-DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
+DATAPOLICY_Tooltip_SETUP=يتم إجراء إخفاء الهوية من خلال المهمة المجدولة "%s" التي يتم تشغيلها بواسطة الوحدة "%s"، لذا يجب تمكين هذه الوحدة وتشغيلها بشكل صحيح.
 SendAgreementText = يمكنك إرسال بريد إلكتروني بالقانون العام لحماية البيانات (GDPR) إلى جميع جهات الاتصال ذات الصلة (الذين لم يتلقوا بعد رسالة بريد إلكتروني و والتي لم تسجل أي شيء بشأن اتفاقية القانون العام لحماية البيانات الخاصة بهم). للقيام بذلك، استخدم الزر التالي.
 SendAgreement = إرسال رسائل البريد الإلكتروني
 AllAgreementSend = تم إرسال كافة رسائل البريد الإلكتروني
 TXTLINKDATAPOLICYACCEPT = نص الرابط "الاتفاقية"
 TXTLINKDATAPOLICYREFUSE = نص الرابط "الخلاف"
-DelayForAnonymization=Delay for anonymization
-DelayForDeletion=Delay for deletion
+DelayForAnonymization=تأخير إخفاء الهوية
+DelayForDeletion=تأخير الحذف
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = اللائحة العامة لحماية البيانات: معالجة البيانات الشخصية
 DATAPOLICY_consentement = تم الحصول على الموافقة لمعالجة البيانات الشخصية

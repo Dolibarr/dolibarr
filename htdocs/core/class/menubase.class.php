@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ class Menubase
 				$sql .= "usertype";
 				$sql .= ") VALUES (";
 				$sql .= " '".$this->db->escape($this->menu_handler)."',";
-				$sql .= " '".$this->db->escape($this->entity)."',";
+				$sql .= " '".$this->db->escape((string) $this->entity)."',";
 				$sql .= " '".$this->db->escape($this->module)."',";
 				$sql .= " '".$this->db->escape($this->type)."',";
 				$sql .= " ".($this->mainmenu ? "'".$this->db->escape($this->mainmenu)."'" : "''").","; // Can't be null
@@ -288,7 +288,7 @@ class Menubase
 				$sql .= " '".$this->db->escape($this->langs)."',";
 				$sql .= " '".$this->db->escape($this->perms)."',";
 				$sql .= " '".$this->db->escape($this->enabled)."',";
-				$sql .= " '".$this->db->escape($this->user)."'";
+				$sql .= " '".$this->db->escape((string) $this->user)."'";
 				$sql .= ")";
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -363,7 +363,7 @@ class Menubase
 		$sql .= " langs='".$this->db->escape($this->langs)."',";
 		$sql .= " perms='".$this->db->escape($this->perms)."',";
 		$sql .= " enabled='".$this->db->escape($this->enabled)."',";
-		$sql .= " usertype='".$this->db->escape($this->user)."'";
+		$sql .= " usertype='".$this->db->escape((string) $this->user)."'";
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -575,7 +575,7 @@ class Menubase
 				//print 'Try to add menu (current is mainmenu='.$mainmenu.' leftmenu='.$leftmenu.') for '.join(',',$val).' fk_mainmenu='.$val['fk_mainmenu'].' fk_leftmenu='.$val['fk_leftmenu'].'<br>';
 				//var_dump($this->newmenu->liste);exit;
 				if (empty($val['fk_leftmenu'])) {
-					$this->newmenu->add($val['url'], $val['titre'], 0, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
+					$this->newmenu->add($val['url'], $val['titre'], 0, (int) $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
 					//var_dump($this->newmenu->liste);
 				} else {
 					// Search first menu with this couple (mainmenu,leftmenu)=(fk_mainmenu,fk_leftmenu)
@@ -604,7 +604,7 @@ class Menubase
 					}
 					//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
 					if ($found) {
-						$this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
+						$this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, (int) $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position'], '', '', '', $val['prefix']);
 					} else {
 						dol_syslog("Error. Modules ".$val['module']." has defined a menu entry with a parent='fk_mainmenu=".$val['fk_leftmenu'].",fk_leftmenu=".$val['fk_leftmenu']."' and position=".$val['position'].'. The parent was not found. May be you forget it into your definition of menu, or may be the parent has a "position" that is after the child (fix field "position" of parent or child in this case).', LOG_WARNING);
 						//print "Parent menu not found !!<br>";
@@ -767,8 +767,8 @@ class Menubase
 		for ($x = 0; $x < $num; $x++) {
 			//si un element a pour pere : $pere
 			if ((($tab[$x]['fk_menu'] >= 0 && $tab[$x]['fk_menu'] == $pere)) && $tab[$x]['enabled']) {
-				$this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level - 1), $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu'], 0, '', '', '', $tab[$x]['prefix']);
-				$this->recur($tab, $tab[$x]['rowid'], ($level + 1));
+				$this->newmenu->add($tab[$x]['url'], $tab[$x]['titre'], ($level - 1), (int) $tab[$x]['perms'], $tab[$x]['target'], $tab[$x]['mainmenu'], $tab[$x]['leftmenu'], 0, '', '', '', $tab[$x]['prefix']);
+				$this->recur($tab, (int) $tab[$x]['rowid'], ($level + 1));
 			}
 		}
 	}

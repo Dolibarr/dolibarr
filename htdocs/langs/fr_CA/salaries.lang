@@ -20,6 +20,4 @@ FillFieldFirst=Remplissez d'abord le champ employé
 UpdateAmountWithLastSalary=Montant défini du dernier salaire
 MakeTransferRequest=Faire une demande de transfert
 VirementOrder=Demande de virement bancaire
-WithdrawalReceipt=Ordre de virement bancaire
-OrderWaiting=Commande en attente
 FillEndOfMonth=Remplir avec la fin du mois

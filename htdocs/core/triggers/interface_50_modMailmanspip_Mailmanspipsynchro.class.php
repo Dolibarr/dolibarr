@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2005-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Rafael San José     <rsanjose@alxarafe.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,6 +94,7 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 			return $return;
 		} elseif ($action == 'MEMBER_VALIDATE') {
+			'@phan-var-force Adherent $object';
 			// Members
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
@@ -110,13 +111,14 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 
 			return $return;
 		} elseif ($action == 'MEMBER_MODIFY') {
+			'@phan-var-force Adherent $object';
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$return = 0;
 			// Add user into some linked tools (mailman, spip, etc...)
 			if (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid)) {
 				if (is_object($object->oldcopy) && (($object->oldcopy->email != $object->email) || ($object->oldcopy->typeid != $object->typeid))) {    // If email has changed or if list has changed we delete mailman subscription for old email
-					// $object->oldcopy may be a stdClass and not original object depending on copy type, so we realod a new object to run the del_to_abo()
+					// $object->oldcopy may be a stdClass and not original object depending on copy type, so we reload a new object to run the del_to_abo()
 					$tmpmember = new Adherent($this->db);
 					$tmpmember->fetch($object->oldcopy->id);
 					if ($tmpmember->del_to_abo() < 0) {

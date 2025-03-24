@@ -70,6 +70,7 @@ if (isModEnabled('paypal')) {
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user 		User object is initialized but empty as it is a public page
  *
  * @var string $dolibarr_main_url_root
  */
@@ -198,6 +199,7 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 	$ipaddress          = $_SESSION['ipaddress'];
 	$errormessage       = $_SESSION['errormessage'];
 
+	// @phpstan-ignore-next-line
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
 		// Call trigger @phan-suppress-next-line PhanUndeclaredMethod
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_KO', $user);

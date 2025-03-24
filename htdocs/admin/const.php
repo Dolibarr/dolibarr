@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +260,8 @@ $sql .= ", tms";
 $sql .= ", entity";
 $sql .= " FROM ".MAIN_DB_PREFIX."const";
 $sql .= " WHERE entity IN (".$db->sanitize($user->entity.",".$conf->entity).")";
-if ((empty($user->entity) || $user->admin) && $debug) {
+if ((empty($user->entity)/*  || $user->admin */) && $debug) {
+	// empty
 } elseif (!GETPOST('visible') || GETPOST('visible') != 'all') {
 	// to force for superadmin to debug
 	$sql .= " AND visible = 1"; // We must always have this. Otherwise, array is too large and submitting data fails due to apache POST or GET limits

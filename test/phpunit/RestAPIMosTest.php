@@ -73,18 +73,18 @@ class RestAPIMosTest extends AbstractRestAPITest
 
 		$result = getURLContent($url, $method, $body, 1, $addheaders, array('http', 'https'), 2);
 
-		$this->assertEquals('', $result['curl_error_no'], "{$test_title}Should not have a curl error");
+		$this->assertEquals(0, $result['curl_error_no'], $test_title." Should not have a curl error");
 
 		$object = json_decode($result['content'], true);
 
 		$dbg_info = PHP_EOL.json_encode($result, JSON_PRETTY_PRINT);
 
-		$this->assertNotNull($object, "{$test_title}Parsing of JSON result must not be null$dbg_info");
+		$this->assertNotNull($object, $test_title." Parsing of JSON result must not be null ".$dbg_info);
 
 		$result['content'] = $object;
 		$dbg_info = PHP_EOL.json_encode($result, JSON_PRETTY_PRINT);
 
-		$this->assertEquals($expected_error, (empty($object['error']['code']) ? 0 : $object['error']['code']), "{$test_title}Error code is not $expected_error$dbg_info");
+		$this->assertEquals($expected_error, (empty($object['error']['code']) ? 0 : $object['error']['code']), $test_title." Error code is not ".$expected_error.$dbg_info);
 
 		return $result;
 	}

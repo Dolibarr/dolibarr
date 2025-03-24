@@ -584,7 +584,7 @@ class Conf extends stdClass
 
 								$modulename = strtolower($reg[1]);
 								$partname = strtolower($reg[2]);
-								if (!isset($this->modules_parts[$partname]) || !is_array($this->modules_parts[$partname])) {
+								if (!array_key_exists($partname, $this->modules_parts) || !is_array($this->modules_parts[$partname])) {
 									$this->modules_parts[$partname] = array();
 								}
 
@@ -974,7 +974,7 @@ class Conf extends stdClass
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
-				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 0;	// Not enabled by default (still trouble of persistent tooltip)
+				$this->global->MAIN_ENABLE_AJAX_TOOLTIP = 1;	// Try to have it enabled by default with v21+
 			}
 
 			// By default, suppliers objects can be linked to all projects
@@ -1304,10 +1304,10 @@ class Conf extends stdClass
 				}
 			}
 
-			if (!isset($this->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
+			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML)) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML = 1;
 			}
-			if (!isset($this->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
+			if (!isset($this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY) && extension_loaded('tidy') && class_exists("tidy")) {
 				$this->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 			}
 
@@ -1331,13 +1331,6 @@ class Conf extends stdClass
 			if (!empty($this->global->MAIN_TZUSERINPUTKEY)) {
 				$this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 			}
-
-			if (!empty($this->global->PRODUIT_AUTOFILL_DESC)) {
-				$this->global->MAIN_NO_CONCAT_DESCRIPTION = 1;
-			} else {
-				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
-			}
-
 
 			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 

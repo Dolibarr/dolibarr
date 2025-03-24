@@ -8,7 +8,7 @@
  * Copyright (C) 2019-2022	Thibault Foucart			<support@ptibogxiv.net>
  * Copyright (C) 2020		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -225,7 +225,7 @@ if ($action == 'add' && $user->hasRight('adherent', 'configurer')) {
 if ($action == 'update' && $user->hasRight('adherent', 'configurer')) {
 	$object->fetch($rowid);
 
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$object->label = trim($label);
 	$object->morphy	= trim($morphy);
@@ -505,7 +505,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 			$colspan = 1;
 			foreach ($arrayfields as $key => $val) {
 				//if (!empty($val['checked'])) {
-					$colspan++;
+				$colspan++;
 				//}
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
@@ -519,6 +519,7 @@ if (!$rowid && $action != 'create' && $action != 'edit') {
 		dol_print_error($db);
 	}
 }
+
 
 // Creation
 if ($action == 'create') {
@@ -642,14 +643,18 @@ if ($rowid > 0) {
 		print yn($object->vote);
 		print '</tr>';
 
-		// Duration
-		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
+		$durationarray = array();
 		if ($object->duration_value > 1) {
-			$dur = array("i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
-		} elseif ($object->duration_value > 0) {
-			$dur = array("i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
+			$durationarray = array("s" => $langs->trans("Seconds"), "mn" => $langs->trans("Minutes"), "i" => $langs->trans("Minutes"), "h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
+		} else {
+			$durationarray = array("s" => $langs->trans("Seconds"), "mn" => $langs->trans("Minutes"), "i" => $langs->trans("Minute"), "h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 		}
-		print(!empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
+
+		// Duration
+		print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">';
+		print $object->duration_value > 0 ? $object->duration_value : '';
+		print '&nbsp;';
+		print(!empty($object->duration_unit) && isset($durationarray[$object->duration_unit]) ? $langs->trans($durationarray[$object->duration_unit]) : '');
 		print '</td></tr>';
 
 		// Description
@@ -807,7 +812,7 @@ if ($rowid > 0) {
 
 			if ($type > 0) {
 				$membertype = new AdherentType($db);
-				$result = $membertype->fetch($type);
+				$result = $membertype->fetch((int) $type);
 				$titre .= " (".$membertype->label.")";
 			}
 
@@ -1084,7 +1089,7 @@ if ($rowid > 0) {
 		print '</td></tr>';
 
 		print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3">';
-		print '<input name="duration_value" size="5" value="'.$object->duration_value.'"> ';
+		print '<input name="duration_value" size="5" value="'.($object->duration_value > 0 ? $object->duration_value : '').'"> ';
 		print $formproduct->selectMeasuringUnits("duration_unit", "time", ($object->duration_unit === '' ? 'y' : $object->duration_unit), 0, 1);
 		print '</td></tr>';
 

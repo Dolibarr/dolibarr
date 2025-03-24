@@ -1,8 +1,28 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+/**
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinepair1
+ * @var string $colortextbackhmenu
+ * @var string $colortextlink
+ * @var int<0,1> $disableimages
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colortextbackhmenu
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $disableimages
+@phan-var-force string $left
+@phan-var-force string $right
+';
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -114,7 +134,7 @@ button.dropdown-item.global-search-item {
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid rgba(0,0,0,.15);
+	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -680,7 +700,7 @@ div.quickaddblock:focus {
 	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 		width: 300px;
 	}
-	.dropdown-menu {
+	.dropdown-menu:not(#ai_dropdownmessage) {
 		border: none;
 		-webkit-box-shadow: none;
 		box-shadow: none;

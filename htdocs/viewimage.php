@@ -193,20 +193,17 @@ if ($modulepart == 'fckeditor') {
  * View
  */
 
-if (GETPOST("cache", 'alpha')) {
+$cachestring = GETPOST("cache", 'aZ09');	// May be 1, or an int, or a hash
+if ($cachestring) {
 	// Important: The following code is to avoid a page request by the browser and PHP CPU at each Dolibarr page access.
 	// We are here when param cache=xxx to force a cache policy:
 	//  xxx=1 means cache of 3600s
 	//  xxx=abcdef or 123456789 means a cache of 1 week (the key will be modified to get break cache use)
 	if (empty($dolibarr_nocache)) {
-		if (GETPOST('cache', 'alpha') != '1') {
-			$delaycache = 3600 * 24 * 7;
-		} else {
-			$delaycache = 3600;
-		}
+		$delaycache = ((is_numeric($cachestring) && (int) $cachestring > 1 && (int) $cachestring < 999999) ? $cachestring : '3600');
 		header('Cache-Control: max-age='.$delaycache.', public, must-revalidate');
 		header('Pragma: cache'); // This is to avoid to have Pragma: no-cache set by proxy or web server
-		header('Expires: '.gmdate('D, d M Y H:i:s', time() + $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
+		header('Expires: '.gmdate('D, d M Y H:i:s', time() + (int) $delaycache).' GMT');	// This is to avoid to have Expires set by proxy or web server
 	} else {
 		// If any cache on files were disable by config file (for test purpose)
 		header('Cache-Control: no-cache');
@@ -306,7 +303,7 @@ if (!empty($hashp)) {
 } elseif (GETPOSTINT("publictakepos")) {
 	if (getDolGlobalString('TAKEPOS_AUTO_ORDER') && in_array($modulepart, array('product', 'category'))) {
 		$accessallowed = 1; // When TakePOS Public Auto Order is enabled, we accept to see all images of product and categories with no login
-		// TODO Replace this with a call of getPublicImageOfObject like used by website so
+		// TODO Replace the use of link to viewimage with a call to get link by getPublicImageOfObject, like done by website templates so
 		// only shared images are visible
 	}
 } else {
