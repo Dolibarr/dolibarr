@@ -372,6 +372,13 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				// Make substitutions into odt of user info
 				$tmparray = $this->get_substitutionarray_user($user, $outputlangs);
 				foreach ($tmparray as $key => $value) {
@@ -379,7 +386,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						if (preg_match('/logo$/', $key)) { // Image
 							//var_dump($value);exit;
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -397,7 +404,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						if (preg_match('/logo$/', $key)) {	// Image
 							//var_dump($value);exit;
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -419,7 +426,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 					try {
 						if (preg_match('/logo$/', $key)) {	// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -437,7 +444,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						try {
 							if (preg_match('/logo$/', $key)) {	// Image
 								if (file_exists($value)) {
-									$odfHandler->setImage($key, $value);
+									$odfHandler->setImage($key, $value, $ratio);
 								} else {
 									$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 								}
@@ -464,7 +471,7 @@ class doc_generic_shipment_odt extends ModelePdfExpedition
 						if (preg_match('/logo$/', $key)) {
 							// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}

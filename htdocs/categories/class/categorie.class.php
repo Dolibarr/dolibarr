@@ -945,7 +945,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return list of fetched instance of elements having this category
+	 * Return list of fetched instances of elements having the current category.
+	 * WARNING: Do not use this. It can return an array with a very high number of element making an out of memory. Try by using instead getListForItem() or containing().
 	 *
 	 * @param   string     	$type       	Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management', ...)
 	 * @param   int        	$onlyids    	Return only ids of objects (consume less memory)
@@ -964,6 +965,10 @@ class Categorie extends CommonObject
 	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = '', $filtermode = 'AND', $filterlang = '')
 	{
 		global $user;
+
+		if (empty($onlyids)) {
+			dol_syslog("getObjectsInCateg: This method used with parameter onlyids=0 is deprecated. Try by using instead getListForItem().", LOG_WARNING);
+		}
 
 		$objs = array();
 
@@ -1031,7 +1036,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Check for the presence of an object in a category
+	 * Check for the presence of a given object in the current category
 	 *
 	 * @param   string $type      		Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int    $object_id 		Id of the object to search
@@ -1055,7 +1060,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return the list of categories of an element id.
+	 * Return the list of the categories of a given element (a product, a customer, ...).
 	 * Warning, this load/fetch all qualified categories.
 	 *
 	 * @param	int		$id			Id of element
@@ -1169,7 +1174,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return direct children ids of a category into an array
+	 * Return direct children ids of a category into an array. Only first level of children.
 	 *
 	 * @return	Categorie[]|int   Return integer <0 KO, array ok
 	 */
@@ -1197,7 +1202,8 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...)
+	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...), so array of all child categories and ID of their parent.
+	 *  TODO Add a filter on the type of category.
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
@@ -1209,7 +1215,7 @@ class Categorie extends CommonObject
 		// Load array[child]=parent
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE fk_parent != 0";
+		$sql .= " WHERE fk_parent <> 0";
 		$sql .= " AND entity IN (".getEntity('category').")";
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
@@ -1444,7 +1450,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Returns the top level categories (which are not child)
+	 *	Returns the first level categories (which are not child)
 	 *
 	 *	@param	?int		$type		Type of category (0, 1, ...)
 	 *	@return	array<int,Categorie>|int<-1,-1>	Table of Object Category, -1 on error
@@ -1627,13 +1633,13 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
-	 * Should be named getListOfCategForObject
+	 * Return list of categories (object instances or labels) linked to a given object having id $id and type $type.
+	 * Should be named getListOfCategForObject.
+	 * Try to use it only with parameter $mode = 'id' or 'label'.
 	 *
 	 * @param   int    		$id                 Id of element
 	 * @param   string|int	$type               Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
-	 * @param   string 		$mode               'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                                          labels, 'id'= Get array of category IDs
+	 * @param   string 		$mode               'id'=Get array of category IDs, 'label'=Get array of category labels, 'object'=Get array of fetched category instances
 	 * @return  Categorie[]|int[]|string[]|int  Array of category objects, labels or IDs or < 0 if KO
 	 */
 	public function containing($id, $type, $mode = 'object')
