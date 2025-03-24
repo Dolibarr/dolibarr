@@ -47,8 +47,6 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 	 */
 	public function testPushDocument()
 	{
-		global $conf,$user,$langs,$db;
-
 		$url = $this->api_url.'/documents/upload?api_key='.$this->api_key;
 
 		echo __METHOD__.' Request POST url='.$url."\n";

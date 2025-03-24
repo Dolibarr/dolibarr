@@ -46,7 +46,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 	 */
 	public function testRestGetContact()
 	{
-		global $conf,$user,$langs,$db;
 		//fetch Non-Existent contact
 		$url = $this->api_url.'/contacts/123456789?api_key='.$this->api_key;
 		//$addheaders=array('Content-Type: application/json');
@@ -83,7 +82,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 	 */
 	public function testRestCreateContact()
 	{
-		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
 		$addheaders = array('Content-Type: application/json');
@@ -140,7 +138,6 @@ class RestAPIContactTest extends AbstractRestAPITest
 	 */
 	public function testRestUpdateContact($objid)
 	{
-		global $conf,$user,$langs,$db;
 		// attempt to create without mandatory fields
 		$url = $this->api_url.'/contacts?api_key='.$this->api_key;
 		$addheaders = array('Content-Type: application/json');
