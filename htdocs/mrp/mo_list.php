@@ -544,7 +544,6 @@ $trackid = 'mo'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($massaction == 'precancel') {
-
 	$formquestion = array(
 		array(
 			'label' => $langs->trans('MoCancelConsumedAndProducedLines'),
@@ -558,7 +557,7 @@ if ($massaction == 'precancel') {
 		$langs->trans('CancelMo'),
 		$langs->trans('ConfirmCancelMo'),
 		'confirm_cancel', $formquestion,
-		1, 0,200,500,1);
+		1, 0, 200, 500, 1);
 }
 
 if ($massaction == 'predatestart') {

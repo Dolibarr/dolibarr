@@ -163,4 +163,5 @@ ConfirmMassChangeDateEnd=Confirmation de modification de la date de fin prévue 
 ErrorModifyMoDateStart=Vous devez choisir une date de début inférieur à la date de début. %s
 ErrorModifyMoDateEnd=Vous devez choisir une date de fin supérieur à la date de début. %s
 ErrorCancelMo=Erreur lors de la mise à jour de l'annulation
+ErrorModifyMoDate=Erreur lors de la mise à jour de la modification de la date
 

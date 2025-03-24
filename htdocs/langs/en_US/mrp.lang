@@ -164,3 +164,4 @@ ConfirmMassChangeDateEnd = Confirmation of mass modification of the planned end 
 ErrorModifyMoDateStart = You must choose a start date earlier than the current start date. %s
 ErrorModifyMoDateEnd = You must choose an end date later than the start date. %s
 ErrorCancelMo=Error updating cancellation
+ErrorModifyMoDate=Error updating date modification
