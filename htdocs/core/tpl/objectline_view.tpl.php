@@ -517,7 +517,7 @@ if ($line->special_code == 3) {
 
 // Price inc tax
 if ($outputalsopricetotalwithtax) {
-	print '<td class="linecolht nowrap right">'.price($sign * $line->total_ttc).'</td>';
+	print '<td class="linecolttc nowrap right">'.price($sign * $line->total_ttc).'</td>';
 	$coldisplay++;
 }
 
