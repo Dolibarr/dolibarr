@@ -12195,7 +12195,7 @@ class Form
 	 *                           Ex : search element in a table row : '#table-id tr'
 	 * @param string $htmlName the html name attribute
 	 * @param string $value the html value attribute
-	 * @param array<string,int|float|string|mixed[]> $params a mixed array of params
+	 * @param array<mixed> $params a mixed array of params
 	 *
 	 * @return string
 	 */
