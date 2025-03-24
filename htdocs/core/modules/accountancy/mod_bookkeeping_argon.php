@@ -154,7 +154,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 */
 	private function getPrefix(BookKeeping $object): string
 	{
-		$fiscalStartMonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START') ?: 1;
+		$fiscalStartMonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
 		$docYear = (int) dol_print_date($object->doc_date, '%Y');
 		$docMonth = (int) dol_print_date($object->doc_date, '%m');
 		$docFiscalYear = $docMonth < $fiscalStartMonth ? ($docYear - 1) : $docYear;
