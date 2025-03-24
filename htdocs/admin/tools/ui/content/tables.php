@@ -103,7 +103,7 @@ $documentation->showSidebar(); ?>
 							<tr class="oddeven">
 								<td class="left">My Product C</td>
 								<td class="center">7</td>
-								<td class="right"><?php echo price (16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right"><?php echo price(16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
 								<td class="right"><?php echo price(116.62, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="oddeven">
