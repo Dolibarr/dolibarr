@@ -67,14 +67,14 @@ $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 $also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
-$changeDate = GETPOST('Change_date', 'alpha');
+$changeDate = GETPOST('change_date', 'alpha');
 
 //Data request for date
-$year   = GETPOST('Change_dateyear', 'int');
-$month   = GETPOST('Change_datemonth', 'int');
-$day   = GETPOST('Change_dateday', 'int');
-$hour   = GETPOST('Change_datehour', 'int');
-$min   = GETPOST('Change_datemin', 'int');
+$year   = GETPOST('change_dateyear', 'int');
+$month   = GETPOST('change_datemonth', 'int');
+$day   = GETPOST('change_dateday', 'int');
+$hour   = GETPOST('change_datehour', 'int');
+$min   = GETPOST('change_datemin', 'int');
 
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
@@ -219,26 +219,26 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	$objMo = new Mo($db);
 
-	if($action == 'confirm_cancel') {
+	if ($action == 'confirm_cancel') {
 		if ($action == 'confirm_cancel' && $confirm == 'yes') {
-			if (!empty($toselect)){
+			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
-					if ($objMo->fetch($idMo)){
+					if ($objMo->fetch($idMo)) {
 						if ($objMo->status == Mo::STATUS_VALIDATED || $objMo->status == Mo::STATUS_INPROGRESS) {
-							if ($also_cancel_consumed_and_produced_lines){
-								if($objMo->cancelConsumedAndProducedLines($user, 0, true, 1)){
+							if ($also_cancel_consumed_and_produced_lines) {
+								if ($objMo->cancelConsumedAndProducedLines($user, 0, true, 1)) {
 									$objMo->status = Mo::STATUS_CANCELED;
 								}
-							}else{
+							} else {
 								$objMo->status = Mo::STATUS_CANCELED;
 							}
-							if ($objMo->update($user)){
-								setEventMessages($langs->trans('CancelMoValidated',$objMo->ref), null, 'mesgs');
-							}else{
-								setEventMessages($langs->trans('ErrorCancelMo',$objMo->ref), null, 'errors');
+							if ($objMo->update($user)) {
+								setEventMessages($langs->trans('CancelMoValidated', $objMo->ref), null, 'mesgs');
+							} else {
+								setEventMessages($langs->trans('ErrorCancelMo', $objMo->ref), null, 'errors');
 							}
-						}else{
-							setEventMessages($langs->trans('ErrorObjectMustHaveStatusValidatedToBeCanceled',$objMo->ref), null, 'errors');
+						} else {
+							setEventMessages($langs->trans('ErrorObjectMustHaveStatusValidatedToBeCanceled', $objMo->ref), null, 'errors');
 						}
 					}
 				}
@@ -246,41 +246,41 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'changedatestart_confirm' || $action == 'changedateend_confirm'){
-		if ($confirm == 'yes'){
+	if ($action == 'changedatestart_confirm' || $action == 'changedateend_confirm') {
+		if ($confirm == 'yes') {
 			$newDate = dol_mktime($hour, $min, 0, $month, $day, $year);
 
-			if (!empty($toselect)){
+			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
-					if ($objMo->fetch($idMo)){
+					if ($objMo->fetch($idMo)) {
 						if ($objMo->status == Mo::STATUS_DRAFT) {
 							if (!empty($changeDate)) {
-								if($action == 'changedatestart_confirm'){
-									if ($newDate < $objMo->date_end_planned){
+								if ($action == 'changedatestart_confirm') {
+									if ($newDate < $objMo->date_end_planned) {
 										$objMo->date_start_planned = $newDate;
-									}else{
-										setEventMessages($langs->trans('ErrorModifyMoDateStart',$objMo->ref), null, 'errors');
+									} else {
+										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
 										break;
 									}
-								}elseif ($action == 'changedateend_confirm'){
-									if ($newDate > $objMo->date_start_planned){
+								} elseif ($action == 'changedateend_confirm') {
+									if ($newDate > $objMo->date_start_planned) {
 										$objMo->date_end_planned = $newDate;
-									}else{
-										setEventMessages($langs->trans('ErrorModifyMoDateEnd',$objMo->ref), null, 'errors');
+									} else {
+										setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
 										break;
 									}
 								}
-								if ($objMo->update($user)){
-									setEventMessages($langs->trans('ModifyMoDate',$objMo->ref), null, 'mesgs');
-								}else{
-									setEventMessages($langs->trans('ErrorModifyMoDate',$objMo->ref), null, 'errors');
+								if ($objMo->update($user)) {
+									setEventMessages($langs->trans('ModifyMoDate', $objMo->ref), null, 'mesgs');
+								} else {
+									setEventMessages($langs->trans('ErrorModifyMoDate', $objMo->ref), null, 'errors');
 								}
-							}else{
+							} else {
 								setEventMessages($langs->trans('ErrorEmptyChangeDate'), null, 'errors');
 								break;
 							}
-						}else{
-							setEventMessages($langs->trans('ErrorObjectMustHaveStatusDraftToModifyDate',$objMo->ref), null, 'errors');
+						} else {
+							setEventMessages($langs->trans('ErrorObjectMustHaveStatusDraftToModifyDate', $objMo->ref), null, 'errors');
 						}
 					}
 				}
@@ -566,7 +566,7 @@ if ($massaction == 'predatestart') {
 		array(
 			'type' => 'datetime',
 			'tdclass' => 'fieldrequired',
-			'name' => 'Change_date',
+			'name' => 'change_date',
 			'label' => $langs->trans('ModifyDateStart'),
 			'value' => -1),
 	);
@@ -582,7 +582,7 @@ if ($massaction == 'predateend') {
 		array(
 			'type' => 'datetime',
 			'tdclass' => 'fieldrequired',
-			'name' => 'Change_date',
+			'name' => 'change_date',
 			'label' => $langs->trans('ModifyDateEnd'),
 			'value' => -1),
 	);
