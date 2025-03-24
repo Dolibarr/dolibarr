@@ -1977,6 +1977,8 @@ class Mo extends CommonObject
 			return $MoParent;
 		}
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *      Load indicators for dashboard (this->nbtodo and this->nbtodolate)
 	 *
@@ -1985,6 +1987,7 @@ class Mo extends CommonObject
 	 */
 	public function load_board($user)
 	{
+		// phpcs:enable
 		global $conf, $langs;
 		if ($user->socid) {
 			return -1; // Protection pour éviter appel par utilisateur externe
@@ -2026,7 +2029,6 @@ class Mo extends CommonObject
 			$this->error = $this->db->error();
 			return -1;
 		}
-
 	}
 
 	/**
