@@ -108,7 +108,7 @@ class MenuManager
 	 */
 	public function showmenu($mode, $moredata = null)
 	{
-		global $langs, $dolibarr_main_db_name;
+		global $langs, $user, $dolibarr_main_db_name;
 
 		$id = 'mainmenu';
 
