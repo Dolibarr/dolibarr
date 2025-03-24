@@ -2041,7 +2041,7 @@ class Mo extends CommonObject
 		if ($this->status != Mo::STATUS_VALIDATED && $this->status != Mo::STATUS_INPROGRESS) {
 			return false;
 		}
-		return dol_now() > $this->date_end_planned + $conf->mrp->progress->warning_delay ? true : false;
+		return dol_now() > ($this->date_end_planned + $conf->mrp->progress->warning_delay) ? true : false;
 	}
 
 
