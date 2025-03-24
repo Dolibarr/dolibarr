@@ -378,7 +378,7 @@ class Conf extends stdClass
 	public $category;
 
 	/**
-	 * @var stdClass
+	 * @var ?stdClass
 	 */
 	public $mrp;
 
