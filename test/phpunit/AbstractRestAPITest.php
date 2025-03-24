@@ -86,15 +86,15 @@ abstract class AbstractRestAPITest extends CommonClassTest
 
 		$method = get_called_class()."::".__FUNCTION__;
 		$test = "API Test Setup - ";
-		$login = 'admin';
-		$password = 'admin';
-		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
+		$login = getenv("DOL_CTI_ADMIN_LOGIN") ? getenv("DOL_CTI_ADMIN_LOGIN") : 'admin';
+		$password = getenv('DOL_CTI_ADMIN_PASSWORD') ? getenv('DOL_CTI_ADMIN_PASSWORD') : 'admin';
+		$url = $this->api_url.'/login?login='.urlencode($login).'&password='.urlencode($password);
 		// Call the API login method to save api_key for this test class.
 		// At first call, if token is not defined a random value is generated and returned.
 		$result = getURLContent($url, 'GET', '', 1, $addheaders, array('http', 'https'), 2);
 		print "$method result = ".var_export($result, true)."\n";
 		print "$method curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals('', $result['curl_error_no'], "$test Should not have a curl error");
+		$this->assertEquals(0, $result['curl_error_no'], "$test Should not have a curl error");
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 
 		$this->assertNotNull($object, "$test Parsing of JSON result must not be null");
