@@ -936,7 +936,7 @@ class FormFile
 
 				// Get list of files stored into database for same relative directory
 				if ($relativedir) {
-					completeFileArrayWithDatabaseInfo($file_list, $relativedir, $object->entity);
+					completeFileArrayWithDatabaseInfo($file_list, $relativedir, $object);
 					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 					//var_dump($sortfield.' - '.$sortorder);
@@ -1429,7 +1429,7 @@ class FormFile
 
 			// Get list of files stored into database for same relative directory
 			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object->entity);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object);
 				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 				//var_dump($sortfield.' - '.$sortorder);
