@@ -163,4 +163,4 @@ ErrorEmptyChangeDate = Please define a date
 ConfirmMassChangeDateEnd = Confirmation of mass modification of the planned end date
 ErrorModifyMoDateStart = You must choose a start date earlier than the current start date. %s
 ErrorModifyMoDateEnd = You must choose an end date later than the start date. %s
-
+ErrorCancelMo=Error updating cancellation
