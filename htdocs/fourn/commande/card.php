@@ -364,53 +364,12 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
-		if (in_array($object->status, array(1, 2, 3, 4, 5, 6, 7, 9))) {
-			if ($object->status == 1) {
-				$newstatus = 0; // Validated->Draft
-			} elseif ($object->status == 2) {
-				$newstatus = 0; // Approved->Draft
-			} elseif ($object->status == 3) {
-				$newstatus = 2; // Ordered->Approved
-			} elseif ($object->status == 4) {
-				$newstatus = 3;
-			} elseif ($object->status == 5) {
-				//$newstatus=2;    // Ordered
-				// TODO Can we set it to submitted ?
-				//$newstatus=3;  // Submitted
-				// TODO If there is at least one reception, we can set to Received->Received partially
-				$newstatus = 4; // Received partially
-			} elseif ($object->status == 6) {
-				$newstatus = 2; // Canceled->Approved
-			} elseif ($object->status == 7) {
-				$newstatus = 3; // Canceled->Process running
-			} elseif ($object->status == 9) {
-				$newstatus = 1; // Refused->Validated
-			} else {
-				$newstatus = 2;
-			}
-
-			//print "old status = ".$object->status.' new status = '.$newstatus;
-			$db->begin();
-
-			$result = $object->setStatus($user, $newstatus);
-			if ($result > 0) {
-				if ($newstatus == 0) {
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
-					$sql .= ' WHERE rowid = '.((int) $object->id);
-
-					$resql = $db->query($sql);
-				}
-
-				$db->commit();
-
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-				exit;
-			} else {
-				$db->rollback();
-
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+		$resSetReopen = $object->setReopen($user);
+		if ($resSetReopen) {
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
