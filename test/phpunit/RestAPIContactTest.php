@@ -152,7 +152,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$updateRequestBody = json_encode($updateBody);
 		$updateUrl = $this->api_url . '/contacts/' . $objid. '?api_key=' . $this->api_key;
 		$updateResult = getURLContent($updateUrl, 'PUTALREADYFORMATED', $updateRequestBody, 1, $addheaders, array('http', 'https'), 2);
-		$this->assertEquals($updateResult['curl_error_no'], '');
+		$this->assertEquals(0, $updateResult['curl_error_no']);
 
 		$updateResponse = json_decode($updateResult['content'], true);
 

@@ -36,7 +36,7 @@ require_once __DIR__."/AbstractRestAPITest.php";
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIMosTest extends AbstractRestAPITest
+class RestAPIMoTest extends AbstractRestAPITest
 {
 	/**
 	 *
