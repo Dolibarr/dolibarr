@@ -1336,7 +1336,7 @@ while ($i < min($num, $limit)) {
 
 	// Creation operation date
 	if (!empty($arrayfields['t.date_creation']['checked'])) {
-		print '<td class="center">'.dol_print_date($line->date_creation, 'dayhour', 'tzuserrel').'</td>';
+		print '<td class="center">'.dol_print_date($lingit adge->date_creation, 'dayhour', 'tzuserrel').'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

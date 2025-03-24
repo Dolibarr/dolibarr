@@ -2652,3 +2652,4 @@ UxComponentsDoc=UX Components Doc
 WebhookTargetTypeHelp=Blocking: If an error occurs, an error message is displayed and the action is cancelled<br>No blocking: If an error occurs, the error message is only recorded in Dolibarr logs and the action is not cancelled
 Blocking=Blocking
 NoBlocking=No blocking
+MULTICURRENCY_APP_ENDPOINT=API endpoint URL to get live multicurrencies from a source currency
