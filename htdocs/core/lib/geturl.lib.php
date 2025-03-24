@@ -243,7 +243,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
-		$response = curl_exec($ch);
+		$response = curl_exec($ch);		// return false on error, result on success
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
@@ -271,9 +271,12 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$rep = array();
 	if (curl_errno($ch)) {
 		// Add keys to $rep
-		$rep['content'] = $response;
+		if ($response) {
+			$rep['content'] = $response;
+		} else {
+			$rep['content'] = '';
+		}
 
-		// moving to display page to display curl errors
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
 
@@ -290,7 +293,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		// Add more keys to $rep
 		if ($response) {
 			$rep['content'] = $response;
+		} else {
+			$rep['content'] = '';
 		}
+
 		$rep['curl_error_no'] = '';
 		$rep['curl_error_msg'] = '';
 	}

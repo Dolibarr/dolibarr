@@ -34,7 +34,9 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string $conffile
+ * @var string 	$conffile
+ * @var	string	$dolibarr_main_url_root_alt
+ * @var string	$dolibarr_main_document_root_alt
  */
 
 // Load translation files required by the page
@@ -157,53 +159,50 @@ print '<td></td>';
 print '</tr>'."\n";
 $i = 0;
 foreach ($configfileparameters as $key) {
-	$ignore = 0;
-
-	if ($key == 'dolibarr_main_url_root_alt' && empty(${$key})) {
-		$ignore = 1;
+	if ($key == 'dolibarr_main_url_root_alt' && empty($dolibarr_main_url_root_alt)) {
+		continue;
 	}
-	if ($key == 'dolibarr_main_document_root_alt' && empty(${$key})) {
-		$ignore = 1;
+	if ($key == 'dolibarr_main_document_root_alt' && empty($dolibarr_main_document_root_alt)) {
+		continue;
 	}
 
-	if (empty($ignore)) {
-		$newkey = preg_replace('/^\?/', '', $key);
+	$newkey = preg_replace('/^\?/', '', $key);
 
-		if (preg_match('/^\?/', $key) && empty(${$newkey})) {
-			$i++;
-			continue; // We discard parameters starting with ?
-		}
+	if (preg_match('/^\?/', $key) && empty(${$newkey})) {
+		$i++;
+		continue; // We discard parameters starting with ?
+	}
 
-		if ($newkey == 'separator' && $lastkeyshown == 'separator') {
-			$i++;
-			continue;
-		}
+	if ($newkey == 'separator' && $lastkeyshown == 'separator') {
+		$i++;
+		continue;
+	}
 
-		print '<tr class="oddeven">';
-		if ($newkey == 'separator') {
-			print '<td colspan="3">&nbsp;</td>';
+	print '<tr class="oddeven">';
+	if ($newkey == 'separator') {
+		print '<td colspan="3">&nbsp;</td>';
+	} else {
+		// Label
+		print "<td>".$configfilelib[$i].'</td>';
+		// Key
+		print '<td>'.$newkey.'</td>';
+		// Value
+		print "<td>";
+		if ($newkey == 'dolibarr_main_db_pass') {
+			print preg_replace('/./i', '*', ${$newkey});
+		} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
+			print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
 		} else {
-			// Label
-			print "<td>".$configfilelib[$i].'</td>';
-			// Key
-			print '<td>'.$newkey.'</td>';
-			// Value
-			print "<td>";
-			if ($newkey == 'dolibarr_main_db_pass') {
-				print preg_replace('/./i', '*', ${$newkey});
-			} elseif ($newkey == 'dolibarr_main_url_root' && preg_match('/__auto__/', ${$newkey})) {
-				print ${$newkey}.' => '.constant('DOL_MAIN_URL_ROOT');
-			} else {
-				print ${$newkey};
-			}
-			if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) {
-				print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
-			}
-			print "</td>";
+			print ${$newkey};
 		}
-		print "</tr>\n";
-		$lastkeyshown = $newkey;
+		if ($newkey == 'dolibarr_main_url_root' && ${$newkey} != DOL_MAIN_URL_ROOT) {
+			print ' (currently overwritten by autodetected value: '.DOL_MAIN_URL_ROOT.')';
+		}
+		print "</td>";
 	}
+	print "</tr>\n";
+	$lastkeyshown = $newkey;
+
 	$i++;
 }
 print '</table>';

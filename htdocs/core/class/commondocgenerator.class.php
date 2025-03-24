@@ -914,9 +914,9 @@ abstract class CommonDocGenerator
 			'line_localtax1_rate' => 'localtax1_tx',
 			'line_localtax2_rate' => 'localtax2_tx',
 		);
-		foreach ($vat_specs as $vat_spec) {
-			if (property_exists($line, $vat_spec[1])) {
-				$resarray[$vat_spec[0]] = vatrate($line->${$vat_spec[1]});
+		foreach ($vat_specs as $vat_key => $vat_spec) {
+			if (property_exists($line, $vat_spec)) {
+				$resarray[$vat_key] = vatrate($line->$vat_spec);
 			}
 		}
 
