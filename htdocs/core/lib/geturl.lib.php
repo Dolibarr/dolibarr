@@ -272,7 +272,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	if (curl_errno($ch)) {
 		// Add keys to $rep
 		if ($response) {
-			$rep['content'] = $response;
+			$rep['content'] = (string) $response;
 		} else {
 			$rep['content'] = '';
 		}
@@ -292,7 +292,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 		// Add more keys to $rep
 		if ($response) {
-			$rep['content'] = $response;
+			$rep['content'] = (string) $response;
 		} else {
 			$rep['content'] = '';
 		}
