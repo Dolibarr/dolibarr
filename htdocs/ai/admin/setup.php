@@ -192,31 +192,35 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	$functioncode = GETPOST('functioncode');
 	$out = '';
 
-	if ($functioncode) {
-		$labeloffeature = empty($arrayofaifeatures[GETPOST('functioncode')]['label']) ? 'Undefined' : $arrayofaifeatures[GETPOST('functioncode')]['label'];
+	//if ($functioncode) {
+		$key = 'textgenerationother';	// The HTML ID of field to fill
+
+		$labeloffeature = empty($arrayofaifeatures[$key]['label']) ? 'Undefined' : $arrayofaifeatures[$key]['label'];
 
 		//$out .= $langs->trans("Test").' '.$labeloffeature.'...<br><br>';
 
-		if (GETPOST('functioncode') == 'textgenerationemail') {
-			$key = 'textgenerationemail';	// The HTML ID of field to fill
+		//if (GETPOST('functioncode') == 'textgenerationemail') {
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("Test").' '.$labeloffeature;
-			$showlinktolayout = 0;
-			$formmail = new FormMail($db);
-			$htmlname = $key;
+		print '<br>';
+		//print '<hr>';
 
-			// Fill $out
-			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+		include_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
+		$formai = new FormAI($db);
+		$formmail = new FormMail($db);
 
-			$out .= '<div id="'.$key.'"></div>';
-		} else {
-			$out .= $langs->trans("FeatureNotYetAvailable").'<br><br>';
-			$functioncode = '';
-		}
-	}
+		$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
+		$showlinktoailabel = $langs->trans("AITestText");
+		$showlinktolayout = 0;
+		$htmlname = $key;
 
+		// Fill $out
+		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+		$out .= '<br><textarea id="'.$key.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+	//}
+
+	/*
 	if (!$functioncode) {
 		// Combo list of AI features
 		$out .= '<select name="functioncode" id="functioncode" class="flat minwidth300" placeholder="Test feature">';
@@ -233,6 +237,8 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 
 		$out .= '<input class="button small" type="submit" name="testmode" value="'.$langs->trans("Test").'">';
 	}
+	*/
+
 	print $out;
 
 	print '</form>';

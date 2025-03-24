@@ -538,7 +538,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '</td>';
 	print '</tr></table>';
 
-	print '<br><center>';
+	print '<br><br><center>';
 	if (isModEnabled('barcode') || $is_mod_batch_enabled) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 	}
@@ -1058,7 +1058,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									}
 									// Qty to dispatch
 									print '<td class="right nowraponall">';
-									$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty);
+									$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTFLOAT('qty'.$suffix) : $objd->qty);
 									//var_dump($suggestedvalue);exit;
 									if ($can_update_stock) {
 										print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';

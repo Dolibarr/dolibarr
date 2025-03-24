@@ -1582,7 +1582,6 @@ class Setup extends DolibarrApi
 		$pos = $request_data['pos'];
 		$moreparams = array();
 
-		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
 		if (0 > $extrafields->updateExtraField($attrname, $label, $type, (int) $pos, $size, $elementtype, (int) $unique, (int) $required, $default_value, $param, (int) $alwayseditable, $perms, $list, $help, $computed, (string) $entity, $langfile, (string) $enabled, (int) $totalizable, (int) $printable, $moreparams)) {
 			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}

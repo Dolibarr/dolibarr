@@ -87,7 +87,7 @@ $config['suppress_issue_types'] = [
 
 		'PhanPluginNonBoolBranch',			// Not essential - 31240+ occurrences
 		'PhanPluginNumericalComparison',	// Not essential - 19870+ occurrences
-		'PhanTypeMismatchArgument',			// Not showing in cti.dolibarr until low count - Can detect missing array keys, invalid types, objects being passed when scalar expected - Not all reported by phpstan - <=1200 cases (was: 12300+ before)
+		// 'PhanTypeMismatchArgument',		// Most fixed ~120 occurrences (was: 12300+ before)
 		'PhanPluginNonBoolInLogicalArith',	// Not essential - 11040+ occurrences
 		'PhanPluginConstantVariableScalar',	// Not essential - 5180+ occurrences
 		'PhanPluginDuplicateAdjacentStatement',

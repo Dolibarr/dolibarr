@@ -11,7 +11,7 @@
  * Copyright (C) 2015		Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2016-2018	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2016		Yasser Carreón			<yacasia@gmail.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2022       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -515,7 +515,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -882,7 +882,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1188,6 +1188,7 @@ if ($action == 'create') {
 
 			print '<br>';
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder centpercent">';
 
 			// Load shipments already done for same order
@@ -1901,6 +1902,7 @@ if ($action == 'create') {
 			}
 
 			print "</table>";
+			print '</div>';
 
 			print '<br>';
 
@@ -2325,7 +2327,7 @@ if ($action == 'create') {
 	print '<br>';
 
 	print '<div class="div-table-responsive-no-min">';
-	print '<table class="noborder" width="100%" id="tablelines" >';
+	print '<table class="noborder centpercent" id="tablelines" >';
 	print '<thead>';
 	print '<tr class="liste_titre">';
 	// Adds a line numbering column
@@ -2349,15 +2351,15 @@ if ($action == 'create') {
 		}
 		print '<td class="center linecoleditlineotherinfo" colspan="'.$editColspan.'">';
 		if ($object->status <= 1) {
-			print $langs->trans("QtyToShip").' - ';
+			print $langs->trans("QtyToShip");
 		} else {
-			print $langs->trans("QtyShipped").' - ';
+			print $langs->trans("QtyShipped");
 		}
 		if (isModEnabled('stock')) {
-			print $langs->trans("WarehouseSource").' - ';
+			print ' - '.$langs->trans("WarehouseSource");
 		}
 		if (isModEnabled('productbatch')) {
-			print $langs->trans("Batch");
+			print ' - '.$langs->trans("Batch");
 		}
 		print '</td>';
 	} else {
@@ -2615,7 +2617,11 @@ if ($action == 'create') {
 							// Warehouse source
 							print '<td>'.$formproduct->selectWarehouses($lines[$i]->entrepot_id, 'entl'.$line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 							// Batch number management
-							print '<td> - '.$langs->trans("NA").'</td>';
+							print '<td>';
+							if (isModEnabled('productbatch')) {
+								print ' - '.$langs->trans("NA");
+							}
+							print '</td>';
 							print '</tr>';
 						} elseif (count($lines[$i]->details_entrepot) > 1) {
 							print '<!-- case edit 3 -->';
@@ -2626,7 +2632,11 @@ if ($action == 'create') {
 								// Warehouse source
 								print '<td>'.$formproduct->selectWarehouses($detail_entrepot->entrepot_id, 'entl'.$detail_entrepot->line_id, '', 1, 0, $lines[$i]->fk_product, '', 1).'</td>';
 								// Batch number management
-								print '<td> - '.$langs->trans("NA").'</td>';
+								print '<td>';
+								if (isModEnabled('productbatch')) {
+									print ' - '.$langs->trans("NA");
+								}
+								print '</td>';
 								print '</tr>';
 							}
 						} elseif ($lines[$i]->product_type == Product::TYPE_SERVICE && getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES')) {

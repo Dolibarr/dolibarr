@@ -198,8 +198,6 @@ class HookManager
 	 */
 	public function executeHooks($method, $parameters = array(), &$object = null, &$action = '')
 	{
-		//global $debugbar;
-		//if (is_object($debugbar) && get_class($debugbar) === 'DolibarrDebugBar') {
 		if (isModEnabled('debugbar') && function_exists('debug_backtrace')) {
 			$trace = debug_backtrace();
 			if (isset($trace[0])) {
