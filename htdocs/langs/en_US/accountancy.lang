@@ -217,6 +217,7 @@ LetteringCode=Lettering code
 LetteringYear=Year related to lettering code
 LetteringYearTooltip=Year related to lettering code: %s
 Lettering=Lettering
+LetteringGL=Lettering (General Ledger)
 Codejournal=Journal
 JournalLabel=Journal label
 NumPiece=Piece number
@@ -428,9 +429,11 @@ Formula=Formula
 LetteringAuto=Reconcile auto
 LetteringManual=Reconcile manual
 LetteringPartial=Reconcile partial
+GeneralLedgerLetteringManual=General ledger reconcile manual
 Unlettering=Unreconcile
 UnletteringAuto=Unreconcile auto
 UnletteringManual=Unreconcile manual
+GeneralLedgerUnletteringManual=General ledger unreconcile manual
 AccountancyNoLetteringModified=No reconcile modified
 AccountancyOneLetteringModifiedSuccessfully=One reconcile successfully modified
 AccountancyLetteringModifiedSuccessfully=%s reconcile successfully modified
@@ -452,6 +455,8 @@ AccountancyClosureInsertAccountingReversalSuccessfully=Bookkeeping entries for "
 ConfirmMassUnletteringAuto=Bulk auto unreconcile confirmation
 ConfirmMassUnletteringManual=Bulk manual unreconcile confirmation
 ConfirmMassUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
+ConfirmMassGeneralLedgerUnletteringManual=Bulk General ledger manual unreconcile confirmation
+ConfirmMassGeneralLedgerUnletteringQuestion=Are you sure you want to unreconcile the %s selected record(s)?
 ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
@@ -477,6 +482,7 @@ ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 ErrorDocDateNotFound=No bookkeeping doc date found
+ErrorAccountNotReconcilable=Account %s is not reconcilable. Use the <a href="%s">%s</a> page to set reconcilable accounts.
 
 ## Import
 ImportAccountingEntries=Accounting entries

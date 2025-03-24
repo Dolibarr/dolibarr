@@ -893,6 +893,9 @@ class BookKeeping extends CommonObject
 			$sql .= " t.lettering_code,";
 			$sql .= " t.lettering_year,";
 			$sql .= " t.date_lettering,";
+			$sql .= " t.gl_lettering_code,";
+			$sql .= " t.gl_lettering_year,";
+			$sql .= " t.date_lettering_gl,";
 			$sql .= " t.fk_user_author,";
 			$sql .= " t.import_key,";
 			$sql .= " t.code_journal,";
@@ -1021,6 +1024,9 @@ class BookKeeping extends CommonObject
 					$line->lettering_code = $obj->lettering_code;
 					$line->lettering_year = $obj->lettering_year;
 					$line->date_lettering = $obj->date_lettering;
+					$line->gl_lettering_code = $obj->gl_lettering_code;
+					$line->gl_lettering_year = $obj->gl_lettering_year;
+					$line->date_lettering_gl = $obj->date_lettering_gl;
 					$line->fk_user_author = $obj->fk_user_author;
 					$line->import_key = $obj->import_key;
 					$line->code_journal = $obj->code_journal;
@@ -3313,6 +3319,21 @@ class BookKeepingLine extends CommonObjectLine
 	 * @var string
 	 */
 	public $date_lettering;
+
+	/**
+	 * @var ?string
+	 */
+	public $gl_lettering_code;
+
+	/**
+	 * @var ?int
+	 */
+	public $gl_lettering_year;
+
+	/**
+	 * @var string
+	 */
+	public $date_lettering_gl;
 
 	/**
 	 * @var int ID
