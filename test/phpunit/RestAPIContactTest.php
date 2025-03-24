@@ -55,7 +55,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result for get on unexisting contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(404, $object['error']['code'], 'Error code is not 404');
@@ -67,7 +67,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
 		print __METHOD__." result for get on an existing contact: ".var_export($result, true)."\n";
 		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, "Parsing of json result must not be null");
 		$this->assertEquals(1, $object['statut']);
@@ -98,7 +98,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 		$result = getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 		//print __METHOD__." Result for creating incomplete contact".var_export($result, true)."\n";
 		//print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 		$this->assertNotNull($object, "Parsing of json result must no be null");
 		$this->assertEquals(400, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
@@ -119,7 +119,7 @@ class RestAPIContactTest extends AbstractRestAPITest
 
 		$result = getURLContent($url, 'POST', $body, 1, $addheaders, array('http', 'https'), 2);
 
-		$this->assertEquals($result['curl_error_no'], '');
+		$this->assertEquals(0, $result['curl_error_no']);
 
 		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
 		$this->assertNotNull($object, "Parsing of json result must not be null");
