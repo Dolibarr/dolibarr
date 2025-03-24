@@ -114,7 +114,7 @@ class BankAccounts extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$account = new Account($this->db);
 				if ($account->fetch($obj->rowid) > 0) {
-					$account->solde = $account->solde(1);  //1=Exclude future operation date 
+					$account->balance = $account->solde(1);  // 1=Exclude future operation date 
 					$list[] = $this->_filterObjectProperties($this->_cleanObjectDatas($account), $properties);
 				}
 			}
