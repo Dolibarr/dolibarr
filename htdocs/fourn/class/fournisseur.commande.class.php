@@ -2864,7 +2864,7 @@ class CommandeFournisseur extends CommonOrder
 			$result = $this->setStatus($user, $newStatus);
 			if ($result > 0) {
 				if ($newStatus == 0) {
-					$sql = 'UPDATE '.$this->db->begin().'commande_fournisseur';
+					$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur';
 					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
 					$sql .= ' WHERE rowid = '.((int) $this->id);
 
