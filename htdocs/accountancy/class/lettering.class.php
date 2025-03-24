@@ -421,7 +421,7 @@ class Lettering extends BookKeeping
 			if (!$error) {
 				$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
 				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
-				$sql .= " lettering_year=YEAR('{$this->db->escape($fiscalYearStart)}')";
+				$sql .= ", lettering_year = YEAR('{$this->db->escape($fiscalYearStart)}')";
 				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
 				$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
 
