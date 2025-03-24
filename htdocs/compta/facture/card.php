@@ -829,7 +829,6 @@ if (empty($reshook)) {
 						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 				}
-
 			}
 		}
 	} elseif ($action == 'confirm_paid' && $confirm == 'yes' && $usercanissuepayment) {
