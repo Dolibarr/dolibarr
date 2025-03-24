@@ -86,9 +86,9 @@ abstract class AbstractRestAPITest extends CommonClassTest
 
 		$method = get_called_class()."::".__FUNCTION__;
 		$test = "API Test Setup - ";
-		$login = 'admin';
-		$password = 'admin';
-		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
+		$login = getenv("DOL_CTI_ADMIN_LOGIN") ? getenv("DOL_CTI_ADMIN_LOGIN") : 'admin';
+		$password = getenv('DOL_CTI_ADMIN_PASSWORD') ? getenv('DOL_CTI_ADMIN_PASSWORD') : 'admin';
+		$url = $this->api_url.'/login?login='.urlencode($login).'&password='.urlencode($password);
 		// Call the API login method to save api_key for this test class.
 		// At first call, if token is not defined a random value is generated and returned.
 		$result = getURLContent($url, 'GET', '', 1, $addheaders, array('http', 'https'), 2);
