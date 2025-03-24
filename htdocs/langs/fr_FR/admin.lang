@@ -2630,3 +2630,6 @@ AvailableWithSomePDFTemplatesOnly=Fonctionnalité non prise en charge sur les an
 SelectAService=Select the kind of service to use
 SelectFeatureToTest=Select the feature to test
 AIModelForFeature=AI model for features (AI service %s)
+WebhookTargetTypeHelp=Bloquant: Si une erreur se produit, un message d'erreur est affiché et l'action est annulée<br>Non bloquant: Si une erreur se produit, le message d'erreur est seulement enregistré dans les logs Dolibarr et l'action est n'est pas annulée
+Blocking=Bloquant
+NoBlocking=Non bloquant

@@ -217,6 +217,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->url = 'http://'.$link->url;
 		}
 		$link->label = GETPOST('label', 'alphanohtml');
+
+		$shareenabled = GETPOST('shareenabled', 'alpha');
+		if ($shareenabled) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$link->share = getRandomPassword(true);
+		} else {
+			$link->share = '';
+		}
 		$res = $link->update($user);
 		if (!$res) {
 			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');

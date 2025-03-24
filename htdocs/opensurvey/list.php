@@ -95,26 +95,10 @@ if (!$user->hasRight('opensurvey', 'read')) {
 
 // Definition of fields for list
 $arrayfields = array();
-// TODO
-/* foreach ($arrayfields as $key => $val) {
-	// If $val['visible']==0, then we never show the field
-	if (!empty($val['visible'])) {
-		$arrayfields['t.'.$key] = array('label' => $val['label'], 'checked' => (($val['visible'] < 0) ? 0 : 1), 'enabled' => $val['enabled'], 'position' => $val['position']);
-	}
-} */
 // Extra fields
-if (isset($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["ef.".$key] = array(
-				'label' => $extrafields->attributes[$object->table_element]['label'][$key],
-				'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position' => $extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
-			);
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -549,7 +533,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 // If no record found
 if ($num == 0) {
 	$colspan = 8;
-	foreach ($arrayfields as $key => $val) {
+	foreach ($arrayfields as $key => $val) {	//
 		if (!empty($val['checked'])) {
 			$colspan++;
 		}

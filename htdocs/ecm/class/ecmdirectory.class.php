@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ class EcmDirectory extends CommonObject
 			$sql .= "fk_user_c";
 			$sql .= ") VALUES (";
 			$sql .= " '".$this->db->escape($this->label)."',";
-			$sql .= " '".$this->db->escape($conf->entity)."',";
+			$sql .= " '".$this->db->escape((string) $conf->entity)."',";
 			$sql .= " ".($this->fk_parent > 0 ? ((int) $this->fk_parent) : "null").",";
 			$sql .= " '".$this->db->escape($this->description)."',";
 			$sql .= " ".((int) $this->cachenbofdoc).",";

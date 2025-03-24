@@ -35,7 +35,9 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string $dolibarr_main_db_pass
+ * @var string 	$dolibarr_main_db_pass
+ * @var string	$dolibarr_main_db_character_set
+ * @var string	$dolibarr_main_db_collation
  */
 
 $langs->load("admin");

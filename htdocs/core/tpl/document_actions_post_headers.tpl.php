@@ -23,7 +23,6 @@
  */
 
 // Following var can be set
-// $permissiontoadd = permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
 // $modulepart  = for download
 // $param       = param to add to download links
 // $moreparam   = param to add to download link for the form_attach_new_file function
@@ -31,12 +30,17 @@
 // $object
 // $filearray
 // $savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
+
 /**
  * @var CommonObject $object
  * @var Form $form
  * @var HookManager $hookmanager
  * @var Translate $langs
+ *
+ * @var string 	$relativepathwithnofile
+ * @var	int		$permisstiontoadd			Permission or not to add a file (can use also $permission) and permission or not to edit file name or crop file (can use also $permtoedit)
  */
+
 // Protection to avoid direct call of template
 if (empty($langs) || !is_object($langs)) {
 	print "Error, template page can't be called as URL";
