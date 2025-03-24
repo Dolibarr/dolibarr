@@ -867,26 +867,22 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script nonce="' . getNonce() . '">
-                        function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
-        		{
+				function initCheckForSelect(mode, name, cssclass) {	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
         			atleastoneselected=0;
-                                jQuery("."+cssclass).each(function( index ) {
+					jQuery("."+cssclass).each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
 
 					console.log("initCheckForSelect mode="+mode+" name="+name+" cssclass="+cssclass+" atleastoneselected="+atleastoneselected);
 
-    	  			if (atleastoneselected || ' . ((int) $alwaysvisible) . ')
-    	  			{
-                                    jQuery("."+name).show();
+    	  			if (atleastoneselected || ' . ((int) $alwaysvisible) . ') {
+						jQuery("."+name).show();
         			    ' . ($selected ? 'if (atleastoneselected) { jQuery("."+name+"select").val("' . $selected . '").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', false); }' : '') . '
         			    ' . ($selected ? 'if (! atleastoneselected) { jQuery("."+name+"select").val("0").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', true); } ' : '') . '
-    	  			}
-    	  			else
-    	  			{
-                                    jQuery("."+name).hide();
-                                    jQuery("."+name+"other").hide();
+    	  			} else {
+						jQuery("."+name).hide();
+						jQuery("."+name+"other").hide();
     	            }
         		}
 
@@ -9605,7 +9601,7 @@ class Form
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '')
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return '';
@@ -9658,7 +9654,9 @@ class Form
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" />';
-				$listoffieldsforselection .= '<label for="checkbox' . $key . '">'.dol_string_nohtmltag($langs->trans($val['label'])) . '</label></li>';
+				$listoffieldsforselection .= '<label for="checkbox' . $key . '">';
+				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
+				$listoffieldsforselection .= '</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
 			}
 		}
@@ -9675,7 +9673,9 @@ class Form
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
-                    <li class="liinputsearch"><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    <li class="liinputsearch">
+						<input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'">
+					</li>
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>
@@ -9683,8 +9683,8 @@ class Form
         </dl>
 
         <script nonce="' . getNonce() . '" type="text/javascript">
-          jQuery(document).ready(function () {
-              $(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]\').on(\'click\', function () {
+			jQuery(document).ready(function () {
+				$(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]\').on("click", function () {
                   console.log("A new field was added/removed, we edit field input[name=formfilteraction]");
 
                   $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\');	// Update field so we know we changed something on selected fields after POST
@@ -9698,16 +9698,25 @@ class Form
                   }
                   // Now, we submit page
                   //$(this).parents(\'form:first\').submit();
-              });
-              $("input.inputsearch_dropdownselectedfields").on("keyup", function() {
-			    var value = $(this).val().toLowerCase();
-			    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
-			      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-			    });
-			  });
+              	});
 
-
-           });
+				$("input.inputsearch_dropdownselectedfields").on("keyup", function() {
+					console.log("keyup on inputsearch_dropdownselectedfields");
+				    var value = $(this).val().toLowerCase();
+				    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
+				      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+				    });
+				});
+		';
+		if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') {
+			$out .= '
+					$(".dropdown dt a").on("click", function () {
+						console.log("Click on dropdown, we set focus to search field");
+		           		setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
+					});';
+		}
+		$out .= '
+			});
         </script>
 
         ';

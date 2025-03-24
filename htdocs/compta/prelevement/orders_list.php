@@ -175,10 +175,12 @@ if ($type == 'bank-transfer') {
 }
 include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
+
 /*
  * View
  */
 
+$form = new Form($db);
 $directdebitorder = new BonPrelevement($db);
 
 $titlekey = "WithdrawalsReceipts";
