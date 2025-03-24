@@ -41,11 +41,25 @@ DocButtonSubmenuDescription=Fill the $url parameter with an array of url in orde
 
 #Tables
 DocTableTitle=Tables
-DocTableMainDescription=
-DocTableBasic=Table
-DocTableBasicDescription=Table description
-DocTableWithFilters=Filters
-DocTableWithFiltersDescription=Filters descriptions
+DocTableMainDescription=Documentation and examples for tables.
+DocTableBasic=Basic usage
+DocTableBasicDescription=Here is a template for creating a basic data table.
+DocTableClassExplain=<b>nooddeven</b>
+DocTableWithFilters=Filters row
+DocTableWithFiltersDescription=You can add a filters row using the following syntax. Your table must be into a form tag. <br>In order to show inputs, you can use the Form Class (see <a href="%s">#Inputs</a>) <br><span class="opacitylow"><i>Look at a list file to see how to use dynamic fields, not functionnal here.</i></span>
+DocTableBeforeFilters=Use a custom line before cols filters
+DocTableBeforeFiltersDescription=You can add a line before filters with this syntax. <br>Don't forget to use listwithfilterbefore class in your data table.
+DocTableCSSClass=Using CSS Classes
+DocTableCSSClassDescription=There are many classes for tables in Dolibarr, below is a non-exhaustive list.
+DocTableTRCSSClassDescription=<b><u>Class for row element:</u></b>
+DocTableTABLECSSClassDescription=<b><u>Class for table element:</u></b>
+DocTableCSSClass_tagtable=<b>tagtable:</b> Use diplay table
+DocTableCSSClass_liste=<b>liste:</b> Prepare the table for a list
+DocTableCSSClass_listwithfilterbefore=<b>listwithfilterbefore:</b> Useful class to hide top border and border radius if elements are placed before filters
+DocTableCSSClass_liste_titre=<b>liste_titre:</b> Used for table headers
+DocTableCSSClass_liste_titre_filter=<b>liste_titre_filter:</b> Used for table filters row
+DocTableCSSClass_liste_total=<b>liste_total:</b> Used for table footers
+DocTableCSSClass_oddeven=<b>oddeven / nooddeven:</b> This class allows you to slightly differentiate the color of the lines of a table (or to hide)
 
 #Progress bars
 DocProgressBarsTitle = Progress bars

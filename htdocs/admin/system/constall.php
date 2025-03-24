@@ -34,9 +34,9 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string 	$conffile
- * @var	string	$dolibarr_main_url_root_alt
- * @var string	$dolibarr_main_document_root_alt
+ * @var string $conffile
+ * @var string $dolibarr_main_document_root_alt
+ * @var string $dolibarr_main_url_root_alt
  */
 
 // Load translation files required by the page

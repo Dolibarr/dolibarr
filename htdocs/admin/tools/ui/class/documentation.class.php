@@ -181,7 +181,9 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#tablesection-basicusage',
-						'DocTableWithFilters' => '#tablesection-withfilters'
+						'DocTableWithFilters' => '#tablesection-withfilters',
+						'DocTableBeforeFilters' => '#tablesection-beforefilters',
+						'DocTableCSSClass' => '#tablesection-cssclasses',
 					),
 				),
 			)
