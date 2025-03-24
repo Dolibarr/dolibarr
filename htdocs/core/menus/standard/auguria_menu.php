@@ -94,8 +94,6 @@ class MenuManager
 	 */
 	public function loadMenu($forcemainmenu = '', $forceleftmenu = '')
 	{
-		global $conf, $user, $langs;
-
 		// We save into session the main menu selected
 		if (GETPOSTISSET("mainmenu")) {
 			$_SESSION["mainmenu"] = GETPOST("mainmenu", 'aZ09');
@@ -149,7 +147,7 @@ class MenuManager
 
 
 	/**
-	 *  Show menu.
+	 *  Output menu on screen.
 	 *  Menu defined in sql tables were stored into $this->tabMenu BEFORE this is called.
 	 *
 	 *	@param	string					$mode	    'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
@@ -335,6 +333,7 @@ class MenuManager
 								}
 							}
 
+							// Add font-awesome (if $val2['level'] == 0, we are on level2
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];
 							} else {

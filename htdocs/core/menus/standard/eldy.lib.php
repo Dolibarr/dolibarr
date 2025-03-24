@@ -58,10 +58,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
-	if (empty($noout)) {
-		print_start_menu_array();
-	}
-
 	global $usemenuhider;
 	$usemenuhider = 1;
 
@@ -467,7 +463,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Add menus
+	// Add menus previously had code declared
 	foreach ($menu_arr as $key => $smenu) {
 		$smenu = (object) $smenu;
 
@@ -495,11 +491,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		}
 	}
 
-	// Show personalized menus
+	// Load menu with top entries of non hardcoded core menu enties and external modules
 	$menuArbo = new Menubase($db, 'eldy');
+	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Set tabMenu with only top entries of non hardcoded core menu enties and external modules
 
-	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Return tabMenu with only top entries
-
+	// Add menu with top entries of non hardcoded core menu enties and external modules
 	$num = count($newTabMenu);
 	for ($i = 0; $i < $num; $i++) {
 		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
@@ -561,9 +557,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Sort on position
 	$menu->liste = dol_sort_array($menu->liste, 'position');
 
+	// If noout is on (for jmobile div menu for example)
+	if ($noout) {
+		return 0;
+	}
+
 	// Output menu entries
+
+	print_start_menu_array();
+
 	// Show logo company
-	if (!getDolGlobalString('MAIN_MENU_INVERT') && empty($noout) && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
@@ -593,16 +597,14 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	}
 
 	//var_dump($menu->liste);
-	if (empty($noout)) {
-		foreach ($menu->liste as $menuval) {
-			print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-			print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
-			print_end_menu_entry($menuval['enabled']);
-		}
+	foreach ($menu->liste as $menuval) {
+		print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
+		print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
+		print_end_menu_entry($menuval['enabled']);
 	}
 
-	$showmode = 1;
-	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		$showmode = 1;
 		print_start_menu_entry('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry($showmode);
 		print_end_menu_array();
