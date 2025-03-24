@@ -18,9 +18,9 @@ use Term::ANSIColor;
 
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
-$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 
+$PUBLISHBETARC="$ENV{'DESTIASSLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
+$PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -69,6 +69,25 @@ if ($SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i)
 {
 	print "Error: Launch the script $PROG.$Extension with its full path from /.\n";
 	print "$PROG.$Extension aborted.\n";
+	sleep 2;
+	exit 1;
+}
+if (! $ENV{"DESTIASSOLOGIN"} || ! $ENV{"DESTISFLOGIN"})
+{
+	print "Error: Missing environment variables.\n";
+	print "You must define the environment variable DESTIASSOLOGIN and DESTISFLOGIN to define your login to connect to the dolibarr foundation server and/or mirrors servers.\n";
+	print "$PROG.$Extension aborted.\n";
+	print "\n";
+	print "You can set them with\n";
+	print "On Linux:\n";
+	print "export DESTIASSOLOGIN='mylogin'; export DESTISFLOGIN='mylogin,project';\n";
+	print "On Windows:\n";
+	print "set DESTIASSOLOGIN=mylogin\n";
+	print "set DESTISFLOGIN=mylogin,project\n";
+	print "\n";
+	print "Example in .bashrc:\n";
+	print "export DESTIASSOLOGIN='mylogin'\n";
+	print "export DESTISFLOGIN='mylogin,project'\n";
 	sleep 2;
 	exit 1;
 }
