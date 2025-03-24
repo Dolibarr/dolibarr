@@ -226,8 +226,8 @@ $arrayfields = array(
 	'f.date_valid' => array('label' => "DateValidation", 'checked' => 0, 'position' => 22),
 	'f.date_lim_reglement' => array('label' => "DateDue", 'checked' => 1, 'position' => 25),
 	'f.date_closing' => array('label' => "DateClosing", 'checked' => 0, 'position' => 30),
-	'p.ref' => array('label' => "ProjectRef", 'langs' => 'projects', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 40),
-	'p.title' => array('label' => "ProjectLabel", 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 41),
+	'p.ref' => array('label' => "ProjectRef", 'langfile' => 'projects', 'checked' => 1, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 40),
+	'p.title' => array('label' => "ProjectLabel", 'langfile' => 'projects', 'checked' => 0, 'enabled' => (!isModEnabled('project') ? 0 : 1), 'position' => 41),
 	's.nom' => array('label' => "ThirdParty", 'checked' => 1, 'position' => 50),
 	's.name_alias' => array('label' => "AliasNameShort", 'checked' => -1, 'position' => 51),
 	's.code_client' => array('label' => "CustomerCodeShort", 'checked' => -1, 'position' => 52),
@@ -631,7 +631,6 @@ $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
-$bankaccountstatic = new Account($db);
 $facturestatic = new Facture($db);
 $formcompany = new FormCompany($db);
 $companystatic = new Societe($db);
