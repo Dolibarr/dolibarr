@@ -711,7 +711,7 @@ function createOrder($authentication, $order)
 		$newobject->ref_ext = $order['ref_ext'];
 		$newobject->date = dol_stringtotime($order['date'], 'dayrfc');
 		// TODO: 'date_due' is not defined in the $order_fields for the WS - verify
-		$newobject->date_lim_reglement = dol_stringtotime($order['date_due'], 'dayrfc');
+		$newobject->date_lim_reglement = dol_stringtotime((string) $order['date_due'], 'dayrfc');
 		$newobject->note_private = $order['note_private'];
 		$newobject->note_public = $order['note_public'];
 		$newobject->statut = Commande::STATUS_DRAFT; // We start with status draft

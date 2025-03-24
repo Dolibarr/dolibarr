@@ -309,7 +309,7 @@ function MoreCategories(moreorless) {
 // LoadProducts
 function LoadProducts(position, issubcat) {
 	console.log("LoadProducts position="+position+" issubcat="+issubcat);
-	var maxproduct = <?php echo($MAXPRODUCT - 2); ?>;
+	var maxproduct = <?php echo (int) ($MAXPRODUCT - 2); ?>;
 
 	if (position=="supplements") {
 		currentcat="supplements";
@@ -346,8 +346,9 @@ function LoadProducts(position, issubcat) {
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
 			$("#prodiv"+ishow).attr("data-rowid",val.rowid);
-			$("#prodiv"+ishow).data("iscat",1);
-			$("#prodiv"+ishow).attr("data-iscat",1);
+			$("#prodiv"+ishow).data("iscat", 1);
+			$("#prodiv"+ishow).attr("data-iscat", 1);
+			$("#prodiv"+ishow).removeClass("divempty");
 			$("#prowatermark"+ishow).show();
 			ishow++;
 		}
@@ -356,16 +357,16 @@ function LoadProducts(position, issubcat) {
 	idata=0; //product data counter
 	var limit = 0;
 	if (maxproduct >= 1) {
-		limit = maxproduct-1;
+		limit = maxproduct - 1;
 	}
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
-		console.log(data);
+		//console.log(data);
 
 		while (ishow < maxproduct) {
 			console.log("ishow"+ishow+" idata="+idata);
-			//console.log(data[idata]);
+			console.log(data[idata]);
 
 			if (typeof (data[idata]) == "undefined") {
 				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
@@ -382,6 +383,9 @@ function LoadProducts(position, issubcat) {
 
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+
+				$("#prodiv"+ishow).data("iscat","0");
+				$("#prodiv"+ishow).attr("data-iscat","0");
 
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 			} else  {
@@ -543,7 +547,7 @@ function ClickProduct(position, qty = 1) {
 	}
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
-	if ($('#prodiv'+position).data('iscat')==1){
+	if ($('#prodiv'+position).data('iscat') == 1){
 		console.log("Click on a category at position "+position);
 		LoadProducts(position, true);
 	}
@@ -1575,8 +1579,9 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 						} ?>">
 	<?php
 	$count = 0;
+
 	while ($count < $MAXPRODUCT) {
-		print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  '; ?>
+		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
 												<?php if ($count == ($MAXPRODUCT - 2)) {
 													?> onclick="MoreProducts('less')" <?php
 												}

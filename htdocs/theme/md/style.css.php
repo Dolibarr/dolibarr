@@ -2160,7 +2160,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 85px; }
+.maxwidthdate  { max-width: 95px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -4984,7 +4984,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
 
 /*
 div.liste_titre {
@@ -8443,12 +8443,37 @@ table.jPicker {
 }
 
 
+
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.ai_dropdown {
+	min-width: 400px !important;
+	padding: 12px;
+	left: inherit !important;
+	top: inherit !important;
+	border-radius: 5px !important;
+}
+.ai_feature {
+	background-color: var(--colorbackgrey);
+	padding: 10px;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	border-radius: 5px;
+}
+
+
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
 @media only screen and (max-width: 767px)
 {
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 
 	#tooltip {

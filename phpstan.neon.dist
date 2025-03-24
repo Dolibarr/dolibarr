@@ -73,6 +73,7 @@ parameters:
 	ignoreErrors:
 		- '#.*phan-var#'
 		- '#^Expression "''…" on a separate line does not do anything\.$#'
+		- '#Empty array passed to foreach#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512
