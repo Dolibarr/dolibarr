@@ -63,6 +63,8 @@
  * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * LICENSE
  * Redistribution and use in source and binary forms, with or without
@@ -354,7 +356,7 @@ class EvalMath
 				if (preg_match("/^([a-z]\w*)\($/", $val, $matches)) { // may be func, or variable w/ implicit multiplication against parentheses...
 					if (in_array($matches[1], $this->fb) or array_key_exists($matches[1], $this->f)) { // it's a func
 						$stack->push($val);
-						$stack->push(1);
+						$stack->push('1');
 						$stack->push('(');
 						$expecting_op = false;
 					} else { // it's a var w/ implicit multiplication

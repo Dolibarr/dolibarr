@@ -150,8 +150,6 @@ function dol_session_rotate($sessionname = '')
 
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 // --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";

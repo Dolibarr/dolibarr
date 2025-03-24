@@ -91,24 +91,37 @@ class FormAI extends Form
 	}
 
 	/**
-	 * Return Html code for AI instruction of message and autofill result
+	 * Return Html code for AI instructions of message and autofill result
 	 *
 	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
 	 * @param	string		$format			Format for output ('', 'html', ...)
 	 * @param   string      $htmlContent    HTML name of WYSIWYG field
-	 * @return 	string      				HTML code to ask AI instruction and autofill result
+	 * @return 	string      				HTML code to ask AI instructions and autofill result
 	 */
-	public function getSectionForAIPrompt($function = 'textgeneration', $format = '', $htmlContent = 'message')
+	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message')
 	{
 		global $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+		$formadmin = new FormAdmin($this->db);
 
 		$langs->load("other");
 
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<div id="ai_input'.$htmlContent.'" class="ai_input'.$htmlContent.' hidden paddingtop paddingbottom">';
-		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
-		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
+		$out = '<!-- getSectionForAIEnhancement -->';
+		$out .= '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">';
+		$out .= '<div id="ai_textgeneration'.$htmlContent.'" class="ai_textgeneration'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+		//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
+		$out .= '<textarea class="centpercent" data-functionai="textgeneration" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
+		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="textgeneration" value="'.$langs->trans('Generate').'"/>';
+		$out .= '</div>';
+		$out .= '<br>';
+
+		$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+		$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
+		$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
+		$out .= '</div>';
+
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
 		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
 		$out .= '</div>';
@@ -120,32 +133,83 @@ class FormAI extends Form
 		$out .= "</div>\n";
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
+				$('#ai_translation".$htmlContent."_select').data('functionai', 'texttranslation')
+
+				$('#ai_instructions".$htmlContent."').keyup(function(){
+					console.log('We type a key up on #ai_instructions".$htmlContent."');
+					if ($(this).val() != '') {
+						$('#generate_button".$htmlContent."').prop('disabled', false);
+					} else {
+						$('#generate_button".$htmlContent."').prop('disabled', true);
+					}
+				});
+
 				// for keydown
 				$('#ai_instructions".$htmlContent."').keydown(function(event) {
-					if (event.keyCode === 13) {
+					if (event.keyCode === 13 && $(this).val() != '') {
+						console.log('We type enter on #ai_instructions".$htmlContent."');
 						event.preventDefault();
 						$('#generate_button".$htmlContent."').click();
 					}
 				});
 
 				$('#generate_button".$htmlContent."').click(function() {
-					console.log('We click on generate_button".$htmlContent." ai button, so we make an ajax on url /ai/ajax/generate_content.php');
+					console.log('We click on #generate_button".$htmlContent."');
+					prepareCallAIGenerator($(this));
+				});
 
-					var instructions = $('#ai_instructions".$htmlContent."').val();
+				$('#ai_translation".$htmlContent."_select').on('change', function() {
+					console.log('We change #ai_translation".$htmlContent."_select with lang '+$(this).val());
+					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
+						prepareCallAIGenerator($(this));
+					}
+				});
+
+				function prepareCallAIGenerator(element) {
+					console.log('We prepare ajax call to AI to url /ai/ajax/generate_content.php function=".dol_escape_js($function)." format=".dol_escape_js($format)."');
+
+					var userprompt = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
+					instructions = '';
 					htmlname = '".$htmlContent."';
 					format = '".dol_escape_js($format)."';
-					functionai = '".dol_escape_js($function)."';
+					functionai = $(element).data('functionai');
+
+					if (functionai == 'texttranslation') {
+						console.log('htmlname='+htmlname);
+						/*
+						if (CKEDITOR.instances) {
+							editorInstance = CKEDITOR.instances[htmlname];
+							if (editorInstance) {
+								texttomodify = editorInstance.getData();
+							}
+						}
+						*/
+						if ($('#'+htmlname).is('div')) {
+							texttomodify = $('#'+htmlname).html();	/* for div */
+						} else {
+							texttomodify = $('#'+htmlname).val();	/* for input or textarea */
+						}
+
+						lang = $('#ai_translation'+htmlname+'_select').val();
+						instructions = 'Translate the following text to ' + lang + ': ' + texttomodify;
+					} else {
+						instructions = userprompt;
+					}
 
 					$('#ai_status_message".$htmlContent."').show();
 					$('.icon-container .loader').show();
+
 					setTimeout(function() {
 						timeoutfinished = 1;
 						$('#ai_status_message".$htmlContent."').hide();
 					}, 30000);
+
+					console.log(instructions);
+
 					callAIGenerator(functionai, instructions, format, htmlname);
-				});
+				}
 			});
 			</script>
 			";
@@ -155,7 +219,7 @@ class FormAI extends Form
 	/**
 	 * Return javascript code for call to AI function callAIGenerator()
 	 *
-	 * @return 	string      				HTML code to ask AI instruction and autofill result
+	 * @return 	string      				HTML code to ask AI instructions and autofill result
 	 */
 	public function getAjaxAICallFunction()
 	{
@@ -228,7 +292,7 @@ class FormAI extends Form
 						console.log('Add response into field \'#'+htmlname+'\': '+response);
 
 						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
-						jQuery('#'+htmlname).html(response);		// If #htmlContent is a div
+						jQuery('#'+htmlname).html(response);	// If #htmlContent is a div
 						//jQuery('#'+htmlname+'preview').val(response);
 
 						if (CKEDITOR.instances) {
@@ -245,7 +309,10 @@ class FormAI extends Form
 
 						// remove readonly
 						$('#ai_instructions'+htmlname).val('');
+						$('#ai_translation'+htmlname+'_select').val('-1');
+						$('#ai_translation'+htmlname+'_select').trigger('change'); ;
 						$('#ai_status_message'+htmlname).hide();
+						$('#ai_dropdown'+htmlname).hide();
 					},
 					error: function(xhr, status, error) {
 						alert(error);
