@@ -3305,6 +3305,11 @@ class BookKeepingLine extends CommonObjectLine
 	public $lettering_code;
 
 	/**
+	 * @var ?int
+	 */
+	public $lettering_year;
+
+	/**
 	 * @var string
 	 */
 	public $date_lettering;
