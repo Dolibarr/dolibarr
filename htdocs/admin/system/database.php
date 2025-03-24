@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Sebastien Di Cintio  	<sdicintio@ressource-toi.org>
  * Copyright (C) 2004       Benoit Mortier       	<benoit.mortier@opensides.be>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,9 +35,9 @@ require '../../main.inc.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var string 	$dolibarr_main_db_pass
- * @var string	$dolibarr_main_db_character_set
- * @var string	$dolibarr_main_db_collation
+ * @var string $dolibarr_main_db_pass
+ * @var string $dolibarr_main_db_collation
+ * @var string $dolibarr_main_db_character_set
  */
 
 $langs->load("admin");
