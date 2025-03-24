@@ -916,6 +916,7 @@ abstract class CommonDocGenerator
 		);
 		foreach ($vat_specs as $vat_key => $vat_spec) {
 			if (property_exists($line, $vat_spec)) {
+				// @phan-suppress-next-line PhanUndeclaredProperty
 				$resarray[$vat_key] = vatrate($line->$vat_spec);
 			}
 		}
