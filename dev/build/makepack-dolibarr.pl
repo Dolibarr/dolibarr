@@ -18,9 +18,9 @@ use Term::ANSIColor;
 
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
-$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 
+$PUBLISHBETARC="$ENV{'DESTIASSLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
+$PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -36,7 +36,7 @@ $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
+"DEB"=>"dpkg,po2debconf",						# need also debhelper
 "FLATPACK"=>"flatpack",
 "EXEDOLIWAMP"=>"ISCC.exe",
 "SNAPSHOT"=>"tar"
@@ -72,6 +72,25 @@ if ($SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i)
 	sleep 2;
 	exit 1;
 }
+if (! $ENV{"DESTIASSOLOGIN"} || ! $ENV{"DESTISFLOGIN"})
+{
+	print "Error: Missing environment variables.\n";
+	print "You must define the environment variable DESTIASSOLOGIN and DESTISFLOGIN to define your login to connect to the dolibarr foundation server and/or mirrors servers.\n";
+	print "$PROG.$Extension aborted.\n";
+	print "\n";
+	print "You can set them with\n";
+	print "On Linux:\n";
+	print "export DESTIASSOLOGIN='mylogin'; export DESTISFLOGIN='mylogin,project';\n";
+	print "On Windows:\n";
+	print "set DESTIASSOLOGIN=mylogin\n";
+	print "set DESTISFLOGIN=mylogin,project\n";
+	print "\n";
+	print "Example in .bashrc:\n";
+	print "export DESTIASSOLOGIN='mylogin'\n";
+	print "export DESTISFLOGIN='mylogin,project'\n";
+	sleep 2;
+	exit 1;
+}
 if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
 	print "Error: Missing environment variables.\n";
@@ -85,8 +104,9 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 	print "set DESTIBETARC=c:/tmp\n";
 	print "set DESTISTABLE=c:/tmp\n";
 	print "\n";
-	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
-	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
+	print "Example in .bashrc:\n";
+	print "export DESTIBETARC='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/lastbuild'\n";
+	print "export DESTISTABLE='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/stable'\n";
 	sleep 2;
 	exit 1;
 }

@@ -349,7 +349,7 @@ ALTER TABLE llx_societe_commerciaux ADD COLUMN fk_c_type_contact_code varchar(32
 -- VPGSQL8.2 DROP INDEX uk_societe_commerciaux;
 ALTER TABLE llx_societe_commerciaux ADD UNIQUE INDEX uk_societe_commerciaux_c_type_contact (fk_soc, fk_user, fk_c_type_contact_code);
 ALTER TABLE llx_c_type_contact ADD INDEX idx_c_type_contact_code (code);
---Removed, not unique. ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
+-- Removed, not unique. ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_c_type_contact_code FOREIGN KEY (fk_c_type_contact_code)  REFERENCES llx_c_type_contact(code);
 ALTER TABLE llx_societe_commerciaux DROP FOREIGN KEY fk_societe_commerciaux_fk_c_type_contact_code;
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_soc FOREIGN KEY (fk_soc)  REFERENCES llx_societe(rowid);
 ALTER TABLE llx_societe_commerciaux ADD CONSTRAINT fk_societe_commerciaux_fk_user FOREIGN KEY (fk_user)  REFERENCES llx_user(rowid);
@@ -363,7 +363,7 @@ ALTER TABLE llx_ecm_files DROP column keyword;
 
 ALTER TABLE llx_c_type_container ADD COLUMN typecontainer varchar(10) DEFAULT 'page';
 UPDATE llx_c_type_container SET typecontainer  = 'container' WHERE code IN ('banner', 'other', 'menu');
---UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
+-- UPDATE llx_c_type_container SET typecontainer  = 'page' WHERE code IN ('page', 'blogpost');
 UPDATE llx_c_type_container SET position = 10  WHERE code IN ('page');
 UPDATE llx_c_type_container SET position = 20  WHERE code IN ('blogpost');
 
@@ -413,7 +413,7 @@ ALTER TABLE llx_hrm_evaluation ADD COLUMN entity INTEGER DEFAULT 1 NOT NULL;
 -- Error SQL DB_ERROR_1170 BLOB/TEXT column 'url' used in key specification without a key length, so we remove completely the unique key
 ALTER TABLE llx_menu DROP INDEX idx_menu_uk_menu;
 ALTER TABLE llx_menu MODIFY COLUMN url TEXT NOT NULL;
---ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, entity, url);
+-- ALTER TABLE llx_menu ADD UNIQUE INDEX idx_menu_uk_menu (menu_handler, fk_menu, position, entity, url);
 
 UPDATE llx_c_units SET short_label = 'mn' WHERE short_label = 'i' AND code = 'MI';
 

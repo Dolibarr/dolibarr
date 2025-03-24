@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       JF FERRY             <jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -660,7 +660,7 @@ function updateContact($authentication, $contact)
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 		$object = new Contact($db);
-		$result = $object->fetch($contact['id'], null, $contact['ref_ext']);
+		$result = $object->fetch((int) $contact['id'], null, $contact['ref_ext']);
 
 		if (!empty($object->id)) {
 			$objectfound = true;
@@ -707,7 +707,7 @@ function updateContact($authentication, $contact)
 
 			$db->begin();
 
-			$result = $object->update($contact['id'], $fuser);
+			$result = $object->update((int) $contact['id'], $fuser);
 			if ($result <= 0) {
 				$error++;
 			}

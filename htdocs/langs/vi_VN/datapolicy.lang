@@ -17,8 +17,9 @@ Module4100Name = Chính sách bảo mật dữ liệu
 Module4100Desc = Mô-đun quản lý quyền riêng tư dữ liệu (Tuân thủ GDPR)
 # Administration page
 datapolicySetup = Thiết lập chính sách bảo mật dữ liệu mô-đun
-Deletion = Xóa dữ liệu
-datapolicySetupPage = Tùy thuộc vào luật pháp của quốc gia bạn (Ví dụ <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Điều 5</a> của GDPR), dữ liệu cá nhân phải được lưu giữ trong một khoảng thời gian không vượt quá khoảng thời gian dữ liệu cần thiết cho mục đích thu thập dữ liệu, ngoại trừ mục đích lưu trữ.<br>Việc xóa sẽ được thực hiện tự động sau một khoảng thời gian nhất định mà không có sự kiện (khoảng thời gian mà bạn sẽ chỉ ra dưới đây).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s tháng
 ONE_YEAR = 1 năm
 NB_YEARS = %s năm
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Khách hàng tiềm năng
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Cũng không phải khách hàng tiềm năng/Cũng không phải khách hàng
 DATAPOLICY_CONTACT_FOURNISSEUR = Nhà cung cấp
 DATAPOLICY_ADHERENT = Thành viên
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Bạn có thể gửi email GDPR đến tất cả các địa chỉ liên hệ có liên quan của mình (những người chưa nhận được email và bạn chưa đăng ký bất kỳ điều gì về thỏa thuận GDPR của họ). Để thực hiện việc này, hãy sử dụng nút sau.
 SendAgreement = Gửi email
 AllAgreementSend = Tất cả các email đã được gửi
 TXTLINKDATAPOLICYACCEPT = Văn bản cho liên kết "thỏa thuận"
 TXTLINKDATAPOLICYREFUSE = Văn bản cho liên kết "bất đồng"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Xử lý dữ liệu cá nhân
 DATAPOLICY_consentement = Đã có sự đồng ý cho việc xử lý dữ liệu cá nhân

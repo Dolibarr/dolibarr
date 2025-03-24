@@ -398,7 +398,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<th colspan="2">&nbsp;</th>';
 		print '</tr>';
 
-		print '<tr>';
+		print '<tr class="oddeven">';
 		print '<td>'.$langs->trans("DefaultSkin").'</td>';
 		print '<td>' . getDolGlobalString('MAIN_THEME').'</td>';
 		print '<td class="nowrap left"><input id="check_MAIN_THEME" name="check_MAIN_THEME"'.($edit ? '' : ' disabled').' type="checkbox" '.($selected_theme ? " checked" : "").'> <label for="check_MAIN_THEME">'.$langs->trans("UsePersonalValue").'</label></td>';
@@ -410,19 +410,19 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 			$dirthemestring .= '"'.$dirtheme.'" ';
 		}
 
-		print '<tr class="liste_titre"><th class="titlefieldmiddle">';
+		print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 		print $form->textwithpicto($langs->trans("DefaultSkin"), $langs->trans("ThemeDir").' : '.$dirthemestring);
-		print '</th>';
-		print '<th class="right">';
+		print '</td>';
+		print '<td class="right">';
 		$url = 'https://www.dolistore.com/9-skins';
 		print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 		print $langs->trans('DownloadMoreSkins');
 		print img_picto('', 'globe', 'class="paddingleft"');
 		print '</a>';
-		print '</th></tr>';
+		print '</td></tr>';
 	}
 
-	print '<tr><td colspan="'.$colspan.'" class="center">';
+	print '<tr class="oddeven"><td colspan="'.$colspan.'" class="center">';
 
 	if (getDolGlobalString('MAIN_FORCETHEME')) {
 		$langs->load("errors");

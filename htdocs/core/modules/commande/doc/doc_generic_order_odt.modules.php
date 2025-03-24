@@ -38,6 +38,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 
 /**
  *	Class to build documents using ODF templates generator
+ *
+ *  This files is called by the "$obj = new $classname($this->db);" found into
+ *  the commobject.class.php->commonGenerateDocument() called by $object->generateDocument()
  */
 class doc_generic_order_odt extends ModelePDFCommandes
 {
@@ -396,11 +399,18 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -423,6 +433,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				if ($foundtagforlines) {
 					$linenumber = 0;
 					foreach ($object->lines as $line) {
+						/** @var OrderLine $line */
 						$linenumber++;
 						$tmparray = $this->get_substitutionarray_lines($line, $outputlangs, $linenumber);
 						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");

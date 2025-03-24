@@ -249,7 +249,7 @@ if ($result > 0) {
 
 	// Add notification form
 
-	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.urlencode((string) ($id)).'" method="POST">';
+	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.urlencode((string) $socid).'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="page_y" value="">';
 	if ($action == 'create') {
@@ -276,7 +276,7 @@ if ($result > 0) {
 		dol_print_error($db);
 	}
 
-	$param = '';
+	$param = "&socid=".$socid;
 
 	$newcardbutton = '';
 	$newcardbutton .= dolGetButtonTitle($langs->trans('New'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $user->hasRight("societe", "creer"));
@@ -289,12 +289,6 @@ if ($result > 0) {
 	// List of active notifications
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 	print_barre_liste($titlelist, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, (empty($nbtotalofrecords) ? -1 : $nbtotalofrecords), 'email', 0, $newcardbutton, '', $limitforsubscription, 0, 0, 1);
-
-	print '<form action="'.$_SERVER["PHP_SELF"].'?socid='.$socid.'" method="post">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="add">';
-
-	$param = "&socid=".$socid;
 
 	// Line with titles
 	print '<div class="div-table-responsive-no-min">';

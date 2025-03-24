@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,11 @@ if (file_exists($conffile)) {
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  */
+
+'
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
 
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
@@ -111,6 +116,7 @@ print 'Option clean_menus is '.(GETPOST('clean_menus', 'alpha') ? GETPOST('clean
 print 'Option clean_orphelin_dir is '.(GETPOST('clean_orphelin_dir', 'alpha') ? GETPOST('clean_orphelin_dir', 'alpha') : 'undefined').'<br>'."\n";
 print 'Option clean_product_stock_batch is '.(GETPOST('clean_product_stock_batch', 'alpha') ? GETPOST('clean_product_stock_batch', 'alpha') : 'undefined').'<br>'."\n";
 print 'Option clean_perm_table is '.(GETPOST('clean_perm_table', 'alpha') ? GETPOST('clean_perm_table', 'alpha') : 'undefined').'<br>'."\n";
+print 'Option clean_ecm_files_table is '.(GETPOST('clean_ecm_files_table', 'alpha') ? GETPOST('clean_ecm_files_table', 'alpha') : 'undefined').'<br>'."\n";
 print 'Option repair_link_dispatch_lines_supplier_order_lines, is '.(GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') ? GETPOST('repair_link_dispatch_lines_supplier_order_lines', 'alpha') : 'undefined').'<br>'."\n";
 // Init data
 print 'Option set_empty_time_spent_amount is '.(GETPOST('set_empty_time_spent_amount', 'alpha') ? GETPOST('set_empty_time_spent_amount', 'alpha') : 'undefined').'<br>'."\n";
@@ -205,7 +211,7 @@ $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 $oneoptionset = 0;
 $oneoptionset = (GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos', 'alpha') || GETPOST('clean_linked_elements', 'alpha') || GETPOST('clean_menus', 'alpha')
 	|| GETPOST('clean_orphelin_dir', 'alpha') || GETPOST('clean_product_stock_batch', 'alpha') || GETPOST('set_empty_time_spent_amount', 'alpha') || GETPOST('rebuild_product_thumbs', 'alpha')
-	|| GETPOST('clean_perm_table', 'alpha')
+	|| GETPOST('clean_perm_table', 'alpha') || GETPOST('clean_ecm_files_table', 'alpha')
 	|| GETPOST('force_disable_of_modules_not_found', 'alpha')
 	|| GETPOST('force_utf8_on_tables', 'alpha') || GETPOST('force_utf8mb4_on_tables', 'alpha') || GETPOST('force_collation_from_conf_on_tables', 'alpha')
 	|| GETPOST('rebuild_sequences', 'alpha') || GETPOST('recalculateinvoicetotal', 'alpha'));
@@ -857,6 +863,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
+		$object_instance = null;
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -953,6 +960,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 	}
 }
 
+$methodtofix = '';
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$methodtofix = GETPOST('methodtofix', 'alpha') ? GETPOST('methodtofix', 'alpha') : 'updatestock';
@@ -1294,6 +1302,59 @@ if ($ok && GETPOST('clean_perm_table', 'alpha')) {
 }
 
 
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+if ($ok && GETPOST('clean_ecm_files_table', 'alpha')) {
+	print '<tr><td colspan="2"><br>*** Clean table ecm_files from lines of entries whose physical files does not exists anymore (emplemented for entity 1 only)</td></tr>';
+
+	$MAXTODELETE = 100;
+
+	$sql = "SELECT rowid, filename, filepath, entity from ".MAIN_DB_PREFIX."ecm_files";
+	$sql .= " WHERE entity = 1";
+	$sql .= " ORDER BY rowid ASC";
+
+	$nbfile = 0;
+	$nbfiletodelete = 0;
+
+	$resql = $db->query($sql);
+	if ($resql) {
+		$num = $db->num_rows($resql);
+		if ($num) {
+			$i = 0;
+			while ($i < $num) {
+				$obj = $db->fetch_object($resql);
+				if ($obj->rowid > 0) {
+					$filetocheck = DOL_DATA_ROOT.'/'.$obj->filepath.'/'.$obj->filename;
+					$nbfile++;
+					if (!dol_is_file($filetocheck) && !dol_is_file($filetocheck.'.noexe')) {
+						$nbfiletodelete++;
+						if ($nbfiletodelete <= $MAXTODELETE) {
+							print '<tr><td>Found line with id '.$obj->rowid.', entity '.$obj->entity.', file "'.$filetocheck.'" to delete';
+							if (GETPOST('clean_ecm_files_table', 'alpha') == 'confirmed') {
+								$sqldelete = "DELETE FROM ".MAIN_DB_PREFIX."ecm_files WHERE rowid = ".((int) $obj->rowid);
+								$resqldelete = $db->query($sqldelete);
+								if (!$resqldelete) {
+									dol_print_error($db);
+								}
+								print ' - deleted';
+							}
+							print '</td></tr>';
+						} else {
+							break;
+						}
+					}
+				}
+				$i++;
+			}
+		}
+		if ($nbfiletodelete > $MAXTODELETE) {
+			print '<tr><td>There is more than '.$MAXTODELETE.' invalid entries into ecm_files index table (among '.$nbfile.' analyzed) with no valid physical files. Run the page several time to process all of them.</td></tr>';
+		} else {
+			print '<tr><td>Nb of entries processed into ecm_files index table: '.$nbfile.', number of invalid record: '.$nbfiletodelete.'</td></tr>';
+		}
+	} else {
+		dol_print_error($db);
+	}
+}
 
 // force utf8 on tables
 if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {

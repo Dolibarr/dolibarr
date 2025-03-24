@@ -1,17 +1,17 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015-2020 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2020      Tobias Sekan         <tobias.sekan@startmail.com>
- * Copyright (C) 2020      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024      Rafael San José      <rsanjose@alxarafe.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2005  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2015  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2015-2020  Juanjo Menent	        <jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	    <jfefe@aternatik.fr>
+ * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2020       Tobias Sekan            <tobias.sekan@startmail.com>
+ * Copyright (C) 2020       Josep Lluís Amador      <joseplluis@lliuretic.cat>
+ * Copyright (C) 2021-2025  Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024       Rafael San José         <rsanjose@alxarafe.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 		$sql .= " AND f.fk_soc = ".((int) $socid);
 	}
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = f.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
@@ -312,7 +312,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 		$sql .= " AND ff.fk_soc = ".((int) $socid);
 	}
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = ff.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 	// Add where from hooks
@@ -433,7 +433,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 	$langs->load("boxes");
 	$donationstatic = new Don($db);
 
-	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status";
+	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut as status, d.fk_soc as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql .= " WHERE d.entity IN (".getEntity('donation').")";
 	// Add where from hooks
@@ -484,9 +484,18 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 
-				$label = $donationstatic->getFullName($langs);
-				if ($obj->societe) {
-					$label .= ($label ? ' - ' : '').$obj->societe;
+				$label = '';
+				if (!empty($obj->socid)) {
+					$companystatic = new Societe($db);
+					$ret = $companystatic->fetch($obj->socid);
+					if ($ret > 0) {
+						$label = $companystatic->getNomUrl(1);
+					}
+				} else {
+					$label = $donationstatic->getFullName($langs);
+					if ($obj->societe) {
+						$label .= ($label ? ' - ' : '').$obj->societe;
+					}
 				}
 
 				print '<tr class="oddeven tdoverflowmax100">';
@@ -635,7 +644,7 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 	$sql .= " AND c.fk_statut = ".((int) Commande::STATUS_CLOSED);
 	$sql .= " AND c.facture = 0";
 	// Filter on sale representative
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
 	}
 

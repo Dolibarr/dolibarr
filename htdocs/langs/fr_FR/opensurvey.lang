@@ -62,3 +62,4 @@ EmailSomeoneVoted=%s a rempli une ligne.\nVous pouvez trouver le sondage via le 
 ShowSurvey=Afficher le sondage
 UserMustBeSameThanUserUsedToVote=Vous devez avoir voté et utiliser le même nom d'utilisateur que celui utilisé pour voter, pour poster un commentaire
 ListOfOpenSurveys=Liste des enquêtes ouvertes
+AddTheVote=Cliquez pour ajouter le vote

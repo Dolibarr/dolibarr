@@ -8,7 +8,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -328,7 +328,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							}
 
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
 							print '</td>';
 
 							print '</tr>';
@@ -456,7 +456,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
 								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -490,7 +490,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+	print '<td align="center" width="60"></td>';
 	print '<td width="80">&nbsp;</td>';
 	print "</tr>\n";
 

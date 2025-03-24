@@ -1,11 +1,12 @@
 <?php
+
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012 Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2024 Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021 	   Gauthier VERDOL 	    <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024	   MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
@@ -310,7 +311,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -400,7 +401,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						if (!empty($object->tracking_url)) {
 							if ($object->shipping_method_id > 0) {
 								// Get code using getLabelFromKey
-								$code = $outputlangs->getLabelFromKey($this->db, $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
+								$code = $outputlangs->getLabelFromKey($this->db, (string) $object->shipping_method_id, 'c_shipment_mode', 'rowid', 'code');
 								$label = '';
 								if ($object->tracking_url != $object->tracking_number) {
 									$label .= $outputlangs->trans("LinkToTrackYourPackage")."<br>";
@@ -492,7 +493,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 					}
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -556,7 +557,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 
 						$pageposafter = $pdf->getPage();
@@ -593,7 +594,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description or photo were moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -635,7 +636,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 					// Qty
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->writeHTMLCell($this->posxwarehousesource - $this->posxqty + 2, 3, $this->posxqty - 1, $curY, $object->lines[$i]->qty, 0, 0, false, true, 'C');
+					$pdf->writeHTMLCell($this->posxwarehousesource - $this->posxqty + 2, 3, $this->posxqty - 1, $curY, (string) $object->lines[$i]->qty, 0, 0, false, true, 'C');
 					//$pdf->MultiCell(($this->posxwarehousesource - $this->posxqty), 3, $weighttxt.(($weighttxt && $voltxt)?'<br>':'').$voltxt,'','C');
 
 					// Warehouse source
@@ -693,7 +694,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -774,12 +775,12 @@ class pdf_eagle extends ModelePDFStockTransfer
 	 *
 	 *	@param	TCPDF			$pdf            Object PDF
 	 *	@param  StockTransfer	$object         Object StockTransfer
-	 *	@param  int				$deja_regle     Amount already paid
-	 *	@param	int				$posy			Start Position
+	 *	@param  float			$already_paid   Amount already paid / not used
+	 *	@param	float			$posy			Start Position
 	 *	@param	Translate		$outputlangs	Object langs
-	 *	@return int								Position for suite
+	 *	@return float							Position for suite
 	 */
-	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
+	protected function _tableau_tot(&$pdf, $object, $already_paid, $posy, $outputlangs)
 	{
 		// phpcs:enable
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -842,32 +843,32 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 		$pdf->SetFillColor(255, 255, 255);
 		$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', 1);
+		$pdf->MultiCell($col2x - $col1x, $tab2_hl, $outputlangs->transnoentities("Total"), 0, 'L', true);
 
 		if (!getDolGlobalString('STOCKTRANSFER_PDF_HIDE_ORDERED')) {
 			$pdf->SetXY($this->posxqty, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxwarehousesource - $this->posxqty, $tab2_hl, $totalQty, 0, 'C', 1);
+			$pdf->MultiCell($this->posxwarehousesource - $this->posxqty, $tab2_hl, (string) $totalQty, 0, 'C', true);
 		}
 
 		if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {
 			$pdf->SetXY($this->posxpuht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', 1);
+			$pdf->MultiCell($this->posxtotalht - $this->posxpuht, $tab2_hl, '', 0, 'C', true);
 
 			$pdf->SetXY($this->posxtotalht, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', 1);
+			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxtotalht, $tab2_hl, price($object->total_ht, 0, $outputlangs), 0, 'C', true);
 		}
 
 		if (!getDolGlobalString('STOCKTRANSFER_PDF_HIDE_WEIGHT_AND_VOLUME')) {
 			// Total Weight
 			if ($totalWeighttoshow) {
 				$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell(($this->posxqty - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', 1);
+				$pdf->MultiCell(($this->posxqty - $this->posxweightvol), $tab2_hl, $totalWeighttoshow, 0, 'C', true);
 
 				$index++;
 			}
 			if ($totalVolumetoshow) {
 				$pdf->SetXY($this->posxweightvol, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell(($this->posxqty - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', 1);
+				$pdf->MultiCell(($this->posxqty - $this->posxweightvol), $tab2_hl, $totalVolumetoshow, 0, 'C', true);
 
 				$index++;
 			}
@@ -1167,6 +1168,8 @@ class pdf_eagle extends ModelePDFStockTransfer
 
 			if (!empty($thirdparty)) {
 				$carac_emetteur_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			} else {
+				$carac_emetteur_name = '';
 			}
 
 			if ($usecontact) {

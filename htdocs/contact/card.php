@@ -11,7 +11,7 @@
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2019		Josep Lluís Amador			<joseplluis@lliuretic.cat>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -329,7 +329,7 @@ if (empty($reshook)) {
 
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('societe', 'contact', 'supprimer')) {
 		$result = $object->fetch($id);
-		$object->oldcopy = clone $object;
+		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$result = $object->delete($user);
 		if ($result > 0) {
@@ -413,7 +413,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;   // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->socid = $socid;
 			$object->lastname = (string) GETPOST("lastname", 'alpha');
@@ -537,7 +537,7 @@ if (empty($reshook)) {
 
 	// Update extrafields
 	if ($action == 'update_extras' && $user->hasRight('societe', 'contact', 'creer')) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);   // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
@@ -865,7 +865,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
 				// Default value is in MAILING_CONTACT_DEFAULT_BULK_STATUS that you can modify in setup of module emailing
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS')), 1, false, (int) (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2));
 				print '</td>';
 				print '</tr>';
 			}
@@ -924,16 +924,15 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<table class="border centpercent">';
 
 			// Date To Birth
-			print '<tr><td><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td>';
+			print '<tr><td class="titlefieldcreate"><label for="birthday">'.$langs->trans("DateOfBirth").'</label></td><td colspan="3">';
 			$form = new Form($db);
 			if ($object->birthday) {
 				print $form->selectDate($object->birthday, 'birthday', 0, 0, 0, "perso", 1, 0);
 			} else {
 				print $form->selectDate('', 'birthday', 0, 0, 1, "perso", 1, 0);
 			}
-			print '</td>';
 
-			print '<td><label for="birthday_alert">'.$langs->trans("Alert").'</label>: ';
+			print ' &nbsp; <label for="birthday_alert">'.$langs->trans("Alert").'</label> ';
 			if (!empty($object->birthday_alert)) {
 				print '<input type="checkbox" name="birthday_alert" id="birthday_alert" checked>';
 			} else {
@@ -1106,7 +1105,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			print '<input type="text" name="fax" id="fax" class="maxwidth200" maxlength="80" value="'.(GETPOSTISSET('phone_fax') ? GETPOST('phone_fax', 'alpha') : $object->fax).'"></td></tr>';
 
 			// EMail
-			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (getDolGlobalString('SOCIETE_EMAIL_MANDATORY'))).'</td>';
+			print '<tr><td>'.$form->editfieldkey('EMail', 'email', GETPOST('email', 'alpha'), $object, 0, 'string', '', (int) (getDolGlobalInt('SOCIETE_EMAIL_MANDATORY'))).'</td>';
 			print '<td>';
 			print img_picto('', 'object_email', 'class="pictofixedwidth"');
 			print '<input type="text" name="email" id="email" class="maxwidth100onsmartphone quatrevingtpercent" value="'.(GETPOSTISSET('email') ? GETPOST('email', 'alpha') : $object->email).'"></td>';
@@ -1153,7 +1152,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '<td class="noemail"><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
 				print '<td>';
 				$useempty = (getDolGlobalInt('MAILING_CONTACT_DEFAULT_BULK_STATUS') == 2);
-				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : $object->no_email), 1, false, $useempty);
+				print $form->selectyesno('no_email', (GETPOSTISSET("no_email") ? GETPOSTINT("no_email") : $object->no_email), 1, false, (int) $useempty);
 				print '</td>';
 				print '</tr>';
 			}
@@ -1441,7 +1440,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 				print '</tr></table>';
 				print '</td><td>';
 				if ($action == 'editlevel') {
-					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
+					$formcompany->formProspectContactLevel($_SERVER['PHP_SELF'].'?id='.$object->id, (int) $object->fk_prospectlevel, 'prospect_contact_level_id', 1);
 				} else {
 					print $object->getLibProspLevel();
 				}

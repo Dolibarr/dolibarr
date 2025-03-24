@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) 2025	Laurent Destailleur	<eldy@users.sourceforge.net>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ CREATE TABLE llx_webhook_target (
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	ref varchar(128) NOT NULL,
 	label varchar(255),
+	type integer DEFAULT 0 NOT NULL,
 	description text,
 	note_public text,
 	note_private text,
@@ -31,7 +32,6 @@ CREATE TABLE llx_webhook_target (
 	url varchar(255) NOT NULL,
 	connection_method varchar(255) NULL,	-- to store the way to authenticate to the webhook
 	connection_data varchar(255) NULL, 		-- to store the data to use to authenticate to the webhook
-	trigger_codes text NULL,				-- list of selected trigger that must call the webhook
-	trigger_stack text  					-- json object to store trigger to be sent manually
+	trigger_codes text NULL					-- list of selected trigger that must call the webhook
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

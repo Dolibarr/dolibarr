@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2011 Regis Houssin
  * Copyright (C) 2016      Jonathan TISSEAU     <jonathan.tisseau@86dev.fr>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -890,7 +890,6 @@ class SMTPs
 	 *
 	 * @param string $_path Path to the sendmail executable
 	 * @return boolean
-	 *
 	 */
 	public function setMailPath($_path)
 	{
@@ -1086,7 +1085,6 @@ class SMTPs
 	 *
 	 * @param string $_strTransEncodeType Content-Transfer-Encoding
 	 * @return void
-	 *
 	 */
 	public function setTransEncodeType($_strTransEncodeType)
 	{
@@ -1230,7 +1228,6 @@ class SMTPs
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
 	 * @return void
-	 *
 	 */
 	private function _buildAddrList($_type, $_addrList)
 	{
@@ -1574,8 +1571,11 @@ class SMTPs
 		if ($this->getInReplyTo()) {
 			$_header .= "In-Reply-To: ".$this->getInReplyTo()."\r\n";
 		}
-		if ($this->getReferences()) {
-			$_header .= "References: ".$this->getReferences()."\r\n";
+		$references = $this->getReferences();
+		if ($references) {
+			// List of message ids:
+			// Example "References: <id1@domain2.com> <id2@domain.com>
+			$_header .= "References: ".implode(' ', $references)."\r\n";
 		}
 
 		return $_header;
@@ -2297,5 +2297,4 @@ class SMTPs
  * Revision 1.1  2005/03/01 19:22:49  walter
  *  - initial commit
  *  - basic shell with some comments
- *
  */

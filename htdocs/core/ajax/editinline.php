@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -72,7 +73,7 @@ top_httphead();
 if (!empty($action) && $action === 'updatedElementContent' && $usercanmodify && !empty($content) && !empty($element_id) && !empty($website_ref) && !empty($page_id)) {
 	// Page object
 	$objectpage = new WebsitePage($db);
-	$res = $objectpage->fetch($page_id);
+	$res = $objectpage->fetch((int) $page_id);
 	if (!$res) {
 		print "Cannot find page with ID = " . $page_id . ".";
 		exit;

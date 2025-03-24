@@ -59,6 +59,11 @@ if ($mode == 'searchkey') {
 	$transvalue = GETPOST('transvalue', 'restricthtml');
 }
 
+$entity = $conf->entity;
+if (isModEnabled('multicompany') && !$user->entity) {
+	$entity = GETPOST('entity', 'int');
+}
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -128,10 +133,19 @@ if ($action == 'update') {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NewTranslationStringToShow")), null, 'errors');
 		$error++;
 	}
+	if ($entity == '') {
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Entity")), null, 'errors');
+		$error++;
+	}
 	if (!$error) {
 		$db->begin();
 
-		$sql = "UPDATE ".MAIN_DB_PREFIX."overwrite_trans set transkey = '".$db->escape($transkey)."', transvalue = '".$db->escape($transvalue)."' WHERE rowid = ".(GETPOSTINT('rowid'));
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "overwrite_trans set transkey = '" . $db->escape(
+				$transkey
+			) . "', transvalue = '" . $db->escape($transvalue) . "', entity = '" . $db->escape(
+				$entity
+			) . "' WHERE rowid = " . ((int) GETPOST('rowid', 'int'));
+
 		$result = $db->query($sql);
 		if ($result) {
 			$db->commit();
@@ -368,7 +382,9 @@ if ($mode == 'overwrite') {
 	print_liste_field_titre("Language_en_US_es_MX_etc", $_SERVER["PHP_SELF"], 'lang,transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("TranslationKey", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("NewTranslationStringToShow", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
-	//if (isModEnabled('multicompany') && !$user->entity) print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'entity,transkey', '', $param, '', $sortfield, $sortorder);
+	if (isModEnabled('multicompany') && !$user->entity) {
+		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'Entity', '', $param, '', $sortfield, $sortorder);
+	}
 	print '<td align="center"></td>';
 	print "</tr>\n";
 
@@ -376,20 +392,35 @@ if ($mode == 'overwrite') {
 	// Line to add new record
 	print "\n";
 
-	print '<tr class="oddeven"><td>';
+	print '<tr class="oddeven">';
+
+	// Lang
+	print '<td>';
 	print $formadmin->select_language(GETPOST('langcode'), 'langcode', 0, array(), 1, 0, $disablededit ? 1 : 0, 'maxwidth250', 1);
 	print '</td>'."\n";
+
+	// Trans key
 	print '<td>';
 	print '<input type="text" class="flat maxwidthonsmartphone"'.$disablededit.' name="transkey" id="transkey" value="'.(!empty($transkey) ? $transkey : "").'">';
-	print '</td><td>';
+	print '</td>';
+
+	// Value
+	print '<td>';
 	print '<input type="text" class="quatrevingtpercent"'.$disablededit.' name="transvalue" id="transvalue" value="'.(!empty($transvalue) ? $transvalue : "").'">';
 	print '</td>';
+
+	// Multi company
+	if (isModEnabled('multicompany') && !$user->entity) {
+		print '<td>';
+		print '<input type="text" class="quatrevingtpercent"' . $disablededit . ' name="entity" id="entity" value="' . (!empty($entity) ? $entity : "") . '">';
+		print '</td>';
+	}
+
 	print '<td class="center">';
 	print '<input type="hidden" name="entity" value="'.$conf->entity.'">';
 	print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("Add").'" name="add" title="'.dol_escape_htmltag($langs->trans("YouMustEnableTranslationOverwriteBefore")).'">';
 	print "</td>\n";
 	print '</tr>';
-
 
 	// Show constants
 	$sql = "SELECT rowid, entity, lang, transkey, transvalue";
@@ -411,7 +442,10 @@ if ($mode == 'overwrite') {
 
 			print '<tr class="oddeven">';
 
+			// Lang
 			print '<td>'.dol_escape_htmltag($obj->lang).'</td>'."\n";
+
+			// Trans key
 			print '<td>';
 			if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
 				print '<input type="text" class="quatrevingtpercent" name="transkey" value="'.dol_escape_htmltag($obj->transkey).'">';
@@ -440,6 +474,19 @@ if ($mode == 'overwrite') {
 				print '</span>';
 			}
 			print '</td>';
+
+			// Entity limit to superadmin
+			if (isModEnabled('multicompany') && empty($user->entity)) {
+				print '<td>';
+				if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
+					print '<input type="text" class="flat" size="1" name="entity" value="' . ((int) $obj->entity) . '">';
+				} else {
+					print dol_escape_htmltag($obj->entity);
+				}
+				print '</td>';
+			} else {
+				print '<input type="hidden" name="const[' . $i . '][entity]" value="' . ((int) $obj->entity) . '">';
+			}
 
 			print '<td class="center">';
 			if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {

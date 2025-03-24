@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ class MailingTargets // This can't be abstract as it is used for some method
 		}
 
 		if ($this->tooltip && is_object($form)) {
-			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 1);
+			$s .= ' '.$form->textwithpicto('', $langs->trans($this->tooltip), 1, 'help');
 		}
 		return $s;
 	}

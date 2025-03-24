@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2016-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -229,7 +229,7 @@ if ($action == 'create') {
 	print '<td class="fieldrequired">'.$langs->trans('AccountToDebit').'</td>';
 	print '<td>';
 	print img_picto('', 'bank_account', 'class="pictofixedwidth"');
-	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opend bank account list
+	$form->select_comptes(GETPOSTINT("accountid") ? GETPOSTINT("accountid") : $tva->accountid, "accountid", 0, '', 1, '', 0, 'maxwidth500 widthcentpercentminusx'); // Show opened bank account list
 	print '</td></tr>';
 
 	// Number

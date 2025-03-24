@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin  <regis.houssin@inodbox.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ if ($id > 0 || !empty($ref)) {
 // Retrieve First Task ID of Project if withprojet is on to allow project prev next to work
 if (!empty($project_ref) && !empty($withproject)) {
 	if ($projectstatic->fetch(0, $project_ref) > 0) {
-		$tasksarray = $object->getTasksArray(0, 0, $projectstatic->id, $socid, 0);
+		$tasksarray = $object->getTasksArray(null, null, $projectstatic->id, $socid, 0);
 		if (count($tasksarray) > 0) {
 			$id = $tasksarray[0]->id;
 			$object->fetch($id);
@@ -202,17 +203,6 @@ if ($object->id > 0) {
 			print '</td></tr>';
 		}
 
-		// Visibility
-		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-		if ($projectstatic->public) {
-			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-			print $langs->trans('SharedProject');
-		} else {
-			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-			print $langs->trans('PrivateProject');
-		}
-		print '</td></tr>';
-
 		// Budget
 		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 		if (isset($projectstatic->budget_amount) && strcmp($projectstatic->budget_amount, '')) {
@@ -232,9 +222,23 @@ if ($object->id > 0) {
 		}
 		print '</td></tr>';
 
+		// Visibility
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+		if ($projectstatic->public) {
+			print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+			print $langs->trans('SharedProject');
+		} else {
+			print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+			print $langs->trans('PrivateProject');
+		}
+		print '</td></tr>';
+
 		// Other attributes
 		$cols = 2;
-		//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		$savobject = $object;
+		$object = $projectstatic;
+		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+		$object = $savobject;
 
 		print '</table>';
 
@@ -244,16 +248,21 @@ if ($object->id > 0) {
 
 		print '<table class="border centpercent tableforfield">';
 
-		// Description
-		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-		print nl2br($projectstatic->description);
-		print '</td></tr>';
-
 		// Categories
 		if (isModEnabled('category')) {
 			print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 			print $form->showCategories($projectstatic->id, 'project', 1);
 			print "</td></tr>";
+		}
+
+		// Description
+		print '<tr><td class="titlefield'.($projectstatic->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+		if ($projectstatic->description) {
+			print '<tr><td class="nottitleforfield" colspan="2">';
+			print '<div class="longmessagecut">';
+			print dolPrintHTML($projectstatic->description);
+			print '</div>';
+			print '</td></tr>';
 		}
 
 		print '</table>';

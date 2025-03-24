@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,11 +54,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
  */
+
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
 $action = GETPOST('action', 'aZ09');
@@ -125,6 +129,8 @@ $errmsg = '';
 /**
  * Show header for booking
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -133,7 +139,7 @@ $errmsg = '';
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -190,7 +196,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  * Actions
  */
 
-if ($action == 'add' ) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+if ($action == 'add') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$idcontact = 0;
 	$calendar = $object;
@@ -272,7 +278,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 				'id' => $contact->id,
 				'mandatory' => 0,
 				'answer_status' => 0,
-				'transparency' =>0,
+				'transparency' => 0,
 			]
 		];
 		$actioncomm->ip = getUserRemoteIP();
@@ -303,6 +309,14 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
  */
 
 $form = new Form($db);
+
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+// TODO Replace DOL_URL_ROOT with $urlwithroot ?
+
 
 llxHeaderVierge('BookingCalendar');
 

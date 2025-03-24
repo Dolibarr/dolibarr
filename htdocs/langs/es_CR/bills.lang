@@ -118,6 +118,7 @@ LatestSupplierTemplateInvoices=Últimas  %s plantillas   de facturas de proveedo
 LastCustomersBills=Últimas %s facturas de clientes
 LastSuppliersBills=Últimas%s facturas de proveedores
 AllCustomerTemplateInvoices=Todas las plantillas de facturas
+AllSupplierTemplateInvoices=Todas las plantillas de facturas
 DraftBills=Facturas en borrador
 CustomersDraftInvoices=Facturas de clientes en borrador
 SuppliersDraftInvoices=Facturas de proveedores en borrador

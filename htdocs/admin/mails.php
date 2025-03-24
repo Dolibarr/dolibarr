@@ -5,7 +5,7 @@
  * Copyright (C) 2016		Jonathan TISSEAU			<jonathan.tisseau@86dev.fr>
  * Copyright (C) 2023		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -382,6 +382,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameters").'</td><td></td></tr>';
 
@@ -471,10 +472,13 @@ if ($action == 'edit') {
 		$vartosmtpstype = 'MAIN_MAIL_SMTPS_AUTH_TYPE';
 		if (!isModEnabled('multicompany') || ($user->admin && !$user->entity)) {
 			// Note: Default value for MAIN_MAIL_SMTPS_AUTH_TYPE if not defined is 'LOGIN' (but login/pass may be empty and they won't be provided in such a case)
+			print '<input type="radio" id="radio_none" name="'.$vartosmtpstype.'" value="NONE"'.(getDolGlobalString($vartosmtpstype) == 'NONE' ? ' checked' : '').'> ';
+			print '<label for="radio_none" >'.$langs->trans("UseAUTHNONE").'</label>';
+			print '<br>';
 			print '<input type="radio" id="radio_pw" name="'.$vartosmtpstype.'" value="LOGIN"'.(getDolGlobalString($vartosmtpstype, 'LOGIN') == 'LOGIN' ? ' checked' : '').'> ';
 			print '<label for="radio_pw" >'.$langs->trans("UseAUTHLOGIN").'</label>';
 			print '<br>';
-			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype, 'PLAIN') == 'PLAIN' ? ' checked' : '').'> ';
+			print '<input type="radio" id="radio_plain" name="'.$vartosmtpstype.'" value="PLAIN"'.(getDolGlobalString($vartosmtpstype) == 'PLAIN' ? ' checked' : '').'> ';
 			print '<label for="radio_plain" >'.$langs->trans("UseAUTHPLAIN").'</label>';
 			print '<br>';
 			print '<input type="radio" id="radio_oauth" name="'.$vartosmtpstype.'" value="XOAUTH2"'.(getDolGlobalString($vartosmtpstype) == 'XOAUTH2' ? ' checked' : '').(isModEnabled('oauth') ? '' : ' disabled').'> ';
@@ -613,11 +617,11 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	print '</table>';
-
+	print '</div>';
 
 	print '<br>';
 
-
+	print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("OtherOptions").'</td><td></td></tr>';
 
@@ -664,6 +668,7 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	print '</table>';
+	print '</div>';
 
 	print dol_get_fiche_end();
 
@@ -731,7 +736,9 @@ if ($action == 'edit') {
 		if (in_array(getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail'), array('smtps', 'swiftmailer'))) {
 			$authtype = getDolGlobalString('MAIN_MAIL_SMTPS_AUTH_TYPE', 'LOGIN');
 			$text = '';
-			if ($authtype === "LOGIN") {
+			if ($authtype === "NONE") {
+				$text = $langs->trans("None");
+			} elseif ($authtype === "LOGIN") {
 				$text = $langs->trans("UseAUTHLOGIN");
 			} elseif ($authtype === "PLAIN") {
 				$text = $langs->trans("UseAUTHPLAIN");
@@ -868,7 +875,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
-				print img_warning($langs->trans("ErrorBadEMail"));
+				print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
 			}
@@ -892,7 +899,7 @@ if ($action == 'edit') {
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.getDolGlobalString('MAIN_MAIL_FORCE_SENDTO');
 		if (getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')) {
 			if (!isValidEmail(getDolGlobalString('MAIN_MAIL_FORCE_SENDTO'))) {
-				print img_warning($langs->trans("ErrorBadEMail"));
+				print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_FORCE_SENDTO')));
 			} else {
 				print img_warning($langs->trans("RecipientEmailsWillBeReplacedWithThisValue"));
 			}
@@ -910,7 +917,7 @@ if ($action == 'edit') {
 	if (!getDolGlobalString('MAIN_MAIL_EMAIL_FROM')) {
 		print img_warning($langs->trans("Mandatory"));
 	} elseif (!isValidEmail(getDolGlobalString('MAIN_MAIL_EMAIL_FROM'))) {
-		print img_warning($langs->trans("ErrorBadEMail"));
+		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_EMAIL_FROM')));
 	}
 	print '</td></tr>';
 
@@ -944,7 +951,7 @@ if ($action == 'edit') {
 	} elseif (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') === 'company') {
 		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
 	} else {
-		$id = preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
+		$id = (int) preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
 		if ($id > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
 			$emailsenderprofile = new EmailSenderProfile($db);
@@ -958,7 +965,7 @@ if ($action == 'edit') {
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.(getDolGlobalString('MAIN_MAIL_ERRORS_TO'));
 	if (getDolGlobalString('MAIN_MAIL_ERRORS_TO') && !isValidEmail(getDolGlobalString('MAIN_MAIL_ERRORS_TO'))) {
-		print img_warning($langs->trans("ErrorBadEMail"));
+		print img_warning($langs->trans("ErrorBadEMail", getDolGlobalString('MAIN_MAIL_ERRORS_TO')));
 	}
 	print '</td></tr>';
 
@@ -1210,7 +1217,7 @@ if ($action == 'edit') {
 		// References
 		if (!empty($user->admin)) {
 			print '<br><br>';
-			print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+			print '<span class="opacitymedium wordwrap small">'.$langs->trans("EMailsWillHaveMessageID").': ';
 			print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
 			print '</span>';
 		}

@@ -4,7 +4,7 @@
  * Copyright (C) 2021      Thibault FOUCART     <support@ptibogxiv.net>
  * Copyright (C) 2022      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -269,9 +269,9 @@ if (isModEnabled("bank")) {
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 		if ($stripeacc) {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION'), "stripe_account" => $stripeacc));
 		} else {
-			$readers = \Stripe\Terminal\Reader::all('', array("location" => getDolGlobalString('STRIPE_LOCATION')));
+			$readers = \Stripe\Terminal\Reader::all(null, array("location" => getDolGlobalString('STRIPE_LOCATION')));
 		}
 
 		$reader = array();
@@ -323,7 +323,7 @@ if (isModEnabled('stock')) {
 	print '</td></tr>';
 
 
-	$disabled = getDolGlobalString('CASHDESK_NO_DECREASE_STOCK'.$terminal);
+	$disabled = getDolGlobalInt('CASHDESK_NO_DECREASE_STOCK'.$terminal);
 
 
 	print '<tr class="oddeven"><td>';
@@ -364,7 +364,7 @@ if (isModEnabled('project')) {
 	print img_picto('', 'project', 'class="pictofixedwidth"');
 	// select_projects($socid = -1, $selected = '', $htmlname = 'projectid', $maxlength = 16, $option_only = 0, $show_empty = 1, $discard_closed = 0, $forcefocus = 0, $disabled = 0, $mode = 0, $filterkey = '', $nooutput = 0, $forceaddid = 0, $morecss = '', $htmlid = '', $morefilter = '')
 	$projectid = getDolGlobalInt('CASHDESK_ID_PROJECT'.$terminaltouse);
-	print $formproject->select_projects(-1, $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
+	print $formproject->select_projects(-1, (string) $projectid, 'projectid', 0, 0, 1, 1, 0, 0, 0, '', 1, 1, 'maxwidth500 widthcentpercentminusxx');
 	print '</td></tr>';
 }
 

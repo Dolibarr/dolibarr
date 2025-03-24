@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Juanjo Menent <jmenent@2byte.es>
  * Copyright (C) 2014       Marcos García <marcosgdf@gmail.com>
  * Copyright (C) 2017       Charlene Benke <cf.benke@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@ $langs->load("donations");
 
 $total = 0;
 $ilink = 0;
+$lastObjectLink = null;
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
@@ -47,9 +48,10 @@ foreach ($linkedObjectBlock as $key => $objectlink) {
 	print '<td class="right">';
 	$total += $objectlink->total_ht;
 	echo price($objectlink->total_ht);
+	$lastObjectLink = $objectlink;
 }
 print '</td>';
-print '<td class="right">'.$objectlink->getLibStatut(3).'</td>';
+print '<td class="right">'.(is_object($lastObjectLink) ? $lastObjectLink->getLibStatut(3) : '').'</td>';
 print '</tr>';
 
 if (count($linkedObjectBlock) > 1) {

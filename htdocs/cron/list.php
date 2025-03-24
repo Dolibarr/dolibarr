@@ -3,7 +3,7 @@
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2021	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -580,7 +580,7 @@ if ($num > 0) {
 		print '<td class="minwidth150">';
 		if (!empty($object->label)) {
 			$object->ref = $langs->trans($object->label);
-			print '<div class="small twolinesmax minwidth150 maxwidth250 classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
+			print '<div class="small twolinesmax lineheightsmall minwidth150 maxwidth250 classfortooltip" title="'.dol_escape_htmltag($langs->trans($object->label), 0, 0).'">';
 			print $object->getNomUrl(0, '', 1);
 			print '</div>';
 			$object->ref = $obj->rowid;
@@ -616,6 +616,9 @@ if ($num > 0) {
 			$texttoshow .= $langs->trans('CronCommand').': '.dol_trunc($obj->command);
 			$texttoshow .= '<br>'.$langs->trans('CronArgs').': '.$obj->params;
 			$texttoshow .= '<br>'.$langs->trans('Comment').': '.$langs->trans($obj->note);
+		} else {
+			$texttoshow = '';
+			$texttoshow = '';
 		}
 		print '<span class="classfortooltip" title="'.dol_escape_htmltag($texttoshow, 1, 1).'">'.$text.'</a>';
 		print '</td>';
@@ -665,7 +668,7 @@ if ($num > 0) {
 		$datefromto = (empty($datelastrun) ? '' : dol_print_date($datelastrun, 'dayhoursec', 'tzserver')).' - '.(empty($datelastresult) ? '' : dol_print_date($datelastresult, 'dayhoursec', 'tzserver'));
 
 		// Date start last run
-		print '<td class="center" title="'.dol_escape_htmltag($datefromto).'">';
+		print '<td class="center lineheightsmall" title="'.dol_escape_htmltag($datefromto).'">';
 		if (!empty($datelastrun)) {
 			print dol_print_date($datelastrun, 'dayhoursec', 'tzserver');
 		}
@@ -693,14 +696,14 @@ if ($num > 0) {
 		// Output of last run
 		print '<td class="small minwidth150">';
 		if (!empty($obj->lastoutput)) {
-			print '<div class="twolinesmax classfortooltip" title="'.dol_escape_htmltag($obj->lastoutput, 1, 1).'">';
+			print '<div class="twolinesmax lineheightsmall classfortooltip" title="'.dol_escape_htmltag($obj->lastoutput, 1, 1).'">';
 			print dol_trunc(dolGetFirstLineOfText($obj->lastoutput, 2), 100);
 			print '</div>';
 		}
 		print '</td>';
 
 		// Next run date
-		print '<td class="center">';
+		print '<td class="center lineheightsmall">';
 		if (!empty($obj->datenextrun)) {
 			$datenextrun = $db->jdate($obj->datenextrun);
 			if (empty($obj->status)) {

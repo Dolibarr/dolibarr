@@ -3,7 +3,7 @@
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015-2016  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ foreach ($session_var as $var) {
 // On initialise également les autres variables
 $cocheplus = '';
 $cochemail = '';
+$champdatefin = 0;
 
 // Jump to correct page
 if (!empty($creation_sondage_date) || !empty($creation_sondage_autre)) {
@@ -181,6 +182,7 @@ if ($_SESSION["mailsonde"]) {
 
 print '<input type="checkbox" id="mailsonde" name="mailsonde" '.$cochemail.'> <label for="mailsonde">'.$langs->trans("ToReceiveEMailForEachVote").'</label><br>'."\n";
 
+$allow_comments = '';
 if ($_SESSION['allow_comments']) {
 	$allow_comments = 'checked';
 }
@@ -189,6 +191,7 @@ if (GETPOSTISSET('allow_comments')) {
 }
 print '<input type="checkbox" id="allow_comments" name="allow_comments" '.$allow_comments.'"> <label for="allow_comments">'.$langs->trans('CanComment').'</label><br>'."\n";
 
+$allow_spy = '';
 if ($_SESSION['allow_spy']) {
 	$allow_spy = 'checked';
 }
