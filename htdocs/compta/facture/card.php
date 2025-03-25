@@ -2760,7 +2760,7 @@ if (empty($reshook)) {
 		// Invoice situation
 		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 			$previousprogress = $line->get_allprev_progress($line->fk_facture);
-			$fullprogress = price2num(GETPOST('progress', 'alpha'), 2);
+			$fullprogress = (int) price2num(GETPOST('progress', 'alpha'), 2);
 
 			if ($fullprogress < $previousprogress) {
 				$error++;
@@ -2891,7 +2891,7 @@ if (empty($reshook)) {
 					$percent = $line->get_prev_progress($object->id);
 				}
 				if ((float) $all_progress < (float) $percent) {
-					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("CantBeLessThanMinPercent");
+					$mesg = $langs->trans("Line").' '.$line->rang.' : '.$langs->trans("test");
 					setEventMessages($mesg, null, 'warnings');
 					$result = -1;
 				} else {
