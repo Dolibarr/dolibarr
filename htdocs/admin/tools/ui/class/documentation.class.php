@@ -53,6 +53,9 @@ class Documentation
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $baseUrl = 'admin/tools/ui';
 
 	/**

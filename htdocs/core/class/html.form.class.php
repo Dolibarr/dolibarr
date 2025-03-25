@@ -12251,7 +12251,7 @@ class Form
 			$TCompiledAttr[] = $key . '="' . $value . '"';    // $value has been escaped by the dolPrintHTMLForAttribute... just before
 		}
 
-		$compiledAttributes = empty($TCompiledAttr) ? '' : implode(' ', $TCompiledAttr);
+		$compiledAttributes = implode(' ', $TCompiledAttr);
 
 
 		return '<div class="search-tool-container"><input '.$compiledAttributes.'></div>';

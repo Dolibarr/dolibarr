@@ -47,7 +47,7 @@ $documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css']);
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
 $documentation->view = array('Components','Icons');
-$form = new form($db);
+$form = new Form($db);
 
 
 $displayMode = GETPOST('displayMode') == 'kanban' ?  'kanban' : 'icon-only';
