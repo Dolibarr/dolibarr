@@ -405,6 +405,7 @@ class Odf
 
 		while (strlen($tempHtml) > 0) {
 			// Check if the string includes a html tag
+			$matches = array();
 			if (preg_match_all(self::FIND_TAGS_REGEX, $tempHtml, $matches)) {
 				$tagOffset = strpos($tempHtml, $matches[0][0]);
 				// Check if the string starts with the html tag
@@ -417,6 +418,7 @@ class Odf
 					$tempHtml = substr($tempHtml, $tagOffset);
 				}
 				// Extract the attribute data from the html tag
+				$explodedAttributes = array();
 				preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;\#]*")?)+/', $matches[2][0], $explodedAttributes);
 				$explodedAttributes = array_filter($explodedAttributes[0]);
 				$attributes = array();
@@ -527,10 +529,11 @@ class Odf
 	 *
 	 * @param string $key name of the variable within the template
 	 * @param string $value path to the picture
+	 * @param float $ratio   Ratio for image
 	 * @throws OdfException
 	 * @return odf
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, float $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -539,8 +542,8 @@ class Odf
 			throw new OdfException("Invalid image");
 		}
 		list ($width, $height) = $size;
-		$width *= self::PIXEL_TO_CM;
-		$height *= self::PIXEL_TO_CM;
+		$width *= self::PIXEL_TO_CM * $ratio;
+		$height *= self::PIXEL_TO_CM * $ratio;
 		$xml = <<<IMG
 			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="aschar" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
 IMG;
@@ -832,7 +835,10 @@ IMG;
 	public function exportAsAttachedFile($name = "")
 	{
 		$this->_save();
-		if (headers_sent($filename, $linenum)) {
+
+		$filename = '';
+		$linenum = 0;
+		if (headers_sent($filename, $linenum)) {	// this fills $filename and $linenum variables
 			throw new OdfException("headers already sent ($filename at $linenum)");
 		}
 
@@ -863,7 +869,7 @@ IMG;
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
-		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+		$execmethod = (getDolGlobalString('MAIN_EXEC_USE_POPEN') ? 2 : 1);	// 1 or 2
 		// Method 1 sometimes hang the server.
 
 

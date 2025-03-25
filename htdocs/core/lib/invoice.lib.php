@@ -927,9 +927,9 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$filename = dol_sanitizeFileName($obj->ref);
 		$filedir = $conf->propal->multidir_output[$obj->entity].'/'.$filename;
 
-		$result .= '<tr class="nowrap">';
+		$result .= '<tr class="oddeven">';
 
-		$result .= '<td class="oddeven">';
+		$result .= '<td class="nowrap">';
 		$result .= '<table class="nobordernopadding">';
 		$result .= '<tr class="nocellnopadd">';
 
@@ -942,7 +942,7 @@ function getCustomerInvoiceLatestEditTable($maxCount = 5, $socid = 0)
 		$result .= '</td>';
 
 		$result .= '<td class="tdoverflowmax150">'.$companystatic->getNomUrl(1, 'customer').'</td>';
-		$result .= '<td>'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
+		$result .= '<td title="'.dol_print_date($db->jdate($obj->datec), 'day').'">'.dol_print_date($db->jdate($obj->datec), 'day').'</td>';
 		$result .= '<td class="right amount">'.price($obj->total_ttc).'</td>';
 
 		// Load amount of existing payment of invoice (needed for complete status)
@@ -1207,7 +1207,7 @@ function getCustomerInvoiceUnpaidOpenTable($maxCount = 500, $socid = 0)
 					print '<td class="nowrap tdoverflowmax100">';
 					print $societestatic->getNomUrl(1, 'customer');
 					print '</td>';
-					print '<td class="right">';
+					print '<td class="right" title="'.dol_print_date($db->jdate($obj->datelimite), 'day').'">';
 					print dol_print_date($db->jdate($obj->datelimite), 'day');
 					if ($tmpinvoice->hasDelay()) {
 						print img_warning($langs->trans("Late"));

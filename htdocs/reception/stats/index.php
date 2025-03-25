@@ -43,8 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height');
 
+$hookmanager->initHooks(array('receptionstats', 'globalcard'));
+
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+}
 
 $nowyear = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
 $year = GETPOSTINT('year') > 0 ? GETPOSTINT('year') : $nowyear;

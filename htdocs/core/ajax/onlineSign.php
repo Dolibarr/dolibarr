@@ -152,6 +152,7 @@ if ($action == "importSignature") {
 
 				if (preg_match('/\.pdf/i', $last_main_doc_file)) {
 					$ref_pdf = pathinfo($last_main_doc_file, PATHINFO_FILENAME); // Retrieves the name of external or internal PDF
+					$ref_pdf = preg_replace('/_signed-(\d+)/', '', $ref_pdf);
 
 					$newpdffilename = $upload_dir . $ref_pdf . "_signed-" . $date . ".pdf";
 					$sourcefile = $upload_dir . $ref_pdf . ".pdf";
@@ -183,6 +184,8 @@ if ($action == "importSignature") {
 							$param['online_sign_name'] = $online_sign_name;
 							$param['pathtoimage'] = $upload_dir . $filename;
 
+							$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
+
 							$s = array();    // Array with size of each page. Example array(w'=>210, 'h'=>297);
 							for ($i = 1; $i < ($pagecount + 1); $i++) {
 								try {
@@ -190,9 +193,18 @@ if ($action == "importSignature") {
 									$s = $pdf->getTemplatesize($tppl);
 									$pdf->AddPage($s['h'] > $s['w'] ? 'P' : 'L');
 									$pdf->useTemplate($tppl);
-									$propalsignonspecificpage = getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE");
 									if ($propalsignonspecificpage < 0) {
 										$propalsignonspecificpage = $pagecount - abs($propalsignonspecificpage);
+									}
+
+									if (empty($propalsignonspecificpage)) {
+										// Now we get the metadata keywords from the $sourcefile PDF (by parsing the binary PDF file) and use it to extract
+										// the page x in PAGESIGN=x into $propalsignonspecificpage
+										$keywords = pdfExtractMetadata($sourcefile, 'Keywords');
+										$reg = array();
+										if (preg_match('/PAGESIGN=(\d+)/', $keywords, $reg)) {
+											$propalsignonspecificpage = (int) $reg[1];
+										}
 									}
 
 									if (getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") || $propalsignonspecificpage == $i) {
@@ -224,10 +236,9 @@ if ($action == "importSignature") {
 								}
 							}
 
-							if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !getDolGlobalInt("PROPAL_SIGNATURE_ON_SPECIFIC_PAGE")) {
+							if (!getDolGlobalString("PROPAL_SIGNATURE_ON_ALL_PAGES") && !$propalsignonspecificpage) {
+								// We do not found specific instruction or page for the signature, so we add it now we are on the last page.
 								// A signature image file is 720 x 180 (ratio 1/4) but we use only the size into PDF
-								// TODO Get position of box from PDF template
-
 								if (getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART")) {
 									$param['xforimgstart'] = getDolGlobalString("PROPAL_SIGNATURE_XFORIMGSTART");
 								} else {

@@ -19,8 +19,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	text-align: center;
 	padding: 10px;
 	margin: 0 5px;
-	background: #e9e9e9;
-	border: 1px solid #ccc;
+	background: var(--colorbackgrey);
 	border-radius: 5px;
 	cursor: pointer;
 	height: 60px;
