@@ -50,7 +50,6 @@ DocTableTitle=Tables
 DocTableMainDescription=Documentation and examples for tables.
 DocTableBasic=Basic usage
 DocTableBasicDescription=Here is a template for creating a basic data table.
-DocTableClassExplain=<b>nooddeven</b>
 DocTableWithFilters=Filters row
 DocTableWithFiltersDescription=You can add a filters row using the following syntax. Your table must be into a form tag. <br>In order to show inputs, you can use the Form Class (see <a href="%s">#Inputs</a>) <br><span class="opacitylow"><i>Look at a list file to see how to use dynamic fields, not functionnal here.</i></span>
 DocTableBeforeFilters=Use a custom line before cols filters
@@ -131,6 +130,10 @@ DocContributeStep2Description=The various menus (sidebar, summary) and the bread
 DocContributeAddMenuEntry=<b><u>Here is an example to add a menu entry in "Components" by the setMenu() function:</u></b>
 DocContributeStep3=Breadcrumb
 DocContributeStep3Description=In order to correctly configure the breadcrumbs of your page, you must correctly fill $documentation->view in your view. <br><b>You must precise all levels of your page.</b> Let's take the previous example, we added MyComponent in the component section.
+DocExampleError=Example error message
+DocExampleGreen=Example green/success message
+DocExampleInfo=Example info message
+DocExampleWarning=Example warning message
 
 #Template
 DocMyPageTitle=My page title
