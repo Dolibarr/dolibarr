@@ -259,7 +259,7 @@ if (empty($conf->stripeconnect->enabled)) {
 					\Stripe\Stripe::setApiKey(getDolGlobalString('STRIPE_TEST_SECRET_KEY'));
 					$endpoint = \Stripe\WebhookEndpoint::retrieve(getDolGlobalString('STRIPE_TEST_WEBHOOK_ID'));
 					$endpoint->enabled_events = $stripearrayofwebhookevents;
-					if (GETPOST('webhook', 'alpha') == getDolGlobalSting('STRIPE_TEST_WEBHOOK_ID')) {
+					if (GETPOST('webhook', 'alpha') == getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
 						if (!GETPOST('status', 'alpha')) {
 							$endpoint->disabled = true;
 						} else {
@@ -327,7 +327,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY') && getDolGlobalString('STRIPE_LIVE_SECRET_KEY') && getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
-			if (utf8_check(getdolGlobalString('STRIPE_TEST_SECRET_KEY'))) {
+			if (utf8_check(getDolGlobalString('STRIPE_TEST_SECRET_KEY'))) {
 				try {
 					\Stripe\Stripe::setApiKey(getDolGlobalString('STRIPE_LIVE_SECRET_KEY'));
 					$endpoint = \Stripe\WebhookEndpoint::retrieve(getDolglobalString('STRIPE_LIVE_WEBHOOK_ID'));

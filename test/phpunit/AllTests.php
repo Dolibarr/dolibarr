@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       test/phpunit/AllTest.php
+ *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
