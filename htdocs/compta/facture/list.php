@@ -2476,7 +2476,7 @@ if ($num > 0) {
 			// Channel
 			if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
 				print '<td>';
-				$form->formInputReason($_SERVER['PHP_SELF'], $obj->fk_input_reason, 'none', '');
+				$form->formInputReason($_SERVER['PHP_SELF'], (string) $obj->fk_input_reason, 'none');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

@@ -4103,7 +4103,7 @@ if ($action == 'create') {
 		// Source / Channel - What trigger creation
 		print '<tr><td>'.$langs->trans('Source').'</td><td>';
 		print img_picto('', 'question', 'class="pictofixedwidth"');
-		$form->selectInputReason($inputReasonId, 'input_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		$form->selectInputReason((string) $inputReasonId, 'input_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Project
@@ -4927,12 +4927,12 @@ if ($action == 'create') {
 
 		// Source reason (why we have an invoice)
 		print '<tr><td>';
-		print $form->editfieldkey('Source', 'input_reason', '', $object, $usercancreate);
+		print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate);
 		print '</td><td class="valuefield">';
 		if ($action == 'editinput_reason') {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'input_reason_id', 1);
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'input_reason_id', 1);
 		} else {
-			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, $object->demand_reason_id, 'none');
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'none');
 		}
 		print '</td></tr>';
 
