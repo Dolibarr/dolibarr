@@ -360,7 +360,7 @@ class Facture extends CommonInvoice
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
-		'fk_input_reason' =>array('type'=>'integer', 'label'=>'Source', 'enabled'=>1, 'visible'=>-1, 'position'=>220),
+		'fk_input_reason' => array('type' => 'integer', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 220),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
 		'situation_cycle_ref' => array('type' => 'smallint(6)', 'label' => 'Situation cycle ref', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 230),
 		'situation_counter' => array('type' => 'smallint(6)', 'label' => 'Situation counter', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 235),
