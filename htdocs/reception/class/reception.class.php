@@ -381,6 +381,7 @@ class Reception extends CommonObject
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
 		$sql .= " WHERE e.entity IN (".getEntity('reception').")";
+		$sql .= " AND el.sourcetype = 'order_supplier'";
 		if ($id) {
 			$sql .= " AND e.rowid = ".((int) $id);
 		}
