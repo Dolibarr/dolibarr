@@ -106,6 +106,3 @@ $documentation->showSidebar(); ?>
 // Output close body + html
 $documentation->docFooter();
 ?>
-
-
-blockmenu
