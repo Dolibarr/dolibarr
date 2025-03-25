@@ -544,7 +544,7 @@ class modCategorie extends DolibarrModules
 			$this->exportTagLinks(
 				$r,
 				'supplier_invoice',
-				'FactureFournisseur',
+				'invoice_supplier',
 				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_invoice"))',
 				['fournisseur', 'facture', 'export'],
 				[
