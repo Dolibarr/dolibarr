@@ -159,7 +159,7 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][4] = 'ignore_price_min_advance';
 		$r++;
 
-		$this->rights[$r][0] = 40; // id de la permission
+		$this->rights[$r][0] = 37; // id de la permission
 		$this->rights[$r][1] = 'Read supplier prices'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
