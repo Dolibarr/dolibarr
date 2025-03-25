@@ -786,7 +786,7 @@ class modCategorie extends DolibarrModules
 				$r,
 				'supplier_invoice',
 				'/fourn/class/fournisseur.facture.class.php',
-				'FactureFournisseur',
+				'invoice_supplier',
 				'FactureFournisseur'
 			);
 		}
