@@ -274,6 +274,7 @@ Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 Reconcilable=Reconcilable
+Centralized=Centralizing account
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
