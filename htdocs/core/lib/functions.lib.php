@@ -11939,7 +11939,14 @@ function dolExplodeKeepIfQuotes($input)
 		$matches[2],
 		$matches[3]
 	);
-	return array_values(array_filter($result, static fn($val) => $val !== ''));
+	return array_values(array_filter($result,
+		/**
+		 * Filter out empty strings from the result array.
+		 *
+		 * @param string $val The value to check.
+		 * @return bool True if the value is not an empty string.
+		 */
+		static fn($val) => $val !== ''));
 }
 
 
