@@ -962,6 +962,7 @@ class ContratLigne extends CommonObjectLine
 		}
 		$sql .= " fk_user_ouverture = ".((int) $this->fk_user_ouverture).",";
 		$sql .= " date_cloture = null,";
+		$sql .= " fk_user_cloture = null,";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
 		$sql .= " WHERE rowid = ".((int) $this->id)." AND (statut = ".ContratLigne::STATUS_INITIAL." OR statut = ".ContratLigne::STATUS_CLOSED.")";
 
