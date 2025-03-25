@@ -83,17 +83,17 @@ $documentation->showSidebar(); ?>
 		if (!empty($indexMenu)) {
 			foreach ($indexMenu as $keyMenu => $infosMenu) {
 				print '<div class="doclinks-section">';
-					print '<h2 class="doclinks-title">'.$langs->trans($keyMenu).'</h2>';
-					print '<div class="doclinks-wrapper flex-fix" style="justify-content: flex-start;">';
-					if (!empty($infosMenu['submenu'])) {
-						foreach ($infosMenu['submenu'] as $keySubmenu => $infosSubmenu) {
-							print '<a href="'.$infosSubmenu['url'].'" class="doc-link size-small">';
-								print '<div class="link-icon"><span class="'.$infosSubmenu['icon'].'"></span></div>';
-								print '<div class="link-title">'.$langs->trans($keySubmenu).'</div>';
-							print '</a>';
-						}
+				print '<h2 class="doclinks-title">'.$langs->trans($keyMenu).'</h2>';
+				print '<div class="doclinks-wrapper flex-fix" style="justify-content: flex-start;">';
+				if (!empty($infosMenu['submenu'])) {
+					foreach ($infosMenu['submenu'] as $keySubmenu => $infosSubmenu) {
+						print '<a href="'.$infosSubmenu['url'].'" class="doc-link size-small">';
+							print '<div class="link-icon"><span class="'.$infosSubmenu['icon'].'"></span></div>';
+							print '<div class="link-title">'.$langs->trans($keySubmenu).'</div>';
+						print '</a>';
 					}
-					print '</div>';
+				}
+				print '</div>';
 				print '</div>';
 			}
 		}
