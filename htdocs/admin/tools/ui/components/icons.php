@@ -42,11 +42,19 @@ $langs->load('uxdocumentation');
 $documentation = new Documentation($db);
 
 // Output html head + body - Param is Title
-$documentation->docHeader('Icons');
+$documentation->docHeader('Icons', [], ['admin/tools/ui/css/doc-icons.css']);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
 $documentation->view = array('Components','Icons');
+$form = new Form($db);
+
+
+$displayMode = GETPOST('displayMode') == 'kanban' ?  'kanban' : 'icon-only';
+$revertDisplayMode = $displayMode == 'kanban' ? 'icon-only' : 'kanban';
+$revertDisplayName = $displayMode == 'kanban' ? $langs->trans('ViewList') : $langs->trans('ViewKanban');
+$switchDisplayLink = dol_buildpath($documentation->baseUrl . '/components/icons.php', 1) . '?displayMode=' . $revertDisplayMode;
+$switchDisplayLinkIcon = $displayMode == 'kanban' ? 'fa fa-th' : 'fa fa-th-list';
 
 // Output sidebar
 $documentation->showSidebar(); ?>
@@ -85,13 +93,30 @@ $documentation->showSidebar(); ?>
 
 				<h2 class="documentation-title"><?php echo $langs->trans('DocIconsListImgPicto'); ?></h2>
 				<?php /* <p class="documentation-text"><?php echo $langs->trans('DocDocIconsListDescription'); ?></p>*/ ?>
+
+				<?php print $form->getSearchFilterToolInput(
+					'.documentation-img-picto-icon-list .info-box, .documentation-img-picto-icon-list .doc-icon-list-item',
+					'search-tools-input',
+					'',
+					['attr' => [
+							'data-no-item-target' => '#img-picto-section-list .search-tool-no-results',
+						],
+					]
+				); ?>
+
+				<div class="right">
+					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+				</div>
+
 				<div class="documentation-example">
-					<div class="documentation-fontawesome-icon-list">
+					<div class="documentation-img-picto-icon-list">
 						<?php
 						foreach (getImgPictoNameList() as $iconName) {
 							$labelAlt = 'Text on title tag for tooltip';
-							$iconCode =  img_picto($iconName, $iconName);
-							print '<div class="info-box ">
+
+							if ($displayMode == 'kanban') {
+								$iconCode =  img_picto($iconName, $iconName);
+								print '<div class="info-box ">
 									<span class="info-box-icon bg-infobox-expensereport">
 										'.$iconCode.'
 									</span>
@@ -106,9 +131,16 @@ $documentation->showSidebar(); ?>
 										</div><!-- /.info-box-lines -->
 									</div><!-- /.info-box-content -->
 								</div>';
+							} else {
+								$tooltip = $iconName.'<br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
+								$iconCode =  img_picto($tooltip, $iconName, '', 0, 0, 0, '', 'classfortooltip');
+								print '<span class="doc-icon-list-item">'.$iconCode.'<span class="doc-icon-hidden-name-for-search">'.$iconName.'</span></span>';
+							}
 						}
 						?>
 					</div>
+
+					<div class="search-tool-no-results center hidden-search-result" ><?php print $langs->trans('NoResults') ?></div>
 				</div>
 			</div>
 			<!--  -->
@@ -135,10 +167,22 @@ $documentation->showSidebar(); ?>
 
 				<h2 class="documentation-title"><?php echo $langs->trans('DocIconsListFontAwesome'); ?></h2>
 				<?php /* <p class="documentation-text"><?php echo $langs->trans('DocDocIconsListDescription'); ?></p>*/ ?>
+
+				<?php print $form->getSearchFilterToolInput('.documentation-fontawesome-icon-list .info-box, .documentation-fontawesome-icon-list .doc-icon-list-item',
+					'search-tools-input',
+					'',
+					['attr' => [
+							'data-no-item-target' => '#icon-section-list .search-tool-no-results',
+						],
+					]
+				); ?>
+
+				<div class="right">
+					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+				</div>
+
 				<div class="documentation-example">
-
 					<div class="documentation-fontawesome-icon-list">
-
 					<?php
 					$alreadyDisplay = [];
 					if ($fontAwesomeIcons && is_array($fontAwesomeIcons)) {
@@ -157,26 +201,32 @@ $documentation->showSidebar(); ?>
 							$alreadyDisplay[] = $class;
 							$iconCode =  '<span class="'.$class.'" ></span>';
 
-
-							print '<div class="info-box ">
+							if ($displayMode == 'kanban') {
+								print '<div class="info-box ">
 										<span class="info-box-icon bg-infobox-expensereport">
-											'.$iconCode.'
+											' . $iconCode . '
 										</span>
 										<div class="info-box-content">
-											<div class="info-box-title" >'. ($iconData[2]??($iconData[0]??'')) .'</div>
+											<div class="info-box-title" >' . ($iconData[2] ?? ($iconData[0] ?? '')) . '</div>
 											<div class="info-box-lines">
 												<div class="info-box-line spanoverflow nowrap">
 													<div class="inline-block nowraponall">
-														<div class="documentation-code"><pre>'.dol_htmlentities($iconCode).'</pre></div>
+														<div class="documentation-code"><pre>' . dol_htmlentities($iconCode) . '</pre></div>
 													</div>
 												</div>
 											</div><!-- /.info-box-lines -->
 										</div><!-- /.info-box-content -->
 									</div>';
+							} else {
+								$tooltip = $class;
+								print '<span class="doc-icon-list-item classfortooltip" title="'.dol_escape_htmltag($tooltip).'">'.$iconCode.'<span class="doc-icon-hidden-name-for-search">'.$class.'</span></span>';
+							}
 						}
 					}
 					?>
 					</div>
+
+					<div class="search-tool-no-results center hidden-search-result" ><?php print $langs->trans('NoResults') ?></div>
 				</div>
 			</div>
 			<!--  -->

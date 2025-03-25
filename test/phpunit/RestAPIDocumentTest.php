@@ -47,8 +47,6 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 	 */
 	public function testPushDocument()
 	{
-		global $conf,$user,$langs,$db;
-
 		$url = $this->api_url.'/documents/upload?api_key='.$this->api_key;
 
 		echo __METHOD__.' Request POST url='.$url."\n";
@@ -112,7 +110,7 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 		$object2 = json_decode($result2['content'], true);
 		//$this->assertNotNull($object2, 'Parsing of json result must not be null');
 		$this->assertEquals('200', $result2['http_code'], 'Return code must be 200');
-		$this->assertEquals($result2['curl_error_no'], '');
+		$this->assertEquals(0, $result2['curl_error_no']);
 		$this->assertEquals($object2, 'mynewfile.txt', 'Must contains basename of file');
 
 
@@ -141,7 +139,7 @@ class RestAPIDocumentTest extends AbstractRestAPITest
 		$object3 = json_decode($result3['content'], true);
 		//$this->assertNotNull($object2, 'Parsing of json result must not be null');
 		$this->assertEquals('200', $result3['http_code'], 'Return code must be 200');
-		$this->assertEquals($result3['curl_error_no'], '');
+		$this->assertEquals(0, $result3['curl_error_no']);
 		$this->assertEquals($object3, 'mynewfile.txt', 'Must contains basename of file');
 
 
