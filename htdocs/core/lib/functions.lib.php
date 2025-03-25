@@ -11929,6 +11929,12 @@ function dolExplodeKeepIfQuotes($input)
 	// Merge result and delete empty values
 
 	$result = array_map(
+		/**
+		 * @param string $a Matched value in double quotes
+		 * @param string $b Matched value in single quotes
+		 * @param string $c Unquoted value
+		 * @return string
+		 */
 		static function ($a, $b, $c) {
 			if ($a !== '') return $a;
 			if ($b !== '') return $b;
@@ -11946,7 +11952,9 @@ function dolExplodeKeepIfQuotes($input)
 		 * @param string $val The value to check.
 		 * @return bool True if the value is not an empty string.
 		 */
-		static fn($val) => $val !== ''));
+		static function ($val) {
+			return $val !== '';
+		}));
 }
 
 
