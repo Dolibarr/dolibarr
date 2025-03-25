@@ -147,7 +147,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
 			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 			$texte .= getDolGlobalString('ASSET_ASSET_ADDON_PDF_ODT_PATH');
 			$texte .= '</textarea>';
 			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';

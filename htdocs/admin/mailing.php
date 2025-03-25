@@ -210,25 +210,18 @@ print '<td class="hideonsmartphone"></td>';
 print '</tr>';
 
 // Limit number for each mailing batch, displayed only if this value is not defined in the conf.php file
+print '<tr class="oddeven">';
+$help = img_help(1, $langs->trans("MailingNumberOfEmailsPerBatchHelp"));
+print '<td>' . $langs->trans("MailingNumberOfEmailsPerBatch") . ' ' . $help . '</td>';
+print '<td>';
 if (empty($conf->file->mailing_limit_sendbyweb)) {
-	print '<tr class="oddeven">';
-	$help = img_help(1, $langs->trans("MailingNumberOfEmailsPerBatchHelp"));
-	print '<td>' . $langs->trans("MailingNumberOfEmailsPerBatch") . ' ' . $help . '</td>';
-	print '<td>';
-	print '<input class="minwidth100 maxwdith250 widthcentpercentminusx" type="text" name="MAILING_LIMIT_SENDBYWEB" id="MAILING_LIMIT_SENDBYWEB" value="' . getDolGlobalString('MAILING_LIMIT_SENDBYWEB') . '">';
-	print '</td>';
-	print '<td class="hideonsmartphone"></td>';
-	print '</tr>';
+	print '<input class="width75 right" type="number" name="MAILING_LIMIT_SENDBYWEB" id="MAILING_LIMIT_SENDBYWEB" value="' . getDolGlobalString('MAILING_LIMIT_SENDBYWEB') . '">';
+} else {
+	print $conf->file->mailing_limit_sendbyweb;
 }
-
-if (!empty($conf->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
-	print '<tr class="oddeven"><td>';
-	print $langs->trans("MailAdvTargetRecipients") . '</td><td>';
-	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
-	print '</td>';
-	print '<td class="hideonsmartphone"></td>';
-	print '</tr>';
-}
+print '</td>';
+print '<td class="hideonsmartphone"></td>';
+print '</tr>';
 
 print '</table>';
 
