@@ -204,7 +204,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currenc
 }
 
 if ($outputalsopricetotalwithtax) {
-	print '<th class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
+	print '<th class="linecolttc right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
 }
 
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {

@@ -138,6 +138,14 @@ class modProduct extends DolibarrModules
 		$this->rights[$r][5] = 'read_prices';
 		$r++;
 
+		$this->rights[$r][0] = 35; // id de la permission
+		$this->rights[$r][1] = 'Read supplier prices'; // libelle de la permission
+		$this->rights[$r][2] = 'w'; // type de la permission (deprecated)
+		$this->rights[$r][3] = 0; // La permission est-elle une permission par default
+		$this->rights[$r][4] = 'product_advance';
+		$this->rights[$r][5] = 'read_supplier_prices';
+		$r++;
+		
 		$this->rights[$r][0] = 34; // id de la permission
 		$this->rights[$r][1] = 'Delete products'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecated)

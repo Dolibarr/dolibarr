@@ -273,6 +273,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print load_fiche_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 			}
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="liste centpercent">';
 			print '<tr class="liste_titre">';
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
@@ -310,7 +311,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<tr class="oddeven">';
 
 				// Sending id
-				print '<td class="nowrap left">';
+				print '<td class="tdoverflowmax125">';
 				print $expedition->getNomUrl(1);
 				//print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
@@ -401,7 +402,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Warehouse
 				if (isModEnabled('stock')) {
-					print '<td>';
+					print '<td class="tdoverflowmax125">';
 					if ($objp->warehouse_id > 0) {
 						$warehousestatic->fetch($objp->warehouse_id);
 						print $warehousestatic->getNomUrl(1);
@@ -485,6 +486,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			}
 
 			print '</table>';
+			print '</div>';
 		}
 		$db->free($resql);
 	} else {

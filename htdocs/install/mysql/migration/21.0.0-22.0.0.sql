@@ -63,6 +63,8 @@ ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
 
+-- mailing
+UPDATE llx_const SET visible = 0 WHERE name='MAILING_LIMIT_SENDBYWEB';
 
 ALTER TABLE llx_categorie_member ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_category_bankline ADD COLUMN import_key varchar(14);
@@ -203,9 +205,9 @@ ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT 
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));
 
 -- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
-INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = 1 AND c2.entity = c1.entity);
-UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 0;
-DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = 1;
+INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
+UPDATE llx_const SET name = 'STOCK_DISALLOW_NEGATIVE_TRANSFER', value = 1 WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '0';
+DELETE FROM llx_const WHERE name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND value = '1';
 
 ALTER TABLE llx_links ADD COLUMN  share varchar(128) NULL AFTER objectid;
 ALTER TABLE llx_links ADD COLUMN  share_pass varchar(32) NULL AFTER share;
@@ -221,3 +223,8 @@ UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM ll
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
 
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
+
+-- Add input reason on invoice
+ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
+ALTER TABLE llx_facture ADD INDEX idx_facture_fk_input_reason (fk_input_reason);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (fk_input_reason) REFERENCES llx_c_input_reason (rowid);

@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       test/phpunit/AllTest.php
+ *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -258,6 +258,8 @@ class AllTests
 		$suite->addTestSuite('RestAPIContactTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
 		$suite->addTestSuite('RestAPIDocumentTest');
+		require_once dirname(__FILE__).'/RestAPIMoTest.php';
+		$suite->addTestSuite('RestAPIMoTest');
 
 		// Test only with php7.2 or less
 		//if ((float) phpversion() < 7.3)

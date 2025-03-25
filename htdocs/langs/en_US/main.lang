@@ -1323,6 +1323,7 @@ NbRecordQualified=Number of qualified records
 auto=auto
 UploadFile=Direct import of document
 OrClickToSelectAFile=or click to select a file on disk
+SelectAPredefinedFilter=Select a predefined filter
 NetTotal=Net total
 VATAmount=VAT amount
 TotalDiscount=Total discount
