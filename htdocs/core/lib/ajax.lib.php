@@ -130,6 +130,18 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLen
 										console.log("Received answer from ajax GET, we populate array to return to the jquery autocomplete");
 										if (autoselect == 1 && data.length == 1) {
 											$("#search_'.$htmlnamejquery.'").val(item.value);
+		';
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+		$script .= '
+											// When product has only one price by qty and 1 result, must set data attributes before triggering change
+											$("#'.$htmlname.'").attr("data-pbq", item.pbq);
+											$("#'.$htmlname.'").attr("data-pbqup", item.price_ht);
+											$("#'.$htmlname.'").attr("data-pbqbase", item.pricebasetype);
+											$("#'.$htmlname.'").attr("data-pbqqty", item.qty);
+											$("#'.$htmlname.'").attr("data-pbqpercent", item.discount);
+		';
+	}
+	$script .= '
 											$("#'.$htmlnamejquery.'").val(item.key).trigger("change");
 										}
 										var label = "";

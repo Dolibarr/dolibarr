@@ -1294,6 +1294,10 @@ class Conf extends stdClass
 				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;	// Use the domain in $dolibarr_main_url_root (mydomain.com)
 			}
 
+			if (!empty($this->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				$this->global->EMAILING_USE_ADVANCED_SELECTOR = 1;
+			}
+
 			// Security
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 				if (defined('MAIN_ANTIVIRUS_COMMAND')) {
