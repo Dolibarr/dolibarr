@@ -63,6 +63,8 @@ ALTER TABLE llx_societe_account ADD COLUMN ip varchar(250);
 
 ALTER TABLE llx_product ADD COLUMN packaging float(24,8) DEFAULT NULL;
 
+-- mailing
+UPDATE llx_const SET visible = 0 WHERE name='MAILING_LIMIT_SENDBYWEB';
 
 ALTER TABLE llx_categorie_member ADD COLUMN import_key varchar(14);
 ALTER TABLE llx_category_bankline ADD COLUMN import_key varchar(14);

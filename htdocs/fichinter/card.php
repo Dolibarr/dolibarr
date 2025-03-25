@@ -422,7 +422,7 @@ if (empty($reshook)) {
 											$prod->fetch($lines[$i]->fk_product);
 											$outputlangs = $langs;
 											$newlang = '';
-											if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+											if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 												$newlang = GETPOST('lang_id', 'aZ09');
 											}
 											if (empty($newlang)) {
