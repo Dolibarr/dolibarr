@@ -82,7 +82,6 @@ $documentation->showSidebar(); ?>
 
 		if (!empty($indexMenu)) {
 			foreach ($indexMenu as $keyMenu => $infosMenu) {
-
 				print '<div class="doclinks-section">';
 					print '<h2 class="doclinks-title">'.$langs->trans($keyMenu).'</h2>';
 					print '<div class="doclinks-wrapper flex-fix" style="justify-content: flex-start;">';
