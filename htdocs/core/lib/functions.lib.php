@@ -11927,23 +11927,19 @@ function dolExplodeKeepIfQuotes($input)
 	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
 
 	// Merge result and delete empty values
-	return array_filter(array_map(
-		/**
-		 * Return first non-empty item, or empty string
-		 *
-		 * @param string $a Possibly empty item - match ""
-		 * @param string $b Possibly empty item - match ''
-		 * @param string $c Non empty string if $a and $b are empty
-		 *
-		 * @return string
-		 */
+
+	$result = array_map(
 		static function ($a, $b, $c) {
-			return $a ?: ($b ?: $c);
+			if ($a !== '') return $a;
+			if ($b !== '') return $b;
+			if ($c !== '') return $c;
+			return '';
 		},
 		$matches[1],
 		$matches[2],
 		$matches[3]
-	));
+	);
+	return array_values(array_filter($result, static fn($val) => $val !== ''));
 }
 
 
