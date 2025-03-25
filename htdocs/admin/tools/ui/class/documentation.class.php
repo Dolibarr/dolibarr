@@ -54,10 +54,9 @@ class Documentation
 	public $db;
 
 	/**
-	 * @var string Documentation Base URL.
+	 * @var string
 	 */
 	public $baseUrl = 'admin/tools/ui';
-
 
 	/**
 	 *    Constructor
@@ -164,6 +163,7 @@ class Documentation
 					'summary' => array(
 						'DocBasicUsage' => '#setinputssection-basicusage',
 						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
+						'DocHelperFunctionsGetSearchFilterToolInput' => '#setinputssection-getSearchFilterToolInput',
 					)
 				),
 			),
@@ -433,6 +433,13 @@ class Documentation
 	{
 		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 		print '<div class="documentation-code">';
+
+		if (isset($lines[0])) {
+			if ($option === 'html' && strpos(strtolower($lines[0]), '<!doctype') === false) {
+				array_unshift($lines, '<!DOCTYPE html>', '');
+			}
+		}
+
 		$content = implode("\n", $lines) . "\n";
 		$doleditor = new DolEditor(md5($content), $content, '', 0, 'Basic', 'In', true, false, 'ace', 0, '99%', 1);
 		print $doleditor->Create(1, '', false, '', $option);

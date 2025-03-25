@@ -12189,4 +12189,71 @@ class Form
 
 		return $out;
 	}
+
+	/**
+	 * @param string $dataTarget a css target like '.element-item-to-search-in' OR '#id-of-parent .class-of-container > .element-item-to-search-in'
+	 *                           Ex : search element in a table row : '#table-id tr'
+	 * @param string $htmlName the html name attribute
+	 * @param string $value the html value attribute
+	 * @param array<mixed> $params a mixed array of params
+	 *
+	 * @return string
+	 */
+	public function getSearchFilterToolInput($dataTarget, $htmlName = 'search-tools-input', $value = '', $params = [])
+	{
+		global $langs;
+
+		$attr = array(
+			'type' => 'search',
+			'name' => $htmlName,
+			'value' => $value,
+			'class' => "search-tool-input",
+			'placeholder' => $langs->trans('Search'),
+			'autocomplete' => 'off'
+		);
+
+		// Optional data attr
+		// 'autofocus' : will set auto focus on field ,
+		// data-counter-target : will get count results
+		// data-no-item-target : will be display if count results is 0
+
+		if ($dataTarget !== false) {
+			$attr['data-search-tool-target'] = $dataTarget;
+		}
+
+		// Override attr
+		if (!empty($params['attr']) && is_array($params['attr'])) {
+			foreach ($params['attr'] as $key => $value) {
+				if ($key == 'class') {
+					$attr['class'] .= ' '.$value;
+				} elseif ($key == 'classOverride') {
+					$attr['class'] = $value;
+				} else {
+					$attr[$key] = $value;
+				}
+			}
+		}
+
+		// automatic add tooltip when title is detected
+		if (!empty($attr['title']) && !empty($attr['class']) && strpos($attr['class'], 'classfortooltip') === false) {
+			$attr['class'] .= ' classfortooltip';
+		}
+
+		$TCompiledAttr = [];
+		foreach ($attr as $key => $value) {
+			if (in_array($key, ['data-target'])
+				|| (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr']))) { // Not recommended
+				$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
+			} else {
+				$value = dolPrintHTMLForAttribute($value);
+			}
+
+			$TCompiledAttr[] = $key . '="' . $value . '"';    // $value has been escaped by the dolPrintHTMLForAttribute... just before
+		}
+
+		$compiledAttributes = implode(' ', $TCompiledAttr);
+
+
+		return '<div class="search-tool-container"><input '.$compiledAttributes.'></div>';
+	}
 }
