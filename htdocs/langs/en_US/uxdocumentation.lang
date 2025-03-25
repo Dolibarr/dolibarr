@@ -2,6 +2,8 @@ BackToDolibarr=Go back to Dolibarr
 WelcomeToDocumentation=Welcome to UI Documentation. This section is under development,
 DocumentationHome=UI Documentation
 DocBasicUsage=Basic usage
+DocListLinks=List of links - %s
+DocGroupIndexDescription= This page brings together all the links from the "%s" section.
 
 # Components
 DocComponentsTitle=Components
