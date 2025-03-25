@@ -34,6 +34,7 @@ if ($user->socid > 0) {
 
 // Includes
 require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 
 // Load documentation translations
 $langs->load('uxdocumentation');
@@ -43,9 +44,15 @@ $hookmanager->initHooks(array('uidocumentation'));
 
 //
 $documentation = new Documentation($db);
+$form = new Form($db);
 
+$morejs = [
+	'/includes/ace/src/ace.js',
+	'/includes/ace/src/ext-statusbar.js',
+	'/includes/ace/src/ext-language_tools.js',
+];
 // Output html head + body - Param is Title
-$documentation->docHeader('Tables');
+$documentation->docHeader('Tables', $morejs);
 
 // Set view for menu and breadcrumb
 // Menu must be set in constructor of documentation class
@@ -61,7 +68,7 @@ $documentation->showSidebar(); ?>
 		<div class="doc-content-wrapper">
 
 			<h1 class="documentation-title"><?php echo $langs->trans('DocTableTitle'); ?></h1>
-			<p class="documentation-text"><?php echo $langs->trans('Description'); ?></p>
+			<p class="documentation-text"><?php echo $langs->trans('DocTableMainDescription'); ?></p>
 
 			<!-- Summary -->
 			<?php $documentation->showSummary(); ?>
@@ -69,47 +76,86 @@ $documentation->showSidebar(); ?>
 			<!-- Basic usage -->
 			<div class="documentation-section" id="tablesection-basicusage">
 
-				<h2 class="documentation-title">Table with a title line</h2>
+				<h2 class="documentation-title"><?php echo $langs->trans('DocTableBasic'); ?></h2>
 
 				<p class="documentation-text"><?php echo $langs->trans('DocTableBasicDescription'); ?></p>
 				<div class="documentation-example">
 					<div class="div-table-responsive">
-						<table class="tagtable noborder liste nobottomiftotal">
+						<table class="tagtable liste">
 							<tr class="liste_titre">
-								<th class="wrapcolumntitle left liste_titre" title="First Name">First Name</th>
-								<th class="wrapcolumntitle left liste_titre" title="Last Name">Last Name</th>
-								<th class="wrapcolumntitle center liste_titre" title="Age">Age</th>
-								<th class="wrapcolumntitle right liste_titre" title="Country">Country</th>
+								<th class="wrapcolumntitle left liste_titre" title="<?php echo $langs->trans('ProductRef'); ?>"><?php echo $langs->trans('ProductRef'); ?></th>
+								<th class="wrapcolumntitle center liste_titre" title="<?php echo $langs->trans('Qty'); ?>"><?php echo $langs->trans('Qty'); ?></th>
+								<th class="wrapcolumntitle right liste_titre" title="<?php echo $langs->trans('AmountHT'); ?>"><?php echo $langs->trans('AmountHT'); ?></th>
+								<th class="wrapcolumntitle right liste_titre" title="<?php echo $langs->trans('TotalHT'); ?>"><?php echo $langs->trans('TotalHT'); ?></th>
 							</tr>
 							<tr class="oddeven">
-								<td class="left">John</td>
-								<td class="left">Doe</td>
-								<td class="center">37</td>
-								<td class="right">U.S.A</td>
+								<td class="left">My Product A</td>
+								<td class="center">13</td>
+								<td class="right"><?php echo price(9.99, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right"><?php echo price(129.87, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="oddeven">
-								<td class="left">Jack</td>
-								<td class="left">Sparrow</td>
-								<td class="center">29</td>
-								<td class="right">Caribbean</td>
+								<td class="left">My Product B</td>
+								<td class="center">21</td>
+								<td class="right"><?php echo price(13.37, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right"><?php echo price(280.77, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="oddeven">
-								<td class="left">Sacha</td>
-								<td class="left">Ketchum</td>
-								<td class="center">16</td>
-								<td class="right">Kanto</td>
+								<td class="left">My Product C</td>
+								<td class="center">7</td>
+								<td class="right"><?php echo price(16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right"><?php echo price(116.62, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="oddeven">
-								<td class="left">Albert</td>
-								<td class="left">Einstein</td>
-								<td class="center">72</td>
-								<td class="right">Germany</td>
+								<td class="left">My Product D</td>
+								<td class="center">17</td>
+								<td class="right"><?php echo price(38.33, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right"><?php echo price(651.61, 0, '', 1, -1, -1, 'auto'); ?></td>
+							</tr>
+							<tr class="liste_total">
+								<td class="left">Total</td>
+								<td class="center">58</td>
+								<td class="right">--</td>
+								<td class="right"><?php echo price(1178.87, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 						</table>
 					</div>
 				</div>
 				<?php
 				$lines = array(
+					'<table class="tagtable liste">',
+					'',
+					'	<!-- Table header -->',
+					'	<tr class="liste_titre">',
+					'		<th class="wrapcolumntitle left liste_titre" title="First Name">First Name</th>',
+					'		<th class="wrapcolumntitle left liste_titre" title="Last Name">Last Name</th>',
+					'		<th class="wrapcolumntitle center liste_titre" title="Age">Age</th>',
+					'		<th class="wrapcolumntitle right liste_titre" title="Country">Country</th>',
+					'	</tr>',
+					'',
+					'	<!-- Data lines -->',
+					'	<tr class="oddeven">',
+					'		<td class="left">My Product A</td>',
+					'		<td class="left">13</td>',
+					'		<td class="center">9,99 &euro;</td>',
+					'		<td class="right">129,87 &euro;</td>',
+					'	</tr>',
+					'	<tr class="oddeven">',
+					'		<td class="left">My Product B</td>',
+					'		<td class="left">21</td>',
+					'		<td class="center">13,37 &euro;</td>',
+					'		<td class="right">280,77 &euro;</td>',
+					'	</tr>',
+					'',
+					'	<!-- Total -->',
+					'	<tr class="liste_total">',
+					'		<td class="left">Total</td>',
+					'		<td class="left">58</td>',
+					'		<td class="center">--</td>',
+					'		<td class="right">1178,87 &euro;</td>',
+					'	</tr>',
+					'',
+					'</table>',
 				);
 				echo $documentation->showCode($lines); ?>
 			</div>
@@ -117,43 +163,68 @@ $documentation->showSidebar(); ?>
 			<!-- Table with filters -->
 			<div class="documentation-section" id="tablesection-withfilters">
 
-				<h2 class="documentation-title">Table with a filter line and title line</h2>
+				<h2 class="documentation-title"><?php echo $langs->trans('DocTableWithFilters'); ?></h2>
 
-				<p class="documentation-text"><?php echo $langs->trans('DocTableWithFiltersDescription'); ?></p>
+				<p class="documentation-text"><?php echo $langs->trans('DocTableWithFiltersDescription', dol_buildpath('admin/tools/ui/components/inputs.php', 1)); ?></p>
 				<div class="documentation-example">
 					<div class="div-table-responsive">
-						<table class="tagtable noborder nobottomiftotal liste">
+						<table class="tagtable liste">
 							<tr class="liste_titre_filter">
-								<td><input></td>
-								<td></td>
-								<td></td>
-								<td></td>
+								<td class="liste_titre center maxwidthsearch">
+									<div class="nowraponall">
+										<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x">
+											<span class="fas fa-search"></span>
+										</button>
+										<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x">
+											<span class="fas fa-times"></span>
+										</button>
+									</div>
+								</td>
+								<td><input class="flat" type="text" name="search_firstname" value=""></td>
+								<td><input class="flat" type="text" name="search_lasttname" value=""></td>
+								<td class="center"><input class="maxwidth50 flat" type="text" name="search_age" value=""></td>
+								<td class="right"><input class="flat" type="text" name="search_country" value=""></td>
 							</tr>
 							<tr class="liste_titre">
+								<th>
+									<dl class="dropdown" style="opacity: 0.5;">
+										<dt><span class="fas fa-list" style=""></span></dt>
+										<dd class="dropdowndd">
+											<div class="multiselectcheckboxselectedfields">
+												<ul class="selectedfieldsleft"></ul>
+											</div>
+										</dd>
+									</dl>
+									<div class="inline-block checkallactions"><input type="checkbox" id="checkforselects" name="checkforselects" class="checkallactions" disabled></div>
+								</th>
 								<th class="wrapcolumntitle left liste_titre" title="First Name">First Name</th>
 								<th class="wrapcolumntitle left liste_titre" title="Last Name">Last Name</th>
 								<th class="wrapcolumntitle center liste_titre" title="Age">Age</th>
 								<th class="wrapcolumntitle right liste_titre" title="Country">Country</th>
 							</tr>
 							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">John</td>
 								<td class="left">Doe</td>
 								<td class="center">37</td>
 								<td class="right">U.S.A</td>
 							</tr>
 							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">Jack</td>
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
 								<td class="right">Caribbean</td>
 							</tr>
 							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">Sacha</td>
 								<td class="left">Ketchum</td>
 								<td class="center">16</td>
 								<td class="right">Kanto</td>
 							</tr>
 							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">Albert</td>
 								<td class="left">Einstein</td>
 								<td class="center">72</td>
@@ -164,39 +235,121 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
+					'<form method="POST" id="FORMID" action="ACTION_URL">',
+					'',
+					'	<input type="hidden" name="token" value="TOKEN_VALUE">',
+					'	<input type="hidden" name="action" value="ACTION_VALUE">',
+					'	<!-- other hidden fields like sortfield, sortorder, page, ... -->',
+					'	',
+					'	<table class="tagtable liste">',
+					'	',
+					'		<!-- Filters row -->',
+					'		<tr class="liste_titre_filter">',
+					'			<td class="liste_titre center maxwidthsearch">',
+					'				<div class="nowraponall">',
+					'					<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x">',
+					'						<span class="fas fa-search"></span>',
+					'					</button>',
+					'					<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x">',
+					'						<span class="fas fa-times"></span>',
+					'					</button>',
+					'				</div>',
+					'			</td>',
+					'			<td>',
+					'				<input class="flat" type="text" name="search_firstname" value="">',
+					'			</td>',
+					'			<td>',
+					'				<input class="flat" type="text" name="search_lasttname" value="">',
+					'			</td>',
+					'			<td class="center">',
+					'				<input class="maxwidth50 flat" type="text" name="search_age" value="">',
+					'			</td>',
+					'			<td class="right">',
+					'				<input class="flat" type="text" name="search_country" value="">',
+					'			</td>',
+					'		</tr>',
+					'	',
+					'		<!-- Table header -->',
+					'		<!-- Data lines -->',
+					'		<!-- Total -->',
+					'	',
+					'	</table>',
+					'</form>',
 				);
 				echo $documentation->showCode($lines); ?>
 			</div>
 
+			<!-- Add a row before filters -->
+			<div class="documentation-section" id="tablesection-beforefilters">
 
-			<!-- Table with no filter and no title line -->
-			<div class="documentation-section" id="tablesection-withfilters">
+				<h2 class="documentation-title"><?php echo $langs->trans('DocTableBeforeFilters'); ?></h2>
 
-				<h2 class="documentation-title">Table with no filter, no title line</h2>
-
-				<p class="documentation-text"><?php echo $langs->trans('Description'); ?></p>
+				<p class="documentation-text"><?php echo $langs->trans('DocTableBeforeFiltersDescription'); ?></p>
 				<div class="documentation-example">
 					<div class="div-table-responsive">
-						<table class="tagtable noborder nobottomiftotal liste">
-							<tr class="oddeven trfirstline">
+						<div class="liste_titre liste_titre_bydiv centpercent">
+							<div class="divsearchfield">
+								<span class="fas fa-tag pictofixedwidth" style="" title="TitleOfMySelectBeforeFilter"></span>
+								<?php echo $form->selectarray('myselectbeforefilter', array('ValueFilterA', 'ValueFilterB', 'ValueFilterC'), '', 1); ?>
+							</div>
+						</div>
+						<table class="tagtable liste listwithfilterbefore">
+							<tr class="liste_titre_filter">
+								<td class="liste_titre center maxwidthsearch">
+									<div class="nowraponall">
+										<button type="submit" class="liste_titre button_search reposition" name="button_search_x" value="x">
+											<span class="fas fa-search"></span>
+										</button>
+										<button type="submit" class="liste_titre button_removefilter reposition" name="button_removefilter_x" value="x">
+											<span class="fas fa-times"></span>
+										</button>
+									</div>
+								</td>
+								<td><input class="flat" type="text" name="search_firstname" value=""></td>
+								<td><input class="flat" type="text" name="search_lasttname" value=""></td>
+								<td class="center"><input class="maxwidth50 flat" type="text" name="search_age" value=""></td>
+								<td class="right"><input class="flat" type="text" name="search_country" value=""></td>
+							</tr>
+							<tr class="liste_titre">
+								<th>
+									<dl class="dropdown" style="opacity: 0.5;">
+										<dt><span class="fas fa-list" style=""></span></dt>
+										<dd class="dropdowndd">
+											<div class="multiselectcheckboxselectedfields">
+												<ul class="selectedfieldsleft"></ul>
+											</div>
+										</dd>
+									</dl>
+									<div class="inline-block checkallactions"><input type="checkbox" id="checkforselects" name="checkforselects" class="checkallactions" disabled></div>
+								</th>
+								<th class="wrapcolumntitle left liste_titre" title="First Name">First Name</th>
+								<th class="wrapcolumntitle left liste_titre" title="Last Name">Last Name</th>
+								<th class="wrapcolumntitle center liste_titre" title="Age">Age</th>
+								<th class="wrapcolumntitle right liste_titre" title="Country">Country</th>
+							</tr>
+							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">John</td>
 								<td class="left">Doe</td>
 								<td class="center">37</td>
 								<td class="right">U.S.A</td>
 							</tr>
 							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">Jack</td>
 								<td class="left">Sparrow</td>
 								<td class="center">29</td>
 								<td class="right">Caribbean</td>
 							</tr>
 							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">Sacha</td>
 								<td class="left">Ketchum</td>
 								<td class="center">16</td>
 								<td class="right">Kanto</td>
 							</tr>
-							<tr class="oddeven trlastline">
+							<tr class="oddeven">
+								<td><input type="checkbox" name="" value="" disabled></td>
 								<td class="left">Albert</td>
 								<td class="left">Einstein</td>
 								<td class="center">72</td>
@@ -207,8 +360,49 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
+					'<div class="liste_titre liste_titre_bydiv centpercent">',
+					'	<div class="divsearchfield">',
+					'		<span class="fas fa-tag pictofixedwidth" style="" title="TitleOfMySelectBeforeFilter"></span>',
+					'		<!-- Use Form Class to show a select, see Inputs section. Select below is for example -->',
+					'		<select name="myselectbeforefilter">',
+					'			<option value="-1"></option>',
+					'			<option value="ValueFilterA">ValueFilterA</option>',
+					'			<option value="ValueFilterB">ValueFilterB</option>',
+					'			<option value="ValueFilterC">ValueFilterC</option>',
+					'		</select>',
+					'	</div>',
+					'</div>',
+					'<table class="tagtable liste listwithfilterbefore">',
+					'	<!-- Filters row -->',
+					'	<!-- Table header -->',
+					'	<!-- Data lines -->',
+					'	<!-- Total -->',
+					'</table>',
 				);
 				echo $documentation->showCode($lines); ?>
+			</div>
+
+			<!-- CSS classes for tables -->
+			<div class="documentation-section" id="tablesection-cssclasses">
+
+				<h2 class="documentation-title"><?php echo $langs->trans('DocTableCSSClass'); ?></h2>
+
+				<p class="documentation-text"><?php echo $langs->transnoentities('DocTableCSSClassDescription'); ?></p>
+
+				<p class="documentation-text"><?php echo $langs->transnoentities('DocTableTABLECSSClassDescription'); ?></p>
+				<ul>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_tagtable'); ?></li>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_liste'); ?></li>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_listwithfilterbefore'); ?></li>
+				</ul>
+
+				<p class="documentation-text"><?php echo $langs->transnoentities('DocTableTRCSSClassDescription'); ?></p>
+				<ul>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_liste_titre'); ?></li>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_liste_titre_filter'); ?></li>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_liste_total'); ?></li>
+					<li><?php echo $langs->transnoentities('DocTableCSSClass_oddeven'); ?></li>
+				</ul>
 			</div>
 
 		</div>

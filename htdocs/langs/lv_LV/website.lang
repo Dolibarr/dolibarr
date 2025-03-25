@@ -62,7 +62,11 @@ NoPageYet=Vēl nav nevienas lapas
 YouCanCreatePageOrImportTemplate=Jūs varat izveidot jaunu lapu vai importēt pilnu vietnes veidni
 SyntaxHelp=Palīdzība par konkrētiem sintakses padomiem
 YouCanEditHtmlSourceckeditor=Jūs varat rediģēt HTML avota kodu, izmantojot redaktorā pogu "Avots".
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> You can dynamically set <strong>SEO title and meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE_TITLE__ = "Title value …";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> Lai iekļautu <strong>attēls</strong>, kas saglabāts <strong>medias</strong> (publiskai piekļuvei atvērts direktorijs), izmantojiet relatīvo ceļu, kas sākas ar <strong>/medias</strong><br><strong>&lt;img src="/medias/image/myimageexpath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
@@ -91,7 +95,7 @@ DisableSiteFirst=Put website offline first
 MyContainerTitle=Manas tīmekļa vietnes virsraksts
 AnotherContainer=Šis ir veids, kā iekļaut citas lapas / konteinera saturu (šeit, iespējams, iespējot dinamisko kodu, iespējams, ir kļūda, jo iegultais apakštvertne, iespējams, neeksistē)
 SorryWebsiteIsCurrentlyOffLine=Diemžēl šī vietne pašlaik nav pieejama. Lūdzu, atgriezieties vēlāk ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account for thirdparties
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Vispirms ir jādefinē noklusējuma sākumlapa
 OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
@@ -364,3 +368,12 @@ WebPortalSetupNotComplete=Tīmekļa portāla iestatīšana nav pabeigta
 DeleteWebsiteAccount=Delete website account
 ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
 ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.
+ContentSecurityPolicy=Content Security Policy
+WebsiteSecurityForceRP=Website Security RP
+WebsiteSecurityForceSTS=Website Security STS
+WebsiteSecurityForcePP=Website Security PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
+SecurityPolicySucesfullyRemoved=Content Security Policy successfully removed
+ErrorRemovingSecurityPolicy=An error occurred when trying to remove a Content Security Policy
+SecurityPolicySucesfullyAdded=Content Security Policy successfully added
+ErrorAddingSecurityPolicy=An error occurred when trying to add a Content Security Policy

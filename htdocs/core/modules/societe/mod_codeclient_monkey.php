@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2007	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,9 +96,9 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	/**
 	 *  Return next value
 	 *
-	 *  @param	Societe|string	$objsoc     Object third party
-	 *  @param  int				$type       Client ou fournisseur (1:client, 2:fournisseur)
-	 *  @return string|-1      				Value if OK, '' if module not configured, -1 if KO
+	 * @param	Societe|string|null	$objsoc	Object third party
+	 * @param	int<-1,2>			$type	Type of third party (1:customer, 2:supplier, -1:autodetect)
+	 * @return	string|-1      				Value if OK, '' if module not configured, -1 if KO
 	 */
 	public function getNextValue($objsoc = '', $type = -1)
 	{

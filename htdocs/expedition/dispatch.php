@@ -56,7 +56,10 @@ if (isModEnabled('project')) {
 // Load translation files required by the page
 $langs->loadLangs(array("sendings", "companies", "bills", 'deliveries', 'orders', 'stocks', 'other', 'propal', 'receptions'));
 
-if (isModEnabled('productbatch')) {
+$is_mod_batch_enabled = isModEnabled('productbatch');
+$is_eat_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_EATBY');
+$is_sell_by_enabled = !getDolGlobalInt('PRODUCT_DISABLE_SELLBY');
+if ($is_mod_batch_enabled) {
 	$langs->load('productbatch');
 }
 
@@ -530,8 +533,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '</td>';
 	print '</tr></table>';
 
-	print '<br><center>';
-	if (isModEnabled('barcode') || isModEnabled('productbatch')) {
+	print '<br><br><center>';
+	if (isModEnabled('barcode') || $is_mod_batch_enabled) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 	}
 	print '<a href="#" id="resetalltoexpected" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto("", 'autofill', 'class="pictofixedwidth"').$langs->trans("RestoreWithCurrentQtySaved").'</a></td>';
@@ -588,7 +591,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 		//$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, '' AS sref, l.qty as qty,";
-		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode";
+		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse, p.barcode, p.stockable_product";
 		// Enable hooks to alter the SQL query (SELECT)
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks(
@@ -634,12 +637,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 				print '<tr class="liste_titre">';
 
 				print '<td>'.$langs->trans("Description").'</td>';
-				if (isModEnabled('productbatch')) {
+				if ($is_mod_batch_enabled) {
 					print '<td class="dispatch_batch_number_title">'.$langs->trans("batch_number").'</td>';
-					if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+					if ($is_sell_by_enabled) {
 						print '<td class="dispatch_dlc_title">'.$langs->trans("SellByDate").'</td>';
 					}
-					if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+					if ($is_eat_by_enabled) {
 						print '<td class="dispatch_dluo_title">'.$langs->trans("EatByDate").'</td>';
 					}
 				} else {
@@ -733,17 +736,17 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$linktoprod = $tmpproduct->getNomUrl(1);
 						$linktoprod .= ' - '.$objp->label."\n";
 
-						if (isModEnabled('productbatch')) {
+						if ($is_mod_batch_enabled) {
 							if ($objp->tobatch) {
 								// Product
 								print '<td id="product_'.$i.'" data-idproduct="'.$objp->fk_product.'" data-barcode="'.$objp->barcode.'">';
 								print $linktoprod;
 								print "</td>";
 								print '<td class="dispatch_batch_number"></td>';
-								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								if ($is_sell_by_enabled) {
 									print '<td class="dispatch_dlc"></td>';
 								}
-								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								if ($is_eat_by_enabled) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							} else {
@@ -754,10 +757,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<td class="dispatch_batch_number">';
 								print '<span class="opacitymedium small">'.$langs->trans("ProductDoesNotUseBatchSerial").'</span>';
 								print '</td>';
-								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								if ($is_sell_by_enabled) {
 									print '<td class="dispatch_dlc"></td>';
 								}
-								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								if ($is_eat_by_enabled) {
 									print '<td class="dispatch_dluo"></td>';
 								}
 							}
@@ -793,8 +796,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
 						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
 						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
-						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
-						$sql .= " AND ed.fk_expedition =".(int) $object->id;
+						$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
+						$sql .= " AND ed.fk_expedition = ".(int) $object->id;
 						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
 
 						$resultsql = $db->query($sql);
@@ -806,7 +809,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$suffix = "_".$j."_".$i;
 								$objd = $db->fetch_object($resultsql);
 
-								if (isModEnabled('productbatch') && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
+								if ($is_mod_batch_enabled && (!empty($objd->batch) || (is_null($objd->batch) && $tmpproduct->status_batch > 0))) {
 									$type = 'batch';
 
 									// Enable hooks to append additional columns
@@ -846,13 +849,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.(GETPOSTISSET('lot_number'.$suffix) ? GETPOST('lot_number'.$suffix) : $objd->batch).'">';
 									//print '<input type="hidden" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.$objd->batch.'">';
 									print '</td>';
-									if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+									if ($is_sell_by_enabled) {
 										print '<td class="nowraponall">';
 										$dlcdatesuffix = !empty($objd->sellby) ? dol_stringtotime($objd->sellby) : dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 										print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 										print '</td>';
 									}
-									if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+									if ($is_eat_by_enabled) {
 										print '<td class="nowraponall">';
 										$dluodatesuffix = !empty($objd->eatby) ? dol_stringtotime($objd->eatby) : dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 										print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
@@ -862,8 +865,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 								} else {
 									$type = 'dispatch';
 									$colspan = 6;
-									$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
-									$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
+									$colspan = $is_sell_by_enabled ? $colspan : --$colspan;
+									$colspan = $is_eat_by_enabled ? $colspan : --$colspan;
 
 									// Enable hooks to append additional columns
 									$parameters = array(
@@ -899,12 +902,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 								// Qty to dispatch
 								print '<td class="right nowraponall">';
 								print '<a href="" id="reset'.$suffix.'" class="resetline">'.img_picto($langs->trans("Reset"), 'eraser', 'class="pictofixedwidth opacitymedium"').'</a>';
-								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTINT('qty'.$suffix) : $objd->qty);
+								$suggestedvalue = (GETPOSTISSET('qty'.$suffix) ? GETPOSTFLOAT('qty'.$suffix) : $objd->qty);
 								//var_dump($suggestedvalue);exit;
 								print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-type="'.$type.'" data-index="'.$i.'" class="width50 right qtydispatchinput" value="'.$suggestedvalue.'" data-expected="'.$objd->qty.'">';
 								print '</td>';
 								print '<td>';
-								if (isModEnabled('productbatch') && $objp->tobatch > 0) {
+								if ($is_mod_batch_enabled && $objp->tobatch > 0) {
 									$type = 'batch';
 									print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" '.($numd != $j + 1 ? 'style="display:none"' : '').' onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 								} else {
@@ -916,13 +919,19 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 								// Warehouse
 								print '<td class="right">';
-								if (count($listwarehouses) > 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
-								} elseif (count($listwarehouses) == 1) {
-									print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+								if ($objp->stockable_product == Product::ENABLED_STOCK) {
+									if (count($listwarehouses) > 1) {
+										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+									} elseif (count($listwarehouses) == 1) {
+										print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+									} else {
+										$langs->load("errors");
+										print $langs->trans("ErrorNoWarehouseDefined");
+									}
 								} else {
-									$langs->load("errors");
-									print $langs->trans("ErrorNoWarehouseDefined");
+									// on force l'entrepot pour passer le test d'ajout de ligne dans expedition.class.php
+									print '<input id="entrepot'.$suffix.'" name="entrepot'.$suffix.'" type="hidden" value="'.$objd->fk_warehouse.'">';
+									print img_warning().' '.$langs->trans('StockDisabled');
 								}
 								print "</td>\n";
 
@@ -950,10 +959,14 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$numline++;
 							}
 							$suffix = "_".$j."_".$i;
+						} else {
+							$errorMsg = 'Shipment dispatch SQL error : '.$db->lasterror();
+							setEventMessage($errorMsg, 'errors');
+							dol_syslog($errorMsg, LOG_ERR);
 						}
 
 						if ($j == 0) {
-							if (isModEnabled('productbatch') && !empty($objp->tobatch)) {
+							if ($is_mod_batch_enabled && !empty($objp->tobatch)) {
 								$type = 'batch';
 
 								// Enable hooks to append additional columns
@@ -991,13 +1004,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 								print '<td>';
 								print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number'.$suffix.'" name="lot_number'.$suffix.'" value="'.GETPOST('lot_number'.$suffix).'">';
 								print '</td>';
-								if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
+								if ($is_sell_by_enabled) {
 									print '<td class="nowraponall">';
 									$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 									print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 									print '</td>';
 								}
-								if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
+								if ($is_eat_by_enabled) {
 									print '<td class="nowraponall">';
 									$dluodatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 									print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
@@ -1007,8 +1020,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 							} else {
 								$type = 'dispatch';
 								$colspan = 6;
-								$colspan = (getDolGlobalString('PRODUCT_DISABLE_SELLBY')) ? --$colspan : $colspan;
-								$colspan = (getDolGlobalString('PRODUCT_DISABLE_EATBY')) ? --$colspan : $colspan;
+								$colspan = $is_sell_by_enabled ? $colspan : --$colspan;
+								$colspan = $is_eat_by_enabled ? $colspan : --$colspan;
 
 								// Enable hooks to append additional columns
 								$parameters = array(
@@ -1054,7 +1067,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 							print '<input id="qty'.$suffix.'" onchange="onChangeDispatchLineQty($(this))" name="qty'.$suffix.'" data-index="'.$i.'" data-type="text" class="width50 right qtydispatchinput" value="'.$amounttosuggest.'" data-expected="'.$amounttosuggest.'">';
 							print '</td>';
 							print '<td>';
-							if (isModEnabled('productbatch') && $objp->tobatch > 0) {
+							if ($is_mod_batch_enabled && $objp->tobatch > 0) {
 								$type = 'batch';
 								print img_picto($langs->trans('AddStockLocationLine'), 'split.png', 'class="splitbutton" onClick="addDispatchLine('.$i.', \''.$type.'\')"');
 							} else {
@@ -1175,7 +1188,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			var errortab3 = [];
 			var errortab4 = [];
 
-			function barcodescannerjs(){
+			function barcodescannerjs() {
 				console.log("We catch inputs in scanner box");
 				jQuery("#scantoolmessage").text();
 
@@ -1192,11 +1205,11 @@ if ($object->id > 0 || !empty($object->ref)) {
 				errortab3 = [];
 				errortab4 = [];
 
-				textarray = textarray.filter(function(value){
+				textarray = textarray.filter(function(value) {
 					return value != "";
 				});
-				if(textarray.some((element) => element != "")){
-					$(".qtydispatchinput").each(function(){
+				if (textarray.some((element) => element != "")) {
+					$(".qtydispatchinput").each(function() {
 						id = $(this).attr(\'id\');
 						idarray = id.split(\'_\');
 						idproduct = idarray[2];
@@ -1207,7 +1220,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 						productbarcode = $("#product_"+idproduct).attr(\'data-barcode\');
 						console.log(productbarcode);
 						productbatchcode = $("#lot_number_"+id).val();
-						if(productbatchcode == undefined){
+						if (productbatchcode == undefined) {
 							productbatchcode = "";
 						}
 						console.log(productbatchcode);
@@ -1215,25 +1228,25 @@ if ($object->id > 0 || !empty($object->ref)) {
 						if (barcodemode != "barcodeforproduct") {
 							tabproduct.forEach(product=>{
 								console.log("product.Batch="+product.Batch+" productbatchcode="+productbatchcode);
-								if(product.Batch != "" && product.Batch == productbatchcode){
+								if (product.Batch != "" && product.Batch == productbatchcode) {
 									console.log("duplicate batch code found for batch code "+productbatchcode);
 									duplicatedbatchcode.push(productbatchcode);
 								}
 							})
 						}
 						productinput = $("#qty_"+id).val();
-						if(productinput == ""){
+						if (productinput == "") {
 							productinput = 0
 						}
 						tabproduct.push({\'Id\':id,\'Warehouse\':warehouse,\'Barcode\':productbarcode,\'Batch\':productbatchcode,\'Qty\':productinput,\'fetched\':false});
 					});
 					console.log("Loop on each record entered in the textarea");
 
-					textarray.forEach(function(element,index){
+					textarray.forEach(function(element,index) {
 						console.log("Process record element="+element+" id="+id);
 						var verify_batch = false;
 						var verify_barcode = false;
-						switch(barcodemode){
+						switch(barcodemode) {
 							case "barcodeforautodetect":
 								verify_barcode = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"barcode",true);
 								verify_batch = barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,"lotserial",true);
@@ -1264,12 +1277,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 					if (Object.keys(errortab1).length < 1 && Object.keys(errortab2).length < 1 && Object.keys(errortab3).length < 1) {
 						tabproduct.forEach(product => {
-							if(product.Qty!=0){
-								if(product.hasOwnProperty("reelqty")){
+							if (product.Qty!=0) {
+								if (product.hasOwnProperty("reelqty")) {
 									idprod = $("td[data-idproduct=\'"+product.fk_product+"\']").attr("id");
 									idproduct = idprod.split("_")[1];
 									console.log("We create a new line for product_"+idproduct);
-									if(product.Barcode != null){
+									if (product.Barcode != null) {
 										modedispatch = "dispatch";
 									} else {
 										modedispatch = "batch";
@@ -1281,7 +1294,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 									$("#qty_"+(nbrTrs-1)+"_"+idproduct).val(product.Qty);
 									$("#entrepot_"+(nbrTrs-1)+"_"+idproduct).val(product.Warehouse);
 
-									if(modedispatch == "batch"){
+									if (modedispatch == "batch") {
 										$("#lot_number_"+(nbrTrs-1)+"_"+idproduct).val(product.Batch);
 									}
 
@@ -1332,7 +1345,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 			}
 
 			/* This methode is called by parent barcodescannerjs() */
-			function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,mode,autodetect=false){
+			function barcodeserialforproduct(tabproduct,index,element,barcodeproductqty,warehousetouse,selectaddorreplace,mode,autodetect=false) {
 				BarcodeIsInProduct=0;
 				newproductrow=0
 				result=false;
@@ -1342,13 +1355,13 @@ if ($object->id > 0 || !empty($object->ref)) {
 						type: \'POST\',
 						async: false,
 						success: function(response) {
-							if (response.status == "success"){
+							if (response.status == "success") {
 								console.log(response.message);
-								if(!newproductrow){
+								if (!newproductrow) {
 									newproductrow = response.object;
 								}
 							}else{
-								if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)){
+								if (mode!="lotserial" && autodetect==false && !errortab4.includes(element)) {
 									errortab4.push(element);
 									console.error(response.message);
 								}
@@ -1359,18 +1372,18 @@ if ($object->id > 0 || !empty($object->ref)) {
 						},
 					});
 					console.log("Product "+(index+=1)+": "+element);
-					if(mode == "barcode"){
+					if (mode == "barcode") {
 						testonproduct = product.Barcode
-					}else if (mode == "lotserial"){
+					}else if (mode == "lotserial") {
 						testonproduct = product.Batch
 					}
 					testonwarehouse = product.Warehouse;
-					if(testonproduct == element && testonwarehouse == warehousetouse){
-						if(selectaddorreplace == "add"){
+					if (testonproduct == element && testonwarehouse == warehousetouse) {
+						if (selectaddorreplace == "add") {
 							productqty = parseInt(product.Qty,10);
 							product.Qty = productqty + parseInt(barcodeproductqty,10);
-						}else if(selectaddorreplace == "replace"){
-							if(product.fetched == false){
+						}else if (selectaddorreplace == "replace") {
+							if (product.fetched == false) {
 								product.Qty = barcodeproductqty
 								product.fetched=true
 							}else{
@@ -1381,11 +1394,11 @@ if ($object->id > 0 || !empty($object->ref)) {
 						BarcodeIsInProduct+=1;
 					}
 				})
-				if(BarcodeIsInProduct==0 && newproductrow!=0){
+				if (BarcodeIsInProduct==0 && newproductrow!=0) {
 					tabproduct.push({\'Id\':tabproduct.length-1,\'Warehouse\':newproductrow.fk_warehouse,\'Barcode\':mode=="barcode"?element:null,\'Batch\':mode=="lotserial"?element:null,\'Qty\':barcodeproductqty,\'fetched\':true,\'reelqty\':newproductrow.reelqty,\'fk_product\':newproductrow.fk_product,\'mode\':mode});
 					result = true;
 				}
-				if(BarcodeIsInProduct > 0){
+				if (BarcodeIsInProduct > 0) {
 					result = true;
 				}
 				return result;
@@ -1409,7 +1422,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 
 			$("#autoreset").click(function() {
 				console.log("we click on autoreset");
-				$(".autoresettr").each(function(){
+				$(".autoresettr").each(function() {
 					id = $(this).attr("name");
 					idtab = id.split("_");
 					console.log("we process line "+id+" "+idtab);
@@ -1432,8 +1445,8 @@ if ($object->id > 0 || !empty($object->ref)) {
 				return false;
 			});
 
-			$("#resetalltoexpected").click(function(){
-				$(".qtydispatchinput").each(function(){
+			$("#resetalltoexpected").click(function() {
+				$(".qtydispatchinput").each(function() {
 					console.log("We reset to expected "+$(this).attr("id")+" qty to dispatch");
 					$(this).val($(this).data("expected"));
 				});

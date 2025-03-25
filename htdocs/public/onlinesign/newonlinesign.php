@@ -66,6 +66,8 @@ require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
  * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files
@@ -418,6 +420,8 @@ if ($source == 'proposal') {
 	$last_main_doc_file = $object->last_main_doc;
 
 	if ($object->status == $object::STATUS_VALIDATED) {
+		$object->last_main_doc = preg_replace('/_signed-(\d+)/', '', $object->last_main_doc);	// We want to be sure to not work on the signed version
+
 		if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
 			// It seems document has never been generated, or was generated and then deleted.
 			// So we try to regenerate it with its default template.
@@ -446,7 +450,7 @@ if ($source == 'proposal') {
 				$datefilesigned = dol_filemtime($last_main_doc_file);
 				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
 
-				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
+				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {	// If file signed is more recent
 					$directdownloadlink = $object->getLastMainDocLink('proposal');
 					if ($directdownloadlink) {
 						print '<br><a href="'.$directdownloadlink.'">';
@@ -754,6 +758,12 @@ if ($action == "dosign" && empty($cancel)) {
 	print '<input type="button" class="button marginleftonly marginrightonly" id="signbutton" value="'.$langs->trans("Sign").'">';
 	print '<input type="submit" class="button butActionDelete marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
+
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+	// TODO Replace DOL_URL_ROOT with $urlwithroot ?
 
 	// Add js code managed into the div #signature
 	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');

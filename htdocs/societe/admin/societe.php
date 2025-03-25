@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -440,7 +440,7 @@ foreach ($dirsociete as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
-'@phan-var-force array<string,ModeleThirdPartyCode> $arrayofmodules';  // Repeat type because of dol_sort_array
+// '@phan-var-force array<string,ModeleThirdPartyCode> $arrayofmodules';  // Repeat type because of dol_sort_array
 
 foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<tr class="oddeven">'."\n";
@@ -448,7 +448,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
-	if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file") {
+	if ($conf->global->SOCIETE_CODECLIENT_ADDON == (string) $file) {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
@@ -988,7 +988,7 @@ if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
 	print '<td>';
-	print $formcompany->selectProspectCustomerType(getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
+	print $formcompany->selectProspectCustomerType(getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
 	print '<td class="center">';
 	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';

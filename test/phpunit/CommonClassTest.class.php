@@ -132,7 +132,12 @@ abstract class CommonClassTest extends TestCase
 
 		// Get the lines that were added since the start of the test
 
-		$filecontent = (string) @file_get_contents($this->logfile);
+		if (file_exists($this->logfile)) {
+			$filecontent = (string) @file_get_contents($this->logfile);
+		} else {
+			$filecontent = '';
+		}
+
 		$currentSize = strlen($filecontent);
 		if ($currentSize >= $this->logSizeAtSetup) {
 			$filecontent = substr($filecontent, $this->logSizeAtSetup);
@@ -214,7 +219,11 @@ abstract class CommonClassTest extends TestCase
 		$db = $this->savdb;
 
 		// Record the filesize to determine which part of the log to show on error
-		$this->logSizeAtSetup = (int) filesize($this->logfile);
+		if (file_exists($this->logfile)) {
+			$this->logSizeAtSetup = (int) filesize($this->logfile);
+		} else {
+			$this->logSizeAtSetup = 0;
+		}
 
 		if ((int) getenv('PHPUNIT_DEBUG') > 0) {
 			print get_called_class().'::'.$this->getName(false)."::".__FUNCTION__.PHP_EOL;

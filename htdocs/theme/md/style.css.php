@@ -101,6 +101,7 @@ session_cache_limiter('public');
 
 require_once __DIR__.'/../../main.inc.php'; // __DIR__ allow this script to be included in custom themes
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -110,6 +111,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
  * @var string $badgeDanger
  * @var string $badgeWarning
  * @var string $butactionbg
+ * @var string $badgeStatus4
  * @var string $colorbackbody
  * @var string $colorbackhmenu1
  * @var string $colorbacklinebreak
@@ -829,11 +831,31 @@ td.linecoldescription.bomline {
 
 td.amount, span.amount, div.amount, b.amount {
 	color: #006666;
+}
+td.amountneg, span.amountneg, div.amountneg, b.amountneg
+{
+	color: #660000;
+}
+td.amount.amountbadge, span.amount.amountbadge, div.amount.amountbadge, b.amount.amountbadge {
+	background-color: <?php echo $badgeStatus4; ?>;
+	color: #FFF;
+	padding: 4px;
+	border-radius: 4px;
+}
+td.amountneg.amountbadge, span.amountneg.amountbadge, div.amountneg.amountbadge, b.amountneg.amountbadge
+{
+	background-color: #660000;
+	color: #FFF;
+	padding: 4px;
+	border-radius: 4px;
+}
+
+td.amount, span.amount, div.amount, b.amount,
+td.amountneg, span.amountneg, div.amountneg, b.amountneg,
+span.amount, span.amountneg {
 	white-space: nowrap;
 }
-span.amount {
-	white-space: nowrap;
-}
+
 td.actionbuttons a {
 	padding-left: 6px;
 }
@@ -1229,7 +1251,7 @@ textarea.centpercent {
 	word-break: break-word !important;
 }
 .wordbreak {
-	word-break: break-word;	/* cut fist between word, inside word if not possible */
+	word-break: break-word;	/* cut first between word, inside word if not possible */
 }
 .wordbreakall {
 	word-break: break-all;
@@ -1323,6 +1345,9 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
+}
+.marginleftlarge {
+	margin-<?php print $left; ?>: 20px !important;
 }
 .paddinglarge {
 	padding: 6px !important;
@@ -2135,7 +2160,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 85px; }
+.maxwidthdate  { max-width: 95px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -4138,9 +4163,6 @@ a.tabTitle {
 	text-decoration: none;
 	white-space: nowrap;
 }
-.tabTitleText {
-	display: none;
-}
 .imgTabTitle {
 	max-height: 14px;
 }
@@ -4547,7 +4569,7 @@ form.tagtable {
 }
 
 table.liste td, table.noborder td, div.noborder form div {
-	padding: 8px 6px 8px 6px;			/* t r b l */
+	padding: 8px 8px 8px 8px;			/* t r b l */
 }
 div.liste_titre_bydiv .divsearchfield {
 	padding: 2px 1px 2px 6px;			/* t r b l */
@@ -4837,11 +4859,15 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 }
 .trforbreak td {
 	font-weight: bold;
-	border-bottom: 1pt solid black !important;
+	border-bottom: 1pt solid #aaa !important;
 	background-color: var(--colorbacklinebreak) !important;
 }
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
 	font-weight: normal !important;
+}
+tr.trforbreaknobg:nth-of-type(n+3) td {
+	font-weight: 500;
+	border-top: 1pt dashed #aaa !important;
 }
 
 table.dataTable td {
@@ -4958,7 +4984,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
 
 /*
 div.liste_titre {
@@ -5410,11 +5436,19 @@ div.fiche div.info, div.fiche div.warning {
 	margin: 1em 0em 1.2em 0em;
 }
 
+/* Ok message */
+div.green div.greenborder, section.green, section.greenborder {
+	border-<?php print $left; ?>: solid 5px #118822;
+}
+div.green, section.green {
+	background: #e3f0e3;
+}
+
 /* Warning message */
-div.warning, div.warningborder {
+div.warning, div.warningborder, section.warning, section.warningborder {
 	border-<?php print $left; ?>: solid 5px #f2cf87;
 }
-div.warning {
+div.warning, section.warning {
 	background: #fcf8e3;
 }
 div.warning a, div.info a, div.error a {
@@ -6307,9 +6341,6 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
-}
-.jPicker td.Text input {
-	height: 1em !important;
 }
 .jPicker .Preview div {
 	height: 36px !important;
@@ -8412,12 +8443,37 @@ table.jPicker {
 }
 
 
+
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.ai_dropdown {
+	min-width: 400px !important;
+	padding: 12px;
+	left: inherit !important;
+	top: inherit !important;
+	border-radius: 5px !important;
+}
+.ai_feature {
+	background-color: var(--colorbackgrey);
+	padding: 10px;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	border-radius: 5px;
+}
+
+
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
 @media only screen and (max-width: 767px)
 {
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 
 	#tooltip {
@@ -8711,6 +8767,7 @@ include dol_buildpath($path.'/theme/eldy/emaillayout.inc.php', 0); // actually m
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
+include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print $conf->global->THEME_CUSTOM_CSS;

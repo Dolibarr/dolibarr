@@ -416,7 +416,6 @@ VATIsNotUsedDesc=Standardmässig beträgt die vorgeschlagene Umsatzsteuer 0, was
 LocalTax1IsNotUsedDescES=Standardmässig werden die vorgeschlagenen RE 0 ist. Ende der Regel.
 LocalTax2IsNotUsedDescES=Standardmässig werden die vorgeschlagenen IRPF 0 ist. Ende der Regel.
 AtEndOfMonth=Am Ende des Monats
-DriverType=Treiber Typ
 MenuCompanySetup=Firma / Organisation
 MessageOfDay=Nachricht des Tages
 CompanyInfo=Firma / Organisation

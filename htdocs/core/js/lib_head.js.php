@@ -1122,9 +1122,11 @@ function getParameterByName(name, valueifnotfound)
 }
 
 /**
- * Get the list of operators for a given field type
+ * Get the list of possible operators for a given field type that we can use in the generic filter.
  */
 function getOperatorsForFieldType(type, maybenull = 0) {
+	console.log('Get list of operators for type='+type);
+
 	// Define the list of operators for each general field category
 	const operatorList = {
 		selectlink: {
@@ -1160,15 +1162,12 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 		}
 	};
 
-
 	// Determine the general category for the given type using regex
 	let generalType = "";
 
-	console.log('Get list of operators for type='+type);
-
 	if (/^select$/i.test(type) || /^link$/i.test(type)) {
 		generalType = "selectlink";
-	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^varchar$/i.test(type)) {
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar|mail|phone|ip)$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
 		generalType = "number";
@@ -1550,7 +1549,7 @@ if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DI
 	?>
 /*
  * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
- * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
+ * This fix the need to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *

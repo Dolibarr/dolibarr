@@ -267,7 +267,6 @@ RemoveString=Supprimer la chaîne '%s'
 SomeTranslationAreUncomplete=Certaines des langues proposées peuvent être partiellement traduites ou contenir des erreurs. Aidez-nous à corriger votre langue en vous inscrivant sur <a href="https://transifex.com/projects/p/dolibarr/" target="_blank" rel="noopener noreferrer external">https://transifex.com/projects/p/dolibarr/</a> pour apporter vos améliorations.
 PrivateDownloadLinkDesc=Vous devez être connecté et vous avez besoin d'autorisations pour afficher ou télécharger le fichier
 Download=Télécharger
-ActualizeCurrency=Utilisez le dernier taux connu de la devise
 Fiscalyear=Année fiscale
 ModuleBuilder=Générateur de modules et d'applications
 SetMultiCurrencyCode=Définir la devise

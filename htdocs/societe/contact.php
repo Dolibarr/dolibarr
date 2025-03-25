@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,8 +146,8 @@ if (empty($reshook)) {
 }
 
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
-	$id = GETPOST('id', 'int');
-	if (!empty($id) && $socid > 0) {
+	$id = GETPOSTINT('id');
+	if ($id > 0 && $socid > 0) {
 		$contact = new Contact($db);
 		$ret = $contact->fetch($id);
 		if ($ret > 0) {

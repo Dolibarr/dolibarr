@@ -7,8 +7,9 @@
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +58,6 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
-	if (empty($noout)) {
-		print_start_menu_array();
-	}
-
 	global $usemenuhider;
 	$usemenuhider = 1;
 
@@ -76,9 +73,15 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menu_arr = array();
 
 	// Home
+	$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
+	if (!empty($landingpage)) {
+		$landingpage = dol_buildpath($landingpage, 1);
+	} else {
+		$landingpage = '/index.php?mainmenu=home&leftmenu=home';
+	}
 	$menu_arr[] = array(
 		'name' => 'Home',
-		'link' => '/index.php?mainmenu=home&amp;leftmenu=home',
+		'link' => $landingpage,
 		'title' => "Home",
 		'level' => 0,
 		'enabled' => $showmode = 1,
@@ -460,7 +463,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		'submenus' => array(),
 	);
 
-	// Add menus
+	// Add menus previously had code declared
 	foreach ($menu_arr as $key => $smenu) {
 		$smenu = (object) $smenu;
 
@@ -488,11 +491,11 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 		}
 	}
 
-	// Show personalized menus
+	// Load menu with top entries of non hardcoded core menu enties and external modules
 	$menuArbo = new Menubase($db, 'eldy');
+	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Set tabMenu with only top entries of non hardcoded core menu enties and external modules
 
-	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Return tabMenu with only top entries
-
+	// Add menu with top entries of non hardcoded core menu enties and external modules
 	$num = count($newTabMenu);
 	for ($i = 0; $i < $num; $i++) {
 		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
@@ -554,9 +557,17 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	// Sort on position
 	$menu->liste = dol_sort_array($menu->liste, 'position');
 
+	// If noout is on (for jmobile div menu for example)
+	if ($noout) {
+		return 0;
+	}
+
 	// Output menu entries
+
+	print_start_menu_array();
+
 	// Show logo company
-	if (!getDolGlobalString('MAIN_MENU_INVERT') && empty($noout) && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_MENU_INVERT') && getDolGlobalString('MAIN_SHOW_LOGO') && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		//$mysoc->logo_mini=(empty($conf->global->MAIN_INFO_SOCIETE_LOGO_MINI)?'':$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI);
 		$mysoc->logo_squarred_mini = (!getDolGlobalString('MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI') ? '' : $conf->global->MAIN_INFO_SOCIETE_LOGO_SQUARRED_MINI);
 
@@ -586,16 +597,14 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	}
 
 	//var_dump($menu->liste);
-	if (empty($noout)) {
-		foreach ($menu->liste as $menuval) {
-			print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
-			print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
-			print_end_menu_entry($menuval['enabled']);
-		}
+	foreach ($menu->liste as $menuval) {
+		print_start_menu_entry($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
+		print_text_menu_entry($menuval['titre'], $menuval['enabled'], (($menuval['url'] != '#' && !preg_match('/^(http:\/\/|https:\/\/)/i', $menuval['url'])) ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
+		print_end_menu_entry($menuval['enabled']);
 	}
 
-	$showmode = 1;
-	if (empty($noout) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+	if (!getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		$showmode = 1;
 		print_start_menu_entry('', 'class="tmenuend"', $showmode);
 		print_end_menu_entry($showmode);
 		print_end_menu_array();
@@ -1059,9 +1068,9 @@ function print_left_eldy_menu($db, $menu_array_before, $menu_array_after, &$tabM
 					print '<div class="menu_contenu'.$cssmenu.'">';
 					print $tabstring;
 					if ($shorturlwithoutparam) {
-						print '<a class="vsmenu" title="'.dol_escape_htmltag(dol_string_nohtmltag($menu_array[$i]['titre'])).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
+						print '<a class="vsmenu" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'" href="'.$url.'"'.($menu_array[$i]['target'] ? ' target="'.$menu_array[$i]['target'].'"' : '').'>';
 					} else {
-						print '<span class="vsmenu" title="'.dol_escape_htmltag($menu_array[$i]['titre']).'">';
+						print '<span class="vsmenu" title="'.dolPrintHTMLForAttribute($menu_array[$i]['titre']).'">';
 					}
 					print $menu_array[$i]['titre'];
 					if ($shorturlwithoutparam) {
@@ -1122,7 +1131,13 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 		$langs->load("users");
 
 		// Home - dashboard
-		$newmenu->add("/index.php?mainmenu=home&amp;leftmenu=home", $langs->trans("MyDashboard"), 0, 1, '', $mainmenu, 'home', 0, '', '', '', '<i class="fas fa-chart-bar fa-fw paddingright pictofixedwidth"></i>');
+		$landingpage = getDolUserString('MAIN_LANDING_PAGE', getDolGlobalString('MAIN_LANDING_PAGE'));
+		if (!empty($landingpage)) {
+			$landingpage = dol_buildpath($landingpage, 1);
+		} else {
+			$landingpage = '/index.php?mainmenu=home&leftmenu=home';
+		}
+		$newmenu->add($landingpage, $langs->trans("MyDashboard"), 0, 1, '', $mainmenu, 'home', 0, '', '', '', '<i class="fas fa-chart-bar fa-fw paddingright pictofixedwidth"></i>');
 
 		// Setup
 		$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup', 0, '', '', '', '<i class="fa fa-tools fa-fw paddingright pictofixedwidth"></i>');
@@ -1398,6 +1413,12 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			} else {
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1, $user->hasRight('commande', 'lire'));
 			}
+
+			// Categories
+			if (isModEnabled('category')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=16", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+			}
 		}
 
 		// Supplier proposal
@@ -1434,6 +1455,12 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'commande', 'export'));
 			} else {
 				$newmenu->add("/commande/stats/index.php?leftmenu=orders_suppliers&amp;mode=supplier", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'commande', 'lire'));
+			}
+
+			// Categories
+			if (isModEnabled('category')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=20", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1478,7 +1505,7 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
  */
 function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $conf, $langs;
+	global $user, $langs;
 
 	if ($mainmenu == 'billing') {
 		$langs->load("companies");
@@ -1508,6 +1535,12 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			}
 
 			$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_stats');
+
+			// Categories
+			if (isModEnabled('category')) {
+				$langs->load("categories");
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=14", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+			}
 		}
 
 		// Suppliers invoices
@@ -1517,7 +1550,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add("/fourn/facture/card.php?leftmenu=suppliers_bills&action=create", $langs->trans("NewBill"), 1, (int) ($user->hasRight('fournisseur', 'facture', 'creer') || $user->hasRight('supplier_invoice', 'creer')), '', $mainmenu, 'suppliers_bills_create');
 			$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills", $langs->trans("List"), 1, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_list');
 
-			if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
+			if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills(|_draft|_notpaid|_paid|_canceled)$/', $leftmenu)) {
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_draft&amp;search_status=0", $langs->trans("BillShortStatusDraft"), 2, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_draft');
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_notpaid&amp;search_status=1", $langs->trans("BillShortStatusNotPaid"), 2, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_notpaid');
 				$newmenu->add("/fourn/facture/list.php?leftmenu=suppliers_bills_paid&amp;search_status=2", $langs->trans("BillShortStatusPaid"), 2, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_paid');
@@ -1527,7 +1560,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			$newmenu->add("/fourn/paiement/list.php?leftmenu=suppliers_bills_payment", $langs->trans("Payments"), 1, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_payment');
 
-			if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills/', $leftmenu)) {
+			if ($usemenuhider || empty($leftmenu) || preg_match('/suppliers_bills_payment/', $leftmenu)) {
 				$newmenu->add("/fourn/facture/rapport.php?leftmenu=suppliers_bills_payment_report", $langs->trans("Reportings"), 2, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_payment_report');
 			}
 
@@ -2502,7 +2535,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 			//$newmenu->add("/exports/export.php?leftmenu=export",$langs->trans("List"),1, $user->hasRight('export',  'lire'));
 		}
 
-		$newmenu->add("/core/customreports.php?leftmenu=customreports", $langs->trans("CustomReports"), 0, 1, '', $mainmenu, 'customreports', 0, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
+		$newmenu->add("/core/customreports.php?leftmenu=customreports", $langs->trans("BICustomReports"), 0, 1, '', $mainmenu, 'customreports', 0, '', '', '', img_picto('', 'graph', 'class="paddingright pictofixedwidth"'));
 	}
 }
 

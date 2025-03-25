@@ -66,9 +66,10 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->webhook) || empty($conf->webhook->enabled)) {
+		if (!isModEnabled('webhook')) {
 			return 0; // If module is not enabled, we do nothing
 		}
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
 		// Or you can execute some code here
@@ -76,12 +77,25 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$errors = 0;
 		$static_object = new Target($this->db);
 		$target_url = $static_object->fetchAll();
+
+		if (is_numeric($target_url) && $target_url < 0) {
+			dol_syslog("Error Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
+			$this->errors = array_merge($this->errors, $static_object->errors);
+			return -1;
+		}
+
 		if (!is_array($target_url)) {
+			// No webhook found
 			return 0;
 		}
+
+		$sendmanualtriggers = (!empty($object->context['sendmanualtriggers']) ? $object->context['sendmanualtriggers'] : "");
 		foreach ($target_url as $key => $tmpobject) {
 			$actionarray = explode(",", $tmpobject->trigger_codes);
-			if ($tmpobject->status == Target::STATUS_VALIDATED && is_array($actionarray) && in_array($action, $actionarray)) {
+
+			// Test on Target status
+			$testontargetstatus = ($tmpobject->status == Target::STATUS_AUTOMATIC_TRIGGER || ($tmpobject->status == Target::STATUS_MANUAL_TRIGGER && !empty($sendmanualtriggers)));
+			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && is_array($actionarray) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;
@@ -115,19 +129,29 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 				if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 					$nbPosts++;
 				} else {
-					$errors++;
 					$errormsg = "The WebHook for ".$action." failed to get URL ".$tmpobject->url." with httpcode=".(!empty($response['http_code']) ? $response['http_code'] : "")." curl_error_no=".(!empty($response['curl_error_no']) ? $response['curl_error_no'] : "");
-					$this->errors[] = $errormsg;
+
+					if ($tmpobject->type == Target::TYPE_BLOCKING) {
+						$errors++;
+						$this->errors[] = $errormsg;
+
+						dol_syslog($errormsg, LOG_ERR);
+					} else {
+						dol_syslog($errormsg, LOG_WARNING);
+					}
 					/*if (!empty($response['content'])) {
 						$this->errors[] = dol_trunc($response['content'], 200);
 					}*/
-					dol_syslog($errormsg, LOG_ERR);
 				}
 			}
 		}
+
+		dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id." -> nbPost=".$nbPosts);
+
 		if (!empty($errors)) {
 			return $errors * -1;
 		}
+
 		return $nbPosts;
 	}
 }

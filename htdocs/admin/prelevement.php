@@ -5,6 +5,7 @@
  * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2019      Markus Welters       <markus@welters.de>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -194,7 +195,7 @@ print '</td></tr>';
 print '<tr class="oddeven"><td class="fieldrequired">'.$langs->trans("ResponsibleUser").'</td>';
 print '<td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers(getDolGlobalInt('PRELEVEMENT_USER'), 'PRELEVEMENT_USER', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+print $form->select_dolusers(getDolGlobalInt('PRELEVEMENT_USER'), 'PRELEVEMENT_USER', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 print '</td>';
 print '</tr>';
 

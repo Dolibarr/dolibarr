@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=Keine Zeile, gehen Sie zum Hinzufügen auf die Registerka
 CreateInvoiceForThisCustomerFromSendings=Rechnungen erstellen
 IfValidateInvoiceIsNoSendingStayUnbilled=Wenn die Rechnung nicht freigegeben ist, bleibt die Lieferung im Status 'nicht fakturiert', bis die Rechnung freigegeben wird.
 OptionToSetSendingBilledNotEnabled=Option aus dem Modul-Workflow, um eine Lieferung automatisch auf 'fakturiert' zu setzen, wenn die Rechnung freigegeben ist, ist nicht aktiviert. Daher müssen Sie den Status von Lieferungen manuell auf 'fakturiert' setzen, nachdem die Rechnung erstellt wurde.
+ShipmentUpdated=Lieferung erfolgreich aktualisiert
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Lieferung für den Versand
 ErrorTooManyCombinationBatchcode=Kein Versand für Position %s, da zu viele Kombinationen aus Lager, Produkt und Chargencode gefunden wurden (%s).
 ErrorNoCombinationBatchcode=Konnte die Zeile %s nicht speichern, da keine Kombination aus Lager, Produkt und Chargencode (%s, %s, %s) gefunden wurde.
 ErrorTooMuchShipped=Die versendete Menge sollte nicht größer sein als die bestellte Menge für Zeile %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Mitarbeiter für die Nachbetreuung des Versands
+TypeContact_shipping_external_BILLING=Kontakt für Kundenrechnungen
+TypeContact_shipping_external_CUSTOMER=Kundenkontakt zur Betreuung der Lieferung
+TypeContact_shipping_external_SHIPPING=Lieferadresse Kunde
+TypeContact_shipping_external_DELIVERY=Lieferadresse Kunde
+CloseShipment=Lieferung schließen
+ConfirmCloseShipment=Bestätigen Sie das Schließen der Lieferung

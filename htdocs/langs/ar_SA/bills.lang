@@ -51,7 +51,7 @@ CardBill=بطاقة الفاتورة
 PredefinedInvoices=فواتير محددة مسبقا
 Invoice=فاتورة
 PdfInvoiceTitle=فاتورة
-PdfInvoiceSituationTitle=Invoice situation
+PdfInvoiceSituationTitle=حالة الفاتورة
 Invoices=فواتير
 InvoiceLine=سطر الفاتورة
 InvoiceCustomer=فاتورة العميل
@@ -169,6 +169,7 @@ BillTo=فاتورة الى:
 ShippingTo=شحن الي
 ActionsOnBill=الإجراءات على الفاتورة
 ActionsOnBillRec=الإجراءات عند تكرار فاتورة
+InvoicesGeneratedFromRec=الفواتير المولدة
 RecurringInvoiceTemplate=نموذج او فاتورة متكررة
 NoQualifiedRecurringInvoiceTemplateFound=لا يوجد نموذج فاتورة متكرر مؤهل للإنشاء.
 FoundXQualifiedRecurringInvoiceTemplate=%s قالب متكرر فاتورة(قوالب) متكررة مؤهل للإنشاء.
@@ -182,6 +183,7 @@ LastCustomersBills=أحدث %s فواتير العملاء
 LastSuppliersBills=أحدث %s فواتير الموردين
 AllBills=جميع الفواتير
 AllCustomerTemplateInvoices=جميع قالب الفواتير
+AllSupplierTemplateInvoices=جميع قالب الفواتير
 OtherBills=فواتير اخرى
 DraftBills=مسودة فواتير
 CustomersDraftInvoices=مسودة فواتير العميل
@@ -230,7 +232,7 @@ AmountOfBillsByMonthHT=مبلغ الفواتير حسب الشهر (بعد خص�
 UseSituationInvoices=Allow situation invoice
 UseSituationInvoicesCreditNote=Allow situation invoice credit note
 RetainedWarranty=Retained warranty
-RetainedWarrantyShort=Ret. warranty
+RetainedWarrantyShort=ضمان الإرجاع
 AllowedInvoiceForRetainedWarranty=Retained warranty usable on the following types of invoices
 RetainedWarrantyDefaultPercent=Retained warranty default percent
 RetainedWarrantyOnlyForSituation=Make "retained warranty" available only for situation invoices
@@ -419,6 +421,7 @@ InvoiceAutoValidate=اعتماد الفواتير تلقائيًا
 GeneratedFromRecurringInvoice=تم إنشاؤه من نموذج الفاتورة المتكررة %s
 DateIsNotEnough=الاجل لم يحل بعد
 InvoiceGeneratedFromTemplate=الفاتورة %s المُنشأة من فاتورة القالب المتكرر %s
+InvoiceGeneratedFromTemplateError=خطأ بالفاتورة %s تم إنشاؤها من فاتورة القالب المتكررة %s : %s
 GeneratedFromTemplate=تم إنشاؤه من نموذج الفاتورة %s
 WarningInvoiceDateInFuture=تحذير ، تاريخ الفاتورة احدث من التاريخ الحالي
 WarningInvoiceDateTooFarInFuture=تحذير ، تاريخ الفاتورة بعيد جدًا عن التاريخ الحالي
@@ -495,6 +498,8 @@ IBANNumber=رقم حساب الآيبان
 IBAN=إيبان
 CustomerIBAN=الآيبان الخاص بالعميل
 SupplierIBAN=الآيبان الخاص بالمورد
+DebitBankAccount = حساب الخصم المباشر المصرفي
+SetDebitBankAccount = تعريف حساب الخصم المباشر المصرفي
 BIC=بيك / سويفت
 BICNumber=رمز BIC / SWIFT
 ExtraInfos=معلومات اضافية
@@ -513,10 +518,12 @@ PrettyLittleSentence=قبول المبلغ المستحق بشيكات صادر�
 IntracommunityVATNumber=معرف ضريبة القيمة المضافة داخل الاتحاد
 PaymentByChequeOrderedTo=مدفوعات الشيكات (شامل الضرائب) مستحقة الدفع إلى %s ، أرسل إلى
 PaymentByChequeOrderedToShort=مدفوعات الشيكات (شامل الضرائب) واجبة الدفع ل
+StructuredCommunication=الاتصالات المنظمة
 SendTo=أرسل إلى
 PaymentByTransferOnThisBankAccount=الدفع عن طريق التحويل إلى الحساب المصرفي التالي
 VATIsNotUsedForInvoice=* غير سارية ضريبة القيمة المضافة art-293B من CGI
 VATIsNotUsedForInvoiceAsso=* غير سارية ضريبة القيمة المضافة art-261-7 من CGI
+VATIsNotUsedReverseChargeProcedure=* لا ينطبق ضريبة القيمة المضافة على المادة 259-1 من قانون CGI
 LawApplicationPart1=من خلال تطبيق القانون 80.335 من 12/05/80
 LawApplicationPart2=البضاعة تظل ملكا لل
 LawApplicationPart3=البائع حتى السداد الكامل ل
@@ -537,7 +544,7 @@ ChequeDeposits=قسائم الايداع
 Cheques=الشيكات
 DepositId=معرف الايداع
 NbCheque=عدد الشيكات
-CreditNoteConvertedIntoDiscount=%s converted into %s
+CreditNoteConvertedIntoDiscount=%s تم تحويل(ها) إلى %s
 UsBillingContactAsIncoiveRecipientIfExist=استخدم جهة الاتصال / العنوان من نوع "جهة اتصال الفواتير" بدلاً من عنوان الجهة الخارجية كمستلم للفواتير
 ShowUnpaidAll=عرض جميع الفواتير الغير المسددة
 ShowUnpaidLateOnly=عرض الفواتير المتأخرة الغير المسددة فقط
@@ -569,7 +576,7 @@ YouMustCreateInvoiceFromSupplierThird=هذا الخيار متاح فقط عند
 YouMustCreateStandardInvoiceFirstDesc=يجب عليك إنشاء فاتورة قياسية أولاً وتحويلها إلى "نموذج" لإنشاء نموذج فاتورة جديد
 PDFCrabeDescription=Invoice PDF template Crabe. A complete invoice template (old implementation of Sponge template)
 PDFSpongeDescription=Invoice PDF template Sponge. A complete invoice template
-PDFOctopusDescription=Invoice PDF template Octopus. A complete invoice template for situation invoices
+PDFOctopusDescription=فاتورة قالب PDF Octopus. قالب فاتورة كامل لفواتير حسب الموقف
 TerreNumRefModelDesc1=رقم الإرجاع بالتنسيق %syymm-nnnn للفواتير القياسية و %s yymm-nnnn للإشعارات الدائنة حيث yy هي سنة، mm هي شهر و nnnn هو رقم تسلسلي متزايد تلقائيًا بدون فاصل و لا عودة إلى 0
 MarsNumRefModelDesc1=رقم الإرجاع بالتنسيق %syymm-nnnn للفواتير القياسية، %syymm-nnnn للفواتير البديلة، %syymm-nnnn لفواتير الدفعة المقدمة و %syymm-nnnn لإشعارات الائتمان حيث تكون yy السنة، mm هو الشهر و nnnn هو رقم متزايد تلقائيًا بدون فاصل و بدون عودة إلى 0
 TerreNumRefModelError=A bill starting with $syymm already exists and is not compatible with this model of sequence. Remove it or rename it to activate this module.
@@ -586,7 +593,7 @@ TypeContact_invoice_supplier_external_BILLING=جهة اتصال فاتورة ا�
 TypeContact_invoice_supplier_external_SHIPPING=جهة اتصال الشحن للمورد
 TypeContact_invoice_supplier_external_SERVICE=جهة اتصال خدمة المورد
 # Situation invoices
-WarningsObjectIsNotASituation=Warning, this invoice is not a situation
+WarningsObjectIsNotASituation=تحذير، هذه الفاتورة ليست حالة
 InvoiceFirstSituationAsk=الفاتورة الأولى الوضع
 InvoiceFirstSituationDesc=وترتبط <b>الفواتير الوضع</b> إلى حالات تتعلق التقدم، على سبيل المثال تطور البناء. ويرتبط كل حالة على فاتورة.
 InvoiceSituation=فاتورة الوضع
@@ -605,23 +612,24 @@ DisabledBecauseNotLastInCycle=The next situation already exists.
 DisabledBecauseFinal=هذا الوضع النهائي.
 situationInvoiceShortcode_AS=AS
 situationInvoiceShortcode_S=S
+CantBeNullOrPositive=لا يمكن أن يكون تقدم فاتورة مذكرة الائتمان فارغًا أو موجبًا
 CantBeLessThanMinPercent=لا يمكن أن يكون التقدم أقل من قيمته في الوضع السابق.
 NoSituations=No open situations
 InvoiceSituationLast=الفاتورة النهائية والعامة
-SituationInvoiceAmountColTitle=Amount(net)
+SituationInvoiceAmountColTitle=المبلغ(الصافي)
 SituationInvoiceProgressColTitle=تقدم
-SituationInvoiceDate=Date invoice situation
-SituationInvoiceTotalProposal=Proposal of invoice situation
-SituationInvoiceOldCumulation=Old cumulation
-SituationInvoiceNewCumulation=New cumulation
-SituationInvoiceMainTask=Main task
-SituationInvoiceAdditionalTask=Additional task
+SituationInvoiceDate=تاريخ حالة الفاتورة
+SituationInvoiceTotalProposal=اقتراح وضع الفاتورة
+SituationInvoiceOldCumulation=تراكم قديم
+SituationInvoiceNewCumulation=تراكم جديد
+SituationInvoiceMainTask=المهمة الرئيسية
+SituationInvoiceAdditionalTask=مهمة اضافية
 PDFOctopusSituationNumber=Situation N°%s
 PDFOctopusSituationInvoiceLineDecompte=Situation invoice - COUNT
 PDFOctopusSituationInvoiceTitle=Situation invoice
 PDFOctopusSituationInvoiceLine=Situation N°%s: Inv. N°%s on %s
 TotalSituationInvoice=Total situation
-TotalSituationInvoiceWithRetainedWarranty=Total (incl. tax) with retained warranty
+TotalSituationInvoiceWithRetainedWarranty=الإجمالي (بما في ذلك الضريبة) مع الاحتفاظ بالضمان
 invoiceLineProgressError=لا يمكن أن يكون تقدم بند الفاتورة أكبر من أو يساوي بند الفاتورة التالي
 updatePriceNextInvoiceErrorUpdateline=خطأ: تحديث السعر في سطر الفاتورة: %s
 ToCreateARecurringInvoice=لإنشاء فاتورة متكررة لهذا العقد ، قم أولاً بإنشاء مسودة الفاتورة هذه ، ثم قم بتحويلها إلى قالب فاتورة وحدد معدل تكرار إنشاء الفواتير المستقبلية.
@@ -645,7 +653,7 @@ BILL_SUPPLIER_DELETEInDolibarr=تم حذف فاتورة المورد
 UnitPriceXQtyLessDiscount=سعر الوحدة × الكمية - الخصم
 CustomersInvoicesArea=منطقة فواتير العملاء
 SupplierInvoicesArea=منطقة فواتير المورد
-SituationTotalRayToRest=Remainder to pay without tax
+SituationTotalRayToRest=الباقي للدفع بدون ضريبة
 PDFSituationTitle=Situation n° %d
 SituationTotalProgress=إجمالي التقدم %d %%
 SearchUnpaidInvoicesWithDueDate=البحث في الفواتير غير المسددة بتاريخ استحقاق = %s
@@ -661,6 +669,7 @@ MentionCategoryOfOperations0=توصيل البضائع
 MentionCategoryOfOperations1=تقديم الخدمات
 MentionCategoryOfOperations2=مختلط - تسليم البضائع وتقديم الخدمات
 Salaries=الرواتب
+InvoiceSubtype=نوع الفاتورة الفرعي
 SalaryInvoice=الراتب
 BillsAndSalaries=الفواتير ورواتب
 CreateCreditNoteWhenClientInvoiceExists=يتم تمكين هذا الخيار فقط عند التحقق من صحة فاتورة(s) لـ العميل أو عند استخدام الثابت INVOICE_CREDIT_NOTE_STANDALONE (مفيد لبعض البلدان )
@@ -668,5 +677,6 @@ SearchUnpaidSupplierInvoicesWithDueDate=البحث عن فواتير مورد غ
 SearchValidatedSupplierInvoicesWithDate=البحث عن فواتير مورد غير المدفوعة بتاريخ التحقق = %s
 SendEmailsRemindersOnSupplierInvoiceDueDate=إرسال تذكير عبر البريد الإلكتروني بشأن فواتير و غير المدفوعة مورد التي تم التحقق منها
 PaymentMadeForSeveralInvoices=تم الدفع لعدة فواتير
-SituationInvoiceProgressCurrent=Invoice progress
-INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.
+SituationInvoiceProgressCurrent=تقدم الفاتورة
+CumulativeProgression=Cumulative progress
+INVOICE_ADD_EPC_QR_CODEPay=قم بمسح رمز الاستجابة السريعة هذا للدفع باستخدام هاتف ذكي يدعم الدفع باستخدام رمز المنتج الإلكتروني EPC QR.

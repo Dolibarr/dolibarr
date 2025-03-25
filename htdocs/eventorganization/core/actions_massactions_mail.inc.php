@@ -4,7 +4,7 @@
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -239,7 +239,7 @@ if (!$error && $massaction == 'confirm_presend_attendees') {
 
 			// Send mail (substitutionarray must be done just before this)
 			require_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
+			$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, array(), array(), array(), $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', "attendees_".$attendees->id, '', $sendcontext);
 			if ($mailfile->error) {
 				$resaction .= '<div class="error">' . $mailfile->error . '</div>';
 			} else {

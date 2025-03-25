@@ -550,7 +550,7 @@ function fillArrayOfFilterFields($object, $tablealias, $labelofobject, &$arrayof
 			// Exclude some fields
 			if (in_array($key, array(
 				'id', 'ref_ext', 'rowid', 'entity', 'last_main_doc', 'logo', 'logo_squarred', 'extraparams',
-				'parent', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
+				'parent', 'pass', 'pass_crypted', 'pass_temp', 'photo', 'socialnetworks', 'webservices_url', 'webservices_key'))) {
 				continue;
 			}
 			if (isset($val['enabled']) && ! (int) dol_eval($val['enabled'], 1, 1, '1')) {

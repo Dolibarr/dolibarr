@@ -68,8 +68,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 $includeconferror = '';
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";
@@ -96,7 +94,7 @@ $long_options = array(
  * @param string $header  the message to signal to the user
  * @return void
  */
-function usage($program, $header)
+function install_usage($program, $header)
 {
 	echo $header."\n";
 	echo "  php ".$program." [options] [script options]\n";
@@ -149,7 +147,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 				break;
 			case 'h':
 			case 'help':
-				usage($argv[0], "Usage:");
+				install_usage($argv[0], "Usage:");
 				exit(0);
 		}
 	}
@@ -189,7 +187,7 @@ if (php_sapi_name() === "cli" && (float) PHP_VERSION > 7.0) {
 	// typo right now.
 	if (count($unknown_options) > 0) {
 		echo "Unknown option: ".array_values($unknown_options)[0]."\n";
-		usage($argv[0], "Usage:");
+		install_usage($argv[0], "Usage:");
 		exit(1);
 	}
 

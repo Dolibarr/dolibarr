@@ -356,7 +356,8 @@ if ($action == 'importCSV' && $user->hasRight('stock', 'mouvement', 'creer')) {
 		$labelsrecord = $importcsv->import_read_record();
 
 		if ($nblinesrecord < 1) {
-			setEventMessages($langs->trans("BadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorBadNumberOfLinesMustHaveAtLeastOneLinePlusTitle"), null, 'errors');
 		} else {
 			$i = 0;
 			$data = array();
