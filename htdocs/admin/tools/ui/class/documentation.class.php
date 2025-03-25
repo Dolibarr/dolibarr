@@ -188,6 +188,24 @@ class Documentation
 			)
 		);
 
+		// Elements
+		$this->menu['Resources'] = array(
+			'url' => dol_buildpath($this->baseUrl.'/resources/index.php', 1),
+			'icon' => 'fas fa-wrench',
+			'submenu' => array(
+				'Contributing' => array(
+					'url' => dol_buildpath($this->baseUrl.'/resources/contributing.php', 1),
+					'icon' => 'fas fa-code',
+					'submenu' => array(),
+					'summary' => array(
+						'DocContributeStep1' => '#contributesection-step1',
+						'DocContributeStep2' => '#contributesection-step2',
+						'DocContributeStep3' => '#contributesection-step3',
+					),
+				),
+			)
+		);
+
 		$parameters = array(
 			'baseUrl' => $this->baseUrl,
 		);
@@ -285,8 +303,9 @@ class Documentation
 		foreach ($menu as $key => $item) {
 			$levelclass = (!empty($item['submenu'])) ? 'li-withsubmenu' : '';
 			$levelclass .= (in_array($key, $this->view)) ? ' active' : '';
+			$levelclass .= ($key == 'BackToDolibarr') ? ' li-withseparator' : '';
 
-			print '<li class="'.$levelclass.' level-'.$level.'">';
+			print '<li class="'.trim($levelclass).' level-'.$level.'">';
 			print '<a href="'.$item['url'].'" class="'.((!empty($item['submenu'])) ? 'link-withsubmenu' : '').'">';
 			print ((!empty($item['icon'])) ? '<i class="menu-icon '.$item['icon'].' pictofixedwidth" aria-hidden="true"></i>' : '');
 			print '<span class="label">'.$langs->transnoentities($key).'</span>';
