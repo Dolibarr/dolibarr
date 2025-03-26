@@ -11960,7 +11960,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 }
 
 /**
- * Explode a search string into an array but do not explode with keys are inside quotes.
+ * Explode a search string into an array but do not explode when keys are inside quotes.
  * For example "a 'b c'" will be array("a", "b c").
  *
  * @param	string				$input		String to explode
@@ -12037,7 +12037,7 @@ function dol_getmypid()
  * 										1=value is a numeric test (Example ">5.5 <10"),
  * 										2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
- * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search inside a string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -12076,6 +12076,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$crit = trim($crit);
 		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
+
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);

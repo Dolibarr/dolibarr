@@ -63,7 +63,6 @@ if (isModEnabled('category')) {
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "customers", "suppliers", "bills", "compta", "categories", "cashdesk"));
 
-
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $massaction = GETPOST('massaction', 'alpha');
@@ -97,6 +96,7 @@ $search_town = trim(GETPOST("search_town", 'alpha'));
 $search_state = trim(GETPOST("search_state", 'alpha'));
 $search_region = trim(GETPOST("search_region", 'alpha'));
 $search_email = trim(GETPOST('search_email', 'alpha'));
+$search_noemail = trim(GETPOST('search_noemail', 'alpha'));
 $search_phone = trim(GETPOST('search_phone', 'alpha'));
 $search_phone_mobile = trim(GETPOST('search_phone_mobile', 'alpha'));
 $search_fax = trim(GETPOST('search_fax', 'alpha'));
@@ -144,6 +144,8 @@ $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
@@ -309,6 +311,7 @@ $arrayfields = array(
 	'region.nom' => array('label' => "Region", 'position' => 23, 'checked' => '0'),
 	'country.code_iso' => array('label' => "Country", 'position' => 24, 'checked' => '0'),
 	's.email' => array('label' => "Email", 'position' => 25, 'checked' => '0'),
+	'su.noemail' => array('label' => "No_Email", 'position' => 26, 'checked' => '0'),
 	's.url' => array('label' => "Url", 'position' => 26, 'checked' => '0'),
 	's.phone' => array('label' => "Phone", 'position' => 27, 'checked' => '1'),
 	's.fax' => array('label' => "Fax", 'position' => 28, 'checked' => '0'),
@@ -443,6 +446,7 @@ if (empty($reshook)) {
 		$search_region = "";
 		$search_country = '';
 		$search_email = '';
+		$search_noemail = '';
 		$search_phone = '';
 		$search_phone_mobile = '';
 		$search_fax = '';
@@ -475,6 +479,8 @@ if (empty($reshook)) {
 		$search_date_modif_endyear = "";
 		$search_date_modif_endday = "";
 		$search_date_modif_end = "";
+		$search_note_public = "";
+		$search_note_private = "";
 		$search_status = -1;
 		$search_stcomm = '';
 		$search_level = '';
@@ -764,6 +770,9 @@ if ($search_country && $search_country != '-1') {
 if ($search_email) {
 	$sql .= natural_search("s.email", $search_email);
 }
+if ($search_noemail) {
+	$sql .= " AND EXISTS (SELECT rowid FROM ".MAIN_DB_PREFIX."mailing_unsubscribe as mu WHERE mu.email = '".$db->escape($search_email)."' AND unsubscribegroup = '' AND entity IN (".getEntity('societe')."))";
+}
 if (strlen($search_phone)) {
 	$sql .= natural_search("s.phone", $search_phone);
 }
@@ -836,6 +845,12 @@ if ($search_stcomm) {
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
+}
+if ($search_note_public != '') {
+	$sql .= natural_search('s.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('s.note_private', $search_note_private);
 }
 if ($search_date_creation_start) {
 	$sql .= " AND s.datec >= '".$db->idate($search_date_creation_start)."'";
@@ -1009,6 +1024,9 @@ if ($search_fax != '') {
 }
 if ($search_email != '') {
 	$param .= "&search_email=".urlencode($search_email);
+}
+if ($search_noemail != '') {
+	$param .= "&search_noemail=".urlencode($search_noemail);
 }
 if ($search_url != '') {
 	$param .= "&search_url=".urlencode($search_url);
@@ -1467,6 +1485,12 @@ if (!empty($arrayfields['s.email']['checked'])) {
 	print '<input class="flat searchemail maxwidth50imp" type="text" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
 	print '</td>';
 }
+if (!empty($arrayfields['su.noemail']['checked'])) {
+	// Email
+	print '<td class="liste_titre center">';
+	print '<input class="flat searchemail maxwidth50imp" type="checkbox" name="search_noemail" '.($search_noemail ? ' checked="checked"' : '').'">';
+	print '</td>';
+}
 if (!empty($arrayfields['s.phone']['checked'])) {
 	// Phone
 	print '<td class="liste_titre">';
@@ -1602,11 +1626,13 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 if (!empty($arrayfields['s.note_public']['checked'])) {
 	// Note public
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.note_private']['checked'])) {
 	// Note private
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
 	print '</td>';
 }
 // Status
@@ -1728,6 +1754,10 @@ if (!empty($arrayfields['s.email']['checked'])) {
 	print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
+if (!empty($arrayfields['su.noemail']['checked'])) {
+	print_liste_field_titre($arrayfields['su.noemail']['label'], $_SERVER["PHP_SELF"], "", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
 if (!empty($arrayfields['s.phone']['checked'])) {
 	print_liste_field_titre($arrayfields['s.phone']['label'], $_SERVER["PHP_SELF"], "s.phone", "", $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
@@ -1808,10 +1838,6 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tms']['label'], $_SERVER["PHP_SELF"], "s.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;	// For the column action
 }
-if (!empty($arrayfields['s.status']['checked'])) {
-	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;	// For the column action
-}
 if (!empty($arrayfields['s.note_public']['checked'])) {
 	print_liste_field_titre($arrayfields['s.note_public']['label'], $_SERVER["PHP_SELF"], "s.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -1819,6 +1845,10 @@ if (!empty($arrayfields['s.note_public']['checked'])) {
 if (!empty($arrayfields['s.note_private']['checked'])) {
 	print_liste_field_titre($arrayfields['s.note_private']['label'], $_SERVER["PHP_SELF"], "s.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.status']['checked'])) {
+	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -2133,6 +2163,13 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Unsubscribe to ML list
+		if (!empty($arrayfields['su.noemail']['checked'])) {
+			print '<td class="center">'.yn($obj->noemail)."</td>\n";
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		if (!empty($arrayfields['s.phone']['checked'])) {
 			print '<td class="nowraponall">'.dol_print_phone($obj->phone, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone')."</td>\n";
 			if (!$i) {
@@ -2285,7 +2322,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['s.note_public']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5);
+			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2294,7 +2331,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['s.note_private']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5);
+			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
