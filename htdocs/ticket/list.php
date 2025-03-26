@@ -64,7 +64,6 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'alpha');
 
 $id = GETPOSTINT('id');
-$msg_id     = GETPOSTINT('msg_id');
 $socid      = GETPOSTINT('socid');
 $contractid  = GETPOSTINT('contractid');
 $projectid  = GETPOSTINT('projectid');
@@ -125,12 +124,10 @@ if (!$sortorder) {
 $search_all = trim(GETPOST("search_all", 'alphanohtml'));
 $search = array();
 foreach ($object->fields as $key => $val) {
-	if (GETPOST('search_'.$key, 'alpha') !== '') {
-		if (isset($val['arrayofkeyval'])) {
-			$search[$key] = GETPOST('search_'.$key, 'array');
-		} else {
-			$search[$key] = GETPOST('search_'.$key, 'alpha');
-		}
+	if (GETPOSTISARRAY('search_'.$key)) {
+		$search[$key] = GETPOST('search_'.$key, 'array:alpha');
+	} elseif (GETPOST('search_'.$key, 'alpha') !== '') {
+		$search[$key] = GETPOST('search_'.$key, 'alpha');
 	} else {
 		$search[$key] = "";
 	}
@@ -406,7 +403,7 @@ foreach ($search as $key => $val) {
 				$newarrayofstatus[] = $val2;
 			}
 		}
-		if ($search['fk_statut'] == 'openall' || (is_array($search['fk_statut']) && in_array('openall', $search['fk_statut']))) {
+		if ($search['fk_statut'] === 'openall' || (is_array($search['fk_statut']) && in_array('openall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
 			$newarrayofstatus[] = Ticket::STATUS_READ;
 			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
@@ -414,7 +411,7 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
 			$newarrayofstatus[] = Ticket::STATUS_WAITING;
 		}
-		if ($search['fk_statut'] == 'closeall' || (is_array($search['fk_statut']) && in_array('closeall', $search['fk_statut']))) {
+		if ($search['fk_statut'] === 'closeall' || (is_array($search['fk_statut']) && in_array('closeall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_CLOSED;
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
