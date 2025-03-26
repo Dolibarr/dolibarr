@@ -462,7 +462,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action to update one extrafield
 if ($action == 'update_extras' && $permissiontoeditextra) {
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$attribute = GETPOST('attribute', 'aZ09');
 
