@@ -6,7 +6,7 @@
  * Copyright (C) 2017		Open-DSI					<support@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -167,26 +167,25 @@ if (!$user->hasRight('agenda', 'allactions', 'read') || $filter == 'mine') {	// 
 }
 
 $arrayfields = array(
-	'a.id' => array('label' => "Ref", 'checked' => 1),
-	'owner' => array('label' => "Owner", 'checked' => 1),
-	'c.libelle' => array('label' => "Type", 'checked' => 1),
-	'a.label' => array('label' => "Title", 'checked' => 1),
-	'a.note' => array('label' => 'Description', 'checked' => 0),
-	'a.datep' => array('label' => "DateStart", 'checked' => 1),
-	'a.datep2' => array('label' => "DateEnd", 'checked' => 1),
-	's.nom' => array('label' => "ThirdParty", 'checked' => 1),
-	'a.fk_contact' => array('label' => "Contact", 'checked' => 0),
-	'a.fk_element' => array('label' => "LinkedObject", 'checked' => 1, 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
-	'a.datec' => array('label' => 'DateCreation', 'checked' => 0, 'position' => 510),
-	'a.tms' => array('label' => 'DateModification', 'checked' => 0, 'position' => 520),
-	'a.percent' => array('label' => "Status", 'checked' => 1, 'position' => 1000)
+	'a.id' => array('label' => "Ref", 'checked' => '1'),
+	'owner' => array('label' => "Owner", 'checked' => '1'),
+	'c.libelle' => array('label' => "Type", 'checked' => '1'),
+	'a.label' => array('label' => "Title", 'checked' => '1'),
+	'a.note' => array('label' => 'Description', 'checked' => '0'),
+	'a.datep' => array('label' => "DateStart", 'checked' => '1'),
+	'a.datep2' => array('label' => "DateEnd", 'checked' => '1'),
+	's.nom' => array('label' => "ThirdParty", 'checked' => '1'),
+	'a.fk_contact' => array('label' => "Contact", 'checked' => '0'),
+	'a.fk_element' => array('label' => "LinkedObject", 'checked' => '1', 'enabled' => (getDolGlobalString('AGENDA_SHOW_LINKED_OBJECT'))),
+	'a.datec' => array('label' => 'DateCreation', 'checked' => '0', 'position' => 510),
+	'a.tms' => array('label' => 'DateModification', 'checked' => '0', 'position' => 520),
+	'a.percent' => array('label' => "Status", 'checked' => '1', 'position' => 1000)
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $result = restrictedArea($user, 'agenda', 0, '', 'myactions');
 if ($user->socid && $socid) {
@@ -308,7 +307,7 @@ $title = $langs->trans("Agenda");
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist');
 
 // Define list of all external calendars
-$listofextcals = array();
+// $listofextcals = array(); Not used yet in lists
 
 $param = '';
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -457,20 +456,25 @@ $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_extrafields as ef ON (a.id = ef.fk_object)";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON a.fk_soc = s.rowid";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
-$sql .= " ,".MAIN_DB_PREFIX."c_actioncomm as c";
+$sql .= " INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as c ON c.id = a.fk_action";
 // We must filter on resource table
 if ($resourceid > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."element_resources as r";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."element_resources as r ON r.element_type = 'action' AND r.element_id = a.id";
 }
 // We must filter on assignment table
 if ($filtert > 0 || $usergroup > 0) {
-	$sql .= ", ".MAIN_DB_PREFIX."actioncomm_resources as ar";
+	$sql .= " INNER JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
 if ($usergroup > 0) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_user = ar.fk_element";
 }
-$sql .= " WHERE c.id = a.fk_action";
-$sql .= ' AND a.entity IN ('.getEntity('agenda').')';
+
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
+
+$sql .= " WHERE a.entity IN (".getEntity('agenda').")";
 // Condition on actioncode
 if (!empty($actioncode)) {
 	if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
@@ -494,14 +498,14 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
-			} else {
+			} elseif ($actioncode !== '-1') {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
 		}
 	}
 }
 if ($resourceid > 0) {
-	$sql .= " AND r.element_type = 'action' AND r.element_id = a.id AND r.resource_id = ".((int) $resourceid);
+	$sql .= " AND r.resource_id = ".((int) $resourceid);
 }
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
@@ -520,12 +524,8 @@ if ($search_sale && $search_sale != '-1') {
 	}
 }
 // Search on socid
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND a.fk_soc = ".((int) $socid);
-}
-// We must filter on assignment table
-if ($filtert > 0 || $usergroup > 0) {
-	$sql .= " AND ar.fk_actioncomm = a.id AND ar.element_type='user'";
 }
 if ($type) {
 	$sql .= " AND c.id = ".((int) $type);
@@ -736,13 +736,13 @@ $viewmode .= '</div>';
 
 $viewmode .= '<span class="marginrightonly"></span>';
 
-
-$tmpforcreatebutton = dol_getdate(dol_now(), true);
+$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
 
 $newparam = '&month='.str_pad((string) $month, 2, "0", STR_PAD_LEFT).'&year='.$tmpforcreatebutton['year'];
 
 $url = DOL_URL_ROOT.'/comm/action/card.php?action=create';
-$url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'].'&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
+$url .= '&apyear='.$tmpforcreatebutton['year'].'&apmonth='.$tmpforcreatebutton['mon'].'&apday='.$tmpforcreatebutton['mday'];
+$url .= '&aphour='.$tmpforcreatebutton['hours'].'&apmin='.$tmpforcreatebutton['minutes'];
 $url .= '&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam ? '?'.$newparam : ''));
 
 $newcardbutton = dolGetButtonTitle($langs->trans('AddAction'), '', 'fa fa-plus-circle', $url, '', (int) ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')));
@@ -886,7 +886,6 @@ if (!empty($arrayfields['a.note']['checked'])) {
 	print_liste_field_titre($arrayfields['a.note']['label'], $_SERVER["PHP_SELF"], "a.note", $param, "", "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
-//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 if (!empty($arrayfields['a.datep']['checked'])) {
 	print_liste_field_titre($arrayfields['a.datep']['label'], $_SERVER["PHP_SELF"], "a.datep,a.id", $param, '', '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;

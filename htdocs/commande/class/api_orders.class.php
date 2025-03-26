@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   	Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 class Orders extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -38,7 +39,7 @@ class Orders extends DolibarrApi
 	);
 
 	/**
-	 * @var Commande $commande {@type Commande}
+	 * @var Commande {@type Commande}
 	 */
 	public $commande;
 
@@ -47,7 +48,8 @@ class Orders extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
+
 		$this->db = $db;
 		$this->commande = new Commande($this->db);
 	}
@@ -160,12 +162,15 @@ class Orders extends DolibarrApi
 	 * @param string           $sqlfilterlines      Other criteria to filter answers separated by a comma. Syntax example "(tl.fk_product:=:'17') and (tl.price:<:'250')"
 	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int			   $loadlinkedobjects	Load also linked object
 	 * @return  array                               Array of order objects
+	 * @phan-return Commande[]|array{data:Commande[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Commande[]|array{data:Commande[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $sqlfilterlines = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
@@ -239,12 +244,18 @@ class Orders extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$commande_static = new Commande($this->db);
-				if ($commande_static->fetch($obj->rowid)) {
+				if ($commande_static->fetch($obj->rowid) > 0) {
 					// Add external contacts ids
 					$tmparray = $commande_static->liste_contact(-1, 'external', 1);
 					if (is_array($tmparray)) {
 						$commande_static->contacts_ids = $tmparray;
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$commande_static->fetchObjectLinked();
+					}
+
 					// Add online_payment_url, cf #20477
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$commande_static->online_payment_url = getOnlinePaymentUrl(0, 'order', $commande_static->ref);
@@ -283,6 +294,8 @@ class Orders extends DolibarrApi
 	 * Example: { "socid": 2, "date": 1595196000, "type": 0, "lines": [{ "fk_product": 2, "qty": 1 }] }
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of order
 	 */
 	public function post($request_data = null)
@@ -325,6 +338,8 @@ class Orders extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return OrderLine[]
+	 * @phpstan-return OrderLine[]
 	 */
 	public function getLines($id)
 	{
@@ -353,6 +368,8 @@ class Orders extends DolibarrApi
 	 *
 	 * @param int   $id             Id of order to update
 	 * @param array $request_data   OrderLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -421,6 +438,8 @@ class Orders extends DolibarrApi
 	 * @param	int   $id             Id of order to update
 	 * @param	int   $lineid         Id of line to update
 	 * @param	array $request_data   OrderLine data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object|false		  Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
@@ -556,6 +575,8 @@ class Orders extends DolibarrApi
 	 * @param int    $contactid      Id of contact to add
 	 * @param string $type           Type of the contact (BILLING, SHIPPING, CUSTOMER)
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}
 	 *
@@ -605,6 +626,8 @@ class Orders extends DolibarrApi
 	 * @url	DELETE {id}/contact/{contactid}/{type}
 	 *
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -649,7 +672,9 @@ class Orders extends DolibarrApi
 	 * Update order general fields (won't touch lines of order)
 	 *
 	 * @param	int		$id             Id of order to update
-	 * @param	array	$request_data   Datas
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -704,6 +729,8 @@ class Orders extends DolibarrApi
 	 *
 	 * @param   int     $id         Order ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -751,7 +778,6 @@ class Orders extends DolibarrApi
 	 * @throws RestException 401
 	 * @throws RestException 404
 	 * @throws RestException 500 System error
-	 *
 	 */
 	public function validate($id, $idwarehouse = 0, $notrigger = 0)
 	{
@@ -1013,6 +1039,8 @@ class Orders extends DolibarrApi
 	 * @url     GET {id}/shipment
 	 *
 	 * @return array
+	 * @phan-return Expedition[]
+	 * @phpstan-return Expedition[]
 	 *
 	 * @throws RestException 401
 	 * @throws RestException 404
@@ -1090,6 +1118,7 @@ class Orders extends DolibarrApi
 		$shipment = new Expedition($this->db);
 		$shipment->socid = $this->commande->socid;
 		$shipment->origin_id = $this->commande->id;
+		$shipment->origin = $this->commande->element;
 		$result = $shipment->create(DolibarrApiAccess::$user);
 		if ($result <= 0) {
 			throw new RestException(500, 'Error on creating expedition :'.$this->db->lasterror());
@@ -1128,12 +1157,15 @@ class Orders extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$commande = array();
 		foreach (Orders::$FIELDS as $field) {
 			if (!isset($data[$field])) {

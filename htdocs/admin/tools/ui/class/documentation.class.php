@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024        Anthony Damhet        <a.damhet@progiseize.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,11 +53,16 @@ class Documentation
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
+	public $baseUrl = 'admin/tools/ui';
 
 	/**
 	 *    Constructor
 	 *
 	 * @param DoliDB $db Database handler
+	 * @return void
 	 */
 	public function __construct(DoliDB $db)
 	{
@@ -75,13 +81,10 @@ class Documentation
 	 */
 	private function setMenu()
 	{
-
 		global $hookmanager;
 
 
 		$hookmanager->initHooks(array('uidocumentation'));
-
-		$baseUrl = 'admin/tools/ui';
 
 		// Go back to Dolibarr
 		$this->menu['BackToDolibarr'] = array(
@@ -92,18 +95,18 @@ class Documentation
 
 		// Home for Ui documentation
 		$this->menu['DocumentationHome'] = array(
-			'url' => dol_buildpath($baseUrl.'/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/index.php', 1),
 			'icon' => 'fas fa-book',
 			'submenu' => array(),
 		);
 
 		// Components
 		$this->menu['Components'] = array(
-			'url' => dol_buildpath($baseUrl.'/components/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/components/index.php', 1),
 			'icon' => 'fas fa-th-large',
 			'submenu' => array(
 				'Badges' => array(
-					'url' => dol_buildpath($baseUrl.'/components/badges.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/badges.php', 1),
 					'icon' => 'fas fa-certificate pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -117,7 +120,7 @@ class Documentation
 					),
 				),
 				'Buttons' => array(
-					'url' => dol_buildpath($baseUrl.'/components/buttons.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/buttons.php', 1),
 					'icon' => 'fas fa-mouse pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -126,8 +129,17 @@ class Documentation
 						'DocButtonSubmenu' => '#buttonsection-submenu',
 					),
 				),
+				'Icons' => array(
+					'url' => dol_buildpath($this->baseUrl.'/components/icons.php', 1),
+					'icon' => 'far fa-flag pictofixedwidth',
+					'submenu' => array(),
+					'summary' => array(
+						'DocIconsList' => '#img-picto-section-list',
+						'DocIconsFontAwesomeList' => '#icon-section-list',
+					),
+				),
 				'Progress' => array(
-					'url' => dol_buildpath($baseUrl.'/components/progress-bars.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/progress-bars.php', 1),
 					'icon' => 'fas fa-battery-half pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
@@ -137,12 +149,22 @@ class Documentation
 					),
 				),
 				'Event Message' => array(
-					'url' => dol_buildpath($baseUrl.'/components/event-message.php', 1),
+					'url' => dol_buildpath($this->baseUrl.'/components/event-message.php', 1),
 					'icon' => 'fas fa-comments pictofixedwidth',
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#seteventmessagesection-basicusage',
 						'DocSetEventMessageContextualVariations' => '#seteventmessagesection-contextvariations',
+					)
+				),
+				'Inputs' => array(
+					'url' => dol_buildpath($this->baseUrl.'/components/inputs.php', 1),
+					'icon' => 'fas fa-comments pictofixedwidth',
+					'submenu' => array(),
+					'summary' => array(
+						'DocBasicUsage' => '#setinputssection-basicusage',
+						'DocHelperFunctionsInputUsage' => '#setinputssection-helperfunctions',
+						'DocHelperFunctionsGetSearchFilterToolInput' => '#setinputssection-getSearchFilterToolInput',
 					)
 				),
 			),
@@ -153,7 +175,7 @@ class Documentation
 
 		// Elements
 		$this->menu['Content'] = array(
-			'url' => dol_buildpath($baseUrl.'/content/index.php', 1),
+			'url' => dol_buildpath($this->baseUrl.'/content/index.php', 1),
 			'icon' => 'fas fa-th-large',
 			'submenu' => array(
 				'Tables' => array(
@@ -162,14 +184,16 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(
 						'DocBasicUsage' => '#tablesection-basicusage',
-						'DocTableWithFilters' => '#tablesection-withfilters'
+						'DocTableWithFilters' => '#tablesection-withfilters',
+						'DocTableBeforeFilters' => '#tablesection-beforefilters',
+						'DocTableCSSClass' => '#tablesection-cssclasses',
 					),
 				),
 			)
 		);
 
 		$parameters = array(
-			'baseUrl' => $baseUrl,
+			'baseUrl' => $this->baseUrl,
 		);
 		$action = '';
 
@@ -223,7 +247,8 @@ class Documentation
 	}
 
 	/**
-	 *    Output sidebar
+	 * Output sidebar
+	 *
 	 * @return void
 	 */
 	public function showSidebar()
@@ -312,7 +337,8 @@ class Documentation
 	}
 
 	/**
-	 *    Output summary
+	 * Output summary
+	 *
 	 * @param int $showsubmenu 			Show Sub menus: 0 = No, 1 = Yes
 	 * @param int $showsubmenu_summary	Show summary of sub menus: 0 = No, 1 = Yes
 	 * @return void
@@ -320,6 +346,7 @@ class Documentation
 	public function showSummary($showsubmenu = 1, $showsubmenu_summary = 1)
 	{
 		$i = 0;
+		$menu_entry = [];
 		if (!empty($this->view)) :
 			// On se place au bon niveau
 			foreach ($this->view as $view) {
@@ -384,16 +411,23 @@ class Documentation
 	 *    Output a View Code area
 	 *
 	 * @param array $lines Lines of code to show
+	 * @param string $option Source code language ('html', 'php' etc)
 	 * @return void
 	 */
-	public function showCode($lines = array())
+	public function showCode($lines = array(), $option = 'html')
 	{
-		print '<div class="documentation-code"><pre>';
-		if (!empty($lines)) {
-			foreach ($lines as $lineofcode) {
-				print dol_htmlentities($lineofcode).'<br/>';
+		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
+		print '<div class="documentation-code">';
+
+		if (isset($lines[0])) {
+			if ($option === 'html' && strpos(strtolower($lines[0]), '<!doctype') === false) {
+				array_unshift($lines, '<!DOCTYPE html>', '');
 			}
 		}
-		print '</pre></div>';
+
+		$content = implode("\n", $lines) . "\n";
+		$doleditor = new DolEditor(md5($content), $content, '', 0, 'Basic', 'In', true, false, 'ace', 0, '99%', 1);
+		print $doleditor->Create(1, '', false, '', $option);
+		print '</div>';
 	}
 }

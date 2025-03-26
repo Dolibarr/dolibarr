@@ -8,13 +8,12 @@ Shipments=Transporter
 ShowSending=Visa leveranser
 Receivings=Leverans kvitton
 SendingsArea=Transporter område
-ListOfSendings=Lista över transporter
 SendingMethod=Frakt metod
 LastSendings=Senaste %s sändningar
 StatisticsOfSendings=Statistik för transporter
 NbOfSendings=Antal transporter
 NumberOfShipmentsByMonth=Antal leveranser per månad
-SendingCard=Fraktkort
+SendingCard=Sändning
 NewSending=Ny leverans
 CreateShipment=Skapa leverans
 QtyShipped=Antal sändas
@@ -39,16 +38,17 @@ StatusSendingValidatedShort=Bekräftat
 StatusSendingProcessedShort=Bearbetade
 SendingSheet=Packsedel
 ConfirmDeleteSending=Är du säker på att du vill radera den här sändningen?
-ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
+ConfirmValidateSending=Är du säker på att du vill validera den här försändelsen med referensen <b>%s</b> >?
 ConfirmCancelSending=Är du säker på att du vill avbryta denna leverans?
 DocumentModelMerou=Merou A5-modellen
 WarningNoQtyLeftToSend=Varning, att inga produkter väntar sändas.
 StatsOnShipmentsOnlyValidated=Statistik gäller endast för validerade försändelser. Datum som används är datumet för validering av leveransen (planerat leveransdatum är inte alltid känt)
+DateShipping=Sending date
 DateDeliveryPlanned=Planerat leveransdatum
 RefDeliveryReceipt=Ref leverans kvitto
 StatusReceipt=Status leverans kvitto
 DateReceived=Datum leverans fick
-ClassifyReception=Classify Received
+ClassifyReception=Klassificera Mottaget
 SendShippingByEMail=Skicka leverans via e-post
 SendShippingRef=Inlämning av leveransen %s
 ActionsOnShipping=Evenemang på leverans
@@ -62,7 +62,11 @@ ProductQtyInSuppliersShipmentAlreadyRecevied=Produktkvantitet från öppna inkö
 NoProductToShipFoundIntoStock=Ingen produkt skickas i frakt <b> %s </b>. Rätt lager eller gå tillbaka för att välja ett annat lager.
 WeightVolShort=Vikt / vol.
 ValidateOrderFirstBeforeShipment=Du måste först validera ordern innan du kan göra sändningar.
-NoLineGoOnTabToAddSome=No line, go on tab "%s" to add
+NoLineGoOnTabToAddSome=Ingen rad, gå till fliken "%s" för att lägga till
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Mer komplett dokumentmodell för leveranskvitton och extrafä
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Konstant EXPEDITION_ADDON_NUMBER definieras inte
 SumOfProductVolumes=Summan av produktvolymer
 SumOfProductWeights=Summan av produktvikter
-
 # warehouse details
 DetailWarehouseNumber= Lagerinformation
 DetailWarehouseFormat= W: %s (Antal: %d)
-SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
-CreationOptions=Available options during shipment creation
-
-ShipmentDistribution=Shipment distribution
-
-ErrorTooManyCombinationBatchcode=No dispatch for line %s as too many combinations of warehouse, product, batch code was found (%s).
-ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
-ErrorTooMuchShipped=Quantity shipped should not be greater than quantity ordered for line %s
+SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Visa sista datum för inträde i lager under skapandet av försändelsen för serienummer eller batch
+CreationOptions=Tillgängliga alternativ när försändelsen skapas
+ShipmentDistribution=Försändelsedistribution
+ErrorTooManyCombinationBatchcode=Ingen utskick för rad %s eftersom för många kombinationer av lager, produkt, batchkod hittades (%s).
+ErrorNoCombinationBatchcode=Det gick inte att spara raden %s som kombinationen av warehouse-product-lot/serial (%s, %s, %s) hittades inte i lager.
+ErrorTooMuchShipped=Kvantiteten som skickas bör inte vara större än den beställda kvantiteten för rad %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representanten uppföljning sjöfart
+TypeContact_shipping_external_BILLING=Kundfaktura kontakt
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

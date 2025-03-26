@@ -3,12 +3,12 @@
  * Copyright (C) 2007-2010	Jean Heimburger				<jean@tiaris.info>
  * Copyright (C) 2011		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2013-2016	Olivier Geffroy				<jeff@jeffinfo.com>
  * Copyright (C) 2013-2016	Florian Henry				<florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2018		Eric Seigne					<eric.seigne@cap-rel.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,8 +134,8 @@ if (empty($date_endmonth)) {
 }
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
-	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+	$date_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
 $sql = "SELECT f.rowid, f.ref as ref, f.type, f.datef as df, f.libelle as label, f.ref_supplier, f.date_lim_reglement as dlr, f.close_code, f.vat_reverse_charge,";
@@ -190,8 +190,8 @@ if ($date_start && $date_end) {
 	$sql .= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 }
 // Define begin binding date
-if (getDolGlobalString('ACCOUNTING_DATE_START_BINDING')) {
-	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalString('ACCOUNTING_DATE_START_BINDING'))."'";
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND f.datef >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
 }
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already') {
@@ -399,34 +399,34 @@ foreach ($tabfac as $key => $val) {		// Loop on each invoice
 	}
 }
 */
+
 // New way, single query, load all unbound lines
-$sql = "
-SELECT
-    fk_facture_fourn,
-    COUNT(fd.rowid) as nb
-FROM
-    " . MAIN_DB_PREFIX . "facture_fourn_det as fd
-WHERE
-    fd.product_type <= 2
-    AND fd.fk_code_ventilation <= 0
-    AND fd.total_ttc <> 0
-	AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
-GROUP BY fk_facture_fourn
-";
-$resql = $db->query($sql);
+if (!empty($tabfac)) {
+	$sql = "
+	SELECT
+    	fk_facture_fourn,
+    	COUNT(fd.rowid) as nb
+	FROM
+    	" . MAIN_DB_PREFIX . "facture_fourn_det as fd
+	WHERE
+    	fd.product_type <= 2
+    	AND fd.fk_code_ventilation <= 0
+    	AND fd.total_ttc <> 0
+		AND fk_facture_fourn IN (".$db->sanitize(implode(",", array_keys($tabfac))).")
+	GROUP BY fk_facture_fourn
+	";
+	$resql = $db->query($sql);
 
-$num = $db->num_rows($resql);
-$i = 0;
-while ($i < $num) {
-	$obj = $db->fetch_object($resql);
-	if ($obj->nb > 0) {
-		$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+	$num = $db->num_rows($resql);
+	$i = 0;
+	while ($i < $num) {
+		$obj = $db->fetch_object($resql);
+		if ($obj->nb > 0) {
+			$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+		}
+		$i++;
 	}
-	$i++;
 }
-//var_dump($errorforinvoice);exit;
-
-
 
 // Bookkeeping Write
 if ($action == 'writebookkeeping' && !$error && $user->hasRight('accounting', 'bind', 'write')) {
@@ -866,8 +866,8 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
 			print '"'.length_accountg($companystatic->accountancy_code_supplier_general).'"'.$sep;
 			print '"'.length_accounta(html_entity_decode($k)).'"'.$sep;
-			print '"'.$langs->trans("Thirdparty").'"'.$sep;
-			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $val["refsuppliersologest"], $langs->trans("Thirdparty"))).'"'.$sep;
+			print '"'.$langs->trans("ThirdParty").'"'.$sep;
+			print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $val["refsuppliersologest"], $langs->trans("ThirdParty"))).'"'.$sep;
 			print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 			print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
 			print '"'.$journal.'"';
@@ -959,7 +959,7 @@ if ($action == 'exportcsv' && !$error) {		// ISO and not UTF8 !
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
 						print '"'.length_accountg(html_entity_decode($k)).'"'.$sep;
-						print '"'.$langs->trans("Thirdparty").'"'.$sep;
+						print '"'.$langs->trans("ThirdParty").'"'.$sep;
 						print '"'.csvClean($bookkeepingstatic->accountingLabelForOperation($companystatic->name, $val["refsuppliersologest"], $langs->trans("VAT").' NPR')).'"'.$sep;
 						print '"'.($mt < 0 ? price(-$mt) : '').'"'.$sep;
 						print '"'.($mt >= 0 ? price($mt) : '').'"'.$sep;
@@ -1276,12 +1276,10 @@ if (empty($action) || $action == 'view') {
 					// Subledger account
 					print "<td>";
 					print '</td>';
-					print "<td>";
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					$labelvatrate = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 					$labelvatrate .= ($numtax ? ' - Localtax '.$numtax : '');
 					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($companystatic->getNomUrl(0, 'supplier'), $invoicestatic->ref_supplier, $labelvatrate) . "</td>";
-					print "</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print "</tr>";

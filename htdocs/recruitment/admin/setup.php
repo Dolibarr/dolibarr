@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -212,7 +212,7 @@ if ($action == 'edit') {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-	foreach ($arrayofparameters as $key => $val) {
+	foreach ($arrayofparameters as $key => $val) {  // @phan-suppress-current-line PhanEmptyForeach
 		print '<tr class="oddeven"><td>';
 		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
 		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
@@ -343,7 +343,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								print "</tr>\n";
@@ -482,7 +482,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 0);
+										print $form->textwithpicto('', $htmltooltip, 1, 'info');
 										print '</td>';
 
 										// Preview
@@ -491,7 +491,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											$newname = preg_replace('/_'.preg_quote(strtolower($myTmpObjectKey), '/').'/', '', $name);
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($newname).'&object='.urlencode($myTmpObjectKey).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
-											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
 

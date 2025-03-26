@@ -269,6 +269,7 @@ class modTakePos extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs, $user, $mysoc;
+
 		$langs->load("cashdesk");
 
 		dolibarr_set_const($this->db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
@@ -301,7 +302,7 @@ class modTakePos extends DolibarrModules
 		$categories = new Categorie($this->db);
 		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo) || !getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID')) {
+			if (!count($cate_arbo) || (!getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') || getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') == '-1')) {
 				$category = new Categorie($this->db);
 
 				$category->label = $langs->trans("DefaultPOSCatLabel");

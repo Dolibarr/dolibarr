@@ -3,7 +3,7 @@
  * Copyright (C) 2015-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024 	    Nick Fragoulis
  *
@@ -193,8 +193,8 @@ if ($massaction == 'withdrawrequest') {
 			$objecttmp = new Salary($db);
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0) {
-				$totalpaid = $objecttmp->getSommePaiement();
-				$objecttmp->resteapayer = price2num((float) $objecttmp->amount - $totalpaid, 'MT');
+				$totalpaid = (float) $objecttmp->getSommePaiement();
+				$objecttmp->resteapayer = (float) price2num((float) $objecttmp->amount - $totalpaid, 'MT');
 
 				// hook to finalize the remaining amount, considering e.g. cash discount agreements
 				$parameters = array('remaintopay' => $objecttmp->resteapayer);
@@ -211,7 +211,7 @@ if ($massaction == 'withdrawrequest') {
 				if ($objecttmp->status == Salary::STATUS_PAID || $objecttmp->resteapayer == 0) {
 					$error++;
 					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
-				} elseif ($resteapayer < 0) {
+				} elseif ($objecttmp->resteapayer < 0) {
 					$error++;
 					setEventMessages($langs->trans("Salary").' '.$objecttmp->ref.' : '.$langs->trans("AmountMustBePositive"), $objecttmp->errors, 'errors');
 				}
@@ -227,6 +227,7 @@ if ($massaction == 'withdrawrequest') {
 				$rsql .= " AND pfd.traite = 0";
 				$rsql .= " ORDER BY pfd.date_demande DESC";
 
+				$numprlv = 0;
 				$result_sql = $db->query($rsql);
 				if ($result_sql) {
 					$numprlv = $db->num_rows($result_sql);
@@ -256,7 +257,7 @@ if ($massaction == 'withdrawrequest') {
 					$nbwithdrawrequestok++;
 				} else {
 					$db->rollback();
-					setEventMessages($aBill->error, $aBill->errors, 'errors');
+					setEventMessages($salary->error, $salary->errors, 'errors');
 				}
 			}
 			if ($nbwithdrawrequestok > 0) {

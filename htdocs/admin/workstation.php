@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2020 Gauthier VERDOL <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -185,57 +185,6 @@ print load_fiche_titre($langs->trans($page_name), $linkback, 'title_setup');
 $head = workstationAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, "workstation");
 
-// Setup page goes here
-//echo '<span class="opacitymedium">'.$langs->trans("WorkstationSetupPage").'</span><br><br>';
-
-
-if ($action == 'edit') {
-	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
-	print '<input type="hidden" name="token" value="'.newToken().'">';
-	print '<input type="hidden" name="action" value="update">';
-
-	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-	// @phan-suppress-next-line PhanEmptyForeach
-	foreach ($arrayofparameters as $key => $val) {
-		print '<tr class="oddeven"><td>';
-		$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-		print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css']) ? 'minwidth200' : $val['css']).'" value="'.getDolGlobalString($key).'"></td></tr>';
-	}
-	print '</table>';
-
-	print '<br><div class="center">';
-	print '<input class="button button-save" type="submit" value="'.$langs->trans("Save").'">';
-	print '</div>';
-
-	print '</form>';
-	print '<br>';
-} else {
-	if (!empty($arrayofparameters)) {
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-		foreach ($arrayofparameters as $key => $val) {
-			$setupnotempty++;
-
-			print '<tr class="oddeven"><td>';
-			$tooltiphelp = (($langs->trans($key.'Tooltip') != $key.'Tooltip') ? $langs->trans($key.'Tooltip') : '');
-			print $form->textwithpicto($langs->trans($key), $tooltiphelp);
-			print '</td><td>'.getDolGlobalString($key).'</td></tr>';
-		}
-
-		print '</table>';
-
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	}/* else {
-		print '<br>'.$langs->trans("NothingToSetup");
-	}*/
-}
-
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {
@@ -332,7 +281,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								print "</tr>\n";
@@ -466,7 +415,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 0);
+										print $form->textwithpicto('', $htmltooltip, 1, 'info');
 										print '</td>';
 
 										// Preview
@@ -474,7 +423,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										if ($module->type == 'pdf') {
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'&object='.$myTmpObjectKey.'">'.img_object($langs->trans("Preview"), 'generic').'</a>';
 										} else {
-											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
 

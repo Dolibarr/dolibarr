@@ -2,7 +2,7 @@
 /* Advance Targeting Emailing for mass emailing module
  * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +186,7 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
 		$sql .= " ".((int) $conf->entity).",";
-		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : "'".$this->db->escape($this->fk_element)."'").",";
+		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : "'".$this->db->escape((string) $this->fk_element)."'").",";
 		$sql .= " ".(!isset($this->type_element) ? 'NULL' : "'".$this->db->escape($this->type_element)."'").",";
 		$sql .= " ".(!isset($this->filtervalue) ? 'NULL' : "'".$this->db->escape($this->filtervalue)."'").",";
 		$sql .= " ".((int) $user->id).",";
@@ -734,7 +734,7 @@ class AdvanceTargetingMailing extends CommonObject
 				if (!empty($arrayquery['contact_no_email'])) {
 					$tmpwhere .= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
 				} else {
-					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape((string) $arrayquery['contact_no_email'])."'))";
 				}
 				$sqlwhere[] = $tmpwhere;
 			}

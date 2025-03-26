@@ -9,8 +9,8 @@
  * Copyright (C) 2015-2017	Alexandre Spangaro		<aspangaro@open-dsi.fr>
  * Copyright (C) 2016		Ferran Marcet   		<fmarcet@2byte.es>
  * Copyright (C) 2019		JC Prieto				<jcprieto@virtual20.com><prietojc@gmail.com>
- * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -348,7 +348,7 @@ class Account extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -535,7 +535,7 @@ class Account extends CommonObject
 	 *      @param  int         $fk_bank    To search using bank transaction id
 	 *      @param  int         $url_id     To search using link to
 	 *      @param  string      $type       To search using type
-	 *		@return	int<-1,-1>|array<int,array{0:string,1:int,2:string,3:int,url:string,url_id:int,label:string,type:int,fk_bank:int}>		Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
+	 *		@return	int<-1,-1>|array<int,array{0:string,1:int,2:string,3:int,url:string,url_id:int,label:string,type:string,fk_bank:int}>		Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
 	public function get_url($fk_bank = 0, $url_id = 0, $type = '')
 	{
@@ -686,7 +686,7 @@ class Account extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= ((int) $accline->id).", '".$this->db->escape($categorie)."'";
+				$sql .= ((int) $accline->id).", '".$this->db->escape((string) $categorie)."'";
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -758,6 +758,11 @@ class Account extends CommonObject
 		if (empty($this->status && !empty($this->clos))) {
 			dol_syslog(get_class($this)."::create clos is deprecated use status", LOG_NOTICE);
 			$this->status = $this->clos;
+		}
+
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
 		}
 
 		// Load the library to validate/check a BAN account
@@ -899,6 +904,11 @@ class Account extends CommonObject
 	public function update($user, $notrigger = 0)
 	{
 		global $langs, $conf;
+
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
 
 		$error = 0;
 
@@ -1196,11 +1206,11 @@ class Account extends CommonObject
 	/**
 	 *  Delete bank account from database
 	 *
-	 *  @param	?User		$user		User deleting
+	 *  @param	User		$user		User deleting
 	 *	@param  int<0,1>	$notrigger	1=Disable triggers
 	 *  @return int      	       		Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -1597,9 +1607,9 @@ class Account extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("BankAccount");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -2006,7 +2016,7 @@ class Account extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
@@ -2317,7 +2327,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".(empty($this->amount_main_currency) ? "NULL" : price2num($this->amount_main_currency));
 		$sql .= ", ".($this->fk_user_author > 0 ? ((int) $this->fk_user_author) : "null");
 		$sql .= ", ".($this->num_chq ? "'".$this->db->escape($this->num_chq)."'" : "null");
-		$sql .= ", '".$this->db->escape($this->fk_account)."'";
+		$sql .= ", '".$this->db->escape((string) $this->fk_account)."'";
 		$sql .= ", '".$this->db->escape($this->fk_type)."'";
 		$sql .= ", ".($this->emetteur ? "'".$this->db->escape($this->emetteur)."'" : "null");
 		$sql .= ", ".($this->bank_chq ? "'".$this->db->escape($this->bank_chq)."'" : "null");
@@ -2354,11 +2364,11 @@ class AccountLine extends CommonObjectLine
 	/**
 	 * Delete bank transaction record
 	 *
-	 * @param	?User		$user		User object that delete
+	 * @param	User		$user		User object that delete
 	 * @param	int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return	int 					Return integer <0 if KO, >0 if OK
 	 */
-	public function delete($user = null, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 		$nbko = 0;
 

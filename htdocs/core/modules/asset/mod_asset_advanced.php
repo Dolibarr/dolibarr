@@ -70,7 +70,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 		$text .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$text .= '<input type="hidden" name="action" value="updateMask">';
 		$text .= '<input type="hidden" name="maskconst" value="ASSET_ADVANCED_MASK">';
-		$text .= '<table class="nobordernopadding" width="100%">';
+		$text .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Asset"), $langs->transnoentities("Asset"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -81,7 +81,7 @@ class mod_asset_advanced extends ModeleNumRefAsset
 
 		// Parametrage du prefix
 		$text .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="mask" value="'.getDolGlobalString('ASSET_ADVANCED_MASK').'">', $tooltip, 1, 1).'</td>';
+		$text .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="mask" value="'.getDolGlobalString('ASSET_ADVANCED_MASK').'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$text .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2012	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2011-2012	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -467,22 +468,10 @@ function hash_call($methodName, $nvpStr)
 	}
 
 	// Clean parameters
-	$PAYPAL_API_USER = "";
-	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
-	}
-	$PAYPAL_API_PASSWORD = "";
-	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
-	}
-	$PAYPAL_API_SIGNATURE = "";
-	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
-	}
-	$PAYPAL_API_SANDBOX = "";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
-	}
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 	// TODO END problem with triggers
 
 	dol_syslog("Paypal API endpoint ".$API_Endpoint);
@@ -514,8 +503,8 @@ function hash_call($methodName, $nvpStr)
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, ($ssl_verifypeer ? true : false));
 	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, ($ssl_verifypeer ? true : false));
 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, !getDolGlobalString('MAIN_USE_CONNECT_TIMEOUT') ? 5 : $conf->global->MAIN_USE_CONNECT_TIMEOUT);
-	curl_setopt($ch, CURLOPT_TIMEOUT, !getDolGlobalString('MAIN_USE_RESPONSE_TIMEOUT') ? 30 : $conf->global->MAIN_USE_RESPONSE_TIMEOUT);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
+	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POST, 1);

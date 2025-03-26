@@ -17,8 +17,9 @@ Module4100Name = 数据隐私政策
 Module4100Desc = 管理数据隐私的模块（符合GDPR）
 # Administration page
 datapolicySetup = 数据隐私政策模块设置
-Deletion = 删除数据
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=删除数据
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s月
 ONE_YEAR = 1年
 NB_YEARS = %s年
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = 准客户/客户
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nor prospect/Nor customer
 DATAPOLICY_CONTACT_FOURNISSEUR = 供应商
 DATAPOLICY_ADHERENT = 会员
-DATAPOLICY_Tooltip_SETUP = Type of contact - Indicate your choices for each type.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = 您可以向所有相关联系人（尚未收到电子邮件且您尚未为其注册任何有关 GDPR 协议的联系人）发送 GDPR 电子邮件。为此，请使用以下按钮。
 SendAgreement = 发送电子邮件
 AllAgreementSend = 所有电子邮件都已发送
 TXTLINKDATAPOLICYACCEPT = Text for the link "agreement"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : Processing of personal data
 DATAPOLICY_consentement = Consent obtained for the processing of personal data

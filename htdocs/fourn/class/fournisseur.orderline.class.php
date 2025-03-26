@@ -14,7 +14,7 @@
  * Copyright (C) 2021		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2022		Gauthier VERDOL			<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		Solution Libre SAS		<contact@solution-libre.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -173,7 +173,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc,';
 		$sql .= ' cd.total_localtax1, cd.total_localtax2,';
 		$sql .= ' p.ref as product_ref, p.label as product_label, p.description as product_desc,';
-		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit,';
+		$sql .= ' cd.date_start, cd.date_end, cd.fk_unit, cd.extraparams,';
 		$sql .= ' cd.multicurrency_subprice, cd.multicurrency_total_ht, cd.multicurrency_total_tva, cd.multicurrency_total_ttc,';
 		$sql .= ' c.fk_soc as socid';
 		$sql .= ' FROM '.$this->db->prefix().'commande_fournisseur as c, '.$this->db->prefix().'commande_fournisseurdet as cd';
@@ -247,6 +247,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 				$this->date_start       		= $this->db->jdate($objp->date_start);
 				$this->date_end         		= $this->db->jdate($objp->date_end);
 				$this->fk_unit = $objp->fk_unit;
+
+				$this->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$this->multicurrency_subprice	= $objp->multicurrency_subprice;
 				$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
@@ -356,11 +358,11 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		} else {
 			$sql .= "null,";
 		}
-		$sql .= "'".$this->db->escape($this->product_type)."',";
-		$sql .= (int) $this->special_code . ",";
-		$sql .= "'".$this->db->escape($this->rang)."',";
-		$sql .= "'".$this->db->escape($this->qty)."', ";
-		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
+		$sql .= "'".$this->db->escape((string) $this->product_type)."',";
+		$sql .= ((int) $this->special_code) . ",";
+		$sql .= "'".$this->db->escape((string) $this->rang)."',";
+		$sql .= "'".$this->db->escape((string) $this->qty)."', ";
+		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape((string) $this->vat_src_code)."'").",";
 		$sql .= " ".price2num($this->tva_tx).", ";
 		$sql .= " ".price2num($this->localtax1_tx).",";
 		$sql .= " ".price2num($this->localtax2_tx).",";
@@ -372,7 +374,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= " ".price2num($this->total_localtax1).",";
 		$sql .= " ".price2num($this->total_localtax2).",";
 		$sql .= " ".price2num($this->total_ttc).",";
-		$sql .= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'" : "null");
+		$sql .= ($this->fk_unit ? "'".$this->db->escape((string) $this->fk_unit)."'" : "null");
 		$sql .= ", ".($this->fk_multicurrency ? ((int) $this->fk_multicurrency) : "null");
 		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql .= ", ".($this->multicurrency_subprice ? price2num($this->multicurrency_subprice) : '0');
@@ -451,7 +453,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ", qty='".price2num($this->qty)."'";
 		$sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
 		$sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-		$sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
+		$sql .= ", info_bits='".$this->db->escape((string) $this->info_bits)."'";
 		$sql .= ", total_ht='".price2num($this->total_ht)."'";
 		$sql .= ", total_tva='".price2num($this->total_tva)."'";
 		$sql .= ", total_localtax1='".price2num($this->total_localtax1)."'";
@@ -459,7 +461,7 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
 		$sql .= ", product_type=".$this->product_type;
 		$sql .= ", special_code=".(!empty($this->special_code) ? $this->special_code : 0);
-		$sql .= ($this->fk_unit ? ", fk_unit='".$this->db->escape($this->fk_unit)."'" : ", fk_unit=null");
+		$sql .= ($this->fk_unit ? ", fk_unit='".$this->db->escape((string) $this->fk_unit)."'" : ", fk_unit=null");
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
 /**
  * @var Conf $conf
  * @var DoliDB $db
+ * @var ExtraFields $extrafields
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
@@ -84,7 +86,7 @@ $ecmdir = new EcmDirectory($db);
 
 if ($module == 'ecm') {
 	// $section should be an int except if it is dir not yet created into EcmDirectory
-	$result = $ecmdir->fetch($section);
+	$result = preg_match('/^\d+$/', $section) ? $ecmdir->fetch((int) $section) : 0;
 	if ($result > 0) {
 		$relativepath = $ecmdir->getRelativePath();
 		$upload_dir = $conf->ecm->dir_output.'/'.$relativepath;
@@ -198,6 +200,7 @@ if ($action == 'confirm_deletedir' && $confirm == 'yes' && $permissiontoupload) 
 // Update dirname or description
 if ($action == 'update' && !GETPOST('cancel', 'alpha') && $permissiontoadd) {
 	$error = 0;
+	$oldlabel = '';
 
 	if ($module == 'ecm') {
 		$oldlabel = $ecmdir->label;

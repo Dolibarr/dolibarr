@@ -8,7 +8,7 @@
  * Copyright (C) 2018       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2021       Waël Almoman            <info@almoman.com>
  * Copyright (C) 2022       Udo Tamm                <dev@dolibit.de>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
  *	\file       htdocs/public/company/new.php
  *	\ingroup    prospect
  *	\brief      Example of form to add a new prospect
- *
  */
 
 if (!defined('NOLOGIN')) {
@@ -46,9 +45,9 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+// if (is_numeric($entity)) { // value is casted to int so always numeric
+define("DOLENTITY", $entity);
+// }
 
 
 // Load Dolibarr environment
@@ -63,6 +62,14 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // Init vars
 $backtopage = GETPOST('backtopage', 'alpha');
 $action = GETPOST('action', 'aZ09');
@@ -84,7 +91,7 @@ if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
 }
 
 
-//permissions
+// permissions
 
 $permissiontoadd 	= $user->hasRight('societe', 'creer');
 
@@ -102,6 +109,8 @@ $extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch op
 /**
  * Show header for new prospect
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -110,7 +119,7 @@ $extrafields->fetch_name_optionals_label($objectsoc->table_element); // fetch op
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -132,16 +141,16 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	print '<header class="center">';
 
 	// Output html code for logo
-	if ($urllogo) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		print '<img id="dolpaymentlogo" src="' . $urllogo . '">';
-		print '</div>';
-		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
+	// if ($urllogo) { // test always true
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="' . $urllogo . '">';
+	print '</div>';
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
 	}
+	print '</div>';
+	// }
 
 	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
 		print '<div class="backimagepublicregistration">';
@@ -157,13 +166,13 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new societe
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs;
-
-	$ext = '';
 
 	print '</div>';
 
@@ -171,7 +180,7 @@ function llxFooterVierge()
 
 	if (!empty($conf->use_javascript_ajax)) {
 		print "\n" . '<!-- Includes JS Footer of Dolibarr -->' . "\n";
-		print '<script src="' . DOL_URL_ROOT . '/core/js/lib_foot.js.php?lang=' . $langs->defaultlang . (!empty($ext) ? '&' . $ext : '') . '"></script>' . "\n";
+		print '<script src="' . DOL_URL_ROOT . '/core/js/lib_foot.js.php?lang=' . $langs->defaultlang . '"></script>' . "\n";
 	}
 
 	print "</body>\n";
@@ -219,13 +228,13 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 		$societe->name = GETPOST('name', 'alphanohtml');
 		$societe->client = GETPOSTINT('client') ? GETPOSTINT('client') : $societe->client;
-		$societe->address	= GETPOST('address', 'alphanohtml');
-		$societe->country_id				= GETPOSTINT('country_id');
-		$societe->phone					= GETPOST('phone', 'alpha');
-		$societe->fax				= GETPOST('fax', 'alpha');
-		$societe->email					= trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
+		$societe->address = GETPOST('address', 'alphanohtml');
+		$societe->country_id = GETPOSTINT('country_id');
+		$societe->phone = GETPOST('phone', 'alpha');
+		$societe->fax = GETPOST('fax', 'alpha');
+		$societe->email = trim(GETPOST('email', 'custom', 0, FILTER_SANITIZE_EMAIL));
 		$societe->client = 2 ; // our client is a prospect
-		$societe->code_client		= '-1';
+		$societe->code_client = '-1';
 		$societe->name_alias = GETPOST('name_alias', 'alphanohtml');
 		$societe->note_private = GETPOST('note_private', 'alphanohtml');
 
@@ -429,7 +438,7 @@ if (isModEnabled('mailing') && getDolGlobalString('THIRDPARTY_SUGGEST_ALSO_ADDRE
 		print '</tr><tr>';
 	}
 	print '<td class="individualline noemail">' . $form->editfieldkey($langs->trans('No_Email') . ' (' . $langs->trans('Contact') . ')', 'contact_no_email', '', $objectsoc, 0) . '</td>';
-	print '<td class="individualline" ' . (($conf->browser->layout == 'phone') || !isModEnabled('mailing') ? ' colspan="3"' : '') . '>' . $form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($objectsoc->no_email) ? 0 : 1)), 1, false, 1) . '</td>';
+	print '<td class="individualline" ' . (($conf->browser->layout == 'phone') /* || !isModEnabled('mailing') */ ? ' colspan="3"' : '') . '>' . $form->selectyesno('contact_no_email', (GETPOSTISSET("contact_no_email") ? GETPOST("contact_no_email", 'alpha') : (empty($objectsoc->no_email) ? 0 : 1)), 1, false, 1) . '</td>';
 }
 print '</tr>';
 
@@ -460,7 +469,7 @@ if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
 	print '</span>';
 	print '<span class="nowrap inline-block">';
 	print '<img class="inline-block valignmiddle" src="' . DOL_URL_ROOT . '/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-	print '<a class="inline-block valignmiddle" href="' . $php_self . '" tabindex="4" data-role="button">' . img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"') . '</a>';
+	print '<a class="inline-block valignmiddle" href="' . $_SERVER['PHP_SELF'] . '" tabindex="4" data-role="button">' . img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"') . '</a>';
 	print '</span>';
 	print '</td></tr>';
 }

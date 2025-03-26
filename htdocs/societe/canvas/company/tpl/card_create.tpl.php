@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2012 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2010       Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,10 +18,13 @@
  */
 
 /**
+ * @var Canvas $this
  * @var Conf $conf
  * @var CommonObject $this
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $canvas
  */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {

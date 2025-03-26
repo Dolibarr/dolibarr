@@ -1,10 +1,32 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
+/**
+ * @var string $colorbackhmenu1
+ * @var string $colorbacklinepair1
+ * @var string $colortextbackhmenu
+ * @var string $colortextlink
+ * @var int<0,1> $disableimages
+ * @var string $left
+ * @var string $right
+ */
+'
+@phan-var-force string $colorbackhmenu1
+@phan-var-force string $colorbacklinepair1
+@phan-var-force string $colortextbackhmenu
+@phan-var-force string $colortextlink
+@phan-var-force int<0,1> $disableimages
+@phan-var-force string $left
+@phan-var-force string $right
+';
 ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -112,7 +134,7 @@ button.dropdown-item.global-search-item {
 	background-color: #fff;
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
-	border: 1px solid rgba(0,0,0,.15);
+	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -167,7 +189,7 @@ div#topmenu-global-search-dropdown a::after, div#topmenu-quickadd-dropdown a::af
 }
 .tmenu .dropdown-menu, .login_block .dropdown-menu, .topnav .dropdown-menu {
 	position: absolute;
-	right: 2px;
+	right: 1px;
 	<?php echo $left; ?>: auto;
 	line-height:1.3em;
 }
@@ -429,57 +451,6 @@ li.liinputsearch {
 }
 
 
-/*
- * SEARCH
- */
-
-.dropdown-search-input {
-	width: 100%;
-	padding: 10px 35px 10px 20px;
-
-	background-color: transparent;
-	/*font-size: 14px;
-	line-height: 16px;*/
-	box-sizing: border-box;
-
-	color: #575756;
-	background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3C/svg%3E");
-	background-repeat: no-repeat;
-	background-size: 16px 16px;
-	background-position: 95% center;
-	border-radius: 20px;
-	border: 1px solid #c4c4c2 !important;
-	transition: all 250ms ease-in-out;
-	backface-visibility: hidden;
-	transform-style: preserve-3d;
-}
-
-.dropdown-search-input::placeholder {
-	color: #888;
-	letter-spacing: 1.5px;
-}
-
-.hidden-search-result{
-	display: none !important;
-}
-
-.search-dropdown-body {
-	padding: unset;
-}
-
-.global-search-item {
-	font-size: 1.1em;
-}
-
-.global-search-item:before {
-	content: none;
-}
-
-.global-search-header {
-	color: #444 !important;
-}
-
-
 
 /*
  * QUICK ADD
@@ -657,7 +628,7 @@ div.quickaddblock:focus {
 /* smartphone */
 @media only screen and (max-width: 767px)
 {
-	.dropdown-search-input {
+	.dropdown-search-input,.search-tool-input {
 		width: 100%;
 	}
 
@@ -678,7 +649,7 @@ div.quickaddblock:focus {
 	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 		width: 300px;
 	}
-	.dropdown-menu {
+	.dropdown-menu:not(#ai_dropdownmessage) {
 		border: none;
 		-webkit-box-shadow: none;
 		box-shadow: none;

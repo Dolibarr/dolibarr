@@ -84,7 +84,7 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Setting the prefix
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceStandard").'):</span></td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_INVOICE").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipstandardmercure').'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_INVOICE").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipstandardmercure').'</td>';
 
 		$texte .= '<td class="left" rowspan="3">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -92,20 +92,20 @@ class mod_facture_mercure extends ModeleNumRefFactures
 
 		// Prefix setting of credit note
 		$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceAvoir").'):</span></td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcredit" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_CREDIT").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipcreditnotemercure').'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskcredit" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_CREDIT").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipcreditnotemercure').'</td>';
 		$texte .= '</tr>';
 
 		// Prefix setting of replacement invoices
 		if (!getDolGlobalString('INVOICE_DISABLE_REPLACEMENT')) {
 			$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceReplacement").'):</span></td>';
-			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_REPLACEMENT").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipreplacementmercure').'</td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskreplacement" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_REPLACEMENT").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipreplacementmercure').'</td>';
 			$texte .= '</tr>';
 		}
 
 		// Prefix setting of deposit
 		if (!getDolGlobalString('INVOICE_DISABLE_DEPOSIT')) {
 			$texte .= '<tr><td><span class="opacitymedium">'.$langs->trans("Mask").' ('.$langs->trans("InvoiceDeposit").'):</span></td>';
-			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_DEPOSIT").'">', $tooltip, 1, 1, '', 0, 3, 'tooltipdownpaymentmercure').'</td>';
+			$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskdeposit" value="'.getDolGlobalString("FACTURE_MERCURE_MASK_DEPOSIT").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipdownpaymentmercure').'</td>';
 			$texte .= '</tr>';
 		}
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2006-2013 	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2015 		Francis Appels  		<francis.appels@yahoo.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -291,7 +291,7 @@ class pdf_standard_member extends CommonStickerGenerator
 
 			// List of values to scan for a replacement
 			$substitutionarray = array(
-				'__ID__' => $object->id,
+				'__ID__' => (string) $object->id,
 				'__REF__' => $object->ref,
 				'__LOGIN__' => empty($object->login) ? '' : $object->login,
 				'__FIRSTNAME__' => empty($object->firstname) ? '' : $object->firstname,
@@ -309,7 +309,7 @@ class pdf_standard_member extends CommonStickerGenerator
 				'__YEAR__' => $year,
 				'__MONTH__' => $month,
 				'__DAY__' => $day,
-				'__DOL_MAIN_URL_ROOT__' => DOL_MAIN_URL_ROOT,
+				'__DOL_MAIN_URL_ROOT__' => (string) DOL_MAIN_URL_ROOT,
 				'__SERVER__' => "https://".$_SERVER["SERVER_NAME"]."/"
 			);
 			complete_substitutions_array($substitutionarray, $langs);
@@ -419,7 +419,7 @@ class pdf_standard_member extends CommonStickerGenerator
 		}
 
 		$pdf->SetMargins(0, 0);
-		$pdf->SetAutoPageBreak(false);
+		$pdf->setAutoPageBreak(false);
 
 		$this->_Metric_Doc = $this->Tformat['metric'];
 		// Permet de commencer l'impression de l'etiquette desiree dans le cas ou la page a deja service

@@ -3,6 +3,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
  * Copyright (C) 2016-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,10 +75,10 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'subaccount'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
-	'label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
-	'type'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
-	'reconcilable'=>array('label'=>$langs->trans("Reconcilable"), 'checked'=>1)
+	'subaccount' => array('label' => $langs->trans("AccountNumber"), 'checked' => '1'),
+	'label' => array('label' => $langs->trans("Label"), 'checked' => '1'),
+	'type' => array('label' => $langs->trans("Type"), 'checked' => '1'),
+	'reconcilable' => array('label' => $langs->trans("Reconcilable"), 'checked' => '1')
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -88,7 +89,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'chartofaccount')) {
+if (!$user->hasRight('accounting', 'chartofaccount')) { // after this test, $user->hasRight('accounting', 'chartofaccount') is always valid
 	accessforbidden();
 }
 
@@ -125,10 +126,10 @@ if (empty($reshook)) {
 		$search_array_options = array();
 	}
 
-	if ($action == 'enable' && $user->hasRight('accounting', 'chartofaccount')) {
+	if ($action == 'enable' /* && $user->hasRight('accounting', 'chartofaccount') */) { // test useless
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
 	}
-	if ($action == 'disable' && $user->hasRight('accounting', 'chartofaccount')) {
+	if ($action == 'disable' /* && $user->hasRight('accounting', 'chartofaccount') */) {
 		setEventMessages($langs->trans("FeatureNotYetAvailable"), null, 'errors');
 	}
 }
@@ -170,7 +171,6 @@ if (strlen(trim($search_subaccount))) {
 		}
 	}
 
-	//var_dump($search_subaccount); exit;
 	if ($search_subaccount_tmp) {
 		if ($weremovedsomezero) {
 			$search_subaccount_tmp_clean = $search_subaccount_tmp;
@@ -377,7 +377,7 @@ if ($resql) {
 		print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_label" value="'.$search_label.'"></td>';
 	}
 	if (!empty($arrayfields['type']['checked'])) {
-		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1'=>$langs->trans('Customer').' / '.$langs->trans("Prospect"), '2'=>$langs->trans('Supplier'), '3'=>$langs->trans('Employee')), $search_type, 1).'</td>';
+		print '<td class="liste_titre center">'.$form->selectarray('search_type', array('1' => $langs->trans('Customer').' / '.$langs->trans("Prospect"), '2' => $langs->trans('Supplier'), '3' => $langs->trans('Employee')), $search_type, 1).'</td>';
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['reconcilable']['checked'])) {
@@ -567,7 +567,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

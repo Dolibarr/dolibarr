@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -303,7 +303,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print '</tr>';
@@ -441,7 +441,7 @@ foreach ($dirmodels as $reldir) {
 					$htmltooltip .= '<br>'.$langs->trans("PaymentMode").': '.yn($module->option_modereg, 1, 1);
 					$htmltooltip .= '<br>'.$langs->trans("PaymentConditions").': '.yn($module->option_condreg, 1, 1);
 					print '<td class="center">';
-					print $form->textwithpicto('', $htmltooltip, 1, 0);
+					print $form->textwithpicto('', $htmltooltip, 1, 'info');
 					print '</td>';
 					print '<td class="center">';
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($name).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
@@ -472,7 +472,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 

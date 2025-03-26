@@ -5,7 +5,7 @@
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2020      Maxime DEMAREST      <maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -246,7 +246,7 @@ if (!$mesg) {
 	$px3->SetLegend($legend);
 	$px3->SetYLabel($langs->trans("AmountAverage"));
 	$px3->SetMaxValue($px3->GetCeilMaxValue());
-	$px3->SetMinValue($px3->GetFloorMinValue());
+	$px3->SetMinValue((int) $px3->GetFloorMinValue());
 	$px3->SetWidth($WIDTH);
 	$px3->SetHeight($HEIGHT);
 	$px3->SetShading(3);
@@ -312,7 +312,7 @@ print '</td></tr>';
 
 // ThirdParty Type
 print '<tr><td>'.$langs->trans("ThirdPartyType").'</td><td>';
-$sortparam_typent = (!getDolGlobalString('SOCIETE_SORT_ON_TYPEENT') ? 'ASC' : $conf->global->SOCIETE_SORT_ON_TYPEENT); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
+$sortparam_typent = getDolGlobalString('SOCIETE_SORT_ON_TYPEENT', 'ASC'); // NONE means we keep sort of original array, so we sort on position. ASC, means next function will sort on label.
 print $form->selectarray("typent_id", $formcompany->typent_array(0), $typent_id, 1, 0, 0, '', 0, 0, 0, $sortparam_typent, '', 1);
 if ($user->admin) {
 	print ' '.info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
@@ -342,7 +342,7 @@ if (isModEnabled('category')) {
 // User
 print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>';
 print img_picto('', 'user', 'class="pictofixedwidth"');
-print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+print $form->select_dolusers($userid ? $userid : -1, 'userid', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 print '</td></tr>';
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td>';

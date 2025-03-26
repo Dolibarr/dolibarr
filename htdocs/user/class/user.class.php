@@ -12,9 +12,9 @@
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2018		charlene Benke			<charlie@patas-monkey.com>
  * Copyright (C) 2018-2021	Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2019		Abbes Bahfir			<dolipar@dolipar.org>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -76,11 +76,6 @@ class User extends CommonObject
 	public $id = 0;
 
 	/**
-	 * @var static old copy of User
-	 */
-	public $oldcopy;
-
-	/**
 	 * @var int
 	 * @deprecated Use $status
 	 * @see $status
@@ -130,7 +125,7 @@ class User extends CommonObject
 	public $birth;
 
 	/**
-	 * @var string email
+	 * @var ?string email
 	 */
 	public $email;
 
@@ -497,7 +492,7 @@ class User extends CommonObject
 	/**
 	 *    Constructor of the class
 	 *
-	 *    @param   DoliDB  $db     Database handler
+	 *    @param   DoliDB|null  $db     Database handler
 	 */
 	public function __construct($db)
 	{
@@ -602,7 +597,11 @@ class User extends CommonObject
 			if (isModEnabled('multicompany') && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 				$sql .= " WHERE u.entity IS NOT NULL"; // multicompany is on in transverse mode or user making fetch is on entity 0, so user is allowed to fetch anywhere into database
 			} else {
-				$sql .= " WHERE u.entity IN (0, ".((int) (($entity != '' && $entity >= 0) ? $entity : $conf->entity)).")"; // search in entity provided in parameter
+				if ($entity != '' && $entity == 0) {	// If $entity = 0
+					$sql .= " WHERE u.entity = 0";
+				} else {								// if $entity is -1 or > 0
+					$sql .= " WHERE u.entity IN (0, ".((int) ($entity > 0 ? $entity : $conf->entity)).")";
+				}
 			}
 		}
 
@@ -1183,7 +1182,7 @@ class User extends CommonObject
 			// les charactis for the module, permissions and sub-permission of this permission.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
-			$sql .= " WHERE id = '".$this->db->escape($rid)."'";
+			$sql .= " WHERE id = '".((int) $rid)."'";
 			$sql .= " AND entity IN (".$this->db->sanitize($entity, 0, 0, 0, 0).")";
 
 			$result = $this->db->query($sql);
@@ -1769,7 +1768,7 @@ class User extends CommonObject
 
 		// Check if login already exists in same entity or into entity 0.
 		if ($this->login) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -1784,7 +1783,7 @@ class User extends CommonObject
 			}
 		}
 		if (!empty($this->email)) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -2097,6 +2096,11 @@ class User extends CommonObject
 	{
 		global $conf, $langs;
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$nbrowsaffected = 0;
 		$error = 0;
 
@@ -2171,7 +2175,7 @@ class User extends CommonObject
 
 		// Check if login already exists in same entity or into entity 0.
 		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && $this->oldcopy->login != $this->login) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND login = '".$this->db->escape($this->login)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND login = '".$this->db->escape($this->login)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -2185,7 +2189,7 @@ class User extends CommonObject
 			}
 		}
 		if (is_object($this->oldcopy) && !$this->oldcopy->isEmpty() && !empty($this->email) && $this->oldcopy->email != $this->email) {
-			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize((int) $this->entity).", 0) AND email = '".$this->db->escape($this->email)."'";
+			$sqltochecklogin = "SELECT COUNT(*) as nb FROM ".$this->db->prefix()."user WHERE entity IN (".$this->db->sanitize(((int) $this->entity).", 0").") AND email = '".$this->db->escape($this->email)."'";
 			$resqltochecklogin = $this->db->query($sqltochecklogin);
 			if ($resqltochecklogin) {
 				$objtochecklogin = $this->db->fetch_object($resqltochecklogin);
@@ -2217,8 +2221,8 @@ class User extends CommonObject
 		$sql .= ", address = '".$this->db->escape($this->address)."'";
 		$sql .= ", zip = '".$this->db->escape($this->zip)."'";
 		$sql .= ", town = '".$this->db->escape($this->town)."'";
-		$sql .= ", fk_state = ".((!empty($this->state_id) && $this->state_id > 0) ? "'".$this->db->escape($this->state_id)."'" : "null");
-		$sql .= ", fk_country = ".((!empty($this->country_id) && $this->country_id > 0) ? "'".$this->db->escape($this->country_id)."'" : "null");
+		$sql .= ", fk_state = ".((!empty($this->state_id) && $this->state_id > 0) ? "'".((int) $this->state_id)."'" : "null");
+		$sql .= ", fk_country = ".((!empty($this->country_id) && $this->country_id > 0) ? "'".((int) $this->country_id)."'" : "null");
 		$sql .= ", office_phone = '".$this->db->escape($this->office_phone)."'";
 		$sql .= ", office_fax = '".$this->db->escape($this->office_fax)."'";
 		$sql .= ", user_mobile = '".$this->db->escape($this->user_mobile)."'";
@@ -2239,9 +2243,9 @@ class User extends CommonObject
 		$sql .= ", note_public = '".$this->db->escape($this->note_public)."'";
 		$sql .= ", photo = ".($this->photo ? "'".$this->db->escape($this->photo)."'" : "null");
 		$sql .= ", openid = ".($this->openid ? "'".$this->db->escape($this->openid)."'" : "null");
-		$sql .= ", fk_user = ".($this->fk_user > 0 ? "'".$this->db->escape($this->fk_user)."'" : "null");
-		$sql .= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0 ? "'".$this->db->escape($this->fk_user_expense_validator)."'" : "null");
-		$sql .= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0 ? "'".$this->db->escape($this->fk_user_holiday_validator)."'" : "null");
+		$sql .= ", fk_user = ".($this->fk_user > 0 ? "'".((int) $this->fk_user)."'" : "null");
+		$sql .= ", fk_user_expense_validator = ".($this->fk_user_expense_validator > 0 ? "'".((int) $this->fk_user_expense_validator)."'" : "null");
+		$sql .= ", fk_user_holiday_validator = ".($this->fk_user_holiday_validator > 0 ? "'".((int) $this->fk_user_holiday_validator)."'" : "null");
 		if (isset($this->thm) || $this->thm != '') {
 			$sql .= ", thm= ".($this->thm != '' ? "'".$this->db->escape($this->thm)."'" : "null");
 		}
@@ -2646,7 +2650,7 @@ class User extends CommonObject
 	public function send_password($user, $password = '', $changelater = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 		global $dolibarr_main_url_root;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
@@ -2658,13 +2662,8 @@ class User extends CommonObject
 
 		$outputlangs = new Translate("", $conf);
 
-		if (isset($this->conf->MAIN_LANG_DEFAULT)
-			&& $this->conf->MAIN_LANG_DEFAULT != 'auto') {	// If user has defined its own language (rare because in most cases, auto is used)
-			$outputlangs->getDefaultLang($this->conf->MAIN_LANG_DEFAULT);
-		}
-
-		if ($this->conf->MAIN_LANG_DEFAULT) {
-			$outputlangs->setDefaultLang($this->conf->MAIN_LANG_DEFAULT);
+		if (getDolGlobalString('MAIN_LANG_DEFAULT')) {
+			$outputlangs->setDefaultLang(getDolGlobalString('MAIN_LANG_DEFAULT'));
 		} else {	// If user has not defined its own language, we used current language
 			$outputlangs = $langs;
 		}
@@ -2725,7 +2724,7 @@ class User extends CommonObject
 		$mailfile = new CMailFile(
 			$subject,
 			$this->email,
-			$conf->global->MAIN_MAIL_EMAIL_FROM,
+			getDolGlobalString("MAIN_MAIL_EMAIL_FROM_PASSWORDRESET", getDolGlobalString("MAIN_MAIL_EMAIL_FROM")),
 			$mesg,
 			array(),
 			array(),
@@ -3171,9 +3170,9 @@ class User extends CommonObject
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowUser");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams . ' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -3341,9 +3340,9 @@ class User extends CommonObject
 	/**
 	 *	Return clickable link of object (optionally with picto)
 	 *
-	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
-	 *  @return		string											HTML Code for Kanban thumb.
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{

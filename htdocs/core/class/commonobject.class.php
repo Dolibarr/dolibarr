@@ -1,23 +1,23 @@
 <?php
-/* Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2020 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2022 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2016      Bahfir abbes         <bafbes@gmail.com>
- * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
- * Copyright (C) 2017-2019 Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht          <rui.strecht@aliartalentos.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2018      Josep Lluís Amador   <joseplluis@lliuretic.cat>
- * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2021      Grégory Blémand      <gregory.blemand@atm-consulting.fr>
- * Copyright (C) 2023      Lenin Rivas      	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2006-2015  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2013  Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2020  Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012-2013  Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2011-2022  Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2015  Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2012-2015  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2012       Cedric Salvador     <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016       Bahfir abbes        <bafbes@gmail.com>
+ * Copyright (C) 2017       ATM Consulting      <support@atm-consulting.fr>
+ * Copyright (C) 2017-2019  Nicolas ZABOURI     <info@inovea-conseil.com>
+ * Copyright (C) 2017       Rui Strecht         <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018       Josep Lluís Amador  <joseplluis@lliuretic.cat>
+ * Copyright (C) 2023       Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2021       Grégory Blémand     <gregory.blemand@atm-consulting.fr>
+ * Copyright (C) 2023       Lenin Rivas      	<lenin.rivas777@gmail.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -152,7 +152,7 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
-	 * @var array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>	 	To store result of ->liste_contact()
+	 * @var array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>	 	To store result of ->liste_contact()
 	 */
 	public $contacts_ids;
 
@@ -270,13 +270,13 @@ abstract class CommonObject
 	public $user;
 
 	/**
-	 * @var string 		The type of originating object. Combined with $origin_id, it allows to reload $origin_object
+	 * @var string 		The type of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
 	public $origin_type;
 
 	/**
-	 * @var int 		The id of originating object. Combined with $origin_type, it allows to reload $origin_object
+	 * @var int 		The id of originating object. Combined with `$origin_type`, it allows to reload `$origin_object`
 	 * @see fetch_origin()
 	 */
 	public $origin_id;
@@ -361,7 +361,6 @@ abstract class CommonObject
 	 */
 	public $status;
 
-
 	/**
 	 * @var string		Country name
 	 * @see getFullAddress()
@@ -381,7 +380,7 @@ abstract class CommonObject
 	public $country_code;
 
 	/**
-	 * @var string		State name
+	 * @var ?string		State name
 	 * @see getFullAddress()
 	 */
 	public $state;
@@ -546,7 +545,7 @@ abstract class CommonObject
 	public $multicurrency_total_localtax2;	// not in database
 
 	/**
-	 * @var string
+	 * @var ?string
 	 * @see SetDocModel()
 	 */
 	public $model_pdf;
@@ -653,8 +652,14 @@ abstract class CommonObject
 
 	/**
 	 * @var string 		The civility code, not an integer
+	 * @deprecated		Use $civlity_code
 	 */
 	public $civility_id;
+
+	/**
+	 * @var string 		The civility code, not an integer
+	 */
+	public $civility_code;
 
 	// Dates
 	/**
@@ -704,7 +709,7 @@ abstract class CommonObject
 	public $user_creation;
 
 	/**
-	 * @var int			User id author/creation
+	 * @var int|null	User id author/creation
 	 */
 	public $user_creation_id;
 
@@ -818,7 +823,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array<string,string>|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
+	 * @var array<string,string>|string		Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -950,7 +955,7 @@ abstract class CommonObject
 	/**
 	 * setErrorsFromObject
 	 *
-	 * @param CommonObject $object commonobject
+	 * @param CommonObject|HookManager $object commonobject or HookManager
 	 * @return void
 	 */
 	public function setErrorsFromObject($object)
@@ -1489,7 +1494,7 @@ abstract class CommonObject
 	 *    @param    string      $code       	Filter on this code of contact type ('SHIPPING', 'BILLING', ...)
 	 *    @param	int			$status			Status of user or company
 	 *    @param	int[]		$arrayoftcids	Array with ID of type of contacts. If we provide this, we can filter on ec.fk_c_type_contact IN ($arrayoftcids) to avoid a link on c_type_contact table (faster).
-	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:string,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
+	 *    @return array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,gender:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>|int<-1,-1>        	Array of contacts, -1 if error
 	 */
 	public function liste_contact($statusoflink = -1, $source = 'external', $list = 0, $code = '', $status = -1, $arrayoftcids = array())
 	{
@@ -1500,14 +1505,14 @@ abstract class CommonObject
 
 		$sql = "SELECT ec.rowid, ec.statut as statuslink, ec.fk_socpeople as id, ec.fk_c_type_contact"; // This field contains id of llx_socpeople or id of llx_user
 		if ($source == 'internal') {
-			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender";
+			$sql .= ", '-1' as socid, t.statut as statuscontact, t.login, t.photo, t.gender, t.fk_country as country_id";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {
-			$sql .= ", t.fk_soc as socid, t.statut as statuscontact";
+			$sql .= ", t.fk_soc as socid, t.statut as statuscontact, t.fk_pays as country_id";
 		}
-		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email";
+		$sql .= ", t.civility as civility, t.lastname as lastname, t.firstname, t.email, t.address, t.zip, t.town";
 		if (empty($arrayoftcids)) {
-			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label";
+			$sql .= ", tc.source, tc.element, tc.code, tc.libelle as type_label, co.label as country";
 		}
 		$sql .= " FROM";
 		if (empty($arrayoftcids)) {
@@ -1516,9 +1521,11 @@ abstract class CommonObject
 		$sql .= " ".$this->db->prefix()."element_contact as ec";
 		if ($source == 'internal') {	// internal contact (user)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."user as t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.fk_country";
 		}
 		if ($source == 'external' || $source == 'thirdparty') {	// external contact (socpeople)
 			$sql .= " LEFT JOIN ".$this->db->prefix()."socpeople as t on ec.fk_socpeople = t.rowid";
+			$sql .= " LEFT JOIN ".$this->db->prefix()."c_country as co ON co.rowid = t.fk_pays";
 		}
 		$sql .= " WHERE ec.element_id = ".((int) $this->id);
 		if (empty($arrayoftcids)) {
@@ -1566,6 +1573,11 @@ abstract class CommonObject
 						'lastname' => $obj->lastname,
 						'firstname' => $obj->firstname,
 						'email' => $obj->email,
+						'address' => $obj->address,
+						'zip' => $obj->zip,
+						'town' => $obj->town,
+						'country_id' => $obj->country_id,
+						'country' => $obj->country,
 						'login' => (empty($obj->login) ? '' : $obj->login),
 						'photo' => (empty($obj->photo) ? '' : $obj->photo),
 						'gender' => (empty($obj->gender) ? '' : $obj->gender),
@@ -1573,7 +1585,7 @@ abstract class CommonObject
 						'rowid' => $obj->rowid,
 						'code' => $obj->code,
 						'libelle' => $libelle_type,
-						'status' => $obj->statuslink,
+						'status' => (int) $obj->statuslink,
 						'fk_c_type_contact' => $obj->fk_c_type_contact
 					);
 				} else {
@@ -2059,9 +2071,9 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the product with id $this->fk_product into this->product
+	 *	Load the product with id $this->fk_product into this->product
 	 *
-	 *		@return		int<-1,1>	Return integer <0 if KO, >=0 if OK
+	 *	@return		int<-1,1>	Return integer <0 if KO, >=0 if OK
 	 */
 	public function fetch_product()
 	{
@@ -2083,10 +2095,10 @@ abstract class CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *		Load the user with id $userid into this->user
+	 *	Load the user with id $userid into this->user
 	 *
-	 *		@param	int		$userid 		Id du contact
-	 *		@return	int<-1,1>				Return integer <0 if KO, >0 if OK
+	 *	@param	int		$userid 		Id du contact
+	 *	@return	int<-1,1>				Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch_user($userid)
 	{
@@ -2894,6 +2906,7 @@ abstract class CommonObject
 									$line->product_type,
 									$line->array_options,
 									$line->ref_fourn,
+									(int) $line->fk_unit,
 									$line->multicurrency_subprice
 								);
 								break;
@@ -3001,7 +3014,7 @@ abstract class CommonObject
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
 			$sql .= " SET ".$fieldname." = ".(($id > 0 || $id == '0') ? ((int) $id) : 'NULL');
 			if (in_array($this->table_element, array('propal', 'commande', 'societe'))) {
-				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape($deposit_percent)."'");
+				$sql .= " , deposit_percent = " . (empty($deposit_percent) ? 'NULL' : "'".$this->db->escape((string) $deposit_percent)."'");
 			}
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
@@ -3384,7 +3397,9 @@ abstract class CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$children = $this->getChildrenOfLine($row[0], $grandchild);
+					if ($fk_parent_line) {
+						$children = $this->getChildrenOfLine($row[0], $grandchild);
+					}
 					if (!empty($children)) {
 						foreach ($children as $child) {
 							array_push($rows, $child);
@@ -4182,7 +4197,11 @@ abstract class CommonObject
 	{
 		// phpcs:enable
 		global $user, $hookmanager, $action;
-		$origin = (!empty($origin) ? $origin : $this->origin);
+
+		if (empty($this->origin_type) && !empty($this->origin)) {
+			$this->origin_type = $this->origin;
+		}
+		$origin = (!empty($origin) ? $origin : $this->origin_type);
 		$origin_id = (!empty($origin_id) ? $origin_id : $this->origin_id);
 		$f_user = isset($f_user) ? $f_user : $user;
 
@@ -4309,21 +4328,23 @@ abstract class CommonObject
 		$withtargettype = false;
 		$withsourcetype = false;
 
-		$parameters = array('sourcetype' => $sourcetype, 'sourceid' => $sourceid, 'targettype' => $targettype, 'targetid' => $targetid);
 		// Hook for explicitly set the targettype if it must be differtent than $this->element
-		$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) {
-			if (!empty($hookmanager->resArray['sourcetype'])) {
-				$sourcetype = $hookmanager->resArray['sourcetype'];
-			}
-			if (!empty($hookmanager->resArray['sourceid'])) {
-				$sourceid = $hookmanager->resArray['sourceid'];
-			}
-			if (!empty($hookmanager->resArray['targettype'])) {
-				$targettype = $hookmanager->resArray['targettype'];
-			}
-			if (!empty($hookmanager->resArray['targetid'])) {
-				$targetid = $hookmanager->resArray['targetid'];
+		if (is_object($hookmanager)) {
+			$parameters = array('sourcetype' => $sourcetype, 'sourceid' => $sourceid, 'targettype' => $targettype, 'targetid' => $targetid);
+			$reshook = $hookmanager->executeHooks('setLinkedObjectSourceTargetType', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) {
+				if (!empty($hookmanager->resArray['sourcetype'])) {
+					$sourcetype = $hookmanager->resArray['sourcetype'];
+				}
+				if (!empty($hookmanager->resArray['sourceid'])) {
+					$sourceid = $hookmanager->resArray['sourceid'];
+				}
+				if (!empty($hookmanager->resArray['targettype'])) {
+					$targettype = $hookmanager->resArray['targettype'];
+				}
+				if (!empty($hookmanager->resArray['targetid'])) {
+					$targetid = $hookmanager->resArray['targetid'];
+				}
 			}
 		}
 
@@ -4369,7 +4390,7 @@ abstract class CommonObject
 			}
 		} else {
 			$sql .= "(fk_source = ".((int) $sourceid)." AND sourcetype = '".$this->db->escape($sourcetype)."')";
-			$sql .= " ".$clause." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
+			$sql .= " ".$this->db->sanitize($clause)." (fk_target = ".((int) $targetid)." AND targettype = '".$this->db->escape($targettype)."')";
 			if ($loadalsoobjects && $this->id > 0 && $sourceid == $this->id && $sourcetype == $this->element && $targetid == $this->id && $targettype == $this->element && $clause == 'OR') {
 				$this->linkedObjectsFullLoaded[$this->id] = true;
 			}
@@ -4547,10 +4568,11 @@ abstract class CommonObject
 			$deletetarget = true;
 		}
 
+		$element = $this->getElementType();
 		$sourceid = (!empty($sourceid) ? $sourceid : $this->id);
-		$sourcetype = (!empty($sourcetype) ? $sourcetype : $this->element);
+		$sourcetype = (!empty($sourcetype) ? $sourcetype : $element);
 		$targetid = (!empty($targetid) ? $targetid : $this->id);
-		$targettype = (!empty($targettype) ? $targettype : $this->element);
+		$targettype = (!empty($targettype) ? $targettype : $element);
 		$this->db->begin();
 		$error = 0;
 
@@ -4576,14 +4598,14 @@ abstract class CommonObject
 			} else {
 				if ($deletesource) {
 					$sql .= " fk_source = " . ((int) $sourceid) . " AND sourcetype = '" . $this->db->escape($sourcetype) . "'";
-					$sql .= " AND fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($this->element) . "'";
+					$sql .= " AND fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "'";
 				} elseif ($deletetarget) {
 					$sql .= " fk_target = " . ((int) $targetid) . " AND targettype = '" . $this->db->escape($targettype) . "'";
-					$sql .= " AND fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($this->element) . "'";
+					$sql .= " AND fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "'";
 				} else {
-					$sql .= " (fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($this->element) . "')";
+					$sql .= " (fk_source = " . ((int) $this->id) . " AND sourcetype = '" . $this->db->escape($element) . "')";
 					$sql .= " OR";
-					$sql .= " (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($this->element) . "')";
+					$sql .= " (fk_target = " . ((int) $this->id) . " AND targettype = '" . $this->db->escape($element) . "')";
 				}
 			}
 
@@ -4807,6 +4829,8 @@ abstract class CommonObject
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
+					} elseif ($fieldstatus == 'tobatch') {
+						$this->status_batch = $status;	// @phpstan-ignore-line
 					} else {
 						$this->status = $status;
 					}
@@ -4925,6 +4949,15 @@ abstract class CommonObject
 		$haschild = 0;
 		foreach ($arraytoscan as $table => $element) {
 			//print $id.'-'.$table.'-'.$elementname.'<br>';
+
+			// Check if module is enabled (to avoid error if tables of module not created)
+			if (isset($element['enabled']) && !empty($element['enabled'])) {
+				$enabled = (int) dol_eval($element['enabled'], 1);
+				if (empty($enabled)) {
+					continue;
+				}
+			}
+
 			// Check if element can be deleted
 			$sql = "SELECT COUNT(*) as nb";
 			$sql .= " FROM ".$this->db->prefix().$table." as c";
@@ -5162,6 +5195,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET extraparams = ".(!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
@@ -5316,7 +5350,7 @@ abstract class CommonObject
 					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 				}
 			}
-			if (empty($reshook)) {
+			if (empty($reshook) && $buyer !== null) {
 				$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 			}
 
@@ -5366,7 +5400,8 @@ abstract class CommonObject
 
 				// Define output language and label
 				if (getDolGlobalInt('MAIN_MULTILANGS')) {
-					if (property_exists($this, 'socid') && !is_object($this->thirdparty)) {
+					// @phan-suppress-next-line PhanUndeclaredProperty
+					if (property_exists($this, 'socid') && !empty($this->socid) && !is_object($this->thirdparty)) {
 						dol_print_error(null, 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
 						return;
 					}
@@ -5691,10 +5726,10 @@ abstract class CommonObject
 		$sql .= ") VALUES (";
 		$sql .= ((int) $resource_id);
 		$sql .= ", '".$this->db->escape($resource_type)."'";
-		$sql .= ", '".$this->db->escape($this->id)."'";
+		$sql .= ", '".$this->db->escape((string) $this->id)."'";
 		$sql .= ", '".$this->db->escape($this->element)."'";
-		$sql .= ", '".$this->db->escape($busy)."'";
-		$sql .= ", '".$this->db->escape($mandatory)."'";
+		$sql .= ", '".$this->db->escape((string) $busy)."'";
+		$sql .= ", '".$this->db->escape((string) $mandatory)."'";
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::add_element_resource", LOG_DEBUG);
@@ -5781,7 +5816,7 @@ abstract class CommonObject
 	 */
 	protected function commonGenerateDocument($modelspath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams = null)
 	{
-		global $conf, $langs, $user, $hookmanager, $action;
+		global $conf, $langs, $hookmanager, $action;
 
 		$srctemplatepath = '';
 
@@ -5931,11 +5966,24 @@ abstract class CommonObject
 		$this->model_pdf = $saved_model;
 
 		if ($obj instanceof ModelePDFMember) {
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
+			if ($this instanceof Adherent) {
+				$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, 'member', 1, 'tmp_cards');
+			} else {
+				$resultwritefile = -1;
+				dol_syslog("Error generating document - Provided ".get_class($this)." to ".get_class($obj)."::write_file()", LOG_ERR);
+			}
+		} elseif ($obj instanceof ModeleDon) {
+			// Only 3 arguments
+			if ($this instanceof Don) {
+				$resultwritefile = $obj->write_file($this, $outputlangs /*, $currency */);
+			} else {
+				$resultwritefile = -1;
+				dol_syslog("Error generating document - Provided ".get_class($this)." to Don::write_file()", LOG_ERR);
+			}
 		} else {
 			// TODO: Try to set type above again
-			'@phan-var-force ModeleBarCode|ModeleDon|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);  // @phan-suppress-line-PhanTypeMismatchArgument
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -6105,9 +6153,10 @@ abstract class CommonObject
 	 *  @todo Move this into files.lib.php
 	 *
 	 *  @param      string	$file           Path file in UTF8 to original file to create thumbs from.
+	 *  @param		int		$quality		Quality after compression (0=worst so better compression, 100=best so low or no compression). For thumbs, we force quality to 50 by default.
 	 *	@return		void
 	 */
-	public function addThumbs($file)
+	public function addThumbs($file, $quality = 50)
 	{
 		$file_osencoded = dol_osencode($file);
 
@@ -6120,7 +6169,6 @@ abstract class CommonObject
 			$maxwidthmini = $tmparraysize['maxwidthmini'];
 			$maxheightmini = $tmparraysize['maxheightmini'];
 			//$quality = $tmparraysize['quality'];
-			$quality = 50;	// For thumbs, we force quality to 50
 
 			// Create small thumbs for company (Ratio is near 16/9)
 			// Used on logon for example
@@ -6225,8 +6273,10 @@ abstract class CommonObject
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
+			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
+			$langs->load("main");
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
@@ -6523,8 +6573,8 @@ abstract class CommonObject
 					}
 				} else {
 					/**
-					 We are in a situation where the current object has no values in its extra fields.
-					 We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
+					 * We are in a situation where the current object has no values in its extra fields.
+					 * We want to initialize all the values to null so that the array_option is accessible in other contexts (especially in document generation).
 					 **/
 					if (is_array($extrafields->attributes[$this->table_element]['label'])) {
 						foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
@@ -6571,8 +6621,6 @@ abstract class CommonObject
 	 */
 	public function deleteExtraFields()
 	{
-		global $conf;
-
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
 		}
@@ -6604,14 +6652,14 @@ abstract class CommonObject
 	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
 	 *
-	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
+	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY). Must be used for action 'update_extras'. For other actions, trigger is called explicitly by caller.
 	 *  @param	User		$userused		Object user
 	 *  @return int<-1,1>					-1=error, O=did nothing, 1=OK
 	 *  @see insertExtraLanguages(), updateExtraField(), deleteExtraField(), setValueFrom()
 	 */
 	public function insertExtraFields($trigger = '', $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -6652,6 +6700,12 @@ abstract class CommonObject
 				// If we clone, we have to clean unique extrafields to prevent duplicates.
 				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
 				if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+					$new_array_options[$key] = null;
+				}
+
+				// If we create product combination, we have to clean unique extrafields to prevent duplicates.
+				// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
+				if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
 					$new_array_options[$key] = null;
 				}
 
@@ -6786,14 +6840,27 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								'@phan-var-force CommonObject $object';
+
+								$objectId = 0;
+
+								$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
 								if (is_numeric($value)) {
-									$res = $object->fetch($value); // Common case
+									$sqlFetchObject .= " WHERE rowid = " . (int) $value;
 								} else {
-									$res = $object->fetch(0, $value); // For compatibility
+									$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
+								}
+
+								$obj = $this->db->getRow($sqlFetchObject);
+
+								if ($obj !== false) {
+									$objectId = $obj->rowid;
+									$res = 1;
+								} else {
+									$res = -1;
 								}
 
 								if ($res > 0) {
-									$new_array_options[$key] = $object->id;
+									$new_array_options[$key] = $objectId;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
 									return -1;
@@ -6856,28 +6923,52 @@ abstract class CommonObject
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POINT(15 20)"
+							$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for point ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
+							$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for multipoint ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+							$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for line ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
 				}
 				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
 					if (!empty($new_array_options[$key])) {
-						$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						if (!preg_match('/error/i', $new_array_options[$key])) {
+							// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+							$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
+						} else {
+							dol_syslog("Bad syntax string for polygon ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
+							$sql .= ",null";
+						}
 					} else {
 						$sql .= ",null";
 					}
@@ -6938,7 +7029,7 @@ abstract class CommonObject
 	 */
 	public function insertExtraLanguages($trigger = '', $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		if (empty($userused)) {
 			$userused = $user;
@@ -7056,7 +7147,7 @@ abstract class CommonObject
 	 */
 	public function updateExtraField($key, $trigger = null, $userused = null)
 	{
-		global $conf, $langs, $user, $hookmanager;
+		global $langs, $user, $hookmanager;
 
 		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
 			return 0;
@@ -7389,13 +7480,13 @@ abstract class CommonObject
 	 */
 	public function updateExtraLanguages($key, $trigger = null, $userused = null)
 	{
-		global $conf, $langs, $user;
+		global $user;
 
 		if (empty($userused)) {
 			$userused = $user;
 		}
 
-		$error = 0;
+		//$error = 0;
 
 		if (getDolGlobalString('MAIN_EXTRALANGUAGES_DISABLED')) {
 			return 0; // For avoid conflicts if trigger used
@@ -7409,16 +7500,15 @@ abstract class CommonObject
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of extra fields
 	 *
-	 * @param ?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show (used only if ->fields not defined)
-	 *                                                                                                                                                                                                                                                                                                                                          Array of properties of field to show
-	 * @param  string  		$key           Key of attribute
-	 * @param  string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
-	 * @param  string  		$moreparam     To add more parameters on html input tag
-	 * @param  string  		$keysuffix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string  		$keyprefix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
-	 * @param  int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
-	 * @return string
+	 * @param 	?array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}	$val	Array of properties for field to show (used only if ->fields not defined, so try to keep this null)
+	 * @param  	string  		$key           Key of attribute
+	 * @param  	string|string[]	$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value, for array type must be array)
+	 * @param  	string  		$moreparam     To add more parameters on html input tag
+	 * @param  	string  		$keysuffix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  	string  		$keyprefix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
+	 * @param  	string|int	$morecss       Value for css to define style/length of field. May also be a numeric.
+	 * @param  	int<0,1>		$nonewbutton   Force to not show the new button on field that are links to object
+	 * @return 	string
 	 */
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
@@ -7445,7 +7535,7 @@ abstract class CommonObject
 			$validationClass = ' --success'; // the -- is use as class state in css :  .--success can't be be defined alone it must be define with another class like .my-class.--success or input.--success
 		}
 
-		$valuemultiselectinput = array();
+		//$valuemultiselectinput = array();
 		$out = '';
 		$type = '';
 		$isDependList = 0;
@@ -7514,6 +7604,8 @@ abstract class CommonObject
 		$required = (!empty($this->fields[$key]['required']) ? $this->fields[$key]['required'] : 0);
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$autofocusoncreate = (!empty($this->fields[$key]['autofocusoncreate']) ? $this->fields[$key]['autofocusoncreate'] : 0);
+		// @phan-suppress-next-line PhanTypeMismatchProperty
+		$placeholder = (!empty($this->fields[$key]['placeholder']) ? $this->fields[$key]['placeholder'] : 0);
 
 		// @phan-suppress-next-line PhanTypeMismatchProperty
 		$langfile = (!empty($this->fields[$key]['langfile']) ? $this->fields[$key]['langfile'] : '');
@@ -7594,7 +7686,7 @@ abstract class CommonObject
 		} elseif (in_array($type, array('real'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/varchar/', (string) $type)) {
-			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
+			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"'.($size > 0 ? ' maxlength="'.$size.'"' : '').' value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').($placeholder ? ' placeholder="'.dolPrintHTMLForAttribute($placeholder).'"' : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (in_array($type, array('email', 'mail', 'phone', 'url', 'ip'))) {
 			$out = '<input type="text" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.dol_escape_htmltag($value).'" '.($moreparam ? $moreparam : '').($autofocusoncreate ? ' autofocus' : '').'>';
 		} elseif (preg_match('/^text/', (string) $type)) {
@@ -7896,6 +7988,8 @@ abstract class CommonObject
 					} else {
 						$sql .= " ORDER BY ".$this->db->sanitize(implode(', ', $fields_label));
 					}
+					$sql .= ' LIMIT ' . getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
+					// print $sql;
 
 					dol_syslog(get_class($this) . '::showInputField type=sellist', LOG_DEBUG);
 					$resql = $this->db->query($sql);
@@ -7965,7 +8059,11 @@ abstract class CommonObject
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categcode = $InfoFieldList[5];
+					if (is_numeric($categcode)) {
+						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
+					}
+					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out .= '<option value="0">&nbsp;</option>';
 					foreach ($data as $data_key => $data_value) {
 						$out .= '<option value="' . $data_key . '"';
@@ -8199,7 +8297,11 @@ abstract class CommonObject
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categcode = $InfoFieldList[5];
+					if (is_numeric($categcode)) {
+						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
+					}
+					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix . $key . $keysuffix, $data, $value_arr, 0, 0, $morecss, 0, '100%');
 				}
 			}
@@ -8226,8 +8328,19 @@ abstract class CommonObject
 					}
 				}
 			}
-			$objectfield = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
-			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
+
+			// $param_list_array[0] can be the name of object (Example 'User' the field is linked to). Not as taking the information from the record in ->fields found from $objectfield.
+
+			// $valparent is a string 'dataobject@module:keyoffieldinfieldsarray' to find the record field to link to.
+			// $valparent = $this->element.($this->module ? '@'.$this->module : '').':'.$key.$keysuffix;
+
+			// $val is already the record field found at same place than found by $valparent but already loaded and may have been modified by parent caller.
+
+			//$objectfield = $valparent;
+			$objectfield = $val;			// Is better than using old method $valparent
+
+			// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
+			$out = $form->selectForForms($param_list_array[0], $keyprefix.$key.$keysuffix, (int) $value, $showempty, '', '', $morecss, $moreparam, 0, (empty($val['disabled']) ? 0 : 1), '', $objectfield);
 
 			if (!empty($param_list_array[2])) {		// If the entry into $fields is set, we must add a create button
 				if ((!GETPOSTISSET('backtopage') || strpos(GETPOST('backtopage'), $_SERVER['PHP_SELF']) === 0)	// // To avoid to open several times the 'Plus' button (we accept only one level)
@@ -8349,7 +8462,7 @@ abstract class CommonObject
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
 		}
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (isset($val['type']) && preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 		}
 
@@ -8363,7 +8476,7 @@ abstract class CommonObject
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			$param['options'] = $val['arrayofkeyval'];
 		}
-		if (preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
+		if (isset($val['type']) && preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
 			// Special case: Force addition of getnomurlparam1 to -1 for users
@@ -8371,19 +8484,19 @@ abstract class CommonObject
 				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1] => 'N');
 			$type = 'chkbxlst';
-		} elseif (preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
 			$type = 'stars';
 			$size = $reg[1];
@@ -8467,15 +8580,15 @@ abstract class CommonObject
 				$value = yn($value ? 1 : 0);
 			}
 		} elseif ($type == 'mail' || $type == 'email') {
-			$value = dol_print_email($value, 0, 0, 0, 64, 1, 1);
+			$value = dol_print_email((string) $value, 0, 0, 0, 64, 1, 1);
 		} elseif ($type == 'url') {
-			$value = dol_print_url($value, '_blank', 32, 1);
+			$value = dol_print_url((string) $value, '_blank', 32, 1);
 		} elseif ($type == 'phone') {
-			$value = dol_print_phone($value, '', 0, 0, '', '&nbsp;', 'phone');
+			$value = dol_print_phone((string) $value, '', 0, 0, '', '&nbsp;', 'phone');
 		} elseif ($type == 'ip') {
-			$value = dol_print_ip($value, 0);
+			$value = dol_print_ip((string) $value, 0);
 		} elseif ($type == 'stars') {
-			$value = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.$this->id.'" value="'.dol_escape_htmltag($value).'"'.($moreparam ? $moreparam : '').'>';
+			$value = '<input type="hidden" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.$this->id.'" value="'.dol_escape_htmltag((string) $value).'"'.($moreparam ? $moreparam : '').'>';
 			$value .= '<div class="star-selection" id="'.$keyprefix.$key.$keysuffix.$this->id.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
@@ -8576,7 +8689,7 @@ abstract class CommonObject
 			} elseif ($selectkey == 'rowid') {
 				$sql .= " WHERE ".$selectkey." = ".((int) $value);
 			} else {
-				$sql .= " WHERE ".$selectkey." = '".$this->db->escape($value)."'";
+				$sql .= " WHERE ".$selectkey." = '".$this->db->escape((string) $value)."'";
 			}
 
 			//$sql.= ' AND entity = '.$conf->entity;
@@ -8781,7 +8894,7 @@ abstract class CommonObject
 						'@phan-var-force CommonObject $object';
 						if ($object->element === 'product') {	// Special case for product because default valut of fetch are wrong
 							'@phan-var-force Product $object';
-							$result = $object->fetch($value, '', '', '', 0, 1, 1);
+							$result = $object->fetch((int) $value, '', '', '', 0, 1, 1);
 						} else {
 							$result = $object->fetch($value);
 						}
@@ -8834,7 +8947,7 @@ abstract class CommonObject
 			if (!empty($value) && preg_match('/^text/', (string) $type) && !preg_match('/search_/', $keyprefix) && !empty($param['options'])) {
 				$value = str_replace(',', "\n", $value);
 			}
-			$value = dol_htmlentitiesbr($value);
+			$value = dol_htmlentitiesbr((string) $value);
 		}
 
 		//print $type.'-'.$size.'-'.$value;
@@ -8889,7 +9002,7 @@ abstract class CommonObject
 	/**
 	 * Return validation test result for a field
 	 *
-	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	$fields	Array of properties of field to show
+	 * @param array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}>	$fields	Array of properties of field to show
 	 * @param  	string  $fieldKey           Key of attribute
 	 * @param	string  $fieldValue         Value of attribute
 	 * @return 	bool 						Return false if fail true on success, see $this->error for error message
@@ -8932,7 +9045,7 @@ abstract class CommonObject
 		// Convert var to be able to share same code than showOutputField of extrafields
 		if (preg_match('/varchar\((\d+)\)/', $type, $reg)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
-			$maxSize = $reg[1];
+			$maxSize = (int) $reg[1];
 		} elseif (preg_match('/varchar/', $type)) {
 			$type = 'varchar'; // convert varchar(xx) int varchar
 		}
@@ -9079,11 +9192,11 @@ abstract class CommonObject
 			$InfoFieldList = explode(":", $param_list[0]);
 			$classname = $InfoFieldList[0];
 			$classpath = $InfoFieldList[1];
-			if (!$validate->isFetchable($fieldValue, $classname, $classpath)) {
+			if (!$validate->isFetchable((int) $fieldValue, $classname, $classpath)) {
 				$lastIsFetchableError = $validate->error;
 
 				// from V19 of Dolibarr, In some cases link use element instead of class, example project_task
-				if ($validate->isFetchableElement($fieldValue, $classname)) {
+				if ($validate->isFetchableElement((int) $fieldValue, $classname)) {
 					return true;
 				}
 
@@ -9175,6 +9288,10 @@ abstract class CommonObject
 					if (($mode == 'create') && !in_array(abs($visibility), array(1, 3))) {
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 					} elseif (($mode == 'edit') && !in_array(abs($visibility), array(1, 3, 4))) {
+						// We need to make sure, that the values of hidden extrafields are also part of $_POST. Otherwise, they would be empty after an update of the object. See also getOptionalsFromPost
+						$ef_name = 'options_' . $key;
+						$ef_value = $this->array_options[$ef_name];
+						$out .= '<input type="hidden" name="' . $ef_name . '" id="' . $ef_name . '" value="' . $ef_value . '" />' . "\n";
 						continue; // <> -1 and <> 1 and <> 3 = not visible on forms, only on list and <> 4 = not visible at the creation
 					} elseif ($mode == 'view' && empty($visibility)) {
 						continue;
@@ -9328,6 +9445,13 @@ abstract class CommonObject
 							}
 						}
 
+						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('checkbox'))) {
+							if ($action == 'create') {
+								$value = (GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix) || $value) ? $value : explode(',', $extrafields->attributes[$this->table_element]['default'][$key]);
+							}
+						}
+
+
 						$labeltoshow = $langs->trans($label);
 						$helptoshow = $langs->trans($extrafields->attributes[$this->table_element]['help'][$key]);
 						if ($display_type == 'card') {
@@ -9393,7 +9517,7 @@ abstract class CommonObject
 									$out .= getPictoForType($extrafields->attributes[$this->table_element]['type'][$key], ($extrafields->attributes[$this->table_element]['type'][$key] == 'text' ? 'tdtop' : ''));
 								}
 								//$out .= '<!-- type = '.$extrafields->attributes[$this->table_element]['type'][$key].' -->';
-								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', 0, $this, $this->table_element);
+								$out .= $extrafields->showInputField($key, $value, '', $keysuffix, '', '', $this, $this->table_element);
 								break;
 							case "edit":
 								$listoftypestoshowpicto = explode(',', getDolGlobalString('MAIN_TYPES_TO_SHOW_PICTO', 'email,phone,ip,password'));
@@ -10247,9 +10371,9 @@ abstract class CommonObject
 				}
 				$keys_with_alias[] = $alias . '.' . $fieldname;
 			}
-			return implode(',', $keys_with_alias);
+			return implode(', ', $keys_with_alias);
 		} else {
-			return implode(',', $keys);
+			return implode(', ', $keys);
 		}
 	}
 
@@ -10283,9 +10407,9 @@ abstract class CommonObject
 	/**
 	 * Create object in the database
 	 *
-	 * @param  User		$user		User that creates
-	 * @param  int<0,1>	$notrigger	0=launch triggers after, 1=disable triggers
-	 * @return int<-1,max>			Return integer <0 if KO, Id of created object if OK
+	 * @param  User			$user		User that creates
+	 * @param  int<0,1>		$notrigger	0=launch triggers after, 1=disable triggers
+	 * @return int<-1,max>				Return integer <0 if KO, Id of created object if OK
 	 */
 	public function createCommon(User $user, $notrigger = 0)
 	{
@@ -10303,7 +10427,9 @@ abstract class CommonObject
 
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) {
 			$fieldvalues['date_creation'] = $this->db->idate($now);
+			$this->date_creation = $this->db->idate($now);
 		}
+		// For backward compatibility, if a property ->fk_user_creat exists and not filled.
 		if (array_key_exists('fk_user_creat', $fieldvalues) && !($fieldvalues['fk_user_creat'] > 0)) {
 			$fieldvalues['fk_user_creat'] = $user->id;
 			$this->fk_user_creat = $user->id;
@@ -10314,7 +10440,11 @@ abstract class CommonObject
 		}
 		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass')) {
 			// @phan-suppress-next-line PhanUndeclaredProperty
-			$fieldvalues['pass_crypted'] = dol_hash($this->pass);
+			$tmparray = dol_hash($this->pass, '0', 0, 1);
+			$fieldvalues['pass_crypted'] = $tmparray['pass_encrypted'];
+			if (array_key_exists('pass_encoding', $fieldvalues) && property_exists($this, 'pass_encoding')) {
+				$fieldvalues['pass_encoding'] = $tmparray['pass_encoding'];
+			}
 		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
@@ -10422,7 +10552,7 @@ abstract class CommonObject
 		}
 
 		// Create lines
-		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
+		if (!empty($this->table_element_line) && !empty($this->fk_element) && !empty($this->lines)) {
 			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
@@ -10626,6 +10756,15 @@ abstract class CommonObject
 		}
 		if (array_key_exists('user_modification_id', $fieldvalues) && !($fieldvalues['user_modification_id'] > 0)) {
 			$fieldvalues['user_modification_id'] = $user->id;
+		}
+		// @phan-suppress-next-line PhanUndeclaredProperty
+		if (array_key_exists('pass_crypted', $fieldvalues) && property_exists($this, 'pass') && !empty($this->pass)) {
+			// @phan-suppress-next-line PhanUndeclaredProperty
+			$tmparray = dol_hash($this->pass, '0', 0, 1);
+			$fieldvalues['pass_crypted'] = $tmparray['pass_encrypted'];
+			if (array_key_exists('pass_encoding', $fieldvalues) && property_exists($this, 'pass_encoding')) {
+				$fieldvalues['pass_encoding'] = $tmparray['pass_encoding'];
+			}
 		}
 		if (array_key_exists('ref', $fieldvalues)) {
 			$fieldvalues['ref'] = dol_string_nospecial($fieldvalues['ref']); // If field is a ref, we sanitize data
@@ -10990,7 +11129,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$statusfield = 'status';
-		if (in_array($this->element, array('don', 'donation', 'shipping'))) {
+		if (in_array($this->element, array('don', 'donation', 'shipping', 'project_task'))) {
 			$statusfield = 'fk_statut';
 		}
 

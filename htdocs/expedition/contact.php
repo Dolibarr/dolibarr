@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 
+$typeobject = null;
 $object = new Expedition($db);
 if ($id > 0 || !empty($ref)) {
 	$object->fetch($id, $ref);
@@ -85,7 +87,7 @@ $result = restrictedArea($user, 'expedition', $object->id, '');
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -135,7 +137,7 @@ if (empty($reshook)) {
 
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
-llxHeader('', $langs->trans('Order'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
+llxHeader('', $langs->trans('Shipment'), $help_url, '', 0, 0, '', '', '', 'mod-expedition page-card_contact');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -151,11 +153,8 @@ $userstatic = new User($db);
 /* *************************************************************************** */
 
 if ($id > 0 || !empty($ref)) {
-	$langs->trans("OrderCard");
-
 	$head = shipping_prepare_head($object);
 	print dol_get_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, $object->picto);
-
 
 	// Shipment card
 	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
@@ -175,7 +174,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
 				$proj = new Project($db);

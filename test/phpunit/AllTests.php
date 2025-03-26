@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       test/phpunit/AllTest.php
+ *      \file       test/phpunit/AllTests.php
  *      \ingroup    test
  *      \brief      This file is a test suite to run all unit tests
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -49,7 +49,7 @@ if ($langs->defaultlang != 'en_US') {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
 	exit(1);
 }
-if (!isModEnabled('adherent')) {
+if (!isModEnabled('member')) {
 	print "Error: Module member must be enabled to have significant results.\n";
 	exit(1);
 }
@@ -134,6 +134,8 @@ class AllTests
 		$suite->addTestSuite('SecurityTest');
 		require_once dirname(__FILE__).'/SecurityGETPOSTTest.php';
 		$suite->addTestSuite('SecurityGETPOSTTest');
+		require_once dirname(__FILE__).'/SecurityLoginTest.php';
+		$suite->addTestSuite('SecurityLoginTest');
 
 		require_once dirname(__FILE__).'/UserTest.php';
 		$suite->addTestSuite('UserTest');
@@ -241,6 +243,9 @@ class AllTests
 		require_once dirname(__FILE__).'/KnowledgeRecordTest.php';
 		$suite->addTestSuite('KnowledgeRecordTest');
 
+		require_once dirname(__FILE__).'/AccountancySystemTest.php';
+		$suite->addTestSuite('AccountancySystemTest');
+
 		require_once dirname(__FILE__).'/AccountingAccountTest.php';
 		$suite->addTestSuite('AccountingAccountTest');
 		require_once dirname(__FILE__).'/AssetModelTest.php';
@@ -253,6 +258,8 @@ class AllTests
 		$suite->addTestSuite('RestAPIContactTest');
 		require_once dirname(__FILE__).'/RestAPIDocumentTest.php';
 		$suite->addTestSuite('RestAPIDocumentTest');
+		require_once dirname(__FILE__).'/RestAPIMoTest.php';
+		$suite->addTestSuite('RestAPIMoTest');
 
 		// Test only with php7.2 or less
 		//if ((float) phpversion() < 7.3)
@@ -279,10 +286,6 @@ class AllTests
 		require_once dirname(__FILE__).'/ScriptsTest.php';
 		$suite->addTestSuite('ScriptsTest');
 
-		require_once dirname(__FILE__).'/ModulesTest.php';  // At end because it's the longer
-		$suite->addTestSuite('ModulesTest');
-
-
 		// GUI
 		require_once dirname(__FILE__).'/FormAdminTest.php';
 		$suite->addTestSuite('FormAdminTest');
@@ -303,6 +306,11 @@ class AllTests
 		// Website
 		require_once dirname(__FILE__).'/WebsiteTest.php';
 		$suite->addTestSuite('WebsiteTest');
+
+		// At end because it's the longer
+		// Also enabling and disabling modules is changing the context and global variables that changes behaviour of previous tests
+		require_once dirname(__FILE__).'/ModulesTest.php';
+		$suite->addTestSuite('ModulesTest');
 
 		return $suite;
 	}

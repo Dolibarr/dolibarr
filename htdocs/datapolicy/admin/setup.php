@@ -156,21 +156,37 @@ $head = datapolicyAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', '', -1, '');
 
 // Setup page goes here
-print '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span><br>';
-// print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP'));
+print '<span class="opacitymedium">'.$langs->trans("datapolicySetupPage").'</span>';
+print $form->textwithpicto('', $langs->trans('DATAPOLICY_Tooltip_SETUP', $langs->trans("DATAPOLICYJob"), $langs->transnoentities("CronList")));
+print '<br>';
+print '<br>';
 print '<br>';
 
+// TODO Show the last date of execution of the job DATAPOLICYJob
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="update">';
 
-	print '<table class="noborder centpercent">';
-	//print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
+	print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+	print '<table class="tagtable nobottomiftotal liste">';
+
+	print '<tr class="liste_titre"><td class="titlefield"></td>';
+	print '<td>'.$langs->trans("DelayForAnonymization").'</td>';
+	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+		print '<td>'.$langs->trans("DelayForDeletion").'</td>';
+	}
+	print '</tr>';
 
 	foreach ($arrayofparameters as $title => $tab) {
-		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';
+		print '<tr class="trforbreak liste_titre"><td class="titlefield trforbreak">'.$langs->trans($title).'</td>';
+		print '<td></td>';
+		if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+			print '<td></td>';
+		}
+		print '</tr>';
+
 		foreach ($tab as $key => $val) {
 			print '<tr class="oddeven"><td>';
 			print $val['picto'];
@@ -184,11 +200,19 @@ if ($action == 'edit') {
 			}
 			print '</select>';
 			print ajax_combobox($key);
-			print '</td></tr>';
+			print '</td>';
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+				print '<td>';
+				print $langs->trans("FeatureNotYetAvailable");
+				print '</td>';
+			}
+
+			print '</tr>';
 		}
 	}
 
 	print '</table>';
+	print '</div>';
 
 	print $form->buttonsSaveCancel("Save", '');
 
@@ -196,7 +220,6 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent">';
-	//print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $title => $tab) {
 		print '<tr class="trforbreak"><td class="titlefield trforbreak" colspan="2">'.$langs->trans($title).'</td></tr>';

@@ -1,14 +1,22 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
+// Expected to be defined by including parent
+'
+@phan-var-force string $right
+@phan-var-force string $left
+';
 ?>
-/* <style type="text/css" > */
+/* IDE Hack <style type="text/css"> */
 
 /*
  * Component: Info Box
@@ -292,7 +300,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 @media only screen and (max-width: 480px)
 {
 	.info-box-text {
-		font-size: 0.82em;
+		font-size: 0.85em;
 	}
 	.info-box-line {
 		line-height: 1.25em;
@@ -323,10 +331,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -335,8 +343,8 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 	color: #fff !important;
 	<?php } ?>
 	opacity: 0.95;
-	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
+		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
 }
 
@@ -446,9 +454,6 @@ a.vmenu span, span.vmenu, span.vmenu span {
 .infobox-invoice_supplier:not(.error),
 .infobox-order_supplier:not(.error) {
 	color: #599caf;
-}
-.infobox-order_supplier::before {
-	margin-left: 5px;
 }
 .infobox-contrat, .infobox-ticket{
 	color: #3bbfa8;
@@ -691,8 +696,10 @@ a.vmenu span, span.vmenu, span.vmenu span {
 		padding-left: 10px;
 		padding-right: 2px;
 	}
+	/*
 	.info-box-line-text {
 		width: calc(100% - 98px);
 		max-width: calc(100% - 88px);
 	}
+	*/
 }

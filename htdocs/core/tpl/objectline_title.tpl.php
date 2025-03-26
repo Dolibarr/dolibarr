@@ -159,7 +159,7 @@ print '</th>';
 
 // Fields for situation invoice
 if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
-	print '<th class="linecolcycleref right">'.$langs->trans('Progress').'</th>';
+	print '<th class="linecolcycleref right">'.$langs->trans('CumulativeProgression').'</th>';
 	if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
 		print '<th class="linecolcycleref2 right">' . $langs->trans('SituationInvoiceProgressCurrent') . '</th>';
 	}
@@ -214,7 +214,7 @@ if (isModEnabled("multicurrency") && $this->multicurrency_code != $conf->currenc
 }
 
 if ($outputalsopricetotalwithtax) {
-	print '<th class="right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
+	print '<th class="linecolttc right" style="width: 80px">'.$langs->trans('TotalTTCShort').'</th>';
 }
 
 if (isModEnabled('asset') && $object->element == 'invoice_supplier') {

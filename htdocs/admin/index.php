@@ -61,16 +61,16 @@ print load_fiche_titre($langs->trans("SetupArea"), '', 'tools');
 
 
 if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
-	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', $conf->global->MAIN_MOTD_SETUPPAGE);
+	$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 	if (getDolGlobalString('MAIN_MOTD_SETUPPAGE')) {
 		$i = 0;
 		$reg = array();
-		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', $conf->global->MAIN_MOTD_SETUPPAGE, $reg) && $i < 100) {
+		while (preg_match('/__\(([a-zA-Z|@]+)\)__/i', getDolGlobalString('MAIN_MOTD_SETUPPAGE'), $reg) && $i < 100) {
 			$tmp = explode('|', $reg[1]);
 			if (!empty($tmp[1])) {
 				$langs->load($tmp[1]);
 			}
-			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), $conf->global->MAIN_MOTD_SETUPPAGE);
+			$conf->global->MAIN_MOTD_SETUPPAGE = preg_replace('/__\('.preg_quote($reg[1]).'\)__/i', $langs->trans($tmp[0]), getDolGlobalString('MAIN_MOTD_SETUPPAGE'));
 			$i++;
 		}
 
@@ -96,7 +96,7 @@ if (!getDolGlobalString('MAIN_INFO_SOCIETE_NOM') || !getDolGlobalString('MAIN_IN
 	$setupcompanynotcomplete = 1;
 }
 
-print '<section class="setupsection">';
+print '<section class="setupsection setupcompany cursorpointer">';
 
 print img_picto('', 'company', 'class="paddingright valignmiddle double"').' '.$langs->trans("SetupDescriptionLink", DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit&token='.newToken()), $langs->transnoentities("Setup"), $langs->transnoentities("MenuCompanySetup"));
 print '<br><br>';
@@ -107,12 +107,13 @@ if (!empty($setupcompanynotcomplete)) {
 	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 
+print '</a>';
 print '</section>';
 
 print '<br>';
 print '<br>';
 
-print '<section class="setupsection">';
+print '<section class="setupsection setupmodules cursorpointer">';
 
 // Define $nbmodulesnotautoenabled - TODO This code is at different places
 $nbmodulesnotautoenabled = count($conf->modules);
@@ -137,6 +138,22 @@ print '</section>';
 print '<br>';
 print '<br>';
 print '<br>';
+
+
+print '<script>
+	$(document).ready(function(){
+            $(".setupcompany").click(function() {
+				event.preventDefault();
+				console.log("we click on setupcompany");
+                window.location.href = "'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete) ? '' : '&action=edit').'";
+            });
+            $(".setupmodules").click(function() {
+				event.preventDefault();
+				console.log("we click on setupmodules");
+                window.location.href = "'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home";
+            });
+        });
+</script>';
 
 // Add hook to add information
 $parameters = array();

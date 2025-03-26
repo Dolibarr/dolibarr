@@ -121,7 +121,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>";
-print "<td>".$langs->trans("Value")."</td>";
+print "<td></td>";
 //print "<td>".$langs->trans("Examples")."</td>";
 print "<td>&nbsp;</td>";
 print "</tr>";
@@ -180,8 +180,8 @@ print "</form>\n";
 
 clearstatcache();
 
-//if ($mesg) print "<br>$mesg<br>";
-print "<br>";
+
+print "<br><br>";
 
 
 // Define $urlwithroot

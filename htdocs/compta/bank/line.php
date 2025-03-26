@@ -672,10 +672,10 @@ if ($result) {
 					current.click(function()
 					{
 						var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+						console.log("We click on ajaxforbankoperationchange url="+url);
 						$.get(url, function(data)
 						{
-							console.log(url)
-							console.log(data)
+							console.log(data);
 							current.parent().prev().replaceWith(data);
 						});
 						return false;

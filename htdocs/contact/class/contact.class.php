@@ -11,8 +11,8 @@
  * Copyright (C) 2015      Marcos García               <marcosgdf@gmail.com>
  * Copyright (C) 2019      Nicolas ZABOURI 	           <info@inovea-conseil.com>
  * Copyright (C) 2020      Open-Dsi  	               <support@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,12 +87,12 @@ class Contact extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}> Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>}> Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 3, 'notnull' => 1, 'position' => 30, 'index' => 1),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 3, 'position' => 35),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 35),
 		'civility' => array('type' => 'varchar(6)', 'label' => 'Civility', 'enabled' => 1, 'visible' => 3, 'position' => 40),
 		'lastname' => array('type' => 'varchar(50)', 'label' => 'Lastname', 'enabled' => 1, 'visible' => 1, 'position' => 45, 'showoncombobox' => 1, 'searchall' => 1),
 		'name_alias' => array('type' => 'varchar(255)', 'label' => 'Name alias', 'enabled' => 1, 'visible' => -1, 'position' => 46, 'searchall' => 1),
@@ -120,12 +120,12 @@ class Contact extends CommonObject
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 3, 'position' => 200, 'searchall' => 1),
 		'default_lang' => array('type' => 'varchar(6)', 'label' => 'Default lang', 'enabled' => 1, 'visible' => 3, 'position' => 205),
 		'canvas' => array('type' => 'varchar(32)', 'label' => 'Canvas', 'enabled' => 1, 'visible' => 3, 'position' => 210),
+		'ip' => array('type' => 'ip', 'label' => 'IPAddress', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '-2', 'comment' => 'ip used to create record (for public submission page)'),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 300),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 305),
 		'fk_user_creat' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => 3, 'position' => 310),
 		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => 3, 'position' => 315),
 		'statut' => array('type' => 'tinyint(4)', 'label' => 'Status', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'position' => 500),
-		'ip' => array('type' => 'varchar(250)', 'label' => 'Ip', 'enabled' => '1', 'position' => 700, 'notnull' => 0, 'visible' => '0', 'comment' => 'ip used to create record (for public submission page)'),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'position' => 1000),
 	);
 
@@ -175,17 +175,17 @@ class Contact extends CommonObject
 	public $name_alias;
 
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string zip code
+	 * @var ?string zip code
 	 */
 	public $zip;
 
 	/**
-	 * @var string Town
+	 * @var ?string Town
 	 */
 	public $town;
 
@@ -235,13 +235,13 @@ class Contact extends CommonObject
 
 	/**
 	 * Email
-	 * @var string
+	 * @var ?string
 	 */
 	public $email;
 
 	/**
 	 * Email
-	 * @var string
+	 * @var ?string
 	 * @deprecated Use $email
 	 * @see $email
 	 */
@@ -249,7 +249,7 @@ class Contact extends CommonObject
 
 	/**
 	 * URL
-	 * @var string
+	 * @var ?string
 	 */
 	public $url;
 
@@ -343,13 +343,6 @@ class Contact extends CommonObject
 	public $ip;
 	// END MODULEBUILDER PROPERTIES
 
-
-	/**
-	 * Old copy
-	 * @var static
-	 */
-	public $oldcopy; // To contain a clone of this when we need to save old properties of object
-
 	/**
 	 * @var array<int,array{id:int,socid:int,element:string,source:string,code:string,label:string}> roles
 	 */
@@ -392,6 +385,8 @@ class Contact extends CommonObject
 		$this->statut = 1; // By default, status is enabled
 		$this->ismultientitymanaged = 1;
 		$this->isextrafieldmanaged = 1;
+
+		$this->fields['ref_ext']['visible'] = getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT');
 
 		if (!isModEnabled('mailing')) {
 			$this->fields['no_email']['enabled'] = 0;
@@ -490,6 +485,10 @@ class Contact extends CommonObject
 
 		$error = 0;
 		$now = dol_now();
+
+		if (empty($this->date_creation)) {
+			$this->date_creation = $now;
+		}
 
 		$this->db->begin();
 
@@ -608,6 +607,11 @@ class Contact extends CommonObject
 	{
 		global $conf;
 
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$country_id = getCountry($this->country_code, '3');
+			$this->country_id = is_int($country_id) ? $country_id : 0;
+		}
+
 		$error = 0;
 
 		$this->id = $id;
@@ -619,7 +623,7 @@ class Contact extends CommonObject
 		$this->name_alias = trim($this->name_alias);
 		$this->lastname = trim($this->lastname) ? trim($this->lastname) : trim($this->lastname);
 		$this->firstname = trim($this->firstname);
-		$this->email = trim($this->email);
+		$this->email = trim($this->email ?? '');
 		$this->phone_pro = trim($this->phone_pro);
 		$this->phone_perso = trim($this->phone_perso);
 		$this->phone_mobile = trim($this->phone_mobile);
@@ -648,7 +652,7 @@ class Contact extends CommonObject
 		$sql .= ", name_alias='".$this->db->escape($this->name_alias)."'";
 		$sql .= ", lastname='".$this->db->escape($this->lastname)."'";
 		$sql .= ", firstname='".$this->db->escape($this->firstname)."'";
-		$sql .= ", address='".$this->db->escape($this->address)."'";
+		$sql .= ", address='".$this->db->escape((string) $this->address)."'";
 		$sql .= ", zip='".$this->db->escape($this->zip)."'";
 		$sql .= ", town='".$this->db->escape($this->town)."'";
 		$sql .= ", ref_ext = ".(!empty($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "NULL");
@@ -665,13 +669,13 @@ class Contact extends CommonObject
 		$sql .= ", phone = ".(isset($this->phone_pro) ? "'".$this->db->escape($this->phone_pro)."'" : "NULL");
 		$sql .= ", phone_perso = ".(isset($this->phone_perso) ? "'".$this->db->escape($this->phone_perso)."'" : "NULL");
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile) ? "'".$this->db->escape($this->phone_mobile)."'" : "NULL");
-		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
+		$sql .= ", priv = ".((int) $this->priv);
 		$sql .= ", fk_prospectlevel = '".$this->db->escape($this->fk_prospectlevel)."'";
 		if (isset($this->stcomm_id)) {
 			$sql .= ", fk_stcommcontact = ".($this->stcomm_id > 0 || $this->stcomm_id == -1 ? $this->stcomm_id : "0");
 		}
 		$sql .= ", statut = ".((int) $this->statut);
-		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'" : "NULL");
+		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape((string) $user->id)."'" : "NULL");
 		$sql .= ", default_lang=".($this->default_lang ? "'".$this->db->escape($this->default_lang)."'" : "NULL");
 		$sql .= ", entity = ".((int) $this->entity);
 		$sql .= " WHERE rowid = ".((int) $id);
@@ -919,8 +923,8 @@ class Contact extends CommonObject
 	 *  Update field alert birthday
 	 *
 	 *  @param      int			$id         Id of contact
-	 *  @param      User		$user		User asking to change alert or birthday
-	 *  @param      int		    $notrigger	0=no, 1=yes
+	 *  @param      ?User		$user		User asking to change alert or birthday
+	 *  @param      int<0,1>    $notrigger	0=no, 1=yes
 	 *  @return     int         			Return integer <0 if KO, >=0 if OK
 	 */
 	public function update_perso($id, $user = null, $notrigger = 0)
@@ -974,15 +978,15 @@ class Contact extends CommonObject
 					$this->error = $this->db->lasterror();
 				}
 			}
-		}
 
-		if (!$error && !$notrigger) {
-			// Call trigger
-			$result = $this->call_trigger('CONTACT_MODIFY', $user);
-			if ($result < 0) {
-				$error++;
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('CONTACT_MODIFY', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
 			}
-			// End call triggers
 		}
 
 		if (!$error) {
@@ -1574,9 +1578,9 @@ class Contact extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowContact");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -2244,7 +2248,7 @@ class Contact extends CommonObject
 	 *	Return clickable link of object (with eventually picto)
 	 *
 	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array{string,mixed}		$arraydata				Array of data
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
 	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)

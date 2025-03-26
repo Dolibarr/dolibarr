@@ -3,6 +3,7 @@
  * Copyright (C) 2011-2022 	Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,8 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var DoliDB $db
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_force_https
  *
  * @var string $captcha
  *
@@ -165,7 +168,7 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 	// Set a cookie to transfer rollback page information
 	$prefix = dol_getprefix('');
 	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
-		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
 
 	// Auto redirect if OpenID Connect is the only authentication
@@ -281,11 +284,12 @@ if ($disablenofollow) {
 <div class="tagtable left centpercent" title="<?php echo $langs->trans("EnterLoginDetail"); ?>">
 
 <!-- Login -->
+<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
-<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
-	?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php
-} ?>
+	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+		?><label for="username" class="hidden"><?php echo $langs->trans("Login"); ?></label><?php
+	} ?>
 <!-- <span class="span-icon-user">-->
 <span class="fa fa-user"></span>
 <input type="text" id="username" maxlength="255" placeholder="<?php echo $langs->trans("Login"); ?>" name="username" class="flat input-icon-user minwidth150" value="<?php echo dol_escape_htmltag($login); ?>" tabindex="1" autofocus="autofocus" autocapitalize="off" autocomplete="on" spellcheck="false" autocorrect="off" />
@@ -293,7 +297,6 @@ if ($disablenofollow) {
 </div>
 
 <!-- Password -->
-<?php if (!isset($conf->file->main_authentication) || $conf->file->main_authentication != 'googleoauth') { ?>
 <div class="trinputlogin">
 <div class="tagtd nowraponall center valignmiddle tdinputlogin">
 	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
@@ -317,7 +320,7 @@ if (!empty($captcha)) {
 	}
 
 	// List of directories where we can find captcha handlers
-	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), is_array($conf->modules_parts['captcha']) ? $conf->modules_parts['captcha'] : array());
+	$dirModCaptcha = array_merge(array('main' => '/core/modules/security/captcha/'), (isset($conf->modules_parts['captcha']) && is_array($conf->modules_parts['captcha'])) ? $conf->modules_parts['captcha'] : array());
 	$fullpathclassfile = '';
 	foreach ($dirModCaptcha as $dir) {
 		$fullpathclassfile = dol_buildpath($dir."modCaptcha".ucfirst($captcha).'.class.php', 0, 2);
@@ -334,7 +337,7 @@ if (!empty($captcha)) {
 		$classname = "modCaptcha".ucfirst($captcha);
 		if (class_exists($classname)) {
 			/** @var ModeleCaptcha $captchaobj */
-			$captchaobj = new $classname($db, $conf, $langs, $user);
+			$captchaobj = new $classname($db, $conf, $langs, null);
 			'@phan-var-force ModeleCaptcha $captchaobj';
 
 			if (is_object($captchaobj) && method_exists($captchaobj, 'getCaptchaCodeForForm')) {
@@ -433,7 +436,6 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 	dol_include_once('/core/lib/openid_connect.lib.php');
 	$langs->load("users");
 
-	//if (!empty($conf->global->MAIN_OPENIDURL_PERUSER)) $url=
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';
 	print '<div class="loginbuttonexternal">';
 

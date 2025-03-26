@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017	    Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -48,6 +48,7 @@ $langs->loadLangs(array("admin", "other", "agenda"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $param = GETPOST('param', 'alpha');
@@ -182,7 +183,7 @@ print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right"></td>'."\n";
 print '</tr>'."\n";
 
 // AGENDA REMINDER BROWSER
@@ -283,6 +284,7 @@ if (getDolGlobalString('AGENDA_REMINDER_EMAIL')) {
 		} else {
 			$selected = json_decode(getDolGlobalString('AGENDA_DEFAULT_REMINDER_EVENT_TYPES', ''));
 		}
+		// Assuming $selected is correct type: @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 		print $formactions->select_type_actions($selected, "AGENDA_DEFAULT_REMINDER_EVENT_TYPES", "systemauto", 0, -1, 1, 1);
 		print '</td></tr>';
 	}

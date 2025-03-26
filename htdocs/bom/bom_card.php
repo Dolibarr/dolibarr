@@ -2,7 +2,7 @@
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -181,7 +181,7 @@ if (empty($reshook)) {
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$fk_workstation = GETPOSTINT('idworkstations');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+		$fk_unit = GETPOSTINT('fk_unit');
 
 		$fk_default_workstation = 0;
 		if (!empty($idprod) && isModEnabled('workstation')) {
@@ -235,7 +235,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->addLine((int) $idprod, (float) $qty, $qty_frozen, $disable_stock_change, (float) $efficiency, -1, $bom_child_id, null, (int) $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -264,7 +264,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+		$fk_unit = GETPOSTINT('fk_unit');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -291,7 +291,7 @@ if (empty($reshook)) {
 				$fk_default_workstation = GETPOSTINT('idworkstations');
 			}
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->updateLine($lineid, (float) $qty, (int) $qty_frozen, (int) $disable_stock_change, (float) $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -425,10 +425,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		if (isModEnabled('bom')) {
 			$langs->load("mrp");
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') {
-				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			}
 			$formquestion = array(
 				// 'text' => $langs->trans("ConfirmClone"),
 				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
@@ -453,10 +449,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		if (isModEnabled('bom')) {
 			$langs->load("mrp");
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') {
-				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			}
 			$formquestion = array(
 				// 'text' => $langs->trans("ConfirmClone"),
 				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
@@ -482,10 +474,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (isModEnabled('bom')) {
 			$langs->load("mrp");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') {
-				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			}
 			$formquestion = array(
 				// 'text' => $langs->trans("ConfirmClone"),
 				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
@@ -580,9 +568,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Common attributes
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-	$object->calculateCosts();
-	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
-	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
+
+	// Manufacturing cost
+	print '<tr><td>'.$form->textwithpicto($langs->trans("ManufacturingCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">';
+	print price($object->total_cost);
+	print '</span>';
+	if ($object->total_cost != $object->unit_cost) {
+		print '&nbsp; &nbsp; <span class="opacitymedium">('.$form->textwithpicto(price($object->unit_cost), $langs->trans("ManufacturingUnitCost"), 1, 'help', '').')</span>';
+	}
+	print '</td></tr>';
+
+	// Find sell price of generated product. We suppose we sell it to a company like ours (same country...).
+	$object->fetch_product();
+	$manufacturedvalued = '';
+	if (!empty($object->product)) {
+		$tmparray = $object->product->getSellPrice($mysoc, $mysoc);
+		$manufacturedvalued = $tmparray['pu_ht'] * $object->qty;
+	}
+	print '<tr><td>'.$langs->trans("ManufacturingGeneratedValue").'</td><td><span class="amount">'.price($manufacturedvalued).'</span></td></tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -658,7 +661,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Services
 
 		$filtertype = 1;
-		$res = $object->fetchLinesbytypeproduct(1);		// Load all lines services into ->lines
+		$res = $object->fetchLinesbytypeproduct($filtertype);		// Load all lines services into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
@@ -812,7 +815,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->hasRight('bom', 'read'); // If you can read, you can build the PDF to read content
 		$delallowed = $user->hasRight('bom', 'write'); // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object);
 
 		// Show links to link elements
 		$tmparray = $form->showLinkToObjectBlock($object, array(), array('bom'), 1);

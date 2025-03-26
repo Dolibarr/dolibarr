@@ -126,6 +126,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$_POST["param18"] = '<span style="background-image: url(...?...action=aaa)">abc</span>';
 		$_POST["param19"] = '<a href="j&Tab;a&Tab;v&Tab;asc&NewLine;ri&Tab;pt:&lpar;alert(document.cookie)&rpar;">XSS</a>';
 		//$_POST["param19"]='<a href="javascript:alert(document.cookie)">XSS</a>';
+		$_GET["param20"] = '<link rel="dns-prefetch" href="//cdnjs.cloudflare.com" />';
 
 
 
@@ -275,7 +276,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 
 		$result = GETPOST("param7", 'restricthtml');
 		print __METHOD__." result param7 = ".$result."\n";
-		$this->assertEquals('"c:\this is a path~1\aaan &#x;;;;" abcdef', $result);
+		$this->assertEquals('"c:\this is a path~1\aaan ;" abcdef', $result);
 
 		$result = GETPOST("param8e", 'restricthtml');
 		print __METHOD__." result param8e = ".$result."\n";
@@ -344,7 +345,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 			$result = GETPOST("param0", 'restricthtml');
-			$resultexpected = 'A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and & inside content';
+			$resultexpected = 'A real string with <a href="rrr" title="aa&quot;bb">aaa</a> and " and \' and &amp; inside content';
 			print __METHOD__." result for param0=".$result."\n";
 			$this->assertEquals($resultexpected, $result, 'Test on param0');
 
@@ -356,12 +357,12 @@ class SecurityGETPOSTTest extends CommonClassTest
 			$result = GETPOST("param6", 'restricthtml');
 			print __METHOD__." result for param6=".$result." - before=".$_POST["param6"]."\n";
 			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
-			$this->assertEquals('"&gt;', $result);
+			$this->assertEquals('&quot;&gt;', $result);
 
 			$result = GETPOST("param7", 'restricthtml');
 			print __METHOD__." result param7 = ".$result."\n";
 			//$this->assertEquals('InvalidHTMLStringCantBeCleaned', $result, 'Test 15b');   // With some PHP and libxml version, we got this result when parsing invalid HTML, but ...
-			$this->assertEquals('"c:\this is a path~1\aaan &amp;#x110;" abcdef', $result);
+			$this->assertEquals('"c:\this is a path~1\aaan ;" abcdef', $result);
 		}
 
 
@@ -372,7 +373,7 @@ class SecurityGETPOSTTest extends CommonClassTest
 			$conf->global->MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY = 1;
 
 			$result = GETPOST("param0", 'restricthtml');
-			$resultexpected = 'A real string with <a href="rrr" title=\'aa"bb\'>aaa</a> and " and \' and & inside content';
+			$resultexpected = 'A real string with <a href="rrr" title=\'aa"bb\'>aaa</a> and " and \' and &amp; inside content';
 			print __METHOD__." result for param0=".$result."\n";
 			$this->assertEquals($resultexpected, $result, 'Test on param0');
 
@@ -414,6 +415,10 @@ class SecurityGETPOSTTest extends CommonClassTest
 		$result = GETPOST('param18', 'restricthtml');
 		print __METHOD__." result=".$result."\n";
 		$this->assertEquals('<span style="background-image: url(...?...aaa)">abc</span>', $result, 'Test anytag with a forbidden value for attribute');
+
+		$result = GETPOST("param20", 'restricthtmlallowlinkscript');
+		print __METHOD__." result param20 = ".$result."\n";
+		$this->assertEquals('<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">', $result);
 
 
 		unset($conf->global->MAIN_RESTRICTHTML_REMOVE_ALSO_BAD_ATTRIBUTES);

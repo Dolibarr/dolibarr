@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2008-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
  */
 
 // Load translation files required by page
@@ -85,7 +88,7 @@ if (!$urlfile) {
 
 // Load ecm object
 $ecmdir = new EcmDirectory($db);
-$result = $ecmdir->fetch(GETPOST("section", 'alpha'));
+$result = $ecmdir->fetch(GETPOSTINT("section"));
 if (!($result > 0)) {
 	dol_print_error($db, $ecmdir->error);
 	exit;

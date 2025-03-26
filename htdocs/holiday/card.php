@@ -9,6 +9,7 @@
  * Copyright (C) 2020-2021	Udo Tamm					<dev@dolibit.de>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,7 +61,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : $user->id);
+$fuserid = (GETPOSTINT('fuserid') ? GETPOSTINT('fuserid') : ($action == 'create' ? $user->id : 0));
 $socid = GETPOSTINT('socid');
 
 // Load translation files required by the page
@@ -85,11 +86,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$canread = 0;
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
 
 	// Check current user can read this leave request
-	$canread = 0;
 	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
@@ -98,6 +99,9 @@ if (($id > 0) || $ref) {
 	}
 	if (!$canread) {
 		accessforbidden();
+	}
+	if ($fuserid == 0) {
+		$fuserid = $object->fk_user; // If $fuserid is not defined, set it to the owner of the leave request
 	}
 }
 
@@ -112,6 +116,11 @@ if ($user->hasRight('holiday', 'write') && in_array($fuserid, $childids)) {
 if ($user->hasRight('holiday', 'writeall')) {
 	$permissiontoadd = 1;
 	$permissiontoaddall = 1;
+}
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
 }
 
 $candelete = 0;
@@ -169,10 +178,10 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+		$date_debut = GETPOSTDATE('date_debut_', '00:00:00');
+		$date_fin = GETPOSTDATE('date_fin_', '00:00:00');
+		$date_debut_gmt = GETPOSTDATE('date_debut_', '00:00:00', 1);
+		$date_fin_gmt = GETPOSTDATE('date_fin_', '00:00:00', 1);
 		$starthalfday = GETPOST('starthalfday');
 		$endhalfday = GETPOST('endhalfday');
 		$type = GETPOST('type');
@@ -305,7 +314,7 @@ if (empty($reshook)) {
 	if ($action == 'update' && GETPOSTISSET('savevalidator') && $user->hasRight('holiday', 'approve')) {
 		$object->fetch($id);
 
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		$object->fk_validator = GETPOSTINT('valideur');
 
@@ -325,10 +334,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update' && !GETPOSTISSET('savevalidator')) {	// Test on permission done later
-		$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+		$date_debut = GETPOSTDATE('date_debut_', '00:00:00');
+		$date_fin = GETPOSTDATE('date_fin_', '00:00:00');
+		$date_debut_gmt = GETPOSTDATE('date_debut_', '00:00:00', 1);
+		$date_fin_gmt = GETPOSTDATE('date_fin_', '00:00:00', 1);
 		$starthalfday = GETPOST('starthalfday');
 		$endhalfday = GETPOST('endhalfday');
 		$halfday = 0;
@@ -464,7 +473,7 @@ if (empty($reshook)) {
 
 		// If draft and owner of leave
 		if ($object->status == Holiday::STATUS_DRAFT && $permissiontoadd) {
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->status = Holiday::STATUS_VALIDATED;
 
@@ -542,6 +551,9 @@ if (empty($reshook)) {
 				} elseif ($object->halfday == 0 || $object->halfday == 2) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Afternoon";
+				} else {
+					$starthalfdaykey = "";
+					$endhalfdaykey = "";
 				}
 
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
@@ -576,18 +588,19 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras') {
-		$object->oldcopy = dol_clone($object, 2);
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			$result = $object->insertExtraFields('HOLIDAY_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'HOLIDAY_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -605,7 +618,7 @@ if (empty($reshook)) {
 
 		// If status is waiting approval and approver is also user
 		if ($object->status == Holiday::STATUS_VALIDATED && ($user->id == $object->fk_validator || $permissiontoaddall) && $user->hasRight('holiday', 'approve')) {
-			$object->oldcopy = dol_clone($object, 2);
+			$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$object->date_approval = dol_now();
 			$object->fk_user_approve = $user->id;
@@ -977,7 +990,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 $object = new Holiday($db);
 
-$listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
+$listhalfday = array('morning' => $langs->trans("Morning"), "afternoon" => $langs->trans("Afternoon"));
 
 $title = $langs->trans('Leave');
 $help_url = 'EN:Module_Holiday';
@@ -1076,10 +1089,10 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<td class="titlefield fieldrequired tdtop">'.$langs->trans("User").'</td>';
 		print '<td><div class="inline-block">';
 		if ($permissiontoadd && !$permissiontoaddall) {
-			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(($fuserid ? $fuserid : $user->id), 'fuserid', 0, null, 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
 			//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
 		} else {
-			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fuserid ? $fuserid : $user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
+			print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($fuserid ? $fuserid : $user->id, 'fuserid', 0, null, 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'minwidth200 maxwidth500 inline-block');
 		}
 		print '</div>';
 
@@ -1101,7 +1114,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$htmltooltip = $langs->trans("Detail").'<br>';
 			$htmltooltip .= $out;
 
-			print $form->textwithtooltip($langs->trans('SoldeCPUser', round($nb_holiday, 5)).' '.img_picto('', 'help'), $htmltooltip);
+			print $form->textwithtooltip($langs->trans('SoldeCPUser', (string) round($nb_holiday, 5)).' '.img_picto('', 'help'), $htmltooltip);
 
 			print '</div>';
 			if (!empty($conf->use_javascript_ajax)) {
@@ -1138,7 +1151,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')' : '');
 			$arraytypeleaves[$val['rowid']] = $labeltoshow;
 		}
-		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', true);
+		print $form->selectarray('type', $arraytypeleaves, (GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : ''), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}
@@ -1154,7 +1167,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (!GETPOST('date_debut_')) {	// If visitor does not come from agenda
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
+			$tmpdate = GETPOSTDATE('date_debut_', '00:00:00');
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
@@ -1171,7 +1184,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (!GETPOST('date_fin_')) {
 			print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
 		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_fin_month'), GETPOSTINT('date_fin_day'), GETPOSTINT('date_fin_year'));
+			$tmpdate = GETPOSTDATE('date_fin_', '00:00:00');
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
@@ -1198,7 +1211,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			if (GETPOSTINT('valideur') > 0) {
 				$defaultselectuser = GETPOSTINT('valideur');
 			}
-			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, '', 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
+			$s = $form->select_dolusers($defaultselectuser, "valideur", 1, null, 0, $include_users, '', '0,'.$conf->entity, 0, 0, '', 0, '', 'minwidth200 maxwidth500');
 			print img_picto('', 'user', 'class="pictofixedwidth"').$form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
 		}
 
@@ -1349,7 +1362,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
 					print '</td>';
 					print '<td>';
-					$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
+					$tmpdate = GETPOSTDATE('date_debut_', '00:00:00');
 					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
 					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ? GETPOST('starthalfday') : $starthalfday));
@@ -1546,7 +1559,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 				// Si refus de la demande
 				if ($action == 'refuse') {
-					$array_input = array(array('type'=>"text", 'label'=> $langs->trans('DetailRefusCP'), 'name'=>"detail_refuse", 'size'=>"50", 'value'=>""));
+					$array_input = array(array('type' => "text", 'label' => $langs->trans('DetailRefusCP'), 'name' => "detail_refuse", 'size' => "50", 'value' => ""));
 					print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
 				}
 
@@ -1650,9 +1663,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			$includedocgeneration = 0;
-
 			// Documents
+			/* $includedocgeneration = 0;
 			if ($includedocgeneration) {
 				$objref = dol_sanitizeFileName($object->ref);
 				$relativepath = $objref.'/'.$objref.'.pdf';
@@ -1661,7 +1673,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
 				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall_advance'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-			}
+			} */
 
 			// Show links to link elements
 			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);

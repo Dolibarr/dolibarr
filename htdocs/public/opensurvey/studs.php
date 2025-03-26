@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,12 +60,12 @@ if (GETPOST('sondage')) {
 }
 
 $object = new Opensurveysondage($db);
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 
 $nblines = $object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
+$canbemodified = ((empty($object->date_fin) || dol_get_last_hour($object->date_fin) > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
 
 // Security check
 if (!isModEnabled('opensurvey')) {
@@ -191,7 +191,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
-		$sql .= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
+		$sql .= " WHERE id_sondage = '".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
 		if (!$resql) {
 			dol_print_error($db);
@@ -255,6 +255,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x")) {		// bo
 $testmodifier = false;
 $testligneamodifier = false;
 $ligneamodifier = -1;
+$modifier = -1;
 for ($i = 0; $i < $nblines; $i++) {
 	if (GETPOSTISSET('modifierligne'.$i)) {
 		$ligneamodifier = $i;
@@ -720,12 +721,13 @@ if ($ligneamodifier < 0 && (!isset($_SESSION['nom']))) {
 	}
 
 	// Show button to add a new line into database
-	print '<td><input type="image" class="borderimp" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
+	print '<td><input type="image" class="borderimp classfortooltip" title="'.dolPrintHTML($langs->trans("AddTheVote")).'" name="boutonp" value="'.$langs->trans("Vote").'" src="'.img_picto('', 'edit_add', '', 0, 1).'"></td>'."\n";
 	print '</tr>'."\n";
 }
 
 // Select value of best choice (for checkbox columns only)
 $nbofcheckbox = 0;
+$meilleurecolonne = null;
 for ($i = 0; $i < $nbcolonnes; $i++) {
 	if (empty($listofanswers[$i]['format']) || !in_array($listofanswers[$i]['format'], array('yesno', 'foragainst'))) {
 		$nbofcheckbox++;

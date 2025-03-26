@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018	   Ferran Marcet 		<fmarcet@2byte.es>
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	    Ferran Marcet 		    <fmarcet@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,6 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $mode = GETPOST('mode', 'aZ'); // The output mode ('list', 'kanban', 'hierarchy', 'calendar', ...)
 
 $id = GETPOSTINT('id');
-$rowid = GETPOST('rowid', 'alpha');
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
@@ -83,8 +82,8 @@ $search_array_options = $extrafields->getOptionalsFromPost($object->table_elemen
 
 // Default sort order (if not yet defined by previous GETPOST)
 if (!$sortfield) {
-	reset($object->fields);					// Reset is required to avoid key() to return null.
-	$sortfield = "t.".key($object->fields); // Set here default search field. By default 1st field in definition.
+	reset($object->fields);			// Reset is required to avoid key() to return null.
+	$sortfield = "t.position"; 		// Set here default search field. By default 1st field in definition.
 }
 if (!$sortorder) {
 	$sortorder = "ASC";
@@ -127,18 +126,8 @@ foreach ($object->fields as $key => $val) {
 	}
 }
 // Extra fields
-if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		if (!empty($extrafields->attributes[$object->table_element]['list'][$key])) {
-			$arrayfields["ef.".$key] = array(
-				'label' => $extrafields->attributes[$object->table_element]['label'][$key],
-				'checked' => (($extrafields->attributes[$object->table_element]['list'][$key] < 0) ? 0 : 1),
-				'position' => $extrafields->attributes[$object->table_element]['pos'][$key],
-				'enabled' => (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3 && $extrafields->attributes[$object->table_element]['perms'][$key])
-			);
-		}
-	}
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
+
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 
@@ -760,13 +749,13 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.'.$key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.(preg_match('/tdoverflow/', $cssforfield) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, $object->id, '');
+					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}
@@ -804,14 +793,11 @@ while ($i < $imaxinloop) {
 				$url .= '&limit='.((int) $limit);
 			}
 			if ($page) {
-				$url .= '&page='.urlencode((string) ($page));
+				$url .= '&page='.urlencode((string) $page);
 			}
-			if ($sortfield) {
-				$url .= '&sortfield='.urlencode($sortfield);
-			}
-			if ($sortorder) {
-				$url .= '&page='.urlencode($sortorder);
-			}
+			$url .= '&sortfield='.urlencode((string) $sortfield);
+			$url .= '&page='.urlencode((string) $sortorder);
+
 			print '<a class="editfielda reposition marginrightonly marginleftonly" href="'.$url.'&action=edit&token='.newToken().'&rowid='.$obj->rowid.'">'.img_edit().'</a>';
 			//print ' &nbsp; ';
 			print '<a class=" marginrightonly marginleftonly" href="'.$url.'&action=delete&token='.newToken().'">'.img_delete().'</a>  &nbsp; ';
@@ -827,7 +813,6 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
-
 
 		print '</tr>'."\n";
 	}

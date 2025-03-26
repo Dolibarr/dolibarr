@@ -36,7 +36,7 @@ Definition:
 
 As the Developer:
 
-1. Check you agree with the terms of the [DCO - Developer's Certificate of Origin](https://github.com/Dolibarr/dolibarr/DCO)
+1. Check you agree with the terms of the [DCO - Developer's Certificate of Origin](https://github.com/Dolibarr/dolibarr/blob/develop/DCO)
 2. [Fork](https://help.github.com/articles/fork-a-repo) the [GitHub repository](https://github.com/Dolibarr/dolibarr).
 3. Clone your fork.
 4. Choose a branch(See the [Branches](#branches) section below).

@@ -8,10 +8,10 @@
  * Copyright (C) 2014-2022	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2015-2016	Abbes Bahfir				<bafbes@gmail.com>
  * Copyright (C) 2018-2022	Philippe Grand				<philippe.grand@atoo-net.com>
- * Copyright (C) 2020-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2020-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2023       Benjamin Grembi				<benjamin@oarces.fr>
  * Copyright (C) 2023-2024	William Mead				<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -120,8 +120,11 @@ $permissionnote = $user->hasRight('ficheinter', 'creer'); // Used by the include
 $permissiondellink = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_dellink.inc.php
 $permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->hasRight('ficheinter', 'supprimer'));
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
-
-$usercancreate = $user->hasRight('ficheinter', 'creer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -170,8 +173,16 @@ if (empty($reshook)) {
 			if ($object->id > 0) {
 				// Because createFromClone modifies the object, we must clone it so that we can restore it later
 				$orig = clone $object;
+				$clone_notes = false;
+				if (GETPOSTISSET('clone_notes') && GETPOST('clone_notes') === 'on') {
+					$clone_notes = true;
+				}
+				$clone_contacts = false;
+				if (GETPOSTISSET('clone_contacts') && GETPOST('clone_contacts') === 'on') {
+					$clone_contacts = true;
+				}
 
-				$result = $object->createFromClone($user, $socid);
+				$result = $object->createFromClone($user, $socid, $clone_contacts, $clone_notes);
 				if ($result > 0) {
 					header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 					exit;
@@ -192,7 +203,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -217,7 +228,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -242,7 +253,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -267,7 +278,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -293,7 +304,7 @@ if (empty($reshook)) {
 				// Define output language
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -414,7 +425,7 @@ if (empty($reshook)) {
 											$prod->fetch($lines[$i]->fk_product);
 											$outputlangs = $langs;
 											$newlang = '';
-											if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+											if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 												$newlang = GETPOST('lang_id', 'aZ09');
 											}
 											if (empty($newlang)) {
@@ -614,7 +625,7 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -703,7 +714,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -736,7 +747,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -756,7 +767,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -778,7 +789,7 @@ if (empty($reshook)) {
 		// Define output language
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -810,9 +821,10 @@ if (empty($reshook)) {
 	$permissiontoadd = $user->hasRight('ficheinter', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
-		$attribute_name = GETPOST('attribute', 'restricthtml');
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
@@ -937,7 +949,7 @@ if ($action == 'create') {
 			$classname = ucfirst($subelement);
 			$objectsrc = new $classname($db);
 			'@phan-var-force Commande|Propal|Contrat $objectsrc';
-			$objectsrc->fetch(GETPOST('originid'));
+			$objectsrc->fetch(GETPOSTINT('originid'));
 			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 				$objectsrc->fetch_lines();
 				$lines = $objectsrc->lines;
@@ -1048,7 +1060,7 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="tdtop">'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
-		$doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
+		$doleditor = new DolEditor('note_public', (string) $note_public, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PUBLIC') ? 0 : 1, ROWS_3, '90%');
 		print $doleditor->Create(1);
 		//print '<textarea name="note_public" cols="80" rows="'.ROWS_3.'">'.$note_public.'</textarea>';
 		print '</td></tr>';
@@ -1058,7 +1070,7 @@ if ($action == 'create') {
 			print '<tr>';
 			print '<td class="tdtop">'.$langs->trans('NotePrivate').'</td>';
 			print '<td>';
-			$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
+			$doleditor = new DolEditor('note_private', (string) $note_private, '', 80, 'dolibarr_notes', 'In', false, false, !getDolGlobalString('FCKEDITOR_ENABLE_NOTE_PRIVATE') ? 0 : 1, ROWS_3, '90%');
 			print $doleditor->Create(1);
 			//print '<textarea name="note_private" cols="80" rows="'.ROWS_3.'">'.$note_private.'</textarea>';
 			print '</td></tr>';
@@ -1273,12 +1285,28 @@ if ($action == 'create') {
 	if ($action == 'clone') {
 		// Create an array for form
 		$formquestion = array(
-							// 'text' => $langs->trans("ConfirmClone"),
-							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-							// 1),
-							// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-							// => 1),
-							array('type' => 'other', 'name' => 'socid', 'label' => $langs->trans("SelectThirdParty"), 'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, array(), 0, 'minwidth200')));
+			// 'text' => $langs->trans("ConfirmClone"),
+			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			array(
+				'type' => 'other',
+				'name' => 'socid',
+				'label' => $langs->trans("SelectThirdParty"),
+				'value' => $form->select_company(GETPOSTINT('socid'), 'socid', '', '', 0, 0, array(), 0, 'minwidth200')
+			),
+			array(
+				'type' => 'checkbox',
+				'name' => 'clone_contacts',
+				'label' => $langs->trans("CloneContacts"),
+				'value' => 1
+			),
+			array(
+				'type' => 'checkbox',
+				'name' => 'clone_notes',
+				'label' => $langs->trans("CloneNotes"),
+				'value' => 1
+			)
+		);
+
 		// Paiement incomplet. On demande si motif = escompte ou autre
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneIntervention', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
@@ -1311,12 +1339,12 @@ if ($action == 'create') {
 	if (isModEnabled('project')) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>';
-		if ($usercancreate) {
+		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -1418,7 +1446,7 @@ if ($action == 'create') {
 	if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 		// Duration in time
 		print '<tr><td class="titlefield">'.$langs->trans("TotalDuration").'</td>';
-		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("h").')</td>';
+		print '<td>'.convertSecondToTime($object->duration, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY).' ('.convertDurationtoHour($object->duration, "s").' '.$langs->trans("HourShort").')</td>';
 		print '</tr>';
 	}
 
@@ -1509,13 +1537,11 @@ if ($action == 'create') {
 
 					$extrafields->fetch_name_optionals_label($objectline->table_element);
 
-					if (!empty($extrafields)) {
-						$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', 1, 'line');
-						if (!empty($temps)) {
-							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
-							print $temps;
-							print '</div>';
-						}
+					$temps = $objectline->showOptionals($extrafields, 'view', array(), '', '', '1', 'line');
+					if (!empty($temps)) {
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print $temps;
+						print '</div>';
 					}
 
 					print '</td>';
@@ -1581,13 +1607,11 @@ if ($action == 'create') {
 
 					$extrafields->fetch_name_optionals_label($objectline->table_element);
 
-					if (!empty($extrafields)) {
-						$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', 1, 'line');
-						if (!empty($temps)) {
-							print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
-							print $temps;
-							print '</div>';
-						}
+					$temps = $objectline->showOptionals($extrafields, 'edit', array(), '', '', '1', 'line');
+					if (!empty($temps)) {
+						print '<div style="padding-top: 10px" id="extrafield_lines_area_'.$line->id.'" name="extrafield_lines_area_'.$line->id.'">';
+						print $temps;
+						print '</div>';
 					}
 
 					print '</td>';
@@ -1663,7 +1687,7 @@ if ($action == 'create') {
 				$extrafields->fetch_name_optionals_label($objectline->table_element);
 
 				if (is_object($objectline)) {
-					$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', 1, 'line');
+					$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 					if (!empty($temps)) {
 						print '<div style="padding-top: 10px" id="extrafield_lines_area_create" name="extrafield_lines_area_create">';

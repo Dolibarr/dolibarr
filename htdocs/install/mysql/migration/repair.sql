@@ -422,7 +422,7 @@ drop table tmp_c_shipment_mode;
 
 -- Restore id of user on link for payment of expense report
 drop table tmp_bank_url_expense_user;
-create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
+create table tmp_bank_url_expense_user as (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
 update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
@@ -601,6 +601,10 @@ DELETE FROM llx_rights_def WHERE module = 'hrm' AND perms = 'employee';
 -- Sequence to fix the content of llx_bank.amount_main_currency (sign was wrong with some version)
 -- UPDATE llx_bank as b SET b.amount_main_currency = -b.amount_main_currency WHERE b.amount IS NOT NULL AND b.amount_main_currency IS NOT NULL AND SIGN(b.amount_main_currency) <> SIGN(b.amount);
 
+
+-- Sequence to fix the table llx_paiement_facture and llx_paiement for payment record on a bank account that does not exists anymore.
+-- delete from llx_paiement_facture where fk_paiement in (select rowid from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank));
+-- delete from llx_paiement WHERE fk_bank is not null AND fk_bank not in (select rowid from llx_bank);
 
 
 -- Delete duplicate entries into llx_c_transport_mode

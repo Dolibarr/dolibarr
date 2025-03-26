@@ -185,10 +185,22 @@ if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'payment') {
 	$description .= '<br>' . $langs->trans("RulesVATInServices");
 }
 if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {
-	$description .= '<br>' . $langs->trans("DepositsAreNotIncluded");
+	if (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice' && getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') {
+		$description .= '<br>' . $langs->trans("DepositsAreNotIncluded");
+	} elseif (getDolGlobalString('TAX_MODE_SELL_SERVICE') == 'invoice') { // calculate on sale invoice for service only
+		$description .= '<br>' . $langs->trans("DepositsAreNotIncluded").' (for services)';
+	} elseif (getDolGlobalString('TAX_MODE_SELL_PRODUCT') == 'invoice') { // calculate on sale invoice for service only
+		$description .= '<br>' . $langs->trans("DepositsAreNotIncluded").' (for products)';
+	}
 }
 if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {
-	$description .= $langs->trans("SupplierDepositsAreNotIncluded");
+	if (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice' && getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice') {
+		$description .= '<br>' . $langs->trans("SupplierDepositsAreNotIncluded");
+	} elseif (getDolGlobalString('TAX_MODE_BUY_SERVICE') == 'invoice') { // calculate on supplier invoice for service only
+		$description .= '<br>' . $langs->trans("SupplierDepositsAreNotIncluded").' (for services)';
+	} elseif (getDolGlobalString('TAX_MODE_BUY_PRODUCT') == 'invoice') { // calculate on supplier invoice for product only
+		$description .= '<br>' . $langs->trans("SupplierDepositsAreNotIncluded").' (for products)';
+	}
 }
 if (isModEnabled('accounting')) {
 	$description .= '<br>' . $langs->trans("ThisIsAnEstimatedValue");

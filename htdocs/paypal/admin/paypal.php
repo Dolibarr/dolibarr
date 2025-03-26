@@ -267,7 +267,7 @@ if (isModEnabled("bank")) {
 print '<tr class="oddeven"><td>';
 print $langs->trans("CSSUrlForPaymentForm").'</td><td>';
 print '<input size="64" type="text" name="ONLINE_PAYMENT_CSS_URL" value="'.getDolGlobalString('ONLINE_PAYMENT_CSS_URL').'">';
-print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': http://mysite/mycss.css</span>';
+print ' &nbsp; <span class="opacitymedium">'.$langs->trans("Example").': https://mysite/mycss.css</span>';
 print '</td></tr>';
 
 
@@ -374,17 +374,19 @@ print 'Your API authentication information can be found with following steps. We
 print '</div>';
 
 if (!empty($conf->use_javascript_ajax)) {
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-	            $("#apidoc").hide();
-	            $("#apidoca").click(function() {
-					console.log("We click on apidoca so we show/hide");
-	                $("#apidoc").show();
-	            	$("#apidoca").hide();
-					return false;
-	            })
-			});';
-	print '</script>';
+	print '
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#apidoc").hide();
+			$("#apidoca").click(function() {
+				console.log("We click on apidoca so we show/hide");
+				$("#apidoc").show();
+				$("#apidoca").hide();
+				return false;
+			})
+		});
+	</script>
+	';
 }
 
 print '<br><br>';

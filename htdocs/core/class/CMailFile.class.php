@@ -7,7 +7,7 @@
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,11 +90,11 @@ class CMailFile
 	/** @var ?int<1,1> When 1, there is at least one file */
 	public $atleastonefile;
 
-	/** @var string $msg Message to send */
+	/** @var string Message to send */
 	public $msg;
-	/** @var string $msg End of line sequence */
+	/** @var string End of line sequence */
 	public $eol;
-	/** @var string $msg End of line sequence (header ?) */
+	/** @var string End of line sequence (header ?) */
 	public $eol2;
 
 	/**
@@ -539,7 +539,7 @@ class CMailFile
 			$text_body = $this->write_body($msg);
 
 			// Add attachments to text_encoded
-			if (!empty($this->atleastonefile)) {
+			if (!empty($this->atleastonefile) && $filename_list !== null && $mimetype_list !== null && $mimefilename_list !== null) {
 				$files_encoded = $this->write_files($filename_list, $mimetype_list, $mimefilename_list, $cid_list);
 			}
 
@@ -1212,7 +1212,7 @@ class CMailFile
 
 							$result = $this->smtps->sendMsg();
 
-							if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 								$this->dump_mail();
 							}
 							*/
@@ -1483,24 +1483,26 @@ class CMailFile
 			$outputfile = $dolibarr_main_data_root."/dolibarr_mail.log";
 			$fp = fopen($outputfile, "w");	// overwrite
 
-			if ($this->sendmode == 'mail') {
-				fwrite($fp, $this->headers);
-				fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
-				fwrite($fp, $this->message);
-			} elseif ($this->sendmode == 'smtps') {
-				fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
-			} elseif ($this->sendmode == 'swiftmailer') {
-				fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
-				fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
-			}
+			if ($fp) {
+				if ($this->sendmode == 'mail') {
+					fwrite($fp, $this->headers);
+					fwrite($fp, $this->eol); // This eol is added by the mail function, so we add it in log
+					fwrite($fp, $this->message);
+				} elseif ($this->sendmode == 'smtps') {
+					fwrite($fp, $this->smtps->log); // this->smtps->log is filled only if MAIN_MAIL_DEBUG was set to on
+				} elseif ($this->sendmode == 'swiftmailer') {
+					fwrite($fp, "smtpheader=\n".$this->message->getHeaders()->toString()."\n");
+					fwrite($fp, $this->logger->dump()); // this->logger is filled only if MAIN_MAIL_DEBUG was set to on
+				}
 
-			fclose($fp);
-			dolChmod($outputfile);
+				fclose($fp);
+				dolChmod($outputfile);
 
-			// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
-			if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-				archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
+				// Move dolibarr_mail.log into a dolibarr_mail.log.v123456789
+				if (getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE')) {
+					require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+					archiveOrBackupFile($outputfile, getDolGlobalInt('MAIN_MAIL_DEBUG_LOG_WITH_DATE'));
+				}
 			}
 		}
 	}
@@ -1688,8 +1690,8 @@ class CMailFile
 	/**
 	 * Create header MIME (mode = 'mail')
 	 *
-	 * @param	string[]	$filename_list			Array of filenames
-	 * @param 	string[]	$mimefilename_list		Array of mime types
+	 * @param	?string[]	$filename_list			Array of filenames
+	 * @param 	?string[]	$mimefilename_list		Array of mime types
 	 * @return	string							mime headers
 	 */
 	public function write_mimeheaders($filename_list, $mimefilename_list)
@@ -1698,7 +1700,7 @@ class CMailFile
 		$mimedone = 0;
 		$out = "";
 
-		if (is_array($filename_list)) {
+		if (is_array($filename_list) && is_array($mimefilename_list)) {
 			$filename_list_size = count($filename_list);
 			for ($i = 0; $i < $filename_list_size; $i++) {
 				if ($filename_list[$i]) {
@@ -1937,7 +1939,7 @@ class CMailFile
 				$host = 'ssl://'.$host;
 			}
 			// tls smtp start with no encryption
-			//if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
+			//if (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS') && function_exists('openssl_open')) $host='tls://'.$host;
 
 			dol_syslog("Try socket connection to host=".$host." port=".$port." timeout=".$timeout);
 			//See if we can connect to the SMTP server
@@ -1960,11 +1962,14 @@ class CMailFile
 				// Check response from Server
 				if ($_retVal = $this->server_parse($socket, "220")) {
 					$_retVal = $socket;
+				} else {
+					$this->error = ($this->error ? $this->error." - " : "")."Succeed in opening socket but answer 220 not received";
 				}
 			} else {
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
+
 		return $_retVal;
 	}
 

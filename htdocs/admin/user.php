@@ -7,7 +7,7 @@
  * Copyright (C) 2005-2011	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2015		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2020-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,9 +163,9 @@ print '</tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserMailRequired").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td class="center" width="20">&nbsp;</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_MAIL_REQUIRED');
 } else {
@@ -181,9 +181,9 @@ print '</td></tr>';
 
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UserHideInactive").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
+print '<td class="center" width="20">&nbsp;</td>';
 
-print '<td align="center" width="100">';
+print '<td class="center" width="100">';
 if ($conf->use_javascript_ajax) {
 	print ajax_constantonoff('USER_HIDE_INACTIVE_IN_COMBOBOX');
 } else {
@@ -317,7 +317,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -325,7 +325,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
