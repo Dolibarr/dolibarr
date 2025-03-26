@@ -3143,7 +3143,7 @@ if ($action == 'create' && $usercancreate) {
 						'url' => '/fichinter/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid,
 					);
 				}
-				
+
 				/*if (isModEnabled('ficheinter')) {
 					$langs->load("interventions");
 
