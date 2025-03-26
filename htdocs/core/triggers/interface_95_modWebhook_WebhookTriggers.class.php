@@ -97,7 +97,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 			$actionarraytmp = explode(",", $tmpobject->trigger_codes);
 			$actionarray = array();
 			foreach ($actionarraytmp as $val) {
-				$actionarray = trim($val);
+				$actionarray[] = trim($val);
 			}
 
 			// Test on Target status
