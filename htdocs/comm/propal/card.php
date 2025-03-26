@@ -1545,7 +1545,6 @@ if (empty($reshook)) {
 				}
 			}
 		}
-		var_dump(5);
 	} elseif ($action == 'addline' && $usercancreate && (
 			(GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '') ||
 			(GETPOST('submitforallmark', 'alpha') && GETPOST('markforalllines') !== ''))) {
