@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 $langs->loadLangs(array("admin", "website", "other"));
 
 $arrayofaifeatures = getListOfAIFeatures();
-$arrayofia = getListOfAIServices();
+$arrayofai = getListOfAIServices();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -412,7 +412,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 
 
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
-	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofia[$aiservice]), $newbutton, '');
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]), $newbutton, '');
 	print $formSetup->generateOutput(true);
 }
 
