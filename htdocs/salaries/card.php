@@ -129,6 +129,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
+$error = 0;
 
 /*
  * Actions
