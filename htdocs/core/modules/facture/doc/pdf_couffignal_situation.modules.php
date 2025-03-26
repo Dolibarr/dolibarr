@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/couffignal/FactureTools.php';
 // TSubtotal
 if (isModEnabled('subtotal')) dol_include_once('/subtotal/class/subtotal.class.php');
 
@@ -1474,11 +1475,24 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->SetXY($this->margin_left + 2, $tab_top + $h);
 			$pdf->MultiCell($rect_width - 4, 2, $label, '', 'L');
 			$h += 4;
-		}		
+		}
+
+		/** Orders of projetcs */
+		$ordersTotalHt = FactureTools::getTotalHtOrdersLinkedToProjectOfInvoice($this->db, $object);
+		$linesOrders = [];
+		if (count($ordersTotalHt) > 0) {
+			$linesOrders = array_map(static function($v) {
+				return '<li>' . $v['ref_client'] . ' : ' . price($v['total_ht']) . ' HT </li>';
+			}, $ordersTotalHt);
+			array_unshift($linesOrders, '<ul>');
+			$linesOrders[] = '</ul>';
+		}
+
+		$pdf->writeHtml(implode($linesOrders));
+		$h += (4*count($ordersTotalHt));
+
 		$this->printRectBtp($pdf, $this->margin_left, $tab_top, $rect_width, $h + 3, $hidetop, $hidebottom);
 		$tab_top += ($h+5);
-
-
 
 		/****** Main Table on 1st page *****/
 		/** Table Data **/

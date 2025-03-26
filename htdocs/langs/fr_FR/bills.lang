@@ -233,6 +233,7 @@ AllowedInvoiceForRetainedWarranty=Garantie conservée utilisable sur les types d
 RetainedwarrantyDefaultPercent=Pourcentage par défaut de la retenue de garantie
 RetainedwarrantyOnlyForSituation=Rendre la "retenue de garantie" disponible uniquement pour les factures de situation
 RetainedwarrantyOnlyForSituationFinal=Sur les factures de situation, la déduction globale pour "retenue de garantie" n'est appliquée que sur la facture de situation finale
+InvoiceSituationMustHaveOrdersImportedForBeingValidated=Toutes les commandes validées ne sont pas dans la dernière facture de situation disponible
 ToPayOn=À payer le %s
 toPayOn=à payer le %s
 RetainedWarranty=Retenue de garantie
