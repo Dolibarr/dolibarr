@@ -2435,11 +2435,11 @@ div.vmenu, td.vmenu {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '42' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '38' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu)) {
-		print 'margin-bottom: 12px;'."\n";
-	} ?>
-	<?php if (!empty($dol_hide_leftmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;'."\n";
+	} ?>
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
+		print 'margin-bottom: 12px;'."\n";
 	} ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
@@ -6191,8 +6191,9 @@ a.cke_dialog_ui_button_ok span {
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
 }
-/* .cke_notifications_area { display: none; } */
-
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
+}
 
 /* ============================================================================== */
 /*  ACE editor                                                                    */
@@ -6492,6 +6493,7 @@ div.ecmjqft {
 	float: <?php echo $right; ?>;
 	right:4px;
 	clear: both;
+	height: 16px;
 }
 #ecm-layout-north {
 	min-height: 40px;

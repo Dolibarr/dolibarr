@@ -92,7 +92,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		$this->description = $langs->trans('SuppliersCommandModel');
 		$this->update_main_doc_field = 1;		// Save the name of generated file as the main doc when generating a doc with this template
 
-		// Page size for A4 format
+		// Dimension page
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
 		$this->page_largeur = $formatarray['width'];
@@ -116,7 +116,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		// Get source company
 		$this->emetteur = $mysoc;
 		if (empty($this->emetteur->country_code)) {
-			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
+			$this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
 		}
 
 		// Define position of columns
@@ -196,6 +196,8 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				}
 
 				$realpath = '';
+
+				$arephoto = false;
 				foreach ($objphoto->liste_photos($dir, 1) as $key => $obj) {
 					if (!getDolGlobalInt('CAT_HIGH_QUALITY_IMAGES')) {		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
 						if ($obj['photo_vignette']) {
@@ -207,10 +209,12 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$filename = $obj['photo'];
 					}
 					$realpath = $dir.$filename;
+					$arephoto = true;
+					$this->atleastonephoto = true;
 					break;
 				}
 
-				if ($realpath) {
+				if ($realpath && $arephoto) {
 					$realpatharray[$i] = $realpath;
 				}
 			}
@@ -260,17 +264,19 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				global $action;
 				$reshook = $hookmanager->executeHooks('beforePDFCreation', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
-				$nblines = count($object->lines);
+				// Set nblines with the new facture lines content after hook
+				$nblines = is_array($object->lines) ? count($object->lines) : 0;
 
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$heightforinfotot = 50; // Height reserved to output the info and total part
+				$pdf->SetAutoPageBreak(1, 0);
+
+				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
 				if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS')) {
 					$heightforfooter += 6;
 				}
-				$pdf->SetAutoPageBreak(1, 0);
 
 				if (class_exists('TCPDF')) {
 					$pdf->setPrintHeader(false);
@@ -278,7 +284,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				}
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
-				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
+				if (!getDolGlobalString('MAIN_DISABLE_FPDI') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
 					$pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
@@ -323,7 +329,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 				$tab_height = $this->page_hauteur - $tab_top - $heightforfooter - $heightforfreetext;
 
+				$nexY = $tab_top - 1;
+
 				// Incoterm
+				$height_incoterms = 0;
 				if (isModEnabled('incoterm')) {
 					$desc_incoterms = $object->getIncotermsForPDF();
 					if ($desc_incoterms) {
@@ -331,7 +340,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 						$pdf->SetFont('', '', $default_font_size - 1);
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
-						$nexY = $pdf->GetY();
+						$nexY = max($pdf->GetY(), $nexY);
 						$height_incoterms = $nexY - $tab_top;
 
 						// Rect takes a length in 3rd parameter
@@ -339,10 +348,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_incoterms + 1);
 
 						$tab_top = $nexY + 6;
+						$height_incoterms += 4;
 					}
 				}
 
-				// Affiche notes
+				// Displays notes. Here we are still on code executed only for the first page.
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 
 				// Extrafields in note
@@ -352,7 +362,9 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				}
 
 				$pagenb = $pdf->getPage();
-				if ($notetoshow) {
+				if (!empty($notetoshow)) {
+					$tab_top -= 2;
+
 					$tab_width = $this->page_largeur - $this->marge_gauche - $this->marge_droite;
 					$pageposbeforenote = $pagenb;
 
@@ -360,8 +372,6 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 					$notetoshow = convertBackOfficeMediasLinksToPublicLinks($notetoshow);
-
-					$tab_top -= 2;
 
 					$pdf->startTransaction();
 
@@ -374,7 +384,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					if ($pageposafternote > $pageposbeforenote) {
 						$pdf->rollbackTransaction(true);
 
-						// prepar pages to receive notes
+						// prepare pages to receive notes
 						while ($pagenb < $pageposafternote) {
 							$pdf->AddPage();
 							$pagenb++;
@@ -444,8 +454,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						}
 						$height_note = $posyafter - $tab_top_newpage;
 						$pdf->Rect($this->marge_gauche, $tab_top_newpage - 1, $tab_width, $height_note + 1);
-					} else {
-						// No pagebreak
+					} else { // No pagebreak
 						$pdf->commitTransaction();
 						$posyafter = $pdf->GetY();
 						$height_note = $posyafter - $tab_top;
@@ -478,20 +487,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 				// Use new auto column system
 				$this->prepareArrayColumnField($object, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
+				$nexY = $tab_top + $this->tabTitleHeight;
 
 				$pageposbeforeprintlines = $pdf->getPage();
 				$pagenb = $pageposbeforeprintlines;
-
-				// Show square
-				if ($pagenb == $pageposbeforeprintlines) {
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
-				}
-
-				$nexY = $tab_top + $this->tabTitleHeight;
 
 				// Loop on each lines
 				for ($i = 0; $i < $nblines; $i++) {
@@ -539,20 +538,22 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 							$posYAfterImage = $curY + $imglinesize['height'];
 						}
 					}
+
 					// Description of product line
-					$curX = $this->posxdesc - 1;
 					$showpricebeforepagebreak = 1;
 
 					if ($this->getColumnStatus('desc')) {
 						$pdf->startTransaction();
-						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
 
+						$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
 						$pageposafter = $pdf->getPage();
+
 						if ($pageposafter > $pageposbefore) {	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
+							$pageposafter = $pageposbefore;
+							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 							$this->printColDescContent($pdf, $curY, 'desc', $object, $i, $outputlangs, $hideref, $hidedesc, 1);
-
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
 							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot))) {	// There is no space left for total+free text
@@ -579,8 +580,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 						$posYAfterDescription = $pdf->GetY();
 					}
 
-					$nexY = $pdf->GetY();
+					$nexY = max($pdf->GetY(), $posYAfterImage);
+
 					$pageposafter = $pdf->getPage();
+
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
 					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
@@ -592,6 +595,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par default
+
+					// # of line
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+					}
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
@@ -777,6 +785,14 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 					}
 				}
 
+				// Show square
+				if ($pagenb == $pageposbeforeprintlines) {
+					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, $hidetop, 0, $object->multicurrency_code, $outputlangsbis);
+				} else {
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code, $outputlangsbis);
+				}
+				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+
 				// Affiche zone infos
 				$posy = $this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
@@ -814,11 +830,11 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 
 				return 1; // No error
 			} else {
-				$this->error = $langs->trans("ErrorCanNotCreateDir", $dir);
+				$this->error = $langs->transnoentities("ErrorCanNotCreateDir", $dir);
 				return 0;
 			}
 		} else {
-			$this->error = $langs->trans("ErrorConstantNotDefined", "SUPPLIER_OUTPUTDIR");
+			$this->error = $langs->transnoentities("ErrorConstantNotDefined", "SUPPLIER_OUTPUTDIR");
 			return 0;
 		}
 	}
@@ -1106,7 +1122,7 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 			$pdf->SetTextColor(0, 0, 0);
 		}
 
-		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index, 'posy' => $posy);
 
 		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -1130,9 +1146,10 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 	 *   @param		int			$hidetop		Hide top bar of array
 	 *   @param		int			$hidebottom		Hide bottom bar of array
 	 *   @param		string		$currency		Currency code
+	 *   @param		Translate	$outputlangsbis	Langs object bis
 	 *   @return	void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '', $outputlangsbis = null)
 	{
 		global $conf;
 
@@ -1514,6 +1531,24 @@ class pdf_cornas extends ModelePDFSuppliersOrders
 		 */
 
 		$rank = 0; // do not use negative rank
+		$this->cols['position'] = array(
+			'rank' => $rank,
+			'width' => 10,
+			'status' => getDolGlobalInt('PDF_CORNAS_ADD_POSITION') ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
+			'title' => array(
+				'textkey' => '#', // use lang key is useful in somme case with module
+				'align' => 'C',
+				// 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+				// 'label' => ' ', // the final label
+				'padding' => array(0.5, 0.5, 0.5, 0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+			'content' => array(
+				'align' => 'C',
+				'padding' => array(1, 0.5, 1, 1.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+			),
+		);
+
+		$rank += 10; // do not use negative rank
 		$this->cols['desc'] = array(
 			'rank' => $rank,
 			'width' => false, // only for desc

@@ -294,7 +294,8 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 
 	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
 		$prodcomb->combination_price_levels = array();
-		for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+		$maxi = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+		for ($i = 1; $i <= $maxi; $i++) {
 			$productCombinationLevel = new ProductCombinationLevel($db);
 			$productCombinationLevel->fk_product_attribute_combination = $prodcomb->id;
 			$productCombinationLevel->fk_price_level = $i;
@@ -416,7 +417,7 @@ if (!empty($id) || !empty($ref)) {
 	print dol_get_fiche_head($head, 'combinations', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.((int) $object->type).'">'.$langs->trans("BackToList").'</a>';
-	$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+	$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '');
 
@@ -715,14 +716,16 @@ if (!empty($id) || !empty($ref)) {
 			<tr>
 				<td><label for="price_impact"><?php echo $langs->trans('PriceImpact') ?></label></td>
 				<td><input type="text" id="price_impact" name="price_impact" value="<?php echo price($price_impact) ?>">
-				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo $price_impact_percent ? ' checked' : '' ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
+
+				<input type="checkbox" id="price_impact_percent" name="price_impact_percent" <?php echo ($price_impact_percent ? ' checked' : '') ?>> <label for="price_impact_percent"><?php echo $langs->trans('PercentageVariation') ?></label>
 				</td>
 			</tr>
 				<?php
 			} else {
 				$prodcomb->fetchCombinationPriceLevels();
 
-				for ($i = 1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++) {
+				$maxi = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+				for ($i = 1; $i <= $maxi; $i++) {
 					$keyforlabel = 'PRODUIT_MULTIPRICES_LABEL'.$i;
 					$text = $langs->trans('ImpactOnPriceLevel', $i).' - '.getDolGlobalString($keyforlabel);
 					print '<tr>';
@@ -732,7 +735,7 @@ if (!empty($id) || !empty($ref)) {
 					}
 					print '</td>';
 					print '<td><input type="text" class="level_price_impact" id="level_price_impact_'.$i.'" name="level_price_impact['.$i.']" value="'.price($prodcomb->combination_price_levels[$i]->variation_price).'">';
-					print '<input type="checkbox" class="level_price_impact_percent" id="level_price_impact_percent_'.$i.'" name="level_price_impact_percent['.$i.']" '.(!empty($prodcomb->combination_price_levels[$i]->variation_price_percentage) ? ' checked' : '').'> <label for="level_price_impact_percent_'.$i.'">'.$langs->trans('PercentageVariation').'</label>';
+					print '<input type="checkbox" class="level_price_impact_percent" id="level_price_impact_percent_'.$i.'" name="level_price_impact_percent['.$i.']" '.($prodcomb->combination_price_levels[$i]->variation_price_percentage ? ' checked' : '').'> <label for="level_price_impact_percent_'.$i.'">'.$langs->trans('PercentageVariation').'</label>';
 
 					print '</td>';
 					print '</tr>';
@@ -759,7 +762,7 @@ if (!empty($id) || !empty($ref)) {
 						let priceImpact = $( "#level_price_impact_1" ).val();
 						let priceImpactPrecent = $( "#level_price_impact_percent_1" ).prop("checked");
 
-						var multipricelimit = <?php print intval($conf->global->PRODUIT_MULTIPRICES_LIMIT); ?>
+						let multipricelimit = <?php print getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT'); ?>
 
 						for (let i = 2; i <= multipricelimit; i++) {
 							$( "#level_price_impact_" + i ).val(priceImpact);

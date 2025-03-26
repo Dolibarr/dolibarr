@@ -244,7 +244,7 @@ if (empty($reshook)) {
 
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 
 	if ($action == 'setref_supplier' && $permissiontoadd) {
@@ -388,7 +388,7 @@ if (empty($reshook)) {
 				//var_dump(GETPOST("productl".$i, 'int').' '.GETPOST('entl'.$i, 'int').' '.GETPOST($idl, 'int').' '.GETPOST($qty, 'int').' '.GETPOST($batch, 'alpha'));
 
 				//if (GETPOST($qty, 'int') > 0 || (GETPOST($qty, 'int') == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS')) || (GETPOST($qty, 'int') < 0 && getDolGlobalString('RECEPTION_ALLOW_NEGATIVE_QTY'))) {
-				if (GETPOSTINT($qty) > 0 || (GETPOSTINT($qty) == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS'))) {
+				if (GETPOSTFLOAT($qty) > 0 || (GETPOSTFLOAT($qty) == 0 && getDolGlobalString('RECEPTION_GETS_ALL_ORDER_PRODUCTS'))) {
 					$ent = "entl".$i;
 					$idl = "idl".$i;
 
@@ -947,7 +947,7 @@ if ($action == 'create') {
 			include_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 			$list = ModelePdfReception::liste_modeles($db);
 
-			if (count($list) > 1) {
+			if (is_array($list) && count($list) > 1) {
 				print "<tr><td>".$langs->trans("DefaultModel")."</td>";
 				print '<td colspan="3">';
 				print $form->selectarray('model', $list, $conf->global->RECEPTION_ADDON_PDF);

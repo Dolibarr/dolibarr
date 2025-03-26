@@ -384,15 +384,18 @@ if ($socid > 0) {
 }
 
 foreach ($search as $key => $val) {
+	$tmpkey = 't.' . $key;
 	if ($key == 'fk_statut' && !empty($search['fk_statut'])) {
 		$newarrayofstatus = array();
-		foreach ($search['fk_statut'] as $key2 => $val2) {
-			if (in_array($val2, array('openall', 'closeall'))) {
-				continue;
+		if (is_array($search['fk_statut'])) {
+			foreach ($search['fk_statut'] as $key2 => $val2) {
+				if (in_array($val2, array('openall', 'closeall'))) {
+					continue;
+				}
+				$newarrayofstatus[] = $val2;
 			}
-			$newarrayofstatus[] = $val2;
 		}
-		if ($search['fk_statut'] == 'openall' || in_array('openall', $search['fk_statut'])) {
+		if ($search['fk_statut'] == 'openall' || (is_array($search['fk_statut']) && in_array('openall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_NOT_READ;
 			$newarrayofstatus[] = Ticket::STATUS_READ;
 			$newarrayofstatus[] = Ticket::STATUS_ASSIGNED;
@@ -400,23 +403,23 @@ foreach ($search as $key => $val) {
 			$newarrayofstatus[] = Ticket::STATUS_NEED_MORE_INFO;
 			$newarrayofstatus[] = Ticket::STATUS_WAITING;
 		}
-		if ($search['fk_statut'] == 'closeall' || in_array('closeall', $search['fk_statut'])) {
+		if ($search['fk_statut'] == 'closeall' || (is_array($search['fk_statut']) && in_array('closeall', $search['fk_statut']))) {
 			$newarrayofstatus[] = Ticket::STATUS_CLOSED;
 			$newarrayofstatus[] = Ticket::STATUS_CANCELED;
 		}
 		if (count($newarrayofstatus)) {
-			$sql .= natural_search($key, implode(',', $newarrayofstatus), 2);
+			$sql .= natural_search($tmpkey, implode(',', $newarrayofstatus), 2);
 		}
 		continue;
 	} elseif ($key == 'fk_user_assign' || $key == 'fk_user_create' || $key == 'fk_project' || $key == 'fk_contract') {
 		if ($search[$key] > 0) {
-			$sql .= natural_search($key, $search[$key], 2);
+			$sql .= natural_search($tmpkey, $search[$key], 2);
 		}
 		continue;
 	} elseif ($key == 'type_code') {
 		$newarrayoftypecodes = is_array($search[$key]) ? $search[$key] : (!empty($search[$key]) ? explode(',', $search[$key]) : array());
 		if (count($newarrayoftypecodes)) {
-			$sql .= natural_search($key, implode(',', $newarrayoftypecodes), 3);
+			$sql .= natural_search($tmpkey, implode(',', $newarrayoftypecodes), 3);
 		}
 		continue;
 	}
@@ -424,7 +427,7 @@ foreach ($search as $key => $val) {
 	$mode_search = ((!empty($object->fields[$key]) && ($object->isInt($object->fields[$key]) || $object->isFloat($object->fields[$key]))) ? 1 : 0);
 	// $search[$key] can be an array of values, or a string. We add filter if array not empty or if it is a string.
 	if ((is_array($search[$key]) && !empty($search[$key])) || (!is_array($search[$key]) && $search[$key] != '')) {
-		$sql .= natural_search($key, $search[$key], $mode_search);
+		$sql .= natural_search($tmpkey, $search[$key], $mode_search);
 	}
 }
 if ($search_all) {
@@ -434,7 +437,7 @@ if ($search_societe) {
 	$sql .= natural_search('s.nom', $search_societe);
 }
 if ($search_fk_project > 0) {
-	$sql .= natural_search('fk_project', $search_fk_project, 2);
+	$sql .= natural_search('t.fk_project', $search_fk_project, 2);
 }
 if ($search_fk_contract > 0) {
 	$sql .= natural_search('fk_contract', $search_fk_contract, 2);
@@ -900,7 +903,11 @@ foreach ($object->fields as $key => $val) {
 			//var_dump(array_values($search[$key]));
 			$selectedarray = null;
 			if (!empty($search[$key])) {
-				$selectedarray = array_values($search[$key]);
+				if (is_array($search[$key])) {
+					$selectedarray = array_values($search[$key]);
+				} else {
+					$selectedarray = array($search[$key]); // Compatibility with "Default search filters"
+				}
 			}
 			print Form::multiselectarray('search_fk_statut', $arrayofstatus, $selectedarray, 0, 0, 'search_status width150 onrightofpage', 1, 0, '', '', '');
 			print '</td>';

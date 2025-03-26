@@ -1384,9 +1384,9 @@ if (count($listofextcals)) {
 					$event->datep = $datestart + $usertime;
 					$event->datef = $dateend + $usertime;
 
-					if ($icalevent['SUMMARY']) {
+					if (isset($icalevent['SUMMARY']) && $icalevent['SUMMARY']) {
 						$event->label = dol_string_nohtmltag($icalevent['SUMMARY']);
-					} elseif ($icalevent['DESCRIPTION']) {
+					} elseif (isset($icalevent['DESCRIPTION']) && $icalevent['DESCRIPTION']) {
 						$event->label = dol_nl2br(dol_string_nohtmltag($icalevent['DESCRIPTION']), 1);
 					} else {
 						$event->label = $langs->trans("ExtSiteNoLabel");
@@ -1965,9 +1965,14 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 								$nextindextouse++; // Prepare to use next color
 							}
 						}
-						//print '|'.($color).'='.($idusertouse?$idusertouse:0).'='.$colorindex.'<br>';
-						// Define color  // @suppress-next-line PhanPluginPrintfIncompatibleArgumentType
-						$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+						if (isset($theme_datacolor[$colorindex])) {
+							$color = sprintf("%02x%02x%02x", $theme_datacolor[$colorindex][0], $theme_datacolor[$colorindex][1], $theme_datacolor[$colorindex][2]);
+						} elseif (getDolGlobalString('THEME_ELDY_BACKBODY')) {
+							require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+							$color = colorArrayToHex(explode(',', getDolGlobalString('THEME_ELDY_BACKBODY')));
+						} else {
+							$color = "ffffff";
+						}
 					}
 					$cssclass = $cssclass.' eventday_'.$ymd;
 
@@ -2339,7 +2344,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
 function dol_color_minus($color, $minus, $minusunit = 16)
 {
 	$newcolor = $color;
-	if ($minusunit == 16) {
+	if ($minusunit == 16 && is_array($newcolor)) {
 		$newcolor[0] = dechex(max(min(hexdec($newcolor[0]) - $minus, 15), 0));
 		$newcolor[2] = dechex(max(min(hexdec($newcolor[2]) - $minus, 15), 0));
 		$newcolor[4] = dechex(max(min(hexdec($newcolor[4]) - $minus, 15), 0));

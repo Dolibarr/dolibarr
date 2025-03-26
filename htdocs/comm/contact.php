@@ -37,7 +37,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if (!$sortfield) {
-	$sortfield = "p.name";
+	$sortfield = "p.lastname";
 }
 if ($page < 0) {
 	$page = 0;
@@ -81,7 +81,7 @@ if ($type == "f") {
  */
 
 $sql = "SELECT s.rowid, s.nom as name, st.libelle as stcomm,";
-$sql .= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
+$sql .= " p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
@@ -97,7 +97,7 @@ if ($type == "f") {
 	$sql .= " AND s.fournisseur = 1";
 }
 if (!empty($search_lastname)) {
-	$sql .= " AND p.name LIKE '%".$db->escape($search_lastname)."%'";
+	$sql .= " AND p.lastname LIKE '%".$db->escape($search_lastname)."%'";
 }
 if (!empty($search_firstname)) {
 	$sql .= " AND p.firstname LIKE '%".$db->escape($search_firstname)."%'";
@@ -106,8 +106,8 @@ if (!empty($search_company)) {
 	$sql .= " AND s.nom LIKE '%".$db->escape($search_company)."%'";
 }
 if (!empty($contactname)) { // access a partir du module de recherche
-	$sql .= " AND (p.name LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
-	$sortfield = "p.name";
+	$sql .= " AND (p.lastname LIKE '%".$db->escape($contactname)."%' OR lower(p.firstname) LIKE '%".$db->escape($contactname)."%') ";
+	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
 // If the internal user must only see his customers, force searching by him
@@ -144,7 +144,7 @@ if ($resql) {
 
 	print '<table class="liste centpercent">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.name", $begin, $param, "", $sortfield, $sortorder);
+	print_liste_field_titre("Lastname", $_SERVER["PHP_SELF"], "p.lastname", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Firstname", $_SERVER["PHP_SELF"], "p.firstname", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", $begin, $param, "", $sortfield, $sortorder);
 	print_liste_field_titre("Email");

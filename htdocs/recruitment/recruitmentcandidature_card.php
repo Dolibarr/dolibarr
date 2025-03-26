@@ -87,6 +87,17 @@ $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 $result = restrictedArea($user, 'recruitment', $object->id, 'recruitment_recruitmentcandidature', 'recruitmentjobposition', '', 'rowid', $isdraft);
 
 
+if (GETPOST("action", "aZ09") == 'create') {
+	$reg = array();
+	preg_match('/^(integer|link):(.*):(.*):(.*):(.*)/i', $object->fields['fk_recruitmentjobposition']['type'], $reg);
+	if (!empty($reg)) {
+		$object->fields['fk_recruitmentjobposition']['type'] .= " AND (t.status:=:1)";
+	} else {
+		$object->fields['fk_recruitmentjobposition']['type'] .= ":(t.status:=:1)";
+	}
+}
+
+
 /*
  * Actions
  */
@@ -277,7 +288,7 @@ llxHeader('', $title, $help_url);
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("RecruitmentCandidature")), '', 'object_'.$object->picto);
+	print load_fiche_titre($title, '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';

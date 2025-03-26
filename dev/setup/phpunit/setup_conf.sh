@@ -128,12 +128,9 @@ if [ "$DB" = 'mysql' ] || [ "$DB" = 'mariadb' ] || [ "$DB" = 'postgresql' ]; the
 	echo "MySQL flush"
 	${SUDO} "${MYSQL}" -u "$DB_ROOT" -h 127.0.0.1 $PASS_OPT -e 'FLUSH PRIVILEGES;'
 
-	sum=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | LC_ALL=C sort | md5sum)
-	cnt=$(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f -exec md5sum {} + | wc)
-	echo "OLDSUM $sum COUNT:$cnt"
-
 	# shellcheck disable=2046
-	sum=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | LC_ALL=C sort | md5sum)
+	# filefunc.inc.php holds the version, so include it"
+	sum=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f ; echo "${TRAVIS_BUILD_DIR}/filefunc.inc.php" ) | md5sum)
 	# shellcheck disable=2046
 	cnt=$(md5sum $(find "${TRAVIS_BUILD_DIR}/htdocs/install" -type f) | wc)
 	echo "NEWSUM $sum COUNT:$cnt"
@@ -200,11 +197,39 @@ if [ "$load_cache" != "1" ] ; then
 	(
 		cd "${TRAVIS_BUILD_DIR}/htdocs/install" || exit 1
 
+		# Get the target version from the filefunc.inc.php file
+		target_version=$(sed -n "s/.*define('DOL_VERSION',[[:space:]]*'\\([0-9.]*\\).*/\\1/p" ../filefunc.inc.php) ; echo $target_version
+		# Default in case that failed
+		target_version=${target_version:=20.0.0}
+
+		# Sequence of versions for upgrade process (to be completed)
 		VERSIONS=("3.5.0" "3.6.0" "3.7.0" "3.8.0" "3.9.0")
 		VERSIONS+=("4.0.0")
 		VERSIONS+=("5.0.0" "6.0.0" "7.0.0" "8.0.0" "9.0.0")
 		VERSIONS+=("10.0.0" "11.0.0" "12.0.0" "13.0.0" "14.0.0")
 		VERSIONS+=("15.0.0" "16.0.0" "18.0.0" "19.0.0" "20.0.0")
+
+		# Append versions up to the current dolibarr version
+		last_version=${VERSIONS[-1]}
+
+		target_major=${target_version%%.*}
+		last_major=${last_version%%.*}
+
+		# Add versions up to target_version
+		while (( last_major < target_major )); do
+			((last_major++))
+			VERSIONS+=("${last_major}.0.0")
+		done
+
+		# Add target_version if it's not already in the list
+		last_version=${VERSIONS[-1]}
+		if [[ "${last_version}" != "${target_version}" ]]; then
+			VERSIONS+=("$target_version")
+		fi
+
+		last_version=${VERSIONS[-1]}  # Keep last_version up-to-date
+
+		# Proceed with the upgrade process
 		pVer=${VERSIONS[0]}
 		for v in "${VERSIONS[@]:1}" ; do
 			LOGNAME="${TRAVIS_BUILD_DIR}/upgrade${pVer//./}${v//./}"

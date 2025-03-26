@@ -109,11 +109,13 @@ $title = $langs->trans("User");
 //print dol_get_fiche_head($head, 'info', $title, -1, 'user');
 
 
+/*
 $linkback = '';
 
 if ($user->hasRight('user', 'user', 'lire') || $user->admin) {
 	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 }
+*/
 
 $morehtmlref = '<a href="'.DOL_URL_ROOT.'/user/vcard.php?id='.$object->id.'&output=file&file='.urlencode(dol_sanitizeFileName($object->getFullName($langs).'.vcf')).'" class="refid" rel="noopener">';
 $morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
@@ -128,7 +130,9 @@ print '<div class="fichecenter">';
 print '<br>';
 
 $param = '&id='.((int) $object->id);
-$param .= '&dol_openinpopup=1';
+if (GETPOSTISSET('dol_openinpopup')) {
+	$param .= '&dol_openinpopup='.urlencode(GETPOST('dol_openinpopup', 'aZ09'));
+}
 
 $enabledisablehtml = $langs->trans("EnablePublicVirtualCard").' ';
 if (!getDolUserInt('USER_ENABLE_PUBLIC', 0, $object)) {

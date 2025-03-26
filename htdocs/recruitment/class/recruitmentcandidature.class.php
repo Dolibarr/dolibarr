@@ -18,21 +18,22 @@
  */
 
 /**
- * \file        class/recruitmentcandidature.class.php
+ * \file        recruitment/class/recruitmentcandidature.class.php
  * \ingroup     recruitment
  * \brief       This file is a CRUD class file for RecruitmentCandidature (Create/Read/Update/Delete)
  */
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 /**
  * Class for RecruitmentCandidature
  */
 class RecruitmentCandidature extends CommonObject
 {
+	use CommonPeople;
+
 	/**
 	 * @var string ID of module.
 	 */
@@ -102,7 +103,7 @@ class RecruitmentCandidature extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'comment' => "Id"),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'position' => 5, 'notnull' => 1, 'default' => '1', 'index' => 1),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'default' => '(PROV)', 'index' => 1, 'searchall' => 1, 'showoncombobox' => 1, 'comment' => "Reference of candidature", 'csslist' => 'nowraponall'),
-		'fk_recruitmentjobposition' => array('type' => 'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php:0:(t.status:=:1)', 'label' => 'Job', 'enabled' => 1, 'position' => 15, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'picto' => 'recruitmentjobposition', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'minwidth100 nowraponall'),
+		'fk_recruitmentjobposition' => array('type' => 'integer:RecruitmentJobPosition:recruitment/class/recruitmentjobposition.class.php:0', 'label' => 'Job', 'enabled' => '1', 'position' => 15, 'notnull' => 0, 'visible' => 1, 'index' => 1, 'picto' => 'recruitmentjobposition', 'css' => 'minwidth300 maxwidth500 widthcentpercentminusx', 'csslist' => 'minwidth100 nowraponall'),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'position' => 61, 'notnull' => 0, 'visible' => 0,),
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'position' => 62, 'notnull' => 0, 'visible' => 0,),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid', 'csslist' => 'tdoverflowmax100'),
@@ -159,7 +160,7 @@ class RecruitmentCandidature extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		$this->db = $db;
 

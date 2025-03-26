@@ -175,7 +175,6 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_year = '';
 	$search_note = '';
 	$search_duration = '';
-	$search_value = '';
 	$search_date_startday = '';
 	$search_date_startmonth = '';
 	$search_date_startyear = '';
@@ -249,6 +248,7 @@ if ($action == 'addtimespent' && $user->hasRight('projet', 'time')) {
 					$object->timespent_withhour = 1;
 				} else {
 					$object->timespent_date = dol_mktime(12, 0, 0, GETPOSTINT("timemonth"), GETPOSTINT("timeday"), GETPOSTINT("timeyear"));
+					$object->timespent_withhour = 0;
 				}
 				$object->timespent_fk_user = GETPOSTINT("userid");
 				$object->timespent_fk_product = GETPOSTINT("fk_product");
@@ -299,6 +299,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_withhour = 1;
 			} else {
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOST("timelinemonth"), GETPOST("timelineday"), GETPOST("timelineyear"));
+				$object->timespent_withhour = 0;
 			}
 			$object->timespent_fk_user = GETPOSTINT("userid_line");
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
@@ -328,6 +329,7 @@ if (($action == 'updateline' || $action == 'updatesplitline') && !$cancel && $us
 				$object->timespent_withhour = 1;
 			} else {
 				$object->timespent_date = dol_mktime(12, 0, 0, GETPOSTINT("timelinemonth"), GETPOSTINT("timelineday"), GETPOSTINT("timelineyear"));
+				$object->timespent_withhour = 0;
 			}
 			$object->timespent_fk_user = GETPOSTINT("userid_line");
 			$object->timespent_fk_product = GETPOSTINT("fk_product");
@@ -2579,7 +2581,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowraponall">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
-							$object->fetch($id);
+							$idTask = (!empty($id)) ? $id : $task_time->fk_element;
+							$object->fetch($idTask);
 						}
 						$contactsoftask = $object->getListContactId('internal');
 						if (!in_array($task_time->fk_user, $contactsoftask)) {
@@ -2743,7 +2746,8 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 					print '<td class="nowraponall tdoverflowmax100">';
 					if ($action == 'splitline' && GETPOSTINT('lineid') == $task_time->rowid) {
 						if (empty($object->id)) {
-							$object->fetch($id);
+							$idTask = (!empty($id)) ? $id : $task_time->fk_element;
+							$object->fetch($idTask);
 						}
 						$contactsoftask = $object->getListContactId('internal');
 						if (!in_array($task_time->fk_user, $contactsoftask)) {

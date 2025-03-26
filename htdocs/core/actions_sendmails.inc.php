@@ -208,6 +208,15 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 				} elseif ($val == 'contact') { // Key selected means current contact
 					$tmparray[] = dol_string_nospecial($contact->getFullName($langs), ' ', array(",")).' <'.$contact->email.'>';
 					$sendtoid[] = $contact->id;
+				} elseif ($val && $object->element == 'project' && empty($object->socid)) {	// $val is the Id of a contact
+					$contact = new Contact($db);
+					$ret = $contact->fetch((int) $val);
+					if ($ret > 0 && !empty($contact->socid)) {
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($contact->socid);
+						$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
+						$sendtoid[] = ((int) $val);
+					}
 				} elseif ($val) {	// $val is the Id of a contact
 					$tmparray[] = $thirdparty->contact_get_property((int) $val, 'email');
 					$sendtoid[] = ((int) $val);
@@ -324,7 +333,7 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			// <img alt="" src="'.$urlwithroot.'viewimage.php?modulepart=medias&amp;entity=1&amp;file=image/ldestailleur_166x166.jpg" style="height:166px; width:166px" />
 			$message = preg_replace('/(<img.*src=")[^\"]*viewimage\.php([^\"]*)modulepart=medias([^\"]*)file=([^\"]*)("[^\/]*\/>)/', '\1'.$urlwithroot.'/viewimage.php\2modulepart=medias\3file=\4\5', $message);
 
-			$sendtobcc = GETPOST('sendtoccc');
+			$sendtobcc = GETPOST('sendtoccc', 'alphawithlgt');
 			// Autocomplete the $sendtobcc
 			// $autocopy can be MAIN_MAIL_AUTOCOPY_PROPOSAL_TO, MAIN_MAIL_AUTOCOPY_ORDER_TO, MAIN_MAIL_AUTOCOPY_INVOICE_TO, MAIN_MAIL_AUTOCOPY_SUPPLIER_PROPOSAL_TO...
 			if (!empty($autocopy)) {

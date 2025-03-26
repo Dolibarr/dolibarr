@@ -4,7 +4,7 @@
  * Copyright (C) 2004		Christophe Combelles	<ccomb@free.fr>
  * Copyright (C) 2005		Marc Barilley			<marc@ocebo.fr>
  * Copyright (C) 2005-2013	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2019	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2023	Juanjo Menent			<jmenent@simnandez.es>
  * Copyright (C) 2013-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
@@ -445,7 +445,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// payment mode
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
@@ -836,7 +836,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms = GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx = GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx = GETPOSTFLOAT('originmulticurrency_tx');
 				$object->transport_mode_id	= GETPOSTINT('transport_mode_id');
 
 				// Proprietes particulieres a facture de replacement
@@ -910,7 +910,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx   = GETPOSTFLOAT('originmulticurrency_tx');
 				$object->transport_mode_id	= GETPOSTINT('transport_mode_id');
 
 				// Proprietes particulieres a facture avoir
@@ -1013,7 +1013,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms       = GETPOSTINT('incoterm_id');
 				$object->location_incoterms = GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx   = GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx   = GETPOSTFLOAT('originmulticurrency_tx');
 
 				// Source facture
 				$object->fac_rec = $fac_recid;
@@ -1080,7 +1080,7 @@ if (empty($reshook)) {
 				$object->fk_incoterms		= GETPOSTINT('incoterm_id');
 				$object->location_incoterms	= GETPOST('location_incoterms', 'alpha');
 				$object->multicurrency_code	= GETPOST('multicurrency_code', 'alpha');
-				$object->multicurrency_tx	= GETPOSTINT('originmulticurrency_tx');
+				$object->multicurrency_tx	= GETPOSTFLOAT('originmulticurrency_tx');
 				$object->transport_mode_id	= GETPOSTINT('transport_mode_id');
 
 				// Auto calculation of date due if not filled by user
@@ -1122,7 +1122,7 @@ if (empty($reshook)) {
 					$object->origin_id = GETPOSTINT('originid');
 
 
-					require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+					dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 					$classname = ucfirst($subelement);
 					if ($classname == 'Fournisseur.commande') {
 						$classname = 'CommandeFournisseur';
@@ -1150,7 +1150,7 @@ if (empty($reshook)) {
 
 					// Add lines
 					if ($id > 0) {
-						require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+						dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 						$classname = ucfirst($subelement);
 						if ($classname == 'Fournisseur.commande') {
 							$classname = 'CommandeFournisseur';
@@ -1338,6 +1338,12 @@ if (empty($reshook)) {
 									$date_end = $lines[$i]->date_end;
 								}
 
+								$tva_tx = $lines[$i]->tva_tx;
+								// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
+								if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
+									$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+								}
+
 								// FIXME Missing special_code  into addline and updateline methods
 								$object->special_code = $lines[$i]->special_code;
 
@@ -1354,7 +1360,7 @@ if (empty($reshook)) {
 								$result = $object->addline(
 									$desc,
 									$pu,
-									$lines[$i]->tva_tx,
+									$tva_tx,
 									$lines[$i]->localtax1_tx,
 									$lines[$i]->localtax2_tx,
 									$lines[$i]->qty,
@@ -2115,7 +2121,7 @@ if ($action == 'create') {
 			$subelement = 'fournisseur.commande';
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/'.$element.'/class/'.$subelement.'.class.php';
+		dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
 		$classname = ucfirst($subelement);
 		if ($classname == 'Fournisseur.commande') {
 			$classname = 'CommandeFournisseur';
@@ -2718,7 +2724,9 @@ if ($action == 'create') {
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 			print '<tr><td>' . $langs->trans('VATReverseCharge') . '</td><td>';
 			// Try to propose to use VAT reverse charge even if the VAT reverse charge is not activated in the supplier card, if this corresponds to the context of use, the activation is proposed
-			if ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
+			if (GETPOSTISSET('vat_reverse_charge')) {  // Check if form was submitted previously
+				$vat_reverse_charge = (GETPOST('vat_reverse_charge', 'alpha') == 'on' || GETPOST('vat_reverse_charge', 'alpha') == '1') ? 1 : 0;
+			} elseif ($vat_reverse_charge == 1 || $societe->vat_reverse_charge == 1 || ($societe->country_code != 'FR' && isInEEC($societe) && !empty($societe->tva_intra))) {
 				$vat_reverse_charge = 1;
 			} else {
 				$vat_reverse_charge = 0;
@@ -3198,14 +3206,12 @@ if ($action == 'create') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 0, 1);
 		}
 
-		if (!$formconfirm) {
-			$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
-			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-			if (empty($reshook)) {
-				$formconfirm .= $hookmanager->resPrint;
-			} elseif ($reshook > 0) {
-				$formconfirm = $hookmanager->resPrint;
-			}
+		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
+		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) {
+			$formconfirm .= $hookmanager->resPrint;
+		} elseif ($reshook > 0) {
+			$formconfirm = $hookmanager->resPrint;
 		}
 
 		// Print form confirm
@@ -3584,9 +3590,9 @@ if ($action == 'create') {
 			// Show link for "recalculate"
 			if ($object->getVentilExportCompta() == 0) {
 				$s = '<span class="hideonsmartphone opacitymedium">' . $langs->trans("ReCalculate") . ' </span>';
-				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&calculationrule=totalofround">' . $langs->trans("Mode1") . '</a>';
+				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=totalofround">' . $langs->trans("Mode1") . '</a>';
 				$s .= ' / ';
-				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&calculationrule=roundoftotal">' . $langs->trans("Mode2") . '</a>';
+				$s .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=calculate&token='.newToken().'&calculationrule=roundoftotal">' . $langs->trans("Mode2") . '</a>';
 				print '<div class="inline-block">';
 				print $form->textwithtooltip($s, $langs->trans("CalculationRuleDesc", $calculationrulenum) . '<br>' . $langs->trans("CalculationRuleDescSupplier"), 2, 1, img_picto('', 'help'), '', 3, '', 0, 'recalculate');
 				print '&nbsp; &nbsp; &nbsp; &nbsp;';
@@ -4093,7 +4099,7 @@ if ($action == 'create') {
 				}
 
 				// Reverse back money or convert to reduction
-				if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD) {
+				if ($object->status != FactureFournisseur::STATUS_DRAFT && ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE || $object->type == FactureFournisseur::TYPE_DEPOSIT || $object->type == FactureFournisseur::TYPE_STANDARD)) {
 					// For credit note only
 					if ($object->type == FactureFournisseur::TYPE_CREDIT_NOTE && $object->status == 1 && $object->paid == 0) {
 						if ($resteapayer == 0) {

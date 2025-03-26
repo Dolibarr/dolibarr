@@ -193,7 +193,7 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 	}
 } elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 	// Set incoterm
-	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+	$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 }
 
 // Update extrafields

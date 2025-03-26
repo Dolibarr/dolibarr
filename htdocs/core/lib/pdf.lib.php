@@ -814,17 +814,24 @@ function pdf_watermark(&$pdf, $outputlangs, $h, $w, $unit, $text)
 	$watermark_x = $w / 2;
 	$watermark_y = $h / 3;
 	$pdf->SetFont('', 'B', 40);
-	$pdf->SetTextColor(255, 192, 203);
+	$pdf->SetTextColor(255, 0, 0);
 
 	//rotate
 	$pdf->_out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm', cos($watermark_angle), sin($watermark_angle), -sin($watermark_angle), cos($watermark_angle), $watermark_x * $k, ($h - $watermark_y) * $k, -$watermark_x * $k, -($h - $watermark_y) * $k));
 	//print watermark
 	$pdf->SetXY($watermark_x_pos, $watermark_y_pos);
+
+	// set alpha to semi-transparency
+	$pdf->SetAlpha(0.3);
 	$pdf->Cell($w - 20, 25, $outputlangs->convToOutputCharset($text), "", 2, "C", 0);
+
 	//antirotate
 	$pdf->_out('Q');
 
 	$pdf->SetXY($savx, $savy);
+
+	// Restore alpha
+	$pdf->SetAlpha(1);
 }
 
 
@@ -1495,6 +1502,8 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
 	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
 
+	$multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
+
 	if ($issupplierline) {
 		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$prodser = new ProductFournisseur($db);
@@ -1507,11 +1516,55 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		}
 	}
 
+	//id
+	$idprod = (!empty($object->lines[$i]->fk_product) ? $object->lines[$i]->fk_product : false);
 	if ($idprod) {
 		$prodser->fetch($idprod);
+		//load multilangs
+		if ($multilangsactive) {
+			$prodser->getMultiLangs();
+			$object->lines[$i]->multilangs = $prodser->multilangs;
+		}
+	}
+	//label
+	if (!empty($object->lines[$i]->label)) {
+		$label = $object->lines[$i]->label;
+	} else {
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['label']) && $multilangsactive) {
+			$label = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['label'];
+		} else {
+			if (!empty($object->lines[$i]->product_label)) {
+				$label = $object->lines[$i]->product_label;
+			} else {
+				$label = '';
+			}
+		}
+	}
+	//description
+	if (!empty($object->lines[$i]->desc)) {
+		$desc = $object->lines[$i]->desc;
+	} else {
+		if (!empty($object->lines[$i]->multilangs[$outputlangs->defaultlang]['description']) && $multilangsactive) {
+			$desc = $object->lines[$i]->multilangs[$outputlangs->defaultlang]['description'];
+		} else {
+			if (!empty($object->lines[$i]->description)) {
+				$desc = $object->lines[$i]->description;
+			} else {
+				$desc = '';
+			}
+		}
+	}
+	//ref supplier
+	$ref_supplier = (!empty($object->lines[$i]->ref_supplier) ? $object->lines[$i]->ref_supplier : (!empty($object->lines[$i]->ref_fourn) ? $object->lines[$i]->ref_fourn : '')); // TODO Not yet saved for supplier invoices, only supplier orders
+	//note
+	$note = (!empty($object->lines[$i]->note) ? $object->lines[$i]->note : '');
+	//dbatch
+	$dbatch = (!empty($object->lines[$i]->detail_batch) ? $object->lines[$i]->detail_batch : false);
+
+	if ($idprod) {
 		// If a predefined product and multilang and on other lang, we renamed label with label translated
-		if (getDolGlobalInt('MAIN_MULTILANGS') && ($outputlangs->defaultlang != $langs->defaultlang)) {
-			$translatealsoifmodified = (getDolGlobalString('MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED')); // By default if value was modified manually, we keep it (no translation because we don't have it)
+		if ($multilangsactive && ($outputlangs->defaultlang != $langs->defaultlang)) {
+			$translatealsoifmodified = getDolGlobalString('MAIN_MULTILANG_TRANSLATE_EVEN_IF_MODIFIED'); // By default if value was modified manually, we keep it (no translation because we don't have it)
 
 			// TODO Instead of making a compare to see if param was modified, check that content contains reference translation. If yes, add the added part to the new translation
 			// ($textwasnotmodified is replaced with $textwasmodifiedorcompleted and we add completion).
@@ -2501,10 +2554,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
-				foreach ($objects as $elementobject) {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
+					foreach ($objects as $elementobject) {
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
+						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("OrderDate").' : '.dol_print_date($elementobject->date, 'day', '', $outputlangs));
+					}
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
@@ -2534,10 +2589,12 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 
 			if (count($objects) > 1) {
 				$order = null;
+
+				$refListsTxt = '';
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.= $outputlangs->transnoentities("RefOrder").' / '.$outputlangs->transnoentities("RefSending").' :';
 				} else {
-					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefSending").' :');
+					$refListsTxt.=$outputlangs->transnoentities("RefSending").' :';
 				}
 				// We concat this record info into fields xxx_value. title is overwrote.
 				foreach ($objects as $elementobject) {
@@ -2552,13 +2609,17 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 							}
 						}
 					}
-
+					$refListsTxt.= (!empty($refListsTxt)?' ':'');
 					if (! is_object($order)) {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->transnoentities($elementobject->ref);
 					} else {
-						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : ''));
-						$object->note_public = dol_concatdesc($object->note_public, ' / '.$outputlangs->transnoentities($elementobject->ref));
+						$refListsTxt.= $outputlangs->convToOutputCharset($order->ref).($order->ref_client ? ' ('.$order->ref_client.')' : '');
+						$refListsTxt.= ' / '.$outputlangs->transnoentities($elementobject->ref);
 					}
+				}
+
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects'])) { // Check if already appended before add to avoid repeat data
+					$object->note_public = dol_concatdesc($object->note_public, $refListsTxt);
 				}
 			} elseif (count($objects) == 1) {
 				$elementobject = array_shift($objects);
@@ -2597,12 +2658,17 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		}
 	}
 
+	$object->context['DolPublicNoteAppendedGetLinkedObjects'] = 1;
+
 	// For add external linked objects
 	if (is_object($hookmanager)) {
 		$parameters = array('linkedobjects' => $linkedobjects, 'outputlangs' => $outputlangs);
 		$action = '';
-		$hookmanager->executeHooks('pdf_getLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (!empty($hookmanager->resArray)) {
+		$reshook = $hookmanager->executeHooks('pdf_getLinkedObjects', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook)) {
+			$linkedobjects = array_replace($linkedobjects, $hookmanager->resArray); // array_replace is used to preserve keys
+		} elseif ($reshook>0) {
+			// The array must be reinserted even if it is empty because clearing the array could be one of the actions performed by the hook.
 			$linkedobjects = $hookmanager->resArray;
 		}
 	}

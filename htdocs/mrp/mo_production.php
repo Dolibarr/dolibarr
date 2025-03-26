@@ -188,7 +188,7 @@ if (empty($reshook)) {
 
 		// Line to produce
 		$moline->fk_mo = $object->id;
-		$moline->qty = GETPOSTINT('qtytoadd');
+		$moline->qty = GETPOSTFLOAT('qtytoadd');
 		$moline->fk_product = GETPOSTINT('productidtoadd');
 		if (GETPOST('addconsumelinebutton')) {
 			$moline->role = 'toconsume';
@@ -484,7 +484,7 @@ if (empty($reshook)) {
 				$value = GETPOST('options_'.$key, 'alphanohtml');
 				$moline->array_options["options_".$key] = $value;
 			}
-			$moline->qty = GETPOSTINT('qty_lineProduce');
+			$moline->qty = GETPOSTFLOAT('qty_lineProduce');
 			$res = $moline->update($user);
 			if ($res < 0) {
 				setEventMessages($moline->error, $moline->errors, 'errors');
@@ -983,7 +983,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 						if (empty($costprice)) {
 							require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 							$productFournisseur = new ProductFournisseur($db);
-							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product) > 0) {
+							if ($productFournisseur->find_min_price_product_fournisseur($line->fk_product, $line->qty) > 0) {
 								$costprice = $productFournisseur->fourn_unitprice;
 							} else {
 								$costprice = 0;
@@ -1686,6 +1686,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 							$href = $_SERVER["PHP_SELF"];
 							$href .= '?id='.$object->id;
 							$href .= '&action=deleteline';
+							$href .= '&token='.newToken();
 							$href .= '&lineid='.$line->id;
 							print '<td class="center">';
 							print '<a class="reposition" href="'.$href.'">';

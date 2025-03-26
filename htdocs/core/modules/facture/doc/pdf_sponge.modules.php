@@ -126,7 +126,7 @@ class pdf_sponge extends ModelePDFFactures
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -714,10 +714,6 @@ class pdf_sponge extends ModelePDFFactures
 					$posYAfterImage = 0;
 					$posYAfterDescription = 0;
 
-					if ($this->getColumnStatus('position')) {
-						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
-					}
-
 					if ($this->getColumnStatus('photo')) {
 						// We start with Photo of product line
 						if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur - $page_bottom_margin)) {	// If photo too high, we moved completely on new page
@@ -798,6 +794,11 @@ class pdf_sponge extends ModelePDFFactures
 					}
 
 					$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
+
+					// # of line
+					if ($this->getColumnStatus('position')) {
+						$this->printStdColumnContent($pdf, $curY, 'position', $i + 1);
+					}
 
 					// VAT Rate
 					if ($this->getColumnStatus('vat')) {
@@ -1362,7 +1363,7 @@ class pdf_sponge extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
-					$paiement_url = getOnlinePaymentUrl('', 'invoice', $object->ref, '', '', '');
+					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, '', '', '');
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
@@ -1444,9 +1445,9 @@ class pdf_sponge extends ModelePDFFactures
 						$EPCQrCodeString = $object->buildEPCQrCodeString();
 						$pdf->write2DBarcode($EPCQrCodeString, 'QRCODE,M', $qrPosX, $qrPosY, 25, 25, $styleQr, 'N');
 
-						$pdf->SetXY($qrPosX + 5, $posy);
+						$pdf->SetXY($qrPosX + 30, $posy + 5);
 						$pdf->SetFont('', '', $default_font_size - 5);
-						$pdf->MultiCell(30, 3, $langs->trans("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
+						$pdf->MultiCell(30, 3, $outputlangs->transnoentitiesnoconv("INVOICE_ADD_EPC_QR_CODEPay"), 0, 'L', 0);
 						$posy = $pdf->GetY() + 2;
 					}
 				}
@@ -1999,7 +2000,7 @@ class pdf_sponge extends ModelePDFFactures
 			$pdf->SetTextColor(0, 0, 0);
 		}
 
-		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index);
+		$parameters = array('pdf' => &$pdf, 'object' => &$object, 'outputlangs' => $outputlangs, 'index' => &$index, 'posy' => $posy);
 
 		$reshook = $hookmanager->executeHooks('afterPDFTotalTable', $parameters, $this); // Note that $action and $object may have been modified by some hooks
 		if ($reshook < 0) {
@@ -2702,7 +2703,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalexcltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_PROPAL_HIDE_PRICE_EXCL_TAX') ? true : false,
+			'status' => !getDolGlobalString('PDF_INVOICE_HIDE_PRICE_EXCL_TAX') ? true : false,
 			'title' => array(
 				'textkey' => 'TotalHTShort'
 			),
@@ -2713,7 +2714,7 @@ class pdf_sponge extends ModelePDFFactures
 		$this->cols['totalincltax'] = array(
 			'rank' => $rank,
 			'width' => 26, // in mm
-			'status' => !getDolGlobalString('PDF_PROPAL_SHOW_PRICE_INCL_TAX') ? false : true,
+			'status' => !getDolGlobalString('PDF_INVOICE_SHOW_PRICE_INCL_TAX') ? false : true,
 			'title' => array(
 				'textkey' => 'TotalTTCShort'
 			),

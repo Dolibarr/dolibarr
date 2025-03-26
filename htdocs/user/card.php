@@ -130,6 +130,9 @@ if ($user->id != $id && !$canreaduser) {
 	accessforbidden();
 }
 
+$caneditpasswordandsee = false;
+$caneditpasswordandsend = false;
+
 // Define value to know what current user can do on properties of edited user
 if ($id > 0) {
 	// $user is the current logged user, $id is the user we want to edit
@@ -1125,7 +1128,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 	}
 
 	// Other form for user password
-	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password);
+	$parameters = array('valuetoshow' => $valuetoshow, 'password' => $password, 'caneditpasswordandsee' => $caneditpasswordandsee, 'caneditpasswordandsend' => $caneditpasswordandsend);
 	$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	if ($reshook > 0) {
 		$valuetoshow = $hookmanager->resPrint; // to replace
@@ -1932,7 +1935,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 			*/
 
 			// Other form for user password
-			$parameters = array('valuetoshow' => $valuetoshow);
+			$parameters = array('valuetoshow' => $valuetoshow, 'caneditpasswordandsee' => $caneditpasswordandsee, 'caneditpasswordandsend' => $caneditpasswordandsend);
 			$reshook = $hookmanager->executeHooks('printUserPasswordField', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {
 				$valuetoshow = $hookmanager->resPrint; // to replace

@@ -40,6 +40,9 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
+$conf->global->MAIN_MAX_DECIMALS_UNIT = 5;
+$conf->global->MAIN_MAX_DECIMALS_TOT = 2;
+
 if (getDolGlobalString('MAIN_ROUNDING_RULE_TOT')) {
 	print "Parameter MAIN_ROUNDING_RULE_TOT must be set to 0 or not set.\n";
 	exit(1);

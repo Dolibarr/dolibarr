@@ -239,11 +239,11 @@ function getCustomerOrderPieChart($socid = 0)
 	/*
 	 * Statistics
 	 */
-
+	if ($user->socid > 0) $socid = $user->socid;
 	$sql = "SELECT count(c.rowid) as nb, c.fk_statut as status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= ", ".MAIN_DB_PREFIX."commande as c";
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	}
 	$sql .= " WHERE c.fk_soc = s.rowid";
@@ -251,7 +251,7 @@ function getCustomerOrderPieChart($socid = 0)
 	if ($user->socid) {
 		$sql .= ' AND c.fk_soc = '.((int) $user->socid);
 	}
-	if (!$user->hasRight('societe', 'client', 'voir')) {
+	if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 		$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 	}
 	$sql .= " GROUP BY c.fk_statut";
@@ -316,7 +316,7 @@ function getCustomerOrderPieChart($socid = 0)
 			}
 		}
 		if (!empty($conf->use_javascript_ajax)) {
-			$result .= '<tr class="impair"><td align="center" colspan="2">';
+			$result .= '<tr class="oddeven"><td align="center" colspan="2">';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();

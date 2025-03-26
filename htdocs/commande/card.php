@@ -633,7 +633,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTFLOAT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -911,17 +911,17 @@ if (empty($reshook)) {
 
 				// Set unit price to use
 				if (!empty($price_ht) || $price_ht === '0') {
-					$pu_ht = price2num($price_ht, 'MU');
-					$pu_ttc = price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
+					$pu_ht = (float) price2num($price_ht, 'MU');
+					$pu_ttc = (float) price2num((float) $pu_ht * (1 + ($tmpvat / 100)), 'MU');
 				} elseif (!empty($price_ttc) || $price_ttc === '0') {
-					$pu_ttc = price2num($price_ttc, 'MU');
-					$pu_ht = price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+					$pu_ttc = (float) price2num($price_ttc, 'MU');
+					$pu_ht = (float) price2num((float) $pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 				} elseif ($tmpvat != $tmpprodvat) {
 					// Is this still used ?
 					if ($price_base_type != 'HT') {
-						$pu_ht = price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
+						$pu_ht = (float) price2num($pu_ttc / (1 + ($tmpvat / 100)), 'MU');
 					} else {
-						$pu_ttc = price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
+						$pu_ttc = (float) price2num($pu_ht * (1 + ($tmpvat / 100)), 'MU');
 					}
 				}
 
@@ -1836,7 +1836,7 @@ if ($action == 'create' && $usercancreate) {
 		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE')) {
 			$warehouse_id = getDolGlobalString('MAIN_DEFAULT_WAREHOUSE');
 		}
-		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->warehouse_id)) {
+		if (empty($object->warehouse_id) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && !empty($user->fk_warehouse)) {
 			$warehouse_id = $user->fk_warehouse;
 		}
 	}

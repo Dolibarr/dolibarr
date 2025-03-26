@@ -380,6 +380,16 @@ class Tickets extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->ticket->array_options[$index] = $this->_checkValForAPI($field, $val, $this->ticket);
+				}
+				continue;
+			}
+
 			$this->ticket->$field = $this->_checkValForAPI($field, $value, $this->ticket);
 		}
 

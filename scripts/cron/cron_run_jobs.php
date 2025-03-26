@@ -235,7 +235,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 						exit(1);
 					}
 				}
-				$user->getrights();
+				$user->getrights('', 1); // We force rights reload to have the correct permissions for user in the entity we just switched in
 			}
 
 			// Reload langs

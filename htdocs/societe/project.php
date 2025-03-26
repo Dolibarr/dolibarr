@@ -85,6 +85,7 @@ if ($reshook < 0) {
 $parameters = array('id'=>$socid);
 
 // List of mass actions available
+$arrayofmassactions = array();
 if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }

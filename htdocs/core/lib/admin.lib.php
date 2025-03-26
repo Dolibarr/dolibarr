@@ -1087,7 +1087,7 @@ function purgeSessions($mysessionid)
 					$sessValues = file_get_contents($fullpath); // get raw session data
 
 					if (preg_match('/dol_login/i', $sessValues) && // limit to dolibarr session
-					preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i', $sessValues) && // limit to current entity
+					(preg_match('/dol_entity\|i:('.$conf->entity.')/', $sessValues) || preg_match('/dol_entity\|s:([0-9]+):"('.$conf->entity.')"/i', $sessValues)) && // limit to current entity
 					preg_match('/dol_company\|s:([0-9]+):"(' . getDolGlobalString('MAIN_INFO_SOCIETE_NOM').')"/i', $sessValues)) { // limit to company name
 						$tmp = explode('_', $file);
 						$idsess = $tmp[1];
@@ -1229,7 +1229,7 @@ function activateModule($value, $withdeps = 1, $noconfverification = 0)
 							if ($activateerr) {
 								$ret['errors'][] = $activateerr;
 							}
-							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
+							$ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring, $objMod->name).'<br>'.$langs->trans('activateModuleDependNotSatisfied2', $modulestring, $objMod->name);
 						}
 					}
 				}
@@ -1311,7 +1311,7 @@ function unActivateModule($value, $requiredby = 1)
 	}
 
 	// Disable modules that depends on module we disable
-	if (!$ret && $requiredby && is_object($objMod) && is_array($objMod->requiredby)) {
+	if (!$ret && $requiredby && isset($objMod) && is_object($objMod) && is_array($objMod->requiredby)) {
 		$countrb = count($objMod->requiredby);
 		for ($i = 0; $i < $countrb; $i++) {
 			//var_dump($objMod->requiredby[$i]);

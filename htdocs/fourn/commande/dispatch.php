@@ -1197,7 +1197,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '<tr class="liste_titre">';
 			// Reception ref
-			if ($conf->reception->enabled) {
+			if (isModEnabled("reception")) {
 				print '<td>'.$langs->trans("Reception").'</td>';
 			}
 			// Product
@@ -1271,7 +1271,11 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
 
 				// Date delivery
-				print '<td class="center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
+				if (property_exists($objp, "date_delivery")) {
+					print '<td class="center">' . dol_print_date($db->jdate($objp->date_delivery), 'day') . '</td>';
+				} else {
+					print '<td class="center"></td>';
+				}
 
 				// Batch / Eat by / Sell by
 				if (isModEnabled('productbatch')) {

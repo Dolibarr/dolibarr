@@ -73,6 +73,7 @@ if (empty($reshook)) {
  *  View
  */
 
+$morehtmlright = '';
 $form = new Form($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Notes");

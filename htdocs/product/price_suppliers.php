@@ -393,7 +393,7 @@ if ($id > 0 || $ref) {
 			print dol_get_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
-			$object->next_prev_filter = "fk_product_type = ".((int) $object->type);
+			$prod->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")"; // use $prod instead $object
 
 			$shownav = 1;
 			if ($user->socid && !in_array('product', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -792,7 +792,7 @@ if ($id > 0 || $ref) {
 				// Delivery delay in days
 				print '<tr>';
 				print '<td>'.$langs->trans('NbDaysToDelivery').'</td>';
-				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.($rowid ? $object->delivery_time_days : '').'">&nbsp;'.$langs->trans('days').'</td>';
+				print '<td><input class="flat" name="delivery_time_days" size="4" value="'.(GETPOSTISSET('delivery_time_days') ? GETPOST('delivery_time_days') : ($rowid ? $object->delivery_time_days : '')).'">&nbsp;'.$langs->trans('days').'</td>';
 				print '</tr>';
 
 				// Reputation

@@ -1690,6 +1690,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// Add the amount and reference
 		$lines[] = 'EUR' . $totalTTCString; // Amount (optional)
+		$lines[] = ''; // Purpose (optional)
 		$lines[] = ''; // Payment reference (optional)
 		$lines[] = $this->ref; // Remittance Information (optional)
 

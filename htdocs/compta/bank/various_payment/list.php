@@ -33,7 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('project')) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "accountancy"));
@@ -242,7 +244,7 @@ if ($arrayfields['ref']['checked']) {
 if ($arrayfields['bank']['checked']) {
 	$accountstatic		= new Account($db);
 }
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	$proj = new Project($db);
 }
 if ($arrayfields['entry']['checked']) {
@@ -538,7 +540,7 @@ if ($arrayfields['type']['checked']) {
 }
 
 // Project
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	print '<td class="liste_titre">';
 	// TODO
 	print '</td>';
@@ -635,7 +637,7 @@ if ($arrayfields['type']['checked']) {
 	print_liste_field_titre($arrayfields['type']['label'], $_SERVER["PHP_SELF"], 'type', '', $param, '', $sortfield, $sortorder, 'center ');
 	$totalarray['nbfield']++;
 }
-if ($arrayfields['project']['checked']) {
+if (isModEnabled('project') && $arrayfields['project']['checked']) {
 	print_liste_field_titre($arrayfields['project']['label'], $_SERVER["PHP_SELF"], 'fk_project', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -702,7 +704,7 @@ while ($i < $imaxinloop) {
 	$variousstatic->amount = $obj->amount;
 
 	$accountingaccount->fetch('', $obj->accountancy_code, 1);
-	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountingaccount, 1);
+	$variousstatic->accountancy_code = $accountingaccount->getNomUrl(0, 0, 1, $obj->accountancy_code, 1);
 
 	if ($mode == 'kanban') {
 		if ($i == 0) {
@@ -780,7 +782,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Project
-		if ($arrayfields['project']['checked']) {
+		if (isModEnabled('project') && $arrayfields['project']['checked']) {
 			print '<td class="nowraponall">';
 			if ($obj->fk_project > 0) {
 				$proj->fetch($obj->fk_project);

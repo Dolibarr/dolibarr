@@ -171,7 +171,7 @@ class Evaluation extends CommonObject
 	 */
 	public function __construct(DoliDB $db)
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$this->db = $db;
 
@@ -186,7 +186,7 @@ class Evaluation extends CommonObject
 		}
 
 		if (!$user->hasRight('hrm', 'evaluation', 'readall')) {
-			$this->fields['fk_user']['type'] .= ':rowid IN('.$this->db->sanitize(implode(", ", $user->getAllChildIds(1))).')';
+			$this->fields['fk_user']['type'] .= ':t.rowid:IN:'.$this->db->sanitize(implode(",", $user->getAllChildIds(1)));
 		}
 
 		$this->date_eval = dol_now();

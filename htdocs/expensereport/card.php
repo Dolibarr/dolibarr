@@ -464,10 +464,15 @@ if (empty($reshook)) {
 						setEventMessages($mesg, null, 'mesgs');
 					} else {
 						$langs->load("other");
-						if ($mailfile->error) {
+						if (!empty($mailfile->error) || !empty($mailfile->errors)) {
 							$mesg = '';
-							$mesg .= $langs->trans('ErrorFailedToSendMail', $emailFrom, $emailTo);
-							$mesg .= '<br>'.$mailfile->error;
+							$mesg .= $langs->transnoentities('ErrorFailedToSendMail', dol_escape_htmltag($emailFrom), dol_escape_htmltag($emailTo));
+							if (!empty($mailfile->error)) {
+								$mesg .= '<br>' . $mailfile->error;
+							}
+							if (!empty($mailfile->errors) && is_array($mailfile->errors)) {
+								$mesg .= '<br>' . implode('<br>', $mailfile->errors);
+							}
 							setEventMessages($mesg, null, 'errors');
 						} else {
 							setEventMessages('No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS', null, 'warnings');
@@ -1566,7 +1571,7 @@ if ($action == 'create') {
 
 		$head = expensereport_prepare_head($object);
 
-		if ($action == 'edit' && ($object->status < 3 || $object->status == 99)) {
+		if ($action == 'edit' && ($object->status < 3 || $object->status == ExpenseReport::STATUS_REFUSED)) {
 			print "<form name='update' action=\"".$_SERVER['PHP_SELF']."\" method=\"post\">\n";
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="id" value="'.$id.'">';
@@ -1574,7 +1579,7 @@ if ($action == 'create') {
 
 			print dol_get_fiche_head($head, 'card', $langs->trans("ExpenseReport"), 0, 'trip');
 
-			if ($object->status == 99) {
+			if ($object->status == ExpenseReport::STATUS_REFUSED) {
 				print '<input type="hidden" name="action" value="updateFromRefuse">';
 			} else {
 				print '<input type="hidden" name="action" value="update">';
@@ -1640,7 +1645,7 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
-			if ($object->status == 6) {
+			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				print '<tr>';
 				print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
 				print '<td>';
@@ -1858,7 +1863,7 @@ if ($action == 'create') {
 				print '</tr>';
 			}
 
-			if ($object->status == $object::STATUS_CLOSED) {
+			if ($object->status == ExpenseReport::STATUS_CLOSED) {
 				/* TODO this fields are not yet filled
 				  print '<tr>';
 				  print '<td>'.$langs->trans("AUTHORPAIEMENT").'</td>';
@@ -2590,22 +2595,22 @@ if ($action == 'create') {
 
 				// Select VAT
 				print '<td class="right inputvat">';
-				$defaultvat = -1;
+				$defaultvat = '';
 				if (getDolGlobalString('EXPENSEREPORT_NO_DEFAULT_VAT')) {
 					// If option to have no default VAT on expense report is on, we force MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS
 					$conf->global->MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS = 'none';
 				}
-				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), $mysoc, '', 0, 0, '', false, 1);
+				print $form->load_tva('vatrate', (!empty($vatrate) ? $vatrate : $defaultvat), null, null, 0, 0, '', false, 1);
 				print '</td>';
 
 				// Unit price net
 				print '<td class="right inputpricenet">';
-				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : 0)).'"'.$taxlessUnitPriceDisabled.' />';
+				print '<input type="text" class="right maxwidth50" id="value_unit_ht" name="value_unit_ht" value="'.dol_escape_htmltag((!empty($value_unit_ht) ? $value_unit_ht : "")).'"'.$taxlessUnitPriceDisabled.' />';
 				print '</td>';
 
 				// Unit price with tax
 				print '<td class="right inputtax">';
-				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : 0)).'">';
+				print '<input type="text" class="right maxwidth50" id="value_unit" name="value_unit" value="'.dol_escape_htmltag((!empty($value_unit) ? $value_unit : "")).'">';
 				print '</td>';
 
 				// Quantity
@@ -2925,7 +2930,7 @@ if ($action != 'presend') {
 }
 
 // Presend form
-$modelmail = 'expensereport';
+$modelmail = 'expensereport_send';
 $defaulttopic = 'SendExpenseReportRef';
 $diroutput = $conf->expensereport->dir_output;
 $trackid = 'exp'.$object->id;

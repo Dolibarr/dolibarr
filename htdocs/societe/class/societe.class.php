@@ -920,6 +920,7 @@ class Societe extends CommonObject
 		$this->name = $this->name ? trim($this->name) : trim((string) $this->nom);
 		$this->setUpperOrLowerCase();
 		$this->nom = $this->name; // For backward compatibility
+
 		if (empty($this->client)) {
 			$this->client = 0;
 		}
@@ -1355,6 +1356,9 @@ class Societe extends CommonObject
 		if (empty($id)) {
 			$id = $this->id;
 		}
+		if (empty($this->country_id) && !empty($this->country_code)) {
+			$this->country_id = dol_getIdFromCode($this->db, $this->country_code, 'c_country', 'code', 'rowid');
+		}
 
 		$error = 0;
 
@@ -1372,7 +1376,7 @@ class Societe extends CommonObject
 		$this->address		= trim((string) $this->address);
 		$this->zip 			= trim((string) $this->zip);
 		$this->town 		= trim((string) $this->town);
-		$this->state_id 	= (is_numeric($this->state_id)) ? (int) trim((string) $this->state_id) : 0;
+		$this->state_id 	= (is_numeric($this->state_id)) ? (int) $this->state_id : 0;
 		$this->country_id 	= ($this->country_id > 0) ? $this->country_id : 0;
 		$this->phone		= trim((string) $this->phone);
 		$this->phone		= preg_replace("/\s/", "", $this->phone);
@@ -2077,7 +2081,7 @@ class Societe extends CommonObject
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
 
-				$result = 1;
+				$result = $this->id;
 
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
@@ -2118,7 +2122,7 @@ class Societe extends CommonObject
 	 *    @param    string	$ref_alias 		Name_alias of third party (Warning, this can return several records)
 	 * 	  @param	int		$is_client		Only client third party
 	 *    @param	int		$is_supplier	Only supplier third party
-	 *    @return   int						>0 if OK, <0 if KO or if two records found, 0 if not found.
+	 *    @return   int						ID of thirdparty found if OK, <0 if KO or if two records found, 0 if not found.
 	 */
 	public function findNearest($rowid = 0, $ref = '', $ref_ext = '', $barcode = '', $idprof1 = '', $idprof2 = '', $idprof3 = '', $idprof4 = '', $idprof5 = '', $idprof6 = '', $email = '', $ref_alias = '', $is_client = 0, $is_supplier = 0)
 	{

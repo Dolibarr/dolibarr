@@ -201,6 +201,13 @@ class SecurityTest extends CommonClassTest
 		$result = testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject bbb');
 
+		$test='<marquee onbeforeintput="alert(1)">';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject onbeforeintput');
+		$test='<marquee onbounce="alert(1)">';
+		$result=testSqlAndScriptInject($test, 0);
+		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject onbounce');
+
 		$test = '<SCRIPT SRC=http://xss.rocks/xss.js></SCRIPT>';
 		$result = testSqlAndScriptInject($test, 0);
 		$this->assertGreaterThanOrEqual($expectedresult, $result, 'Error on testSqlAndScriptInject ccc');
@@ -1094,6 +1101,7 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('358080.38', $result);
 
 		global $leftmenu;	// Used into strings to eval
+		$conf->global->MAIN_FEATURES_LEVEL = 1;
 
 		$leftmenu = 'AAA';
 		$result = dol_eval('$conf->currency && preg_match(\'/^(AAA|BBB)/\',$leftmenu)', 1, 1, '1');
@@ -1116,7 +1124,7 @@ class SecurityTest extends CommonClassTest
 		print "result16 = ".$result."\n";
 		$this->assertFalse($result);
 
-		$string = '(isModEnabled("agenda") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
+		$string = '(isModEnabled("user") || isModEnabled("resource")) && getDolGlobalInt("MAIN_FEATURES_LEVEL") >= 0 && preg_match(\'/^(admintools|all|XXX)/\', $leftmenu)';
 		$result = dol_eval($string, 1, 1, '1');
 		print "result17 = ".$result."\n";
 		$this->assertTrue($result);

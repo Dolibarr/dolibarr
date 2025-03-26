@@ -332,7 +332,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<script type="text/javascript">';
 	print '	function getStringArg(){';
 	print '		var pattern = "";';
-	print '		pattern += $("#minlenght").val() + ";";';
+	print '		pattern += $("#minlength").val() + ";";';
 	print '		pattern += $("#NbMajMin").val() + ";";';
 	print '		pattern += $("#NbNumMin").val() + ";";';
 	print '		pattern += $("#NbSpeMin").val() + ";";';
@@ -342,14 +342,14 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '	}';
 
 	print '	function valuePossible(){';
-	print '		var fields = ["#minlenght", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
+	print '		var fields = ["#minlength", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
 	print '		for(var i = 0 ; i < fields.length ; i++){';
 	print '		    if($(fields[i]).val() < $(fields[i]).attr("min")){';
 	print '		        return false;';
 	print '		    }';
 	print '		}';
 	print '		';
-	print '		var length = parseInt($("#minlenght").val());';
+	print '		var length = parseInt($("#minlength").val());';
 	print '		var length_mini = parseInt($("#NbMajMin").val()) + parseInt($("#NbNumMin").val()) + parseInt($("#NbSpeMin").val());';
 	print '		return length >= length_mini;';
 	print '	}';
@@ -373,7 +373,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '		}';
 	print '	}';
 
-	print '	$("#minlenght").change(function(){valuePatternChange();});';
+	print '	$("#minlength").change(function(){valuePatternChange();});';
 	print '	$("#NbMajMin").change(function(){valuePatternChange();});';
 	print '	$("#NbNumMin").change(function(){valuePatternChange();});';
 	print '	$("#NbSpeMin").change(function(){valuePatternChange();});';

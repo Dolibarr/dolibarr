@@ -139,7 +139,7 @@ class Task extends CommonObjectLine
 	public $timespent_old_duration;
 	public $timespent_date;
 	public $timespent_datehour; // More accurate start date (same than timespent_date but includes hours, minutes and seconds)
-	public $timespent_withhour; // 1 = we entered also start hours for timesheet line
+	public $timespent_withhour; // 0 or 1 = we have entered also start hours for timesheet line
 	public $timespent_fk_user;
 	public $timespent_thm;
 	public $timespent_note;
@@ -1467,10 +1467,9 @@ class Task extends CommonObjectLine
 		$timespent->fk_user = $this->timespent_fk_user;
 		$timespent->fk_product = $this->timespent_fk_product;
 		$timespent->note = $this->timespent_note;
-		$timespent->datec = $this->db->idate($now);
+		$timespent->datec = $now;
 
 		$result = $timespent->create($user);
-
 		if ($result > 0) {
 			$ret = $result;
 			$this->timespent_id = $result;
@@ -2109,15 +2108,15 @@ class Task extends CommonObjectLine
 			$projectstatic = new Project($this->db);
 			$projectstatic->fetch($ori_project_id);
 
-			//Origin project start date
-			$orign_project_dt_start = $projectstatic->date_start;
+			// Origin project start date
+			$orign_project_dt_start = (!isset($projectstatic->date_start) || $projectstatic->date_start == '') ? $projectstatic->date_c : $projectstatic->date_start;
 
-			//Calculate new task start date with difference between origin proj start date and origin task start date
+			// Calculate new task start date with difference between origin proj start date and origin task start date
 			if (!empty($clone_task->date_start)) {
 				$clone_task->date_start = $now + $clone_task->date_start - $orign_project_dt_start;
 			}
 
-			//Calculate new task end date with difference between origin proj end date and origin task end date
+			// Calculate new task end date with difference between origin proj start date and origin task end date
 			if (!empty($clone_task->date_end)) {
 				$clone_task->date_end = $now + $clone_task->date_end - $orign_project_dt_start;
 			}

@@ -609,7 +609,7 @@ function showSkins($fuser, $edit = 0, $foruserprofile = false)
 		print '<td>'.$langs->trans("UseBorderOnTable").'</td>';
 		print '<td colspan="'.($colspan - 1).'" class="valignmiddle">';
 		if ($edit) {
-			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1);
+			print ajax_constantonoff('THEME_ELDY_USEBORDERONTABLE', array(), null, 0, 0, 1, 2, 0, 1);
 			//print $form->selectyesno('THEME_ELDY_USEBORDERONTABLE', $conf->global->THEME_ELDY_USEBORDERONTABLE, 1);
 		} else {
 			print yn(getDolGlobalString('THEME_ELDY_USEBORDERONTABLE'));

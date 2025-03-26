@@ -223,7 +223,7 @@ class Ticket extends CommonObject
 	public $cache_msgs_ticket;
 
 	/**
-	 * @var int 	Notify thirdparty at create
+	 * @var int 	Save if a thirdparty was notified at creation at ticket or not
 	 */
 	public $notify_tiers_at_create;
 
@@ -328,7 +328,7 @@ class Ticket extends CommonObject
 		'progress' => array('type' => 'integer', 'label' => 'Progression', 'visible' => -1, 'enabled' => 1, 'position' => 540, 'notnull' => -1, 'css' => 'right', 'help' => "", 'isameasure' => 2, 'csslist' => 'width50'),
 		'resolution' => array('type' => 'integer', 'label' => 'Resolution', 'visible' => -1, 'enabled' => 'getDolGlobalString("TICKET_ENABLE_RESOLUTION")', 'position' => 550, 'notnull' => 1),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'PDFTemplate', 'enabled' => 1, 'visible' => 0, 'position' => 560),
-		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 570),
+		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => 0, 'position' => 570),
 		'fk_statut' => array('type' => 'integer', 'label' => 'Status', 'visible' => 1, 'enabled' => 1, 'position' => 600, 'notnull' => 1, 'index' => 1, 'arrayofkeyval' => array(0 => 'Unread', 1 => 'Read', 2 => 'Assigned', 3 => 'InProgress', 5 => 'NeedMoreInformation', 7 => 'OnHold', 8 => 'SolvedClosed', 9 => 'Deleted')),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -2, 'position' => 900),
 	);
@@ -891,7 +891,7 @@ class Ticket extends CommonObject
 		$socid = $user->socid ? $user->socid : 0;
 		// If the internal user must only see his customers, force searching by him
 		$search_sale = 0;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$search_sale = $user->id;
 		}
 		// Search on sale representative
@@ -1711,6 +1711,8 @@ class Ticket extends CommonObject
 
 			$this->db->begin();
 
+			$this->status = Ticket::STATUS_READ;
+
 			$sql = "UPDATE ".MAIN_DB_PREFIX."ticket";
 			$sql .= " SET fk_statut = ".Ticket::STATUS_READ.", date_read = '".$this->db->idate(dol_now())."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -1721,7 +1723,7 @@ class Ticket extends CommonObject
 				$this->context['actionmsg'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 				$this->context['actionmsg2'] = $langs->trans('TicketLogMesgReadBy', $this->ref, $user->getFullName($langs));
 
-				if (!$error && !$notrigger) {
+				if (!$notrigger) {
 					// Call trigger
 					$result = $this->call_trigger('TICKET_MODIFY', $user);
 					if ($result < 0) {
@@ -1734,12 +1736,16 @@ class Ticket extends CommonObject
 					$this->db->commit();
 					return 1;
 				} else {
+					$this->status = $this->oldcopy->status;
+
 					$this->db->rollback();
 					$this->error = implode(',', $this->errors);
 					dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
 					return -1;
 				}
 			} else {
+				$this->status = $this->oldcopy->status;
+
 				$this->db->rollback();
 				$this->error = $this->db->lasterror();
 				dol_syslog(get_class($this)."::markAsRead ".$this->error, LOG_ERR);
@@ -1894,26 +1900,37 @@ class Ticket extends CommonObject
 
 		if ($actionid > 0) {
 			if (is_array($attachedfiles) && array_key_exists('paths', $attachedfiles) && count($attachedfiles['paths']) > 0) {
+				// If there is some files, we must now link them to the event, so we can show them per event.
 				foreach ($attachedfiles['paths'] as $key => $filespath) {
-					$destdir = $conf->agenda->dir_output.'/'.$actionid;
-					$destfile = $destdir.'/'.$attachedfiles['names'][$key];
-					if (dol_mkdir($destdir) >= 0) {
+					// Disabled the move into another directory, Files for a ticket should be stored into ticket directory. It generates too much troubles.
+					$destdir = $conf->ticket->dir_output.'/'.$this->ref;
+					//$destfile = $destdir.'/'.$attachedfiles['names'][$key];
+					//if (dol_mkdir($destdir) >= 0) {
 						require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-						dol_move($filespath, $destfile);
-						if (in_array($actioncomm->code,  array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
-							$ecmfile = new EcmFiles($this->db);
-							$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
-							$destdir = preg_replace('/[\\/]$/', '', $destdir);
-							$destdir = preg_replace('/^[\\/]/', '', $destdir);
-							$ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
-							require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-							$ecmfile->share = getRandomPassword(true);
+						//dol_move($filespath, $destfile);	// Disabled, a file for a ticket should be stored into ticket directory. It generates big trouble.
+					if (in_array($actioncomm->code,  array('TICKET_MSG', 'TICKET_MSG_SENTBYMAIL'))) {
+						$ecmfile = new EcmFiles($this->db);
+						$destdir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $destdir);
+						$destdir = preg_replace('/[\\/]$/', '', $destdir);
+						$destdir = preg_replace('/^[\\/]/', '', $destdir);
+
+						$result = $ecmfile->fetch(0, '', $destdir.'/'.$attachedfiles['names'][$key]);
+
+						// TODO We must add a column into ecm_files table agenda_id to store the ID of event.
+						// $ecmfile->agenda_id = $actionid;
+
+						// Disabled, serious security hole. A file published into the ERP should not become public for everybody.
+						//require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+						//$ecmfile->share = getRandomPassword(true);
+
+						if ($result > 0) {
 							$result = $ecmfile->update($user);
 							if ($result < 0) {
 								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
 							}
 						}
 					}
+					//}
 				}
 			}
 		}
@@ -2573,7 +2590,9 @@ class Ticket extends CommonObject
 			}
 
 			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
+
 			$res = dol_move($filepath[$i], $destfile, 0, 1, 0, 1, $moreinfo);
+
 			if (!$res) {
 				// Move has failed
 				$this->error = "Failed to move file ".dirbasename($filepath[$i])." into ".dirbasename($destfile);
@@ -2760,10 +2779,10 @@ class Ticket extends CommonObject
 						}
 
 						// Add global email address recipient
-						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') &&
-							getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)
-						) {
-							$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+						if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
+							if (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')) {
+								$sendto[getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO')] = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+							}
 						}
 
 						if (!empty($sendto)) {
@@ -3137,7 +3156,7 @@ class Ticket extends CommonObject
 
 		$sql = "SELECT p.rowid, p.ref, p.datec as datec";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
-		if (isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+		if (empty($user->socid) && isModEnabled('societe') && !$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -3201,7 +3220,7 @@ class Ticket extends CommonObject
 		$sql = "SELECT count(p.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."ticket as p";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";

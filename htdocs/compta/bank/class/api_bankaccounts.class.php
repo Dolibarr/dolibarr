@@ -159,6 +159,8 @@ class BankAccounts extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		$account = new Account($this->db);
+		// Date of the initial balance (required to create an account).
+		$account->date_solde = time();
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
 				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
@@ -168,8 +170,6 @@ class BankAccounts extends DolibarrApi
 
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
-		// Date of the initial balance (required to create an account).
-		$account->date_solde = time();
 		// courant and type are the same thing but the one used when
 		// creating an account is courant
 		$account->courant = $account->type; // deprecated
@@ -348,6 +348,12 @@ class BankAccounts extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$account->array_options[$index] = $this->_checkValForAPI($field, $val, $account);
+				}
+				continue;
+			}
 			$account->$field = $this->_checkValForAPI($field, $value, $account);
 		}
 

@@ -693,11 +693,11 @@ class Invoices extends DolibarrApi
 			}
 		}
 
-		if ($this->invoice->update(DolibarrApiAccess::$user)) {
+		if ($this->invoice->update(DolibarrApiAccess::$user) > 0) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->invoice->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -1502,7 +1502,11 @@ class Invoices extends DolibarrApi
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
-		$paymentobj->datepaye     = dol_stringtotime($datepaye);
+		if (is_numeric($datepaye)) {
+			$paymentobj->datepaye = $datepaye;
+		} else {
+			$paymentobj->datepaye = dol_stringtotime($datepaye);
+		}
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid = $paymentid;
@@ -1650,7 +1654,11 @@ class Invoices extends DolibarrApi
 
 		// Creation of payment line
 		$paymentobj = new Paiement($this->db);
-		$paymentobj->datepaye     = $datepaye;
+		if (is_numeric($datepaye)) {
+			$paymentobj->datepaye = $datepaye;
+		} else {
+			$paymentobj->datepaye = dol_stringtotime($datepaye);
+		}
 		$paymentobj->amounts      = $amounts; // Array with all payments dispatching with invoice id
 		$paymentobj->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
 		$paymentobj->paiementid   = $paymentid;

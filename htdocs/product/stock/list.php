@@ -199,6 +199,7 @@ $form = new Form($db);
 $warehouse = new Entrepot($db);
 
 $now = dol_now();
+$totalarray = array();
 
 $title = $langs->trans("Warehouses");
 $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
@@ -615,7 +616,6 @@ if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 }
 print '</tr>'."\n";
 
-$totalarray = array();
 $totalarray['nbfield'] = 0;
 
 // Fields title label

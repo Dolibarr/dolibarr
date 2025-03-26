@@ -11,7 +11,8 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +178,9 @@ class ExtraFields
 			// Add declaration of field into table
 			$result2 = $this->create_label($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $param, $alwayseditable, $perms, $list, $help, $default_value, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams);
 			$err2 = $this->errno;
-			if ($result2 > 0 || ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
+			if ($result2 > 0
+				|| ($err1 == 'DB_ERROR_COLUMN_ALREADY_EXISTS' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+				|| ($type == 'separate' && $err2 == 'DB_ERROR_RECORD_ALREADY_EXISTS')) {
 				$this->error = '';
 				$this->errno = '0';
 				return 1;
@@ -746,7 +749,7 @@ class ExtraFields
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
 					} else {
 						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$this->db->sanitize($attrname);
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
@@ -1972,7 +1975,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
+				$value = price($value, 0, $outputlangs, 0, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
@@ -1983,7 +1986,7 @@ class ExtraFields
 				$value = $pricetmp[0];
 			}
 			if ($value || $value == '0') {
-				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
+				$value = price($value, 0, $outputlangs, 0, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), -1, $currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -2217,9 +2220,20 @@ class ExtraFields
 				if (!empty($classpath)) {
 					dol_include_once($InfoFieldList[1]);
 					if ($classname && class_exists($classname)) {
-						$object = new $classname($this->db);
-						$object->fetch($value);
-						$value = $object->getNomUrl(3);
+						$tmpobject = new $classname($this->db);
+						'@phan-var-force CommonObject $tmpobject';
+						$tmpobject->fetch($value);
+
+						if (get_class($tmpobject) == 'Categorie') {
+							// For category object, rendering must use the same method than the one deinfed into showCategories()
+							$color = $tmpobject->color;
+							$sfortag = '<span class="noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
+							$sfortag .= $tmpobject->getNomUrl(3);
+							$sfortag .= '</span>';
+							$value = $sfortag;
+						} else {
+							$value = $tmpobject->getNomUrl(3);
+						}
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -2688,7 +2702,11 @@ class ExtraFields
 					if (!GETPOSTISSET($keyprefix."options_".$key.$keysuffix)) {
 						continue; // Value was not provided, we should not set it.
 					}
+
 					$value_key = GETPOST($keyprefix."options_".$key.$keysuffix);
+					if ($value_key === '') {
+						$value_key = null;
+					}
 				}
 
 				$array_options[$keyprefix."options_".$key] = $value_key; // No keyprefix here. keyprefix is used only for read.

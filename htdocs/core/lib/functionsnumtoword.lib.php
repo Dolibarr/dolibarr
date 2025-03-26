@@ -36,8 +36,6 @@
  */
 function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 {
-	global $conf;
-
 	//$num = str_replace(array(',', ' '), '', trim($num));	This should be useless since $num MUST be a php numeric value
 	if (!$num) {
 		return false;
@@ -48,18 +46,12 @@ function dol_convertToWord($num, $langs, $currency = '', $centimes = false)
 	}
 
 	if (isModEnabled('numberwords')) {
-		if ($currency) {
-			$type = '1';
-		} else {
-			$type = '0';
-		}
-
-		$concatWords = $langs->getLabelFromNumber($num, $type);
+		$concatWords = $langs->getLabelFromNumber($num, $currency);
 		return $concatWords;
 	} else {
 		$TNum = explode('.', (string) $num);
 
-		$num = (int) $TNum[0];
+		$num = abs((int) $TNum[0]);
 		$words = array();
 		$list1 = array(
 			'',

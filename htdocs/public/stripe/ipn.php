@@ -314,7 +314,7 @@ if ($event->type == 'payout.created') {
 	//TODO: delete customer's source
 } elseif ($event->type == 'customer.deleted') {
 	$db->begin();
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' AND site = 'stripe'";
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).

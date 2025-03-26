@@ -603,10 +603,7 @@ class modAgenda extends DolibarrModules
 		// Permissions
 		$this->remove($options);
 
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='member' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','member',".((int) $conf->entity).")"
-		);
+		$sql = array();
 
 		return $this->_init($sql, $options);
 	}

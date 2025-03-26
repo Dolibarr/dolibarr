@@ -362,7 +362,7 @@ a.dropdown-item {
 	display: block !important;
 	box-sizing: border-box;
 	width: 100%;
-	padding: .3em 1.5em .4em 1em;
+	padding: .5em 1.5em .5em 1em;
 	clear: both;
 	font-weight: 400;
 	color: #212529  !important;

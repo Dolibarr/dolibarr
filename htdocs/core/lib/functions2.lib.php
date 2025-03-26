@@ -1353,7 +1353,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			if ($bentityon) { // only if entity enable
 				$maskrefclient_sql .= " AND entity IN (".getEntity($sharetable).")";
 			} elseif (!empty($forceentity)) {
-				$sql .= " AND entity IN (".$db->sanitize($forceentity).")";
+				$maskrefclient_sql .= " AND entity IN (".$db->sanitize($forceentity).")";
 			}
 			if ($where) {
 				$maskrefclient_sql .= $where; //use the same optional where as general mask

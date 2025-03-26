@@ -4133,9 +4133,9 @@ function migrate_delete_old_files($db, $langs, $conf)
 
 	foreach ($filetodeletearray as $filetodelete) {
 		//print '<b>'DOL_DOCUMENT_ROOT.$filetodelete."</b><br>\n";
-		if (file_exists(DOL_DOCUMENT_ROOT.$filetodelete) || preg_match('/\*/', $filetodelete)) {
+		if (preg_match('/\*/', $filetodelete) || file_exists(DOL_DOCUMENT_ROOT.$filetodelete)) {
 			//print "Process file ".$filetodelete."\n";
-			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, 0, 0, null, true, false);
+			$result = dol_delete_file(DOL_DOCUMENT_ROOT.$filetodelete, 0, (preg_match('/\*/', $filetodelete) ? 1 : 0), 0, null, true, false); // nophperrors to avoid false positive with asterisk
 			if (!$result) {
 				$langs->load("errors");
 				print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile", DOL_DOCUMENT_ROOT.$filetodelete);

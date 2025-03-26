@@ -56,7 +56,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
 	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
-	$object->birthday_alert = GETPOSTINT("birthday_alert");
+	$object->birthday_alert = (GETPOST('birthday_alert', 'alpha') == "on" ? 1 : 0);
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';

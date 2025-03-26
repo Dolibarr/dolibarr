@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2014-2023  Alexandre Spangaro   <aspangaro@easya.solutions>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020       Maxime DEMAREST      <maxime@indelog.fr>
+/* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2015		Frederic France				<frederic.france@free.fr>
+ * Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ if (empty($reshook)) {
 		if ($result > 0) {
 			setEventMessages($langs->trans('LoanPaid'), null, 'mesgs');
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -97,7 +97,7 @@ if (empty($reshook)) {
 			header("Location: list.php");
 			exit;
 		} else {
-			setEventMessages($loan->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -106,7 +106,7 @@ if (empty($reshook)) {
 		if (!$cancel) {
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = price2num(GETPOST('capital'));
+			$capital = GETPOSTFLOAT('capital');
 			$rate = price2num(GETPOST('rate'));
 
 			if (!$capital) {
@@ -141,7 +141,7 @@ if (empty($reshook)) {
 				$object->note_private = GETPOST('note_private', 'restricthtml');
 				$object->note_public = GETPOST('note_public', 'restricthtml');
 				$object->fk_project = GETPOSTINT('projectid');
-				$object->insurance_amount = GETPOSTINT('insurance_amount');
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -181,7 +181,7 @@ if (empty($reshook)) {
 
 			$datestart = dol_mktime(12, 0, 0, GETPOSTINT('startmonth'), GETPOSTINT('startday'), GETPOSTINT('startyear'));
 			$dateend = dol_mktime(12, 0, 0, GETPOSTINT('endmonth'), GETPOSTINT('endday'), GETPOSTINT('endyear'));
-			$capital = price2num(GETPOST('capital'));
+			$capital = GETPOSTFLOAT('capital');
 
 			if (!$capital) {
 				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("LoanCapital")), null, 'errors');
@@ -192,7 +192,7 @@ if (empty($reshook)) {
 				$object->capital = $capital;
 				$object->nbterm = GETPOSTINT("nbterm");
 				$object->rate = price2num(GETPOST("rate", 'alpha'));
-				$object->insurance_amount = price2num(GETPOSTINT('insurance_amount'));
+				$object->insurance_amount = GETPOSTFLOAT('insurance_amount');
 
 				$accountancy_account_capital = GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance = GETPOST('accountancy_account_insurance');
@@ -447,6 +447,7 @@ if ($id > 0) {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> : ';
 				}
 				if ($action == 'classify') {
+					$maxlength = 0;
 					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
 					$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 					$morehtmlref .= '<input type="hidden" name="action" value="classin">';

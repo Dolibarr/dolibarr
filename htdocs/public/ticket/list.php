@@ -70,10 +70,10 @@ if (GETPOST('btn_view_ticket_list')) {
 	unset($_SESSION['track_id_customer']);
 	unset($_SESSION['email_customer']);
 }
-if (isset($_SESSION['track_id_customer'])) {
+if (empty($track_id) && isset($_SESSION['track_id_customer'])) {
 	$track_id = $_SESSION['track_id_customer'];
 }
-if (isset($_SESSION['email_customer'])) {
+if (empty($email) && isset($_SESSION['email_customer'])) {
 	$email = strtolower($_SESSION['email_customer']);
 }
 
@@ -85,7 +85,6 @@ $hookmanager->initHooks(array('ticketpubliclist', 'globalcard'));
 if (!isModEnabled('ticket')) {
 	httponly_accessforbidden('Module Ticket not enabled');
 }
-
 
 
 /*
@@ -210,6 +209,7 @@ if ($action == "view_ticketlist") {
 
 		// Store current page url
 		$url_page_current = dol_buildpath('/public/ticket/list.php', 1);
+		$contextpage = $url_page_current;
 
 		// Do we click on purge search criteria ?
 		if (GETPOST("button_removefilter_x")) {
@@ -382,26 +382,26 @@ if ($action == "view_ticketlist") {
 		}
 		$sql .= " WHERE t.entity IN (".getEntity('ticket').")";
 		$sql .= " AND ((tc.source = 'external'";
-		$sql .= " AND tc.element='".$db->escape($object->element)."'";
-		$sql .= " AND tc.active=1";
-		$sql .= " AND sp.email='".$db->escape($_SESSION['email_customer'])."')";		// email found into an external contact
-		$sql .= " OR s.email='".$db->escape($_SESSION['email_customer'])."'";			// or email of the linked company
-		$sql .= " OR t.origin_email='".$db->escape($_SESSION['email_customer'])."')";	// or email of the requester
+		$sql .= " AND tc.element = '".$db->escape($object->element)."'";
+		$sql .= " AND tc.active = 1";
+		$sql .= " AND sp.email = '".$db->escape($_SESSION['email_customer'])."')";		// email found into an external contact
+		$sql .= " OR s.email = '".$db->escape($_SESSION['email_customer'])."'";			// or email of the linked company
+		$sql .= " OR t.origin_email = '".$db->escape($_SESSION['email_customer'])."')";	// or email of the requester
 		// Manage filter
 		if (!empty($filter)) {
 			foreach ($filter as $key => $value) {
 				if (strpos($key, 'date')) { // To allow $filter['YEAR(s.dated)']=>$year
-					$sql .= " AND ".$key." = '".$db->escape($value)."'";
+					$sql .= " AND ".$db->sanitize($key)." = '".$db->escape($value)."'";
 				} elseif (($key == 't.fk_user_assign') || ($key == 't.type_code') || ($key == 't.category_code') || ($key == 't.severity_code')) {
-					$sql .= " AND ".$key." = '".$db->escape($value)."'";
+					$sql .= " AND ".$db->sanitize($key)." = '".$db->escape($value)."'";
 				} elseif ($key == 't.fk_statut') {
 					if (is_array($value) && count($value) > 0) {
-						$sql .= " AND ".$key." IN (".$db->sanitize(implode(',', $value)).")";
+						$sql .= " AND ".$db->sanitize($key)." IN (".$db->sanitize(implode(',', $value)).")";
 					} else {
-						$sql .= " AND ".$key." = ".((int) $value);
+						$sql .= " AND ".$db->sanitize($key)." = ".((int) $value);
 					}
 				} else {
-					$sql .= " AND ".$key." LIKE '%".$db->escape($value)."%'";
+					$sql .= " AND ".$db->sanitize($key)." LIKE '%".$db->escape($value)."%'";
 				}
 			}
 		}
@@ -701,7 +701,10 @@ if ($action == "view_ticketlist") {
 					// Statut
 					if (!empty($arrayfields['t.fk_statut']['checked'])) {
 						print '<td class="nowraponall">';
-						$object->fk_statut = $obj->fk_statut;
+						$object->status = $obj->fk_statut;
+						if (getDolGlobalString('TICKET_SHOW_PROGRESSION')) {
+							$object->progress = $obj->progress;
+						}
 						print $object->getLibStatut(2);
 						print '</td>';
 					}

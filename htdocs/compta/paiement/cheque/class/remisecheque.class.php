@@ -345,7 +345,7 @@ class RemiseCheque extends CommonObject
 	 */
 	public function validate($user)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->errno = 0;
 
@@ -357,7 +357,7 @@ class RemiseCheque extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 			$sql .= " SET statut = 1, ref = '".$this->db->escape($numref)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id);
-			$sql .= " AND entity = ".$conf->entity;
+			$sql .= " AND entity = ".((int) $conf->entity);
 			$sql .= " AND statut = 0";
 
 			dol_syslog("RemiseCheque::Validate", LOG_DEBUG);
@@ -368,13 +368,15 @@ class RemiseCheque extends CommonObject
 				if ($num == 1) {
 					$this->ref = $numref;
 					$this->statut = 1;
+					$this->status = 1;
 				} else {
 					$this->errno = -1029;
-					dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
+					dol_syslog("Remisecheque::validate Error ".$this->errno, LOG_ERR);
 				}
 			} else {
 				$this->errno = -1033;
-				dol_syslog("Remisecheque::Validate Error ".$this->errno, LOG_ERR);
+				$this->error = $this->db->lasterror();
+				dol_syslog("Remisecheque::validate Error ".$this->errno, LOG_ERR);
 			}
 		}
 

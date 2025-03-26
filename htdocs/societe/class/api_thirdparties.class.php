@@ -310,7 +310,7 @@ class Thirdparties extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->company->array_options[$index] = $val;
+					$this->company->array_options[$index] = $this->_checkValForAPI($field, $val, $this->company);
 				}
 				continue;
 			}
@@ -321,7 +321,7 @@ class Thirdparties extends DolibarrApi
 			$this->company->setNoEmail($this->company->no_email);
 		}
 
-		if ($this->company->update($id, DolibarrApiAccess::$user, 1, '', '', 'update', 1) > 0) {
+		if ($this->company->update($id, DolibarrApiAccess::$user, 1, 1, 1, 'update', 1) > 0) {
 			return $this->get($id);
 		} else {
 			throw new RestException(500, $this->company->error);

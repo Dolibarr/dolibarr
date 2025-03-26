@@ -172,15 +172,15 @@ if ($action == 'confirm_delete') {
 			$callbacktodel .= '/core/modules/oauth/google_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_GITHUB') {
 			$callbacktodel .= '/core/modules/oauth/github_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
-		} elseif ($label == 'OAUTH_STRIPE_LIVE') {
+		} elseif ($label == 'OAUTH_STRIPELIVE') {
 			$callbacktodel .= '/core/modules/oauth/stripelive_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
-		} elseif ($label == 'OAUTH_STRIPE_TEST') {
+		} elseif ($label == 'OAUTH_STRIPETEST') {
 			$callbacktodel .= '/core/modules/oauth/stripetest_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_MICROSOFT') {
 			$callbacktodel .= '/core/modules/oauth/microsoft_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		} elseif ($label == 'OAUTH_MICROSOFT2') {
 			$callbacktodel .= '/core/modules/oauth/microsoft2_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
-		} elseif ($label == 'OAUTH_OTHER') {
+		} elseif ($label == 'OAUTH_GENERIC') {
 			$callbacktodel .= '/core/modules/oauth/generic_oauthcallback.php?action=delete&keyforprovider='.$provider.'&token='.newToken().'&backtourl='.urlencode($backtourl);
 		}
 		header("Location: ".$callbacktodel);
@@ -238,9 +238,11 @@ print dol_get_fiche_head($head, 'services', '', -1, '');
 print '<span class="opacitymedium">'.$langs->trans("ListOfSupportedOauthProviders").'</span><br><br>';
 
 
+$list = getAllOauth2Array();
+
+
 print '<select name="provider" id="provider" class="minwidth150">';
 print '<option name="-1" value="-1">'.$langs->trans("OAuthProvider").'</option>';
-$list = getAllOauth2Array();
 // TODO Make a loop directly on getSupportedOauth2Array() and remove getAllOauth2Array()
 foreach ($list as $key) {
 	$supported = 0;
@@ -368,7 +370,7 @@ if (count($listinsetup) > 0) {
 			print '<td></td>';
 			print '</tr>';
 
-			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
 				print '<td>'.$langs->trans("URLOfServiceForAuthorization").'</td>';
 				print '<td><input style="width: 80%" type="text" name="'.$key[3].'" value="'.getDolGlobalString($key[3]).'" >';
@@ -413,7 +415,7 @@ if (count($listinsetup) > 0) {
 
 		// TODO Move this into token generation ?
 		if ($supported) {
-			if ($keyforsupportedoauth2array == 'OAUTH_OTHER_NAME') {
+			if ($keyforsupportedoauth2array == 'OAUTH_GENERIC_NAME') {
 				print '<tr class="oddeven value">';
 				print '<td>'.$langs->trans("Scopes").'</td>';
 				print '<td>';

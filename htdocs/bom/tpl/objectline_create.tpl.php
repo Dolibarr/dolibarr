@@ -185,10 +185,12 @@ if ($filtertype != 1) {
 	print $formproduct->selectMeasuringUnits("fk_unit", "time", $fk_unit_default, 1);
 	print '</td>';
 
-	$coldisplay++;
-	print '<td class="bordertop nobottom nowrap linecolworkstation">';
-	print $formproduct->selectWorkstations('', 'idworkstations', 1);
-	print '</td>';
+	if (isModEnabled('workstation')) {
+		$coldisplay++;
+		print '<td class="bordertop nobottom nowrap linecolworkstation">';
+		print $formproduct->selectWorkstations('', 'idworkstations', 1);
+		print '</td>';
+	}
 
 	$coldisplay++;
 	print '<td class="bordertop nobottom nowrap linecolcost right">';

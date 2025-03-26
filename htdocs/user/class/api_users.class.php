@@ -395,6 +395,12 @@ class Users extends DolibarrApi
 				$this->useraccount->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->useraccount->array_options[$index] = $this->_checkValForAPI($field, $val, $this->useraccount);
+				}
+				continue;
+			}
 
 			if (DolibarrApiAccess::$user->admin) {	// If user for API is admin
 				if ($field == 'admin' && $value != $this->useraccount->admin && empty($value)) {

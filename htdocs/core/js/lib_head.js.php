@@ -1040,11 +1040,11 @@ function document_preview(file, type, title)
 
 		};
 		img.src = file;
-
 	}
 
+	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
@@ -1321,7 +1321,7 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).ready(function() {
-	jQuery(".butAction.dropdown-toggle").on("click", function(event) {
+	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		var parentholder = jQuery(".butAction.dropdown-toggle").closest(".dropdown");
 			 var offset = parentholder.offset();

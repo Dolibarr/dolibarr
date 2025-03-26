@@ -630,7 +630,7 @@ if ($search_accountancy_code_buy_intra) {
 if ($search_accountancy_code_buy_export) {
 	$sql .= natural_search($alias_product_perentity . '.accountancy_code_buy_export', clean_account($search_accountancy_code_buy_export));
 }
-if (getDolGlobalString('PRODUCT_USE_UNITS') && $search_units) {
+if (getDolGlobalString('PRODUCT_USE_UNITS') && !empty($search_units) && $search_units !== 'none') {
 	$sql .= natural_search('cu.rowid', $search_units);
 }
 // Add where from extra fields
@@ -852,7 +852,12 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->hasRight($rightskey, 'creer')) {
-	$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
+	if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+		|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')
+		|| getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		$arrayofmassactions['preupdateprice'] = img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("UpdatePrice");
+	}
+
 	$arrayofmassactions['switchonsalestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnSaleStatus");
 	$arrayofmassactions['switchonpurchasestatus'] = img_picto('', 'stop-circle', 'class="pictofixedwidth"').$langs->trans("SwitchOnPurchaseStatus");
 }
@@ -1983,7 +1988,7 @@ while ($i < $imaxinloop) {
 			foreach ($arraypricelevel as $key => $value) {
 				if (!empty($arrayfields['p.sellprice'.$key]['checked'])) {
 					print '<td class="right nowraponall">';
-					if (!empty($productpricescache[$obj->rowid])) {
+					if (!empty($productpricescache[$obj->rowid]) && isset($productpricescache[$obj->rowid][$key]['price_base_type'])) {
 						if ($productpricescache[$obj->rowid][$key]['price_base_type'] == 'TTC') {
 							print '<span class="amount">'.price($productpricescache[$obj->rowid][$key]['price_ttc']).' '.$langs->trans("TTC").'</span>';
 						} else {

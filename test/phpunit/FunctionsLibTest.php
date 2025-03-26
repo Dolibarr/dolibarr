@@ -533,7 +533,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//Internet Explorer 11
+		// Internet Explorer 11
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
@@ -542,7 +542,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//Internet Explorer 11 bis
+		// Internet Explorer 11 bis
 		$user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; NP06; rv:11.0) like Gecko';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('ie', $tmp['browsername']);
@@ -551,7 +551,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertFalse($tmp['tablet']);
 		$this->assertEquals('classic', $tmp['layout']);
 
-		//iPad
+		// iPad
 		$user_agent = 'Mozilla/5.0 (iPad; CPU OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5355d Safari/8536.25';
 		$tmp = getBrowserInfo($user_agent);
 		$this->assertEquals('safari', $tmp['browsername']);
@@ -560,11 +560,19 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('tablet', $tmp['layout']);
 		$this->assertEquals('iphone', $tmp['phone']);
 
-		//Lynx
+		// Lynx
 		$user_agent = 'Lynx/2.8.8dev.3 libwww‑FM/2.14 SSL‑MM/1.4.1';
 		$tmp = getBrowserInfo($user_agent);
-		$this->assertEquals('lynxlinks', $tmp['browsername']);
+		$this->assertEquals('textbrowser', $tmp['browsername']);
 		$this->assertEquals('2.8.8', $tmp['browserversion']);
+		$this->assertEquals('unknown', $tmp['browseros']);
+		$this->assertEquals('classic', $tmp['layout']);
+
+		// W3M
+		$user_agent = 'w3m/1.2.3-git123456';
+		$tmp = getBrowserInfo($user_agent);
+		$this->assertEquals('textbrowser', $tmp['browsername']);
+		$this->assertEquals('1.2.3', $tmp['browserversion']);
 		$this->assertEquals('unknown', $tmp['browseros']);
 		$this->assertEquals('classic', $tmp['layout']);
 	}

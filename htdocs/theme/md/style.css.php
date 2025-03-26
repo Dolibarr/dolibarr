@@ -2552,7 +2552,7 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '35' : '6')); ?>px;
 	margin-<?php print $right; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '33' : '6')); ?>px;
-	<?php if (!empty($dol_hide_leftmenu) && !empty($dol_hide_topmenu)) {
+	<?php if (!empty($dol_hide_topmenu) || GETPOST('dol_openinpopup', 'aZ09')) {
 		print 'margin-top: 12px;';
 	} ?>
 	margin-bottom: 15px;
@@ -3503,10 +3503,10 @@ img.login, img.printer, img.entity {
 }
 .userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	/* border-radius: 8px; */
-	width: 20px;
-	height: 20px;
+	width: <?php echo $disableimages ? '26' : '30'; ?>px;
+	height: <?php echo $disableimages ? '26' : '30'; ?>px;
+	border-radius: 50%;
 	background-size: contain;
-	vertical-align: text-bottom;
 	background-color: #FFF;
 }
 img.userphoto {			/* size for user photo in lists */
@@ -6158,6 +6158,9 @@ a.cke_dialog_ui_button_ok span {
 }
 a.cke_button, a.cke_combo_button {
 	height: 18px !important;
+}
+div.cke_notifications_area .cke_notification_warning {
+	visibility: hidden;
 }
 
 

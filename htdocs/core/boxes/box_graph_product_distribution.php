@@ -154,7 +154,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data2)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data2 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data2 = array(array(0=>$langs->transnoentitiesnoconv("None"), 1=>1));
 				}
 
 				$filenamenb = $dir."/prodserforpropal-".$year.".png";
@@ -217,7 +217,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data3)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data3 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data3 = array(array(0=>$langs->transnoentitiesnoconv("None"), 1=>1));
 				}
 
 				$filenamenb = $dir."/prodserfororder-".$year.".png";
@@ -282,7 +282,7 @@ class box_graph_product_distribution extends ModeleBoxes
 				if (empty($data1)) {
 					$showpointvalue = 0;
 					$nocolor = 1;
-					$data1 = array(array(0=>$langs->trans("None"), 1=>1));
+					$data1 = array(array(0=>$langs->transnoentitiesnoconv("None"), 1=>1));
 				}
 				$filenamenb = $dir."/prodserforinvoice-".$year.".png";
 				$fileurlnb = DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&amp;file=prodserforinvoice-'.$year.'.png';

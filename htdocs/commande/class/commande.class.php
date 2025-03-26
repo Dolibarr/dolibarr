@@ -1535,7 +1535,7 @@ class Commande extends CommonOrder
 			$pu_ht = price2num($pu_ht);
 			$pu_ht_devise = price2num($pu_ht_devise);
 			$pu_ttc = price2num($pu_ttc);
-			$pa_ht = (float) price2num($pa_ht);
+			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5,1' or '5.1' or '5.1(XXX)', we must clean only if '5,1'
 			}
@@ -2715,16 +2715,16 @@ class Commande extends CommonOrder
 
 		$sql = "SELECT s.rowid, s.nom as name, s.client,";
 		$sql .= " c.rowid as cid, c.ref";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", sc.fk_soc, sc.fk_user";
 		}
 		$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 		$sql .= " WHERE c.entity IN (".getEntity('commande').")";
 		$sql .= " AND c.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 		if ($socid) {
@@ -3130,7 +3130,7 @@ class Commande extends CommonOrder
 			$remise_percent = (float) price2num($remise_percent);
 			$qty = (float) price2num($qty);
 			$pu = price2num($pu);
-			$pa_ht = (float) price2num($pa_ht);
+			$pa_ht = price2num($pa_ht); // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
 			$pu_ht_devise = price2num($pu_ht_devise);
 			if (!preg_match('/\((.*)\)/', (string) $txtva)) {
 				$txtva = price2num($txtva); // $txtva can have format '5.0(XXX)' or '5'
@@ -3551,7 +3551,7 @@ class Commande extends CommonOrder
 
 		$sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = " AND";
@@ -4059,7 +4059,7 @@ class Commande extends CommonOrder
 		$sql = "SELECT count(co.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande as co";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON co.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -4247,7 +4247,7 @@ class OrderLine extends CommonOrderLine
 
 	/**
 	 * Buy price without taxes
-	 * @var float
+	 * @var float|string|null
 	 */
 	public $pa_ht;
 	public $marge_tx;
@@ -4466,6 +4466,7 @@ class OrderLine extends CommonOrderLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float after check if empty value
 
 		dol_syslog(get_class($this)."::insert rang=".$this->rang);
 
@@ -4505,9 +4506,6 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->fk_parent_line)) {
 			$this->fk_parent_line = 0;
-		}
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
 		}
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';
@@ -4631,6 +4629,7 @@ class OrderLine extends CommonOrderLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float after check if empty value
 
 		// Clean parameters
 		if (empty($this->tva_tx)) {
@@ -4680,9 +4679,6 @@ class OrderLine extends CommonOrderLine
 		}
 		if (empty($this->fk_parent_line)) {
 			$this->fk_parent_line = 0;
-		}
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
 		}
 		if (empty($this->ref_ext)) {
 			$this->ref_ext = '';

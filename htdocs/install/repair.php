@@ -1347,10 +1347,16 @@ if ($ok && GETPOST('force_utf8_on_tables', 'alpha')) {
 				continue;
 			}
 
+			$collation = 'utf8_unicode_ci';
+			$defaultcollation = $db->getDefaultCollationDatabase();
+			if (preg_match('/general/', $defaultcollation)) {
+				$collation = 'utf8_general_ci';
+			}
+
 			print '<tr><td colspan="2">';
 			print $table[0];
 			$sql1 = "ALTER TABLE ".$db->sanitize($table[0])." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci";
+			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8_on_tables == 'confirmed') {
@@ -1471,10 +1477,16 @@ if ($ok && GETPOST('force_utf8mb4_on_tables', 'alpha')) {
 				continue;
 			}
 
+			$collation = 'utf8mb4_unicode_ci';
+			$defaultcollation = $db->getDefaultCollationDatabase();
+			if (preg_match('/general/', $defaultcollation)) {
+				$collation = 'utf8mb4_general_ci';
+			}
+
 			print '<tr><td colspan="2">';
 			print $table[0];
 			$sql1 = "ALTER TABLE ".$db->sanitize($table[0])." ROW_FORMAT=dynamic";
-			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
+			$sql2 = "ALTER TABLE ".$db->sanitize($table[0])." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);
 			print '<!-- '.$sql1.' -->';
 			print '<!-- '.$sql2.' -->';
 			if ($force_utf8mb4_on_tables == 'confirmed') {

@@ -292,7 +292,7 @@ class BOM extends CommonObject
 	 * @param  int 	$notrigger false=launch triggers after, true=disable triggers
 	 * @return int             Return integer <0 if KO, Id of created object if OK
 	 */
-	public function create(User $user, $notrigger = 1)
+	public function create(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;
@@ -546,7 +546,7 @@ class BOM extends CommonObject
 	 * @param  int 	$notrigger 0=launch triggers after, 1=disable triggers
 	 * @return int             Return integer <0 if KO, >0 if OK
 	 */
-	public function update(User $user, $notrigger = 1)
+	public function update(User $user, $notrigger = 0)
 	{
 		if ($this->efficiency <= 0 || $this->efficiency > 1) {
 			$this->efficiency = 1;

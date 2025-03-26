@@ -219,7 +219,7 @@ if (!GETPOST('code')) {
 	exit();
 } else {
 	// We are coming from the return of an OAuth2 provider page.
-	dol_syslog("We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
+	dol_syslog(basename(__FILE__)." We are coming from the oauth provider page keyforprovider=".$keyforprovider." code=".dol_trunc(GETPOST('code'), 5));
 
 	// We must validate that the $state is the same than the one into $_SESSION['oauthstateanticsrf'], return error if not.
 	if (isset($_SESSION['oauthstateanticsrf']) && $state != $_SESSION['oauthstateanticsrf']) {

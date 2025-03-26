@@ -158,7 +158,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm')) {
 		// Set incoterm
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
@@ -244,8 +244,6 @@ if ($id > 0 || !empty($ref)) {
 
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
-
-		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');

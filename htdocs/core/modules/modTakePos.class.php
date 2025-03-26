@@ -284,6 +284,7 @@ class modTakePos extends DolibarrModules
 				$societe->client = 1;
 				$societe->code_client = '-1';
 				$societe->code_fournisseur = '-1';
+				$societe->country_id = $mysoc->country_id ? $mysoc->country_id : 1; // By default we consider the default customer is in the same country than the company
 				$societe->note_private = "Default customer automatically created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
 
 				$searchcompanyid = $societe->create($user);

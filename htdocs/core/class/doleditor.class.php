@@ -160,6 +160,8 @@ class DolEditor
 		$found = 0;
 		$out = '';
 
+		$this->content = ($this->content ?? ''); // to avoid htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated
+
 		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
 			//$out.= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'" '.($this->readonly?' disabled':'').' rows="'.$this->rows.'"'.(preg_match('/%/',$this->cols)?' style="margin-top: 5px; width: '.$this->cols.'"':' cols="'.$this->cols.'"').' class="flat">';

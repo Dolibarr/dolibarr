@@ -87,6 +87,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
  * View
  */
 
+$morehtmlright = '';
 $form = new Form($db);
 
 $title = $langs->trans("Loan").' - '.$langs->trans("Documents");

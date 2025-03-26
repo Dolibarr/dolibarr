@@ -192,9 +192,11 @@ class Contacts extends DolibarrApi
 		}
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 		if ($category > 0) {
-			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c";
+			$sql .= " FROM (".MAIN_DB_PREFIX."socpeople as t";
+			$sql .= ", ".MAIN_DB_PREFIX."categorie_contact as c)";
+		} else {
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as t";
 		}
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople_extrafields as te ON te.fk_object = t.rowid";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON t.fk_soc = s.rowid";
@@ -346,7 +348,7 @@ class Contacts extends DolibarrApi
 			}
 			if ($field == 'array_options' && is_array($value)) {
 				foreach ($value as $index => $val) {
-					$this->contact->array_options[$index] = $this->_checkValForAPI('extrafields', $val, $this->contact);
+					$this->contact->array_options[$index] = $this->_checkValForAPI($field, $val, $this->contact);
 				}
 				continue;
 			}
@@ -369,7 +371,7 @@ class Contacts extends DolibarrApi
 	 * Delete contact
 	 *
 	 * @param   int     $id Contact ID
-	 * @return  integer
+	 * @return  array[]
 	 */
 	public function delete($id)
 	{
@@ -385,7 +387,17 @@ class Contacts extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 		$this->contact->oldcopy = clone $this->contact;
-		return $this->contact->delete(DolibarrApiAccess::$user);
+
+		if ($this->contact->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete contact ' . $this->contact->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Contact deleted'
+			)
+		);
 	}
 
 	/**

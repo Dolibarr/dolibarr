@@ -1426,7 +1426,7 @@ function show_day_events2($username, $day, $month, $year, $monthshown, $style, &
 									$tmpcontact->fetch($event->contact_id);
 									$cachecontacts[$event->contact_id] = $tmpcontact;
 								}
-								$cases2[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contact_id]->getFullName($langs);
+								$cases3[$h][$event->id]['string'] .= ', '.$cachecontacts[$event->contact_id]->getFullName($langs);
 							}
 						}
 						if ($event->date_start_in_calendar < $c && $dateendtouse > $b2) {
