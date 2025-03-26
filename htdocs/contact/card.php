@@ -108,6 +108,11 @@ if (!($object->id > 0) && $action == 'view') {
 
 $triggermodname = 'CONTACT_MODIFY';
 $permissiontoadd = $user->hasRight('societe', 'contact', 'creer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 // Security check
 if ($user->socid) {
@@ -511,42 +516,19 @@ if (empty($reshook)) {
 	}
 
 	// Update extrafields
-	if ($action == "update_extras" && $permissiontoadd) {
-		$object->fetch(GETPOSTINT('id'));
-
-		$attributekey = GETPOST('attribute', 'alpha');
-		$attributekeylong = 'options_'.$attributekey;
-
-		if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-			// This is properties of a date
-			$object->array_options['options_'.$attributekey] = dol_mktime(GETPOSTINT($attributekeylong.'hour'), GETPOSTINT($attributekeylong.'min'), GETPOSTINT($attributekeylong.'sec'), GETPOSTINT($attributekeylong.'month'), GETPOSTINT($attributekeylong.'day'), GETPOSTINT($attributekeylong.'year'));
-			//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-		} else {
-			$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
-		}
-
-		$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-		if ($result > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'edit_extras';
-		}
-	}
-
-	// Update extrafields
-	if ($action == 'update_extras' && $user->hasRight('societe', 'contact', 'creer')) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);   // @phan-suppress-current-line PhanTypeMismatchProperty
 
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields('CONTACT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'CONTACT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;

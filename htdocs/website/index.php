@@ -865,11 +865,11 @@ if ($action == 'addcontainer' && $usercanedit) {
 				}
 			}
 
-			if ($tmp['curl_error_no']) {
+			if (!empty($tmp['curl_error_no'])) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
 				$action = 'createcontainer';
-			} elseif ($tmp['http_code'] != '200') {
+			} elseif ($tmp['http_code'] != 200) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
 				$action = 'createcontainer';
@@ -989,14 +989,14 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 					/*
 					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
-					if ($tmpgeturl['curl_error_no'])
+					if (!empty($tmpgeturl['curl_error_no']))
 					{
 						$error++;
 						setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 						$errorforsubresource++;
 						$action='createcontainer';
 					}
-					elseif ($tmpgeturl['http_code'] != '200')
+					elseif ($tmpgeturl['http_code'] != 200)
 					{
 						$error++;
 						setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
@@ -1053,12 +1053,12 @@ if ($action == 'addcontainer' && $usercanedit) {
 					}
 
 					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
-					if ($tmpgeturl['curl_error_no']) {
+					if (!empty($tmpgeturl['curl_error_no'])) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action = 'createcontainer';
-					} elseif ($tmpgeturl['http_code'] != '200') {
+					} elseif ($tmpgeturl['http_code'] != 200) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);

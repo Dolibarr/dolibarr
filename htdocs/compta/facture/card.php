@@ -182,6 +182,11 @@ $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdonw.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoeditextra = $usercancreate;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 // retained warranty invoice available type
 $retainedWarrantyInvoiceAvailableType = array();
@@ -749,7 +754,7 @@ if (empty($reshook)) {
 				}
 			}
 		}
-	} elseif ($action == 'confirm_modif' && $usercanunvalidate) {
+	} elseif ($action == 'confirm_modif' && $usercanunvalidate && !getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
 		// Go back to draft status (unvalidate)
 		$idwarehouse = GETPOSTINT('idwarehouse');
 
@@ -766,7 +771,7 @@ if (empty($reshook)) {
 			}
 
 			if ($qualified_for_stock_change) {
-				if (!$idwarehouse || $idwarehouse == - 1) {
+				if (!$idwarehouse || $idwarehouse == -1) {
 					$error++;
 					setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Warehouse")), null, 'errors');
 					$action = '';
@@ -778,8 +783,8 @@ if (empty($reshook)) {
 			// We check if invoice has payments
 			$totalpaid = 0;
 			$sql = 'SELECT pf.amount';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql .= ' WHERE pf.fk_facture = '.((int) $object->id);
+			$sql .= ' FROM ' . MAIN_DB_PREFIX . 'paiement_facture as pf';
+			$sql .= ' WHERE pf.fk_facture = ' . ((int) $object->id);
 
 			$result = $db->query($sql);
 			if ($result) {
@@ -801,34 +806,32 @@ if (empty($reshook)) {
 			$ventilExportCompta = $object->getVentilExportCompta();
 
 			// We check if no payment has been made
-			if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
-				if ($ventilExportCompta == 0) {
-					if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == $object->total_ttc && empty($object->paye))) {
-						$result = $object->setDraft($user, $idwarehouse);
-						if ($result < 0) {
-							setEventMessages($object->error, $object->errors, 'errors');
-						}
+			if ($ventilExportCompta == 0) {
+				if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == $object->total_ttc && empty($object->paye))) {
+					$result = $object->setDraft($user, $idwarehouse);
+					if ($result < 0) {
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
 
-						// Define output language
-						if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-							$outputlangs = $langs;
-							$newlang = '';
-							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
-								$newlang = GETPOST('lang_id', 'aZ09');
-							}
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
-								$newlang = $object->thirdparty->default_lang;
-							}
-							if (!empty($newlang)) {
-								$outputlangs = new Translate("", $conf);
-								$outputlangs->setDefaultLang($newlang);
-								$outputlangs->load('products');
-							}
-							$model = $object->model_pdf;
-							$ret = $object->fetch($id); // Reload to get new records
-
-							$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					// Define output language
+					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+							$newlang = GETPOST('lang_id', 'aZ09');
 						}
+						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						$model = $object->model_pdf;
+						$ret = $object->fetch($id); // Reload to get new records
+
+						$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 				}
 			}
@@ -2191,7 +2194,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 
 		$price_ht = '';
 		$price_ht_devise = '';
@@ -2283,7 +2286,7 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($product_desc)) {
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
 			$error++;
 		}
@@ -2312,7 +2315,7 @@ if (empty($reshook)) {
 		}
 
 		$price_base_type = null;
-		if (!$error && ($qty >= 0) && (!empty($product_desc) || (!empty($idprod) && $idprod > 0))) {
+		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -2400,15 +2403,12 @@ if (empty($reshook)) {
 					$desc = $prod->description;
 				}
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
-				if ($product_desc == $desc && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc = '';
-				}
-
-				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
-					$desc = $product_desc;
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
+					// 'DoNotAutofillButAutoConcat'
+					$desc = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
 				} else {
-					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+					//'AutoFillFormFieldBeforeSubmit' or 'DoNotUseDescriptionOfProdut' => User has already done the modification they want
+					$desc = $line_desc;
 				}
 
 				// Add custom code and origin country into description
@@ -2430,7 +2430,7 @@ if (empty($reshook)) {
 							$outputlangs->load('products');
 						}
 						if (!empty($prod->customcode)) {
-							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 						}
 						if (!empty($prod->customcode) && !empty($prod->country_code)) {
 							$tmptxt .= ' - ';
@@ -2440,7 +2440,7 @@ if (empty($reshook)) {
 						}
 					} else {
 						if (!empty($prod->customcode)) {
-							$tmptxt .= $langs->transnoentitiesnoconv("CustomCode").': '.$prod->customcode;
+							$tmptxt .= $langs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 						}
 						if (!empty($prod->customcode) && !empty($prod->country_code)) {
 							$tmptxt .= ' - ';
@@ -2472,7 +2472,7 @@ if (empty($reshook)) {
 					$tva_npr = 0;
 				}
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-				$desc = $product_desc;
+				$desc = $line_desc;
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
 
@@ -3156,9 +3156,10 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
-	if ($action == 'update_extras' && $usercancreate) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
-		$attribute_name = GETPOST('attribute', 'restricthtml');
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
@@ -5895,28 +5896,26 @@ if ($action == 'create') {
 				)
 			);
 			// Edit a validated invoice without any payment and not transferred to accounting
-			if ($object->status == Facture::STATUS_VALIDATED) {
+			if ($object->status == Facture::STATUS_VALIDATED && !getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
 				// We check if lines of invoice are not already transferred into accountancy
 				$ventilExportCompta = $object->getVentilExportCompta();
 
-				if (!getDolGlobalString('INVOICE_CAN_NEVER_BE_EDITED')) {
-					if ($ventilExportCompta == 0) {
-						if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
-							if (!$objectidnext && $object->is_last_in_cycle()) {
-								if ($usercanunvalidate) {
-									unset($params['attr']['title']);
-									print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', true, $params);
-								} else {
-									$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
-									print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', false, $params);
-								}
-							} elseif (!$object->is_last_in_cycle()) {
-								$params['attr']['title'] = $langs->trans('NotLastInCycle');
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+				if ($ventilExportCompta == 0) {
+					if (getDolGlobalString('INVOICE_CAN_BE_EDITED_EVEN_IF_PAYMENT_DONE') || ($resteapayer == price2num($object->total_ttc, 'MT', 1) && empty($object->paye))) {
+						if (!$objectidnext && $object->is_last_in_cycle()) {
+							if ($usercanunvalidate) {
+								unset($params['attr']['title']);
+								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', true, $params);
 							} else {
-								$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
-								print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+								$params['attr']['title'] = $langs->trans('NotEnoughPermissions');
+								print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&action=modif&token=' . newToken(), '', false, $params);
 							}
+						} elseif (!$object->is_last_in_cycle()) {
+							$params['attr']['title'] = $langs->trans('NotLastInCycle');
+							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
+						} else {
+							$params['attr']['title'] = $langs->trans('DisabledBecauseReplacedInvoice');
+							print dolGetButtonAction($langs->trans('Modify'), '', 'default', '#', '', false, $params);
 						}
 					}
 				} else {

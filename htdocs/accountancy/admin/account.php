@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,6 +103,7 @@ $arrayfields = array(
 	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => '1', 'help' => 'PcgtypeDesc'),
 	'categories' => array('label' => "AccountingCategories", 'checked' => '-1', 'help' => 'AccountingCategoriesDesc'),
 	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => '1'),
+	'aa.centralized' => array('label' => "Centralized", 'checked' => '1'),
 	'aa.import_key' => array('label' => "ImportId", 'checked' => '-1', 'help' => ''),
 	'aa.active' => array('label' => "Activated", 'checked' => '1')
 );
@@ -251,7 +252,7 @@ if ($action == 'delete') {
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
-$sql .= " aa.reconcilable, aa.active, aa.import_key,";
+$sql .= " aa.reconcilable, aa.centralized, aa.active, aa.import_key,";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 
 // Add fields from hooks
@@ -541,6 +542,9 @@ if ($resql) {
 			print '<td class="liste_titre">&nbsp;</td>';
 		}
 	}
+	if (!empty($arrayfields['aa.centralized']['checked'])) {
+		print '<td class="liste_titre">&nbsp;</td>';
+	}
 	if (!empty($arrayfields['aa.active']['checked'])) {
 		print '<td class="liste_titre">&nbsp;</td>';
 	}
@@ -603,6 +607,10 @@ if ($resql) {
 			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder);
 			$totalarray['nbfield']++;
 		}
+	}
+	if (!empty($arrayfields['aa.centralized']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.centralized']['label'], $_SERVER["PHP_SELF"], 'aa.centralized', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.active']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
@@ -762,6 +770,24 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
+			}
+		}
+
+		// Centralized or not
+		if (!empty($arrayfields['aa.centralized']['checked'])) {
+			print '<td class="center">';
+			if (empty($obj->active)) {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=2&token='.newToken().'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=2&token='.newToken().'">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 

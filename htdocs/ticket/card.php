@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
@@ -151,6 +151,11 @@ $triggermodname = 'TICKET_MODIFY';
 $permissiontoread   = $user->hasRight('ticket', 'read');
 $permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->ticket->dir_output;
 
@@ -557,9 +562,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', $triggermodname);
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', $triggermodname);
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -626,27 +631,26 @@ if (empty($reshook)) {
 	}
 
 	// Action to update an extrafield
-	if ($action == "update_extras" && $permissiontoadd) {
+	if ($action == "update_extras" && $permissiontoeditextra) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			$result = $object->updateExtraField($attribute_name, $triggermodname);
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
 
 		if ($error) {
-			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit_extras';
-		} else {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
 		}
 	}
 
@@ -1528,9 +1532,9 @@ if ($action == 'create' || $action == 'presend') {
 
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			} elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {

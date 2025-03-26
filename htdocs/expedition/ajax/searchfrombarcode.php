@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  */
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +63,7 @@ $warehouseid = 0;
 $objectreturn = array();
 $usesublevelpermission = '';
 
-$object= new Product($db);
+$object = new Product($db);
 
 // Security check
 if (!empty($user->socid)) {
@@ -100,12 +101,12 @@ if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'l
 		$sql .= " WHERE p.barcode = '".$db->escape($barcode)."'";
 	}
 	if (!empty($fk_entrepot)) {
-		$sql .= " AND ps.fk_entrepot = '".$db->escape($fk_entrepot)."'";
+		$sql .= " AND ps.fk_entrepot = '".$db->escape((string) $fk_entrepot)."'";
 	}
 	$result = $db->query($sql);
 	if ($result) {
 		$nbline = $db->num_rows($result);
-		for ($i=0; $i < $nbline; $i++) {
+		for ($i = 0; $i < $nbline; $i++) {
 			$obj = $db->fetch_object($result);
 			if (($mode == "barcode" && $barcode == $obj->barcode) || ($mode == "lotserial" && $barcode == $obj->batch)) {
 				if (!empty($obj->fk_entrepot) && $fk_entrepot == $obj->fk_entrepot) {
@@ -114,22 +115,22 @@ if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'l
 					$fk_product = $obj->fk_product;
 					$reelqty = $obj->reel;
 
-					$objectreturn = array('fk_warehouse'=>$warehouseid,'fk_product'=>$fk_product,'reelqty'=>$reelqty);
+					$objectreturn = array('fk_warehouse' => $warehouseid,'fk_product' => $fk_product,'reelqty' => $reelqty);
 				}
 			}
 		}
 		if ($warehousefound < 1) {
-			$response = array('status'=>'error','errorcode'=>'NotFound','message'=>'No warehouse found for barcode'.$barcode);
+			$response = array('status' => 'error','errorcode' => 'NotFound','message' => 'No warehouse found for barcode'.$barcode);
 		} elseif ($warehousefound > 1) {
-			$response = array('status'=>'error','errorcode'=>'TooManyWarehouse','message'=>'Too many warehouse found');
+			$response = array('status' => 'error','errorcode' => 'TooManyWarehouse','message' => 'Too many warehouse found');
 		} else {
-			$response = array('status'=>'success','message'=>'Warehouse found','object'=>$objectreturn);
+			$response = array('status' => 'success','message' => 'Warehouse found','object' => $objectreturn);
 		}
 	} else {
-		$response = array('status'=>'error','errorcode'=>'NotFound','message'=>"No results found for barcode");
+		$response = array('status' => 'error','errorcode' => 'NotFound','message' => "No results found for barcode");
 	}
 } else {
-	$response = array('status'=>'error','errorcode'=>'ActionError','message'=>"Error on action");
+	$response = array('status' => 'error','errorcode' => 'ActionError','message' => "Error on action");
 }
 
 $response = json_encode($response);

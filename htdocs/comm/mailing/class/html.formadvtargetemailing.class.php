@@ -424,12 +424,12 @@ class FormAdvTargetEmailing extends Form
 	/**
 	 * Return a combo list to select emailing target selector
 	 *
-	 * @param	string 		$htmlname 		control name
-	 * @param	integer 	$selected  		default selected
-	 * @param	integer 	$showempty 		empty lines
-	 * @param	string		$type_element	Type element. Example: 'mailing'
-	 * @param	string		$morecss		More CSS
-	 * @return	string 						HTML combo
+	 * @param	string 			$htmlname 		control name
+	 * @param	integer 		$selected  		default selected
+	 * @param	integer|string 	$showempty 		1=Add an empty lines, 'string'=Value of placeholder for the emptyline
+	 * @param	string			$type_element	Type element. Example: 'mailing'
+	 * @param	string			$morecss		More CSS
+	 * @return	string 							HTML combo
 	 */
 	public function selectAdvtargetemailingTemplate($htmlname = 'template_id', $selected = 0, $showempty = 0, $type_element = 'mailing', $morecss = '')
 	{
@@ -445,7 +445,7 @@ class FormAdvTargetEmailing extends Form
 		if ($resql) {
 			$out .= '<select id="'.$htmlname.'" class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($showempty) {
-				$out .= '<option value=""></option>';
+				$out .= '<option value="-1">'.(is_numeric($showempty) ? '&nbsp;' : $showempty).'</option>';
 			}
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -466,6 +466,8 @@ class FormAdvTargetEmailing extends Form
 				}
 			}
 			$out .= '</select>';
+
+			$out .= ajax_combobox($htmlname);
 		} else {
 			dol_print_error($this->db);
 		}

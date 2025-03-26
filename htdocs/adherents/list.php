@@ -5,7 +5,7 @@
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -381,7 +381,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionError", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
 			$db->rollback();
 		}
 	}

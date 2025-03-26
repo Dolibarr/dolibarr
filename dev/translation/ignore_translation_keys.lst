@@ -91,8 +91,6 @@ YourTicketSuccessfullySaved
 ........
 AADE_WEBSERVICE_KEY
 AADE_WEBSERVICE_USER
-APCCacheInstalledButDisabled
-APCInstalled
 API
 Accept
 AccountancyErrorMismatchLetteringCode
@@ -1005,7 +1003,6 @@ INVOICE_USE_RETAINED_WARRANTY
 INVOICE_USE_SITUATION
 INVOICE_USE_SITUATION_CREDIT_NOTE
 ImpossibleToContactAuthority
-InputValueIsNotAnNumber
 InterDate
 Inventory Code
 InvoiceReplace
@@ -1067,7 +1064,6 @@ ReceptionValidated
 Recruited
 Ref. Product
 RefNewContract
-Societe
 Stable
 Suggested
 TicketMessageMailSignatureText
@@ -1087,14 +1083,9 @@ Vat
 VirtualHost
 WEBPORTAL_ROOT_URL
 WEBPORTAL_USER_LOGGED2
-XSubsriptionError
-email
-id
 multicurrency_buyPriceInCurrency
 multicurrency_modifyRateApplication
-ref
 smsing
-societe
 target
 titre
 type

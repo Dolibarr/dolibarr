@@ -68,8 +68,6 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"]) {
 $includeconferror = '';
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
 // Define localization of conf file
 $conffile = "../conf/conf.php";
 $conffiletoshow = "htdocs/conf/conf.php";

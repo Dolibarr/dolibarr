@@ -26,10 +26,11 @@ create table llx_expeditiondet
   fk_element        integer,           						    -- ID of main source object
   fk_elementdet     integer,           						    -- ID of line of source object (proposal, sale order)
   element_type   	varchar(50) DEFAULT 'commande' NOT NULL,	-- Type of source object ('commande', ...)
-  fk_product        integer,  								    -- ID of product. If empy, you can retreive it using fk_element/element_type link
+  fk_product        integer,  								    -- ID of product. If empy, you can retreive it using fk_element/element_type link, but it may be empty too if line is a non predefined product line.
+  fk_parent         integer,                                    -- ID of parent line. For a hierarchy of lines.
   qty               real,              						    -- Quantity
   fk_unit           integer, 				                    -- ID of unit code
   fk_entrepot       integer,           						    -- Warehouse for departure of product
-  rang              integer  DEFAULT 0,
-  extraparams		varchar(255)				 				-- to stock other parameters in json format
+  rang              integer  DEFAULT 0,							-- Position of line
+  extraparams		varchar(255)				 				-- To save other parameters in json format
 )ENGINE=innodb;
