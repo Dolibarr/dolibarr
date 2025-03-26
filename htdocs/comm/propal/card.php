@@ -986,7 +986,6 @@ if (empty($reshook)) {
 				$object->lines[$key] = $object->line;
 			}
 		}
-		var_dump(1);
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('vatforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define a vat_rate for all lines
 		$vat_rate = (GETPOST('vatforalllines') ? GETPOST('vatforalllines') : 0);
@@ -997,8 +996,6 @@ if (empty($reshook)) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $vat_rate, $localtax1_rate, $localtax2_rate, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 			$object->lines[$key] = $object->line;
 		}
-		var_dump(2);
-
 	} elseif ($action == 'addline' && GETPOST('submitforalllines', 'alpha') && GETPOST('remiseforalllines', 'alpha') !== '' && $usercancreate) {
 		// Define a discount for all lines
 		$remise_percent = (GETPOST('remiseforalllines') ? GETPOST('remiseforalllines') : 0);
@@ -1011,8 +1008,6 @@ if (empty($reshook)) {
 			$result = $object->updateline($line->id, $line->subprice, $line->qty, (float) $remise_percent, $tvatx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 			$object->lines[$key] = $object->line;
 		}
-		var_dump(3);
-
 	} elseif ($action == 'addline' && GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '' && $usercancreate) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines') ? GETPOST('marginforalllines') : 0);
@@ -1049,8 +1044,6 @@ if (empty($reshook)) {
 			// $line->subprice = (float) $subprice;
 			// $line->multicurrency_subprice = $multicurrency_subprice;
 		}
-		var_dump(4);
-
 	} elseif (	$action == 'addline' && !GETPOST('submitforalllines', 'alpha')
 				&& !GETPOST('submitforallmargins', 'alpha') && !GETPOST('markforalllines', 'alpha')
 				&& $usercancreate) {		// Add line
