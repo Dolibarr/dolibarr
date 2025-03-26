@@ -9430,9 +9430,6 @@ class Form
 					$tplpath = 'expensereport';
 				} elseif ($objecttype == 'subscription') {
 					$tplpath = 'adherents';
-					if (!isModEnabled('adherent')) {
-						continue; // Do not show if module disabled
-					}
 				} elseif ($objecttype == 'conferenceorbooth') {
 					$tplpath = 'eventorganization';
 				} elseif ($objecttype == 'conferenceorboothattendee') {
