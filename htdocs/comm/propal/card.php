@@ -147,9 +147,15 @@ if (getDolGlobalBool('PROPAL_DISALLOW_REOPEN')) {
 	$usercanreopen = false;
 }
 
+$permissiontoadd = $usercancreate;
 $permissionnote = $usercancreate; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $price_base_type = null;
 
@@ -1786,9 +1792,10 @@ if (empty($reshook)) {
 	} elseif ($action == 'setwarehouse' && $usercancreate) {
 		// warehouse
 		$result = $object->setWarehouse(GETPOSTINT('warehouse_id'));
-	} elseif ($action == 'update_extras' && $usercancreate) {
+	} elseif ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
-		$attribute_name = GETPOST('attribute', 'restricthtml');
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);

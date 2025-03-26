@@ -4829,6 +4829,8 @@ abstract class CommonObject
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
+					} elseif ($fieldstatus == 'tobatch') {
+						$this->status_batch = $status;	// @phpstan-ignore-line
 					} else {
 						$this->status = $status;
 					}
@@ -10369,9 +10371,9 @@ abstract class CommonObject
 				}
 				$keys_with_alias[] = $alias . '.' . $fieldname;
 			}
-			return implode(',', $keys_with_alias);
+			return implode(', ', $keys_with_alias);
 		} else {
-			return implode(',', $keys);
+			return implode(', ', $keys);
 		}
 	}
 

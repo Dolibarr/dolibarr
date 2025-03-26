@@ -540,7 +540,7 @@ if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$form->textwithpicto($langs->trans("AllowOnLineSign"), $langs->trans("AllowOnLineSignDesc")).'</td>';
 	print '<td class="center">';
-	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->trans("WarningOnlineSignature"));
+	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature"));
 	print '</td></tr>';
 }
 

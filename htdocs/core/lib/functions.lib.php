@@ -392,6 +392,52 @@ function isModEnabled($module)
 }
 
 /**
+ *  Return a warning delay
+ *  You can use it like this: if (getWarningDelay('module', 'paramlevel1'))
+ *  It replaces old syntax: if ($conf->module->user->rights->module->level1)
+ *
+ * 	@param	string	$module			Module of permission to check (Example: 'bank', 'contrat', ...)
+ *  @param  string	$parmlevel1		Parameter level1 (Example: 'rappro', 'services', ...)
+ *  @param  string	$parmlevel2		Parameter level2 (Example: 'inactifs', ...)
+ *  @return int						Return the warning delay
+ */
+function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
+{
+		global $conf;
+
+		// For compatibility with bad naming on module
+		$moduletomoduletouse = array(
+			'invoice' => 'facture',
+		);
+		$moduleParmsMapping = array(
+			'product' => 'produit',
+		);
+
+		if (!empty($moduletomoduletouse[$module])) {
+			$module = $moduletomoduletouse[$module];
+		}
+
+		$warningDelayPath = $parmlevel1;
+		if (!empty($moduleParmsMapping[$warningDelayPath])) {
+			$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
+		}
+
+		if ($parmlevel2) {
+			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+				if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+					return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
+				}
+			}
+		} else {
+			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+				return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+			}
+		}
+
+		return 0;
+}
+
+/**
  * isDolTms check if a timestamp is valid.
  *
  * @param  int|string|null $timestamp timestamp to check

@@ -151,6 +151,11 @@ $triggermodname = 'TICKET_MODIFY';
 $permissiontoread   = $user->hasRight('ticket', 'read');
 $permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->ticket->dir_output;
 
@@ -557,9 +562,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', $triggermodname);
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', $triggermodname);
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -626,27 +631,26 @@ if (empty($reshook)) {
 	}
 
 	// Action to update an extrafield
-	if ($action == "update_extras" && $permissiontoadd) {
+	if ($action == "update_extras" && $permissiontoeditextra) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			$result = $object->updateExtraField($attribute_name, $triggermodname);
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
 
 		if ($error) {
-			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit_extras';
-		} else {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
 		}
 	}
 

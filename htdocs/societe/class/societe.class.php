@@ -4367,10 +4367,11 @@ class Societe extends CommonObject
 	/**
 	 *  Set "blacklist" mailing status
 	 *
-	 *  @param	int		$no_email	1=Do not send mailing, 0=Ok to receive mailing
-	 *  @return int					Return integer <0 if KO, >0 if OK
+	 *  @param	int		$no_email			1=Do not send mailing, 0=Ok to receive mailing
+	 *  @param	string	$unsubscribegroup	Emailing code ('' by default)
+	 *  @return int							Return integer <0 if KO, >0 if OK
 	 */
-	public function setNoEmail($no_email)
+	public function setNoEmail($no_email, $unsubscribegroup = '')
 	{
 		$error = 0;
 
@@ -4379,12 +4380,14 @@ class Societe extends CommonObject
 			$this->db->begin();
 
 			if ($no_email) {
+				// TODO Add $unsubscribegroup
 				$sql = "SELECT COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE entity IN (".getEntity('mailing', 0).") AND email = '".$this->db->escape($this->email)."'";
 				$resql = $this->db->query($sql);
 				if ($resql) {
 					$obj = $this->db->fetch_object($resql);
 					$noemail = $obj->nb;
 					if (empty($noemail)) {
+						// TODO Add $unsubscribegroup
 						$sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_unsubscribe(email, entity, date_creat) VALUES ('".$this->db->escape($this->email)."', ".getEntity('mailing', 0).", '".$this->db->idate(dol_now())."')";
 						$resql = $this->db->query($sql);
 						if (!$resql) {
@@ -4399,6 +4402,7 @@ class Societe extends CommonObject
 					$this->errors[] = $this->error;
 				}
 			} else {
+				// TODO Add $unsubscribegroup
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE email = '".$this->db->escape($this->email)."' AND entity IN (".getEntity('mailing', 0).")";
 				$resql = $this->db->query($sql);
 				if (!$resql) {
