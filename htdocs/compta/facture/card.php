@@ -2633,8 +2633,8 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'addline' && $usercancreate && (
-			(GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines') !== '') ||
-			(GETPOST('submitforallmark', 'alpha') && GETPOST('markforalllines') !== ''))) {
+			(GETPOST('submitforallmargins', 'alpha') && GETPOST('marginforalllines', 'alpha') !== '') ||
+			(GETPOST('submitforallmark', 'alpha') && GETPOST('markforalllines', 'alpha') !== ''))) {
 		$outlangs = $langs;
 		$margin_rate = GETPOSTISSET('marginforalllines') ? GETPOST('marginforalllines', 'int') : '';
 		$mark_rate = GETPOSTISSET('markforalllines') ? GETPOST('markforalllines', 'int') : '';
@@ -2650,10 +2650,14 @@ if (empty($reshook)) {
 
 			$prod = new Product($db);
 			$res = $prod->fetch($line->fk_product);
-			if ($res > 0 && $prod->price_min > $line->subprice) {
-				$price_subprice  = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
-				$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
-				setEventMessages($prod->ref.' - '.$prod->label.' ('.$price_subprice.' < '.$price_price_min.' '.strtolower($langs->trans("MinPrice")).')'."\n", null, 'warnings');
+			if ($res > 0) {
+				if ($prod->price_min > $line->subprice) {
+					$price_subprice = price($line->subprice, 0, $outlangs, 1, -1, -1, 'auto');
+					$price_price_min = price($prod->price_min, 0, $outlangs, 1, -1, -1, 'auto');
+					setEventMessages($prod->ref . ' - ' . $prod->label . ' (' . $price_subprice . ' < ' . $price_price_min . ' ' . strtolower($langs->trans("MinPrice")) . ')' . "\n", null, 'warnings');
+				} else {
+					setEventMessages($prod->error, $prod->errors, 'errors');
+				}
 			} else {
 				setEventMessages($prod->error, $prod->errors, 'errors');
 			}
