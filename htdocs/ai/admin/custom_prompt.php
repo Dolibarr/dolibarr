@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 $langs->loadLangs(array("admin", "website", "other"));
 
 $arrayofaifeatures = getListOfAIFeatures();
-$arrayofia = getListOfAIServices();
+$arrayofai = getListOfAIServices();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
