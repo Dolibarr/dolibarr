@@ -246,7 +246,7 @@ if (empty($reshook)) {
 
 	if ($action == 'changedatestart_confirm' || $action == 'changedateend_confirm') {
 		if ($confirm == 'yes') {
-			$newDate = dol_mktime((int)$hour, (int)$min, (int)0, (int)$month, (int)$day, (int)$year);
+			$newDate = dol_mktime((int) $hour, (int) $min, (int) 0, (int) $month, (int) $day, (int) $year);
 
 			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
