@@ -4298,11 +4298,12 @@ abstract class CommonObject
 			}
 		}
 		$sql .= " ORDER BY ".$orderby;
-
+		dol_syslog("sql=".$sql, LOG_DEBUG);
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
+			dol_syslog("num=".$num, LOG_DEBUG);
 			$i = 0;
 			while ($i < $num) {
 				$obj = $this->db->fetch_object($resql);
@@ -4331,12 +4332,20 @@ abstract class CommonObject
 					$classPath = $element_properties['classpath'];
 					$classFile = $element_properties['classfile'];
 					$className = $element_properties['classname'];
-					$module = $element_properties['module'];
+					if ($objecttype == 'subscription') {
+						$module = 'adherent';
+					} else {
+						$module = $element_properties['module'];
+					}
 
 					// Here $module, $classFile and $className are set, we can use them.
 					if (isModEnabled($module) && (($element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
-							dol_include_once('/'.$classPath.'/'.$classFile.'.class.php');
+							if ($objecttype == 'subscription') {
+								dol_include_once('adherents/class/'.$classFile.'.class.php');
+							} else {
+								dol_include_once('/'.$classPath.'/'.$classFile.'.class.php');
+							}
 							if (class_exists($className)) {
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
 									$object = new $className($this->db);
