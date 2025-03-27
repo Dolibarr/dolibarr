@@ -219,27 +219,25 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	$objMo = new Mo($db);
 
-	if ($action == 'confirm_cancel') {
-		if ($action == 'confirm_cancel' && $confirm == 'yes') {
-			if (!empty($toselect)) {
-				foreach ($toselect as $key => $idMo) {
-					if ($objMo->fetch($idMo)) {
-						if ($objMo->status == Mo::STATUS_VALIDATED || $objMo->status == Mo::STATUS_INPROGRESS) {
-							if ($also_cancel_consumed_and_produced_lines) {
-								if ($objMo->cancelConsumedAndProducedLines($user, 0, true, 1)) {
-									$objMo->status = Mo::STATUS_CANCELED;
-								}
-							} else {
+	if ($action == 'confirm_cancel' && $confirm == 'yes') {
+		if (!empty($toselect)) {
+			foreach ($toselect as $key => $idMo) {
+				if ($objMo->fetch($idMo)) {
+					if ($objMo->status == Mo::STATUS_VALIDATED || $objMo->status == Mo::STATUS_INPROGRESS) {
+						if ($also_cancel_consumed_and_produced_lines) {
+							if ($objMo->cancelConsumedAndProducedLines($user, 0, true, 1)) {
 								$objMo->status = Mo::STATUS_CANCELED;
 							}
-							if ($objMo->update($user)) {
-								setEventMessages($langs->trans('CancelMoValidated', $objMo->ref), null, 'mesgs');
-							} else {
-								setEventMessages($langs->trans('ErrorCancelMo', $objMo->ref), null, 'errors');
-							}
 						} else {
-							setEventMessages($langs->trans('ErrorObjectMustHaveStatusValidatedToBeCanceled', $objMo->ref), null, 'errors');
+							$objMo->status = Mo::STATUS_CANCELED;
 						}
+						if ($objMo->update($user)) {
+							setEventMessages($langs->trans('CancelMoValidated', $objMo->ref), null, 'mesgs');
+						} else {
+							setEventMessages($langs->trans('ErrorCancelMo', $objMo->ref), null, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans('ErrorObjectMustHaveStatusValidatedToBeCanceled', $objMo->ref), null, 'errors');
 					}
 				}
 			}
@@ -248,7 +246,7 @@ if (empty($reshook)) {
 
 	if ($action == 'changedatestart_confirm' || $action == 'changedateend_confirm') {
 		if ($confirm == 'yes') {
-			$newDate = dol_mktime($hour, $min, 0, $month, $day, $year);
+			$newDate = dol_mktime((int)$hour, (int)$min, (int)0, (int)$month, (int)$day, (int)$year);
 
 			if (!empty($toselect)) {
 				foreach ($toselect as $key => $idMo) {
