@@ -19,6 +19,7 @@
 
  /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
  * @var ?FormAI 		$formai
