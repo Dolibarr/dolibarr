@@ -330,7 +330,7 @@ if (empty($conf->stripeconnect->enabled)) {
 			if (utf8_check(getDolGlobalString('STRIPE_TEST_SECRET_KEY'))) {
 				try {
 					\Stripe\Stripe::setApiKey(getDolGlobalString('STRIPE_LIVE_SECRET_KEY'));
-					$endpoint = \Stripe\WebhookEndpoint::retrieve(getDolglobalString('STRIPE_LIVE_WEBHOOK_ID'));
+					$endpoint = \Stripe\WebhookEndpoint::retrieve(getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID'));
 					$endpoint->enabled_events = $stripearrayofwebhookevents;
 					if (GETPOST('webhook', 'alpha') == getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
 						if (empty(GETPOST('status', 'alpha'))) {

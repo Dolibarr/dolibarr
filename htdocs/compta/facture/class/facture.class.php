@@ -738,6 +738,8 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->subtype ? "'".$this->db->escape((string) $this->subtype)."'" : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($this->date_creation)."'";
+		// Date of invoice is a full day, if entered the 27-01 at 22:00 in timezone of user, it must be 27-01 00:00 after the conversion by idate, so when SQL is truncated we keep the 27-01.
+		// So we hope that caller has set the gmt datein ->date to match this.
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");

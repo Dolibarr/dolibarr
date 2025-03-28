@@ -1225,7 +1225,7 @@ class FormFile
 					if ($tmparray && $tmparray['url']) {
 						$tmpout .= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css'] ? ' class="'.$tmparray['css'].'"' : '').($tmparray['mime'] ? ' mime="'.$tmparray['mime'].'"' : '').($tmparray['target'] ? ' target="'.$tmparray['target'].'"' : '').'>';
 						//$tmpout.= img_picto('','detail');
-						$tmpout .= '<i class="fa fa-search-plus paddingright" style="color: gray"></i>';
+						$tmpout .= img_picto('', 'search-plus', 'class="paddingright"');
 						$tmpout .= $langs->trans("Preview").' '.$ext.'</a></li>';
 					}
 				}
@@ -2383,8 +2383,7 @@ class FormFile
 				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
-					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
-					$out .= '<span class="fa fa-search-plus pictofixedwidth" style="color: gray"></span>';
+					$out .= img_picto('', 'search-plus', 'class="pictofixedwidth"');
 				} else {
 					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name'], 'pictofixedwidth');
 				}
