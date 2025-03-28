@@ -46,8 +46,6 @@ class box_lastlogin extends ModeleBoxes
 	 */
 	public function __construct($db, $param)
 	{
-		global $conf;
-
 		$this->db = $db;
 	}
 
@@ -59,7 +57,7 @@ class box_lastlogin extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$textHead = $langs->trans("BoxLoginInformation");
 		$this->info_box_head = array(
@@ -84,9 +82,25 @@ class box_lastlogin extends ModeleBoxes
 			'text' => $langs->trans("PreviousConnexion"),
 		);
 		if ($user->datepreviouslogin) {
-			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel');
+			$tmp = dol_print_date($user->datepreviouslogin, "dayhour", 'tzuserrel').' - <span class="opacitymedium">'.$langs->trans("FromIP").' '.dol_print_ip($user->ippreviouslogin).'</span>';
 		} else {
-			$tmp = $langs->trans("Unknown");
+			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
+		}
+		$this->info_box_contents[$line][1] = array(
+			'td' => '',
+			'text' => $tmp,
+			'asis' => 1
+		);
+
+		$line = 2;
+		$this->info_box_contents[$line][0] = array(
+			'td' => '',
+			'text' => $langs->trans("LastPasswordChange"),
+		);
+		if ($user->datelastpassvalidation) {
+			$tmp = dol_print_date($user->datelastpassvalidation, "dayhour", 'tzuserrel');
+		} else {
+			$tmp = '<span class="opacitymedium">'.$langs->trans("Unknown").'</span>';
 		}
 		$this->info_box_contents[$line][1] = array(
 			'td' => '',

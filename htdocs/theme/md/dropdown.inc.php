@@ -708,6 +708,11 @@ div.quickaddblock:focus {
 		color: var(--colortextbackvmenu);
 	}
 
+	.dropdown-menu:not(.ai_dropdown) {
+		border: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
 
 	#topmenu-global-search-dropdown a.login-dropdown-a,
 	#topmenu-quickadd-dropdown a.login-dropdown-a,

@@ -938,14 +938,14 @@ if ($object->fetch($id) >= 0) {
 				if ($obj->nb > 0) {
 					print img_warning($langs->trans("EmailOptedOut"), 'warning', 'pictofixedwidth');
 				}
-				print dol_escape_htmltag($obj->email);
+				print dolPrintHTML($obj->email);
 				print '</td>';
 
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->lastname).'">'.dolPrintHTML($obj->lastname).'</td>';
 
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->firstname).'">'.dolPrintHTML($obj->firstname).'</td>';
 
-				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->other).'"><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
+				print '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($obj->other).'"><span class="small">'.dolPrintHTML($obj->other).'</small></td>';
 
 				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {

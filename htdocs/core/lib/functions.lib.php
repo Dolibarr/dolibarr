@@ -5300,59 +5300,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				$fa = 'fab';
 			}
 
-			$arrayconvpictotofa = array(
-				'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'ai' => 'magic',
-				'asset' => 'money-check-alt', 'autofill' => 'fill',
-				'back' => 'arrow-left', 'bank_account' => 'university',
-				'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
-				'blank' => 'fw', 'bookcal' => 'calendar-check',
-				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
-				'bom' => 'shapes',
-				'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
-				'chevron-double-left' => 'angle-double-left', 'chevron-double-right' => 'angle-double-right', 'chevron-double-down' => 'angle-double-down', 'chevron-double-top' => 'angle-double-up',
-				'donation' => 'file-alt', 'dynamicprice' => 'hand-holding-usd',
-				'setup' => 'cog', 'companies' => 'building', 'products' => 'cube', 'commercial' => 'suitcase', 'invoicing' => 'coins',
-				'accounting' => 'search-dollar', 'category' => 'tag', 'dollyrevert' => 'dolly',
-				'file-o' => 'file', 'generate' => 'plus-square', 'hrm' => 'user-tie', 'incoterm' => 'truck-loading',
-				'margin' => 'calculator', 'members' => 'user-friends', 'ticket' => 'ticket-alt', 'globe' => 'external-link-alt', 'lot' => 'barcode',
-				'email' => 'at', 'establishment' => 'building', 'edit' => 'pencil-alt', 'entity' => 'globe',
-				'graph' => 'chart-line', 'grip_title' => 'arrows-alt', 'grip' => 'arrows-alt', 'help' => 'question-circle',
-				'generic' => 'file', 'holiday' => 'umbrella-beach',
-				'info' => 'info-circle', 'info_black' => 'info-circle', 'inventory' => 'boxes', 'intracommreport' => 'globe-europe', 'jobprofile' => 'cogs',
-				'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout' => 'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
-				'member' => 'user-alt', 'meeting' => 'chalkboard-teacher', 'mrp' => 'cubes', 'next' => 'arrow-alt-circle-right',
-				'trip' => 'wallet', 'expensereport' => 'wallet', 'group' => 'users', 'movement' => 'people-carry',
-				'sign-out' => 'sign-out-alt',
-				'switch_off' => 'toggle-off', 'switch_on' => 'toggle-on',  'switch_on_grey' => 'toggle-on', 'switch_on_warning' => 'toggle-on', 'switch_on_red' => 'toggle-on', 'check' => 'check', 'bookmark' => 'star',
-				'bank' => 'university', 'close_title' => 'times', 'delete' => 'trash', 'filter' => 'filter',
-				'list-alt' => 'list-alt', 'calendarlist' => 'bars', 'calendar' => 'calendar-alt', 'calendarmonth' => 'calendar-alt', 'calendarweek' => 'calendar-week', 'calendarday' => 'calendar-day', 'calendarperuser' => 'table',
-				'intervention' => 'ambulance', 'invoice' => 'file-invoice-dollar', 'order' => 'file-invoice',
-				'error' => 'exclamation-triangle', 'warning' => 'exclamation-triangle',
-				'other' => 'square',
-				'playdisabled' => 'play', 'pdf' => 'file-pdf', 'poll' => 'check-double', 'pos' => 'cash-register', 'preview' => 'binoculars', 'project' => 'project-diagram', 'projectpub' => 'project-diagram', 'projecttask' => 'tasks', 'propal' => 'file-signature', 'proposal' => 'file-signature',
-				'partnership' => 'handshake', 'payment' => 'money-check-alt', 'payment_vat' => 'money-check-alt', 'pictoconfirm' => 'check-square', 'phoning' => 'phone', 'phoning_mobile' => 'mobile-alt', 'phoning_fax' => 'fax', 'previous' => 'arrow-alt-circle-left', 'printer' => 'print', 'product' => 'cube', 'puce' => 'angle-right',
-				'recent' => 'check-square', 'reception' => 'dolly', 'recruitmentjobposition' => 'id-card-alt', 'recruitmentcandidature' => 'id-badge',
-				'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
-				'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
-				'service' => 'concierge-bell',
-				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
-				'status' => 'stop-circle',
-				'stripe' => 'stripe-s',	'supplier' => 'building',
-				'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
-				'title_agenda' => 'calendar-alt',
-				'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
-				'jabber' => 'comment-o',
-				'website' => 'globe-americas', 'workstation' => 'pallet', 'webhook' => 'bullseye', 'world' => 'globe', 'private' => 'user-lock',
-				'conferenceorbooth' => 'chalkboard-teacher', 'eventorganization' => 'project-diagram',
-				'webportal' => 'door-open'
-			);
-			if ($conf->currency == 'EUR') {
-				$arrayconvpictotofa['currency'] = 'euro-sign';
-				$arrayconvpictotofa['multicurrency'] = 'dollar-sign';
-			} else {
-				$arrayconvpictotofa['currency'] = 'dollar-sign';
-				$arrayconvpictotofa['multicurrency'] = 'euro-sign';
-			}
+			$arrayconvpictotofa = getImgPictoConv('fa');
+
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';
 				$fasize = '1.3em';
@@ -5429,7 +5378,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'ticket' => 'infobox-contrat', 'title_accountancy' => 'infobox-bank_account', 'title_hrm' => 'infobox-holiday', 'expensereport' => 'infobox-expensereport', 'trip' => 'infobox-expensereport', 'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
-				'list-alt' => 'imgforviewmode', 'calendar' => 'imgforviewmode', 'calendarweek' => 'imgforviewmode', 'calendarmonth' => 'imgforviewmode', 'calendarday' => 'imgforviewmode', 'calendarperuser' => 'imgforviewmode'
+				'list-alt' => 'imgforviewmode', 'calendar' => 'imgforviewmode', 'calendarweek' => 'imgforviewmode', 'calendarmonth' => 'imgforviewmode', 'calendarday' => 'imgforviewmode', 'calendarperuser' => 'imgforviewmode', 'calendarpertype' => 'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
 				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
@@ -5447,7 +5396,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'other' => '#ddd', 'world' => '#986c6a',
 				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'resize' => '#444', 'rss' => '#cba',
 				//'shipment'=>'#a69944',
-				'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
+				'search-plus' => '#808080', 'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
 				'technic' => '#999', 'tick' => '#282', 'timespent' => '#555',
 				'uncheck' => '#800', 'uparrow' => '#555', 'user-cog' => '#999', 'country' => '#aaa', 'globe-americas' => '#aaa', 'region' => '#aaa', 'state' => '#aaa',
 				'website' => '#304', 'workstation' => '#a69944'
@@ -5522,7 +5471,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 }
 
 /**
- * Get all usage icon name for img_picto
+ * Get all usage icon key usable for img_picto(..., key)
+ *
  * @return string[]
  */
 function getImgPictoNameList()
@@ -5530,24 +5480,24 @@ function getImgPictoNameList()
 	return array(
 		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 		'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
-		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'blank', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
+		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 		'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype', 'hourglass',
 		'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 		'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
-		'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
+		'chevron-left', 'chevron-right', 'chevron-down', 'chevron-up',
 		'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
 		'commercial', 'companies',
 		'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 		'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 		'filter', 'file', 'file-o', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
-		'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+		'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 		'hands-helping', 'help', 'holiday',
 		'id-card', 'images', 'incoterm', 'info', 'info_black', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 		'key', 'knowledgemanagement',
 		'label', 'language', 'layout', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 		'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 		'off', 'on', 'order',
-		'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
+		'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 		'stock', 'resize', 'service', 'stats',
 		'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 		'discord', 'facebook', 'flickr', 'instagram','linkedin', 'github', 'google', 'jabber', 'meetup', 'microsoft', 'skype', 'slack', 'twitter', 'pinterest', 'reddit', 'snapchat', 'tumblr', 'youtube', 'viadeo', 'google-plus-g', 'whatsapp',
@@ -5556,14 +5506,84 @@ function getImgPictoNameList()
 		'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 		'technic', 'ticket',
 		'error', 'warning',
-		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-		'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
+		'search-plus', 'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 		'conferenceorbooth', 'eventorganization',
 		'stamp', 'signature',
 		'webportal'
 	);
+}
+
+/**
+ * Get array to convert the Dolibarr picto keys into font awesome keys
+ *
+ * @param	string		$mode		'fa' to get conversion array for Font-Awesome
+ * @return 	string[]				Array of conversion
+ * @see img_picto()
+ */
+function getImgPictoConv($mode = 'fa')
+{
+	global $conf;
+
+	// Array when the fa picto key is different than the Dolibarr picto key.
+	$arrayconvpictotofa = array(
+		'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'ai' => 'magic',
+		'asset' => 'money-check-alt', 'autofill' => 'fill',
+		'back' => 'arrow-left', 'bank_account' => 'university',
+		'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
+		'bookcal' => 'calendar-check',
+		'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
+		'bom' => 'shapes',
+		'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
+		'chevron-double-left' => 'angle-double-left', 'chevron-double-right' => 'angle-double-right', 'chevron-double-down' => 'angle-double-down', 'chevron-double-top' => 'angle-double-up',
+		'donation' => 'file-alt', 'dynamicprice' => 'hand-holding-usd',
+		'setup' => 'cog', 'companies' => 'building', 'products' => 'cube', 'commercial' => 'suitcase', 'invoicing' => 'coins',
+		'accounting' => 'search-dollar', 'category' => 'tag', 'dollyrevert' => 'dolly',
+		'file-o' => 'file', 'generate' => 'plus-square', 'hrm' => 'user-tie', 'incoterm' => 'truck-loading',
+		'margin' => 'calculator', 'members' => 'user-friends', 'ticket' => 'ticket-alt', 'globe' => 'external-link-alt', 'lot' => 'barcode',
+		'email' => 'at', 'establishment' => 'building', 'edit' => 'pencil-alt', 'entity' => 'globe',
+		'graph' => 'chart-line', 'grip_title' => 'arrows-alt', 'grip' => 'arrows-alt', 'help' => 'question-circle',
+		'generic' => 'file', 'holiday' => 'umbrella-beach',
+		'info' => 'info-circle', 'info_black' => 'info-circle', 'inventory' => 'boxes', 'intracommreport' => 'globe-europe', 'jobprofile' => 'cogs',
+		'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout' => 'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
+		'member' => 'user-alt', 'meeting' => 'chalkboard-teacher', 'mrp' => 'cubes', 'next' => 'arrow-alt-circle-right',
+		'trip' => 'wallet', 'expensereport' => 'wallet', 'group' => 'users', 'movement' => 'people-carry',
+		'sign-out' => 'sign-out-alt',
+		'switch_off' => 'toggle-off', 'switch_on' => 'toggle-on',  'switch_on_grey' => 'toggle-on', 'switch_on_warning' => 'toggle-on', 'switch_on_red' => 'toggle-on', 'check' => 'check', 'bookmark' => 'star',
+		'bank' => 'university', 'close_title' => 'times', 'delete' => 'trash', 'filter' => 'filter',
+		'list-alt' => 'list-alt', 'calendarlist' => 'bars', 'calendar' => 'calendar-alt', 'calendarmonth' => 'calendar-alt', 'calendarweek' => 'calendar-week', 'calendarday' => 'calendar-day', 'calendarperuser' => 'table', 'calendarpertype' => 'table',
+		'intervention' => 'ambulance', 'invoice' => 'file-invoice-dollar', 'order' => 'file-invoice',
+		'error' => 'exclamation-triangle', 'warning' => 'exclamation-triangle',
+		'other' => 'square',
+		'playdisabled' => 'play', 'pdf' => 'file-pdf', 'poll' => 'check-double', 'pos' => 'cash-register', 'preview' => 'binoculars', 'project' => 'project-diagram', 'projectpub' => 'project-diagram', 'projecttask' => 'tasks', 'propal' => 'file-signature', 'proposal' => 'file-signature',
+		'partnership' => 'handshake', 'payment' => 'money-check-alt', 'payment_vat' => 'money-check-alt', 'pictoconfirm' => 'check-square', 'phoning' => 'phone', 'phoning_mobile' => 'mobile-alt', 'phoning_fax' => 'fax', 'previous' => 'arrow-alt-circle-left', 'printer' => 'print', 'product' => 'cube', 'puce' => 'angle-right',
+		'recent' => 'check-square', 'reception' => 'dolly', 'recruitmentjobposition' => 'id-card-alt', 'recruitmentcandidature' => 'id-badge',
+		'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
+		'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
+		'service' => 'concierge-bell',
+		'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
+		'status' => 'stop-circle',
+		'stripe' => 'stripe-s',	'supplier' => 'building',
+		'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
+		'title_agenda' => 'calendar-alt',
+		'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
+		'jabber' => 'comment',
+		'website' => 'globe-americas', 'workstation' => 'pallet', 'webhook' => 'bullseye', 'world' => 'globe', 'private' => 'user-lock',
+		'conferenceorbooth' => 'chalkboard-teacher', 'eventorganization' => 'project-diagram',
+		'webportal' => 'door-open'
+	);
+
+	if ($conf->currency == 'EUR') {
+		$arrayconvpictotofa['currency'] = 'euro-sign';
+		$arrayconvpictotofa['multicurrency'] = 'dollar-sign';
+	} else {
+		$arrayconvpictotofa['currency'] = 'dollar-sign';
+		$arrayconvpictotofa['multicurrency'] = 'euro-sign';
+	}
+
+	return $arrayconvpictotofa;
 }
 
 
@@ -6101,7 +6121,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$mimetype = dol_mimetype($file, '', 1);
-	$mimeimg = dol_mimetype($file, '', 2);
+	//$mimeimg = dol_mimetype($file, '', 2);
 	$mimefa = dol_mimetype($file, '', 4);
 
 	if (empty($titlealt)) {
@@ -6109,7 +6129,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
 }
 
 
@@ -11952,7 +11972,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 }
 
 /**
- * Explode a search string into an array but do not explode with keys are inside quotes.
+ * Explode a search string into an array but do not explode when keys are inside quotes.
  * For example "a 'b c'" will be array("a", "b c").
  *
  * @param	string				$input		String to explode
@@ -11965,23 +11985,34 @@ function dolExplodeKeepIfQuotes($input)
 	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
 
 	// Merge result and delete empty values
-	return array_filter(array_map(
+
+	$result = array_map(
 		/**
-		 * Return first non-empty item, or empty string
-		 *
-		 * @param string $a Possibly empty item - match ""
-		 * @param string $b Possibly empty item - match ''
-		 * @param string $c Non empty string if $a and $b are empty
-		 *
+		 * @param string $a Matched value in double quotes
+		 * @param string $b Matched value in single quotes
+		 * @param string $c Unquoted value
 		 * @return string
 		 */
 		static function ($a, $b, $c) {
-			return $a ?: ($b ?: $c);
+			if ($a !== '') return $a;
+			if ($b !== '') return $b;
+			if ($c !== '') return $c;
+			return '';
 		},
 		$matches[1],
 		$matches[2],
 		$matches[3]
-	));
+	);
+	return array_values(array_filter($result,
+		/**
+		 * Filter out empty strings from the result array.
+		 *
+		 * @param string $val The value to check.
+		 * @return bool True if the value is not an empty string.
+		 */
+		static function ($val) {
+			return $val !== '';
+		}));
 }
 
 
@@ -12029,7 +12060,7 @@ function dol_getmypid()
  * 										1=value is a numeric test (Example ">5.5 <10"),
  * 										2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
- * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search inside a string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -12068,6 +12099,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$crit = trim($crit);
 		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
+
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);
@@ -12706,6 +12738,11 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'error';
 		$imgmime = 'error.png';
 		$famime = 'file-alt';
+	}
+
+	if ($famime == 'file-o') {
+		// file-o seems to not work in fontawesome 5
+		$famime = 'file';
 	}
 
 	// Return mimetype string
