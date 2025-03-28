@@ -3603,7 +3603,7 @@ if ($action == 'create') {
 					print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 					print '</form>';
 				} else {
-					print $form->showCategories($object->id, Categorie::TYPE_INVOICE, 1);
+					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_INVOICE, 1);
 				}
 				print "</td></tr>";
 			}
