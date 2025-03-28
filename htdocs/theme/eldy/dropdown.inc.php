@@ -649,7 +649,7 @@ div.quickaddblock:focus {
 	.side-nav-vert .user-menu .dropdown-menu, .topnav .user-menu .dropdown-menu {
 		width: 300px;
 	}
-	.dropdown-menu:not(#ai_dropdownmessage) {
+	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
 		-webkit-box-shadow: none;
 		box-shadow: none;
