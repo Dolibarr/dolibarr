@@ -130,7 +130,6 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-
 	// Update a dispatched line
 	if ($action == 'updatelines' && $usercancreate) {
 		$db->begin();
