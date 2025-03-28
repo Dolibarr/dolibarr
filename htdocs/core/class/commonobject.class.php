@@ -4331,20 +4331,12 @@ abstract class CommonObject
 					$classPath = $element_properties['classpath'];
 					$classFile = $element_properties['classfile'];
 					$className = $element_properties['classname'];
-					if ($objecttype == 'subscription') {
-						$module = 'adherent';
-					} else {
-						$module = $element_properties['module'];
-					}
+					$module = $element_properties['module'];
 
 					// Here $module, $classFile and $className are set, we can use them.
 					if (isModEnabled($module) && (($element != $this->element) || $alsosametype)) {
 						if ($loadalsoobjects && (is_numeric($loadalsoobjects) || ($loadalsoobjects === $objecttype))) {
-							if ($objecttype == 'subscription') {
-								dol_include_once('adherents/class/'.$classFile.'.class.php');
-							} else {
-								dol_include_once('/'.$classPath.'/'.$classFile.'.class.php');
-							}
+							dol_include_once('/'.$classPath.'/'.$classFile.'.class.php');
 							if (class_exists($className)) {
 								foreach ($objectids as $i => $objectid) {	// $i is rowid into llx_element_element
 									$object = new $className($this->db);
