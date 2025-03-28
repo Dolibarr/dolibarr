@@ -18,6 +18,7 @@ AccountsCategoriesArea=Bank account tags/categories area
 ProjectsCategoriesArea=Project tags/categories area
 UsersCategoriesArea=User tags/categories area
 InvoicesCategoriesArea=Invoice tags/categories area
+OrdersCategoriesArea=Order tags/categories area
 SuppliersOrdersCategoriesArea=Supplier order tags/categories area
 SuppliersInvoicesCategoriesArea=Supplier invoice tags/categories area
 Bank_linesCategoriesArea==Bank lines tags/categories area

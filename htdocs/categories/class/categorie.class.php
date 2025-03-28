@@ -200,7 +200,7 @@ class Categorie extends CommonObject
 		'ticket'				=> 'TicketsCategoriesArea',
 		'knowledgemanagement'	=> 'KnowledgemanagementsCategoriesArea',
 		'fichinter'				=> 'FichintersCategoriesArea',
-		'order'					=> 'OrderCategoriesArea',
+		'order'					=> 'OrdersCategoriesArea',
 		'invoice'				=> 'InvoicesCategoriesArea',
 		'supplier_order'		=> 'SuppliersOrdersCategoriesArea',
 		'supplier_invoice'		=> 'SuppliersInvoicesCategoriesArea'

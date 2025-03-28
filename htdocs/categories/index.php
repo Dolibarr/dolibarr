@@ -1,12 +1,13 @@
 <?php
-/* Copyright (C) 2005       Matthieu Valleton   <mv@seeschloss.org>
- * Copyright (C) 2005       Eric Seigne         <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2016  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2007       Patrick Raguin      <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005		Matthieu Valleton			<mv@seeschloss.org>
+ * Copyright (C) 2005		Eric Seigne					<eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2007		Patrick Raguin				<patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +81,10 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 	$title = $langs->trans('ActionCommCategoriesArea');
 } elseif ($type == Categorie::TYPE_WEBSITE_PAGE) {
 	$title = $langs->trans('WebsitePagesCategoriesArea');
+} elseif ($type == Categorie::TYPE_SUPPLIER_ORDER) {
+	$title = $langs->trans('SuppliersOrdersCategoriesArea');
+} elseif ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
+	$title = $langs->trans('SuppliersInvoicesCategoriesArea');
 } else {
 	$title = $langs->trans(ucfirst($type).'sCategoriesArea');
 }
