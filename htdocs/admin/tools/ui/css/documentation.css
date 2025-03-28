@@ -1,3 +1,7 @@
+:root {
+    --flex-gap: 24px; /* Variable for gap */
+}
+
 body.dolibarr-doc {
     background: rgb(232, 232, 232);font-family: "Segoe UI", sans-serif;font-weight: 400;font-style: normal;font-size: 0.9em;margin: 0;
 }
@@ -21,6 +25,7 @@ body.dolibarr-doc {
 .doc-sidebar nav ul {margin: 12px 0 ;padding: 0;list-style: none;}
 .doc-sidebar nav ul li {}
 .doc-sidebar nav ul li.li-withsubmenu {}
+.doc-sidebar nav ul li.li-withseparator {border-bottom:1px solid rgba(255,255,255,0.25);margin-bottom: 16px; padding-bottom: 16px}
 .doc-sidebar nav ul li a {text-decoration: none; color: rgba(255, 255, 255, 0.5);display: block;padding: 12px 24px;display: flex;align-items: baseline;justify-content: center;}
 .doc-sidebar nav ul li a i.menu-icon {margin-right: 12px; color: rgba(255, 255, 255, 1);}
 .doc-sidebar nav ul li a i.submenu-toggle {text-align: right;color: rgba(255, 255, 255, .25);margin-right: 0;font-size: 0.9em;}
@@ -46,6 +51,8 @@ body.dolibarr-doc {
 /* MAIN WRAPPER */
 /***************************/
 .doc-wrapper {margin: 0;margin-left: 260px;}
+.doc-wrapper .fa-info-circle {padding-left: 0;}
+.doc-wrapper .fa-at, .doc-wrapper .fa-external-link-alt, .doc-wrapper .fa-share-alt {color: inherit;opacity: 1;}
 
 /* Breadcrumb */
 .doc-wrapper .doc-breadcrumbs {display: flex;margin: 0;padding: 0;list-style: none;background: #fff;height: 75px;box-sizing: border-box;}
@@ -61,6 +68,44 @@ body.dolibarr-doc {
 .doc-wrapper .doc-content-wrapper .warning p.documentation-text {color: #887711;}
 .doc-wrapper .doc-content-wrapper .warning p.documentation-text:first-child {margin-top:6px;}
 .doc-wrapper .doc-content-wrapper .warning p.documentation-text:last-child {margin-bottom:6px;}
+
+/* Documentation block links */
+.doc-wrapper .doc-content-wrapper .doclinks-section {margin: 24px 0 32px 0;}
+.doc-wrapper .doc-content-wrapper .doclinks-title {margin: 0;margin-bottom:12px;padding: 0;color: rgb(38,60,92);font-size: 1.3em;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper {display: flex;flex-wrap: wrap; gap: var(--flex-gap);}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link {display:block; background: #fff;padding: 16px 16px 20px 16px;box-sizing: border-box;border-radius: 5px;box-shadow: rgba(149, 157, 165, 0.2) 0px 4px 16px; cursor: pointer; transition: all .1s ease-in-out;}
+
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link.size-default {flex: 1; min-width: 280px;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link.size-small {
+    --doclinks-items: 5;
+    width: calc((100% / var(--doclinks-items)) - (((var(--doclinks-items) - 1) / var(--doclinks-items)) * var(--flex-gap)));text-align: center;
+}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link .link-icon {font-size: 2.4em; color: rgba(220, 220, 220, 1);margin-bottom: 8px;transition: all .1s ease-in-out;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link .link-title {color: rgb(38,60,92);font-weight: 500;font-size: 1.1em;transition: all .1s ease-in-out;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link.size-default .link-title {margin-bottom: 8px;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link .link-content {color: rgba(64, 64, 64, 1); transition: all .1s ease-in-out;}
+
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link:hover {background: rgb(38,60,92);text-decoration: none;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link:hover .link-icon {color: rgba(255, 255, 255, 0.75);}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link:hover .link-title {color: #fff;}
+.doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link:hover .link-content {color: #fff;}
+
+@media (max-width: 1200px) {
+  .doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link.size-small {
+    --doclinks-items: 4;
+  }
+}
+@media (max-width: 860px) {
+  .doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link.size-small {
+    --doclinks-items: 3;
+  }
+}
+
+@media (max-width: 660px) {
+  .doc-wrapper .doc-content-wrapper .doclinks-wrapper .doc-link.size-small {
+    --doclinks-items: 2;
+  }
+}
 
 /* Documentation summary */
 .doc-wrapper .doc-content-wrapper .summary-wrapper {margin-bottom: 32px;}
@@ -86,4 +131,4 @@ body.dolibarr-doc {
 #documentation-scroll {background: rgb(0, 123, 140);height: 5px;position: absolute;top: 0;left:0}
 
 /* component icons */
-.documentation-fontawesome-icon-list span{ 	color: #333; }
+.documentation-fontawesome-icon-list span {color: #333;}

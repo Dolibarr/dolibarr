@@ -40,7 +40,7 @@ $langs->load('uxdocumentation');
 
 //
 $documentation = new Documentation($db);
-$group = 'Components';
+$group = 'Resources';
 
 // Output html head + body - Param is Title
 $documentation->docHeader($langs->trans('DocListLinks', $group));

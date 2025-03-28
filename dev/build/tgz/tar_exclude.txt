@@ -3,6 +3,11 @@
 .git
 .gitignore
 .scrutinizer.yml
+.travis.yml
+.vscode
+.idea
+.editorconfig
+.codeclimate.yml
 Thumbs.db
 dev/build/exe
 dev/build/html

@@ -1,7 +1,13 @@
 BackToDolibarr=Go back to Dolibarr
-WelcomeToDocumentation=Welcome to UI Documentation. This section is under development,
+WelcomeToDocumentation=Welcome to the Dolibarr UI/UX documentation !
+WelcomeToDocumentationDescription=This document aims to guide you through the different components of the Dolibarr user interface and help you use them effectively. Feel free to explore the different chapters of this documentation to discover the components of the Dolibarr interface and to learn how to use them effectively.
 DocumentationHome=UI Documentation
 DocBasicUsage=Basic usage
+DocLinkSectionResources=Resources
+DocHowContribute=How to contribute ?
+DocHowContributeDescription=This documentation is currently being written. Learn how to contribute and enrich this documentation
+DocListLinks=List of links - %s
+DocGroupIndexDescription= This page brings together all the links from the "%s" section.
 
 # Components
 DocComponentsTitle=Components
@@ -44,7 +50,6 @@ DocTableTitle=Tables
 DocTableMainDescription=Documentation and examples for tables.
 DocTableBasic=Basic usage
 DocTableBasicDescription=Here is a template for creating a basic data table.
-DocTableClassExplain=<b>nooddeven</b>
 DocTableWithFilters=Filters row
 DocTableWithFiltersDescription=You can add a filters row using the following syntax. Your table must be into a form tag. <br>In order to show inputs, you can use the Form Class (see <a href="%s">#Inputs</a>) <br><span class="opacitylow"><i>Look at a list file to see how to use dynamic fields, not functionnal here.</i></span>
 DocTableBeforeFilters=Use a custom line before cols filters
@@ -116,3 +121,24 @@ DocInputsMainDescription = Documentation and examples for inputs
 DocInputsTitle = Inputs
 DocSearchInputUsage = Helper functions for search input + dynamic js filter
 DocSearchInputUsageDescription = The attribute values `data-search-tool-target`, `data-counter-target`, and `data-no-item-target` are CSS selectors, allowing you to target multiple search areas. Example: `data-search-tool-target=".zone01, .zone02, .zone03"`
+
+#Contributing
+DocContributeStep1=Create your documentation page
+DocContributeStep1Description=In order to create your page, you can copy the template/documentation_page.php file into the folder of your choice (Components, Content, ...) or you can copy/paste the code below into a new file.
+DocContributeStep2=Set menu and summary
+DocContributeStep2Description=The various menus (sidebar, summary) and the breadcrumbs are automatically populated by the menu defined in the Documentation class. In order to display your menu, you must fill in the menu array in <b>setMenu()</b> function. You can also use the setMenu hook.
+DocContributeAddMenuEntry=<b><u>Here is an example to add a menu entry in "Components" by the setMenu() function:</u></b>
+DocContributeStep3=Breadcrumb
+DocContributeStep3Description=In order to correctly configure the breadcrumbs of your page, you must correctly fill $documentation->view in your view. <br><b>You must precise all levels of your page.</b> Let's take the previous example, we added MyComponent in the component section.
+DocExampleError=Example error message
+DocExampleGreen=Example green/success message
+DocExampleInfo=Example info message
+DocExampleWarning=Example warning message
+
+#Template
+DocMyPageTitle=My page title
+DocMyPageDescription=Main description for your page
+DocMySectionTitle=Title of my section
+DocMySectionText=A line of text to describe my component
+DocMySectionText2=You can add more lines of text
+DocMySectionExample=Here you can put an example of your component
