@@ -2259,7 +2259,7 @@ class Societe extends CommonObject
 		if ($is_supplier) {
 			$sqlstart .= ' AND s.fournisseur > 0';
 		} // if both false, no test (the thirdparty can be client and/or supplier)
-		
+
 		// Then search on profids with a OR (+ restriction on is_client and is_supplier)
 		dol_syslog("Thirdparty not found with barcode search so we try profids search", LOG_DEBUG);
 		$sqlprof = "";
@@ -2349,7 +2349,7 @@ class Societe extends CommonObject
 			}
 			$sqlref .= " s.ref_ext = '".$this->db->escape($ref_ext)."'";
 		}
-		
+
 		if ($sqlref) {
 			$sqlrefquery = $sqlstart . " AND (".$sqlref." )";
 			$resql = $this->db->query($sqlrefquery);

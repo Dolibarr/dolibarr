@@ -511,7 +511,7 @@ class SocieteTest extends CommonClassTest
 
 		$result = $localobject->findNearest($soc1_id);
 		$this->assertEquals($soc1_id, $result);
-		
+
 		// Test on bad values
 		$result = $localobject->findNearest('', 'Bad REF', 'Bad REF EXT', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', 'bad email', 'BAD REF ALIAS', 0, 0);
 		$this->assertEquals(0, $result);
