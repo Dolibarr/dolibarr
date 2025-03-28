@@ -220,6 +220,10 @@ UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM ll
 
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
 
+-- remove foreign keys we should not have (bad name and bad use)
+ALTER TABLE llx_webhook_target DROP FOREIGN KEY llx_webhook_target_fk_user_creat;
+ALTER TABLE llx_webhook_target DROP FOREIGN KEY fk_webhook_target_fk_user_creat;
+
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
 
 -- Add input reason on invoice

@@ -625,8 +625,26 @@ if (empty($reshook)) {
 	if (($action == "addline" || $action == "freezone") && $placeid == 0 && ($user->hasRight('takepos', 'run') || defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE'))) {
 		$invoice->socid = getDolGlobalInt($constforcompanyid);
 
+		$dolnowtzuserrel = dol_now('tzuserrel');	// If user is 02 january 22:00, we want to store '02 january'
+		$monthuser = dol_print_date($dolnowtzuserrel, '%m', 'gmt');
+		$dayuser = dol_print_date($dolnowtzuserrel, '%d', 'gmt');
+		$yearuser = dol_print_date($dolnowtzuserrel, '%Y', 'gmt');
+		$dateinvoice = dol_mktime(0, 0, 0, $monthuser, $dayuser, $yearuser, 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		$invoice->date = dol_get_first_hour(dol_now('tzuserrel'));		// Invoice::create() needs a date with no hours
+		$invoice->date = $dateinvoice;		// Invoice::create() needs a date with no hours
+
+		/*
+		print "monthuser=".$monthuser." dayuser=".$dayuser." yearuser=".$yearuser.'<br>';
+		print '---<br>';
+		print 'TZSERVER: '.dol_print_date(dol_now('tzserver'), 'dayhour', 'gmt').'<br>';
+		print 'TZUSER: '.dol_print_date(dol_now('tzuserrel'), 'dayhour', 'gmt').'<br>';
+		print 'GMT: '.dol_print_date(dol_now('gmt'), 'dayhour', 'gmt').'<br>';	// Hour in greenwich
+		print '---<br>';
+		print dol_print_date($invoice->date, 'dayhour', 'gmt').'<br>';
+		print "IN SQL, we will got: ".dol_print_date($db->idate($invoice->date), 'dayhour', 'gmt').'<br>';
+		print dol_print_date($db->idate($invoice->date, 'gmt'), 'dayhour', 'gmt').'<br>';
+		*/
 
 		$invoice->module_source = 'takepos';
 		$invoice->pos_source =  isset($_SESSION["takeposterminal"]) ? $_SESSION["takeposterminal"] : '' ;
@@ -640,6 +658,7 @@ if (empty($reshook)) {
 
 			// Create invoice
 			$placeid = $invoice->create($user);
+
 			if ($placeid < 0) {
 				dol_htmloutput_errors($invoice->error, $invoice->errors, 1);
 			}

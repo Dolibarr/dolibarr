@@ -68,6 +68,7 @@ class Categorie extends CommonObject
 	const TYPE_ORDER				= 'order';
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
+	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 
 
 	/**
@@ -97,7 +98,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 14,
 		'order'					=> 16,
 		'invoice'				=> 17,
-		'supplier_order'		=> 20
+		'supplier_order'		=> 20,
+		'supplier_invoice'		=> 21
 	);
 
 	/**
@@ -123,7 +125,8 @@ class Categorie extends CommonObject
 		14 => 'fichinter',
 		16 => 'order',
 		17 => 'invoice',
-		20 => 'supplier_order'
+		20 => 'supplier_order',
+		21 => 'supplier_invoice'
 	);
 
 	/**
@@ -172,7 +175,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'Fichinter',
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
-		'supplier_order'		=> 'CommandeFournisseur'
+		'supplier_order'		=> 'CommandeFournisseur',
+		'supplier_invoice'		=> 'FactureFournisseur'
 	);
 
 	/**
@@ -198,7 +202,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'FichintersCategoriesArea',
 		'order'					=> 'OrderCategoriesArea',
 		'invoice'				=> 'InvoicesCategoriesArea',
-		'supplier_order'		=> 'SuppliersOrdersCategoriesArea'
+		'supplier_order'		=> 'SuppliersOrdersCategoriesArea',
+		'supplier_invoice'		=> 'SuppliersInvoicesCategoriesArea'
 	);
 
 	/**
@@ -217,7 +222,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'fichinter',
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
-		'supplier_order'		=> 'commande_fournisseur'
+		'supplier_order'		=> 'commande_fournisseur',
+		'supplier_invoice'		=> 'facture_fourn'
 	);
 
 	/**
@@ -285,6 +291,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ORDER
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
+	 * @see Categorie::TYPE_SUPPLIER_INVOICE
 	 */
 	public $type;
 

@@ -23,6 +23,7 @@ The following changes may create regressions for some external modules, but were
 * The behavior of constant STOCK_ALLOW_NEGATIVE_TRANSFER has been reversed. It has been renamed to STOCK_DISALLOW_NEGATIVE_TRANSFER.
 * Method Categoie->getObjectsInCateg() is deprecated. Try by using instead getListForItem() or containing().
 * Global variable $bctag and $conffiletoshowshort has been removed.
+* If you setup the API to update multicurrency rate from internet, you may need to re-enter your API key (so API key will be crypted in database).
 
 
 ***** ChangeLog for 21.0.0 compared to 20.0 *****

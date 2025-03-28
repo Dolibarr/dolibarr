@@ -201,7 +201,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Login
 print '<tr><td id="anchorforperms" class="titlefield">'.$langs->trans("Login").'</td>';
-if (!empty($object->ldap_sid) && $object->statut == 0) {
+if (!empty($object->ldap_sid) && $object->status == 0) {
 	print '<td class="error">';
 	print $langs->trans("LoginAccountDisableInDolibarr");
 	print '</td>';
@@ -241,9 +241,8 @@ if ($selectedvalue == 1) {
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
-
-print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("Parameter")."</td>";
+print '<tr class="liste_titre">';
+print '<td class="center">'.$langs->trans("AgendaExtNb", "")."</td>";
 print "<td>".$langs->trans("Name")."</td>";
 print "<td>".$langs->trans("ExtSiteUrlAgenda").'<div class="hideonsmartphone opacitymedium">'." (".$langs->trans("Example").': https://externalcalendar/agenda/agenda.ics)</div></td>';
 print "<td>".$form->textwithpicto($langs->trans("FixTZ"), $langs->trans("FillFixTZOnlyIfRequired"), 1).'</td>';
@@ -260,7 +259,10 @@ while ($i <= $MAXAGENDA) {
 
 	print '<tr class="oddeven">';
 	// Nb @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	print '<td class="maxwidth50onsmartphone">'.$langs->trans("AgendaExtNb", $key)."</td>";
+	print '<td class="maxwidth50onsmartphone center">';
+	//print $langs->trans("AgendaExtNb", $key);
+	print $key;
+	print "</td>";
 	// Name
 	$name_value = (GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) ? GETPOST('AGENDA_EXT_NAME_'.$id.'_'.$key) : (empty($object->conf->$name) ? '' : $object->conf->$name));
 	print '<td><input type="text" class="flat hideifnotset minwidth100 maxwidth100onsmartphone" name="AGENDA_EXT_NAME_'.$id.'_'.$key.'" value="'.$name_value.'"></td>';
