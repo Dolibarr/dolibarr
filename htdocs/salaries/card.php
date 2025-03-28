@@ -1,14 +1,14 @@
 <?php
 /* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2015		    Jean-François Ferry			<jfefe@aternatik.fr>
- * Copyright (C) 2015		    Charlie BENKE				    <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024	Frédéric France				  <frederic.france@free.fr>
- * Copyright (C) 2021		    Gauthier VERDOL				  <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023		    Maxime Nicolas				  <maxime@oarces.com>
- * Copyright (C) 2023		    Benjamin GREMBI				  <benjamin@oarces.com>
- * Copyright (C) 2024-2025	MDW							        <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024-2025		Nick Fragoulis
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
+ * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,6 +129,7 @@ if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->tabl
 
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
+$error = 0;
 
 /*
  * Actions
@@ -461,7 +462,7 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 
 // Action to update one extrafield
 if ($action == 'update_extras' && $permissiontoeditextra) {
-	$object->oldcopy = dol_clone($object, 2);
+	$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	$attribute = GETPOST('attribute', 'aZ09');
 

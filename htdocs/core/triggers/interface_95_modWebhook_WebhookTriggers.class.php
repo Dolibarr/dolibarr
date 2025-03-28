@@ -97,12 +97,12 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 			$actionarraytmp = explode(",", $tmpobject->trigger_codes);
 			$actionarray = array();
 			foreach ($actionarraytmp as $val) {
-				$actionarray = trim($val);
+				$actionarray[] = trim($val);
 			}
 
 			// Test on Target status
 			$testontargetstatus = ($tmpobject->status == Target::STATUS_AUTOMATIC_TRIGGER || ($tmpobject->status == Target::STATUS_MANUAL_TRIGGER && !empty($sendmanualtriggers)));
-			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && is_array($actionarray) && in_array($action, $actionarray)) {
+			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;

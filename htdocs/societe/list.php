@@ -144,6 +144,8 @@ $search_level = GETPOST("search_level", "array:alpha");
 $search_stcomm = GETPOST('search_stcomm', "array:int");
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
 $search_parent_name = trim(GETPOST('search_parent_name', 'alpha'));
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 
 $search_date_creation_startmonth = GETPOSTINT('search_date_creation_startmonth');
 $search_date_creation_startyear = GETPOSTINT('search_date_creation_startyear');
@@ -477,6 +479,8 @@ if (empty($reshook)) {
 		$search_date_modif_endyear = "";
 		$search_date_modif_endday = "";
 		$search_date_modif_end = "";
+		$search_note_public = "";
+		$search_note_private = "";
 		$search_status = -1;
 		$search_stcomm = '';
 		$search_level = '';
@@ -841,6 +845,12 @@ if ($search_stcomm) {
 }
 if ($search_import_key) {
 	$sql .= natural_search("s.import_key", $search_import_key);
+}
+if ($search_note_public != '') {
+	$sql .= natural_search('s.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('s.note_private', $search_note_private);
 }
 if ($search_date_creation_start) {
 	$sql .= " AND s.datec >= '".$db->idate($search_date_creation_start)."'";
@@ -1616,11 +1626,13 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 if (!empty($arrayfields['s.note_public']['checked'])) {
 	// Note public
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
 	print '</td>';
 }
 if (!empty($arrayfields['s.note_private']['checked'])) {
 	// Note private
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
 	print '</td>';
 }
 // Status
@@ -1826,10 +1838,6 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tms']['label'], $_SERVER["PHP_SELF"], "s.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;	// For the column action
 }
-if (!empty($arrayfields['s.status']['checked'])) {
-	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;	// For the column action
-}
 if (!empty($arrayfields['s.note_public']['checked'])) {
 	print_liste_field_titre($arrayfields['s.note_public']['label'], $_SERVER["PHP_SELF"], "s.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -1837,6 +1845,10 @@ if (!empty($arrayfields['s.note_public']['checked'])) {
 if (!empty($arrayfields['s.note_private']['checked'])) {
 	print_liste_field_titre($arrayfields['s.note_private']['label'], $_SERVER["PHP_SELF"], "s.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.status']['checked'])) {
+	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
@@ -2310,7 +2322,7 @@ while ($i < $imaxinloop) {
 		// Note public
 		if (!empty($arrayfields['s.note_public']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5);
+			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2319,7 +2331,7 @@ while ($i < $imaxinloop) {
 		// Note private
 		if (!empty($arrayfields['s.note_private']['checked'])) {
 			print '<td class="flat maxwidth250imp">';
-			print dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5);
+			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
