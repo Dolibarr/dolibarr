@@ -414,6 +414,10 @@ if ($nboftargetok) {
 	  	print $ret."\n";
 	  	# Copy to final dir
 	  	$NEWDESTI=$DESTI;
+		if ( !-d "$NEWDESTI/signatures" ) {
+			use File::Path qw( make_path );
+		    make_path "$NEWDESTI/signatures" or die "Failed to create path: $NEWDESTI/signatures";
+		}
 		print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
 	    use File::Copy qw(copy);
 	    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
