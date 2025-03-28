@@ -230,5 +230,6 @@ INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_input_reason (fk_input_reason);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (fk_input_reason) REFERENCES llx_c_input_reason (rowid);
+ALTER TABLE llx_website ADD COLUMN paymentframemode integer DEFAULT 0;
 ALTER TABLE llx_contratdet DROP COLUMN price_ht;
 ALTER TABLE llx_contratdet DROP COLUMN remise;
