@@ -2245,7 +2245,7 @@ class Societe extends CommonObject
 		// Then search on barcode if we have it (+ restriction on is_client and is_supplier)
 		dol_syslog("Thirdparty not found with exact match so we try barcode search", LOG_DEBUG);
 		if ($barcode) {
-			$result = $tmpthirdparty->fetch('', '', '', $barcode, '', '', '', '', '', '', '', '', $is_client, $is_supplier);
+			$result = $tmpthirdparty->fetch(0, '', '', $barcode, '', '', '', '', '', '', '', '', $is_client, $is_supplier);
 			if ($result != 0) {
 				return $result;
 			}
@@ -2325,7 +2325,7 @@ class Societe extends CommonObject
 		// Then search on email (+ restriction on is_client and is_supplier)
 		dol_syslog("Thirdparty not found with profids search so we try email search", LOG_DEBUG);
 		if ($email) {
-			$result = $tmpthirdparty->fetch('', '', '', '', '', '', '', '', '', '', $email, '', $is_client, $is_supplier);
+			$result = $tmpthirdparty->fetch(0, '', '', '', '', '', '', '', '', '', $email, '', $is_client, $is_supplier);
 			if ($result != 0) {
 				return $result;
 			}

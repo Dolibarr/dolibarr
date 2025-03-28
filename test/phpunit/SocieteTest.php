@@ -513,41 +513,41 @@ class SocieteTest extends CommonClassTest
 		$this->assertEquals($soc1_id, $result);
 
 		// Test on bad values
-		$result = $localobject->findNearest('', 'Bad REF', 'Bad REF EXT', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', 'bad email', 'BAD REF ALIAS', 0, 0);
+		$result = $localobject->findNearest(0, 'Bad REF', 'Bad REF EXT', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', 'bad email', 'BAD REF ALIAS', 0, 0);
 		$this->assertEquals(0, $result);
 
 		// Test on good values
-		$result = $localobject->findNearest('', $soc1->name, $soc1->ref_ext, $soc1->barcode, $soc1->idprof1, $soc1->idprof2, $soc1->idprof3, $soc1->idprof4, $soc1->idprof5, $soc1->idprof6, $soc1->email, $soc1->name_alias, $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, $soc1->name, $soc1->ref_ext, $soc1->barcode, $soc1->idprof1, $soc1->idprof2, $soc1->idprof3, $soc1->idprof4, $soc1->idprof5, $soc1->idprof6, $soc1->email, $soc1->name_alias, $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
 
 		// Test with Barcode
-		$result = $localobject->findNearest('', '', '', $soc1->barcode);
+		$result = $localobject->findNearest(0, '', '', $soc1->barcode);
 		$this->assertEquals($soc1_id, $result);
 
 		// Test with profids
-		$result = $localobject->findNearest('', '', '', '', $soc1->idprof1, 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', $soc1->idprof1, 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', '', '', '', 'bad idprof1', $soc1->idprof2, 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', $soc1->idprof2, 'bad idprof3', 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', '', '', '', 'bad idprof1', 'bad idprof2', $soc1->idprof3, 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', $soc1->idprof3, 'bad idprof4', 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', $soc1->idprof4, 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', $soc1->idprof4, 'bad idprof5', 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', $soc1->idprof5, 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', $soc1->idprof5, 'bad idprof6', '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', $soc1->idprof6, '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', 'bad idprof1', 'bad idprof2', 'bad idprof3', 'bad idprof4', 'bad idprof5', $soc1->idprof6, '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
 
 		// Test with email
-		$result = $localobject->findNearest('', '', '', '', '', '', '', '', '', '', $soc1->email, '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, '', '', '', '', '', '', '', '', '', $soc1->email, '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
 
 		// Test with refs
-		$result = $localobject->findNearest('', $soc1->name, 'Bad REF EXT', '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, $soc1->name, 'Bad REF EXT', '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', 'Bad REF', $soc1->ref_ext, '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, 'Bad REF', $soc1->ref_ext, '', '', '', '', '', '', '', '', 'BAD REF ALIAS', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
-		$result = $localobject->findNearest('', 'Bad REF', 'Bad REF EXT', '', '', '', '', '', '', '', '', $soc1->name_alias, $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, 'Bad REF', 'Bad REF EXT', '', '', '', '', '', '', '', '', $soc1->name_alias, $soc1->client, $soc1->fournisseur);
 		$this->assertEquals($soc1_id, $result);
 
 		$soc2 = new Societe($db);
@@ -558,7 +558,7 @@ class SocieteTest extends CommonClassTest
 		$soc2_id = $soc2->create($user);
 
 		// Test on values not precise enough
-		$result = $localobject->findNearest('', 'Thirdparty Name Specimen', '', '', '', '', '', '', '', '', '', $soc1->client, $soc1->fournisseur);
+		$result = $localobject->findNearest(0, 'Thirdparty Name Specimen', '', '', '', '', '', '', '', '', '', $soc1->client, $soc1->fournisseur);
 		$this->assertEquals(-2, $result);
 
 		// Clean data for next tests
