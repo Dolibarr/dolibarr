@@ -776,7 +776,7 @@ if ($resql) {
 		// Centralized or not
 		if (!empty($arrayfields['aa.centralized']['checked'])) {
 			print '<td class="center">';
-			if (empty($obj->active)) {
+			if (empty($obj->centralized)) {
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=2&token='.newToken().'">';
 				print img_picto($langs->trans("Disabled"), 'switch_off');
 				print '</a>';
