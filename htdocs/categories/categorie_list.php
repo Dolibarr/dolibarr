@@ -58,7 +58,7 @@ $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
 if (is_numeric($type)) {
-	$type = Categorie::$MAP_ID_TO_CODE[$type];
+	$type = Categorie::$MAP_ID_TO_CODE[(int) $type];
 }
 
 // Load variable for pagination
@@ -133,7 +133,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -160,7 +160,7 @@ if ($user->socid > 0) {
 //$socid = 0; if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 //restrictedArea($user, $object->module, 0, $object->table_element, $object->element, 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled("categorie")) {
+if (!isModEnabled("category")) {
 	accessforbidden('Module Category not enabled');
 }
 if (!$permissiontoread) {
