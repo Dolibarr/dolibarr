@@ -736,6 +736,12 @@ if ($action == 'create') {
 			if ($separatedPMP) {
 				$sql .= ", ".MAIN_DB_PREFIX."product_perentity as pa";
 			}
+			$parameters = array('context' => 'warehousecard');
+			$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 
 			$sql .= " WHERE ps.fk_product = p.rowid";
 			$sql .= " AND ps.reel <> 0"; // We do not show if stock is 0 (no product in this warehouse)
@@ -744,6 +750,12 @@ if ($action == 'create') {
 			if ($separatedPMP) {
 				$sql .= " AND pa.fk_product = p.rowid AND pa.entity = ".(int) $conf->entity;
 			}
+			$parameters = array('context' => 'warehousecard');
+			$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
+				$sql = "";
+			}
+			$sql .= $hookmanager->resPrint;
 
 			$sql .= $db->order($sortfield, $sortorder);
 
