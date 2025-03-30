@@ -306,18 +306,26 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		$fill = 0;
 
 		/* Manage SubTotal lines */
+		$tabs = 0;
 		if (class_exists('TSubtotal') && TSubtotal::isTitle($object->lines[$i])) {	
-				$labelproductservice = $object->lines[$i]->label;
-				// Clean the first numbers in the label
-				$a = preg_split('/\s+/', $labelproductservice);
-				array_shift($a);
-				$labelproductservice = '<b>' . implode(' ', $a) . '</b>';
-				$pdf->SetFillColor(233, 233, 233);
-				$posy += $h;
-				$fill = 1;
+			$labelproductservice = $object->lines[$i]->label;
+			// Clean the first numbers in the label
+			$label = preg_replace("/^[0-9] .+/", "", $labelproductservice);
+			// Manage tabulations
+			$tabs = TSubtotal::getNiveau($object->lines[$i]) - 1;
+			// Print
+			$labelproductservice = '<b>' . $label . '</b>';
+			$pdf->SetFillColor(233, 233, 233);
+			$posy += $h;
+			$fill = 1;
 		} elseif (class_exists('TSubtotal') && TSubtotal::isSubtotal($object->lines[$i])) {
+			// Manage tabulations
+			$tabs = TSubtotal::getNiveau($object->lines[$i]) - 1;
+			// Print
 			$labelproductservice = "<b>Total :</b>";
 		} else {
+			$parent_line = TSubtotal::getParentTitleOfLine($object, $object->lines[$i]->rang);
+			$tabs = $parent_line ? TSubtotal::getNiveau($parent_line) : 0;
 			$labelproductservice = pdf_getlinedesc($object, $i, $outputlangs, $hideref, $hidedesc, $issupplierline);
 		}
 
@@ -332,7 +340,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->setHtmlVSpace($TMarginList);
 		}
 
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, $fill, true, 'J', true);
+		$pdf->writeHTMLCell($w - $tabs*4, $h, $posx + $tabs*4, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, $fill, true, 'J', true);
 
 		return 1;
 	}
