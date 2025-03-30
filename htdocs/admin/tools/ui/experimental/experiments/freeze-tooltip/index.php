@@ -44,10 +44,11 @@ $group = 'ExperimentalUx';
 
 $experimentAssetsPath = 'admin/tools/ui/experimental/experiments/freeze-tooltip/assets/';
 $js = [
-//	$experimentAssetsPath . 'freeze-by-alt-keypress.js'
-'admin/tools/ui/experimental/experiments/freeze-tooltip/freeze-by-alt-keypress.js'
+	$experimentAssetsPath . 'freeze-by-alt-keypress.js'
 ];
-$css = [];
+$css = [
+	$experimentAssetsPath . 'freeze-by-alt-keypress.css'
+];
 
 // Output html head + body - Param is Title
 $documentation->docHeader($langs->trans('ExperimentalUxFreezeTooltip', $group), $js, $css);
