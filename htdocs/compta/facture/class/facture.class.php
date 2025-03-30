@@ -7018,7 +7018,7 @@ class FactureLigne extends CommonInvoiceLine
 	 * Returns situation_percent of the previous line.
 	 * Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
 	 *
-	 * @param  int	 $invoiceid	  			Invoice id
+	 * @param  int	 $invoiceid	  				Invoice id
 	 * @param  bool	$include_credit_note		Include credit note or not
 	 * @return int					 			>= 0
 	 */
