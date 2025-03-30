@@ -230,6 +230,13 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+
+				'ExperimentalUxInputAjaxFeedback' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 

@@ -42,7 +42,7 @@ $langs->load('uxdocumentation');
 $documentation = new Documentation($db);
 $group = 'ExperimentalUx';
 
-$experimentAssetsPath = 'admin/tools/ui/experimental/experiments/freeze-tooltip/assets/';
+$experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/freeze-tooltip/assets/';
 $js = [
 	$experimentAssetsPath . 'freeze-by-alt-keypress.js'
 ];

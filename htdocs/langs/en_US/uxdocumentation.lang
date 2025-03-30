@@ -160,4 +160,5 @@ ExperimentalUxContributionEnd = This structure ensures a clear and modular organ
 
 # Start experiements menu title
 ExperimentalUxFreezeTooltip = Tooltip freeze
+ExperimentalUxInputAjaxFeedback = Input feedback
 # End experiements manu tyile
