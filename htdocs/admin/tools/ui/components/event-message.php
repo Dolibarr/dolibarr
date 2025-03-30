@@ -163,9 +163,9 @@ $documentation->showSidebar(); ?>
 			<?php
 			$lines = array(
 				'<?php',
-				'setEventMessages("message", null)',
-				'setEventMessages("message", null, "warnings")',
-				'setEventMessages("message", null, "errors")'
+				'setEventMessages("message", null);',
+				'setEventMessages("message", null, "warnings");',
+				'setEventMessages("message", null, "errors");'
 			);
 			echo $documentation->showCode($lines, 'php'); ?>
 		</div>

@@ -131,10 +131,18 @@ function dolSessionWrite($sess_id, $val)
 		$time_stamp = dol_now();
 
 		if (empty($sessionidfound)) {
+			if ((int) ini_get('session.gc_probability') == 0) {
+				// dolSessionGC will be never called
+				$max_lifetime = max(getDolGlobalInt('MAIN_SESSION_TIMEOUT'), (int) ini_get('session.gc_maxlifetime'));
+				$delete_query = "DELETE FROM ".MAIN_DB_PREFIX."session";
+				$delete_query .= " WHERE last_accessed < '".$dbsession->idate($time_stamp - $max_lifetime)."'";
+				$dbsession->query($delete_query);
+			}
+
 			// No session found, insert a new one
 			$insert_query = "INSERT INTO ".MAIN_DB_PREFIX."session";
-			$insert_query .= "(session_id, session_variable, last_accessed, fk_user, remote_ip, user_agent)";
-			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
+			$insert_query .= "(session_id, session_variable, date_creation, last_accessed, fk_user, remote_ip, user_agent)";
+			$insert_query .= " VALUES ('".$dbsession->escape($sess_id)."', '".$dbsession->escape($val)."', '".$dbsession->idate($time_stamp)."', '".$dbsession->idate($time_stamp)."', 0, '".$dbsession->escape(getUserRemoteIP())."', '".$dbsession->escape(substr($_SERVER['HTTP_USER_AGENT'], 0, 255))."')";
 
 			$result = $dbsession->query($insert_query);
 			if (!$result) {
@@ -247,3 +255,34 @@ function dolSessionGC($max_lifetime)
 
 // Call to register user call back functions.
 session_set_save_handler("dolSessionOpen", "dolSessionClose", "dolSessionRead", "dolSessionWrite", "dolSessionDestroy", "dolSessionGC"); // @phpstan-ignore-line
+
+/**
+ * List sessions in db
+ *
+ * @return array<mixed,array{login:string,age:int,creation:int|false,modification:int,raw:string,remote_ip:string,user_agent:string}>
+ */
+function dolListSessions()
+{
+	global $dbsession;
+
+	$arrayofsessions = [];
+	$sql = "SELECT s.session_id, s.session_variable, s.fk_user, s.date_creation, s.last_accessed, s.remote_ip, s.user_agent";
+	$sql .= ", u.login";
+	$sql .= " FROM ".MAIN_DB_PREFIX."session as s";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=s.fk_user";
+	$sql .= " LIMIT 500";
+	$resql = $dbsession->query($sql);
+	while ($resql && $obj = $dbsession->fetch_object($resql)) {
+		$arrayofsessions[$obj->session_id] = [
+			"login" => (string) $obj->login,
+			"age" => dol_now() - (int) $dbsession->jdate($obj->date_creation),
+			"creation" => $dbsession->idate($obj->date_creation),
+			"modification" => $dbsession->idate($obj->last_accessed),
+			"remote_ip" => $obj->remote_ip,
+			"user_agent" => $obj->user_agent,
+			"raw" => "",
+		];
+	}
+
+	return $arrayofsessions;
+}

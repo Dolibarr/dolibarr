@@ -6,7 +6,7 @@
  * Copyright (C) 2014       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,7 +129,8 @@ $form = new Form($db);
 $formother = new FormOther($db);
 
 if ($object->id) {
-	$title = Categorie::$MAP_TYPE_TITLE_AREA[$type];
+	$title = $langs->trans("Categories");
+	$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
 
 	$head = categories_prepare_head($object, $type);
 	print dol_get_fiche_head($head, 'photos', $langs->trans($title), -1, 'category');
@@ -202,7 +203,7 @@ if ($object->id) {
 	if ($action == 'ajout_photo' && $user->hasRight('categorie', 'creer') && getDolGlobalString('MAIN_UPLOAD_DOC')) {
 		// Affiche formulaire upload
 		$formfile = new FormFile($db);
-		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, 0, $user->hasRight('categorie', 'creer'), 50, $object, '', false, '', 0);
+		$formfile->form_attach_new_file($_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;type='.$type, $langs->trans("AddPhoto"), 1, 0, $user->hasRight('categorie', 'creer'), 50, $object, '', 0, '', 0);
 	}
 
 	// Affiche photos

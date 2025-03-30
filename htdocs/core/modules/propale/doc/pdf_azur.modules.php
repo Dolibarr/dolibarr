@@ -757,6 +757,10 @@ class pdf_azur extends ModelePDFPropales
 				// Customer signature area
 				if (!getDolGlobalString('PROPAL_DISABLE_SIGNATURE')) {
 					$posy = $this->_signature_area($pdf, $object, $posy, $outputlangs);
+
+					// Rewrite keywords to add a tag with the numero of page that contains the signature section
+					$keywords = $outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("PdfCommercialProposalTitle")." ".$outputlangs->convToOutputCharset($object->thirdparty->name);
+					$pdf->SetKeyWords($keywords." PAGESIGN=".$pdf->getPage());
 				}
 
 				// Pied de page

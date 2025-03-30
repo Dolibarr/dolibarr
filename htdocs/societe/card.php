@@ -170,6 +170,12 @@ $permissiontoadd 	= $user->hasRight('societe', 'creer'); // Used by the include 
 $permissiontodelete = $user->hasRight('societe', 'supprimer') || ($permissiontoadd && isset($object->status) && $object->status == 0);
 $permissionnote 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink 	= $user->hasRight('societe', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
@@ -262,21 +268,20 @@ if (empty($reshook)) {
 		$res = $object->setValueFrom('localtax2_value', $value, '', null, 'text', '', $user, 'COMPANY_MODIFY');
 	}
 
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->fetch($socid);
 
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-		// Fill array 'array_options' with data from update form
-		$extrafields->fetch_name_optionals_label($object->table_element);
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields('COMPANY_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'COMPANY_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -322,7 +327,7 @@ if (empty($reshook)) {
 		if (!$error) {
 			if ($action == 'update') {	// Test on permission not required here
 				$ret = $object->fetch($socid);
-				$object->oldcopy = clone $object;
+				$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 			} else {
 				$object->canvas = $canvas;
 			}
@@ -838,7 +843,7 @@ if (empty($reshook)) {
 	// Delete third party
 	if ($action == 'confirm_delete' && $confirm == 'yes' && $user->hasRight('societe', 'supprimer')) {
 		$object->fetch($socid);
-		$object->oldcopy = clone $object;
+		$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$result = $object->delete($socid, $user);
 
 		if ($result > 0) {
@@ -2071,7 +2076,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				$prefixSupplierIsUsed = false;
 			}
 
-			$object->oldcopy = clone $object;
+			$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			if (GETPOSTISSET('name')) {
 				// We overwrite with values if posted

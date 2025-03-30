@@ -5,7 +5,7 @@
  * Copyright (C) 2015		Jean-François Ferry	    <jfefe@aternatik.fr>
  * Copyright (C) 2016		Charlie Benke		    <charlie@patas-monkey.com>
  * Copyright (C) 2017       Open-DSI                <support@open-dsi.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ if ($action == 'set') {
 	dolibarr_set_const($db, 'AGENDA_DEFAULT_VIEW', GETPOST('AGENDA_DEFAULT_VIEW'), 'chaine', 0, '', $conf->entity);
 
 	$defaultValues = new DefaultValues($db);
-	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page' => 'comm/action/card.php', 't.param' => 'complete', 't.user_id' => '0', 't.type' => 'createform', 't.entity' => $conf->entity));
+	$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page' => 'comm/action/card.php', 't.param' => 'complete', 't.user_id' => '0', 't.type' => 'createform', 't.entity' => (string) $conf->entity));
 	if (!is_array($result) && $result < 0) {
 		setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 	} elseif (count($result) > 0) {
@@ -391,7 +391,7 @@ print '<td class="center">&nbsp;</td>'."\n";
 print '<td class="right nowrap">'."\n";
 $defval = 'na';
 $defaultValues = new DefaultValues($db);
-$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page' => 'comm/action/card.php', 't.param' => 'complete', 't.user_id' => '0', 't.type' => 'createform', 't.entity' => $conf->entity));
+$result = $defaultValues->fetchAll('', '', 0, 0, array('t.page' => 'comm/action/card.php', 't.param' => 'complete', 't.user_id' => '0', 't.type' => 'createform', 't.entity' => (string) $conf->entity));
 if (!is_array($result) && $result < 0) {
 	setEventMessages($defaultValues->error, $defaultValues->errors, 'errors');
 } elseif (count($result) > 0) {

@@ -1220,12 +1220,12 @@ class Conf extends stdClass
 				$this->contrat->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
 				$this->contrat->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 			}
-			if (isset($this->commande)) {
-				$this->bank->rappro	= new stdClass();
-				$this->bank->cheque	= new stdClass();
-				$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
-				$this->bank->cheque->warning_delay = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
-			}
+
+			$this->bank->rappro	= new stdClass();
+			$this->bank->cheque	= new stdClass();
+			$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
+			$this->bank->cheque->warning_delay = getDolGlobalInt('MAIN_DELAY_CHEQUES_TO_DEPOSIT') * 86400;
+
 			if (isset($this->expensereport)) {
 				$this->expensereport->approve = new stdClass();
 				$this->expensereport->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_EXPENSEREPORTS') * 86400;
@@ -1294,6 +1294,10 @@ class Conf extends stdClass
 				$this->global->MAIL_SMTP_USE_FROM_FOR_HELO = 2;	// Use the domain in $dolibarr_main_url_root (mydomain.com)
 			}
 
+			if (!empty($this->use_javascript_ajax) && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1) {
+				$this->global->EMAILING_USE_ADVANCED_SELECTOR = 1;
+			}
+
 			// Security
 			if (!defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 				if (defined('MAIN_ANTIVIRUS_COMMAND')) {
@@ -1331,13 +1335,6 @@ class Conf extends stdClass
 			if (!empty($this->global->MAIN_TZUSERINPUTKEY)) {
 				$this->tzuserinputkey = $this->global->MAIN_TZUSERINPUTKEY;	// 'tzserver' or 'tzuserrel'
 			}
-
-			if (!empty($this->global->PRODUIT_AUTOFILL_DESC)) {
-				$this->global->MAIN_NO_CONCAT_DESCRIPTION = 1;
-			} else {
-				unset($this->global->MAIN_NO_CONCAT_DESCRIPTION);
-			}
-
 
 			// Simple deprecation management. We do not use DolDeprecationHandlet for $conf.
 

@@ -868,26 +868,22 @@ class Form
 		if (!empty($conf->use_javascript_ajax)) {
 			$ret .= '<!-- JS CODE TO ENABLE mass action select -->
     		<script nonce="' . getNonce() . '">
-                        function initCheckForSelect(mode, name, cssclass)	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
-        		{
+				function initCheckForSelect(mode, name, cssclass) {	/* mode is 0 during init of page or click all, 1 when we click on 1 checkboxi, "name" refers to the class of the massaction button, "cssclass" to the class of the checkfor select boxes */
         			atleastoneselected=0;
-                                jQuery("."+cssclass).each(function( index ) {
+					jQuery("."+cssclass).each(function( index ) {
     	  				/* console.log( index + ": " + $( this ).text() ); */
     	  				if ($(this).is(\':checked\')) atleastoneselected++;
     	  			});
 
 					console.log("initCheckForSelect mode="+mode+" name="+name+" cssclass="+cssclass+" atleastoneselected="+atleastoneselected);
 
-    	  			if (atleastoneselected || ' . ((int) $alwaysvisible) . ')
-    	  			{
-                                    jQuery("."+name).show();
+    	  			if (atleastoneselected || ' . ((int) $alwaysvisible) . ') {
+						jQuery("."+name).show();
         			    ' . ($selected ? 'if (atleastoneselected) { jQuery("."+name+"select").val("' . $selected . '").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', false); }' : '') . '
         			    ' . ($selected ? 'if (! atleastoneselected) { jQuery("."+name+"select").val("0").trigger(\'change\'); jQuery("."+name+"confirmed").prop(\'disabled\', true); } ' : '') . '
-    	  			}
-    	  			else
-    	  			{
-                                    jQuery("."+name).hide();
-                                    jQuery("."+name+"other").hide();
+    	  			} else {
+						jQuery("."+name).hide();
+						jQuery("."+name+"other").hide();
     	            }
         		}
 
@@ -2679,7 +2675,7 @@ class Form
 	 *										            'warehouseopen' = count products from open warehouses,
 	 *										            'warehouseclosed' = count products from closed warehouses,
 	 *										            'warehouseinternal' = count products from warehouses for internal correct/transfer only
-	 *  @param 		?mixed[]	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
+	 *  @param 		?array<string,mixed>	$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @param		int<0,1> 	$nooutput				No print if 1, return the output into a string
 	 *  @param		int<-1,1>	$status_purchase		Purchase status: -1=No filter on purchase status, 0=Products not on purchase, 1=Products on purchase
 	 *  @param		int 		$warehouseId 			Filter by Warehouses Id where there is real stock
@@ -5193,7 +5189,8 @@ class Form
 
 		$langs->load('bills');
 
-		$opt = '<option value="" selected></option>';
+		$opt = '';
+
 		$sql = "SELECT rowid, ref, situation_cycle_ref, situation_counter, situation_final, fk_soc";
 		$sql .= ' FROM ' . $this->db->prefix() . 'facture';
 		$sql .= ' WHERE entity IN (' . getEntity('invoice') . ')';
@@ -5202,6 +5199,8 @@ class Form
 		$sql .= ' AND type <> 2';
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
+
+		$nbSituationInvoiceForThirdparty = 0;
 
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
@@ -5215,6 +5214,8 @@ class Form
 					if ($obj->situation_final != 1) {
 						//Not prov?
 						if (substr($obj->ref, 1, 4) != 'PROV') {
+							$nbSituationInvoiceForThirdparty++;
+
 							if ($selected == $obj->rowid) {
 								$opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->ref . '</option>';
 							} else {
@@ -5227,9 +5228,13 @@ class Form
 		} else {
 			dol_syslog("Error sql=" . $sql . ", error=" . $this->error, LOG_ERR);
 		}
-		if ($opt == '<option value ="" selected></option>') {
-			$opt = '<option value ="0" selected>' . $langs->trans('NoSituations') . '</option>';
+
+		if ($nbSituationInvoiceForThirdparty > 0) {
+			$opt = '<option class="minwidth100" value="" selected>&nbsp;</option>'.$opt;
+		} else {
+			$opt = '<option class="minwidth100" value="-1" selected>'.$langs->trans('NoSituations').'</option>';
 		}
+
 		return $opt;
 	}
 
@@ -7542,7 +7547,7 @@ class Form
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
 
-					// Icone calendrier
+					// Icon calendar
 					if ($disabled) {
 						$retstringbutton = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
 						$retstring = $retstringbutton . $retstring;
@@ -8679,10 +8684,10 @@ class Form
 		$filter = '';  // Ensure filter has value (for static analysis)
 		$sortfield = '';  // Ensure filter has value (for static analysis)
 
-		if (is_array($objectfield)) {
+		if (is_array($objectfield)) {	// objectfield is an array
 			$objectdesc = $objectfield['type'];
 			$objectdesc = preg_replace('/^integer[^:]*:/', '', $objectdesc);
-		} elseif ($objectfield) {	// We must retrieve the objectdesc from the field or extrafield. Deprecated, it is better to provide the array record directly.
+		} elseif ($objectfield) {		// objectfield is a string. We must retrieve the objectdesc from the field or extrafield. Deprecated, it is better to provide the array record directly.
 			// Example: $objectfield = 'product:options_package' or 'myobject@mymodule:options_myfield'
 			$tmparray = explode(':', $objectfield);
 
@@ -8757,8 +8762,8 @@ class Form
 		);
 
 		if (!is_object($objecttmp)) {
-			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc, LOG_WARNING);
-			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.$objectfield.', objectdesc='.$objectdesc;
+			dol_syslog('selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.(is_array($objectfield) ? 'array' : $objectfield).', objectdesc='.$objectdesc, LOG_WARNING);
+			return 'selectForForms: Error bad setup of field objectdescorig=' . $objectdescorig.', objectfield='.(is_array($objectfield) ? 'array' : $objectfield).', objectdesc='.$objectdesc;
 		}
 		'@phan-var-force CommonObject $objecttmp';
 		/** @var CommonObject $objecttmp */
@@ -8802,7 +8807,7 @@ class Form
 
 			// Set url and param to call to get json of the search results
 			$urlforajaxcall = DOL_URL_ROOT . '/core/ajax/selectobject.php';
-			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . '&objectfield='.urlencode($objectfield) . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
+			$urloption = 'htmlname=' . urlencode($htmlname) . '&outjson=1&objectdesc=' . urlencode($objectdescorig) . (is_scalar($objectfield) ? '&objectfield='.urlencode($objectfield) : '') . ($sortfield ? '&sortfield=' . urlencode($sortfield) : '');
 
 			// Activate the auto complete using ajax call.
 			$out .= ajax_autocompleter((string) $preSelectedValue, $htmlname, $urlforajaxcall, $urloption, getDolGlobalInt($confkeyforautocompletemode), 0);
@@ -9066,7 +9071,7 @@ class Form
 	 * @param string 				$morecss 			Add more class to css styles
 	 * @param int<0,1>				$addjscombo 		Add js combo
 	 * @param string 				$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
-	 * @param int<0,2> 					$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
+	 * @param int<0,2> 				$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
 	 * @param int<0,1> 				$nohtmlescape 		No html escaping (not recommended, use 'data-html' if you need to use label with HTML content).
 	 * @return string									HTML select string.
 	 * @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
@@ -9436,7 +9441,7 @@ class Form
 	 * Show a multiselect form from an array. WARNING: Use this only for short lists.
 	 *
 	 * @param 	string 		$htmlname 		Name of select
-	 * @param 	array<string|int,string|array{id:string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
+	 * @param 	array<string|int,string|array{id:int|string,label:string,color:string,picto:string,labelhtml:string}>	$array 			Array(key=>value) or Array(key=>array('id'=>key, 'label'=>value, 'color'=> , 'picto'=> , 'labelhtml'=> ))
 	 * @param 	string[]	$selected 		Array of keys preselected
 	 * @param 	int<0,1>	$key_in_label 	1 to show key like in "[key] value"
 	 * @param 	int<0,1>	$value_as_key 	1 to use value as key
@@ -9591,16 +9596,16 @@ class Form
 	 * Show a multiselect dropbox from an array.
 	 * If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
-	 * @param string 	$htmlname 	Name of HTML field
+	 * @param string 		$htmlname 	Name of HTML field
 	 * @param array<string,array{label:string,checked?:string,enabled?:string,type?:string,langfile?:string,position?:int,help?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
-	 * @param string 	$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
-	 * @param string 	$pos 		Position of the colon in list: 'left' or '' (meaning 'right').
-	 * @return string            	HTML multiselect string
+	 * @param string 		$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
+	 * @param int|string 	$pos 		Position of the colon in list: 1 or 'left' or '' (meaning 'right').
+	 * @return string            		HTML multiselect string
 	 * @see selectarray()
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '')
 	{
-		global $langs, $user;
+		global $conf, $langs, $user;
 
 		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 			return '';
@@ -9653,7 +9658,9 @@ class Form
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" />';
-				$listoffieldsforselection .= '<label for="checkbox' . $key . '">'.dol_string_nohtmltag($langs->trans($val['label'])) . '</label></li>';
+				$listoffieldsforselection .= '<label for="checkbox' . $key . '">';
+				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
+				$listoffieldsforselection .= '</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
 			}
 		}
@@ -9669,8 +9676,10 @@ class Form
             </dt>
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
-                    <li class="liinputsearch"><input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'"></li>
+                    <ul class="'.$htmlname.(((string) $pos == '1' || (string) $pos == 'left') ? 'left' : '').'">
+                    <li class="liinputsearch">
+						<input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'">
+					</li>
                     '.$listoffieldsforselection.'
                     </ul>
                 </div>
@@ -9678,8 +9687,8 @@ class Form
         </dl>
 
         <script nonce="' . getNonce() . '" type="text/javascript">
-          jQuery(document).ready(function () {
-              $(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]\').on(\'click\', function () {
+			jQuery(document).ready(function () {
+				$(\'.multiselectcheckbox' . $htmlname . ' input[type="checkbox"]\').on("click", function () {
                   console.log("A new field was added/removed, we edit field input[name=formfilteraction]");
 
                   $("input:hidden[name=formfilteraction]").val(\'listafterchangingselectedfields\');	// Update field so we know we changed something on selected fields after POST
@@ -9693,16 +9702,25 @@ class Form
                   }
                   // Now, we submit page
                   //$(this).parents(\'form:first\').submit();
-              });
-              $("input.inputsearch_dropdownselectedfields").on("keyup", function() {
-			    var value = $(this).val().toLowerCase();
-			    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
-			      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
-			    });
-			  });
+              	});
 
-
-           });
+				$("input.inputsearch_dropdownselectedfields").on("keyup", function() {
+					console.log("keyup on inputsearch_dropdownselectedfields");
+				    var value = $(this).val().toLowerCase();
+				    $(\'.multiselectcheckbox'.$htmlname.' li > label\').filter(function() {
+				      $(this).parent().toggle($(this).text().toLowerCase().indexOf(value) > -1)
+				    });
+				});
+		';
+		if (empty($conf->browser->layout) || $conf->browser->layout != 'phone') {
+			$out .= '
+					$(".dropdown dt a").on("click", function () {
+						console.log("Click on dropdown, we set focus to search field");
+		           		setTimeout(() => { $(\'.inputsearch_dropdownselectedfields\').focus(); }, 200);
+					});';
+		}
+		$out .= '
+			});
         </script>
 
         ';
@@ -9994,7 +10012,7 @@ class Form
 					'enabled' => isModEnabled('invoice'),
 					'perms' => 1,
 					'label' => 'LinkToTemplateInvoice',
-					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')'.($dontIncludeCompletedItems ? ' AND t.paye < 1' : ''),
+					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.titre as ref, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "facture_rec as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('invoice') . ')',
 				),
 				'contrat' => array(
 					'enabled' => isModEnabled('contract'),
@@ -11603,6 +11621,109 @@ class Form
 	}
 
 	/**
+	 *  Output a combo list with supplier invoices qualified for a third party
+	 *
+	 *  @param  string	$selected   	Id supplier order preselected
+	 *  @param  string	$htmlname   	Name of HTML select
+	 *	@param	int		$maxlength		Maximum length of label
+	 *	@param	int		$option_only	Return only html options lines without the select tag
+	 *	@param	string	$show_empty		Add an empty line ('1' or string to show for empty line)
+	 *  @param	int		$discard_closed Discard closed projects (0=Keep,1=hide completely,2=Disable)
+	 *  @param	int		$forcefocus		Force focus on field (works with javascript only)
+	 *  @param	int		$disabled		Disabled
+	 *  @param	string	$morecss        More css added to the select component
+	 *
+	 *	@return int         			Nbr of project if OK, <0 if KO
+	 */
+	public function selectSupplierInvoice($selected = '', $htmlname = 'supplierinvoiceid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500')
+	{
+		global $user, $conf, $langs;
+
+		$out = '';
+
+		$hideunselectables = false;
+		if (getDolGlobalString('SUPPLIER_INVOICE_HIDE_UNSELECTABLES')) {
+			$hideunselectables = true;
+		}
+
+		// Search all supplier orders
+		$sql = "SELECT ff.rowid, ff.ref";
+		$sql .= ' FROM '.$this->db->prefix().'facture_fourn as ff';
+		$sql .= " ORDER BY ff.ref ASC";
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			// Use select2 selector
+			if (!empty($conf->use_javascript_ajax)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+				$comboenhancement = ajax_combobox($htmlname, array(), 0, $forcefocus);
+				$out .= $comboenhancement;
+				$morecss = 'minwidth200imp maxwidth500';
+			}
+
+			if (empty($option_only)) {
+				$out .= '<select class="valignmiddle flat'.($morecss ? ' '.$morecss : '').'"'.($disabled ? ' disabled="disabled"' : '').' id="'.$htmlname.'" name="'.$htmlname.'">';
+			}
+			if (!empty($show_empty)) {
+				$out .= '<option value="0" class="optiongrey">';
+				if (!is_numeric($show_empty)) {
+					$out .= $show_empty;
+				} else {
+					$out .= '&nbsp;';
+				}
+				$out .= '</option>';
+			}
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num) {
+				while ($i < $num) {
+					$obj = $this->db->fetch_object($resql);
+
+					if ($discard_closed == 1 && $obj->fk_statut == Project::STATUS_CLOSED) {
+						$i++;
+						continue;
+					}
+
+					$labeltoshow = dol_trunc($obj->ref, 18); // Supplier order ref
+
+					if (!empty($selected) && $selected == $obj->rowid) {
+						$out .= '<option value="'.$obj->rowid.'" selected';
+						//if ($disabled) $out.=' disabled';						// with select2, field can't be preselected if disabled
+						$out .= '>'.$labeltoshow.'</option>';
+					} else {
+						if ($hideunselectables && $disabled && ($selected != $obj->rowid)) {
+							$resultat = '';
+						} else {
+							$resultat = '<option value="'.$obj->rowid.'"';
+							if ($disabled) {
+								$resultat .= ' disabled';
+							}
+							//if ($obj->public) $labeltoshow.=' ('.$langs->trans("Public").')';
+							//else $labeltoshow.=' ('.$langs->trans("Private").')';
+							$resultat .= '>';
+							$resultat .= $labeltoshow;
+							$resultat .= '</option>';
+						}
+						$out .= $resultat;
+					}
+					$i++;
+				}
+			}
+			if (empty($option_only)) {
+				$out .= '</select>';
+			}
+
+			print $out;
+
+			$this->db->free($resql);
+			return $num;
+		} else {
+			dol_print_error($this->db);
+			return -1;
+		}
+	}
+
+	/**
 	 * Output the component to make advanced search criteries
 	 *
 	 * @param 	array<array<string,array{type:string}>>	$arrayofcriterias 					Array of available search criteria. Example: array($object->element => $object->fields, 'otherfamily' => otherarrayoffields, ...)
@@ -12174,5 +12295,72 @@ class Form
 		$out .= ajax_combobox($htmlname);
 
 		return $out;
+	}
+
+	/**
+	 * @param string $dataTarget a css target like '.element-item-to-search-in' OR '#id-of-parent .class-of-container > .element-item-to-search-in'
+	 *                           Ex : search element in a table row : '#table-id tr'
+	 * @param string $htmlName the html name attribute
+	 * @param string $value the html value attribute
+	 * @param array<mixed> $params a mixed array of params
+	 *
+	 * @return string
+	 */
+	public function getSearchFilterToolInput($dataTarget, $htmlName = 'search-tools-input', $value = '', $params = [])
+	{
+		global $langs;
+
+		$attr = array(
+			'type' => 'search',
+			'name' => $htmlName,
+			'value' => $value,
+			'class' => "search-tool-input",
+			'placeholder' => $langs->trans('Search'),
+			'autocomplete' => 'off'
+		);
+
+		// Optional data attr
+		// 'autofocus' : will set auto focus on field ,
+		// data-counter-target : will get count results
+		// data-no-item-target : will be display if count results is 0
+
+		if ($dataTarget !== false) {
+			$attr['data-search-tool-target'] = $dataTarget;
+		}
+
+		// Override attr
+		if (!empty($params['attr']) && is_array($params['attr'])) {
+			foreach ($params['attr'] as $key => $value) {
+				if ($key == 'class') {
+					$attr['class'] .= ' '.$value;
+				} elseif ($key == 'classOverride') {
+					$attr['class'] = $value;
+				} else {
+					$attr[$key] = $value;
+				}
+			}
+		}
+
+		// automatic add tooltip when title is detected
+		if (!empty($attr['title']) && !empty($attr['class']) && strpos($attr['class'], 'classfortooltip') === false) {
+			$attr['class'] .= ' classfortooltip';
+		}
+
+		$TCompiledAttr = [];
+		foreach ($attr as $key => $value) {
+			if (in_array($key, ['data-target'])
+				|| (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr']))) { // Not recommended
+				$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
+			} else {
+				$value = dolPrintHTMLForAttribute($value);
+			}
+
+			$TCompiledAttr[] = $key . '="' . $value . '"';    // $value has been escaped by the dolPrintHTMLForAttribute... just before
+		}
+
+		$compiledAttributes = implode(' ', $TCompiledAttr);
+
+
+		return '<div class="search-tool-container"><input '.$compiledAttributes.'></div>';
 	}
 }

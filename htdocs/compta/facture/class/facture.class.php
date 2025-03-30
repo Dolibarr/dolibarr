@@ -738,6 +738,8 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->subtype ? "'".$this->db->escape((string) $this->subtype)."'" : "null");
 		$sql .= ", ".((int) $socid);
 		$sql .= ", '".$this->db->idate($this->date_creation)."'";
+		// Date of invoice is a full day, if entered the 27-01 at 22:00 in timezone of user, it must be 27-01 00:00 after the conversion by idate, so when SQL is truncated we keep the 27-01.
+		// So we hope that caller has set the gmt datein ->date to match this.
 		$sql .= ", '".$this->db->idate($this->date)."'";
 		$sql .= ", ".(empty($this->date_pointoftax) ? "null" : "'".$this->db->idate($this->date_pointoftax)."'");
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
@@ -1033,6 +1035,11 @@ class Facture extends CommonInvoice
 				$fk_parent_line = 0;
 
 				foreach ($_facrec->lines as $i => $val) {
+					// Reset fk_parent_line for no child products and special product
+					if (($_facrec->lines[$i]->product_type != 9 && empty($_facrec->lines[$i]->fk_parent_line)) || $_facrec->lines[$i]->product_type == 9) {
+						$fk_parent_line = 0;
+					}
+
 					$tva_tx = $_facrec->lines[$i]->tva_tx.($_facrec->lines[$i]->vat_src_code ? '('.$_facrec->lines[$i]->vat_src_code.')' : '');
 					$tva_npr = $_facrec->lines[$i]->info_bits;
 					if (empty($tva_tx)) {
@@ -1115,41 +1122,37 @@ class Facture extends CommonInvoice
 
 			if (!$error) {
 				$result = $this->update_price(1, 'auto', 0, $mysoc);
-				if ($result > 0) {
-					$action = 'create';
-
-					// Actions on extra fields
-					if (!$error) {
-						$result = $this->insertExtraFields();
-						if ($result < 0) {
-							$error++;
-						}
-					}
-
-					if (!$error && !$notrigger) {
-						// Call trigger
-						$result = $this->call_trigger('BILL_CREATE', $user);
-						if ($result < 0) {
-							$error++;
-						}
-					}
-
-					if (!$error) {
-						$this->db->commit();
-						return $this->id;
-					} else {
-						$this->db->rollback();
-						return -4;
-					}
-				} else {
+				if ($result <= 0) {
 					$this->error = $langs->trans('FailedToUpdatePrice');
 					$this->db->rollback();
 					return -3;
 				}
+			}
+
+			$action = 'create';
+
+			// Actions on extra fields
+			if (!$error) {
+				$result = $this->insertExtraFields();
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('BILL_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
 			} else {
-				dol_syslog(get_class($this)."::create error ".$this->error, LOG_ERR);
 				$this->db->rollback();
-				return -2;
+				return -4;
 			}
 		} else {
 			$this->error = $this->db->error();
@@ -3422,9 +3425,14 @@ class Facture extends CommonInvoice
 			$num = $this->ref;
 		}
 
-		$this->newref = dol_sanitizeFileName($num);
+		if (!$num) {
+			$error++;
+		} else {
+			$this->oldref = $this->ref;
+			$this->newref = dol_sanitizeFileName($num);
+		}
 
-		if ($num) {
+		if (!$error) {
 			$this->update_price(1);
 
 			// Validate
@@ -3442,132 +3450,125 @@ class Facture extends CommonInvoice
 				$this->error = $this->db->lasterror();
 				$error++;
 			}
+		}
 
-			// We check if the invoice was provisional
-			/*
-			if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref))) {
-				// La verif qu'une remise n'est pas utilisee 2 fois est faite au moment de l'insertion de ligne
-			}
-			*/
+		if (!$error) {
+			// Define third party as a customer
+			$result = $this->thirdparty->setAsCustomer();
 
-			if (!$error) {
-				// Define third party as a customer
-				$result = $this->thirdparty->setAsCustomer();
+			// If active (STOCK_CALCULATE_ON_BILL), we decrement the main product and its components at invoice validation
+			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $idwarehouse > 0) {
+				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
+				$langs->load("agenda");
 
-				// If active (STOCK_CALCULATE_ON_BILL), we decrement the main product and its components at invoice validation
-				if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $idwarehouse > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-					$langs->load("agenda");
+				// Loop on each line
+				$cpt = count($this->lines);
+				for ($i = 0; $i < $cpt; $i++) {
+					if ($this->lines[$i]->fk_product > 0) {
+						$mouvP = new MouvementStock($this->db);
+						$mouvP->origin = &$this;	// deprecated
+						$mouvP->setOrigin($this->element, $this->id);
 
-					// Loop on each line
-					$cpt = count($this->lines);
-					for ($i = 0; $i < $cpt; $i++) {
-						if ($this->lines[$i]->fk_product > 0) {
-							$mouvP = new MouvementStock($this->db);
-							$mouvP->origin = &$this;	// deprecated
-							$mouvP->setOrigin($this->element, $this->id);
+						// We decrease stock for product
+						if ($this->type == self::TYPE_CREDIT_NOTE) {
+							// TODO If warehouseid has been set into invoice line, we should use this value in priority
+							// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
+							$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
+							if ($result < 0) {
+								$error++;
+								$this->error = $mouvP->error;
+								$this->errors = array_merge($this->errors, $mouvP->errors);
+							}
+						} else {
+							// TODO If warehouseid has been set into invoice line, we should use this value in priority
+							// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
 
-							// We decrease stock for product
-							if ($this->type == self::TYPE_CREDIT_NOTE) {
-								// TODO If warehouseid has been set into invoice line, we should use this value in priority
-								// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
-								$result = $mouvP->reception($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, 0, $langs->trans("InvoiceValidatedInDolibarr", $num), '', '', $this->lines[$i]->batch);
-								if ($result < 0) {
-									$error++;
-									$this->error = $mouvP->error;
-									$this->errors = array_merge($this->errors, $mouvP->errors);
-								}
-							} else {
-								// TODO If warehouseid has been set into invoice line, we should use this value in priority
-								// $newidwarehouse = $this->lines[$i]->fk_warehouse ? $this->lines[$i]->fk_warehouse : $idwarehouse;
+							$is_batch_line = false;
+							if ($batch_rule > 0) {
+								$productStatic->fetch($this->lines[$i]->fk_product);
+								if ($productStatic->hasbatch() && is_object($productbatch)) {
+									$is_batch_line = true;
+									$product_qty_remain = $this->lines[$i]->qty;
 
-								$is_batch_line = false;
-								if ($batch_rule > 0) {
-									$productStatic->fetch($this->lines[$i]->fk_product);
-									if ($productStatic->hasbatch() && is_object($productbatch)) {
-										$is_batch_line = true;
-										$product_qty_remain = $this->lines[$i]->qty;
+									$sortfield = '';
+									$sortorder = '';
+									// find lot/serial by sellby (DLC) and eatby dates (DLUO) first
+									if ($batch_rule == Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST) {
+										$sortfield = 'pl.sellby,pl.eatby,pb.qty,pl.rowid';
+										$sortorder = 'ASC,ASC,ASC,ASC';
+									}
 
-										$sortfield = '';
-										$sortorder = '';
-										// find lot/serial by sellby (DLC) and eatby dates (DLUO) first
-										if ($batch_rule == Productbatch::BATCH_RULE_SELLBY_EATBY_DATES_FIRST) {
-											$sortfield = 'pl.sellby,pl.eatby,pb.qty,pl.rowid';
-											$sortorder = 'ASC,ASC,ASC,ASC';
-										}
+									$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') ? 0 : null), $sortfield, $sortorder);
+									if (!is_array($resBatchList)) {
+										$error++;
+										$this->error = $this->db->lasterror();
+									}
 
-										$resBatchList = $productbatch->findAllForProduct($productStatic->id, $idwarehouse, (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER') ? 0 : null), $sortfield, $sortorder);
-										if (!is_array($resBatchList)) {
+									if (!$error) {
+										$batchList = $resBatchList;
+										if (empty($batchList)) {
 											$error++;
-											$this->error = $this->db->lasterror();
+											$langs->load('errors');
+											$warehouseStatic->fetch($idwarehouse);
+											$this->error = $langs->trans('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+											dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
 										}
 
-										if (!$error) {
-											$batchList = $resBatchList;
-											if (empty($batchList)) {
+										foreach ($batchList as $batch) {
+											if ($batch->qty <= 0) {
+												continue; // try to decrement only batches have positive quantity first
+											}
+
+											// enough quantity in this batch
+											if ($batch->qty >= $product_qty_remain) {
+												$product_batch_qty = $product_qty_remain;
+											} else {
+												// not enough (take all in batch)
+												$product_batch_qty = $batch->qty;
+											}
+											$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+											if ($result < 0) {
+												$error++;
+												$this->error = $mouvP->error;
+												$this->errors = array_merge($this->errors, $mouvP->errors);
+												break;
+											}
+
+											$product_qty_remain -= $product_batch_qty;
+											// all product quantity was decremented
+											if ($product_qty_remain <= 0) {
+												break;
+											}
+										}
+
+										if (!$error && $product_qty_remain > 0) {
+											if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 												$error++;
 												$langs->load('errors');
 												$warehouseStatic->fetch($idwarehouse);
-												$this->error = $langs->trans('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-												dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
-											}
-
-											foreach ($batchList as $batch) {
-												if ($batch->qty <= 0) {
-													continue; // try to decrement only batches have positive quantity first
-												}
-
-												// enough quantity in this batch
-												if ($batch->qty >= $product_qty_remain) {
-													$product_batch_qty = $product_qty_remain;
-												} else {
-													// not enough (take all in batch)
-													$product_batch_qty = $batch->qty;
-												}
-												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_batch_qty, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
+												$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
+												dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
+											} else {
+												// take in the first batch
+												$batch = $batchList[0];
+												$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
 												if ($result < 0) {
 													$error++;
 													$this->error = $mouvP->error;
 													$this->errors = array_merge($this->errors, $mouvP->errors);
-													break;
-												}
-
-												$product_qty_remain -= $product_batch_qty;
-												// all product quantity was decremented
-												if ($product_qty_remain <= 0) {
-													break;
-												}
-											}
-
-											if (!$error && $product_qty_remain > 0) {
-												if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
-													$error++;
-													$langs->load('errors');
-													$warehouseStatic->fetch($idwarehouse);
-													$this->error = $langs->trans('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref);
-													dol_syslog(__METHOD__.' Error: '.$langs->transnoentitiesnoconv('ErrorBatchNoFoundEnoughQuantityForProductInWarehouse', $productStatic->label, $warehouseStatic->ref), LOG_ERR);
-												} else {
-													// take in the first batch
-													$batch = $batchList[0];
-													$result = $mouvP->livraison($user, $productStatic->id, $idwarehouse, $product_qty_remain, $this->lines[$i]->subprice, $langs->trans('InvoiceValidatedInDolibarr', $num), '', '', '', $batch->batch);
-													if ($result < 0) {
-														$error++;
-														$this->error = $mouvP->error;
-														$this->errors = array_merge($this->errors, $mouvP->errors);
-													}
 												}
 											}
 										}
 									}
 								}
+							}
 
-								if (!$is_batch_line) {	// If stock move not yet processed
-									$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
-									if ($result < 0) {
-										$error++;
-										$this->error = $mouvP->error;
-										$this->errors = array_merge($this->errors, $mouvP->errors);
-									}
+							if (!$is_batch_line) {	// If stock move not yet processed
+								$result = $mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr", $num));
+								if ($result < 0) {
+									$error++;
+									$this->error = $mouvP->error;
+									$this->errors = array_merge($this->errors, $mouvP->errors);
 								}
 							}
 						}
@@ -3605,8 +3606,6 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
-				$this->oldref = $this->ref;
-
 				// Rename directory if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
@@ -3623,28 +3622,6 @@ class Facture extends CommonInvoice
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
-					}
-
-					// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
-					$oldref = dol_sanitizeFileName($this->ref);
-					$newref = dol_sanitizeFileName($num);
-					$dirsource = $conf->facture->dir_output.'/'.$oldref;
-					$dirdest = $conf->facture->dir_output.'/'.$newref;
-					if (!$error && file_exists($dirsource)) {
-						dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
-
-						if (@rename($dirsource, $dirdest)) {
-							dol_syslog("Rename ok");
-							// Rename docs starting with $oldref with $newref
-							$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
-							foreach ($listoffiles as $fileentry) {
-								$dirsource = $fileentry['name'];
-								$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
-								$dirsource = $fileentry['path'].'/'.$dirsource;
-								$dirdest = $fileentry['path'].'/'.$dirdest;
-								@rename($dirsource, $dirdest);
-							}
-						}
 					}
 				}
 			}
@@ -3689,8 +3666,31 @@ class Facture extends CommonInvoice
 					$this->setFinal($user);
 				}
 			}
-		} else {
-			$error++;
+		}
+
+		// Rename directory if dir was a temporary ref
+		if (!$error && preg_match('/^[\(]?PROV/i', $this->oldref)) {
+			// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
+			$oldref = dol_sanitizeFileName($this->oldref);
+			$newref = dol_sanitizeFileName($num);
+			$dirsource = $conf->facture->dir_output.'/'.$oldref;
+			$dirdest = $conf->facture->dir_output.'/'.$newref;
+			if (!$error && file_exists($dirsource)) {
+				dol_syslog(get_class($this)."::validate rename dir ".$dirsource." into ".$dirdest);
+
+				if (@rename($dirsource, $dirdest)) {
+					dol_syslog("Rename ok");
+					// Rename docs starting with $oldref with $newref
+					$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
+					foreach ($listoffiles as $fileentry) {
+						$dirsource = $fileentry['name'];
+						$dirdest = preg_replace('/^'.preg_quote($oldref, '/').'/', $newref, $dirsource);
+						$dirsource = $fileentry['path'].'/'.$dirsource;
+						$dirdest = $fileentry['path'].'/'.$dirdest;
+						@rename($dirsource, $dirdest);
+					}
+				}
+			}
 		}
 
 		if (!$error) {
@@ -3767,7 +3767,7 @@ class Facture extends CommonInvoice
 	public function setDraft($user, $idwarehouse = -1)
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$error = 0;
 
@@ -3921,7 +3921,7 @@ class Facture extends CommonInvoice
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__.": using line label is deprecated", LOG_WARNING);
-			//var_dump(debug_backtrace(false));exit;
+			//var_dump(getCallerInfoString());exit;
 		}
 
 		global $mysoc, $langs;
@@ -4351,6 +4351,11 @@ class Facture extends CommonInvoice
 				$rangmax = $this->line_max($fk_parent_line);
 				$this->line->rang = $rangmax + 1;
 			}
+			$apply_abs_price_on_credit_note=false;
+			if ($this->type == self::TYPE_CREDIT_NOTE  && !getDolGlobalInt('FACTURE_ENABLE_NEGATIVE_LINES') && !getDolGlobalInt('INVOICE_KEEP_DISCOUNT_LINES_AS_IN_ORIGIN')) {
+				$apply_abs_price_on_credit_note = true;
+			}
+
 
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				if ($qty < $this->line->packaging) {
@@ -4379,14 +4384,14 @@ class Facture extends CommonInvoice
 			$this->line->localtax2_type		= empty($localtaxes_type[2]) ? 0 : $localtaxes_type[2];
 
 			$this->line->remise_percent		= $remise_percent;
-			$this->line->subprice			= ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
+			$this->line->subprice			= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht) : (float) $pu_ht); // For credit note, unit price always negative, always positive otherwise
 			$this->line->date_start = $date_start;
 			$this->line->date_end			= $date_end;
-			$this->line->total_ht			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_ht) : (float) $total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->total_tva			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_tva) : (float) $total_tva);
+			$this->line->total_ht			= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $total_ht) : (float) $total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->total_tva			= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $total_tva) : (float) $total_tva);
 			$this->line->total_localtax1	= (float) $total_localtax1;
 			$this->line->total_localtax2	= (float) $total_localtax2;
-			$this->line->total_ttc			= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $total_ttc) : (float) $total_ttc);
+			$this->line->total_ttc			= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $total_ttc) : (float) $total_ttc);
 			$this->line->info_bits			= $info_bits;
 			$this->line->special_code		= $special_code;
 			$this->line->product_type		= $type;
@@ -4399,10 +4404,10 @@ class Facture extends CommonInvoice
 			$this->line->pa_ht = $pa_ht;
 
 			// Multicurrency
-			$this->line->multicurrency_subprice		= ($this->type == self::TYPE_CREDIT_NOTE ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
-			$this->line->multicurrency_total_ht 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
-			$this->line->multicurrency_total_tva 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
-			$this->line->multicurrency_total_ttc 	= (($this->type == self::TYPE_CREDIT_NOTE || $qty < 0) ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc);
+			$this->line->multicurrency_subprice		= ($apply_abs_price_on_credit_note ? -abs((float) $pu_ht_devise) : (float) $pu_ht_devise); // For credit note, unit price always negative, always positive otherwise
+			$this->line->multicurrency_total_ht 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ht) : (float) $multicurrency_total_ht); // For credit note and if qty is negative, total is negative
+			$this->line->multicurrency_total_tva 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_tva) : (float) $multicurrency_total_tva);
+			$this->line->multicurrency_total_ttc 	= (($apply_abs_price_on_credit_note || $qty < 0) ? -abs((float) $multicurrency_total_ttc) : (float) $multicurrency_total_ttc);
 
 			if (is_array($array_options) && count($array_options) > 0) {
 				// We replace values in this->line->array_options only for entries defined into $array_options
