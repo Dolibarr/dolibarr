@@ -114,7 +114,7 @@ $documentation->showSidebar(); ?>
     Developers can contribute on
     <a href="https://github.com/Dolibarr/dolibarr" title="Dolibarr GitHub Repository">GitHub</a>.
 </p>
-<p><strong class="classfortooltip" title="No, tooltips in tooltips don\'t work, nice try :p">try tooltip in a tooltip</strong></p>
+<p><strong class="classfortooltip" title="Tooltips in tooltips">try tooltip in a tooltip</strong></p>
 <p>
     Need help? Check out the
     <a href="https://www.dolibarr.org/forum.php" title="Dolibarr Community Forum">Community Forum</a>.
