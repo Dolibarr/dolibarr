@@ -1247,7 +1247,6 @@ if (!defined('NOREQUIRETRAN')) {
 $bc = array(0 => 'class="impair"', 1 => 'class="pair"');
 $bcdd = array(0 => 'class="drag drop oddeven"', 1 => 'class="drag drop oddeven"');
 $bcnd = array(0 => 'class="nodrag nodrop nohover"', 1 => 'class="nodrag nodrop nohoverpair"'); // Used for tr to add new lines
-$bctag = array(0 => 'class="impair tagtr"', 1 => 'class="pair tagtr"');
 
 // Define messages variables
 $mesg = '';
@@ -2635,7 +2634,6 @@ function top_menu_quickadd()
             var openQuickAddDropDown = function(event) {
                 event.preventDefault();
                 $("#topmenu-quickadd-dropdown").toggleClass("open");
-                //$("#top-quickadd-search-input").focus();
             }
         });
         </script>
@@ -2967,6 +2965,7 @@ function top_menu_bookmark()
 	            });
 
 	            var openBookMarkDropDown = function(event) {
+					console.log("toggle #topmenu-bookmark-dropdown and force focus");
 	                event.preventDefault();
 	                jQuery("#topmenu-bookmark-dropdown").toggleClass("open");
 	                jQuery("#top-bookmark-search-input").focus();
@@ -3071,6 +3070,7 @@ function top_menu_search()
             if (e.keyCode == 13 || e.keyCode == 40) {
                 var inputs = $(this).parents("form").eq(0).find(":button");
                 if (inputs[inputs.index(this) + 1] != null) {
+					console.log("Force focus after keydow on #top-global-search-input");
                     inputs[inputs.index(this) + 1].focus();
 					 if (e.keyCode == 13){
 						 inputs[inputs.index(this) + 1].trigger("click");
@@ -3091,12 +3091,14 @@ function top_menu_search()
            		// UP - move to the previous line
 				if (e.keyCode == 38) {
 				    e.preventDefault();
+					console.log("Force focus after keycode 38");
 					$focused.prev().focus();
 				}
 
 				// DOWN - move to the next line
 				if (e.keyCode == 40) {
 				    e.preventDefault();
+					console.log("Force focus after keycode 40");
 					$focused.next().focus();
 				}
 			}
@@ -3839,7 +3841,7 @@ if (!function_exists("llxFooter")) {
 		}
 
 		$parameters = array();
-		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
+		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			print $hookmanager->resPrint;
 		}

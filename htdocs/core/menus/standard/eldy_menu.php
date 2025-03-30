@@ -258,7 +258,7 @@ class MenuManager
 
 						if ($langs->trans(ucfirst($val['mainmenu'])."Dashboard") == ucfirst($val['mainmenu'])."Dashboard") {  // No translation
 							if (in_array($val['mainmenu'], array('cashdesk', 'externalsite', 'website', 'collab', 'takepos'))) {
-								print $langs->trans("aaaAccess");
+								print $langs->trans("Access");
 							} else {
 								print $langs->trans("Dashboard");
 							}

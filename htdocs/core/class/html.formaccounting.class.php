@@ -366,41 +366,52 @@ class FormAccounting extends Form
 	 * @param string   		$morecss           	More css non HTML object
 	 * @param string   		$usecache          	Key to use to store result into a cache. Next call with same key will reuse the cache.
 	 * @param '1'|'0'|''	$active				Filter on status active or not: '0', '1' or '' for no filter
+	 * @param int			$centralized		0=No filter on centralized account, 1=filter only on centralized accounts, 2=show all accounts with centralized account in top of the list like favorite
 	 * @return string|int<-1,-1>               	String with HTML select, or -1 if error
 	 */
-	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1')
+	public function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss = 'minwidth100 maxwidth300 maxwidthonsmartphone', $usecache = '', $active = '1', $centralized = 0)
 	{
-		// phpcs:enable
 		global $conf, $langs;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 		$out = '';
 		$selected = '';
-
-		$options = array();
+		$options = [];
 
 		if ($showempty == 2) {
 			$options['0'] = '--- '.$langs->trans("None").' ---';
 		}
 
 		if ($usecache && !empty($this->options_cache[$usecache])) {
-			$options += $this->options_cache[$usecache]; // We use + instead of array_merge because we don't want to reindex key from 0
+			$options += $this->options_cache[$usecache];
 			$selected = $selectid;
 		} else {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT', 50);
 
-			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version";
+			// Construct SQL request
+			$sql = "SELECT DISTINCT aa.account_number, aa.label, aa.labelshort, aa.rowid, aa.fk_pcg_version, aa.centralized";
 			$sql .= " FROM ".$this->db->prefix()."accounting_account as aa";
 			$sql .= " INNER JOIN ".$this->db->prefix()."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 			$sql .= " AND asy.rowid = ".((int) getDolGlobalInt('CHARTOFACCOUNTS'));
+
 			if ($active === '1') {
 				$sql .= " AND aa.active = 1";
 			} elseif ($active === '0') {
 				$sql .= " AND aa.active = 0";
 			}
+
+			if ($centralized == 1) {
+				$sql .= " AND aa.centralized = 1";
+			}
+
 			$sql .= " AND aa.entity=".((int) $conf->entity);
-			$sql .= " ORDER BY aa.account_number";
+
+			// Sorting: centralized accounts first, then others
+			if ($centralized == 2) {
+				$sql .= " ORDER BY aa.centralized DESC, aa.account_number";
+			} else {
+				$sql .= " ORDER BY aa.account_number";
+			}
 
 			dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -417,31 +428,32 @@ class FormAccounting extends Form
 				$langs->load("errors");
 				$showempty = $langs->trans("ErrorYouMustFirstSetupYourChartOfAccount");
 			} else {
-				$selected = $selectid; // selectid can be -1, 0, 123
+				$selected = $selectid;
+				$lastCentralized = null;
+
 				while ($obj = $this->db->fetch_object($resql)) {
-					if (empty($obj->labelshort)) {
-						$labeltoshow = $obj->label;
-					} else {
-						$labeltoshow = $obj->labelshort;
+					// Insert a separator if you change category (centralized = 1 → 0)
+					if ($centralized == 2 && $lastCentralized !== null && $lastCentralized != $obj->centralized) {
+						$options['0'] = '-------------'; // Visual separator
 					}
 
+					$lastCentralized = $obj->centralized;
+
+					$labeltoshow = !empty($obj->labelshort) ? $obj->labelshort : $obj->label;
 					$label = length_accountg($obj->account_number).' - '.$labeltoshow;
 					$label = dol_trunc($label, $trunclength);
 
 					$select_value_in = $obj->rowid;
 					$select_value_out = $obj->rowid;
 
-					// Try to guess if we have found default value
 					if ($select_in == 1) {
 						$select_value_in = $obj->account_number;
 					}
 					if ($select_out == 1) {
 						$select_value_out = $obj->account_number;
 					}
-					// Remember guy's we store in database llx_facturedet the rowid of accounting_account and not the account_number
-					// Because same account_number can be share between different accounting_system and do have the same meaning
+
 					if ($selectid != '' && $selectid == $select_value_in) {
-						//var_dump("Found ".$selectid." ".$select_value_in);
 						$selected = $select_value_out;
 					}
 
@@ -457,9 +469,7 @@ class FormAccounting extends Form
 			}
 		}
 
-
 		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty ? (is_numeric($showempty) ? 1 : $showempty) : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
-
 		$this->nbaccounts = count($options) - ($showempty == 2 ? 1 : 0);
 
 		return $out;

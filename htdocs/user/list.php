@@ -371,8 +371,6 @@ if (empty($reshook)) {
 $formother = new FormOther($db);
 $user2 = new User($db);
 
-$now = dol_now();
-
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$title = $langs->trans("Employees");

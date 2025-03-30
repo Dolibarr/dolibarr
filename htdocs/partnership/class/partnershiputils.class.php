@@ -540,10 +540,10 @@ class PartnershipUtils
 
 		// $website = 'https://nextgestion.com/'; // For Test
 		$tmpgeturl = getURLContent($website, 'GET', '', 1, array(), array('http', 'https'), 0);
-		if ($tmpgeturl['curl_error_no']) {
+		if (!empty($tmpgeturl['curl_error_no'])) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
-		} elseif ($tmpgeturl['http_code'] != '200') {
+		} elseif ($tmpgeturl['http_code'] != 200) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
 		} else {

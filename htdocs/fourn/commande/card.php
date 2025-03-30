@@ -176,6 +176,11 @@ $permissionnote		= $usercancreate; // Used by the include of actions_setnotes.in
 $permissiondellink	= $usercancreate; // Used by the include of actions_dellink.inc.php
 $permissiontoedit	= $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 // Project permission
 $caneditproject = false;
@@ -364,53 +369,12 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'reopen' && $permissiontoadd) {	// no test on permission here, permission to use will depends on status
-		if (in_array($object->status, array(1, 2, 3, 4, 5, 6, 7, 9))) {
-			if ($object->status == 1) {
-				$newstatus = 0; // Validated->Draft
-			} elseif ($object->status == 2) {
-				$newstatus = 0; // Approved->Draft
-			} elseif ($object->status == 3) {
-				$newstatus = 2; // Ordered->Approved
-			} elseif ($object->status == 4) {
-				$newstatus = 3;
-			} elseif ($object->status == 5) {
-				//$newstatus=2;    // Ordered
-				// TODO Can we set it to submitted ?
-				//$newstatus=3;  // Submitted
-				// TODO If there is at least one reception, we can set to Received->Received partially
-				$newstatus = 4; // Received partially
-			} elseif ($object->status == 6) {
-				$newstatus = 2; // Canceled->Approved
-			} elseif ($object->status == 7) {
-				$newstatus = 3; // Canceled->Process running
-			} elseif ($object->status == 9) {
-				$newstatus = 1; // Refused->Validated
-			} else {
-				$newstatus = 2;
-			}
-
-			//print "old status = ".$object->status.' new status = '.$newstatus;
-			$db->begin();
-
-			$result = $object->setStatus($user, $newstatus);
-			if ($result > 0) {
-				if ($newstatus == 0) {
-					$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande_fournisseur';
-					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
-					$sql .= ' WHERE rowid = '.((int) $object->id);
-
-					$resql = $db->query($sql);
-				}
-
-				$db->commit();
-
-				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-				exit;
-			} else {
-				$db->rollback();
-
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+		$resSetReopen = $object->setReopen($user);
+		if ($resSetReopen) {
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
@@ -566,7 +530,7 @@ if (empty($reshook)) {
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (empty($newlang)) {
@@ -717,7 +681,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */) {
 					$newlang = $object->thirdparty->default_lang;
 					if (GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
@@ -1293,23 +1257,22 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			if (!$error) {
-				$result = $object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
-				if ($result < 0) {
-					$error++;
-					setEventMessages($object->error, $object->errors, 'errors');
-				}
+			$result = $object->updateExtraField($attribute_name, 'ORDER_SUPPLIER_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
 			}
 		}
 

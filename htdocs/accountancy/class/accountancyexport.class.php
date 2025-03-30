@@ -541,7 +541,7 @@ class AccountancyExport
 				break;
 			default:
 				global $hookmanager;
-				$parameters = array('format' => $formatexportset);
+				$parameters = array('format' => $formatexportset, 'exportFile' => $exportFile);
 				// file contents will be created in the hooked function via print
 				$reshook = $hookmanager->executeHooks('export', $parameters, $TData);
 				if ($reshook != 1) {

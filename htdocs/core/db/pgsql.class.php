@@ -1033,16 +1033,16 @@ class DoliDBPgsql extends DoliDB
 		$infotables = array();
 
 		$sql = "SELECT ";
-		$sql .= "	infcol.column_name as 'Column',";
+		$sql .= "	infcol.column_name as \"Column\",";		// pgsql need " for alias names !
 		$sql .= "	CASE WHEN infcol.character_maximum_length IS NOT NULL THEN infcol.udt_name || '('||infcol.character_maximum_length||')'";
 		$sql .= "		ELSE infcol.udt_name";
-		$sql .= "	END as 'Type',";
-		$sql .= "	infcol.collation_name as 'Collation',";
-		$sql .= "	infcol.is_nullable as 'Null',";
-		$sql .= "	'' as 'Key',";
-		$sql .= "	infcol.column_default as 'Default',";
-		$sql .= "	'' as 'Extra',";
-		$sql .= "	'' as 'Privileges'";
+		$sql .= "	END as \"Type\",";		// pgsql need " for alias names !
+		$sql .= "	infcol.collation_name as \"Collation\",";		// pgsql need " for alias names !
+		$sql .= "	infcol.is_nullable as \"Null\",";		// pgsql need " for alias names !
+		$sql .= "	'' as \"Key\",";		// pgsql need " for alias names !
+		$sql .= "	infcol.column_default as \"Default\",";		// pgsql need " for alias names !
+		$sql .= "	'' as \"Extra\",";		// pgsql need " for alias names !
+		$sql .= "	'' as \"Privileges\"";		// pgsql need " for alias names !
 		$sql .= "	FROM information_schema.columns infcol";
 		$sql .= "	WHERE table_schema = 'public' ";
 		$sql .= "	AND table_name = '".$this->escape($table)."'";

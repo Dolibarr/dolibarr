@@ -421,12 +421,18 @@ if (preg_match('/^set(\w+)$/', $action, $reg) && GETPOSTINT('id') > 0 && !empty(
 }
 
 // Action to update one extrafield
-if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoadd)) {
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
+if ($action == "update_extras" && GETPOSTINT('id') > 0 && !empty($permissiontoeditextra)) {
 	$object->fetch(GETPOSTINT('id'));
 
 	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attribute = GETPOST('attribute', 'alphanohtml');
+	$attribute = GETPOST('attribute', 'aZ09');
 
 	$error = 0;
 

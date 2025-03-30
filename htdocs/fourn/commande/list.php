@@ -1771,6 +1771,7 @@ if ($resql) {
 		$objectstatic->note_public = $obj->note_public;
 		$objectstatic->note_private = $obj->note_private;
 		$objectstatic->statut = $obj->fk_statut;
+		$objectstatic->status = $obj->fk_status;
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -1794,7 +1795,7 @@ if ($resql) {
 			print '<tr class="oddeven '.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->billed == 1) ? 'opacitymedium' : '').'">';
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				print '<td class="nowrap center">';
+				print '<td class="nowraponall center">';
 				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
 					$selected = 0;
 					if (in_array($obj->rowid, $arrayofselected)) {
@@ -1809,7 +1810,7 @@ if ($resql) {
 			}
 			// Ref
 			if (!empty($arrayfields['cf.ref']['checked'])) {
-				print '<td class="nowrap">';
+				print '<td class="nowraponall">';
 
 				// Picto + Ref
 				print $objectstatic->getNomUrl(1, '', 0, -1, 1);
@@ -1835,7 +1836,7 @@ if ($resql) {
 				$projectstatic->id = $obj->project_id;
 				$projectstatic->ref = $obj->project_ref;
 				$projectstatic->title = $obj->project_title;
-				print '<td>';
+				print '<td class="tdoverflowmax125">';
 				if ($obj->project_id > 0) {
 					print $projectstatic->getNomUrl(1);
 				}
