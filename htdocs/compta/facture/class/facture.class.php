@@ -2530,7 +2530,7 @@ class Facture extends CommonInvoice
 		if ($prev_inv) {
 			foreach ($prev_inv->getSpecialLines() as $k => $prev_line) {
 				$product_id = $prev_line->fk_product;
-				if (array_key_exists($name, $special_lines)) {
+				if (array_key_exists($product_id, $special_lines)) {
 					$special_lines[$product_id]['amountHT'] -= $prev_line->total_ht;
 					$special_lines[$product_id]['amountTTC'] -= $prev_line->total_ttc;
 				}
