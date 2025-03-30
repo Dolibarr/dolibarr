@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,7 +281,7 @@ foreach ($search as $key => $val) {
 		}
 		$mode_search = (($object->isInt($field_spec) || $object->isFloat($field_spec)) ? 1 : 0);
 		if ((strpos($field_spec['type'], 'integer:') === 0) || (strpos($field_spec['type'], 'sellist:') === 0) || !empty($field_spec['arrayofkeyval'])) {
-			if ($search[$key] == '-1' || ($search[$key] === '0' && (empty($field_spec['arrayofkeyval']) || !array_key_exists('0', $field_spec['arrayofkeyval'])))) {
+			if ($search[$key] == '-1' || ($search[$key] === '0' && !isset($field_spec['arrayofkeyval']['0']))) {
 				$search[$key] = '';
 			}
 			$mode_search = 2;
