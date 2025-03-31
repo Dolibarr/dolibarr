@@ -36,11 +36,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyexport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -343,6 +345,31 @@ if ($action == 'setenabletabonthirdparty') {
 	}
 }
 
+if ($action == 'updateMask') {
+	$maskconstbookkeeping = GETPOST('maskconstbookkeeping', 'aZ09');
+	$maskbookkeeping = GETPOST('maskbookkeeping', 'alpha');
+
+	$res = 0;
+
+	if ($maskconstbookkeeping && preg_match('/_MASK$/', $maskconstbookkeeping)) {
+		$res = dolibarr_set_const($db, $maskconstbookkeeping, $maskbookkeeping, 'chaine', 0, '', $conf->entity);
+	}
+
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
+if ($action == 'setmod') {
+	$value = GETPOST('value', 'alpha');
+	dolibarr_set_const($db, "BOOKKEEPING_ADDON", $value, 'chaine', 0, '', $conf->entity);
+}
 
 /*
  * View
@@ -792,6 +819,113 @@ print '<div class="center"><input type="submit" class="button reposition" value=
 
 
 print '</form>';
+
+/*
+ * Accountancy Numbering model
+ */
+
+$dirmodels = array_merge(array('/'), $conf->modules_parts['models']);
+
+print load_fiche_titre($langs->trans("BookkeepingNumberingModules"), '', '');
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
+print '<td class="center" width="60">'.$langs->trans("Status").'</td>';
+print '<td class="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
+
+clearstatcache();
+
+foreach ($dirmodels as $reldir) {
+	$dir = dol_buildpath($reldir."core/modules/accountancy/");
+
+	if (is_dir($dir)) {
+		$handle = opendir($dir);
+		if (is_resource($handle)) {
+			while (($file = readdir($handle)) !== false) {
+				if (strpos($file, 'mod_bookkeeping_') === 0 && substr($file, dol_strlen($file) - 3, 3) == 'php') {
+					$file = substr($file, 0, dol_strlen($file) - 4);
+
+					require_once $dir.$file.'.php';
+
+					$module = new $file($db);
+
+					'@phan-var-force ModeleNumRefBookkeeping $module';
+
+					// Show modules according to features level
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
+						continue;
+					}
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
+						continue;
+					}
+
+					if ($module->isEnabled()) {
+						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
+						print $module->info($langs);
+						print '</td>';
+
+						// Show example of numbering model
+						print '<td class="nowrap">';
+						$tmp = $module->getExample();
+						if (preg_match('/^Error/', $tmp)) {
+							$langs->load("errors");
+							print '<div class="error">'.$langs->trans($tmp).'</div>';
+						} elseif ($tmp == 'NotConfigured') {
+							print '<span class="opacitymedium">'.$langs->trans($tmp).'</span>';
+						} else {
+							print $tmp;
+						}
+						print '</td>'."\n";
+
+						print '<td class="center">';
+						if ($conf->global->BOOKKEEPING_ADDON == $file) {
+							print img_picto($langs->trans("Activated"), 'switch_on');
+						} else {
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&value='.urlencode($file).'">';
+							print img_picto($langs->trans("Disabled"), 'switch_off');
+							print '</a>';
+						}
+						print '</td>';
+
+						$bookkeeping = new BookKeeping($db);
+						$bookkeeping->initAsSpecimen();
+
+						// Info
+						$htmltooltip = '';
+						$htmltooltip .= ''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
+
+						$nextval = $module->getNextValue($bookkeeping);
+						if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
+							$htmltooltip .= ''.$langs->trans("NextValue").': ';
+							if ($nextval) {
+								if (preg_match('/^Error/', $nextval) || $nextval == 'NotConfigured') {
+									$nextval = $langs->trans($nextval);
+								}
+								$htmltooltip .= $nextval.'<br>';
+							} else {
+								$htmltooltip .= $langs->trans($module->error).'<br>';
+							}
+						}
+
+						print '<td class="center">';
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
+						print '</td>';
+
+						print "</tr>\n";
+					}
+				}
+			}
+			closedir($handle);
+		}
+	}
+}
+print "</table></div><br>\n";
+
 
 // End of page
 llxFooter();
