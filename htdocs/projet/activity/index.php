@@ -5,7 +5,7 @@
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2023      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -168,9 +168,8 @@ $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 $resql = $db->query($sql);
+$total = 0;
 if ($resql) {
-	$total = 0;
-
 	while ($row = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -222,9 +221,8 @@ $sql .= " AND p.rowid in (".$db->sanitize($projectsListId).")";
 $sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 $resql = $db->query($sql);
+$total = 0;
 if ($resql) {
-	$total = 0;
-
 	while ($row = $db->fetch_object($resql)) {
 		print '<tr class="oddeven">';
 		print '<td>';
@@ -253,8 +251,7 @@ print '</div>';
 
 
 /*
-if ($db->type != 'pgsql')
-{
+if ($db->type != 'pgsql') {
 	print '<br>';
 
 	// Show list of projects active this week
@@ -335,6 +332,7 @@ if (getDolGlobalString('PROJECT_TASK_TIME_MONTH')) {
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 	$resql = $db->query($sql);
+	$total = 0;
 	if ($resql) {
 		while ($row = $db->fetch_object($resql)) {
 			print '<tr class="oddeven">';
@@ -382,6 +380,7 @@ if (getDolGlobalString('PROJECT_TASK_TIME_YEAR')) {
 	$sql .= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
 	$resql = $db->query($sql);
+	$total = 0;
 	if ($resql) {
 		while ($row = $db->fetch_object($resql)) {
 			print '<tr class="oddeven">';
@@ -504,14 +503,14 @@ if (!getDolGlobalString('PROJECT_HIDE_TASKS') && getDolGlobalString('PROJECT_SHO
 			$projectstatic->id = $obj->projectid;
 			$projectstatic->ref = $obj->ref;
 			$projectstatic->title = $obj->title;
-			$projectstatic->statut = $obj->status;
+			$projectstatic->status = $obj->status;
 			$projectstatic->public = $obj->public;
 			$projectstatic->date_start = $db->jdate($obj->projdate_start);
 			$projectstatic->date_end = $db->jdate($obj->projdate_end);
 
 			$taskstatic->projectstatus = $obj->projectstatus;
 			$taskstatic->progress = $obj->progress;
-			$taskstatic->fk_statut = $obj->status;
+			$taskstatic->status = $obj->status;
 			$taskstatic->status = $obj->status;
 			$taskstatic->date_start = $db->jdate($obj->date_start);
 			$taskstatic->date_end = $db->jdate($obj->date_end);

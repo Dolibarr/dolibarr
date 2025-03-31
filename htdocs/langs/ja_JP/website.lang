@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=他の名前/エイリアスのリストをここで使用�
 WEBSITE_CSS_URL=外部CSSファイルのURL
 WEBSITE_CSS_INLINE=CSSファイルの内容(全ページに共通)
 WEBSITE_JS_INLINE=JavaScript ファイル コンテンツ (すべてのページに共通)
-WEBSITE_HTML_HEADER=HTML Header (common to all pages)
+WEBSITE_HTML_HEADER=HTML ヘッダー (全ページに共通)
 WEBSITE_ROBOT=ロボットファイル(robots.txt)
 WEBSITE_HTACCESS=ウェブサイトの.htaccessファイル
 WEBSITE_MANIFEST_JSON=ウェブサイトmanifest.jsonファイル
@@ -62,7 +62,10 @@ NoPageYet=まだページはない
 YouCanCreatePageOrImportTemplate=新規ページを作成するか、完全なWebサイトテンプレートをインポートできる
 SyntaxHelp=特定の構文のヒントに関するヘルプ
 YouCanEditHtmlSourceckeditor=エディタの "ソース" ボタンを使用して、HTMLソースコードを編集できる。
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> このソースに PHP コード を含めるには、タグ <strong>&lt;?php ?&gt;</strong>。以下のグローバル変数が利用可能: $conf,$db,$mysoc,$User,$Website,$websitepage,$weblangs,$pagelangs。<br><br><span class="fa fa-bug paddingright"></span> また、次の構文を使用して、別のページ/コンテナーのコンテンツを含めることもできる。:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> 次の構文を使用して、別のページ/コンテナにリダイレクトできる (注意: リダイレクト前にコンテンツを出力しないこと):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>GET パラメータを使用してリダイレクトすることもできる:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> 別のページへのリンクを追加するには、構文:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br> <p><span class="fa fa-bug paddingright"></span> ページタイトルと <strong>SEO メタタグ </strong> (タイトル、キーワード、説明) を動的に設定できる。次の変数を定義するだけです:<br> <code>$__PAGE__TITLE__ = "タイトル値…";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1、keyword2、keyword3 …"; // カンマ区切り</code><br> <code>$__PAGE__DESC__ = "説明…";</code></p><br><span class="fa fa-download paddingright"></span> 含めるには<strong>ダウンロードリンク</strong> ファイル が <strong>documents</strong> ディレクトリに保存されている場合は、<strong>document.php</strong> ラッパーを使用する:<br>たとえば、ファイル を documents/ecm にエクスポートする場合 (ログに記録する必要がある)、構文は次のようになりる。:<br><strong>&lt;a href="/document.php?modulepart=ecm&ファイル=[relative_dir/]filename.ext"&gt;</strong><br>document/media（パブリックアクセス用のオープンディレクトリ）への ファイル の場合、構文は:<br><strong>&lt;a href="/document.php?mod ulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>共有リンクで共有された ファイル (共有ハッシュ キー ファイル を使用してアクセスを開く)、構文は :<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> このソースに PHP コード を含めるには、タグ <strong>&lt;?php ?&gt;</strong>。以下のグローバル変数が利用可能。: $conf、$db、$mysoc、$ユーザ、$ウェブサイト、$websitepage、$weblangs、$pagelangs。<br><br><span class="fa fa-bug paddingright"></span> また、次の構文を使用して、別のページ/コンテナーのコンテンツを含めることもできる。:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> 次の構文を使用して、別のページ/コンテナーにリダイレクトできる (注意: リダイレクト前にコンテンツを出力しないこと):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>GET パラメータを使用してリダイレクトすることもできる:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> 別のページへのリンクを追加するには、構文:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br>
+YouCanEditHtmlSourceb=<span class="fa fa-bug paddingright"></span> <strong>SEO タイトルとメタ タグ</strong> (タイトル、キーワード、説明) を動的に設定できる。次の変数を定義するだけ:<br> <code>$__PAGE_TITLE__ = "タイトルの値…";</code><br> <code>$__PAGE_KEYWORDS__ = "keyword1、keyword2、keyword3 …"; // カンマ区切り</code><br> <code>$__PAGE_DESC__ = "Description …";</code><br>
+YouCanEditHtmlSourcec=<span class="fa fa-download paddingright"></span> <strong>documents</strong>ディレクトリに保存されている ファイル<strong>ダウンロードへのリンク</strong>を含めるには、<strong>document.php</strong> ラッパーを使用する:<br>たとえば、ファイル を documents/ecm にエクスポートする場合 (ログに記録する必要あり)、構文は次のようになる:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>documents/medias（パブリックアクセス用のオープンディレクトリ）への ファイル の場合、構文は次のようになる。:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>
+YouCanEditHtmlSourced=共有リンクで共有された ファイル の場合 (共有ハッシュ キー ファイル を使用してアクセスを開く)、構文は :<br><strong>&lt;a href="/ドキュメント.php?hashp=publicsharekeyoffile"&gt;</strong><br>
 YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span><strong>medias</strong>ディレクトリ（パブリックアクセスに公開されているディレクトリ）に保存されている <strong>image</strong> を含めるには、<strong>/medias</strong>、例:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
 YouCanEditHtmlSource2=共有リンクで共有された画像（共有ハッシュキー ファイル を使用してオープンアクセス）の場合は、ラッパー :<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=PHP オブジェクトの画像の URL を取得する時に使用するのは<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
@@ -88,12 +91,12 @@ WebsiteAccount=ウェブサイトアカウント
 WebsiteAccounts=ウェブサイトアカウント
 AddWebsiteAccount=Webサイトアカウントを作成する
 BackToListForThirdParty=取引先向けリストに戻る
-DisableSiteFirst=Put website offline first
+DisableSiteFirst=まず ウェブサイト をオフラインにする
 MyContainerTitle=私のウェブサイトのタイトル
 AnotherContainer=これは、別のページ/コンテナのコンテンツを含める方法(埋め込まれたサブコンテナが存在しない可能性があるため、動的コードを有効化と、ここでエラーが発生する可能性がある)
 SorryWebsiteIsCurrentlyOffLine=申し訳ありませんが、このウェブサイトは現在オフラインです。後ほどお戻りください...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
+WEBSITE_USE_WEBSITE_ACCOUNTS=サードパーティのウェブサイトアカウントのテーブルを有効にする
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=テーブルを有効にして、各 取引先 の Web サイト アカウント (ログイン/パスワード) を保存する。
 YouMustDefineTheHomePage=最初にデフォルトのホームページを定義する必要がある
 OnlyEditionOfSourceForGrabbedContentFuture=警告: 外部 Web ページをインポートして Web ページを作成するのは、経験豊富なユーザー向けだ。ソース ページの複雑さによっては、インポートの結果が元のものと異なる場合がある。また、ソース ページで一般的な CSS スタイルや競合する JavaScript が使用されている場合、このページで作業しているときに ウェブサイト エディターの外観や機能が損なわれる可能性がある。この方法はページを作成するためのより迅速な方法だが、新規ページを最初から作成するか、提案されたページ テンプレートから作成することをお勧めする。<br>また、取得した外部ページで使用すると、インライン エディターが正しく機能しない可能性があることにも注意すること。
 OnlyEditionOfSourceForGrabbedContent=外部サイトからコンテンツを取得する場合は、HTML ソースの変更のみが可能だ。
@@ -257,7 +260,7 @@ logOutFromYourCustomerAccount=顧客アカウントからログアウトする
 filteredByVersion=バージョンでフィルタリング
 removeFilter=フィルタを削除
 viewMyCart=ショッピングカートを見る
-Shipping=Shipping
+Shipping=配送
 freeShipping=送料無料！
 noProducts=いいえ 製品
 nbrItemsInCart=カートには <span class="ajax_cart_quantity">0</span> 個のアイテムがある。
@@ -286,7 +289,7 @@ productNameAToZ=製品 名前: A から Z
 productNameZToA=製品 名前: Z から A
 referenceLowestFirst=参照: 最低順
 referenceHighestFirst=参照: 最高値順
-productPerPage=products per page
+productPerPage=ページあたり 製品
 perPage=1ページあたり
 showAll=すべて表示する
 showing= 表示中
@@ -305,11 +308,11 @@ lastUpdate=最後の更新
 contactSupport=サポートへのお問い合わせ方法
 noProductToDisplay=エラー、表示する 製品 がない
 yourCompanyInformation=あなたの 法人 情報
-yourBillingInformation=Your billing information
+yourBillingInformation=請求情報
 emailAlreadyRegistered=このEメールはすでに登録されている。
 firstnameContainsLettersOnly=<b>名</b>には文字とスペースのみ使用できる
 lastnameContainsLettersOnly=<b>姓</b>には文字とスペースのみを含めることができる
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>パスワード</b>は、次の条件を満たす必要がある: <br>- 少なくとも 12 文字<br>- 少なくとも 1 つの大文字<br>- 少なくとも 1 つの数字<br>- 少なくとも 1 つの特殊文字<br>- 文字を 3 回以上繰返すのを避ける<br>
 errorOccurred=エラーが発生した。
 accountCreation=アカウントを作成する
 errorsOccurred=%s エラーがある%s
@@ -362,6 +365,15 @@ LoginCheckout=ログインしてチェックアウトに進む
 paymentSuccessProcessed=お支払いが正常に処理された。
 youWillBeRedirectedToOrderPage=すぐに注文の詳細ページにリダイレクトされる。
 WebPortalSetupNotComplete=Webポータルの設定が完了していない
-DeleteWebsiteAccount=Delete website account
-ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
-ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.
+DeleteWebsiteAccount=削除 ウェブサイト アカウント
+ConfirmDeleteWebsiteAccount=このアカウントを 削除 してもよいか
+ConfirmDeleteWebsiteAccount2=このアカウントがパブリックポータルまたは Dolibarr が提供するその他の Web サイトへのログインに使用されていた場合、ログインできなくなる可能性がある。
+ContentSecurityPolicy=コンテンツセキュリティポリシー
+WebsiteSecurityForceRP=ウェブサイト セキュリティ RP
+WebsiteSecurityForceSTS=ウェブサイト セキュリティ STS
+WebsiteSecurityForcePP=ウェブサイト セキュリティ PP
+WebsiteSecurityForceCSPRO=Content Security Policy Report-Only
+SecurityPolicySucesfullyRemoved=コンテンツ セキュリティ ポリシーが正常に削除された
+ErrorRemovingSecurityPolicy=コンテンツ セキュリティ ポリシーを削除しようとしたときにエラーが発生した
+SecurityPolicySucesfullyAdded=コンテンツ セキュリティ ポリシーが正常に追加された
+ErrorAddingSecurityPolicy=コンテンツ セキュリティ ポリシーを追加しようとしたときにエラーが発生した

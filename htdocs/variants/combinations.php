@@ -3,7 +3,7 @@
  * Copyright (C) 2017      	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022   	Open-Dsi			<support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -177,7 +177,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		//First, sanitize
 		foreach ($features as $feature) {
 			$explode = explode('-', $feature);
-			if ($prodattr->fetch($explode[0]) <= 0 || $prodattr_val->fetch($explode[1]) <= 0) {
+			if ($prodattr->fetch((int) $explode[0]) <= 0 || $prodattr_val->fetch((int) $explode[1]) <= 0) {
 				continue;
 			}
 
@@ -196,7 +196,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 		// sanit_feature is an array with 1 (and only 1) value per attribute.
 		// For example:  Color->blue, Size->Small, Option->2
 		if (!$prodcomb->fetchByProductCombination2ValuePairs($id, $sanit_features)) {
-			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, $weight_impact, $reference);
+			$result = $prodcomb->createProductCombination($user, $object, $sanit_features, array(), $level_price_impact_percent, $level_price_impact, (float) $weight_impact, $reference);
 			if ($result > 0) {
 				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				unset($_SESSION['addvariant_'.$object->id]);
@@ -319,7 +319,7 @@ if (($action == 'add' || $action == 'create') && $usercancreate && empty($massac
 	// Update product variant ref
 	$product_child = new Product($db);
 	$product_child->fetch($prodcomb->fk_product_child);
-	$product_child->oldcopy = clone $product_child;  // @phan-ignore-current-line PhanTypeMismatchProperty
+	$product_child->oldcopy = clone $product_child;  // @phan-suppress-current-line PhanTypeMismatchProperty
 	$product_child->ref = $reference;
 
 	$result = $product_child->update($product_child->id, $user);
@@ -438,7 +438,7 @@ if (!empty($id) || !empty($ref)) {
 	if (isModEnabled("product") && isModEnabled("service")) {
 		$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 		print '<tr><td class="titlefieldcreate">';
-		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat) : $langs->trans('Type');
+		print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, (int) $usercancreate, $typeformat) : $langs->trans('Type');
 		print '</td><td>';
 		print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, $usercancreate, $typeformat);
 		print '</td></tr>';
@@ -517,7 +517,7 @@ if (!empty($id) || !empty($ref)) {
 				$toprint = array();
 				foreach ($features as $feature) {
 					$explode = explode('-', $feature);
-					if ($prodattr->fetch($explode[0]) <= 0 || $prodattr_val->fetch($explode[1]) <= 0) {
+					if ($prodattr->fetch((int) $explode[0]) <= 0 || $prodattr_val->fetch((int) $explode[1]) <= 0) {
 						continue;
 					}
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #ddd;">' . $prodattr->label.' : '.$prodattr_val->value .
@@ -531,6 +531,8 @@ if (!empty($id) || !empty($ref)) {
 			$title = $langs->trans('EditProductCombination');
 		}
 
+		$prodattr_alljson = null;
+		$prodattr_all = null;
 		if ($action == 'add') {
 			$prodattr_all = $prodattr->fetchAll();
 

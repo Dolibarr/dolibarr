@@ -259,7 +259,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
-		$sql .= " fk_projet='".$this->db->escape($this->fk_project)."',";
+		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
@@ -295,7 +295,7 @@ class PaymentVarious extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         id object
-	 *  @param  User	$user       User that load
+	 *  @param  ?User	$user       User that load
 	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
@@ -509,9 +509,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= "'".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", '".$this->db->escape($this->sens)."'";
+		$sql .= ", '".$this->db->escape((string) $this->sens)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", '".$this->db->escape($this->type_payment)."'";
+		$sql .= ", '".$this->db->escape((string) $this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
@@ -552,7 +552,7 @@ class PaymentVarious extends CommonObject
 
 					$bank_line_id = $acc->addline(
 						$this->datep,
-						$this->type_payment,
+						(string) $this->type_payment,
 						$this->label,
 						$sign * abs($this->amount),
 						$this->num_payment,
@@ -767,7 +767,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author';
+		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author, fk_user_modif, tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$sql .= ' WHERE v.rowid = '.((int) $id);
 
@@ -780,6 +780,7 @@ class PaymentVarious extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->user_creation = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);

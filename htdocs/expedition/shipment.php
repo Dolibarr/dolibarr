@@ -61,9 +61,9 @@ if (isModEnabled("product") || isModEnabled("service")) {
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'sendings', 'companies', 'bills', 'propal', 'deliveries', 'stocks', 'productbatch', 'incoterm', 'other'));
 
-$id     = GETPOSTINT('id'); // id of order
-$ref    = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$order_id	= GETPOSTINT('id'); // id of order
+$ref		= GETPOST('ref', 'alpha');
+$action 	= GETPOST('action', 'aZ09');
 
 $hookmanager->initHooks(array('ordershipmentcard'));
 
@@ -73,7 +73,7 @@ $socid = 0;
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'commande', $id);
+$result = restrictedArea($user, 'commande', $order_id);
 
 $object = new Commande($db);
 $shipment = new Expedition($db);
@@ -97,6 +97,11 @@ $permissiontoadd = $user->hasRight('expedition', 'creer'); // Used by the includ
 $permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && ((int) $object->status == $object::STATUS_DRAFT));
 $permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -112,12 +117,12 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	// Categorisation dans projet
 	if ($action == 'classin' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$object->setProject(GETPOSTINT('projectid'));
 	}
 
 	if ($action == 'confirm_cloture' && GETPOST('confirm', 'alpha') == 'yes' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->cloture($user);
 	} elseif ($action == 'setref_client' && $permissiontoadd) {
 		// Positionne ref commande client
@@ -130,14 +135,14 @@ if (empty($reshook)) {
 	if ($action == 'setdatedelivery' && $permissiontoadd) {
 		$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->setDeliveryDate($user, $datedelivery);
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	if ($action == 'setmode' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -145,7 +150,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setavailability' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->availability(GETPOSTINT('availability_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -153,7 +158,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setdemandreason' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->demand_reason(GETPOSTINT('demand_reason_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -161,7 +166,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'setconditions' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -176,7 +181,7 @@ if (empty($reshook)) {
 
 	// shipping method
 	if ($action == 'setshippingmethod' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->setShippingMethod(GETPOSTINT('shipping_method_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -185,25 +190,26 @@ if (empty($reshook)) {
 
 	// warehouse
 	if ($action == 'setwarehouse' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$result = $object->setWarehouse(GETPOSTINT('warehouse_id'));
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 
-	if ($action == 'update_extras' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			$result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -216,15 +222,16 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->fetch($id);
+		$object->fetch($order_id);
 		$object->setValueFrom('fk_soc', $socid, '', null, 'date', '', $user, 'ORDER_MODIFY');
 
-		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$order_id);
 		exit();
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
+
 
 /*
  * View
@@ -242,9 +249,9 @@ $help_url = 'EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes|DE:
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-expedition page-shipment');
 
 
-if ($id > 0 || !empty($ref)) {
+if ($order_id > 0 || !empty($ref)) {
 	$object = new Commande($db);
-	if ($object->fetch($id, $ref) > 0) {
+	if ($object->fetch($order_id, $ref) > 0) {
 		$object->loadExpeditions(1);
 
 		$product_static = new Product($db);
@@ -255,8 +262,6 @@ if ($id > 0 || !empty($ref)) {
 		$author = new User($db);
 		$author->fetch($object->user_author_id);
 
-		$res = $object->fetch_optionals();
-
 		$head = commande_prepare_head($object);
 		print dol_get_fiche_head($head, 'shipping', $langs->trans("CustomerOrder"), -1, 'order');
 
@@ -265,7 +270,7 @@ if ($id > 0 || !empty($ref)) {
 
 		// Confirm validation
 		if ($action == 'cloture') {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".urlencode((string) ($id)), $langs->trans("CloseShipment"), $langs->trans("ConfirmCloseShipment"), "confirm_cloture");
+			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF']."?id=".urlencode((string) ($order_id)), $langs->trans("CloseShipment"), $langs->trans("ConfirmCloseShipment"), "confirm_cloture");
 		}
 
 		// Call Hook formConfirm
@@ -601,7 +606,8 @@ if ($id > 0 || !empty($ref)) {
 		 *  Lines or orders with quantity shipped and remain to ship
 		 *  Note: Qty shipped are already available into $object->expeditions[fk_product]
 		 */
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
@@ -840,14 +846,13 @@ if ($id > 0 || !empty($ref)) {
 			$db->free($resql);
 
 			if (!$num) {
-				print '<tr '.$bc[false].'><td colspan="5">'.$langs->trans("NoArticleOfTypeProduct").'<br>';
+				print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoArticleOfTypeProduct").'</span></td></tr>';
 			}
-
-			print "</table>";
 		} else {
 			dol_print_error($db);
 		}
 
+		print "</table>";
 		print '</div>';
 
 
@@ -861,7 +866,7 @@ if ($id > 0 || !empty($ref)) {
 			// Bouton expedier sans gestion des stocks
 			if (!isModEnabled('stock') && ($object->statut > Commande::STATUS_DRAFT && $object->statut < Commande::STATUS_CLOSED)) {
 				if ($user->hasRight('expedition', 'creer')) {
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$id.'">'.$langs->trans("CreateShipment").'</a>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create&amp;origin=commande&amp;object_id='.$order_id.'">'.$langs->trans("CreateShipment").'</a>';
 					if ($toBeShippedTotal <= 0) {
 						print ' '.img_warning($langs->trans("WarningNoQtyLeftToSend"));
 					}

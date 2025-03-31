@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2019-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -202,15 +202,15 @@ if (!$rowid) {
 			// Save into $tmparray all metadata
 			$tmparray = dolExplodeIntoArray($FULLTAG, '.', '=');
 			// Load origin object according to metadata
-			if (!empty($tmparray['CUS']) && $tmparray['CUS'] > 0) {
-				$societestatic->fetch($tmparray['CUS']);
+			if (!empty($tmparray['CUS']) && (int) $tmparray['CUS'] > 0) {
+				$societestatic->fetch((int) $tmparray['CUS']);
 			} elseif (!empty($charge->metadata->dol_thirdparty_id) && $charge->metadata->dol_thirdparty_id > 0) {
 				$societestatic->fetch($charge->metadata->dol_thirdparty_id);
 			} else {
 				$societestatic->id = 0;
 			}
-			if (!empty($tmparray['MEM']) && $tmparray['MEM'] > 0) {
-				$memberstatic->fetch($tmparray['MEM']);
+			if (!empty($tmparray['MEM']) && (int) $tmparray['MEM'] > 0) {
+				$memberstatic->fetch((int) $tmparray['MEM']);
 			} else {
 				$memberstatic->id = 0;
 			}

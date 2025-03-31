@@ -523,7 +523,7 @@ class FileUpload
 					isset($_SERVER['HTTP_X_FILE_SIZE']) ? $_SERVER['HTTP_X_FILE_SIZE'] : $upload['size'][$index],
 					isset($_SERVER['HTTP_X_FILE_TYPE']) ? $_SERVER['HTTP_X_FILE_TYPE'] : $upload['type'][$index],
 					$upload['error'][$index],
-					$index
+					(string) $index
 				);
 				if (!empty($tmpres->error)) {
 					$error++;

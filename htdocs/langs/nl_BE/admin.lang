@@ -147,7 +147,6 @@ SeeWikiForAllTeam=Kijk op de Wiki-pagina voor een lijst met bijdragers en hun or
 UseACacheDelay=Ingestelde vertraging voor de cacheexport in secondes (0 of leeg voor geen cache)
 AddCRIfTooLong=Er is geen automatische tekst terugloop, tekst die te lang is, wordt niet weergegeven op documenten. Voeg indien nodig regeleinden in het tekstgebied toe.
 ConfirmPurge=Weet u zeker dat u deze zuivering wilt uitvoeren? <br> Hiermee worden al uw gegevensbestanden permanent verwijderd zonder dat u ze kunt herstellen (ECM-bestanden, bijgevoegde bestanden ...).
-LanguageFile=Bestandstaal
 ListOfDirectories=Lijst van OpenDocument sjablonenmappen
 ListOfDirectoriesForModelGenODT=Lijst met mappen die sjablonenbestanden met OpenDocument-indeling bevatten. <br><br> Plaats hier het volledige pad van mappen. <br> Voeg een regelterugloop toe tussen elke directory. <br> Voeg hier een map van de GED-module toe <b>DOL_DATA_ROOT/ecm/yourdirectoryname</b> . <br><br> Bestanden in die mappen moeten eindigen op <b>.odt</b> of <b>.ods</b>.
 FollowingSubstitutionKeysCanBeUsed=Door het plaatsen van de volgende velden in het sjabloon krijgt u een vervanging met de aangepaste waarde bij het genereren van het document:

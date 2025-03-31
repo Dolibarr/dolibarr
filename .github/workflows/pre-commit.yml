@@ -23,23 +23,43 @@ jobs:
       RAW_LOG: pre-commit.log
       CS_XML: pre-commit.xml
     steps:
-      - name: Install required tools
-        run: sudo apt-get update && sudo apt-get install cppcheck
-        if: false
-
-      # The next uses the git API because there is no clone yet.
-      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
-      # This is faster for a big repo.
-      - name: Get all changed php files (if PR)
-        id: changed-php
-        uses: tj-actions/changed-files@v45
-        if: env.gh_event == 'pull_request'
-        with:
-          files: |
-            **.php
+      #- name: Install required tools
+      #  run: sudo apt-get update && sudo apt-get install cppcheck
+      #  if: false
 
       # Checkout git sources to analyze
       - uses: actions/checkout@v4
+
+      # Try to get the list of modified files into steps.changed-php.outputs.all_changed_files
+      #- name: Get changed files
+      #  id: changed-files
+      #  uses: actions/github-script@v7
+      #  with:
+      #    script: |
+      #      const base = context.payload.pull_request?.base?.sha;
+      #      const head = context.payload.pull_request?.head?.sha;
+      #      const response = await github.rest.repos.compareCommits({
+      #        owner: context.repo.owner,
+      #        repo: context.repo.repo,
+      #        base,
+      #        head
+      #      });
+      #
+      #      const changedFiles = response.data.files.map(file => file.filename);
+      #      core.setOutput("all_changed_files", changedFiles.join(" "));
+
+      # Another method to get the list of changed files
+      # It sets the variable steps.changed-php.outputs.all_changed_files for other steps
+      - name: Get all changed php files (if PR)
+        id: changed-php
+        if: env.gh_event == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./.github/scripts/get_changed_php.sh
+
+      #- name: Print changed files
+      #  run: echo "Changed files are ${{ steps.changed-files.outputs.all_changed_files }}"
+
       # Action setup-python needs a requirements.txt or pyproject.toml
       # This ensures one of them exists.
       - name: Create requirements.txt if no requirements.txt or pyproject.toml

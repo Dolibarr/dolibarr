@@ -307,7 +307,7 @@ class pdf_timespent extends ModelePDFProjects
 					//$progress=($object->lines[$i]->progress?$object->lines[$i]->progress.'%':'');
 					$datestart = dol_print_date($object->lines[$i]->date_start, 'day');
 					$dateend = dol_print_date($object->lines[$i]->date_end, 'day');
-					$duration = convertSecondToTime((int) $object->lines[$i]->duration, 'allhourmin');
+					$duration = convertSecondToTime((int) $object->lines[$i]->duration_effective, 'allhourmin');
 
 					$showpricebeforepagebreak = 1;
 

@@ -707,11 +707,11 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *	Close the recruitment
 	 *
-	 *	@param      User	$user		Object user that close
-	 *	@param      int		$status		Statut
-	 *	@param      string	$note		Complete private note with this note
-	 *  @param		int		$notrigger	1=Does not execute triggers, 0=Execute triggers
-	 *	@return     int         		Return integer <0 if KO, >0 if OK
+	 *	@param      User		$user		Object user that close
+	 *	@param      int			$status		Statut
+	 *	@param      string		$note		Complete private note with this note
+	 *  @param		int<0,1>	$notrigger	1=Does not execute triggers, 0=Execute triggers
+	 *	@return     int			     		Return integer <0 if KO, >0 if OK
 	 */
 	public function cloture($user, $status, $note = "", $notrigger = 0)
 	{
@@ -792,9 +792,9 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *	Set back to validated status
 	 *
-	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 *	@param	User		$user			Object user that modify
+	 *  @param	int<0,1>	$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int							Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
 	{
@@ -816,12 +816,12 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
-	 *  @param  int     $withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
-	 *  @param  string  $option                     On what the link point to ('nolink', ...)
-	 *  @param  int     $notooltip                  1=Disable tooltip
-	 *  @param  string  $morecss                    Add more css on link
-	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string                              String with URL
+	 *  @param  int<0,2>	$withpicto                  Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param  string		$option                     On what the link point to ('nolink', ...)
+	 *  @param  int<0,1>	$notooltip                  1=Disable tooltip
+	 *  @param  string		$morecss                    Add more css on link
+	 *  @param  int<-1,1>	$save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *  @return	string									String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
@@ -924,8 +924,8 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *  Return label of the status
 	 *
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return	string 			       Label of status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string				       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -936,8 +936,8 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        Id status
-	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @param	int			$status        Id status
+	 *  @param  int<0,6>	$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
@@ -1015,7 +1015,7 @@ class RecruitmentJobPosition extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return CommonObjectLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{

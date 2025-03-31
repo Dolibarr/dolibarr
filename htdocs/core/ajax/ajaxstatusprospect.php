@@ -4,6 +4,7 @@
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,8 +87,8 @@ if ($action === "updatestatusprospect" && $permisstiontoupdate) {
 	$response = '';
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-	$sql .= "fk_stcomm=".(int) $db->escape($idstatus);
-	$sql .= " WHERE rowid = ".(int) $db->escape($idprospect);
+	$sql .= "fk_stcomm=".((int) $idstatus);
+	$sql .= " WHERE rowid = ".((int) $idprospect);
 
 	$resql = $db->query($sql);
 

@@ -697,7 +697,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$recruiter = new User($db);
 	$recruiter->fetch($job->fk_user_recruiter);
 
-	$recruitername = $recruiter->getFullName('');
+	$recruitername = $recruiter->getFullName($langs);
 	$recruitermail = (!empty($job->email_recruiter) ? $job->email_recruiter : $recruiter->email);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

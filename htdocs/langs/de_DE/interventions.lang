@@ -86,3 +86,4 @@ TypeContact_fichinter_external_BILLING=Kundenkontakt für die Abrechnung von Ser
 TypeContact_fichinter_external_CUSTOMER=Kundenkontakt für die Nachbetreuung des Serviceauftrags
 NotARecurringInterventionalTemplate=Keine Vorlage für wiederkehrende Serviceaufträge
 ShowInterventionModel=Vorlage für Serviceauftrag anzeigen
+CreateRepeatableIntervention=Wiederkehrenden Serviceauftrag erstellen

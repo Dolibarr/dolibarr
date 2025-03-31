@@ -178,6 +178,7 @@ $idvote = GETPOSTINT("vote");
 $hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote);
 
 if ($idvote > 0) {
+	$votestatus = 'err';
 	if (in_array($hashedvote, $listofvotes)) {
 		// Has already voted
 		$votestatus = 'ko';

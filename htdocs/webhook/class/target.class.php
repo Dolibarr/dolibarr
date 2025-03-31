@@ -57,7 +57,12 @@ class Target extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_AUTOMATIC_TRIGGER = 1;
+	const STATUS_MANUAL_TRIGGER = 2;
 	const STATUS_CANCELED = 9;
+
+	const TYPE_BLOCKING = 0;
+	const TYPE_NO_BLOCKING = 1;
 
 
 	/**
@@ -96,6 +101,7 @@ class Target extends CommonObject
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 4, 'noteditable' => 1, 'index' => 1, 'searchall' => 1, 'validate' => 1, 'comment' => "Reference of object"),
 		'label' => array('type' => 'varchar(255)', 'label' => 'Label', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 2, 'validate' => 1, 'autofocusoncreate' => 1),
+		'type' => array('type' => 'select', 'label' => 'Type', 'enabled' => 1, 'position' => 40, 'notnull' => 1, 'default' => '0', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Blocking', '1' => 'NoBlocking'), 'help' => 'WebhookTargetTypeHelp', 'validate' => 1),
 		'trigger_codes' => array('type' => 'text', 'label' => 'TriggerCodes', 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => 1, 'help' => "TriggerCodeInfo", 'tdcss' => 'titlefieldmiddle', 'csslist' => 'tdoverflowmax200', 'css' => 'minwidth400', 'arrayofkeyval' => array('defined_in_constructor' => 'defined_from_c_action_trigger'), 'multiinput' => 1,),
 		'url' => array('type' => 'url', 'label' => 'Url', 'enabled' => 1, 'position' => 55, 'notnull' => 1, 'visible' => 1,),
 		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => 3, 'validate' => 1,),
@@ -107,7 +113,6 @@ class Target extends CommonObject
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 511, 'notnull' => -1, 'visible' => -2,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 2000, 'notnull' => 1, 'default' => '1', 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Disabled', '1' => 'AutomaticTrigger', '2' => 'ManualTrigger'), 'validate' => 1,),
-		"trigger_stack" => array("type" => "text", "label" => "TriggerStack", "enabled" => "1", 'position' => 59, 'notnull' => 0, "visible" => "0",),
 	);
 	/**
 	 * @var int
@@ -121,6 +126,10 @@ class Target extends CommonObject
 	 * @var string
 	 */
 	public $label;
+	/**
+	 * @var int
+	 */
+	public $type;
 	/**
 	 * @var string
 	 */
@@ -158,10 +167,6 @@ class Target extends CommonObject
 	 */
 	public $trigger_codes;
 
-	/**
-	 * @var string Json array to store manual trigger that needs to be send
-	 */
-	public $trigger_stack;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -284,6 +289,37 @@ class Target extends CommonObject
 		}
 
 		return 1;
+	}
+
+	/**
+	 * Test if a TriggerCode is inside a Target with status to Manual
+	 * @param  string 	$triggercode TriggerCode to test
+	 * @return int             		 Return integer <0 if KO, >0 if OK, =0 No data found
+	 */
+	public function isTriggerCodeManualTarget($triggercode)
+	{
+		$res = 0;
+		$error = 0;
+		$sql = "SELECT COUNT(wt.rowid) as nbtarget";
+		$sql .= " FROM ".MAIN_DB_PREFIX."webhook_target as wt";
+		$sql .= " WHERE wt.status = ".((int) $this::STATUS_MANUAL_TRIGGER);
+		$sql .= " AND wt.trigger_codes LIKE '%".$this->db->escape($triggercode)."%'";
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			if ($num > 0) {
+				$obj = $this->db->fetch_object($resql);
+				$res = $obj->nbtarget;
+			}
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.implode(',', $this->errors), LOG_ERR);
+			$error++;
+		}
+		if ($error) {
+			$res = $error * -1;
+		}
+		return $res;
 	}
 
 	/**
@@ -437,7 +473,7 @@ class Target extends CommonObject
 
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Load in emory the list of all objects from the database.
 	 *
 	 * @param  string      	$sortorder    	Sort Order
 	 * @param  string      	$sortfield    	Sort field
@@ -563,7 +599,7 @@ class Target extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->status == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_AUTOMATIC_TRIGGER) {
 			dol_syslog(get_class($this)."::validate action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -584,7 +620,7 @@ class Target extends CommonObject
 			// Validate
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
-			$sql .= " status = ".self::STATUS_VALIDATED;
+			$sql .= " status = ".((int) self::STATUS_AUTOMATIC_TRIGGER);
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
@@ -618,7 +654,7 @@ class Target extends CommonObject
 			if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 				// Now we rename also files into index
 				$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'target/".$this->db->escape($this->newref)."'";
-				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'target/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+				$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'target/".$this->db->escape($this->ref)."' and entity = ".((int) $conf->entity);
 				$resql = $this->db->query($sql);
 				if (!$resql) {
 					$error++;
@@ -659,7 +695,7 @@ class Target extends CommonObject
 		// Set new ref and current status
 		if (!$error) {
 			$this->ref = $num;
-			$this->status = self::STATUS_VALIDATED;
+			$this->status = self::STATUS_AUTOMATIC_TRIGGER;
 		}
 
 		if (!$error) {
@@ -699,7 +735,7 @@ class Target extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_AUTOMATIC_TRIGGER) {
 			return 0;
 		}
 
@@ -720,7 +756,7 @@ class Target extends CommonObject
 			return 0;
 		}
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'TARGET_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_AUTOMATIC_TRIGGER, $notrigger, 'TARGET_REOPEN');
 	}
 
 	/**
@@ -874,17 +910,22 @@ class Target extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
 
-			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatus[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatus[self::STATUS_AUTOMATIC_TRIGGER] = $langs->transnoentitiesnoconv('AutomaticTrigger');
+			$this->labelStatus[self::STATUS_MANUAL_TRIGGER] = $langs->transnoentitiesnoconv('ManualTrigger');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
-			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->transnoentitiesnoconv('Enabled');
+			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->transnoentitiesnoconv('Disabled');
+			$this->labelStatusShort[self::STATUS_AUTOMATIC_TRIGGER] = $langs->transnoentitiesnoconv('AutomaticTrigger');
+			$this->labelStatusShort[self::STATUS_MANUAL_TRIGGER] = $langs->transnoentitiesnoconv('ManualTrigger');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->transnoentitiesnoconv('Disabled');
 		}
 
 		$statusType = 'status'.$status;
-		if ($status == self::STATUS_VALIDATED) {
+		if ($status == self::STATUS_AUTOMATIC_TRIGGER) {
 			$statusType = 'status4';
+		}
+		if ($status == self::STATUS_MANUAL_TRIGGER) {
+			$statusType = 'status3';
 		}
 		if ($status == self::STATUS_CANCELED) {
 			$statusType = 'status6';

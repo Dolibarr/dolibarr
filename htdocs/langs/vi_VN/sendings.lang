@@ -8,13 +8,12 @@ Shipments=Lô hàng
 ShowSending=Hiển thị lô hàng
 Receivings=Biên nhận giao hàng
 SendingsArea=Diện tích lô hàng
-ListOfSendings=Danh sách các lô hàng
 SendingMethod=Phương thức vận chuyển
 LastSendings=Lô hàng %s mới nhất
 StatisticsOfSendings=Thống kê cho lô hàng
 NbOfSendings=Số lô hàng
 NumberOfShipmentsByMonth=Số lô hàng theo tháng
-SendingCard=Thẻ hàng
+SendingCard=Lô hàng
 NewSending=Lô hàng mới
 CreateShipment=Tạo lô hàng
 QtyShipped=Số lượng vận chuyển
@@ -44,6 +43,7 @@ ConfirmCancelSending=Bạn có chắc chắn muốn hủy lô hàng này?
 DocumentModelMerou=Mô hình Merou A5
 WarningNoQtyLeftToSend=Cảnh báo, không có sản phẩm chờ đợi để được vận chuyển.
 StatsOnShipmentsOnlyValidated=Số liệu thống kê chỉ dành cho các lô hàng đã được xác nhận. Ngày được sử dụng là ngày xác nhận lô hàng (ngày giao hàng dự kiến không phải lúc nào cũng được biết)
+DateShipping=Sending date
 DateDeliveryPlanned=Ngày giao hàng theo kế hoạch
 RefDeliveryReceipt=Tham chiếu biên nhận giao hàng
 StatusReceipt=Trạng thái biên nhận giao hàng
@@ -63,6 +63,10 @@ NoProductToShipFoundIntoStock=Không có sản phẩm nào được tìm thấy 
 WeightVolShort=Trọng lượng / Khối lượng.
 ValidateOrderFirstBeforeShipment=Trước tiên, bạn phải xác nhận đơn đặt hàng trước khi có thể thực hiện chuyển hàng.
 NoLineGoOnTabToAddSome=Không có dòng nào, vào tab "%s" để thêm
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Mô hình tài liệu hoàn chỉnh hơn cho biên lai giao h
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=EXPEDITION_ADDON_NUMBER liên tục không được xác định
 SumOfProductVolumes=Tổng khối lượng sản phẩm
 SumOfProductWeights=Tổng trọng lượng sản phẩm
-
 # warehouse details
 DetailWarehouseNumber= Chi tiết kho
 DetailWarehouseFormat= W: %s (Số lượng: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Hiển thị ngày nhập kho cuối cùng trong quá trình tạo lô hàng cho số sê-ri hoặc lô
 CreationOptions=Các tùy chọn có sẵn trong quá trình tạo lô hàng
-
 ShipmentDistribution=Phân phối lô hàng
-
 ErrorTooManyCombinationBatchcode=Không có công văn nào cho dòng %s vì tìm thấy quá nhiều kết hợp kho, sản phẩm, mã lô (%s).
 ErrorNoCombinationBatchcode=Không thể lưu dòng %s dưới dạng kết hợp của Warehouse-product-lot/serial (%s, %s, %s) không được tìm thấy trong kho.
-
 ErrorTooMuchShipped=Số lượng vận chuyển không được lớn hơn số lượng đặt hàng cho dòng %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Đại diện theo dõi việc vận chuyển
+TypeContact_shipping_external_BILLING=Liên lạc hóa đơn khách hàng
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Liên lạc khách hàng để giao hàng
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

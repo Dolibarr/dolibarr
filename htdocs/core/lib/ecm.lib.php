@@ -32,7 +32,7 @@
  */
 function ecm_prepare_dasboard_head()
 {
-	global $langs, $conf, $user, $form;
+	global $langs, $conf, $form;
 
 	$h = 0;
 	$head = array();
@@ -61,7 +61,7 @@ function ecm_prepare_dasboard_head()
 		$h++;
 	}
 
-	if ($showmediasection && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	if ($showmediasection) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1';
 		$head[$h][1] = $langs->trans("ECMSectionsMedias").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_medias';

@@ -312,3 +312,7 @@ TaskMergeSuccess=Task-urile au fost unificate
 ErrorTaskIdIsMandatory=Eroare: Id task este obligatoriu
 ErrorsTaskMerge=A apărut o eroare la îmbinarea task-urilor
 Billable = Facturabil
+ConfirmCloseTask=Sigur vrei să închizi acest task ?
+ConfirmClosed=Confirmare închidere task
+TaskStatus=Status task
+TaskReopened=Task redeschis
