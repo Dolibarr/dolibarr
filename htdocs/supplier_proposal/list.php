@@ -202,7 +202,7 @@ $arrayfields = array(
 	'sp.multicurrency_total_ht' => array('label' => 'MulticurrencyAmountHT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.multicurrency_total_vat' => array('label' => 'MulticurrencyAmountVAT', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
 	'sp.multicurrency_total_ttc' => array('label' => 'MulticurrencyAmountTTC', 'checked' => '0', 'enabled' => (!isModEnabled("multicurrency") ? '0' : '1')),
-	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => 1,'enabled' => (!isModEnabled("project") ? 0 : 1)),
+	'sp.fk_projet' => array('label' => $langs->trans("RefProject"), 'checked' => '1', 'enabled' => (!isModEnabled("project") ? '0' : '1')),
 	'u.login' => array('label' => $langs->trans("Author"), 'checked' => '1', 'position' => 10),
 	'sp.datec' => array('label' => $langs->trans("DateCreation"), 'checked' => '0', 'position' => 500),
 	'sp.tms' => array('label' => $langs->trans("DateModificationShort"), 'checked' => '0', 'position' => 500),
@@ -213,7 +213,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:string,enabled?:string,type?:string,langfile?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Check only if it's an internal user
 if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
