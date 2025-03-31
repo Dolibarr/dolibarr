@@ -1081,7 +1081,7 @@ class MyObject extends CommonObject
 
 		return $this->initAsSpecimenCommon();
 	}
-	
+
 	//BEGIN MODULEBUILDER LINES
 	/**
 	 * 	Create an array of lines
