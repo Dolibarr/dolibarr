@@ -1099,7 +1099,7 @@ class MyObject extends CommonObject
 			$this->setErrorsFromObject($objectline);
 			return $result;
 		} else {
-			/** @phpstan-ignore-next-line */	
+			/** @phpstan-ignore-next-line */
 			$this->lines = $result;
 			return $this->lines;
 		}
