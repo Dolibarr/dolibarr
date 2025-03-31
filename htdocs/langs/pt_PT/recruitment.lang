@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Recrutamento
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Gerir e acompanhar as campanhas de recrutamento para os novos cargos
-
-#
 # Admin page
-#
 RecruitmentSetup = Configuração do recrutamento
 RecruitmentSetupPage = Insira aqui a configuração das principais opções para o recrutamento módulo
 RecruitmentArea=Área de recrutamento
 PublicInterfaceRecruitmentDesc=As páginas públicas de trabalhos são URLs públicos para mostrar a resposta e aos trabalhos abrir. Há um hiperligação, conexão diferente para cada trabalho abrir, encontrado em cada registro de trabalho.
 EnablePublicRecruitmentPages=Ativar páginas públicas de tarefas abrir
 
-#
-# About page
-#
-RecruitmentAbout = Sobre Recrutamento
-RecruitmentAboutPage = Página sobre Recrutamento
 NbOfEmployeesExpected=Esperado nb de funcionários
 JobLabel=Nome do cargo
 WorkPlace=Local de trabalho
@@ -47,7 +34,6 @@ PositionToBeFilled=Posição da tarefa
 PositionsToBeFilled=Cargos de trabalho
 ListOfPositionsToBeFilled=Lista de cargos
 NewPositionToBeFilled=Novos cargos
-
 JobOfferToBeFilled=Cargo a ser preenchido
 ThisIsInformationOnJobPosition=Informações sobre o cargo a ser preenchido
 ContactForRecruitment=Contato para recrutamento

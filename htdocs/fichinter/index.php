@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,18 +31,26 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (!$user->hasRight('ficheinter', 'lire')) {
 	accessforbidden();
 }
 
-$hookmanager = new HookManager($db);
-
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('interventionindex'));
-
 // Load translation files required by the page
 $langs->load("interventions");
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('interventionindex'));
+
 
 // Security check
 $socid = GETPOSTINT('socid');
@@ -58,12 +67,13 @@ $max = getDolGlobalInt('MAIN_SIZE_SHORTLIST_LIMIT', 5);
  */
 
 $fichinterstatic = new Fichinter($db);
+$companystatic = new Societe($db);
 $form = new Form($db);
 $formfile = new FormFile($db);
 
 $help_url = "EN:ModuleFichinters|FR:Module_Fiche_Interventions|ES:Módulo_FichaInterventiones";
 
-llxHeader("", $langs->trans("Interventions"), $help_url);
+llxHeader("", $langs->trans("Interventions"), $help_url, '', 0, 0, '', '', '', 'mod-fichinter page-index');
 
 print load_fiche_titre($langs->trans("InterventionsArea"), '', 'intervention');
 
@@ -170,7 +180,7 @@ if ($resql) {
 
 
 /*
- * Draft orders
+ * Draft interventions
  */
 if (isModEnabled('intervention')) {
 	$sql = "SELECT f.rowid, f.ref, s.nom as name, s.rowid as socid";
@@ -195,16 +205,20 @@ if (isModEnabled('intervention')) {
 		print '<table class="noborder centpercent">';
 		print '<tr class="liste_titre">';
 		print '<th colspan="2">'.$langs->trans("DraftFichinter").'</th></tr>';
-		$langs->load("fichinter");
+		$langs->load("interventions");
 		$num = $db->num_rows($resql);
 		if ($num) {
 			$i = 0;
 			while ($i < $num) {
 				$obj = $db->fetch_object($resql);
+				$fichinterstatic->id = $obj->rowid;
+				$fichinterstatic->ref = $obj->ref;
 				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
-				print "<a href=\"card.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowFichinter"), "intervention").' '.$obj->ref."</a></td>";
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td></tr>';
+				print '<td class="nowrap">'.$fichinterstatic->getNomUrl(1).'</td>';
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
+				print '</tr>';
 				$i++;
 			}
 		}
@@ -275,8 +289,9 @@ if ($resql) {
 			print '</td></tr></table>';
 
 			print '</td>';
-
-			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.$obj->name.'</a></td>';
+			$companystatic->id = $obj->socid;
+			$companystatic->name = $obj->name;
+			print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem), 'day').'</td>';
 			print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
 			print '</tr>';
@@ -347,11 +362,10 @@ if (isModEnabled('intervention')) {
 				print '</td></tr></table>';
 
 				print '</td>';
-
-				print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"), "company").' '.dol_trunc($obj->name, 24).'</a></td>';
-
+				$companystatic->id = $obj->socid;
+				$companystatic->name = $obj->name;
+				print '<td>'.$companystatic->getNomUrl(1, 'customer').'</td>';
 				print '<td class="right">'.$fichinterstatic->LibStatut($obj->fk_statut, 5).'</td>';
-
 				print '</tr>';
 				$i++;
 			}

@@ -11,7 +11,6 @@ CurrentAccounts=Cuentas actuales
 ErrorBankLabelAlreadyExists=Ya existe descripción de la cuenta financiera
 BalanceMinimalAllowed=Saldo mínimo permitido
 ShowAllTimeBalance=Mostrar saldo desde el principio
-AllTime=Desde el principio
 Reconciliation=Reconciliación
 RIB=Número de cuenta bancaria
 SwiftValid=BIC / SWIFT válido

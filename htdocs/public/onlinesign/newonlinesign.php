@@ -4,6 +4,7 @@
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +59,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors", "members", "paybox", "stripe", "propal", "commercial"));
 
@@ -81,13 +93,13 @@ $message = GETPOST('message', 'aZ09');
 // currency (iso code)
 
 $suffix = GETPOST("suffix", 'aZ09');
-$source = GETPOST("source", 'alpha');
+$source = (string) GETPOST("source", 'alpha');
 $ref = $REF = GETPOST("ref", 'alpha');
 $urlok = '';
 $urlko = '';
 
 
-if (empty($source)) {
+if ($source == '') {
 	$source = 'proposal';
 }
 if (!empty($refusepropal)) {
@@ -170,7 +182,7 @@ if ($source == 'proposal') {
 	httponly_accessforbidden($langs->trans('ErrorBadParameters')." - Bad value for source. Value not supported.", 400, 1);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('onlinesign'));
 
 $error = 0;
@@ -180,7 +192,7 @@ $error = 0;
  * Actions
  */
 
-if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
+if ($action == 'confirm_refusepropal' && $confirm == 'yes') {	// Test on pemrission not required here. Public form. Security checked on the securekey and on mitigation
 	$db->begin();
 
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."propal";
@@ -223,6 +235,7 @@ if ($action == 'confirm_refusepropal' && $confirm == 'yes') {
  */
 
 $form = new Form($db);
+
 $head = '';
 if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
 	$head = '<link rel="stylesheet" type="text/css" href="' . getDolGlobalString('MAIN_SIGN_CSS_URL').'?lang='.$langs->defaultlang.'">'."\n";
@@ -231,15 +244,19 @@ if (getDolGlobalString('MAIN_SIGN_CSS_URL')) {
 $conf->dol_hide_topmenu = 1;
 $conf->dol_hide_leftmenu = 1;
 
+$title = $langs->trans("OnlineSignature");
+
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+llxHeader($head, $title, '', '', 0, 0, '', '', '', 'onlinepaymentbody', $replacemainarea, 1);
+
+htmlPrintOnlineHeader($mysoc, $langs);
 
 if ($action == 'refusepropal') {
 	print $form->formconfirm($_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.$entity : ''), $langs->trans('RefusePropal'), $langs->trans('ConfirmRefusePropal', $object->ref), 'confirm_refusepropal', '', '', 1);
 }
 
 // Check link validity for param 'source' to avoid use of the examples as value
-if (!empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'proposal_ref', ''))) {
+if (/* $source !== '' :never empty &&  */ in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', 'proposal_ref', ''))) {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
 	// End of page
@@ -270,7 +287,7 @@ print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 $logosmall = $mysoc->logo_small;
 $logo = $mysoc->logo;
 $paramlogo = 'ONLINE_SIGN_LOGO_'.$suffix;
-if (!empty($conf->global->$paramlogo)) {
+if (getDolGlobalString($paramlogo)) {
 	$logosmall = getDolGlobalString($paramlogo);
 } elseif (getDolGlobalString('ONLINE_SIGN_LOGO')) {
 	$logosmall = getDolGlobalString('ONLINE_SIGN_LOGO');
@@ -403,6 +420,8 @@ if ($source == 'proposal') {
 	$last_main_doc_file = $object->last_main_doc;
 
 	if ($object->status == $object::STATUS_VALIDATED) {
+		$object->last_main_doc = preg_replace('/_signed-(\d+)/', '', $object->last_main_doc);	// We want to be sure to not work on the signed version
+
 		if (empty($last_main_doc_file) || !dol_is_file(DOL_DATA_ROOT.'/'.$object->last_main_doc)) {
 			// It seems document has never been generated, or was generated and then deleted.
 			// So we try to regenerate it with its default template.
@@ -431,7 +450,7 @@ if ($source == 'proposal') {
 				$datefilesigned = dol_filemtime($last_main_doc_file);
 				$datefilenotsigned = dol_filemtime($last_main_doc_file_not_signed);
 
-				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {
+				if (empty($datefilenotsigned) || $datefilesigned > $datefilenotsigned) {	// If file signed is more recent
 					$directdownloadlink = $object->getLastMainDocLink('proposal');
 					if ($directdownloadlink) {
 						print '<br><a href="'.$directdownloadlink.'">';
@@ -499,7 +518,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'fichinter') {
 	// Signature on fichinter
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -573,7 +592,7 @@ if ($source == 'proposal') {
 
 	$last_main_doc_file = $object->last_main_doc;
 	$diroutput = $conf->societe->multidir_output[$object->thirdparty->entity].'/'
-			.dol_sanitizeFileName($object->thirdparty->id).'/';
+			.dol_sanitizeFileName((string) $object->thirdparty->id).'/';
 	if ((empty($last_main_doc_file) ||
 		!dol_is_file($diroutput
 			.$langs->transnoentitiesnoconv("SepaMandateShort").' '.$object->id."-".dol_sanitizeFileName($object->rum).".pdf"))
@@ -604,7 +623,7 @@ if ($source == 'proposal') {
 } elseif ($source == 'expedition') {
 	// Signature on expedition
 	$found = true;
-	$langs->load("fichinter");
+	$langs->load("interventions");
 
 	$result = $object->fetch_thirdparty($object->socid);
 
@@ -740,7 +759,14 @@ if ($action == "dosign" && empty($cancel)) {
 	print '<input type="submit" class="button butActionDelete marginleftonly marginrightonly" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</div>';
 
+	// Define $urlwithroot
+	$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+	// TODO Replace DOL_URL_ROOT with $urlwithroot ?
+
 	// Add js code managed into the div #signature
+	$urltogo = $_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '');
 	print '<script language="JavaScript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/plugins/jSignature/jSignature.js"></script>
 	<script type="text/javascript">
 	$(document).ready(function() {
@@ -758,22 +784,22 @@ if ($action == "dosign" && empty($cancel)) {
 				var name = document.getElementById("name").value;
 				$.ajax({
 					type: "POST",
-					url: "'.DOL_URL_ROOT.'/core/ajax/onlineSign.php",
+					url: \''.DOL_URL_ROOT.'/core/ajax/onlineSign.php\',
 					dataType: "text",
 					data: {
-						"action" : "importSignature",
+						"action" : \'importSignature\',
 						"token" : \''.newToken().'\',
 						"signaturebase64" : signature,
 						"onlinesignname" : name,
 						"ref" : \''.dol_escape_js($REF).'\',
 						"securekey" : \''.dol_escape_js($SECUREKEY).'\',
-						"mode" : \''.dol_escape_htmltag($source).'\',
-						"entity" : \''.dol_escape_htmltag($entity).'\',
+						"mode" : \''.dol_escape_js($source).'\',
+						"entity" : \''.dol_escape_js((string) $entity).'\',
 					},
 					success: function(response) {
 						if (response.trim() === "success") {
 							console.log("Success on saving signature");
-							window.location.replace("'.$_SERVER["PHP_SELF"].'?ref='.urlencode($ref).'&source='.urlencode($source).'&message=signed&securekey='.urlencode($SECUREKEY).(isModEnabled('multicompany') ? '&entity='.(int) $entity : '').'");
+							window.location.replace(\''.dol_escape_js($urltogo).'\');
 						} else {
 							document.body.style.cursor = \'auto\';
 							console.error(response);
@@ -804,19 +830,19 @@ if ($action == "dosign" && empty($cancel)) {
 		if ($object->status == $object::STATUS_SIGNED) {
 			print '<br>';
 			if ($message == 'signed') {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'check', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalSigned").'</span>';
 			} else {
-				print img_picto('', 'check', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'check', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalAlreadySigned").'</span>';
 			}
 		} elseif ($object->status == $object::STATUS_NOTSIGNED) {
 			print '<br>';
 			if ($message == 'refused') {
-				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'cross', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="ok">'.$langs->trans("PropalRefused").'</span>';
 			} else {
-				print img_picto('', 'cross', '', false, 0, 0, '', 'size2x').'<br>';
+				print img_picto('', 'cross', '', 0, 0, 0, '', 'size2x').'<br>';
 				print '<span class="warning">'.$langs->trans("PropalAlreadyRefused").'</span>';
 			}
 		} else {
@@ -836,7 +862,7 @@ if ($action == "dosign" && empty($cancel)) {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignFichinter").'">';
 		}
 	} elseif ($source == 'expedition') {
-		if ($message == 'signed' || $object->signed_status == Expedition::STATUS_SIGNED) {
+		if ($message == 'signed' || $object->signed_status == Expedition::$SIGNED_STATUSES['STATUS_SIGNED_SENDER']) {
 			print '<span class="ok">'.$langs->trans("ExpeditionSigned").'</span>';
 		} else {
 			print '<input type="submit" class="butAction small wraponsmartphone marginbottomonly marginleftonly marginrightonly reposition" value="'.$langs->trans("SignExpedition").'">';
@@ -851,6 +877,7 @@ if ($action == "dosign" && empty($cancel)) {
 }
 print '</td></tr>'."\n";
 print '</table>'."\n";
+
 print '</form>'."\n";
 print '</div>'."\n";
 print '<br>';

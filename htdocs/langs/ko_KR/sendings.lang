@@ -8,13 +8,12 @@ Shipments=선적 출하
 ShowSending=선적 보기
 Receivings=배송 확인서
 SendingsArea=선적 영역
-ListOfSendings=선적 목록
 SendingMethod=선적 방법
 LastSendings=최근 %s 선적
 StatisticsOfSendings=선적 통계
 NbOfSendings=선적 수
 NumberOfShipmentsByMonth=해당 달의 선적 수
-SendingCard=선적 카드
+SendingCard=선적 출하
 NewSending=새 선적
 CreateShipment=선적 생성
 QtyShipped=선적된 수량
@@ -44,6 +43,7 @@ ConfirmCancelSending=해당 선적을 삭제하시겠습니까?
 DocumentModelMerou=Merou A5 model
 WarningNoQtyLeftToSend=경고, 선적 대기중인 제품이 없습니다.
 StatsOnShipmentsOnlyValidated=통계는 검증된 배송에 대해서만 제공됩니다. 사용된 날짜는 배송 검증 날짜입니다. (예정 배송일은 항상 알려져 있지 않습니다.)
+DateShipping=Sending date
 DateDeliveryPlanned=배송 예정일
 RefDeliveryReceipt=참고 배송 확인서
 StatusReceipt=배송 확인서 상태
@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=항목이 없습니다. 추가를 위해 탭 "%s"로 가�
 CreateInvoiceForThisCustomerFromSendings=Create Bills
 IfValidateInvoiceIsNoSendingStayUnbilled=청구서 확인 처리 상태가 '안됨'이라면 발송물은 송장이 확인 처리 되기 전까지 '청구되지 않음'으로 남을 것입니다.
 OptionToSetSendingBilledNotEnabled=모듈 워크플로의 옵션, 송장이 확인 처리되었을 때 발송물을 '청구됨'으로 자동 설정하는 것이 불가합니다. 송장이 생성될 때 수동으로 발송물의 상태를 '청구됨'으로 변경해주세요.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=선적 분배
 ErrorTooManyCombinationBatchcode=창고, 제품, 배치 코드 조합이 너무 많아 항목%s에 대한 배송을 찾을 수 없습니다.
 ErrorNoCombinationBatchcode=창고- 제품-lot/serial (%s,%s,%s) 조합이 재고에 없기에 항목 %s을 저장할 수 없습니다.
 ErrorTooMuchShipped= 선적 수량이 항목 %s에 대해 주문된 수량보다 많아서는 안됩니다.
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=선적 담당 직원
+TypeContact_shipping_external_BILLING=고객 송장용 연락처
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

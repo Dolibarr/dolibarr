@@ -3,6 +3,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 ?>
+/* IDE Hack <style type="text/css"> */
+
 .template-container {
 	display: flex;
 	justify-content: space-between;
@@ -16,9 +18,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
   .template-option {
 	text-align: center;
 	padding: 10px;
-	margin: 0 5px;
-	background: #e9e9e9;
-	border: 1px solid #ccc;
+	margin: 4px 5px;
+	background: var(--colorbackgrey);
 	border-radius: 5px;
 	cursor: pointer;
 	height: 60px;

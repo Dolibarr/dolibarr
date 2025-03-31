@@ -1,6 +1,5 @@
 # Dolibarr language file - en_US - hrm
 
-
 # Admin
 HRM_EMAIL_EXTERNAL_SERVICE=البريد الإلكتروني لمنع خدمة  إدارة الموارد البشرية الخارجية
 Establishments=مؤسسات
@@ -18,13 +17,13 @@ DictionaryFunction=إدارة الموارد البشرية - المسميات �
 Employees=الموظفين
 Employee=الموظف
 NewEmployee=موظف جديد
-ListOfEmployees=قائمة الموظفين 
+ListOfEmployees=قائمة الموظفين
 HrmSetup=HRM وحدة الإعداد
 SkillsManagement=إدارة المهارات
 HRM_MAXRANK=أقصى عدد من المستويات لترتيب مهارة
 HRM_DEFAULT_SKILL_DESCRIPTION=الوصف الافتراضي للرتب عند إنشاء المهارة
 deplacement=تحول
-DateEval=تاريخ التقييم
+DateEval=Competency assessment date
 JobCard=بطاقة عمل
 NewJobProfile=الملف الوظيفي الجديد
 JobProfile=نبذه عن الوظيفه
@@ -41,17 +40,17 @@ Skill=مهارة
 Skills=مهارات
 SkillCard=بطاقة المهارة
 EmployeeSkillsUpdated=تم تحديث مهارات الموظفين (انظر علامة التبويب "المهارات" في بطاقة الموظف)
-Eval=تقييم
-Evals=التقييمات
-NewEval=تقييم جديد
-ValidateEvaluation=التحقق من صحة التقييم
-ConfirmValidateEvaluation=هل أنت متأكد أنك تريد التحقق من صحة هذا التقييم باستخدام المرجع <b>%s</b>؟
-EvaluationCard=بطاقة التقييم
-RequiredRank=الرتبة المطلوبة للملف الوظيفي
-RequiredRankShort=الرتبة المطلوبة
+Eval=Competency assessment
+Evals=Competency assessments
+NewEval=New competency assessment
+ValidateEvaluation=Validate competency assessment
+ConfirmValidateEvaluation=Are you sure you want to validate this competency assessment with the reference <b>%s</b>?
+EvaluationCard=Competency assessment
+RequiredRank=Required level for the job profile
+RequiredRankShort=Required level
 PositionsWithThisProfile=المناصب مع هذه التشكيلات الوظيفية
-EmployeeRank=رتبة الموظف لهذه المهارة
-EmployeeRankShort=رتبة موظف
+EmployeeRank=Employee level for this skill
+EmployeeRankShort=Employee level
 EmployeePosition=منصب الموظف
 EmployeePositions=مناصب الموظفين
 EmployeesInThisPosition=موظفين في هذا المنصب
@@ -73,6 +72,9 @@ AddSkill=إضافة المهارات إلى الملف الشخصي للوظيف
 RequiredSkills=المهارات المطلوبة لهذا الملف الوظيفي
 UserRank=رتبة المستخدم
 SkillList=قائمة المهارات
+SkillCreated=%s skills created
+SkillRank=Skill rank
+ShowSkillRank=Show skill rank
 SaveRank=حفظ الرتبة
 TypeKnowHow=أعرف كيف
 TypeHowToBe=كيف تكون
@@ -90,8 +92,11 @@ SaveAddSkill = تمت إضافة المهارة (المهارات)
 SaveLevelSkill = تم حفظ مستوى المهارة (المهارات)
 DeleteSkill = تمت إزالة المهارة
 SkillsExtraFields=السمات التكميلية (المهارات)
-JobsExtraFields=السمات التكميلية (الملف الشخصي للوظيفة)
-EvaluationsExtraFields=السمات التكميلية (التقييمات)
+JobsExtraFields=Complementary attributes (Job profiles)
+EvaluationsExtraFields=Complementary attributes (Competency assessments)
 NeedBusinessTravels=بحاجة إلى رحلات عمل
 NoDescription=بدون وصف
 TheJobProfileHasNoSkillsDefinedFixBefore=لا يحتوي ملف تعريف الوظيفة الذي تم تقييمه لهذا الموظف على أي مهارة محددة فيه. الرجاء إضافة المهارة (المهارات)، ثم حذف و ثم إعادة تشغيل التقييم.
+PDFStandardHrmEvaluation=Standard template to generate a PDF document for a competency assessment
+SkillNotRequired=Skill not required
+LinkToUserCreated=Link to an employee if the applicant has been hired and converted into a user.

@@ -1,2 +1,2 @@
 # Dolibarr language file - Source file is en_US - accountancy
-MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
+VATAccountNotDefined=Compte de la TPS non défini

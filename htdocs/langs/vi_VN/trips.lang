@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Ghi nhận bởi
 AUTHORPAIEMENT=Được trả tiền bởi
 AddTrip=Tạo báo cáo chi phí
@@ -13,6 +13,8 @@ byEX_EXP=theo dòng (giới hạn đến %s)
 byEX_MON=theo tháng (giới hạn đến %s)
 byEX_YEA=theo năm (giới hạn đến %s)
 CANCEL_USER=Đã bị xóa bởi
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Loại xe
 ClassifyRefunded=Phân loại 'hoàn trả'
 CompanyVisited=Công ty / tổ chức đã đến thăm
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=theo năm (không giới hạn)
 NoTripsToExportCSV=Không có báo cáo chi phí để xuất dữ liệu trong giai đoạn này.
 NOT_AUTHOR=Bạn không phải là tác giả của báo cáo chi phí này. Hoạt động bị hủy bỏ.
 OnExpense=Đường chi phí
-PDFStandardExpenseReports=Mẫu chuẩn để tạo tài liệu PDF cho báo cáo chi phí
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Trả tiền một báo cáo chi phí
 REFUSEUR=Bị từ chối bởi
 RangeIk=Phạm vi số dặm
@@ -115,6 +117,10 @@ VALIDOR=Được phê duyệt bởi
 ValidateAndSubmit=Xác nhận và trình phê duyệt
 ValidatedWaitingApproval=Xác nhận (chờ phê duyệt)
 ValideTrip=Phê duyệt báo cáo chi phí
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Bữa ăn sáng

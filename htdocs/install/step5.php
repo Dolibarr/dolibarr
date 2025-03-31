@@ -5,6 +5,7 @@
  * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,12 @@ if (file_exists($conffile)) {
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/security.lib.php'; // for dol_hash
 require_once $dolibarr_main_document_root.'/core/lib/functions2.lib.php';
+
+'
+@phan-var-force ?string $modulesdir
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
 
 global $langs;
 
@@ -97,12 +104,13 @@ dolibarr_install_syslog("--- step5: entering step5.php page ".$versionfrom." ".$
 
 $error = 0;
 
+
 /*
  *	Actions
  */
 
 // If install, check password and password_verification used to create admin account
-if ($action == "set") {
+if ($action == "set") {		// Test on permissions not required here
 	if ($pass != $pass_verif) {
 		header("Location: step4.php?error=1&selectlang=$setuplang".(isset($login) ? '&login='.$login : ''));
 		exit;

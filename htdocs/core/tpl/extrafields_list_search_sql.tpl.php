@@ -1,5 +1,27 @@
 <?php
 
+/* Copyright (C) 2025		Frédéric France			<frederic.france@free.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ */
+
+/**
+ * @var Conf $conf
+ * @var CommonObject $object
+ */
+
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -32,11 +54,11 @@ if (!empty($extrafieldsobjectkey) && !empty($search_array_options) && is_array($
 				}
 				$sql .= " AND ".$extrafieldsobjectprefix.$tmpkey." = '".$db->idate($crit)."'";
 			} elseif (is_array($crit)) {
-				if ($crit['start'] !== '' && $crit['end'] !== '') {
+				if (!is_null($crit['start']) && $crit['start'] !== '' && !is_null($crit['end']) && $crit['end'] !== '') {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." BETWEEN '". $db->idate($crit['start']). "' AND '".$db->idate($crit['end']) . "')";
-				} elseif ($crit['start'] !== '') {
+				} elseif (!is_null($crit['start']) && $crit['start'] !== '') {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." >= '". $db->idate($crit['start'])."')";
-				} elseif ($crit['end'] !== '') {
+				} elseif (!is_null($crit['end']) && $crit['end'] !== '') {
 					$sql .= " AND (".$extrafieldsobjectprefix.$tmpkey." <= '". $db->idate($crit['end'])."')";
 				}
 			}

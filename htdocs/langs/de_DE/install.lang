@@ -217,3 +217,4 @@ FunctionTest=Funktionstest
 NodoUpgradeAfterDB=Keine Aktion von externen Modulen nach Upgrade der Datenbank angefordert
 NodoUpgradeAfterFiles=Keine Aktion von externen Modulen nach dem Upgrade von Dateien oder Verzeichnissen angefordert
 MigrationContractLineRank=Vertragszeile migrieren, um Rang zu verwenden (und Neuordnung zu aktivieren)
+MigrationProductLotPath=Den Pfad für Produkt-Batch-Files migrieren

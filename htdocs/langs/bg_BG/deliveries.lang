@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Доставка
 DeliveryRef=Доставка №
-DeliveryCard=Stock receipt
+DeliveryCard=Разписка за доставка
 DeliveryOrder=Разписка за доставка
 DeliveryDate=Дата на доставка
 CreateDeliveryOrder=Генериране на разписка за доставка
@@ -27,7 +27,7 @@ Recipient=Получател
 ErrorStockIsNotEnough=Няма достатъчна наличност
 Shippable=Годно за изпращане
 NonShippable=Негодно за изпращане
-ShowShippableStatus=Show shippable status
+ShowShippableStatus=Показване на състояние за изпращане
 ShowReceiving=Показване на разписка за доставка
 NonExistentOrder=Несъществуваща поръчка
-StockQuantitiesAlreadyAllocatedOnPreviousLines = Stock quantities already allocated on previous lines
+StockQuantitiesAlreadyAllocatedOnPreviousLines = наличност количества, които вече са разпределени на предишни редове

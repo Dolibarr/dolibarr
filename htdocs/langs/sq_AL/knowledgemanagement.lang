@@ -4,37 +4,24 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
 ModuleKnowledgeManagementName = Sistemi i menaxhimit të njohurive
 # Module description 'ModuleKnowledgeManagementDesc'
 ModuleKnowledgeManagementDesc=Menaxhoni një bazë të menaxhimit të njohurive (KM) ose Help-Desk
-
-#
 # Admin page
-#
 KnowledgeManagementSetup = Konfigurimi i sistemit të menaxhimit të njohurive
 KnowledgeManagementSetupPage = Faqja e konfigurimit të sistemit të menaxhimit të njohurive
-
-
-#
 # About page
-#
 KnowledgeManagementAbout = Rreth Menaxhimit të Dijes
 KnowledgeManagementAboutPage = Menaxhimi i njohurive rreth faqes
-
 KnowledgeManagementArea = Menaxhimi i njohurive
 MenuKnowledgeRecord = Njohuri baze
 MenuKnowledgeRecordShort = Njohuri baze
@@ -46,8 +33,7 @@ KnowledgeRecord = Artikull
 KnowledgeRecordExtraFields = Fusha shtesë për artikullin
 GroupOfTicket=Grupi i biletave
 YouCanLinkArticleToATicketCategory=Mund ta lidhni artikullin me një grup biletash (kështu që artikulli do të theksohet në çdo biletë në këtë grup)
-SuggestedForTicketsInGroup=Sugjerohet për krijimin e biletave
-
+SuggestedForTicketsInGroup=Suggested on tickets creation
 SetObsolete=Cakto si të vjetëruara
 ConfirmCloseKM=A e konfirmoni mbylljen e këtij artikulli si të vjetëruar?
 ConfirmReopenKM=Dëshironi ta rivendosni këtë artikull në statusin "Vleftësuar"?
