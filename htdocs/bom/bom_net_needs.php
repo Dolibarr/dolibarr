@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ $form = new Form($db);
 $formfile = new FormFile($db);
 
 $title = $langs->trans('BOM');
-$help_url ='EN:Module_BOM';
+$help_url = 'EN:Module_BOM';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-net_needs');
 
@@ -330,7 +331,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				if ($useunit) {
 					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 					$unit = new CUnits($db);
-					$unit->fetch($elem['fk_unit']);
+					$unit->fetch((int) $elem['fk_unit']);
 					print(isset($unit->label) ? "&nbsp;".$langs->trans(ucwords($unit->label))."&nbsp;" : '');
 				}
 				print '</td>';

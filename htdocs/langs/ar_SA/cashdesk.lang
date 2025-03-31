@@ -16,8 +16,8 @@ AddThisArticle=إضافة هذا العنصر
 RestartSelling=التراجع عن بيع
 SellFinished=اكتمل البيع
 PrintTicket=طباعة التذكرة
-PrintReport=Print report
-PrintReportNoDetail=Print report (no detail)
+PrintReport=طباعة التقرير
+PrintReportNoDetail=طباعة التقرير (بدون تفاصيل)
 SendTicket=أرسل التذكرة
 NoProductFound=لم يتم العثور على عناصر
 ProductFound=تم العثور على المنتج
@@ -60,7 +60,7 @@ Numberspad=لوحة الأرقام
 BillsCoinsPad=وسادة عملات وأوراق نقدية
 DolistorePosCategory=وحدات TakePOS وحلول نقاط البيع الأخرى لـ Dolibarr
 TakeposNeedsCategories=يحتاج TakePOS إلى فئة منتج واحدة على الأقل حتى يعمل
-TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=يحتاج TakePOS إلى فئة منتج واحدة على الأقل ضمن الفئة <b> %s </b> للعمل
+TakeposNeedsAtLeastOnSubCategoryIntoParentCategory=يحتاج تيكبوس -TakePOS- إلى فئة فرعية 1 على الأقل ضمن فئة المنتج <b>%s</b> ليعمل
 OrderNotes=يمكن إضافة بعض الملاحظات على كل العناصر المطلوبة
 CashDeskBankAccountFor=الحساب الافتراضي لاستخدامه في عمليات الدفع
 NoPaimementModesDefined=لم يتم تحديد وضع paiment في تكوين TakePOS
@@ -108,7 +108,7 @@ ControlCashOpening=افتح النافذة المنبثقة "Control cash box" �
 CloseCashFence=إغلاق التحكم في صندوق النقد
 CashReport=تقرير النقدية
 MainPrinterToUse=الطابعة الرئيسية لاستخدامها
-MainPrinterToUseMore=leave empty to use the browser printer system
+MainPrinterToUseMore=اتركه فارغًا لاستخدام نظام الطابعة في المتصفح
 OrderPrinterToUse=طلب الطابعة لاستخدامها
 MainTemplateToUse=النموذج الرئيسي المراد استخدامه
 MainTemplateToUseMore=عند عدم استخدام نظام طباعة المتصفح
@@ -149,7 +149,7 @@ ShowProductReference=عرض مرجع أو تسمية للمنتجات
 UsePriceHT=استخدام السعر باستثناء. الضرائب و وليس السعر شاملاً. الضرائب عند تعديل السعر
 TerminalName=المحطة الطرفية %s
 TerminalNameDesc=اسم المحطة
-TakePosCustomerMandatory=You must choose a customer
+TakePosCustomerMandatory=يجب عليك اختيار العميل
 DefaultPOSThirdLabel=TakePOS عام العميل
 DefaultPOSCatLabel=منتجات نقاط البيع (POS).
 DefaultPOSProductLabel=مثال المنتج لـ TakePOS

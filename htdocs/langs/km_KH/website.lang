@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=ប្រើបញ្ជីឈ្មោះ/ឈ្មោះ�
 WEBSITE_CSS_URL=URL នៃឯកសារ CSS ខាងក្រៅ
 WEBSITE_CSS_INLINE=មាតិកាឯកសារ CSS (ទូទៅចំពោះទំព័រទាំងអស់)
 WEBSITE_JS_INLINE=មាតិកាឯកសារ JavaScript (ទូទៅសម្រាប់ទំព័រទាំងអស់)
-WEBSITE_HTML_HEADER=ការបន្ថែមនៅផ្នែកខាងក្រោមនៃបឋមកថា HTML (ទូទៅចំពោះទំព័រទាំងអស់)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=ឯកសារមនុស្សយន្ត (robots.txt)
 WEBSITE_HTACCESS=គេហទំព័រ .htaccess ឯកសារ
 WEBSITE_MANIFEST_JSON=ឯកសារ manifest.json គេហទំព័រ
@@ -56,16 +56,17 @@ ReadPerm=អាន
 WritePerm=សរសេរ
 TestDeployOnWeb=សាកល្បង/ដាក់ឱ្យប្រើប្រាស់លើបណ្តាញ
 PreviewSiteServedByWebServer=<u>មើលជាមុន %s នៅក្នុងផ្ទាំងថ្មី។</u><br><br> %s នឹងត្រូវបានបម្រើដោយម៉ាស៊ីនមេគេហទំព័រខាងក្រៅ (ដូចជា Apache, Nginx, IIS ) អ្នកត្រូវតែដំឡើង និងដំឡើងម៉ាស៊ីនមេនេះមុននឹងចង្អុលទៅថត៖<br><strong>%s</strong><br>URL បម្រើដោយម៉ាស៊ីនមេខាងក្រៅ៖<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=URL របស់ម៉ាស៊ីននិម្មិតដែលបម្រើដោយម៉ាស៊ីនមេគេហទំព័រខាងក្រៅមិនត្រូវបានកំណត់ទេ។
 NoPageYet=មិនមានទំព័រនៅឡើយទេ
 YouCanCreatePageOrImportTemplate=អ្នកអាចបង្កើតទំព័រថ្មី ឬនាំចូលគំរូគេហទំព័រពេញលេញ
 SyntaxHelp=ជួយលើគន្លឹះវាក្យសម្ព័ន្ធជាក់លាក់
 YouCanEditHtmlSourceckeditor=អ្នកអាចកែសម្រួលកូដប្រភព HTML ដោយប្រើប៊ូតុង "ប្រភព" នៅក្នុងកម្មវិធីនិពន្ធ។
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> ដើម្បីរួមបញ្ចូល  <strong>image</strong> រក្សាទុកក្នុង <strong>documents<span director class='noaspand'> ប្រើ<strong>viewimage.php</strong> wrapper។<br> រូបភាពចូលទៅក្នុងឯកសារ/ប្រព័ន្ធផ្សព្វផ្សាយ (ថតបើកសម្រាប់ការចូលប្រើជាសាធារណៈ) វាក្យសម្ព័ន្ធគឺ៖<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"7b00128 </strong><br>
-YouCanEditHtmlSource2=សម្រាប់រូបភាពដែលបានចែករំលែកជាមួយតំណចែករំលែក (បើកការចូលប្រើដោយប្រើសោការចែករំលែកនៃឯកសារ) វាក្យសម្ព័ន្ធគឺ៖<br><strong>&lt;img src="/viewimage.php?hashp=12345679012... </span><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=ទំព័រក្លូន/កុងតឺន័រ
 CloneSite=គេហទំព័រក្លូន
@@ -87,15 +88,15 @@ WebsiteAccount=គណនីគេហទំព័រ
 WebsiteAccounts=គណនីគេហទំព័រ
 AddWebsiteAccount=បង្កើតគណនីគេហទំព័រ
 BackToListForThirdParty=ត្រលប់ទៅបញ្ជីសម្រាប់ភាគីទីបី
-DisableSiteFirst=បិទគេហទំព័រជាមុនសិន
+DisableSiteFirst=Put website offline first
 MyContainerTitle=ចំណងជើងគេហទំព័ររបស់ខ្ញុំ
 AnotherContainer=នេះជារបៀបបញ្ចូលមាតិកានៃទំព័រ/កុងតឺន័រផ្សេងទៀត (អ្នកអាចមានកំហុសនៅទីនេះ ប្រសិនបើអ្នកបើកកូដថាមវន្ត ព្រោះកុងតឺន័រដែលបានបង្កប់ប្រហែលជាមិនមានទេ)
 SorryWebsiteIsCurrentlyOffLine=សូមអភ័យទោស គេហទំព័រនេះបច្ចុប្បន្នមិនមានអ៊ីនធឺណិតទេ។ សូមត្រលប់មកវិញពេលក្រោយ...
-WEBSITE_USE_WEBSITE_ACCOUNTS=បើកដំណើរការតារាងគណនីគេហទំព័រ
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=បើកតារាងដើម្បីរក្សាទុកគណនីគេហទំព័រ (ចូល/ឆ្លងកាត់) សម្រាប់គេហទំព័រ/ភាគីទីបីនីមួយៗ
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=ដំបូងអ្នកត្រូវតែកំណត់ទំព័រដើមលំនាំដើម
-OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor may not works correctty when used on a grabbed external page.
-OnlyEditionOfSourceForGrabbedContent=មានតែការបោះពុម្ពប្រភព HTML ប៉ុណ្ណោះដែលអាចធ្វើទៅបាននៅពេលដែលមាតិកាត្រូវបានចាប់យកពីគេហទំព័រខាងក្រៅ
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=Grab ក៏រកឃើញរូបភាពនៅក្នុង css និងទំព័រផងដែរ។
 ImagesShouldBeSavedInto=រូបភាពគួរតែត្រូវបានរក្សាទុកក្នុងថត
 WebsiteRootOfImages=ថតឫសសម្រាប់រូបភាពគេហទំព័រ
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=ចេញពីគណនីអតិថិជន�
 filteredByVersion=ត្រងតាមកំណែ
 removeFilter=យកតម្រងចេញ
 viewMyCart=មើលរទេះទិញទំនិញរបស់ខ្ញុំ
+Shipping=Shipping
 freeShipping=ដឹកជញ្ជូនឥតគិតថ្លៃ!
 noProducts=គ្មានផលិតផល
 nbrItemsInCart=មាន <span class="ajax_cart_quantity">0</span> នៅក្នុងរទេះរបស់អ្នក។
@@ -284,12 +286,13 @@ productNameAToZ=ឈ្មោះផលិតផល៖ A ដល់ Z
 productNameZToA=ឈ្មោះផលិតផល៖ Z ដល់ A
 referenceLowestFirst=ឯកសារយោង៖ ទាបបំផុតដំបូង
 referenceHighestFirst=ឯកសារយោង៖ ខ្ពស់បំផុតទីមួយ
+productPerPage=products per page
 perPage=ក្នុងមួយទំព័រ
 showAll=បង្ហាញ​ទាំងអស់
 showing= បង្ហាញ
 nbrOfProducts= មានផលិតផល %s។
 noResultsHaveBeenFound=រកឃើញលទ្ធផល 0 ។
-noResultsWereFound= រកមិនឃើញលទ្ធផលទេ។
+noResultsWereFound=រកមិនឃើញលទ្ធផលទេ។
 addToCart=បញ្ចូលទៅក្នុងរទេះ
 backHome=ត្រឡប់ទៅផ្ទះវិញ។
 priceDrop=ការធ្លាក់ចុះតម្លៃ
@@ -302,10 +305,11 @@ lastUpdate=បច្ចុប្បន្នភាពចុងក្រោយ
 contactSupport=របៀបទាក់ទងជំនួយ
 noProductToDisplay=កំហុស គ្មានផលិតផលដែលត្រូវបង្ហាញ
 yourCompanyInformation=ព័ត៌មានក្រុមហ៊ុនរបស់អ្នក។
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=អ៊ីមែលនេះត្រូវបានចុះឈ្មោះរួចហើយ។
 firstnameContainsLettersOnly=<b>នាមត្រកូល</b> ត្រូវតែមានអក្សរ និងដកឃ្លាតែប៉ុណ្ណោះ
 lastnameContainsLettersOnly=<b>នាមត្រកូល</b> ត្រូវតែមានអក្សរ និងដកឃ្លាតែប៉ុណ្ណោះ
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=កំហុសមួយបានកើតឡើង។
 accountCreation=បង្កើត​គណនី
 errorsOccurred=មាន %s error%s
@@ -357,3 +361,7 @@ subtract=ដក
 LoginCheckout=ចូល & បន្តដើម្បីបង់ប្រាក់ចេញ
 paymentSuccessProcessed=ការទូទាត់របស់អ្នកត្រូវបានដំណើរការដោយជោគជ័យ។
 youWillBeRedirectedToOrderPage=អ្នកនឹងត្រូវបានបញ្ជូនបន្តទៅកាន់ទំព័រព័ត៌មានលម្អិតនៃការបញ្ជាទិញក្នុងពេលឆាប់ៗនេះ។
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

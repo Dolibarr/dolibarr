@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2023		Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -171,6 +171,8 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
 /**
  * Show header for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -179,7 +181,7 @@ $extrafields->fetch_name_optionals_label($object->table_element); // fetch optio
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -226,9 +228,11 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 /**
  * Show footer for new member
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	print '</div>';
 
@@ -546,7 +550,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 			$resultprod = 0;
 			if (getDolGlobalInt('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION') > 0) {
-				$resultprod = $productforinvoicerow->fetch(getDolGlobalString('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'));
+				$resultprod = $productforinvoicerow->fetch(getDolGlobalInt('SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION'));
 			}
 
 			$facture = null;
@@ -664,7 +668,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 			// Get email content from template
 			$arraydefaultmessage = null;
 
-			$labeltouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
+			$labeltouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');
 			if (!empty($labeltouse)) {
 				$arraydefaultmessage = $formmail->getEMailTemplate($db, 'eventorganization_send', $user, $outputlangs, $labeltouse, 1, '');
 			}
@@ -673,8 +677,8 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				$subject = $arraydefaultmessage->topic;
 				$msg     = $arraydefaultmessage->content;
 			} else {
-				$subject = null;
-				$msg = null;
+				$subject = '';
+				$msg = '';
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $thirdparty);
@@ -909,7 +913,7 @@ if ((!empty($conference->id) && $conference->status == ConferenceOrBooth::STATUS
 			print '<tr><td>' . $langs->trans('State') . '</td><td>';
 			if ($country_code) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state(GETPOST("state_id"), $country_code);
+				print $formcompany->select_state(GETPOSTINT("state_id"), $country_code);
 			} else {
 				print '';
 			}

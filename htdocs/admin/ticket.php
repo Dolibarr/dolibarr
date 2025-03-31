@@ -3,7 +3,7 @@
  * Copyright (C) 2016       	Christophe Battarel 	<christophe@altairis.fr>
  * Copyright (C) 2022-2023  	Udo Tamm            	<dev@dolibit.de>
  * Copyright (C) 2023       	Alexandre Spangaro  	<aspangaro@easya.solutions>
- * Copyright (C) 2024			MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024-2025		Benjamin Falière		<benjamin.faliere@altairis.fr>
  *
@@ -359,7 +359,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
+						print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
 						print '</td>';
 
 						print '</tr>';
@@ -510,7 +510,7 @@ foreach ($dirmodels as $reldir) {
 
 
 								print '<td class="center">';
-								print $formcategory->textwithpicto('', $htmltooltip, 1, 0);
+								print $formcategory->textwithpicto('', $htmltooltip, 1, '0');
 								print '</td>';
 
 								print "</tr>\n";

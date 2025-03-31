@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2023-2024	William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -290,7 +290,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		print '<td><textarea name="address" id="address" class="quatrevingtpercent" rows="3" wrap="soft">';
 		print dol_escape_htmltag(GETPOSTISSET('address') ? GETPOST('address') : $object->address, 0, 1);
 		print '</textarea>';
-		print $form->widgetForTranslation("address", $object, $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
+		print $form->widgetForTranslation("address", $object, (bool) $permissiontoadd, 'textarea', 'alphanohtml', 'quatrevingtpercent');
 		print '</td></tr>';
 
 		// Zip
@@ -302,13 +302,13 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 		// Town
 		print '<tr>';
 		print '<td>'.$form->editfieldkey('Town', 'town', '', $object, 0).'</td><td>';
-		print $formresource->select_ziptown(GETPOSTISSET('town') ?  GETPOST('town') : $object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
-		print $form->widgetForTranslation("town", $object, $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
+		print $formresource->select_ziptown(GETPOSTISSET('town') ? GETPOST('town') : $object->town, 'town', array('zipcode', 'selectcountry_id', 'state_id'));
+		print $form->widgetForTranslation("town", $object, (bool) $permissiontoadd, 'string', 'alphanohtml', 'maxwidth100 quatrevingtpercent');
 		print '</td></tr>';
 
 		// Origin country
 		print '<tr><td>'.$langs->trans("CountryOrigin").'</td><td>';
-		print $form->select_country(GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $object->country_id, 'country_id');
+		print $form->select_country(GETPOSTISSET('country_id') ? (string) GETPOSTINT('country_id') : (string) $object->country_id, 'country_id');
 		if ($user->admin) {
 			print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 		}

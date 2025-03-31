@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - propal
 Proposals=Oferte comerciale
 Proposal=Ofertă comercială
-ProposalShort=Ofertă 
+ProposalShort=Ofertă
 ProposalsDraft=Oferte comerciale schiţă
 ProposalsOpened=Oferte comerciale deschise
 CommercialProposal=Ofertă comercială
 PdfCommercialProposalTitle=Ofertă
-ProposalCard=Fişă ofertă 
+ProposalCard=Fişă ofertă
 NewProp=Ofertă comercială nouă
 NewPropal=Ofertă nouă
 Prospect=Prospect
@@ -24,6 +24,8 @@ SearchAProposal=Caută o ofertă
 NoProposal=Nicio ofertă
 ProposalsStatistics=Statistici oferte comerciale
 NumberOfProposalsByMonth=Număr pe luni
+AmountOfProposals=Valoare oferte
+AmountOfProposalsHT=Valoare oferte (fără TVA)
 AmountOfProposalsByMonthHT=Sumă pe lună (fără taxe)
 NbOfProposals=Număr oferte comerciale
 ShowPropal=Afişează oferta
@@ -77,7 +79,7 @@ AvailabilityTypeAV_1W=1 săptămână
 AvailabilityTypeAV_2W=2 săptămâni
 AvailabilityTypeAV_3W=3 săptămâni
 AvailabilityTypeAV_1M=1 lună
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Reprezentant urmărire ofertă
 TypeContact_propal_external_BILLING=Contact client pentru facturare ofertă
 TypeContact_propal_external_CUSTOMER=Contact client urmărire ofertă

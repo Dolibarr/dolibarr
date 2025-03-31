@@ -1027,8 +1027,6 @@ function show_day_events_pertype($username, $day, $month, $year, $monthshown, $s
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 
-				$ponct = ($event->date_start_in_calendar == $event->date_end_in_calendar);
-
 				// Define $color (Hex string like '0088FF') and $cssclass of event
 				$color = -1;
 				$cssclass = '';

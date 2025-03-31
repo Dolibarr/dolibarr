@@ -99,8 +99,8 @@ SubscriptionRequiredDesc=إذا كان الاشتراك مطلوبًا، فيج�
 DeleteType=حذف
 VoteAllowed=يسمح التصويت
 Physical=الفرد
-Moral=مؤسَّسة
-MorAndPhy=شركة وفرد
+Moral=Legal entity
+MorAndPhy=Legal entity and Individual
 Reenable=إعادة التمكين
 ExcludeMember=استبعاد عضو
 Exclude=استبعاد
@@ -191,7 +191,8 @@ MembersStatisticsByRegion=إحصائيات الأعضاء حسب المنطقة
 NbOfMembers=إجمالي عدد الأعضاء
 NbOfActiveMembers=العدد الإجمالي للأعضاء النشطين الحاليين
 NoValidatedMemberYet=العثور على أي أعضاء التحقق من صحة
-MembersByCountryDesc=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب الدول. تعتمد الرسوم البيانية والمخططات على مدى توفر خدمة الرسم البياني عبر الإنترنت من Google بالإضافة إلى توفر اتصال إنترنت فعال.
+MembersByCountryDesc=This screen shows you the statistics of members by countries.
+MembersByCountryDesc2=Graphs and charts depend on the availability of the Google online graph service as well as on the availability of a working internet connection.
 MembersByStateDesc=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب الولاية / المقاطعات / الكانتون.
 MembersByTownDesc=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب المدينة.
 MembersByNature=تظهر لك هذه الشاشة إحصائيات الأعضاء حسب الطبيعة.
@@ -208,25 +209,25 @@ NewMemberbyWeb=وأضاف عضو جديد. تنتظر الموافقة
 NewMemberForm=الأعضاء الجدد في شكل
 SubscriptionsStatistics=إحصاءات المساهمات
 NbOfSubscriptions=عدد المساهمات
-AmountOfSubscriptions=المبلغ المحصل من المساهمات
+AmountOfSubscriptions=Amount collected from membership payments
 TurnoverOrBudget=دوران (لشركة) أو الميزانية (على أساس)
-DefaultAmount=المبلغ الافتراضي للمساهمة (يُستخدم فقط إذا لم يتم تحديد أي مبلغ على مستوى النوع عضو)
-MinimumAmount=الحد الأدنى للمبلغ (يستخدم فقط عندما يكون مبلغ المساهمة مجانيًا)
-CanEditAmount=يمكن تحديد مبلغ الاشتراك بواسطة عضو
+DefaultAmount=Default amount of membership payment (used only if no amount is defined at member type level)
+MinimumAmount=Minimum amount of membership payment (has priority on any default amounts)
+CanEditAmount=Membership amount can be defined by the member
 CanEditAmountDetail=يمكن للزائر اختيار/تعديل مبلغ مساهمته بغض النظر عن نوع عضو
 AmountIsLowerToMinimumNotice=المبلغ أقل من الحد الأدنى %s
 MEMBER_NEWFORM_PAYONLINE=بعد التسجيل عبر الإنترنت، انتقل تلقائيًا إلى صفحة الدفع عبر الإنترنت
 ByProperties=بالطبيعة
 MembersStatisticsByProperties=إحصائيات الأعضاء حسب الطبيعة
-VATToUseForSubscriptions=معدل ضريبة القيمة المضافة لاستخدامه في المساهمات
-NoVatOnSubscription=لا ضريبة القيمة المضافة للمساهمات
-ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=المنتج المستخدم لبند المساهمة في الفاتورة: %s
+VATToUseForSubscriptions=VAT rate to use for membership payment
+NoVatOnSubscription=No VAT for membership payment
+ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=Product used for membership line into invoice: %s
 NameOrCompany=الإسم أو الشركة
 SubscriptionRecorded=تم تسجيل المساهمة
 NoEmailSentToMember=لم يتم إرسال بريد إلكتروني للعضو
 EmailSentToMember=تم إرسال البريد الإلكتروني إلى العضو على %s
-SendReminderForExpiredSubscriptionTitle=إرسال تذكير عبر البريد الإلكتروني للمساهمات منتهية الصلاحية
-SendReminderForExpiredSubscription=أرسل تذكيرًا عبر البريد الإلكتروني إلى أعضاء عندما تكون المساهمة على وشك الانتهاء (المعلمة هي عدد الأيام قبل نهاية العضوية لإرسال التذكير. ويمكن أن تكون قائمة أيام مفصولة بفاصلة منقوطة ، على سبيل المثال '10;5;0;-5')
+SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired membership
+SendReminderForExpiredSubscription=Send reminder by email to members when membership is about to expire (parameter is number of days before end of membership to send the reminder. It can be a list of days separated by a semicolon, for example '10;5;0;-5')
 MembershipPaid=العضوية مدفوعة للفترة الحالية (حتى %s)
 YouMayFindYourInvoiceInThisEmail=قد تجد فاتورتك مرفقة بهذا البريد الإلكتروني
 XMembersClosed=%s من الأعضاء مغلقين
@@ -237,8 +238,11 @@ CreateDolibarrThirdPartyDesc=الطرف الثالث هو الكيان القا�
 MemberFirstname=الاسم الأول للعضو
 MemberLastname=اسم العائلة للعضو
 MemberCodeDesc=عضو كود فريد لجميع أعضاء
-MemberSubscriptionStartFirstDayOf=تاريخ بدء العضوية يتوافق مع اليوم الأول من أ
-MemberSubscriptionStartAfter=الحد الأدنى للفترة قبل دخول تاريخ البدء حيز التنفيذ الاشتراك باستثناء التجديدات (على سبيل المثال +3 شهر = +3 أشهر، -5 يوم = -5 أيام، +1Y = +1 عام )
+MemberSubscriptionStartFirstDayOf=Force the suggested date of a membership to corresponds to the first day of a
+MemberSubscriptionStartAfter=Minimum period before the entry into force of the start date of a first membership subscription (excluding renewals)
+NoCorrection=No correction
+MemberSubscriptionStartAfterDesc=Example: +3m = +3 months, -5d = -5 days, +1Y = +1 year
+MemberSubscriptionStartAfterDesc2=This is the suggested date when creating a first membership subscription compared to the current date. For renewal, the date suggested by default will remain the end of the previous membership.
 SubscriptionLinkedToConciliatedTransaction=ترتبط العضوية بمعاملة موفقة لذا لا يسمح بهذا التعديل.
 ConfirmMassSubsriptionCreation=تأكيد إنشاء الاشتراك
 ConfirmMassSubsriptionCreationQuestion=هل أنت متأكد أنك تريد إنشاء %s الاشتراك(s) المحدد؟

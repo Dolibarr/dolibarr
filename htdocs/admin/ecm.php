@@ -96,7 +96,7 @@ print dol_get_fiche_head($head, 'ecm', '', -1, '');
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center" width="100px">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="center" width="100px"></td>'."\n";
 print '</tr>';
 
 // Mail required for members

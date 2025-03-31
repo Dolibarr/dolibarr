@@ -34,10 +34,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 
 ?>
@@ -241,8 +241,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	height: 94px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
-	<?php if (isset($conf->global->THEME_SATURATE_RATIO)) { ?>
-		filter: saturate(<?php echo $conf->global->THEME_SATURATE_RATIO; ?>);
+	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
+		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
 }
 
@@ -430,12 +430,14 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	font-size: 0.90em;
 }
 /* Force values for small screen 480 */
+/*
 @media only screen and (max-width: 480px)
 {
 	.info-box-text {
 		font-size: 0.85em;
 	}
 }
+*/
 .info-box-text:first-letter{text-transform: uppercase}
 a.info-box-text{ text-decoration: none;}
 
@@ -459,10 +461,10 @@ if (getDolGlobalString('THEME_INFOBOX_COLOR_ON_BACKGROUND')) {
 }
 
 if (!isset($conf->global->THEME_SATURATE_RATIO)) {
-	$conf->global->THEME_SATURATE_RATIO = 0.7;
+	$conf->global->THEME_SATURATE_RATIO = 0.8;
 }
 if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
-	$conf->global->THEME_SATURATE_RATIO = GETPOSTINT('THEME_SATURATE_RATIO');
+	$conf->global->THEME_SATURATE_RATIO = GETPOSTFLOAT('THEME_SATURATE_RATIO');
 }
 ?>
 .bg-infobox-project i.fa{
@@ -644,7 +646,7 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 @media only screen and (max-width: 767px)
 {
 	.box-flex-container {
-		margin: 0 0 0 -8px !important;
+		margin: 0 0 0 0 !important;
 	}
 }
 
@@ -684,10 +686,12 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 		padding-left: 10px;
 		padding-right: 2px;
 	}
+	/*
 	.info-box-line-text {
 		width: calc(100% - 92px);
 		max-width: calc(100% - 82px);
 	}
+	*/
 }
 
 @media only screen and (max-width: 480px) {

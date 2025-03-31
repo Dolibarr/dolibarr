@@ -212,10 +212,9 @@ class DocumentController extends Controller
 			exit;
 		}
 
-		$fileSize = dol_filesize($fullpath_original_file); // the returned value is in byte
-		$fileSizeMaxDefault = 20 * 1024 * 1024; // 20 Mo by default
-		$fileSizeMax = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', $fileSizeMaxDefault);
-		if ($fileSize > $fileSizeMax) {
+		$fileSize = dol_filesize($fullpath_original_file);
+		$fileSizeMax = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
+		if ($fileSizeMax && $fileSize > $fileSizeMax) {
 			dol_syslog('ErrorFileSizeTooLarge: ' . $fileSize);
 			print 'ErrorFileSizeTooLarge: ' . $fileSize . ' (max ' . $fileSizeMax . ')';
 			exit;

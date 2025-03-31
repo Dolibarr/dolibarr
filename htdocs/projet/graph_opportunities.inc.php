@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,13 @@
  * @var int $socid
  * @var string[] $listofoppstatus
  */
+'
+@phan-var-force string $projectsListId
+@phan-var-force int $socid
+@phan-var-force string[] $listofoppstatus
+@phan-var-force ?array<int,string> $listofopplabel
+@phan-var-force array<string,string> $colorseries
+';
 
 if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES')) {
 	$sql = "SELECT p.fk_opp_status as opp_status, cls.code, COUNT(p.rowid) as nb, SUM(p.opp_amount) as opp_amount, SUM(p.opp_amount * p.opp_percent) as ponderated_opp_amount";

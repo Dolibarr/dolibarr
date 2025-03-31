@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018	Destailleur Laurent	<eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,9 +61,9 @@ class CdavLib
 	/**
 	 * Base sql request for calendar events
 	 *
-	 * @param 	int 		$calid 			Calendard id
-	 * @param 	int|boolean	$oid			Oid
-	 * @param	int|boolean	$ouri			Ouri
+	 * @param 	int 		$calid 			Calendar id
+	 * @param 	int|bool	$oid			Oid
+	 * @param	int|bool	$ouri			Ouri
 	 * @return string
 	 */
 	public function getSqlCalEvents($calid, $oid = false, $ouri = false)
@@ -101,7 +102,7 @@ class CdavLib
 			if ($ouri === false) {
 				$sql .= ' AND a.id = '.((int) $oid);
 			} else {
-				$sql .= ' AND (a.id = '.((int) $oid)." OR ac.uuidext = '".$this->db->escape($ouri)."')";
+				$sql .= ' AND (a.id = '.((int) $oid)." OR ac.uuidext = '".((int) $ouri)."')";
 			}
 		}
 
@@ -187,15 +188,15 @@ class CdavLib
 				$caldata .= "DUE;VALUE=DATE:".date('Ymd', strtotime($obj->datep2) + 1)."\n";
 			}
 		} else {
-			$caldata .= "DTSTART;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+			$caldata .= "DTSTART;TZID=".$timezone.":".strtr($obj->datep, array(" " => "T", ":" => "", "-" => ""))."\n";
 			if ($type == 'VEVENT') {
 				if (trim($obj->datep2) != '') {
-					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep2, array(" " => "T", ":" => "", "-" => ""))."\n";
 				} else {
-					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+					$caldata .= "DTEND;TZID=".$timezone.":".strtr($obj->datep, array(" " => "T", ":" => "", "-" => ""))."\n";
 				}
 			} elseif (trim($obj->datep2) != '') {
-				$caldata .= "DUE;TZID=".$timezone.":".strtr($obj->datep2, array(" "=>"T", ":"=>"", "-"=>""))."\n";
+				$caldata .= "DUE;TZID=".$timezone.":".strtr($obj->datep2, array(" " => "T", ":" => "", "-" => ""))."\n";
 			}
 		}
 		$caldata .= "CLASS:PUBLIC\n";
@@ -217,7 +218,7 @@ class CdavLib
 		}
 
 		$caldata .= "DESCRIPTION:";
-		$caldata .= strtr($obj->note, array("\n"=>"\\n", "\r"=>""));
+		$caldata .= strtr($obj->note, array("\n" => "\\n", "\r" => ""));
 		if (!empty($obj->soc_nom)) {
 			$caldata .= "\\n*DOLIBARR-SOC: ".$obj->soc_nom;
 		}

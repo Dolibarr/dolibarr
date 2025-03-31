@@ -217,11 +217,11 @@ class InfoBox
 	/**
 	 *  Save order of boxes for area and user
 	 *
-	 *  @param	DoliDB	$dbs			Database handler
-	 *  @param	int		$zone       	Key of area (0 for Homepage, ...)
-	 *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
-	 *  @param  int     $userid     	Id of user
-	 *  @return int                   	Return integer <0 if KO, 0=Nothing done, > 0 if OK
+	 *  @param	DoliDB		$dbs			Database handler
+	 *  @param	int|string	$zone       	Key of area ('0' for Homepage, '1', 'pagename', ...)
+	 *  @param  string  	$boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
+	 *  @param  int     	$userid     	Id of user
+	 *  @return int         	          	Return integer <0 if KO, 0=Nothing done, > 0 if OK
 	 */
 	public static function saveboxorder($dbs, $zone, $boxorder, $userid = 0)
 	{
@@ -250,6 +250,10 @@ class InfoBox
 			$error = $dbs->lasterror();
 			$dbs->rollback();
 			return -3;
+		}
+
+		if (!is_numeric($zone)) {
+			$zone = '0';	// Force $zone to a numeric value string
 		}
 
 		// Delete all lines

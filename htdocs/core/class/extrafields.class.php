@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
  * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
@@ -507,7 +507,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
-			$sql .= " '".$this->db->escape($printable)."',";
+			$sql .= " '".$this->db->escape((string) $printable)."',";
 			$sql .= " ".($default ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
@@ -759,6 +759,7 @@ class ExtraFields
 
 			dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 			if ($type != 'separate') { // No table update when separate type
+				// TODO: Verify, adjust - field_desc has 'value' (not expected), and is missing 'label','enabled','position','visible'
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
@@ -773,7 +774,7 @@ class ExtraFields
 						$sql = "ALTER TABLE ".$this->db->prefix().$table." ADD UNIQUE INDEX uk_".$table."_".$this->db->sanitize($attrname)." (".$this->db->sanitize($attrname).")";
 					} else {
 						dol_syslog(get_class($this).'::update_common', LOG_DEBUG);
-						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX IF EXISTS uk_".$table."_".$this->db->sanitize($attrname);
+						$sql = "ALTER TABLE ".$this->db->prefix().$table." DROP INDEX uk_".$table."_".$this->db->sanitize($attrname);
 					}
 					dol_syslog(get_class($this).'::update', LOG_DEBUG);
 					$resql = $this->db->query($sql, 1, 'dml');
@@ -937,7 +938,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " ".((int) $pos).",";
-			$sql .= " '".$this->db->escape($alwayseditable)."',";
+			$sql .= " '".$this->db->escape((string) $alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."',";
 			$sql .= " ".((int) $printable).",";
@@ -1046,7 +1047,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name] = ((is_null($tab->perms) || strlen($tab->perms) == 0) ? 1 : $tab->perms);
+					$this->attributes[$tab->elementtype]['perms'][$tab->name] = $tab->perms;
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
 					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
@@ -1330,7 +1331,7 @@ class ExtraFields
 					$selected = explode(',', $value);
 				}
 
-				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2'));
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', (int) (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')));
 			} else {
 				if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
@@ -1364,215 +1365,284 @@ class ExtraFields
 			}
 		} elseif ($type == 'sellist') {		// List of values selected from a table (1 choice)
 			$out = '';
-			if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
-				$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
-			}
-
-			$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
-			if (is_array($param['options'])) {
-				$tmpparamoptions = array_keys($param['options']);
-				$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
-
-				$InfoFieldList = explode(":", $paramoptions[0], 5);
-				// 0 : tableName
-				// 1 : label field name
-				// 2 : key fields name (if different of rowid)
-				// optional parameters...
-				// 3 : key field parent (for dependent lists). How this is used ?
-				// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on the second line.
-				// 5 : string category type. This replace the filter.
-				// 6 : ids categories list separated by comma for category root. This replace the filter.
-				// 7 : sort field (not used here but used into format for commobject)
-
-				// If there is a filter, we extract it by taking all content inside parenthesis.
-				if (! empty($InfoFieldList[4])) {
-					$pos = 0;	// $pos will be position of ending filter
-					$parenthesisopen = 0;
-					while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
-						if (substr($InfoFieldList[4], $pos, 1) == '(') {
-							$parenthesisopen++;
-						}
-						if (substr($InfoFieldList[4], $pos, 1) == ')') {
-							$parenthesisopen--;
-						}
-						$pos++;
-					}
-					$tmpbefore = substr($InfoFieldList[4], 0, $pos);
-					$tmpafter = substr($InfoFieldList[4], $pos + 1);
-					//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
-					$InfoFieldList[4] = $tmpbefore;
-					if ($tmpafter !== '') {
-						$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
-					}
-
-					// Fix better compatibility with some old extrafield syntax filter "(field=123)"
-					$reg = array();
-					if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
-						$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
-					}
-
-					//var_dump($InfoFieldList);
-				}
-
-				//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
-
-				$parentName = '';
-				$parentField = '';
-				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
-
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
-					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
-					$keyList .= ', '.$parentField;
-				}
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
-					if (strpos($InfoFieldList[4], 'extra.') !== false) {
-						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
-					} else {
-						$keyList = $InfoFieldList[2].' as rowid';
-					}
-				}
-
-				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
-					if ($InfoFieldList[0] == 'categorie') {
-						$filter_categorie = true;
-					}
-				}
-
-				if (!$filter_categorie) {
-					$fields_label = explode('|', $InfoFieldList[1]);
-					if (is_array($fields_label)) {
-						$keyList .= ', ';
-						$keyList .= implode(', ', $fields_label);
-					}
-
-					$sqlwhere = '';
-					$sql = "SELECT ".$keyList;
-					$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
-
-					// Add filter from 4th field
-					if (!empty($InfoFieldList[4])) {
-						// can use current entity filter
-						if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
-							$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
-						}
-						// can use SELECT request
-						if (strpos($InfoFieldList[4], '$SEL$') !== false) {
-							$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
-						}
-
-						// current object id can be use into filter
-						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
-							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
-						} else {
-							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
-						}
-
-						// We have to join on extrafield table
-						$errstr = '';
-						if (strpos($InfoFieldList[4], 'extra.') !== false) {
-							$sql .= ' as main, '.$this->db->sanitize($this->db->prefix().$InfoFieldList[0]).'_extrafields as extra';
-							$sqlwhere .= " WHERE extra.fk_object = main.".$this->db->sanitize($InfoFieldList[2]);
-							$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
-						} else {
-							$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
-						}
-					} else {
-						$sqlwhere .= ' WHERE 1=1';
-					}
-
-					// Add Usf filter on second line
-					/*
-					 if ($Usf) {
-					 $errorstr = '';
-					 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
-					 if (!$errorstr) {
-					 $sqlwhere .= $sqlusf;
-					 } else {
-					 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
-					 }
-					 }
-					 */
-
-					// Some tables may have field, some other not. For the moment we disable it.
-					if (in_array($InfoFieldList[0], array('tablewithentity'))) {
-						$sqlwhere .= ' AND entity = '.((int) $conf->entity);
-					}
-					$sql .= $sqlwhere;
-
-					$sql .= $this->db->order(implode(',', $fields_label));
-					//print $sql;
-
-					dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
-					$resql = $this->db->query($sql);
-					if ($resql) {
-						$out .= '<option value="0">&nbsp;</option>';
-						$num = $this->db->num_rows($resql);
-						$i = 0;
-						while ($i < $num) {
-							$labeltoshow = '';
-							$obj = $this->db->fetch_object($resql);
-
-							// Several field into label (eq table:code|label:rowid)
-							$notrans = false;
-							$fields_label = explode('|', $InfoFieldList[1]);
-							if (is_array($fields_label) && count($fields_label) > 1) {
-								$notrans = true;
-								foreach ($fields_label as $field_toshow) {
-									$labeltoshow .= $obj->$field_toshow.' ';
+			if (!empty($conf->use_javascript_ajax)) {
+				if (getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
+					$out .= "
+					<script>
+					$(document).ready(function () {
+						$('#".$keyprefix.$key.$keysuffix."').select2({
+							ajax: {
+								url: '".DOL_URL_ROOT.'/core/ajax/ajaxextrafield.php'."',
+								dataType: 'json',
+								delay: 250, // wait 250 milliseconds before triggering the request
+								data: function (params) {
+									var query = {
+										search: params.term,
+										page: params.page || 1,
+										objecttype: '".$extrafieldsobjectkey."',
+										objectid: '".$object->id."',
+										objectkey: '".$key."',
+										mode: '".$mode."',
+										value: '".$value."'
+									}
+									return query;
 								}
-							} else {
-								$labeltoshow = $obj->{$InfoFieldList[1]};
+							}
+						})
+					});
+					</script>";
+					$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+					$out .= '	<option value="'.$value.'" selected>'.$this->showOutputField($key, $value, $moreparam, $extrafieldsobjectkey).'</option>';
+					$out .= '</select>';
+				} elseif (!getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
+					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
+					$out .= ajax_combobox($keyprefix.$key.$keysuffix, array(), 0);
+				}
+			}
+			if (!getDolGlobalString('MAIN_EXTRAFIELDS_ENABLE_NEW_SELECT2')) {
+				$out .= '<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam ? $moreparam : '').'>';
+				if (is_array($param['options'])) {
+					// WARNING!! @FIXME This code is duplicated into core/class/extrafields.class.php
+
+					$tmpparamoptions = array_keys($param['options']);
+					$paramoptions = preg_split('/[\r\n]+/', $tmpparamoptions[0]);
+
+					$InfoFieldList = explode(":", $paramoptions[0], 5);
+					// 0 : tableName
+					// 1 : label field name
+					// 2 : key fields name (if different of rowid)
+					// optional parameters...
+					// 3 : key field parent (for dependent lists). How this is used ?
+					// 4 : where clause filter on column or table extrafield, syntax field='value' or extra.field=value. Or use USF on the second line.
+					// 5 : string category type. This replace the filter.
+					// 6 : ids categories list separated by comma for category root. This replace the filter.
+					// 7 : sort field (not used here but used into format for commobject)
+
+					// If there is a filter, we extract it by taking all content inside parenthesis.
+					if (! empty($InfoFieldList[4])) {
+						$pos = 0;	// $pos will be position of ending filter
+						$parenthesisopen = 0;
+						while (substr($InfoFieldList[4], $pos, 1) !== '' && ($parenthesisopen || $pos == 0 || substr($InfoFieldList[4], $pos, 1) != ':')) {
+							if (substr($InfoFieldList[4], $pos, 1) == '(') {
+								$parenthesisopen++;
+							}
+							if (substr($InfoFieldList[4], $pos, 1) == ')') {
+								$parenthesisopen--;
+							}
+							$pos++;
+						}
+						$tmpbefore = substr($InfoFieldList[4], 0, $pos);
+						$tmpafter = substr($InfoFieldList[4], $pos + 1);
+						//var_dump($InfoFieldList[4].' -> '.$pos); var_dump($tmpafter);
+						$InfoFieldList[4] = $tmpbefore;
+						if ($tmpafter !== '') {
+							$InfoFieldList = array_merge($InfoFieldList, explode(':', $tmpafter));
+						}
+
+						// Fix better compatibility with some old extrafield syntax filter "(field=123)"
+						$reg = array();
+						if (preg_match('/^\(?([a-z0-9]+)([=<>]+)(\d+)\)?$/i', $InfoFieldList[4], $reg)) {
+							$InfoFieldList[4] = '('.$reg[1].':'.$reg[2].':'.$reg[3].')';
+						}
+
+						//var_dump($InfoFieldList);
+					}
+
+					//$Usf = empty($paramoptions[1]) ? '' :$paramoptions[1];
+
+					$parentName = '';
+					$parentField = '';
+					$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
+
+					if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+						list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
+						$keyList .= ', '.$parentField;
+					}
+					if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+						if (strpos($InfoFieldList[4], 'extra.') !== false) {
+							$keyList = 'main.'.$InfoFieldList[2].' as rowid';
+						} else {
+							$keyList = $InfoFieldList[2].' as rowid';
+						}
+					}
+
+					$filter_categorie = false;
+					if (count($InfoFieldList) > 5) {
+						if ($InfoFieldList[0] == 'categorie') {
+							$filter_categorie = true;
+						}
+					}
+
+					if (!$filter_categorie) {
+						$fields_label = explode('|', $InfoFieldList[1]);
+						if (is_array($fields_label)) {
+							$keyList .= ', ';
+							$keyList .= implode(', ', $fields_label);
+						}
+
+						// WARNING!! This code is duplicated into core/ajax/ajaxextrafield.php
+
+						$sqlwhere = '';
+						$sql = "SELECT ".$keyList;
+						$sql .= ' FROM '.$this->db->prefix().$InfoFieldList[0];
+
+						// Add filter from 4th field
+						if (!empty($InfoFieldList[4])) {
+							// can use current entity filter
+							if (strpos($InfoFieldList[4], '$ENTITY$') !== false) {
+								$InfoFieldList[4] = str_replace('$ENTITY$', (string) $conf->entity, $InfoFieldList[4]);
+							}
+							// can use SELECT request
+							if (!getDolGlobalString("MAIN_DISALLOW_UNSECURED_SELECT_INTO_EXTRAFIELDS_FILTER")) {
+								if (strpos($InfoFieldList[4], '$SEL$') !== false) {
+									$InfoFieldList[4] = str_replace('$SEL$', 'SELECT', $InfoFieldList[4]);
+								}
+							}
+							// can use MODE parameter (list or view)
+							if (strpos($InfoFieldList[4], '$MODE$') !== false) {
+								$InfoFieldList[4] = str_replace('$MODE$', preg_replace('/[^a-z0-9_]/i', '', (string) $mode), $InfoFieldList[4]);
 							}
 
-							if ($value == $obj->rowid) {
-								if (!$notrans) {
-									foreach ($fields_label as $field_toshow) {
-										$translabel = $langs->trans($obj->$field_toshow);
-										$labeltoshow = $translabel.' ';
+							// current object id can be use into filter
+							if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
+								$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
+							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
+								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
+								// Do nothing if condition is using 'IN' keyword
+								// Replace 'column = $ID$' by "word"
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Replace '$ID$ = column' by "word"
+								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+							} else {
+								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
+							}
+
+							// can use filter on any field of object
+							if (is_object($object)) {
+								$tags = [];
+								preg_match_all('/\$(.*?)\$/', $InfoFieldList[4], $tags);	// Example: $InfoFieldList[4] is ($dateadh$:<=:CURRENT_DATE)
+								foreach ($tags[0] as $keytag => $valuetag) {
+									$property = preg_replace('/[^a-z0-9_]/', '', strtolower($tags[1][$keytag]));
+									if (strpos($InfoFieldList[4], $valuetag) !== false && property_exists($object, $property) && !empty($object->$property)) {
+										$InfoFieldList[4] = str_replace($valuetag, (string) $object->$property, $InfoFieldList[4]);
+									} else {
+										$InfoFieldList[4] = str_replace($valuetag, '0', $InfoFieldList[4]);
 									}
 								}
-								$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
-							} else {
-								if (!$notrans) {
-									$translabel = $langs->trans($obj->{$InfoFieldList[1]});
-									$labeltoshow = $translabel;
-								}
-								if (empty($labeltoshow)) {
-									$labeltoshow = '(not defined)';
-								}
-
-								if (!empty($InfoFieldList[3]) && $parentField) {
-									$parent = $parentName.':'.$obj->{$parentField};
-								}
-
-								$out .= '<option value="'.$obj->rowid.'"';
-								$out .= ($value == $obj->rowid ? ' selected' : '');
-								$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
-								$out .= '>'.$labeltoshow.'</option>';
 							}
 
-							$i++;
+							// We have to join on extrafield table
+							$errstr = '';
+							if (strpos($InfoFieldList[4], 'extra.') !== false) {
+								$sql .= ' as main, '.$this->db->sanitize($this->db->prefix().$InfoFieldList[0]).'_extrafields as extra';
+								$sqlwhere .= " WHERE extra.fk_object = main.".$this->db->sanitize($InfoFieldList[2]);
+								$sqlwhere .= " AND " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
+							} else {
+								$sqlwhere .= " WHERE " . forgeSQLFromUniversalSearchCriteria($InfoFieldList[4], $errstr, 1);
+							}
+						} else {
+							$sqlwhere .= ' WHERE 1=1';
 						}
-						$this->db->free($resql);
+
+						// Add Usf filter on second line
+						/*
+						 if ($Usf) {
+						 $errorstr = '';
+						 $sqlusf .= forgeSQLFromUniversalSearchCriteria($Usf, $errorstr);
+						 if (!$errorstr) {
+						 $sqlwhere .= $sqlusf;
+						 } else {
+						 $sqlwhere .= " AND invalid_usf_filter_of_extrafield";
+						 }
+						 }
+						 */
+
+						// Some tables may have field, some other not. For the moment we disable it.
+						if (in_array($InfoFieldList[0], array('tablewithentity'))) {
+							$sqlwhere .= ' AND entity = '.((int) $conf->entity);
+						}
+						$sql .= $sqlwhere;
+
+						$sql .= $this->db->order(implode(', ', $fields_label));
+						$sql .= ' LIMIT ' . getDolGlobalInt('MAIN_EXTRAFIELDS_LIMIT_SELLIST_SQL', 1000);
+						//print $sql;
+
+						dol_syslog(get_class($this).'::showInputField type=sellist', LOG_DEBUG);
+						$resql = $this->db->query($sql);
+						if ($resql) {
+							$out .= '<option value="0">&nbsp;</option>';
+							$num = $this->db->num_rows($resql);
+							$i = 0;
+							while ($i < $num) {
+								$labeltoshow = '';
+								$obj = $this->db->fetch_object($resql);
+
+								// Several field into label (eq table:code|label:rowid)
+								$notrans = false;
+								$fields_label = explode('|', $InfoFieldList[1]);
+								if (is_array($fields_label) && count($fields_label) > 1) {
+									$notrans = true;
+									foreach ($fields_label as $field_toshow) {
+										$labeltoshow .= $obj->$field_toshow.' ';
+									}
+								} else {
+									$labeltoshow = $obj->{$InfoFieldList[1]};
+								}
+
+								if ($value == $obj->rowid) {
+									if (!$notrans) {
+										foreach ($fields_label as $field_toshow) {
+											$translabel = $langs->trans($obj->$field_toshow);
+											$labeltoshow = $translabel.' ';
+										}
+									}
+									$out .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+								} else {
+									if (!$notrans) {
+										$translabel = $langs->trans($obj->{$InfoFieldList[1]});
+										$labeltoshow = $translabel;
+									}
+									if (empty($labeltoshow)) {
+										$labeltoshow = '(not defined)';
+									}
+
+									if (!empty($InfoFieldList[3]) && $parentField) {
+										$parent = $parentName.':'.$obj->{$parentField};
+									}
+
+									$out .= '<option value="'.$obj->rowid.'"';
+									$out .= ($value == $obj->rowid ? ' selected' : '');
+									$out .= (!empty($parent) ? ' parent="'.$parent.'"' : '');
+									$out .= '>'.$labeltoshow.'</option>';
+								}
+
+								$i++;
+							}
+							$this->db->free($resql);
+						} else {
+							print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
+						}
 					} else {
-						print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
-					}
-				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
-					$out .= '<option value="0">&nbsp;</option>';
-					if (is_array($data)) {
-						foreach ($data as $data_key => $data_value) {
-							$out .= '<option value="'.$data_key.'"';
-							$out .= ($value == $data_key ? ' selected' : '');
-							$out .= '>'.$data_value.'</option>';
+						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+						$categcode = $InfoFieldList[5];
+						if (is_numeric($categcode)) {
+							$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
+						}
+						$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
+						$out .= '<option value="0">&nbsp;</option>';
+						if (is_array($data)) {
+							foreach ($data as $data_key => $data_value) {
+								$out .= '<option value="'.$data_key.'"';
+								$out .= ($value == $data_key ? ' selected' : '');
+								$out .= '>'.$data_value.'</option>';
+							}
 						}
 					}
 				}
+				$out .= '</select>';
 			}
-			$out .= '</select>';
 		} elseif ($type == 'checkbox') {
 			$value_arr = $value;
 			if (!is_array($value)) {
@@ -1690,54 +1760,15 @@ class ExtraFields
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
 							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
-						} elseif (preg_match("#^.*list.php$#", $_SERVER["PHP_SELF"])) {
-							// Pattern for word=$ID$
-							$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
-
-							// Removing spaces around =, ( and )
-							$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-
-							$nbPreg = 1;
-							// While we have parenthesis
-							while ($nbPreg != 0) {
-								// Initialise counters
-								$nbPregRepl = $nbPregSel = 0;
-								// Remove all parenthesis not preceded with '=' sign
-								$InfoFieldList[4] = preg_replace('#([^=])(\([^)^(]*('.$word.')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
-								// Remove all escape characters around '=' and parenthesis
-								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-								// Remove all parentheses preceded with '='
-								$InfoFieldList[4] = preg_replace('#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*('.$word.')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
-								// On retire les escapes autour des = et parenthèses
-								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-
-								// UPdate the totals counter for the loop
-								$nbPreg = $nbPregRepl + $nbPregSel;
-							}
-
-							// In case there is AND ou OR, before or after
-							$matchCondition = array();
-							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
-							while (!empty($matchCondition[0])) {
-								// If the two sides differ but are not empty
-								if (!empty($matchCondition[1]) && !empty($matchCondition[3]) && $matchCondition[1] != $matchCondition[3]) {
-									// Nobody sain would do that without parentheses
-									$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
-								} else {
-									if (!empty($matchCondition[1])) {
-										$boolCond = (($matchCondition[1] == "AND") ? ' AND TRUE ' : ' OR FALSE ');
-										$InfoFieldList[4] = str_replace($matchCondition[0], $boolCond.$matchCondition[3], $InfoFieldList[4]);
-									} elseif (!empty($matchCondition[3])) {
-										$boolCond = (($matchCondition[3] == "AND") ? ' TRUE AND ' : ' FALSE OR');
-										$InfoFieldList[4] = str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
-									} else {
-										$InfoFieldList[4] = " TRUE ";
-									}
-								}
-
-								// In case there is AND ou OR, before or after
-								preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
-							}
+						} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
+							// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
+							// Do nothing if condition is using 'IN' keyword
+							// Replace 'column = $ID$' by "word"
+							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
+							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+							// Replace '$ID$ = column' by "word"
+							$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}
@@ -1848,7 +1879,11 @@ class ExtraFields
 					}
 				} else {
 					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-					$data = $form->select_all_categories(Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]], '', 'parent', 64, $InfoFieldList[6], 1, 1);
+					$categcode = $InfoFieldList[5];
+					if (is_numeric($categcode)) {
+						$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
+					}
+					$data = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
 					$out = $form->multiselectarray($keyprefix.$key.$keysuffix, $data, $value_arr, 0, 0, '', 0, '100%');
 				}
 			}
@@ -2065,7 +2100,7 @@ class ExtraFields
 		} elseif ($type == 'price') {
 			//$value = price($value, 0, $langs, 0, 0, -1, $conf->currency);
 			if ($value || $value == '0') {
-				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
+				$value = price($value, 0, $outputlangs, 0, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), -1).' '.$outputlangs->getCurrencySymbol($conf->currency);
 			}
 		} elseif ($type == 'pricecy') {
 			$currency = $conf->currency;
@@ -2076,7 +2111,7 @@ class ExtraFields
 				$value = $pricetmp[0];
 			}
 			if ($value || $value == '0') {
-				$value = price($value, 0, $outputlangs, 0, $conf->global->MAIN_MAX_DECIMALS_TOT, -1, $currency);
+				$value = price($value, 0, $outputlangs, 0, getDolGlobalInt('MAIN_MAX_DECIMALS_TOT'), -1, $currency);
 			}
 		} elseif ($type == 'select') {
 			$valstr = (!empty($param['options'][$value]) ? $param['options'][$value] : '');
@@ -2313,7 +2348,17 @@ class ExtraFields
 						$tmpobject = new $classname($this->db);
 						'@phan-var-force CommonObject $tmpobject';
 						$tmpobject->fetch($value);
-						$value = $tmpobject->getNomUrl(3);
+
+						if (get_class($tmpobject) == 'Categorie') {
+							// For category object, rendering must use the same method than the one deinfed into showCategories()
+							$color = $tmpobject->color;
+							$sfortag = '<span class="noborderoncategories"' . ($color ? ' style="background: #' . $color . ';"' : ' style="background: #bbb"') . '>';
+							$sfortag .= $tmpobject->getNomUrl(3);
+							$sfortag .= '</span>';
+							$value = $sfortag;
+						} else {
+							$value = $tmpobject->getNomUrl(3);
+						}
 					}
 				} else {
 					dol_syslog('Error bad setup of extrafield', LOG_WARNING);
@@ -2428,8 +2473,22 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
 	 * @return	string							Formatted value
+	 * @deprecated Use getCSSClass()
 	 */
 	public function getAlignFlag($key, $extrafieldsobjectkey = '')
+	{
+		return $this->getCSSClass($key, $extrafieldsobjectkey);
+	}
+
+	/**
+	 * Return the CSS to use for this extrafield into list
+	 *
+	 * @param   string	$key            		Key of attribute
+	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
+	 * @param	string	$mode					'csslist' (used on td into table list), 'css' (used on create/update), 'cssview' (used on view)
+	 * @return	string							Formatted value
+	 */
+	public function getCSSClass($key, $extrafieldsobjectkey = '', $mode = 'csslist')
 	{
 		$type = 'varchar';
 		if (!empty($extrafieldsobjectkey)) {
@@ -2438,19 +2497,27 @@ class ExtraFields
 
 		$cssstring = '';
 
-		if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
-			$cssstring = "center";
-		} elseif (in_array($type, array('int', 'price', 'double', 'duration'))) {
-			$cssstring = "right";
-		} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
-			$cssstring = "center";
+		if ($mode == 'csslist') {
+			if (in_array($type, array('date', 'datetime', 'datetimegmt',))) {
+				$cssstring = "center";
+			} elseif (in_array($type, array('int', 'price', 'double', 'duration'))) {
+				$cssstring = "right";
+			} elseif (in_array($type, array('boolean', 'radio', 'checkbox', 'ip', 'icon'))) {
+				$cssstring = "center";
+			}
+
+			if (!empty($this->attributes[$extrafieldsobjectkey][$mode][$key])) {
+				$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey][$mode][$key];
+			} else {
+				if (in_array($type, array('ip'))) {
+					$cssstring .= ($cssstring ? ' ' : '').'tdoverflowmax150';
+				}
+			}
 		}
 
-		if (!empty($this->attributes[$extrafieldsobjectkey]['csslist'][$key])) {
-			$cssstring .= ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey]['csslist'][$key];
-		} else {
-			if (in_array($type, array('ip'))) {
-				$cssstring .= ($cssstring ? ' ' : '').'tdoverflowmax150';
+		if ($mode == 'css' || $mode == 'cssview') {
+			if (!empty($this->attributes[$extrafieldsobjectkey][$mode][$key])) {
+				$cssstring = ($cssstring ? ' ' : '').$this->attributes[$extrafieldsobjectkey][$mode][$key];
 			}
 		}
 

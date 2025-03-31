@@ -2,9 +2,9 @@
 /* Copyright (C) 2016       Neil Orley          <neil.orley@oeris.fr>
  * Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2013-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025  Alexandre Spangaro  <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                 <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                 <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,41 +63,51 @@ if ($type == 'sub') {
 	$context_default = 'bookkeepingbyaccountlist';
 }
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : $context_default;
+
+$search_doc_date = GETPOSTDATE('doc_date', 'getpost');	// deprecated. Can use 'search_date_start/end'
+
 $search_date_startyear = GETPOSTINT('search_date_startyear');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startday = GETPOSTINT('search_date_startday');
+$search_date_start = GETPOSTDATE('search_date_start', 'getpost', 'auto', 'search_date_start_accountancy');
+
 $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_endmonth = GETPOSTINT('search_date_endmonth');
 $search_date_endday = GETPOSTINT('search_date_endday');
-$search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
-$search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
-$search_doc_date = dol_mktime(0, 0, 0, GETPOSTINT('doc_datemonth'), GETPOSTINT('doc_dateday'), GETPOSTINT('doc_dateyear'));
+$search_date_end = GETPOSTDATE('search_date_end', 'getpostend', 'auto', 'search_date_end_accountancy');
+
 $search_date_export_startyear = GETPOSTINT('search_date_export_startyear');
 $search_date_export_startmonth = GETPOSTINT('search_date_export_startmonth');
 $search_date_export_startday = GETPOSTINT('search_date_export_startday');
+$search_date_export_start = GETPOSTDATE('search_date_export_start', 'getpost');
+
 $search_date_export_endyear = GETPOSTINT('search_date_export_endyear');
 $search_date_export_endmonth = GETPOSTINT('search_date_export_endmonth');
 $search_date_export_endday = GETPOSTINT('search_date_export_endday');
-$search_date_export_start = dol_mktime(0, 0, 0, $search_date_export_startmonth, $search_date_export_startday, $search_date_export_startyear);
-$search_date_export_end = dol_mktime(23, 59, 59, $search_date_export_endmonth, $search_date_export_endday, $search_date_export_endyear);
+$search_date_export_end = GETPOSTDATE('search_date_export_start', 'getpostend');
+
 $search_date_validation_startyear = GETPOSTINT('search_date_validation_startyear');
 $search_date_validation_startmonth = GETPOSTINT('search_date_validation_startmonth');
 $search_date_validation_startday = GETPOSTINT('search_date_validation_startday');
+$search_date_validation_start = GETPOSTDATE('search_date_validation_start', 'getpost');
+
 $search_date_validation_endyear = GETPOSTINT('search_date_validation_endyear');
 $search_date_validation_endmonth = GETPOSTINT('search_date_validation_endmonth');
 $search_date_validation_endday = GETPOSTINT('search_date_validation_endday');
-$search_date_validation_start = dol_mktime(0, 0, 0, $search_date_validation_startmonth, $search_date_validation_startday, $search_date_validation_startyear);
-$search_date_validation_end = dol_mktime(23, 59, 59, $search_date_validation_endmonth, $search_date_validation_endday, $search_date_validation_endyear);
+$search_date_validation_end = GETPOSTDATE('search_date_validation_end', 'getpostend');
+
 // Due date start
 $search_date_due_start_day = GETPOSTINT('search_date_due_start_day');
 $search_date_due_start_month = GETPOSTINT('search_date_due_start_month');
 $search_date_due_start_year = GETPOSTINT('search_date_due_start_year');
-$search_date_due_start = dol_mktime(0, 0, 0, $search_date_due_start_month, $search_date_due_start_day, $search_date_due_start_year);
+$search_date_due_start = GETPOSTDATE('search_date_due_start_', 'getpost');
+
 // Due date end
 $search_date_due_end_day = GETPOSTINT('search_date_due_end_day');
 $search_date_due_end_month = GETPOSTINT('search_date_due_end_month');
 $search_date_due_end_year = GETPOSTINT('search_date_due_end_year');
-$search_date_due_end = dol_mktime(23, 59, 59, $search_date_due_end_month, $search_date_due_end_day, $search_date_due_end_year);
+$search_date_due_end = GETPOSTDATE('search_date_due_end_', 'getpostend');
+
 $search_import_key = GETPOST("search_import_key", 'alpha');
 
 $search_account_category = GETPOSTINT('search_account_category');
@@ -152,8 +162,13 @@ $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
 if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('search_date_startday') && !GETPOSTISSET('search_date_startmonth') && !GETPOSTISSET('search_date_starthour')) {
-	$sql = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
-	$sql .= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."'";
+	$sql = "SELECT date_start, date_end";
+	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
+	if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {
+		$sql .= " WHERE rowid = " . getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT');
+	} else {
+		$sql .= " WHERE date_start < '" . $db->idate(dol_now()) . "' and date_end > '" . $db->idate(dol_now()) . "'";
+	}
 	$sql .= $db->plimit(1);
 	$res = $db->query($sql);
 
@@ -180,19 +195,19 @@ if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('searc
 
 $arrayfields = array(
 	// 't.subledger_account'=>array('label'=>$langs->trans("SubledgerAccount"), 'checked'=>1),
-	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => 1),
-	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => 1),
-	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => 1),
-	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => 1),
-	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => 1),
-	't.lettering_code' => array('label' => $langs->trans("Lettering"), 'checked' => 1),
-	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => 1),
-	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => 1),
-	't.balance' => array('label' => $langs->trans("Balance"), 'checked' => 1),
-	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => -1),
-	't.date_validated' => array('label' => $langs->trans("DateValidation"), 'checked' => -1, 'enabled' => !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
-	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => 0),
-	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => -1, 'position' => 1100),
+	't.piece_num' => array('label' => $langs->trans("TransactionNumShort"), 'checked' => '1'),
+	't.code_journal' => array('label' => $langs->trans("Codejournal"), 'checked' => '1'),
+	't.doc_date' => array('label' => $langs->trans("Docdate"), 'checked' => '1'),
+	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => '1'),
+	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => '1'),
+	't.lettering_code' => array('label' => $langs->trans("Lettering"), 'checked' => '1'),
+	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
+	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
+	't.balance' => array('label' => $langs->trans("Balance"), 'checked' => '1'),
+	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => '-1'),
+	't.date_validated' => array('label' => $langs->trans("DateValidation"), 'checked' => '-1', 'enabled' => (string) (int) !getDolGlobalString("ACCOUNTANCY_DISABLE_CLOSURE_LINE_BY_LINE")),
+	't.date_lim_reglement' => array('label' => $langs->trans("DateDue"), 'checked' => '0'),
+	't.import_key' => array('label' => $langs->trans("ImportId"), 'checked' => '-1', 'position' => 1100),
 );
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
@@ -305,6 +320,12 @@ if (empty($reshook)) {
 		$search_not_reconciled = '';
 		$search_import_key = '';
 		$toselect = array();
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_start_accountancy_year']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_day']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_month']);
+		unset($_SESSION['DOLDATE_search_date_end_accountancy_year']);
 	}
 
 	if (!empty($socid)) {
@@ -330,7 +351,7 @@ if (empty($reshook)) {
 		$listofaccountsforgroup2 = array();
 		if (is_array($listofaccountsforgroup)) {
 			foreach ($listofaccountsforgroup as $tmpval) {
-				$listofaccountsforgroup2[] = "'".$db->escape($tmpval['id'])."'";
+				$listofaccountsforgroup2[] = "'".$db->escape((string) $tmpval['id'])."'";
 			}
 		}
 		$filter['t.search_accounting_code_in'] = implode(',', $listofaccountsforgroup2);
@@ -532,7 +553,7 @@ if (empty($reshook)) {
 			}
 		} elseif ($type == 'sub' && $massaction == 'letteringpartial') {
 			$lettering = new Lettering($db);
-			$result = $lettering->updateLettering($toselect, false, true);
+			$result = $lettering->updateLettering($toselect, 0, true);
 			if ($result < 0) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
@@ -649,7 +670,7 @@ if (!empty($socid)) {
 		print '</div>';
 		print dol_get_fiche_end();
 
-		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting"));
+		print info_admin($langs->trans("WarningThisPageContainsOnlyEntriesTransferredInAccounting")).'';
 
 		// Choice of mode (customer / supplier)
 		if (!empty($conf->dol_use_jmobile)) {
@@ -796,7 +817,7 @@ if (empty($reshook)) {
 		}
 		$newcardbutton .= dolGetButtonTitleSeparator();
 	}
-	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
+	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 }
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
@@ -834,6 +855,7 @@ if (preg_match('/^asc/i', $sortorder)) {
 // Warning to explain why the list of record is not consistent with the other list view (missing a lot of lines)
 if ($type == 'sub' && !$socid) {
 	print info_admin($langs->trans("WarningRecordWithoutSubledgerAreExcluded"));
+	print '<br>';
 }
 
 $moreforfilter = '';
@@ -1200,7 +1222,7 @@ while ($i < min($num, $limit)) {
 		}
 
 		// Show the break account
-		print '<tr class="trforbreak">';
+		print '<tr class="trforbreaknobg">';
 		print '<td colspan="'.($totalarray['nbfield'] ? $totalarray['nbfield'] : count($arrayfields) + 1).'" class="tdforbreak">';
 		if ($type == 'sub') {
 			if ($line->subledger_account != "" && $line->subledger_account != '-1') {
@@ -1258,6 +1280,7 @@ while ($i < min($num, $limit)) {
 		print '<td>';
 		$object->id = $line->id;
 		$object->piece_num = $line->piece_num;
+		$object->ref = $line->ref;
 		print $object->getNomUrl(1, '', 0, '', 1);
 		print '</td>';
 		if (!$i) {
@@ -1367,7 +1390,7 @@ while ($i < min($num, $limit)) {
 
 	// Lettering code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center">'.dol_escape_htmltag($line->lettering_code).'</td>';
+		print '<td class="center">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}
@@ -1479,6 +1502,7 @@ if ($num > 0 && $colspan > 0) {
 		print '<td colspan="'.$colspanend.'"></td>';
 	}
 	print '</tr>';
+
 	// Show balance of last shown account
 	$balance = $sous_total_debit - $sous_total_credit;
 	print '<tr class="liste_total">';
@@ -1513,6 +1537,7 @@ if (!empty($totalarray['val']['totalbalance'])) {
 }
 
 // Show total line
+$trforbreaknobg = 1;	// used in list_print_total.tpl.php
 include DOL_DOCUMENT_ROOT.'/core/tpl/list_print_total.tpl.php';
 
 // If no record found

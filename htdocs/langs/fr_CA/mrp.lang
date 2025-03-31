@@ -95,4 +95,3 @@ QtyCantBeSplit=La quantité ne peut pas être divisée
 NoRemainQtyToDispatch=Il ne reste plus de quantité à diviser
 THMOperatorEstimatedHelp=Coût horaire estimé de l'opérateur. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
 THMMachineEstimatedHelp=Coût horaire estimé de la machine. Sera utilisé pour estimer le coût d'une nomenclature utilisant ce poste de travail.
-BadValueForquantityToConsume=La quantité à consommer pour un matériau ne peut pas être 0 ou négative

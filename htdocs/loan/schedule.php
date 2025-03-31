@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		Franck Moreau				<franck.moreau@theobald.com>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020		Maxime DEMAREST				<maxime@indelog.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -125,7 +125,7 @@ if ($action == 'updateecheancier' && empty($pay_without_schedule) && $permission
 	while ($i < $object->nbterm + 1) {
 		$mens = price2num(GETPOST('mens'.$i));
 		$int = price2num(GETPOST('hi_interets'.$i));
-		$id = GETPOST('hi_rowid'.$i);
+		$id = GETPOSTINT('hi_rowid'.$i);
 		$insurance = price2num(GETPOST('hi_insurance'.$i));
 
 		$new_echeance = new LoanSchedule($db);
@@ -185,11 +185,11 @@ if (isModEnabled('project')) {
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				$morehtmlref .= $formproject->select_projects(-1, $object->fk_project, 'projectid', 16, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= $formproject->select_projects(-1, (string) $object->fk_project, 'projectid', 16, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
 			} else {
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, 'none', 0, 0, 0, 1, '', 'maxwidth300');
 			}
 		}
 	} else {

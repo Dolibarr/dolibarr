@@ -141,7 +141,6 @@ ThirdPartyCreatedByEmailCollector=Tercero creado por el recopilador de correo el
 ContactCreatedByEmailCollector=Contacto / dirección creada por el recopilador de correo electrónico del correo electrónico MSGID %s
 ProjectCreatedByEmailCollector=Proyecto creado por el recopilador de correo electrónico de correo electrónico MSGID %s
 TicketCreatedByEmailCollector=Ticket creado por el recopilador de correo electrónico desde el correo electrónico MSGID %s
-ExportsArea=Área de Exportaciones
 LibraryUsed=Biblioteca utilizada
 LibraryVersion=Versión de la biblioteca
 NoExportableData=No hay datos exportables (no se han cargado módulos con datos exportables o se han perdido permisos)

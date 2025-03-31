@@ -8,21 +8,20 @@ Shipments=Toimitukset
 ShowSending=Näytä lähetykset
 Receivings=Toimituskuittaukset
 SendingsArea=Lähetys alue
-ListOfSendings=Lista lähetyksistä
 SendingMethod=Toimitustapa
 LastSendings=Viimeisimmät %s toimitukset
 StatisticsOfSendings=Toimitusten tilastot
 NbOfSendings=Toimitusten lukumäärä
 NumberOfShipmentsByMonth=Lähetysten määrä kuukausittain
-SendingCard=Toimituskortti
+SendingCard=Lähetys
 NewSending=Uusi toimitus
 CreateShipment=Luo lähetys
-QtyShipped=Kpl lähetetty
-QtyShippedShort=Laiva määrä.
+QtyShipped=Lähetetty määrä
+QtyShippedShort=Läh. määrä
 QtyPreparedOrShipped=Valmistettu tai lähetetty määrä
-QtyToShip=Kpl lähetettävänä
+QtyToShip=Määrä lähetettävänä
 QtyToReceive=Vastaanotettava määrä
-QtyReceived=Kpl saapunut
+QtyReceived=Saapunut määrä
 QtyInOtherShipments=Määrä muissa lähetyksissä
 KeepToShip=Lähettämättä
 KeepToShipShort=Jäädä jäljelle
@@ -44,6 +43,7 @@ ConfirmCancelSending=Haluatko varmasti peruuttaa tämän toimituksen?
 DocumentModelMerou=Merou A5 malli
 WarningNoQtyLeftToSend=Varoitus, ei tuotteet odottavat lähettämistä.
 StatsOnShipmentsOnlyValidated=Statistics are only for validated shipments. Date used is the date of validation of shipment (planned delivery date is not always known)
+DateShipping=Sending date
 DateDeliveryPlanned=Suunniteltu toimituspäivä
 RefDeliveryReceipt=Viite toimitus kuitti
 StatusReceipt=Tilan toimitus kuitti
@@ -63,6 +63,10 @@ NoProductToShipFoundIntoStock=Toimitettavaa tuotetta ei löytynyt varastosta <b>
 WeightVolShort=Til./paino
 ValidateOrderFirstBeforeShipment=Sinun on ensin vahvistettava tilaus ennen kuin voit lähettää toimituksia.
 NoLineGoOnTabToAddSome=Ei riviä, siirry välilehdelle "%s" lisätäksesi
+CreateInvoiceForThisCustomerFromSendings=Tee lasku
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=Täydellisempi asiakirjamalli toimitus kuiteille ja lisäkent
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Jatkuva EXPEDITION_ADDON_NUMBER ei määritelty
 SumOfProductVolumes=Tuotemäärien summa
 SumOfProductWeights=Tuotteiden painojen summa
-
 # warehouse details
 DetailWarehouseNumber= Varaston tiedot
 DetailWarehouseFormat= W:%s (määrä: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Näytä viimeinen päiväys varastossa oleva tilaus lähetystä luotaessa Sarjanumero tai erä
 CreationOptions=Käytettävissä olevat vaihtoehdot lähetyksen luomisen aikana
-
 ShipmentDistribution=Lähetyksen jakelu
-
 ErrorTooManyCombinationBatchcode=Ei lähetystä riville %s, koska löytyi liian monta varaston, tuotteen ja eräkoodin yhdistelmiä (%s).
 ErrorNoCombinationBatchcode=Riviä %s ei voitu tallentaa yhdistelmänä varasto-tuote-erä/sarja (%s, %s, %s) ei löytynyt varastosta.
-
 ErrorTooMuchShipped=Toimitettu määrä ei saa olla suurempi kuin riville %s tilattu määrä
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Edustaja seuraamaan toimitusta
+TypeContact_shipping_external_BILLING=Asiakkaan laskutusosoite
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

@@ -10,7 +10,7 @@
  * Copyright (C) 2015      Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021	   Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -127,11 +127,13 @@ $error = 0;
 $usercanread = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
+$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 $usercanupdatestock = $user->hasRight('stock', 'mouvement', 'creer');
 
 if ($object->isService()) {
 	$label = $langs->trans('Service');
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
+	$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 }
 
 if ($object->id > 0) {
@@ -305,10 +307,10 @@ if ($action == "correct_stock" && !$cancel && $usercanupdatestock) {
 				$result = $object->correct_stock_batch(
 					$user,
 					GETPOSTINT("id_entrepot"),
-					$nbpiece,
+					(float) $nbpiece,
 					GETPOSTINT("mouvement"),
 					GETPOST("label", 'alphanohtml'), // label movement
-					$priceunit,
+					(float) $priceunit,
 					$d_eatby,
 					$d_sellby,
 					$batchnumber,
@@ -321,10 +323,10 @@ if ($action == "correct_stock" && !$cancel && $usercanupdatestock) {
 				$result = $object->correct_stock(
 					$user,
 					GETPOSTINT("id_entrepot"),
-					$nbpiece,
+					(float) $nbpiece,
 					GETPOSTINT("mouvement"),
 					GETPOST("label", 'alphanohtml'),
-					$priceunit,
+					(float) $priceunit,
 					GETPOST('inventorycode', 'alphanohtml'),
 					$origin_element,
 					$origin_id,
@@ -375,11 +377,16 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 			$action = 'transfert';
 		}
 	}
+	$batch = '';
+	$sellby = 0;
+	$eatby = 0;
 
 	if (!$error) {
 		if ($id) {
 			$object = new Product($db);
 			$result = $object->fetch($id);
+			$result1 = -1;
+			$result2 = -1;
 
 			$db->begin();
 
@@ -396,6 +403,8 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 
 			if ($object->hasbatch()) {
 				$pdluo = new Productbatch($db);
+
+				$srcwarehouseid = 0;
 
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
@@ -422,7 +431,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 					$result1 = $object->correct_stock_batch(
 						$user,
 						$srcwarehouseid,
-						$nbpiece,
+						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
 						$pricesrc,
@@ -440,13 +449,13 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 					$result2 = $object->correct_stock_batch(
 						$user,
 						GETPOSTINT("id_entrepot_destination"),
-						$nbpiece,
+						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
 						$pricedest,
 						$eatby,
 						$sellby,
-						$batch,
+						(string) $batch,
 						GETPOST('inventorycode', 'alphanohtml')
 					);
 					if ($result2 < 0) {
@@ -459,7 +468,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 					$result1 = $object->correct_stock(
 						$user,
 						GETPOSTINT("id_entrepot"),
-						$nbpiece,
+						(float) $nbpiece,
 						1,
 						GETPOST("label", 'alphanohtml'),
 						$pricesrc,
@@ -474,7 +483,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 					$result2 = $object->correct_stock(
 						$user,
 						GETPOSTINT("id_entrepot_destination"),
-						$nbpiece,
+						(float) $nbpiece,
 						0,
 						GETPOST("label", 'alphanohtml'),
 						$pricedest,
@@ -543,10 +552,13 @@ if ($action == 'updateline' && GETPOST('save') == $langs->trans("Save") && $user
 
 $form = new Form($db);
 $formproduct = new FormProduct($db);
+$formproject = null;
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
+
+$variants = false;
 if ($id > 0 || $ref) {
 	$object = new Product($db);
 	$result = $object->fetch($id, $ref);
@@ -624,6 +636,7 @@ if ($id > 0 || $ref) {
 		dol_htmloutput_events();
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+		$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 		$shownav = 1;
 		if ($user->socid && !in_array('stock', explode(',', getDolGlobalString('MAIN_MODULES_FOR_EXTERNAL')))) {
@@ -644,7 +657,7 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -661,12 +674,12 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			if (!$usercancreadprice) {
+			if (!$usercancreadsupplierprice) {
 				print $form->editfieldkey($text, 'cost_price', '', $object, 0, 'amount:6');
 				print '</td><td>';
 				print $form->editfieldval($text, 'cost_price', '', $object, 0, 'amount:6');
 			} else {
-				print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+				print $form->editfieldkey($text, 'cost_price', (string) $object->cost_price, $object, (int) $usercancreate, 'amount:6');
 				print '</td><td>';
 				print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			}
@@ -679,7 +692,7 @@ if ($id > 0 || $ref) {
 			print $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $langs->trans("AverageUnitPricePMPDesc"));
 			print '</td>';
 			print '<td>';
-			if ($object->pmp > 0 && $usercancreadprice) {
+			if ($object->pmp > 0 && $usercancreadsupplierprice) {
 				print price($object->pmp).' '.$langs->trans("HT");
 			}
 			print '</td>';
@@ -690,7 +703,7 @@ if ($id > 0 || $ref) {
 			print '<td>';
 			$product_fourn = new ProductFournisseur($db);
 			if ($product_fourn->find_min_price_product_fournisseur($object->id) > 0) {
-				if ($product_fourn->product_fourn_price_id > 0 && $usercancreadprice) {
+				if ($product_fourn->product_fourn_price_id > 0 && $usercancreadsupplierprice) {
 					print $product_fourn->display_price_product_fournisseur();
 				} else {
 					print $langs->trans("NotDefined");
@@ -745,12 +758,12 @@ if ($id > 0 || $ref) {
 			print '<table class="border tableforfield centpercent">';
 
 			// Stock alert threshold
-			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1), 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer')).'</td><td>';
+			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1), 'seuil_stock_alerte', (string) $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer')).'</td><td>';
 			print $form->editfieldval("StockLimit", 'seuil_stock_alerte', $object->seuil_stock_alerte, $object, $user->hasRight('produit', 'creer'), 'string');
 			print '</td></tr>';
 
 			// Desired stock
-			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1), 'desiredstock', $object->desiredstock, $object, $user->hasRight('produit', 'creer'));
+			print '<tr><td>'.$form->editfieldkey($form->textwithpicto($langs->trans("DesiredStock"), $langs->trans("DesiredStockDesc"), 1), 'desiredstock', (string) $object->desiredstock, $object, $user->hasRight('produit', 'creer'));
 			print '</td><td>';
 			print $form->editfieldval("DesiredStock", 'desiredstock', $object->desiredstock, $object, $user->hasRight('produit', 'creer'), 'string');
 			print '</td></tr>';
@@ -890,6 +903,7 @@ if ($id > 0 || $ref) {
 				$sql = "SELECT max(m.datem) as datem";
 				$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 				$sql .= " WHERE m.fk_product = ".((int) $object->id);
+				$lastmovementdate = 0;
 				$resqlbis = $db->query($sql);
 				if ($resqlbis) {
 					$obj = $db->fetch_object($resqlbis);
@@ -1073,7 +1087,7 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 			print '<td class="right nowraponall">'.(price2num($object->pmp) ? price2num($object->pmp, 'MU') : '').'</td>';
 
 			// Value purchase
-			if ($usercancreadprice) {
+			if ($usercancreadsupplierprice) {
 				print '<td class="right amount nowraponall">'.(price2num($object->pmp) ? price(price2num($object->pmp * $obj->reel, 'MT')) : '').'</td>';
 			} else {
 				print '<td class="right amount nowraponall"></td>';
@@ -1234,13 +1248,13 @@ if (!$variants || getDolGlobalString('VARIANT_ALLOW_STOCK_MOVEMENT_ON_VARIANT_PA
 	print '<tr class="liste_total"><td class="right liste_total" colspan="4">'.$langs->trans("Total").':</td>';
 	print '<td class="liste_total right">'.price2num($total, 'MS').'</td>';
 	print '<td class="liste_total right">';
-	if ($usercancreadprice) {
+	if ($usercancreadsupplierprice) {
 		print($totalwithpmp ? price(price2num($totalvalue / $totalwithpmp, 'MU')) : '&nbsp;'); // This value may have rounding errors
 	}
 	print '</td>';
 	// Value purchase
 	print '<td class="liste_total right">';
-	if ($usercancreadprice) {
+	if ($usercancreadsupplierprice) {
 		print $totalvalue ? price(price2num($totalvalue, 'MT'), 1) : '&nbsp;';
 	}
 	print '</td>';

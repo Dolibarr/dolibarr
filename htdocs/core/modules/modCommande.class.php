@@ -94,11 +94,12 @@ class modCommande extends DolibarrModules
 			[
 				"COMMANDE_ADDON_PDF_ODT_PATH",
 				"chaine",
-				"DOL_DATA_ROOT/doctemplates/orders",
+				"DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/orders",
 				"",
 				0,
 			],
 		];
+
 		/*$r++;
 		$this->const[$r][0] = "COMMANDE_DRAFT_WATERMARK";
 		$this->const[$r][1] = "chaine";
@@ -355,8 +356,8 @@ class modCommande extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule' => 'getrefifauto',
-				'class' => (!getDolGlobalString('COMMANDE_ADDON') ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON),
-				'path' => "/core/modules/commande/".(!getDolGlobalString('COMMANDE_ADDON') ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON).'.php',
+				'class' => getDolGlobalString('COMMANDE_ADDON', 'mod_commande_marbre'),
+				'path' => "/core/modules/commande/".getDolGlobalString('COMMANDE_ADDON', 'mod_commande_marbre').'.php',
 				'classobject' => 'Commande',
 				'pathobject' => '/commande/class/commande.class.php',
 			),
@@ -460,7 +461,7 @@ class modCommande extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/orders';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/orders';
 		$dest = $dirodt.'/template_order.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

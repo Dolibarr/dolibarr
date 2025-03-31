@@ -18,9 +18,9 @@ use Term::ANSIColor;
 
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
-$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
 
+$PUBLISHBETARC="$ENV{'DESTIASSOLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
+$PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -36,7 +36,7 @@ $PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/
 "RPM_FEDORA"=>"rpmbuild",
 "RPM_MANDRIVA"=>"rpmbuild",
 "RPM_OPENSUSE"=>"rpmbuild",
-"DEB"=>"dpkg",
+"DEB"=>"dpkg,po2debconf",						# need also debhelper
 "FLATPACK"=>"flatpack",
 "EXEDOLIWAMP"=>"ISCC.exe",
 "SNAPSHOT"=>"tar"
@@ -72,6 +72,25 @@ if ($SOURCE !~ /^\// && $SOURCE !~ /^[a-z]:/i)
 	sleep 2;
 	exit 1;
 }
+if (! $ENV{"DESTIASSOLOGIN"} || ! $ENV{"DESTISFLOGIN"})
+{
+	print "Error: Missing environment variables.\n";
+	print "You must define the environment variable DESTIASSOLOGIN and DESTISFLOGIN to define your login to connect to the dolibarr foundation server and/or mirrors servers.\n";
+	print "$PROG.$Extension aborted.\n";
+	print "\n";
+	print "You can set them with\n";
+	print "On Linux:\n";
+	print "export DESTIASSOLOGIN='mylogin'; export DESTISFLOGIN='mylogin,project';\n";
+	print "On Windows:\n";
+	print "set DESTIASSOLOGIN=mylogin\n";
+	print "set DESTISFLOGIN=mylogin,project\n";
+	print "\n";
+	print "Example in .bashrc:\n";
+	print "export DESTIASSOLOGIN='mylogin'\n";
+	print "export DESTISFLOGIN='mylogin,project'\n";
+	sleep 2;
+	exit 1;
+}
 if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 {
 	print "Error: Missing environment variables.\n";
@@ -85,8 +104,9 @@ if (! $ENV{"DESTIBETARC"} || ! $ENV{"DESTISTABLE"})
 	print "set DESTIBETARC=c:/tmp\n";
 	print "set DESTISTABLE=c:/tmp\n";
 	print "\n";
-	print "Example: DESTIBETARC='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/lastbuild'\n";
-	print "Example: DESTISTABLE='/media/HDDATA1_LD/Mes Sites/Web/Dolibarr/dolibarr.org/files/stable'\n";
+	print "Example in .bashrc:\n";
+	print "export DESTIBETARC='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/lastbuild'\n";
+	print "export DESTISTABLE='/mnt/HDDATA1_LD/Mes Archives/Doli/dolibarr/stable'\n";
 	sleep 2;
 	exit 1;
 }
@@ -415,6 +435,10 @@ if ($nboftargetok) {
 	  	print $ret."\n";
 	  	# Copy to final dir
 	  	$NEWDESTI=$DESTI;
+		if ( !-d "$NEWDESTI/signatures" ) {
+			use File::Path qw( make_path );
+		    make_path "$NEWDESTI/signatures" or die "Failed to create path: $NEWDESTI/signatures";
+		}
 		print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
 	    use File::Copy qw(copy);
 	    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
@@ -971,6 +995,11 @@ if ($nboftargetok) {
 
 			# Removed files we don't need (already removed)
 			#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.codeclimate.yml`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.pre-commit-config.yaml`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.vscode`;
+			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.editorconfig' -exec rm {} \\;`;
+			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.travis.yml' -exec rm {} \\;`;
 
 			# Rename upstream changelog to match debian rules
 			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
@@ -1175,9 +1204,15 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'package_debian-ubuntu',
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
-			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
+			"$DESTI/package_			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.codeclimate.yml`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.pre-commit-config.yaml`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.vscode`;
+			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.editorconfig' -exec rm {} \\;`;
+			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.travis.yml' -exec rm {} \\;`;
+windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'standard'
 		);

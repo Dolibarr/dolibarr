@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent 	<eldy@users.sourceforge.net>
- * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
- * Copyright (C) 2023 	   Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2005-2018  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2012  Destailleur Laurent 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,8 +57,8 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$object = new Product($db);
 if ($id > 0 || !empty($ref)) {
-	$object = new Product($db);
 	$object->fetch($id, $ref);
 }
 
@@ -96,8 +96,6 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		$action = '';
@@ -105,8 +103,6 @@ if (empty($reshook)) {
 
 	// Add translation
 	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
 
 		// update de l'objet
@@ -140,8 +136,6 @@ if (empty($reshook)) {
 
 	// Edit translation
 	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$current_lang = $langs->getDefaultLang();
 
 		foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
@@ -169,8 +163,6 @@ if (empty($reshook)) {
 
 	// Delete translation
 	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $usercancreate) {
-		$object = new Product($db);
-		$object->fetch($id);
 		$langtodelete = GETPOST('langdel', 'alpha');
 
 		$result = $object->delMultiLangs($langtodelete, $user);
@@ -182,9 +174,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
-$object = new Product($db);
-$result = $object->fetch($id, $ref);
 
 
 /*

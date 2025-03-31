@@ -29,7 +29,7 @@
  */
 function openid_connect_prepare_head()
 {
-	global $langs, $conf, $user;
+	global $langs, $conf;
 	$h = 0;
 	$head = array();
 
@@ -73,5 +73,8 @@ function openid_connect_get_redirect_url()
  */
 function openid_connect_get_url()
 {
-	return getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL') . '?client_id=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID') . '&redirect_uri=' . openid_connect_get_redirect_url() . '&scope=' . getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES') . '&response_type=code&state=' . openid_connect_get_state();
+	// Note: For the scope, we msut use rawurlencode instead of urlencode.
+	$url = getDolGlobalString('MAIN_AUTHENTICATION_OIDC_AUTHORIZE_URL').'?client_id='.urlencode(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_CLIENT_ID')).'&redirect_uri='.urlencode(openid_connect_get_redirect_url()).'&scope='.rawurlencode(getDolGlobalString('MAIN_AUTHENTICATION_OIDC_SCOPES')).'&response_type=code&state='.urlencode(openid_connect_get_state());
+
+	return $url;
 }
