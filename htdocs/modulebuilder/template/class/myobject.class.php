@@ -1086,7 +1086,7 @@ class MyObject extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return	array<MyObjectLine>|int		array of lines if OK, <0 if KO
+	 * 	@return	array<CommonObjectLine>|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
