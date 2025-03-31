@@ -262,8 +262,8 @@ class MailingTargets // This can't be abstract as it is used for some method
 
 		if (empty($this->evenunsubscribe)) {
 			$sql = "UPDATE ".$this->db->prefix()."mailing_cibles as mc";
-			$sql .= " SET mc.statut = 3";
-			$sql .= " WHERE mc.fk_mailing = ".((int) $mailing_id);
+			$sql .= " SET statut = 3";
+			$sql .= " WHERE fk_mailing = ".((int) $mailing_id);
 			$sql .= " AND EXISTS (SELECT rowid FROM ".$this->db->prefix()."mailing_unsubscribe as mu WHERE mu.email = mc.email and mu.entity = ".((int) $conf->entity).")";
 
 			dol_syslog(__METHOD__.":mailing update status to display emails that do not want to be contacted anymore", LOG_DEBUG);
