@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2014 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2022      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -287,7 +287,7 @@ class modSociete extends DolibarrModules
 		if (getDolGlobalString('SOCIETE_USEPREFIX')) {
 			$this->export_fields_array[$r]['s.prefix'] = 'Prefix';
 		}
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->export_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
@@ -602,7 +602,7 @@ class modSociete extends DolibarrModules
 			's.fk_multicurrency' => 'MulticurrencyUsed',
 			's.multicurrency_code' => 'MulticurrencyCurrency'
 		);
-		if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 			$this->import_fields_array[$r]['s.price_level'] = 'PriceLevel';
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
@@ -928,6 +928,8 @@ class modSociete extends DolibarrModules
 		$this->import_updatekeys_array[$r] = array(
 			's.rowid' => 'Id',
 			's.lastname' => "Lastname",
+			's.zip' => "Zip",
+			's.email' => "Email",
 		);
 		if (isModEnabled('socialnetworks')) {
 			$sql = "SELECT code, label FROM ".MAIN_DB_PREFIX."c_socialnetworks WHERE active = 1";
@@ -983,7 +985,7 @@ class modSociete extends DolibarrModules
 			'sr.datec' => 'date used for creating direct debit UMR formatted as '.dol_print_date(
 				dol_now(),
 				'%Y-%m-%d'
-				),
+			),
 			'sr.bank' => 'bank name eg: "ING-Direct"',
 			'sr.code_banque' => 'account sort code (GB)/Routing number (US) eg. "8456"',
 			'sr.code_guichet' => "bank code for office/branch",

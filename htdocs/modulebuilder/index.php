@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors"));
+$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors", "uxdocumentation"));
 
 // GET Parameters
 $action  = GETPOST('action', 'aZ09');
@@ -66,7 +66,7 @@ $cancel  = GETPOST('cancel', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
-$module = GETPOST('module', 'alpha');
+$module = (string) GETPOST('module', 'alpha');
 $tab = (string) GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
 $tabdic = GETPOST('tabdic', 'alpha');
@@ -90,12 +90,12 @@ $find = GETPOST('find', 'alpha');
 $modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
 $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
-$editorname = GETPOST('editorname', 'alpha');
-$editorurl = GETPOST('editorurl', 'alpha');
-$version = GETPOST('version', 'alpha');
-$family = GETPOST('family', 'alpha');
-$picto = GETPOST('idpicto', 'alpha');
-$idmodule = GETPOST('idmodule', 'alpha');
+$editorname = (string) GETPOST('editorname', 'alpha');
+$editorurl = (string) GETPOST('editorurl', 'alpha');
+$version = (string) GETPOST('version', 'alpha');
+$family = (string) GETPOST('family', 'alpha');
+$picto = (string) GETPOST('idpicto', 'alpha');
+$idmodule = (string) GETPOST('idmodule', 'alpha');
 $format = '';  // Prevent undefined in css tab
 
 // Security check
@@ -418,7 +418,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 			}
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -1655,7 +1655,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -3297,7 +3297,7 @@ $h++;
 
 $linktoenabledisable = '';
 
-if (is_array($listofmodules) && count($listofmodules) > 0) {
+if (/* is_array($listofmodules) && */ count($listofmodules) > 0) {
 	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
 
@@ -3380,6 +3380,7 @@ print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8
 
 if ($module == 'initmodule') {
 	// New module
+	print '<!-- section init module -->'."\n";
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="initmodule">';
@@ -3393,13 +3394,12 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
-	print '<span class="opacitymedium">';
-	print ' &nbsp; (';
-	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', '', '');
+	print '<input type="number" min="100000" name="idmodule" class="width75" value="500000">';
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info&hidetitle=1', '', '');
 	print ' - ';
 	print '<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>';
-	print ')';
 	print '</span>';
 	print '</div></div>';
 
@@ -3452,6 +3452,12 @@ if ($module == 'initmodule') {
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-file')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 	print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print '</span>';
+
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';

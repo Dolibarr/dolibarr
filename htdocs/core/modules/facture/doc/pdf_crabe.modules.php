@@ -545,7 +545,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Extrafields in note
 				$extranote = $this->getExtrafieldsInHtml($object, $outputlangs);
 				if (!empty($extranote)) {
-					$notetoshow = dol_concatdesc($notetoshow, $extranote);
+					$notetoshow = dol_concatdesc((string) $notetoshow, $extranote);
 				}
 				if ($notetoshow) {
 					$tab_top -= 2;
@@ -831,7 +831,7 @@ class pdf_crabe extends ModelePDFFactures
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $outputlangs));
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
@@ -849,7 +849,7 @@ class pdf_crabe extends ModelePDFFactures
 						} else {
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $langs));
+						$this->_pagefoot($pdf, $object, $outputlangs, 1, $this->getHeightForQRInvoice($pagenb, $object, $outputlangs));
 						// New page
 						$pdf->AddPage();
 						if (!empty($tplidx)) {
@@ -1156,7 +1156,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *   @param		Facture		$object			Object to show
 	 *   @param		float		$posy			Y
 	 *   @param		Translate	$outputlangs	Langs object
-	 *   @param  	Translate	$outputlangsbis	Object lang for output bis
+	 *   @param  	?Translate	$outputlangsbis	Object lang for output bis
 	 *   @return	float						Pos y
 	 */
 	protected function _tableau_info(&$pdf, $object, $posy, $outputlangs, $outputlangsbis)
@@ -1336,7 +1336,7 @@ class pdf_crabe extends ModelePDFFactures
 			if ($this->emetteur->country_code == 'FR') {
 				if (getDolGlobalInt('TAX_MODE') == 1) {
 					$pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->writeHTMLCell(80, 5, '', '', $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
+					$pdf->writeHTMLCell(80, 5, null, null, $outputlangs->transnoentities("MentionVATDebitOptionIsOn"), 0, 1);
 
 					$posy = $pdf->GetY() + 1;
 				}
@@ -1359,11 +1359,12 @@ class pdf_crabe extends ModelePDFFactures
 
 					$langs->loadLangs(array('payment', 'paybox', 'stripe'));
 					$servicename = $langs->transnoentities('Online');
+
 					$paiement_url = getOnlinePaymentUrl(0, 'invoice', $object->ref, 0, '', 0);
 					$linktopay = $langs->trans("ToOfferALinkForOnlinePayment", $servicename).' <a href="'.$paiement_url.'">'.$outputlangs->transnoentities("ClickHere").'</a>';
 
 					$pdf->SetXY($this->marge_gauche, $posy);
-					$pdf->writeHTMLCell(80, 5, '', '', dol_htmlentitiesbr($linktopay), 0, 1);
+					$pdf->writeHTMLCell(80, 5, null, null, dol_htmlentitiesbr($linktopay), 0, 1);
 
 					$posy = $pdf->GetY() + 1;
 				}
@@ -1448,7 +1449,7 @@ class pdf_crabe extends ModelePDFFactures
 	 *	@param  float		$deja_regle     Amount already paid (in the currency of invoice)
 	 *	@param	float		$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
-	 *  @param  Translate	$outputlangsbis	Object lang for output bis
+	 *  @param  ?Translate	$outputlangsbis	Object lang for output bis
 	 *	@return float						Position pour suite
 	 */
 	protected function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs, $outputlangsbis)
@@ -1641,13 +1642,13 @@ class pdf_crabe extends ModelePDFFactures
 							$totalvat = $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code).(is_object($outputlangsbis) ? ' / '.$outputlangsbis->transcountrynoentities("TotalVAT", $mysoc->country_code) : '');
 							$totalvat .= ' ';
 							if (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'rateonly') {
-								$totalvat .= vatrate($tvaval['vatrate'], true).$tvacompl;
+								$totalvat .= vatrate((string) $tvaval['vatrate'], true).$tvacompl;
 							} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'codeonly') {
 								$totalvat .= $tvaval['vatcode'].$tvacompl;
 							} elseif (getDolGlobalString('PDF_VAT_LABEL_IS_CODE_OR_RATE') == 'nocodenorate') {
 								$totalvat .= $tvacompl;
 							} else {
-								$totalvat .= vatrate($tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
+								$totalvat .= vatrate((string) $tvaval['vatrate'], true).($tvaval['vatcode'] ? ' ('.$tvaval['vatcode'].')' : '').$tvacompl;
 							}
 							$pdf->MultiCell($col2x - $col1x, $tab2_hl, $totalvat, 0, 'L', true);
 							$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
@@ -2042,7 +2043,7 @@ class pdf_crabe extends ModelePDFFactures
 			$title = $outputlangs->transnoentities("InvoiceProForma");
 		}
 		if ($this->situationinvoice) {
-			$langs->loadLangs(array("other"));
+			$outputlangs->loadLangs(array("other"));
 			$title = $outputlangs->transnoentities("PDFInvoiceSituation") . " " . $outputlangs->transnoentities("NumberingShort") . $object->situation_counter . " -";
 		}
 		if (getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE') && is_object($outputlangsbis)) {
@@ -2276,7 +2277,7 @@ class pdf_crabe extends ModelePDFFactures
 				$thirdparty = $object->thirdparty;
 			}
 
-			$carac_client_name = pdfBuildThirdpartyName($thirdparty, $outputlangs);
+			$carac_client_name = is_object($thirdparty) ? pdfBuildThirdpartyName($thirdparty, $outputlangs) : '';
 
 			$mode =  'target';
 			$carac_client = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, ($usecontact ? $object->contact : ''), ($usecontact ? 1 : 0), $mode, $object);

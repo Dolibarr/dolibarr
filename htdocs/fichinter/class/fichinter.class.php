@@ -1514,7 +1514,7 @@ class Fichinter extends CommonObject
 		// phpcs:enable
 		$this->lines = array();
 
-		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang";
+		$sql = "SELECT rowid, fk_fichinter, description, duree, date, rang, extraparams";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql .= " WHERE fk_fichinter = ".((int) $this->id);
 		$sql .= " ORDER BY rang ASC, date ASC";
@@ -1540,6 +1540,8 @@ class Fichinter extends CommonObject
 				$line->rang	= $objp->rang;
 				$line->product_type = 1;
 				$line->fetch_optionals();
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$this->lines[$i] = $line;
 				$i++;

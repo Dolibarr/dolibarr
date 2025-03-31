@@ -8,6 +8,7 @@
  * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
  * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,9 +121,15 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
 $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
+$error = 0;
 
 /*
  * Actions
@@ -452,29 +459,29 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	}
 }
 
+
 // Action to update one extrafield
-if ($action == "update_extras" && $permissiontoadd) {
-	$object->fetch(GETPOSTINT('id'));
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
+	$attribute = GETPOST('attribute', 'aZ09');
 
-	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-		// This is properties of a date
-		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOSTINT($attributekeylong.'hour'), GETPOSTINT($attributekeylong.'min'), GETPOSTINT($attributekeylong.'sec'), GETPOSTINT($attributekeylong.'month'), GETPOSTINT($attributekeylong.'day'), GETPOSTINT($attributekeylong.'year'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
+	if ($ret < 0) {
+		setEventMessages($extrafields->error, $object->errors, 'errors');
+		$error++;
 	}
 
-	$triggermodname = 'SALARY_MODIFY';
+	if (!$error) {
+		$result = $object->updateExtraField($attribute, 'SALARY_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
 
-	$result = $object->insertExtraFields($triggermodname, $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+	if ($error) {
 		$action = 'edit_extras';
 	}
 }
@@ -761,21 +768,67 @@ if ($id > 0) {
 		);
 
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		if (!empty($object->dateep)) {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => ($object->dateep) + 86400);
+		} else {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		}
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 
-		//Add fill with end of month button
+		//Add buttons to fill start and end dates
 		$formconfirm .= "<script>
+			// Buttons for start date: previous month, current month, previous week, current week
+			$('#clone_date_start').after(
+				$('<button id=\"start_prev_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousMonthShort')."</button>')
+				.add('<button id=\"start_curr_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentMonthShort')."</button>')
+				.add('<button id=\"start_prev_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousWeekShort')."</button>')
+				.add('<button id=\"start_curr_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentWeekShort')."</button>')
+			);
+
+			$('#start_prev_month').click(function(){
+				var now = new Date();
+				var startPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+				setStartDate(startPrevMonth);
+			});
+
+			$('#start_curr_month').click(function(){
+				var now = new Date();
+				var startCurrMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+			setStartDate(startCurrMonth);
+			});
+
+			$('#start_prev_week').click(function(){
+				var now = new Date();
+				var startPrevWeek = new Date(now.setDate(now.getDate() - now.getDay() - 7));
+				startPrevWeek.setDate(startPrevWeek.getDate() + 1);
+				setStartDate(startPrevWeek);
+			});
+
+			$('#start_curr_week').click(function(){
+				var now = new Date();
+				var startCurrWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+				setStartDate(startCurrWeek);
+			});
+
+			function setStartDate(date) {
+				$('#clone_date_start').val(formatDate(date, '".$langs->trans("FormatDateShortJavaInput")."'));
+				$('#clone_date_startday').val(date.getDate());
+				$('#clone_date_startmonth').val(date.getMonth() + 1);
+				$('#clone_date_startyear').val(date.getFullYear());
+			}
+
+   			// Button for end date
 			$('#clone_date_end').after($('<button id=\"fill_end_of_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('FillEndOfMonth')."</button>'));
 			$('#fill_end_of_month').click(function(){
 				var clone_date_startmonth = +$('#clone_date_startmonth').val();
 				var clone_date_startyear = +$('#clone_date_startyear').val();
 				var end_date;
+
 				if (clone_date_startmonth && clone_date_startyear) {
-					end_date = new Date(clone_date_startyear, clone_date_startmonth , 0);
+					end_date = new Date(clone_date_startyear, clone_date_startmonth, 0);
 				} else {
 					var currentDate = new Date();
 					var currentDay = currentDate.getDate();
@@ -784,7 +837,8 @@ if ($id > 0) {
 					} else {
 						end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 					}
-	 			}
+				}
+
 				$('#clone_date_end').val(formatDate(end_date,'".$langs->trans("FormatDateShortJavaInput")."'));
 				$('#clone_date_endday').val(end_date.getDate());
 				$('#clone_date_endmonth').val(end_date.getMonth() + 1);

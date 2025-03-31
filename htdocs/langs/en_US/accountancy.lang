@@ -274,6 +274,7 @@ Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 Reconcilable=Reconcilable
+Centralized=Centralizing account
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
@@ -310,11 +311,13 @@ ChangeBinding=Change the binding
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
-ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advice on how to use it.
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyccnnnn where yyyy is the year and cc the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Apply mass categories
@@ -473,6 +476,8 @@ ErrorArchiveAddFile=Can't put "%s" file in archive
 ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
+Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
+
 ## Import
 ImportAccountingEntries=Accounting entries
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format

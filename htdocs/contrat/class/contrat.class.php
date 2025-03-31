@@ -851,7 +851,7 @@ class Contrat extends CommonObject
 
 		// Selects contract lines related to a product
 		$sql = "SELECT p.label as product_label, p.description as product_desc, p.ref as product_ref, p.fk_product_type as product_type,";
-		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.price_ht, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.subprice, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
+		$sql .= " d.rowid, d.fk_contrat, d.statut as status, d.description, d.subprice, d.vat_src_code, d.tva_tx, d.localtax1_tx, d.localtax2_tx, d.localtax1_type, d.localtax2_type, d.qty, d.remise_percent, d.fk_product_fournisseur_price as fk_fournprice, d.buy_price_ht as pa_ht,";
 		$sql .= " d.total_ht,";
 		$sql .= " d.total_tva,";
 		$sql .= " d.total_localtax1,";
@@ -866,6 +866,7 @@ class Contrat extends CommonObject
 		$sql .= " d.fk_user_ouverture,";
 		$sql .= " d.fk_user_cloture,";
 		$sql .= " d.fk_unit,";
+		$sql .= " d.extraparams,";
 		$sql .= " d.product_type as type,";
 		$sql .= " d.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as d LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -898,11 +899,9 @@ class Contrat extends CommonObject
 				$line->localtax1_type	= $objp->localtax1_type;
 				$line->localtax2_type	= $objp->localtax2_type;
 				$line->subprice			= $objp->subprice;
-				$line->statut = $objp->status;
-				$line->status = $objp->status;
+				$line->statut           = $objp->status; // For backward compatibility
+				$line->status           = $objp->status;
 				$line->remise_percent	= $objp->remise_percent;
-				$line->price_ht			= $objp->price_ht;
-				$line->price = $objp->price_ht; // For backward compatibility
 				$line->total_ht			= $objp->total_ht;
 				$line->total_tva		= $objp->total_tva;
 				$line->total_localtax1	= $objp->total_localtax1;
@@ -920,6 +919,8 @@ class Contrat extends CommonObject
 				$line->fk_user_ouverture = $objp->fk_user_ouverture;
 				$line->fk_user_cloture = $objp->fk_user_cloture;
 				$line->fk_unit = $objp->fk_unit;
+
+				$line->extraparams = !empty($objp->extraparams) ? (array) json_decode($objp->extraparams, true) : array();
 
 				$line->ref = $objp->product_ref; // deprecated
 				$line->product_ref = $objp->product_ref; // Product Ref
@@ -1363,9 +1364,6 @@ class Contrat extends CommonObject
 		if (isset($this->entity)) {
 			$this->entity = (int) $this->entity;
 		}
-		if (isset($this->statut)) {
-			$this->statut = (int) $this->statut;
-		}
 		if (isset($this->status)) {
 			$this->status = (int) $this->status;
 		}
@@ -1387,7 +1385,9 @@ class Contrat extends CommonObject
 		if (isset($this->import_key)) {
 			$this->import_key = trim($this->import_key);
 		}
-		//if (isset($this->extraparams)) $this->extraparams=trim($this->extraparams);
+
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
 
 		// $this->oldcopy must have been set by the caller of update
 
@@ -1406,8 +1406,8 @@ class Contrat extends CommonObject
 		$sql .= " fk_commercial_suivi=".(isset($this->fk_commercial_suivi) ? $this->fk_commercial_suivi : "null").",";
 		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
 		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
-		//$sql.= " extraparams=".(isset($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
+		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null").",";
+		$sql .= " extraparams=".(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
 
 		$this->db->begin();
@@ -1466,9 +1466,9 @@ class Contrat extends CommonObject
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
-	 *  @param  int			$pa_ht				Buying price HT
+	 *  @param  float		$pa_ht				Buying price HT
 	 *  @param	array<string,mixed>		$array_options		extrafields array
-	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
+	 * 	@param 	?int		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int			$rang 				Position
 	 *  @return int             				Return integer <0 if KO, >0 if OK
 	 */
@@ -1565,15 +1565,6 @@ class Contrat extends CommonObject
 			$localtax1_type = $localtaxes_type[0];
 			$localtax2_type = $localtaxes_type[2];
 
-			// TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$remise = 0;
-			$price = price2num(round($pu_ht, 2));
-			if (dol_strlen(price2num($remise_percent)) > 0) {
-				$remise = round(($pu_ht * $remise_percent / 100), 2);
-				$price = $pu_ht - $remise;
-			}
-
 			if (empty($pa_ht)) {
 				$pa_ht = 0;
 			}
@@ -1595,7 +1586,7 @@ class Contrat extends CommonObject
 			$sql .= " localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, remise_percent, subprice,";
 			$sql .= " total_ht, total_tva, total_localtax1, total_localtax2, total_ttc,";
 			$sql .= " info_bits,";
-			$sql .= " price_ht, remise, fk_product_fournisseur_price, buy_price_ht";
+			$sql .= " fk_product_fournisseur_price, buy_price_ht";
 			if ($date_start > 0) {
 				$sql .= ",date_ouverture_prevue";
 			}
@@ -1618,7 +1609,6 @@ class Contrat extends CommonObject
 			$sql .= " ".price2num($pu_ht).",";
 			$sql .= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_localtax1).",".price2num($total_localtax2).",".price2num($total_ttc).",";
 			$sql .= " ".((int) $info_bits).",";
-			$sql .= " ".price2num($price).",".price2num($remise).",";
 			if (isset($fk_fournprice)) {
 				$sql .= ' '.((int) $fk_fournprice).',';
 			} else {
@@ -1635,7 +1625,7 @@ class Contrat extends CommonObject
 			if ($date_end > 0) {
 				$sql .= ",'".$this->db->idate($date_end)."'";
 			}
-			$sql .= ", ".($fk_unit ? "'".$this->db->escape($fk_unit)."'" : "null");
+			$sql .= ", ".($fk_unit ? "'".$this->db->escape((string) $fk_unit)."'" : "null");
 			$sql .= ", ".(!empty($rang) ? (int) $rang : "0");
 			$sql .= ")";
 
@@ -1717,7 +1707,7 @@ class Contrat extends CommonObject
 		$qty = trim((string) $qty);
 		$desc = trim($desc);
 		$desc = trim($desc);
-		$price = price2num($pu);
+		$subprice = price2num($pu);
 		$tvatx = price2num($tvatx);
 		$localtax1tx = price2num($localtax1tx);
 		$localtax2tx = price2num($localtax2tx);
@@ -1727,15 +1717,6 @@ class Contrat extends CommonObject
 		}
 		if (empty($rang)) {
 			$rang = 0;
-		}
-
-		$subprice = $price;
-		$remise = 0;
-		if (dol_strlen(price2num($remise_percent)) > 0) {
-			$remise = round(($pu * $remise_percent / 100), 2);
-			$price = $pu - $remise;
-		} else {
-			$remise_percent = 0;
 		}
 
 		if ($date_start && $date_end && $date_start > $date_end) {
@@ -1756,7 +1737,7 @@ class Contrat extends CommonObject
 		$localtaxes_type = getLocalTaxesFromRate($tvatx, 0, $this->societe, $mysoc);
 		$tvatx = preg_replace('/\s*\(.*\)/', '', $tvatx); // Remove code into vatrate.
 
-		$tabprice = calcul_price_total($qty, $pu, $remise_percent, (float) price2num($tvatx), $localtax1tx, $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
+		$tabprice = calcul_price_total((float) $qty, $pu, $remise_percent, (float) price2num($tvatx), (float) $localtax1tx, (float) $localtax2tx, 0, $price_base_type, $info_bits, 1, $mysoc, $localtaxes_type);
 		$total_ht  = $tabprice[0];
 		$total_tva = $tabprice[1];
 		$total_ttc = $tabprice[2];
@@ -1765,15 +1746,6 @@ class Contrat extends CommonObject
 
 		$localtax1_type = (empty($localtaxes_type[0]) ? '' : $localtaxes_type[0]);
 		$localtax2_type = (empty($localtaxes_type[2]) ? '' : $localtaxes_type[2]);
-
-		// TODO A virer
-		// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-		$remise = 0;
-		$price = price2num(round($pu, 2));
-		if (dol_strlen(price2num($remise_percent)) > 0) {
-			$remise = round(($pu * $remise_percent / 100), 2);
-			$price = $pu - $remise;
-		}
 
 		if (empty($pa_ht)) {
 			$pa_ht = 0;
@@ -1790,9 +1762,7 @@ class Contrat extends CommonObject
 		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet set description = '".$this->db->escape($desc)."'";
-		$sql .= ",price_ht = ".((float) price2num($price));
 		$sql .= ",subprice = ".((float) price2num($subprice));
-		$sql .= ",remise = ".((float) price2num($remise));
 		$sql .= ",remise_percent = ".((float) price2num($remise_percent));
 		$sql .= ",qty = ".((float) $qty);
 		$sql .= ",tva_tx = ".((float) price2num($tvatx));
@@ -2866,6 +2836,7 @@ class Contrat extends CommonObject
 								$actioncomm->authorid     = $user->id;   // User saving action
 								$actioncomm->userownerid  = $user->id;	// Owner of action
 								$actioncomm->fk_element   = $object->id;
+								$actioncomm->elementid    = $object->id;
 								$actioncomm->elementtype  = 'contract';
 								$actioncomm->note_private = $comment;
 

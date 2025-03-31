@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2024 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2024      MDW	                <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW	                <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  */
 
 /**
- *       \file       htdocs/comm/mailing/cibles.php
+ *       \file       htdocs/comm/mailing/targetemailing.php
  *       \ingroup    mailing
  *       \brief      Page to define or view emailing targets
  */
@@ -37,16 +37,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 
 
-'
-@phan-var-force array{0:string,1:string} $bctag From main.inc
-';
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
- * @var array{0:string,1:string} $bctag From main.inc
  */
 
 // Load translation files required by the page
@@ -329,6 +325,7 @@ llxHeader('', $langs->trans("Mailing"), 'EN:Module_EMailing|FR:Module_Mailing|ES
 
 $form = new Form($db);
 $formmailing = new FormMailing($db);
+
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $totalarray = [
 	'nbfield' => 0,
@@ -393,7 +390,7 @@ if ($object->fetch($id) >= 0) {
 		$emailarray = CMailFile::getArrayAddress($object->email_errorsto);
 		foreach ($emailarray as $email => $name) {
 			if ($name != $email) {
-				print dol_escape_htmltag($name).' &lt;'.$email;
+				print dol_escape_htmltag((string) $name).' &lt;'.$email;
 				print '&gt;';
 				if ($email && !isValidEmail($email)) {
 					$langs->load("errors");
@@ -412,7 +409,7 @@ if ($object->fetch($id) >= 0) {
 	// Reply to
 	if ($object->messtype != 'sms') {
 		print '<tr><td>';
-		print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
+		print $form->editfieldkey("MailReply", 'email_replyto', $object->email_replyto, $object, (int) ($user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY), 'string');
 		print '</td><td>';
 		print $form->editfieldval("MailReply", 'email_replyto', $object->email_replyto, $object, $user->hasRight('mailing', 'creer') && $object->status < $object::STATUS_SENTCOMPLETELY, 'string');
 		$email = CMailFile::getValidAddress($object->email_replyto, 2);
@@ -513,7 +510,7 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($allowaddtarget && $user->hasRight('mailing', 'creer')) {
-		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), 'generic');
+		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere").'...', ($user->admin ? info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"), 1) : ''), '');
 
 		print '<div class="div-table-responsive">';
 		print '<div class="tagtable centpercentwithout1imp liste_titre_bydiv borderbottom" id="tablelines">';
@@ -530,8 +527,8 @@ if ($object->fetch($id) >= 0) {
 		print '</div>';
 		print '<div class="tagtd left"><div class="inline-block">'.$langs->trans("Filters").'</div>';
 		if ($object->messtype != 'sms') {
-			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class=" inline-block">'.$langs->trans("EvenUnsubscribe").' ';
-			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle', '', 1);
+			print ' &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <div class="inline-block valignmiddle">'.$langs->trans("EvenUnsubscribe").' ';
+			print ajax_object_onoff($object, 'evenunsubscribe', 'evenunsubscribe', 'EvenUnsubscribe:switch_on:warning', 'EvenUnsubscribe', array(), 'small valignmiddle reposition', '', 1);
 			print '</div>';
 		}
 		print '</div>';
@@ -591,18 +588,16 @@ if ($object->fetch($id) >= 0) {
 
 				// If module is qualified
 				if ($qualified) {
-					$var = !$var;
-
 					if ($allowaddtarget) {
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form class="oddeven trforbreakperms trforbreaknobg impair tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.newToken().'">';
 						print '<input type="hidden" name="action" value="add">';
 						print '<input type="hidden" name="page_y" value="'.newToken().'">';
 					} else {
-						print '<div '.$bctag[$var].'>';
+						print '<div class="oddeven trforbreakperms trforbreaknobg impair tagtr">';
 					}
 
-					print '<div class="tagtd paddingleftimp marginleftonly paddingrightimp marginrightonly valignmiddle center">';
+					print '<div class="tagtd paddingleftlarge marginleftonly paddingrightlarge marginrightonly valignmiddle center">';
 					if (empty($obj->picto)) {
 						$obj->picto = 'generic';
 					}
@@ -680,6 +675,8 @@ if ($object->fetch($id) >= 0) {
 
 		print '<br><br>';
 	}
+
+
 
 	// List of selected targets
 	$sql  = "SELECT mc.rowid, mc.lastname, mc.firstname, mc.email, mc.other, mc.statut as status, mc.date_envoi, mc.tms,";
@@ -784,7 +781,7 @@ if ($object->fetch($id) >= 0) {
 
 		print '</form>';
 
-		print "\n<!-- Liste destinataires selectionnes -->\n";
+		print "\n<!-- List o selected targets -->\n";
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -810,7 +807,7 @@ if ($object->fetch($id) >= 0) {
 		print '<div class="div-table-responsive">';
 		print '<table class="noborder centpercent">';
 
-		// Ligne des champs de filtres
+		// Line of filters
 		print '<tr class="liste_titre_filter">';
 
 		// Action column
@@ -941,14 +938,14 @@ if ($object->fetch($id) >= 0) {
 				if ($obj->nb > 0) {
 					print img_warning($langs->trans("EmailOptedOut"), 'warning', 'pictofixedwidth');
 				}
-				print dol_escape_htmltag($obj->email);
+				print dolPrintHTML($obj->email);
 				print '</td>';
 
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->lastname).'">'.dolPrintHTML($obj->lastname).'</td>';
 
-				print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->firstname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
+				print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->firstname).'">'.dolPrintHTML($obj->firstname).'</td>';
 
-				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->other).'"><span class="small">'.dol_escape_htmltag($obj->other).'</small></td>';
+				print '<td class="tdoverflowmax300" title="'.dolPrintHTMLForAttribute($obj->other).'"><span class="small">'.dolPrintHTML($obj->other).'</small></td>';
 
 				print '<td class="center tdoverflowmax150">';
 				if (empty($obj->source_id) || empty($obj->source_type)) {
@@ -1037,7 +1034,7 @@ if ($object->fetch($id) >= 0) {
 		dol_print_error($db);
 	}
 
-	print "\n<!-- Fin liste destinataires selectionnes -->\n";
+	print "\n<!-- End list of selected targets -->\n";
 }
 
 // End of page

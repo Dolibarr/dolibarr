@@ -247,7 +247,7 @@ foreach ($object->fields as $key => $val) {
 		$arrayfields['p.'.$key] = array(
 			'label' => $val['label'],
 			'checked' => (($visible < 0) ? '0' : '1'),
-			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval((string) $val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -298,7 +298,6 @@ if ($contextpage == 'lead') {
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-// '@phan-var-force array<string,array{label:string,checked?:string,enabled?:string,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Add a groupby field. Set $groupby and $groupbyvalues.
 // TODO Move this into a inc file
@@ -1245,7 +1244,7 @@ if (getDolGlobalString('MAIN_SEARCH_CATEGORY_CUSTOMER_ON_PROJECT_LIST') && isMod
 
 // alert on late date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option" title="'.$langs->trans("Late").'">'.$langs->trans('Alert').' </label><input type="checkbox" id="search_option" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 if (getDolGlobalInt('PROJECT_ENABLE_SUB_PROJECT')) {

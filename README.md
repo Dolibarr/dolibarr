@@ -116,6 +116,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Product Variants
 - Bill of Materials (BOM)
 - Manufacturing Orders (MO)
+- Workstations / Workplaces
 
  Customer/Sales Management
 
@@ -175,12 +176,13 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 - Data export/import
 - Barcodes
 - LDAP connectivity
-- ClickToDial integration
+- Click-To-Dial integration
 - Mass emailing
 - RSS integration
 - Social platforms linking
 - Payment platforms integration (PayPal, Stripe, Paybox...)
 - Email-Collector
+- AI support via API
 
 (around 100 modules available by default, 1000+ addons at the official marketplace Dolistore.com)
 
@@ -258,6 +260,7 @@ See [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT) fil
 
 Follow Dolibarr project on:
 
+- [Mastodon](https://pouet.chapril.org/@dolibarr)
 - [Facebook](https://www.facebook.com/dolibarr)
 - [X](https://x.com/dolibarr)
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)

@@ -823,6 +823,12 @@ class Product extends CommonObject
 	 */
 	public $mandatory_period;
 
+	/**
+	 * 0=This service or product is not managed in stock, 1=This service or product is managed in stock
+	 *
+	 * @var int
+	 */
+	public $stockable_product = 1;
 
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -876,6 +882,7 @@ class Product extends CommonObject
 		//'tosell'       =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		//'tobuy'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>'0', 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
 		'mandatory_period' => array('type' => 'integer', 'label' => 'mandatoryperiod', 'enabled' => 1, 'visible' => -1,  'notnull' => 1, 'default' => '0', 'index' => 1,  'position' => 1000),
+		'stockable_product'	=>array('type' => 'integer', 'label' => 'stockable_product', 'enabled' => 1, 'visible' => 1, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 502),
 	);
 
 	/**
@@ -886,6 +893,12 @@ class Product extends CommonObject
 	 * Service
 	 */
 	const TYPE_SERVICE = 1;
+
+	/**
+	 * Stockable product
+	 */
+	const DISABLED_STOCK = 0;
+	const ENABLED_STOCK = 1;
 
 	/**
 	 *  Constructor
@@ -991,6 +1004,9 @@ class Product extends CommonObject
 		}
 		if (empty($this->status_buy)) {
 			$this->status_buy = 0;
+		}
+		if (empty($this->stockable_product)) {
+			$this->stockable_product = 0;
 		}
 
 		$price_ht = 0;
@@ -1121,6 +1137,8 @@ class Product extends CommonObject
 					$sql .= ", batch_mask";
 					$sql .= ", fk_unit";
 					$sql .= ", mandatory_period";
+					$sql .= ", stockable_product";
+					if (!empty($this->default_vat_code)) $sql.=", default_vat_code";
 					$sql .= ") VALUES (";
 					$sql .= "'".$this->db->idate($this->date_creation)."'";
 					$sql .= ", ".(!empty($this->entity) ? (int) $this->entity : (int) $conf->entity);
@@ -1152,8 +1170,9 @@ class Product extends CommonObject
 					$sql .= ", '".$this->db->escape($this->batch_mask)."'";
 					$sql .= ", ".($this->fk_unit > 0 ? ((int) $this->fk_unit) : 'NULL');
 					$sql .= ", '".$this->db->escape((string) $this->mandatory_period)."'";
+					$sql .= ", ".((int) $this->stockable_product);
+					if (!empty($this->default_vat_code)) $sql.=", '".$this->db->escape($this->default_vat_code)."'";
 					$sql .= ")";
-
 					dol_syslog(get_class($this)."::Create", LOG_DEBUG);
 
 					$result = $this->db->query($sql);
@@ -1437,6 +1456,10 @@ class Product extends CommonObject
 			$this->state_id = 0;
 		}
 
+		if (empty($this->stockable_product)) {
+			$this->stockable_product = 0;
+		}
+
 		// Barcode value
 		$this->barcode = (empty($this->barcode) ? '' : trim($this->barcode));
 
@@ -1596,9 +1619,11 @@ class Product extends CommonObject
 			$sql .= ", fk_price_expression = ".($this->fk_price_expression != 0 ? (int) $this->fk_price_expression : 'NULL');
 			$sql .= ", fk_user_modif = ".($user->id > 0 ? (int) $user->id : 'NULL');
 			$sql .= ", mandatory_period = ".((int) $this->mandatory_period);
+			$sql .= ", stockable_product = ".(int) $this->stockable_product;
 			if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
 				$sql .= ", packaging = ".(float) $this->packaging;
 			}
+
 			// stock field is not here because it is a denormalized value from product_stock.
 			$sql .= " WHERE rowid = ".((int) $id);
 
@@ -2354,18 +2379,24 @@ class Product extends CommonObject
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$pricebycustomerexist = true;
-					$pu_ht = price($prodcustprice->lines[0]->price);
-					$price_min = price($prodcustprice->lines[0]->price_min);
-					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$price_base_type = $prodcustprice->lines[0]->price_base_type;
-					$tva_tx = $prodcustprice->lines[0]->tva_tx;
-					if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-						$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-					}
-					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-					if (empty($tva_tx)) {
-						$tva_npr = 0;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$pricebycustomerexist = true;
+							$pu_ht = price($custprice_line->price);
+							$price_min = price($custprice_line->price_min);
+							$pu_ttc = price($custprice_line->price_ttc);
+							$price_base_type = $custprice_line->price_base_type;
+							$tva_tx = $custprice_line->tva_tx;
+							if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+								$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
+							}
+							$tva_npr = $custprice_line->recuperableonly;
+							if (empty($tva_tx)) {
+								$tva_npr = 0;
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -2415,17 +2446,23 @@ class Product extends CommonObject
 			$result = $prodcustprice->fetchAll('', '', 0, 0, $filter);
 			if ($result) {
 				if (count($prodcustprice->lines) > 0) {
-					$pu_ht = price($prodcustprice->lines[0]->price);
-					$price_min = price($prodcustprice->lines[0]->price_min);
-					$pu_ttc = price($prodcustprice->lines[0]->price_ttc);
-					$price_base_type = $prodcustprice->lines[0]->price_base_type;
-					$tva_tx = $prodcustprice->lines[0]->tva_tx;
-					if ($prodcustprice->lines[0]->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
-						$tva_tx .= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
-					}
-					$tva_npr = $prodcustprice->lines[0]->recuperableonly;
-					if (empty($tva_tx)) {
-						$tva_npr = 0;
+					$date_now = (int) floor(dol_now() / 86400) * 86400; // date without hours
+					foreach ($prodcustprice->lines as $k => $custprice_line) {
+						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
+							$pu_ht = price($custprice_line->price);
+							$price_min = price($custprice_line->price_min);
+							$pu_ttc = price($custprice_line->price_ttc);
+							$price_base_type = $custprice_line->price_base_type;
+							$tva_tx = $custprice_line->tva_tx;
+							if ($custprice_line->default_vat_code && !preg_match('/\(.*\)/', $tva_tx)) {
+								$tva_tx .= ' (' . $custprice_line->default_vat_code . ')';
+							}
+							$tva_npr = $custprice_line->recuperableonly;
+							if (empty($tva_tx)) {
+								$tva_npr = 0;
+							}
+							break;
+						}
 					}
 				}
 			}
@@ -2925,7 +2962,7 @@ class Product extends CommonObject
 			$sql .= " p.pmp,";
 		}
 		$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
-		$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+		$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 		$sql .= " p.price_label,";
 		if ($separatedStock) {
 			$sql .= " SUM(sp.reel) as stock";
@@ -2969,7 +3006,7 @@ class Product extends CommonObject
 				$sql .= " p.pmp,";
 			}
 			$sql .= " p.datec, p.tms, p.import_key, p.entity, p.desiredstock, p.tobatch, p.sell_or_eat_by_mandatory, p.batch_mask, p.fk_unit,";
-			$sql .= " p.fk_price_expression, p.price_autogen, p.model_pdf,";
+			$sql .= " p.fk_price_expression, p.price_autogen, p.stockable_product, p.model_pdf,";
 			$sql .= " p.price_label";
 			if (!$separatedStock) {
 				$sql .= ", p.stock";
@@ -3062,6 +3099,7 @@ class Product extends CommonObject
 				$this->seuil_stock_alerte = $obj->seuil_stock_alerte;
 				$this->desiredstock = $obj->desiredstock;
 				$this->stock_reel = $obj->stock;
+				$this->stockable_product = $obj->stockable_product;
 				$this->pmp = $obj->pmp;
 
 				$this->date_creation = $this->db->jdate($obj->datec);
@@ -5923,9 +5961,9 @@ class Product extends CommonObject
 	/**
 	 *    Return label of status of object
 	 *
-	 * @param  int $mode 0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-	 * @param  int $type 0=Sell, 1=Buy, 2=Batch Number management
-	 * @return string          Label of status
+	 * @param  int<0,6>	$mode	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
+	 * @param  int<0,2>	$type	0=Sell, 1=Buy, 2=Batch Number management
+	 * @return string			Label of status
 	 */
 	public function getLibStatut($mode = 0, $type = 0)
 	{
@@ -5947,8 +5985,8 @@ class Product extends CommonObject
 	 *    Return label of a given status
 	 *
 	 * @param  int 		$status 	Statut
-	 * @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 * @param  int 		$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
+	 * @param  int<0,6>	$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 * @param  int<0,2>	$type   	0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 	 * @return string              	Label of status
 	 */
 	public function LibStatut($status, $mode = 0, $type = 0)
@@ -6700,7 +6738,7 @@ class Product extends CommonObject
 	 */
 	public function isStockManaged()
 	{
-		return ($this->isProduct() || getDolGlobalString('STOCK_SUPPORTS_SERVICES'));
+		return (($this->isProduct() || ($this->isService() && getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) && ($this->stockable_product > 0));
 	}
 
 	/**

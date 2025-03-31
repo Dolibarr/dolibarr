@@ -4,7 +4,7 @@
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ if (!$user->hasRight('accounting', 'mouvements', 'lire')) {
 
 $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
 $permissiontodelete = $user->hasRight('accounting', 'mouvements', 'supprimer');
-
+$numRefModel = getDolGlobalString('BOOKKEEPING_ADDON', 'mod_bookkeeping_neon');
 
 /*
  * Actions
@@ -127,7 +127,7 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if ($cancel) {
-		header("Location: ". $backtopage . (!empty($type)?'?type=sub':''));
+		header("Location: ". $backtopage . (!empty($type) ? '?type=sub' : ''));
 		exit;
 	}
 
@@ -170,7 +170,7 @@ if (empty($reshook)) {
 					$object->sens = 'C';
 				}
 
-				$result = $object->update($user, false, $mode);
+				$result = $object->update($user, 0, $mode);
 				if ($result < 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 				} else {
@@ -217,6 +217,7 @@ if (empty($reshook)) {
 			$object->doc_type = (string) GETPOST('doc_type', 'alpha');
 			$object->piece_num = $piece_num;
 			$object->doc_ref = (string) GETPOST('doc_ref', 'alpha');
+			$object->ref = (string) GETPOST('ref', 'alpha');
 			$object->code_journal = $journal_code;
 			$object->journal_label = $journal_label;
 			$object->fk_doc = GETPOSTINT('fk_doc');
@@ -234,7 +235,7 @@ if (empty($reshook)) {
 				$object->sens = 'C';
 			}
 
-			$result = $object->createStd($user, false, $mode);
+			$result = $object->createStd($user, 0, $mode);
 
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -293,6 +294,7 @@ if (empty($reshook)) {
 			$object->journal_label = $journal_label;
 			$object->fk_doc = 0;
 			$object->fk_docdet = 0;
+			$object->ref = $numRefModel === 'mod_bookkeeping_neon' ? GETPOST('ref', 'alpha') : $object->getNextNumRef();
 			$object->montant = 0; // deprecated
 			$object->amount = 0;
 
@@ -354,6 +356,19 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'setref' && $permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
+		$newref = GETPOST('ref', 'alpha');
+		$result = $object->updateByMvt($piece_num, 'ref', $newref, $mode);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		} else {
+			if ($mode != '_tmp') {
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+			}
+			$action = '';
+		}
+	}
+
 	// Validate transaction
 	if ($action == 'valid' && $permissiontoadd) {
 		$result = $object->transformTransaction(0, $piece_num);
@@ -366,7 +381,11 @@ if (empty($reshook)) {
 	}
 
 	// Delete all lines into the transaction
-	$toselect = explode(',', GETPOST('toselect', 'alphanohtml'));
+	$toselect_str = explode(',', GETPOST('toselect', 'alphanohtml'));
+	$toselect = array();
+	foreach ($toselect_str as $i) {
+		$toselect[] = (int) $i;
+	}
 
 	if ($action == 'deletebookkeepingwriting' && $confirm == "yes" && $permissiontodelete) {
 		$db->begin();
@@ -493,6 +512,13 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth200" name="doc_ref" value="'.GETPOST('doc_ref', 'alpha').'"></td>';
 	print '</tr>';
 
+	if ($numRefModel === 'mod_bookkeeping_neon') {
+		print '<tr>';
+		print '<td class="">'.$langs->trans("Ref").'</td>';
+		print '<td><input type="text" class="minwidth200" name="ref" value="'.GETPOST('ref', 'alpha').'"></td>';
+		print '</tr>';
+	}
+
 	/*
 	print '<tr>';
 	print '<td>' . $langs->trans("Doctype") . '</td>';
@@ -534,7 +560,6 @@ if ($action == 'create') {
 
 		print dol_get_fiche_head($head, 'transaction', '', -1);
 
-		$object->ref = (string) $object->piece_num;
 		$object->label = $object->doc_ref;
 
 		$morehtmlref = '<div style="clear: both;"></div>';
@@ -555,6 +580,39 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td class="titlefield">'.$langs->trans("NumMvts").'</td>';
 		print '<td>'.($mode == '_tmp' ? '<span class="opacitymedium" title="Id tmp '.$object->piece_num.'">'.$langs->trans("Draft").'</span>' : $object->piece_num).'</td>';
+		print '</tr>';
+
+		// Account movement ref. Edit allowed only for free ref num model.
+		print '<tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
+		print $langs->trans('Ref');
+		print '</td>';
+		if ($action != 'editref') {
+			print '<td class="right">';
+			if ($permissiontoadd && $numRefModel === 'mod_bookkeeping_neon') {
+				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editref&token='.newToken().'&piece_num='.((int) $object->piece_num).'&mode='.urlencode((string) $mode).'">'.img_edit($langs->transnoentitiesnoconv('Edit'), 1).'</a>';
+			}
+			print '</td>';
+		}
+		print '</tr></table>';
+		print '</td><td>';
+		if ($action == 'editref') {
+			print '<form name="setref" action="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).'" method="POST">';
+			if ($optioncss != '') {
+				print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+			}
+			print '<input type="hidden" name="token" value="'.newToken().'">';
+			print '<input type="hidden" name="action" value="setref">';
+			print '<input type="hidden" name="mode" value="'.$mode.'">';
+			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			print '<input type="hidden" name="type" value="'.$type.'">';
+			print '<input type="text" size="20" name="ref" value="'.dol_escape_htmltag($object->ref).'">';
+			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
+			print '</form>';
+		} else {
+			print $object->ref;
+		}
+		print '</td>';
 		print '</tr>';
 
 		// Ref document
@@ -647,7 +705,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
 			print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 			print '<input type="hidden" name="type" value="'.$type.'">';
-			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, 1);
+			print $formaccounting->select_journal($object->code_journal, 'code_journal', 0, 0, 0, 1, '');
 			print '<input type="submit" class="button button-edit" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -818,6 +876,7 @@ if ($action == 'create') {
 			print '<input type="hidden" name="doc_date" value="'.$object->doc_date.'">'."\n";
 			print '<input type="hidden" name="doc_type" value="'.$object->doc_type.'">'."\n";
 			print '<input type="hidden" name="doc_ref" value="'.$object->doc_ref.'">'."\n";
+			print '<input type="hidden" name="ref" value="'.$object->ref.'">'."\n";
 			print '<input type="hidden" name="code_journal" value="'.$object->code_journal.'">'."\n";
 			print '<input type="hidden" name="fk_doc" value="'.$object->fk_doc.'">'."\n";
 			print '<input type="hidden" name="fk_docdet" value="'.$object->fk_docdet.'">'."\n";
@@ -980,13 +1039,13 @@ if ($action == 'create') {
 					if (empty($total_debit) && empty($total_credit)) {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("EnterNonEmptyLinesFirst")).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					} elseif ($total_debit == $total_credit) {
-						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
+						print '<a class="button" href="'.$_SERVER["PHP_SELF"].'?piece_num='.((int) $object->piece_num).(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($backtopage).'&action=valid&token='.newToken().'">'.$langs->trans("ValidTransaction").'</a>';
 					} else {
 						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $total_debit, $total_credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';
-					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type)?'?type=sub':'').'">'.$langs->trans("Cancel").'</a>';
+					print '<a class="button button-cancel" href="'.$backtopage.(!empty($type) ? '?type=sub' : '').'">'.$langs->trans("Cancel").'</a>';
 
 					print "</div>";
 				}

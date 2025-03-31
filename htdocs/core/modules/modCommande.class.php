@@ -356,8 +356,8 @@ class modCommande extends DolibarrModules
 		$this->import_convertvalue_array[$r] = array(
 			'c.ref' => array(
 				'rule' => 'getrefifauto',
-				'class' => (!getDolGlobalString('COMMANDE_ADDON') ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON),
-				'path' => "/core/modules/commande/".(!getDolGlobalString('COMMANDE_ADDON') ? 'mod_commande_marbre' : $conf->global->COMMANDE_ADDON).'.php',
+				'class' => getDolGlobalString('COMMANDE_ADDON', 'mod_commande_marbre'),
+				'path' => "/core/modules/commande/".getDolGlobalString('COMMANDE_ADDON', 'mod_commande_marbre').'.php',
 				'classobject' => 'Commande',
 				'pathobject' => '/commande/class/commande.class.php',
 			),

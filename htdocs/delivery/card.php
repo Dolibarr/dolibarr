@@ -6,7 +6,7 @@
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,6 +101,16 @@ $permissiontodelete = $user->hasRight('expedition', 'delivery', 'supprimer') || 
 $permissiontovalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('expedition', 'delivery_advance', 'validate')));
 $permissionnote = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'delivery', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+$permissiontoeditextraline = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element_line]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextraline = dol_eval($extrafields->attributes[$object->table_element_line]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -160,7 +170,7 @@ if ($action == 'add' && $permissiontoadd) {
 	if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 		$outputlangs = $langs;
 		$newlang = '';
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -210,18 +220,19 @@ if ($action == 'setdate_delivery' && $permissiontoadd) {
 }
 
 // Update extrafields
-if ($action == 'update_extras' && $permissiontoadd) {
-	$object->oldcopy = dol_clone($object, 2);
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+	$attribute_name = GETPOST('attribute', 'aZ09');
 
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 	if ($ret < 0) {
 		$error++;
 	}
 
 	if (!$error) {
-		// Actions on extra fields
-		$result = $object->insertExtraFields('DELIVERY_MODIFY');
+		$result = $object->updateExtraField($attribute_name, 'DELIVERY_MODIFY');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
@@ -234,7 +245,7 @@ if ($action == 'update_extras' && $permissiontoadd) {
 }
 
 // Extrafields line
-if ($action == 'update_extras_line' && $permissiontoadd) {
+if ($action == 'update_extras_line' && $permissiontoeditextraline) {
 	$array_options = array();
 	$num = count($object->lines);
 
@@ -563,7 +574,7 @@ if ($action == 'create') {
 						if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 							$outputlangs = $langs;
 							$newlang = '';
-							if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (empty($newlang)) {
