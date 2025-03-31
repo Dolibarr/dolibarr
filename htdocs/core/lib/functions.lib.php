@@ -12084,7 +12084,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("SeparatorDecimal"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
