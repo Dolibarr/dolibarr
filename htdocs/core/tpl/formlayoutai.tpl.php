@@ -108,8 +108,7 @@ if ($showlinktoai) {
 							$(document).on("click", function (event) {
 								aidropdown = $(".ai_dropdown'.$htmlname.'");
 								aidropdownbutton = $("#linkforaiprompt'.$showlinktoai.'");
-								if (!aidropdown.is(event.target) && !aidropdownbutton.is(event.target) && $(event.target).closest(aidropdown).length === 0 
-								&& $(event.target).closest(aidropdownbutton).length === 0 && aidropdown.is(":visible")) {
+								if (!aidropdown.is(event.target) && !aidropdownbutton.is(event.target) && $(event.target).closest(aidropdown).length === 0 && $(event.target).closest(aidropdownbutton).length === 0 && aidropdown.is(":visible")) {
 									console.log("You clicked outside of ai_dropdown - we close it");
 									$(".ai_dropdown'.$htmlname.'").hide();
 								}
