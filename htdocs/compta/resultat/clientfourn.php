@@ -569,7 +569,7 @@ if ($modecompta == 'BOOKKEEPING') {
 				$sql .= " WHERE p.entity IN (".getEntity('donation').")";
 				$sql .= " AND fk_statut in (1,2)";
 			} else {
-				$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
+				$sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(pe.amount) as amount";
 				$sql .= " FROM ".MAIN_DB_PREFIX."don as p";
 				$sql .= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 				$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";

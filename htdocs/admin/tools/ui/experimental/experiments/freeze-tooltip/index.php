@@ -43,6 +43,7 @@ $documentation = new Documentation($db);
 $group = 'ExperimentalUx';
 
 $experimentAssetsPath = $documentation->baseUrl . '/experimental/experiments/freeze-tooltip/assets/';
+
 $js = [
 	$experimentAssetsPath . 'freeze-by-alt-keypress.js'
 ];
