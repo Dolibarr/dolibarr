@@ -1022,6 +1022,9 @@ if (empty($reshook)) {
 		$alldate_start = dol_mktime(GETPOSTINT('alldate_starthour'), GETPOSTINT('alldate_startmin'), 0, GETPOSTINT('alldate_startmonth'), GETPOSTINT('alldate_startday'), GETPOSTINT('alldate_startyear'));
 		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
 		foreach ($object->lines as $key => $line) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
 			if ($line->product_type == 1) { // only service line
 				$result = $object->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->desc, 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $alldate_start, $alldate_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
 				$object->lines[$key] = $object->line;
@@ -1059,6 +1062,9 @@ if (empty($reshook)) {
 		// Define margin
 		$margin_rate = (GETPOST('marginforalllines', 'alpha') ? GETPOST('marginforalllines', 'alpha') : 0);
 		foreach ($object->lines as $key => $line) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
 			$subprice = price2num($line->pa_ht * (1 + $margin_rate / 100), 'MU');
 			$prod = new Product($db);
 			$prod->fetch($line->fk_product);
@@ -1698,6 +1704,9 @@ if (empty($reshook)) {
 		$margin_rate = GETPOSTISSET('marginforalllines') ? GETPOST('marginforalllines', 'int') : '';
 		$mark_rate = GETPOSTISSET('markforalllines') ? GETPOST('markforalllines', 'int') : '';
 		foreach ($object->lines as &$line) if ($line->subprice > 0) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
 				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));

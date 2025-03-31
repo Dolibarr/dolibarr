@@ -2208,6 +2208,9 @@ if (empty($reshook)) {
 		$alldate_start = dol_mktime(GETPOSTINT('alldate_starthour'), GETPOSTINT('alldate_startmin'), 0, GETPOSTINT('alldate_startmonth'), GETPOSTINT('alldate_startday'), GETPOSTINT('alldate_startyear'));
 		$alldate_end = dol_mktime(GETPOSTINT('alldate_endhour'), GETPOSTINT('alldate_endmin'), 0, GETPOSTINT('alldate_endmonth'), GETPOSTINT('alldate_endday'), GETPOSTINT('alldate_endyear'));
 		foreach ($object->lines as $line) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
 			if ($line->product_type == 1) { // only service line
 				$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, $line->remise_percent, $alldate_start, $alldate_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
 			}
@@ -2238,7 +2241,7 @@ if (empty($reshook)) {
 			}
 			$result = $object->updateline($line->id, $line->desc, $line->subprice, $line->qty, (float) $remise_percent, $line->date_start, $line->date_end, $tvatx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, 0, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
 		}
-	}  elseif ($action == 'confirm_addtitleline' && $usercancreate) {
+	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
 		// Handling adding a new title line for subtotals module
 
 		$langs->load('subtotals');
@@ -2787,6 +2790,9 @@ if (empty($reshook)) {
 		$margin_rate = GETPOSTISSET('marginforalllines') ? GETPOST('marginforalllines', 'int') : '';
 		$mark_rate = GETPOSTISSET('markforalllines') ? GETPOST('markforalllines', 'int') : '';
 		foreach ($object->lines as &$line) if ($line->subprice > 0) {
+			if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				continue;
+			}
 			$subprice_multicurrency = $line->subprice;
 			if (is_numeric($margin_rate) && $margin_rate > 0) {
 				$line->subprice = floatval(price2num(floatval($line->pa_ht) * (1 + floatval($margin_rate) / 100), 'MU'));
