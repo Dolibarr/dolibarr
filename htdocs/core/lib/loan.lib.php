@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2020       Maxime DEMAREST     <maxime@indelog.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 	$numactualloadterm++;
 	$capital = $cap_rest;
 	while ($numactualloadterm <= $nbterm) {
-		$mens = round($object->calcMonthlyPayments($capital, $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
+		$mens = round($object->calcMonthlyPayments($capital, (float) $rate, $nbterm - $numactualloadterm + 1), 2, PHP_ROUND_HALF_UP);
 
 		$int = ($capital * ((float) $rate / 12));
 		$int = round($int, 2, PHP_ROUND_HALF_UP);

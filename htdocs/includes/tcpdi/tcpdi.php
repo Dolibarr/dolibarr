@@ -1,6 +1,6 @@
 <?php
 //
-//  TCPDI - Version 1.0
+//  TCPDI - Version 1.1
 //  Based on FPDI - Version 1.4.4
 //
 //    Copyright 2004-2013 Setasign - Jan Slabon
@@ -74,6 +74,24 @@ class TCPDI extends FPDF_TPL {
      * @var array
      */
     var $_importedPages = array();
+
+    /**
+     * Cache for imported page annotations
+     * @var array
+     */
+    var $_importedAnnots = array();
+
+    /**
+     * Number of TOC pages, used for annotation offset
+     * @var integer
+     */
+    var $_numTOCpages = 0;
+
+    /**
+     * First TOC page, used for annotation offset
+     * @var integer
+     */
+    var $_TOCpagenum = 0;
 
     /**
      * Set a source-file
@@ -217,9 +235,147 @@ class TCPDI extends FPDF_TPL {
         }
 
         $this->_importedPages[$pageKey] = $this->tpl;
-
         return $this->tpl;
     }
+
+    function setPageFormatFromTemplatePage($pageno, $orientation) {
+        $fn = $this->current_filename;
+        $parser =& $this->parsers[$fn];
+        $parser->setPageno($pageno);
+        $boxes = $parser->getPageBoxes($pageno, $this->k);
+        foreach ($boxes as $name => $box) {
+            if ($name[0] == '/') {
+                $boxes[substr($name, 1)] = $box;
+                unset($boxes[$name]);
+            }
+        }
+        $this->setPageFormat($boxes, $orientation);
+    }
+
+    /* Wrapper for AddPage() which tracks TOC pages to offset annotations later */
+    function AddPage($orientation='', $format='', $keepmargins=false, $tocpage=false) {
+        if ($this->inxobj) {
+            // we are inside an XObject template
+            return;
+        }
+        parent::AddPage($orientation, $format, $keepmargins, $tocpage);
+        if ($this->tocpage) {
+            $this->_numTOCpages++;
+        }
+    }
+
+    /* Wrapper for AddTOC() which tracks TOC position to offset annotations later */
+    function AddTOC($page='', $numbersfont='', $filler='.', $toc_name='TOC', $style='', $color=array(0,0,0)) {
+        if (!TCPDF_STATIC::empty_string($page)) {
+            $this->_TOCpagenum = $page;
+        } else {
+            $this->_TOCpagenum = $this->page;
+        }
+
+        parent::AddTOC($page, $numbersfont, $filler, $toc_name, $style, $color);
+    }
+
+    function importAnnotations($pageno) {
+        $fn = $this->current_filename;
+        $parser =& $this->parsers[$fn];
+        $parser->setPageno($pageno);
+        $annots = $parser->getPageAnnotations();
+
+        if (is_array($annots) && $annots[0] == PDF_TYPE_ARRAY // It's an array
+                && is_array($annots[1]) && count($annots[1]) > 1) // It's not empty - there are annotations for this page
+        {
+        	if (!isset($this->_obj_stack[$fn])) {
+                $this->_obj_stack[$fn] = array();
+            }
+
+            $this->_importedAnnots[$this->page] = array();
+            foreach ($annots[1] as $annot) {
+                $this->importAnnotation($annot);
+            }
+        }
+
+        if (is_array($annots) && $annots[0] == PDF_TYPE_OBJECT // We got an object
+                && is_array($annots[1]) && $annots[1][0] == PDF_TYPE_ARRAY // It's an array
+                && is_array($annots[1][1]) && count($annots[1][1]) > 1) // It's not empty - there are annotations for this page
+        {
+        	if (!isset($this->_obj_stack[$fn])) {
+                $this->_obj_stack[$fn] = array();
+            }
+
+            $this->_importedAnnots[$this->page] = array();
+            foreach ($annots[1][1] as $annot) {
+                $this->importAnnotation($annot);
+            }
+        }
+    }
+
+    function importAnnotation($annotation) {
+        $fn = $this->current_filename;
+        $old_id = $annotation[1];
+        $value = array(PDF_TYPE_OBJREF, $old_id, 0);
+        if (!isset($this->_don_obj_stack[$fn][$old_id])) {
+            $this->_newobj(false, true);
+            $this->_obj_stack[$fn][$old_id] = array($this->n, $value);
+            $this->_don_obj_stack[$fn][$old_id] = array($this->n, $value);
+        }
+        $objid = $this->_don_obj_stack[$fn][$old_id][0];
+        $this->_importedAnnots[$this->page][] = $objid;
+    }
+
+
+    /**
+     * Get references to page annotations.
+     * @param $n (int) page number
+     * @return string
+     * @protected
+     * @author Nicola Asuni
+     * @since 5.0.010 (2010-05-17)
+     */
+    protected function _getannotsrefs($n) {
+        if (!empty($this->_numTOCpages) && $n >= $this->_TOCpagenum) {
+            // Offset page number to account for TOC being inserted before page containing annotations.
+            $n -= $this->_numTOCpages;
+        }
+        if (!(isset($this->_importedAnnots[$n]) OR isset($this->PageAnnots[$n]) OR ($this->sign AND isset($this->signature_data['cert_type'])))) {
+            return '';
+        }
+        $out = ' /Annots [';
+        if (isset($this->_importedAnnots[$n])) {
+            foreach ($this->_importedAnnots[$n] as $key => $val) {
+                $out .= ' '.$val.' 0 R';
+            }
+        }
+        if (isset($this->PageAnnots[$n])) {
+            foreach ($this->PageAnnots[$n] as $key => $val) {
+                if (!in_array($val['n'], $this->radio_groups)) {
+                    $out .= ' '.$val['n'].' 0 R';
+                }
+            }
+            // add radiobutton groups
+            if (isset($this->radiobutton_groups[$n])) {
+                foreach ($this->radiobutton_groups[$n] as $key => $data) {
+                    if (isset($data['n'])) {
+                        $out .= ' '.$data['n'].' 0 R';
+                    }
+                }
+            }
+        }
+        if ($this->sign AND ($n == $this->signature_appearance['page']) AND isset($this->signature_data['cert_type'])) {
+            // set reference for signature object
+            $out .= ' '.$this->sig_obj_id.' 0 R';
+        }
+        if (!empty($this->empty_signature_appearance)) {
+            foreach ($this->empty_signature_appearance as $esa) {
+                if ($esa['page'] == $n) {
+                    // set reference for empty signature objects
+                    $out .= ' '.$esa['objid'].' 0 R';
+                }
+            }
+        }
+        $out .= ' ]';
+        return $out;
+    }
+
 
     /**
      * Returns the last used page box

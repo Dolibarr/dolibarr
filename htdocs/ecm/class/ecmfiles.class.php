@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Francis Appels      <francis.appels@yahoo.com>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class EcmFiles extends CommonObject
 	public $entity;
 
 	/**
-	 * @var string filename, Note: Into ecm database record, the entry $filename never ends with .noexe
+	 * @var string filename, Note: Into ecm database record, the entry never ends with .noexe
 	 */
 	public $filename;
 
@@ -118,7 +118,7 @@ class EcmFiles extends CommonObject
 	public $gen_or_uploaded;
 
 	/**
-	 * @var string extraparams
+	 * @var array<string,string>|string 	Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams;
 
@@ -250,9 +250,6 @@ class EcmFiles extends CommonObject
 		if (isset($this->gen_or_uploaded)) {
 			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
-		if (isset($this->extraparams)) {
-			$this->extraparams = trim($this->extraparams);
-		}
 		if (isset($this->fk_user_c)) {
 			$this->fk_user_c = (int) $this->fk_user_c;
 		}
@@ -305,6 +302,10 @@ class EcmFiles extends CommonObject
 		if (!isset($this->entity)) {
 			$this->entity = $conf->entity;
 		}
+
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
+
 		// Put here code to add control on parameters values
 
 		// Insert request
@@ -348,7 +349,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' '.(!isset($this->cover) ? 'NULL' : "'".$this->db->escape($this->cover)."'").',';
 		$sql .= ' '.((int) $maxposition).',';
 		$sql .= ' '.(!isset($this->gen_or_uploaded) ? 'NULL' : "'".$this->db->escape($this->gen_or_uploaded)."'").',';
-		$sql .= ' '.(!isset($this->extraparams) ? 'NULL' : "'".$this->db->escape($this->extraparams)."'").',';
+		$sql .= ' '.(!isset($extraparams) ? 'NULL' : "'".$this->db->escape($extraparams)."'").',';
 		$sql .= " '".$this->db->idate($this->date_c)."',";
 		$sql .= ' '.(!isset($this->date_m) || dol_strlen((string) $this->date_m) == 0 ? 'NULL' : "'".$this->db->idate($this->date_m)."'").',';
 		$sql .= ' '.(!isset($this->fk_user_c) ? $user->id : $this->fk_user_c).',';
@@ -514,7 +515,6 @@ class EcmFiles extends CommonObject
 				$this->cover = $obj->cover;
 				$this->position = $obj->position;
 				$this->gen_or_uploaded = $obj->gen_or_uploaded;
-				$this->extraparams = $obj->extraparams;
 				$this->date_c = $this->db->jdate($obj->date_c);
 				$this->date_m = $this->db->jdate($obj->date_m);
 				$this->fk_user_c = $obj->fk_user_c;
@@ -524,6 +524,8 @@ class EcmFiles extends CommonObject
 				$this->acl = $obj->acl;
 				$this->src_object_type = $obj->src_object_type;
 				$this->src_object_id = $obj->src_object_id;
+
+				$this->extraparams = (isset($obj->extraparams) ? (array) json_decode($obj->extraparams, true) : null);
 			}
 
 			// Retrieve all extrafields for ecm_files
@@ -725,9 +727,6 @@ class EcmFiles extends CommonObject
 		if (isset($this->gen_or_uploaded)) {
 			$this->gen_or_uploaded = trim($this->gen_or_uploaded);
 		}
-		if (isset($this->extraparams)) {
-			$this->extraparams = trim($this->extraparams);
-		}
 		if (isset($this->fk_user_m)) {
 			$this->fk_user_m = (int) $this->fk_user_m;
 		}
@@ -739,7 +738,8 @@ class EcmFiles extends CommonObject
 		}
 
 		// Check parameters
-		// Put here code to add a control on parameters values
+		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
 
 		// Update request
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element.' SET';
@@ -756,9 +756,9 @@ class EcmFiles extends CommonObject
 			$sql .= ' content = '.(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").',';
 		}
 		$sql .= ' cover = '.(isset($this->cover) ? "'".$this->db->escape($this->cover)."'" : "null").',';
-		$sql .= ' position = '.(isset($this->position) ? $this->db->escape($this->position) : "0").',';
+		$sql .= ' position = '.(isset($this->position) ? $this->db->escape((string) $this->position) : "0").',';
 		$sql .= ' gen_or_uploaded = '.(isset($this->gen_or_uploaded) ? "'".$this->db->escape($this->gen_or_uploaded)."'" : "null").',';
-		$sql .= ' extraparams = '.(isset($this->extraparams) ? "'".$this->db->escape($this->extraparams)."'" : "null").',';
+		$sql .= ' extraparams = '.(isset($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null").',';
 		$sql .= ' date_c = '.(!isset($this->date_c) || dol_strlen($this->date_c) != 0 ? "'".$this->db->idate($this->date_c)."'" : 'null').',';
 		//$sql .= ' tms = '.(! isset($this->date_m) || dol_strlen((string) $this->date_m) != 0 ? "'".$this->db->idate($this->date_m)."'" : 'null').','; // Field automatically updated
 		$sql .= ' fk_user_m = '.($this->fk_user_m > 0 ? $this->fk_user_m : $user->id).',';
@@ -1009,9 +1009,11 @@ class EcmFiles extends CommonObject
 
 		if ($option) {
 			if ($option == 'facture_fournisseur') {
-				$tmppath = preg_replace('/^fournisseur\/facture\//', '', $this->filepath);
+				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/facture\//', '', $this->filepath);
 			} elseif ($option == 'commande_fournisseur') {
-				$tmppath = preg_replace('/^fournisseur\/commande\//', '', $this->filepath);
+				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/commande\//', '', $this->filepath);
+			} elseif ($option == 'tax-vat') {	// Remove part "tax/vat/"
+				$tmppath = preg_replace('/^(\d+\/)?tax\/vat\//', '', $this->filepath);
 			} else {
 				if ((int) $this->entity > 1) {
 					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref

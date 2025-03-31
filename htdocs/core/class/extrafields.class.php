@@ -11,7 +11,7 @@
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
  * Copyright (C) 2024		Joachim Kueter			<git-jk@bloxera.com>
  *
@@ -507,7 +507,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " '".$this->db->escape($list)."',";
-			$sql .= " '".$this->db->escape($printable)."',";
+			$sql .= " '".$this->db->escape((string) $printable)."',";
 			$sql .= " ".($default ? "'".$this->db->escape($default)."'" : "null").",";
 			$sql .= " ".($computed ? "'".$this->db->escape($computed)."'" : "null").",";
 			$sql .= " ".(is_object($user) ? $user->id : 0).",";
@@ -759,6 +759,7 @@ class ExtraFields
 
 			dol_syslog(get_class($this).'::DDLUpdateField', LOG_DEBUG);
 			if ($type != 'separate') { // No table update when separate type
+				// TODO: Verify, adjust - field_desc has 'value' (not expected), and is missing 'label','enabled','position','visible'
 				$result = $this->db->DDLUpdateField($this->db->prefix().$table, $attrname, $field_desc);
 			}
 			if ($result > 0 || $type == 'separate') {
@@ -937,7 +938,7 @@ class ExtraFields
 			$sql .= " ".($perms ? "'".$this->db->escape($perms)."'" : "null").",";
 			$sql .= " ".($langfile ? "'".$this->db->escape($langfile)."'" : "null").",";
 			$sql .= " ".((int) $pos).",";
-			$sql .= " '".$this->db->escape($alwayseditable)."',";
+			$sql .= " '".$this->db->escape((string) $alwayseditable)."',";
 			$sql .= " '".$this->db->escape($params)."',";
 			$sql .= " '".$this->db->escape($list)."',";
 			$sql .= " ".((int) $printable).",";
@@ -1046,7 +1047,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['param'][$tab->name] = ($tab->param ? jsonOrUnserialize($tab->param) : '');
 					$this->attributes[$tab->elementtype]['pos'][$tab->name] = $tab->pos;
 					$this->attributes[$tab->elementtype]['alwayseditable'][$tab->name] = $tab->alwayseditable;
-					$this->attributes[$tab->elementtype]['perms'][$tab->name] = ((is_null($tab->perms) || strlen($tab->perms) == 0) ? 1 : $tab->perms);
+					$this->attributes[$tab->elementtype]['perms'][$tab->name] = $tab->perms;
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name] = $tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name] = $tab->list;
 					$this->attributes[$tab->elementtype]['printable'][$tab->name] = $tab->printable;
@@ -1330,7 +1331,7 @@ class ExtraFields
 					$selected = explode(',', $value);
 				}
 
-				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', !empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2'));
+				$out .= $form->multiselectarray($keyprefix.$key.$keysuffix, $options, $selected, 0, 0, $morecss, 0, 0, '', '', '', (int) (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')));
 			} else {
 				if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_EXTRAFIELDS_DISABLE_SELECT2')) {
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
@@ -1505,6 +1506,15 @@ class ExtraFields
 							// current object id can be use into filter
 							if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
 								$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
+							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
+								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
+								// Do nothing if condition is using 'IN' keyword
+								// Replace 'column = $ID$' by "word"
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Replace '$ID$ = column' by "word"
+								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -1750,54 +1760,15 @@ class ExtraFields
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
 							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
-						} elseif (preg_match("#^.*list.php$#", $_SERVER["PHP_SELF"])) {
-							// Pattern for word=$ID$
-							$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
-
-							// Removing spaces around =, ( and )
-							$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-
-							$nbPreg = 1;
-							// While we have parenthesis
-							while ($nbPreg != 0) {
-								// Initialise counters
-								$nbPregRepl = $nbPregSel = 0;
-								// Remove all parenthesis not preceded with '=' sign
-								$InfoFieldList[4] = preg_replace('#([^=])(\([^)^(]*('.$word.')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
-								// Remove all escape characters around '=' and parenthesis
-								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-								// Remove all parentheses preceded with '='
-								$InfoFieldList[4] = preg_replace('#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*('.$word.')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
-								// On retire les escapes autour des = et parenthèses
-								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-
-								// UPdate the totals counter for the loop
-								$nbPreg = $nbPregRepl + $nbPregSel;
-							}
-
-							// In case there is AND ou OR, before or after
-							$matchCondition = array();
-							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
-							while (!empty($matchCondition[0])) {
-								// If the two sides differ but are not empty
-								if (!empty($matchCondition[1]) && !empty($matchCondition[3]) && $matchCondition[1] != $matchCondition[3]) {
-									// Nobody sain would do that without parentheses
-									$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
-								} else {
-									if (!empty($matchCondition[1])) {
-										$boolCond = (($matchCondition[1] == "AND") ? ' AND TRUE ' : ' OR FALSE ');
-										$InfoFieldList[4] = str_replace($matchCondition[0], $boolCond.$matchCondition[3], $InfoFieldList[4]);
-									} elseif (!empty($matchCondition[3])) {
-										$boolCond = (($matchCondition[3] == "AND") ? ' TRUE AND ' : ' FALSE OR');
-										$InfoFieldList[4] = str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
-									} else {
-										$InfoFieldList[4] = " TRUE ";
-									}
-								}
-
-								// In case there is AND ou OR, before or after
-								preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
-							}
+						} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
+							// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
+							// Do nothing if condition is using 'IN' keyword
+							// Replace 'column = $ID$' by "word"
+							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
+							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+							// Replace '$ID$ = column' by "word"
+							$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}

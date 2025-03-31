@@ -226,7 +226,7 @@ return [
 	'simplify_ast' => true,
 	'analyzed_file_extensions' => ['php','inc'],
 	'globals_type_map' => [
-		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:float,custom_x:float,custom_y:float}>',
+		'_Avery_Labels' => 'array<string,array{name:string,paper-size:string|array{0:float,1:float},orientation:string,metric:string,marginLeft:float,marginTop:float,NX:int,NY:int,SpaceX:float,SpaceY:float,width:float,height:float,font-size:int,custom_x:float,custom_y:float}>',
 		'action' => 'string',
 		'actioncode' => 'string',
 		'badgeStatus0' => 'string',
@@ -308,7 +308,7 @@ return [
 	'directory_list' => [
 		'htdocs',
 		'scripts',
-		PHAN_DIR . '/stubs/',
+		PHAN_DIR . '/stubs',
 	],
 
 	// A directory list that defines files that will be excluded
@@ -461,8 +461,8 @@ return [
 
 		'PhanPluginUnknownClosureReturnType',	// When we use closure (we must avoid), we do not have PHP doc
 
-		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed, except in api_*
-		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed, except in api_*
+		// 'PhanPluginUnknownArrayMethodParamType',	// All fixed
+		// 'PhanPluginUnknownArrayMethodReturnType',	// All fixed
 		// 'PhanUndeclaredGlobalVariable',			// Helps identify variables that are not set/defined - add '@phan-var-force TYPE $varname' in tpl or includes to help type the variable
 		// 'PhanPluginUnknownObjectMethodCall',	// False positive for some class. Is enabled in config_extended only.
 		'PhanTypeSuspiciousNonTraversableForeach',  // Reports on `foreach ($object as $key => $value)` which works without php notices, so we ignore it because this is intentional in the code.
@@ -477,7 +477,7 @@ return [
 	// Note: The array key must be the same as the extension name reported by `php -m`,
 	// so that phan can skip loading the stubs if the extension is actually available.
 	'autoload_internal_extension_signatures' => [
-				// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
+		// Stubs may be available at https://github.com/JetBrains/phpstorm-stubs/tree/master
 
 		// Xdebug stubs are bundled with Phan 0.10.1+/0.8.9+ for usage,
 		// because Phan disables xdebug by default.

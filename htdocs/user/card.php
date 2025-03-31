@@ -448,7 +448,7 @@ if (empty($reshook)) {
 			if (!$error) {
 				$object->fetch($id);
 
-				$object->oldcopy = clone $object;
+				$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 				$db->begin();
 
@@ -687,7 +687,7 @@ if (empty($reshook)) {
 				$object->fetch($id);
 
 				if (GETPOST("password", "password")) {	// If pass is empty, we do not change it.
-					$object->oldcopy = clone $object;
+					$object->oldcopy = clone $object;  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 					$ret = $object->setPassword($user, GETPOST("password", "password"));
 					if (is_int($ret) && $ret < 0) {
