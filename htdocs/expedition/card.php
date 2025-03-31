@@ -1240,7 +1240,9 @@ if ($action == 'create') {
 
 			if ($numAsked) {
 				if (isModEnabled('subtotals')) {
-					$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
+					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
+					}
 					foreach ($object->lines as $line) {
 						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
 							$show_check_add_buttons = true;
@@ -2512,7 +2514,7 @@ if ($action == 'create') {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		if (empty($reshook) && empty($lines[$i]->product_type)) {
+		if (empty($reshook) && $lines[$i]->product_type != "9") {
 			print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
 			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'" >';
 
