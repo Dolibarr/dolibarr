@@ -140,7 +140,7 @@ abstract class CommonObject
 
 
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,langfile?:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array();
 
@@ -823,7 +823,7 @@ abstract class CommonObject
 	public $output;
 
 	/**
-	 * @var array<string,string>|string	extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
+	 * @var array<string,string>|string		Extra parameters. Try to store here the array of parameters. Old code is sometimes storing a string.
 	 */
 	public $extraparams = array();
 
@@ -3397,7 +3397,9 @@ abstract class CommonObject
 				while ($i < $num) {
 					$row = $this->db->fetch_row($resql);
 					$rows[] = $row[0]; // Add parent line into array rows
-					$children = $this->getChildrenOfLine($row[0], $grandchild);
+					if ($fk_parent_line) {
+						$children = $this->getChildrenOfLine($row[0], $grandchild);
+					}
 					if (!empty($children)) {
 						foreach ($children as $child) {
 							array_push($rows, $child);
@@ -4827,6 +4829,8 @@ abstract class CommonObject
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
+					} elseif ($fieldstatus == 'tobatch') {
+						$this->status_batch = $status;	// @phpstan-ignore-line
 					} else {
 						$this->status = $status;
 					}
@@ -5191,6 +5195,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$extraparams = (!empty($this->extraparams) ? json_encode($this->extraparams) : null);
+		$extraparams = dol_trunc($extraparams, 250);
 
 		$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 		$sql .= " SET extraparams = ".(!empty($extraparams) ? "'".$this->db->escape($extraparams)."'" : "null");
@@ -5978,7 +5983,7 @@ abstract class CommonObject
 		} else {
 			// TODO: Try to set type above again
 			'@phan-var-force ModeleBarCode|ModeleExports|ModeleImports|ModelePDFAsset|ModelePDFContract|ModelePDFDeliveryOrder|ModelePDFEvaluation|ModelePDFFactures|ModelePDFFicheinter|ModelePDFMo|ModelePDFMovement|ModelePDFProduct|ModelePDFProjects|ModelePDFPropales|ModelePDFRecruitmentJobPosition|ModelePDFStock|ModelePDFStockTransfer|ModelePDFSupplierProposal|ModelePDFSuppliersInvoices|ModelePDFSuppliersOrders|ModelePDFSuppliersPayments|ModelePDFTask|ModelePDFTicket|ModelePDFUser|ModelePDFUserGroup|ModelePdfExpedition|ModelePdfReception|ModeleThirdPartyDoc $obj';
-			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);
+			$resultwritefile = $obj->write_file($this, $outputlangs, $srctemplatepath, $hidedetails, $hidedesc, $hideref, $moreparams);  // @phan-suppress-line-PhanTypeMismatchArgument
 		}
 		// After call of write_file $obj->result['fullpath'] is set with generated file. It will be used to update the ECM database index.
 
@@ -6268,8 +6273,10 @@ abstract class CommonObject
 			exit;
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
+			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
 			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
+			$langs->load("main");
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
@@ -6522,16 +6529,8 @@ abstract class CommonObject
 					$sql .= ", ".$name;
 				}
 				// use geo sql fonction to read as text
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
-				}
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'multipts') {
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
-				}
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'linestrg') {
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
-				}
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'polygon') {
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
+					// TODO Add an abstraction method in the database driver
 					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 			}
@@ -6833,14 +6832,27 @@ abstract class CommonObject
 							} elseif ($value) {
 								$object = new $InfoFieldList[0]($this->db);
 								'@phan-var-force CommonObject $object';
+
+								$objectId = 0;
+
+								$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
 								if (is_numeric($value)) {
-									$res = $object->fetch($value); // Common case
+									$sqlFetchObject .= " WHERE rowid = " . (int) $value;
 								} else {
-									$res = $object->fetch(0, $value); // For compatibility
+									$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
+								}
+
+								$obj = $this->db->getRow($sqlFetchObject);
+
+								if ($obj !== false) {
+									$objectId = $obj->rowid;
+									$res = 1;
+								} else {
+									$res = -1;
 								}
 
 								if ($res > 0) {
-									$new_array_options[$key] = $object->id;
+									$new_array_options[$key] = $objectId;
 								} else {
 									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
 									return -1;
@@ -8442,7 +8454,7 @@ abstract class CommonObject
 				$type = (($this->fields[$key]['type'] == 'checkbox') ? $this->fields[$key]['type'] : 'select');
 			}
 		}
-		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
+		if (isset($val['type']) && preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) {
 			$type = 'link';
 		}
 
@@ -8456,7 +8468,7 @@ abstract class CommonObject
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
 			$param['options'] = $val['arrayofkeyval'];
 		}
-		if (preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
+		if (isset($val['type']) && preg_match('/^integer:([^:]*):([^:]*)/i', $val['type'], $reg)) {	// ex: integer:User:user/class/user.class.php
 			$type = 'link';
 			$stringforoptions = $reg[1].':'.$reg[2];
 			// Special case: Force addition of getnomurlparam1 to -1 for users
@@ -8464,19 +8476,19 @@ abstract class CommonObject
 				$stringforoptions .= ':#getnomurlparam1=-1';
 			}
 			$param['options'] = array($stringforoptions => $stringforoptions);
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2].':'.$reg[3] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^sellist:(.*):(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1].':'.$reg[2] => 'N');
 			$type = 'sellist';
-		} elseif (preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/^chkbxlst:(.*)/i', $val['type'], $reg)) {
 			$param['options'] = array($reg[1] => 'N');
 			$type = 'chkbxlst';
-		} elseif (preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
+		} elseif (isset($val['type']) && preg_match('/stars\((\d+)\)/', $val['type'], $reg)) {
 			$param['options'] = array();
 			$type = 'stars';
 			$size = $reg[1];
@@ -10351,9 +10363,9 @@ abstract class CommonObject
 				}
 				$keys_with_alias[] = $alias . '.' . $fieldname;
 			}
-			return implode(',', $keys_with_alias);
+			return implode(', ', $keys_with_alias);
 		} else {
-			return implode(',', $keys);
+			return implode(', ', $keys);
 		}
 	}
 

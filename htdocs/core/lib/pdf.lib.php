@@ -420,7 +420,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
 	}
 
-	return $outputlangs->convToOutputCharset($socname);
+	return $outputlangs->convToOutputCharset((string) $socname);
 }
 
 
@@ -551,7 +551,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 
 				if (!empty($targetcontact->address)) {
 					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
-				} else {
+				} elseif (is_object($targetcompany)) {
 					$companytouseforaddress = $targetcompany;
 
 					// Contact on a thirdparty that is a different thirdparty than the thirdparty of object
@@ -600,7 +600,7 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 					// Web
 					if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || $mode == 'targetwithdetails' || preg_match('/targetwithdetails_url/', $mode)) {
 						if ($targetcontact->url) {
-							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset($targetcontact->url);
+							$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->transnoentities("Web").": ".$outputlangs->convToOutputCharset((string) $targetcontact->url);
 						}
 					}
 				}
@@ -1124,7 +1124,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 		if (is_numeric($tmpamounttoshow) && $tmpamounttoshow > 0) {
 			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", price($tmpamounttoshow, 0, $outputlangs, 0, 0, 0, $conf->currency));
 		} elseif (!empty($fromcompany->capital)) {
-			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", $fromcompany->capital, $outputlangs);
+			$line3 .= ($line3 ? " - " : "").$outputlangs->transnoentities("CapitalOf", (string) $fromcompany->capital, $outputlangs);
 		}
 	}
 	// Prof Id 1
@@ -1224,7 +1224,7 @@ function pdf_pagefoot(&$pdf, $outputlangs, $paramfreetext, $fromcompany, $marge_
 
 	// The start of the bottom of this page footer is positioned according to # of lines
 	$freetextheight = 0;
-	$align = null;
+	$align = '';
 	if ($line) {	// Free text
 		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 		if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
@@ -1748,7 +1748,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 			if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 				$productCustomerPriceStatic = new ProductCustomerPrice($db);
-				$filter = array('fk_product' => $idprod, 'fk_soc' => $object->socid);
+				$filter = array('fk_product' => (string) $idprod, 'fk_soc' => (string) $object->socid);
 
 				$nbCustomerPrices = $productCustomerPriceStatic->fetchAll('', '', 1, 0, $filter);
 
@@ -1859,7 +1859,7 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 			if ($detail->batch) {
 				$dte[] = $outputlangs->transnoentitiesnoconv('printBatch', $detail->batch);
 			}
-			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', $detail->qty);
+			$dte[] = $outputlangs->transnoentitiesnoconv('printQty', (string) $detail->qty);
 
 			// Add also info of planned warehouse for lot
 			if ($object->element == 'shipping' && $detail->fk_origin_stock > 0 && getDolGlobalInt('PRODUCTBATCH_SHOW_WAREHOUSE_ON_SHIPMENT')) {
@@ -2782,4 +2782,35 @@ function pdfGetLineTotalDiscountAmount($object, $i, $outputlangs, $hidedetails =
 		}
 	}
 	return 0;
+}
+
+/**
+ * Function to extract metadata from a PDF file by doing a binary parsing of the PDF file
+ *
+ * @param 	string	$file		Path of file
+ * @param 	string	$field		Key to extract
+ * @return 	string				String of the extracted key or string started with 'ERROR:' if error.
+ */
+function pdfExtractMetadata($file, $field = 'Keywords')
+{
+	if (!dol_is_file($file)) {
+		return "ERROR: FILE NOT FOUND OR NOT VALID";
+	}
+
+	// Get content of PDF file
+	$content = file_get_contents(dol_osencode($file));
+
+	// Use a regex to capture the metadata
+	if ($content) {
+		$matches = array();
+
+		// Remove non printablecaracters
+		$content = preg_replace('/[^(\x20-\x7F)]*/', '', $content);
+		if (preg_match('/\/' . preg_quote($field, '/') . '\s*\((.*?)\)/', $content, $matches)) {
+			return trim($matches[1]);
+		}
+		return "ERROR: NOT FOUND";
+	} else {
+		return "ERROR: FAILED TO READ PDF";
+	}
 }

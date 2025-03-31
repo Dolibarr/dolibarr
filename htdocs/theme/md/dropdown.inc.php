@@ -150,7 +150,7 @@ button.dropdown-item.global-search-item {
 	-webkit-background-clip: padding-box;
 	background-clip: padding-box;
 	border: 1px solid #ccc;
-	border: 1px solid rgba(0,0,0,.15);
+	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
 	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
@@ -506,23 +506,6 @@ li.liinputsearch {
 
 }
 
-.search-dropdown-body {
-	padding: unset;
-}
-
-.global-search-item {
-	font-size: 1.1em;
-	padding-top: 8px;
-	padding-bottom: 8px;
-}
-
-.global-search-item:before {
-	content: none;
-}
-
-.global-search-header {
-	color: #444 !important;
-}
 
 
 /*
@@ -725,6 +708,11 @@ div.quickaddblock:focus {
 		color: var(--colortextbackvmenu);
 	}
 
+	.dropdown-menu:not(.ai_dropdown) {
+		border: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
 
 	#topmenu-global-search-dropdown a.login-dropdown-a,
 	#topmenu-quickadd-dropdown a.login-dropdown-a,

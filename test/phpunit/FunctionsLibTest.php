@@ -1881,7 +1881,7 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testFetchObjectByElement
 	 *
-	 * @return boolean;
+	 * @return boolean
 	 */
 	public function testFetchObjectByElement()
 	{
@@ -1897,7 +1897,7 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testRoundUpToNextMultiple
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function testRoundUpToNextMultiple()
 	{
@@ -1921,17 +1921,80 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testNaturalSearch
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function testNaturalSearch()
 	{
+		global $db;
+
 		$s = natural_search("t.field", "abc def");
-		$this->assertEquals($s, " AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')");
+		$this->assertEquals(" AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')", $s);
 
 		$s = natural_search("t.field", "'abc def' ghi");
-		$this->assertEquals($s, " AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')");
+		$this->assertEquals(" AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')", $s);
 
-		$s = natural_search("t.field", "abc def,ghi", 3);
-		$this->assertEquals($s, " AND (t.field IN ('abc def','ghi'))");
+		$s = natural_search("t.field", "abc def,ghi", 3);				// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi'))", $s);
+
+		$s = natural_search("t.field", "'ab\'c' def','ghi', 'jkl'", 3);	// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi','jkl'))", $s);
+
+		$s = natural_search("t.field", "a,b", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('a','b'))", $s);
+
+		$s = natural_search("t.field", "A'@%B", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('AB'))", $s);
+
+		/*
+		$s = $db->sanitize("a,b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a',b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a'b',c", 1);
+		var_dump($s);
+		*/
+
+		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+	}
+
+	/**
+	 * testDolExplodeKeepIfQuotes
+	 *
+	 * @return void
+	 */
+	public function testDolExplodeKeepIfQuotes()
+	{
+		global $db;
+
+		$result = dolExplodeKeepIfQuotes("a b");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("'a' 'b'");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b' c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+		$this->assertEquals("c", $result[2]);
+
+		$result = dolExplodeKeepIfQuotes("a b'c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b'c", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b'c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+		$this->assertEquals("c", $result[2]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b c'");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b c", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("1 0");
+		$this->assertEquals("1", $result[0]);
+		$this->assertEquals("0", $result[1]);
 	}
 }

@@ -65,7 +65,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "other", "website"));
+$langs->loadLangs(array("admin", "other", "users", "website"));
 
 // Security check
 if (!$user->hasRight('website', 'read')) {
@@ -865,11 +865,11 @@ if ($action == 'addcontainer' && $usercanedit) {
 				}
 			}
 
-			if ($tmp['curl_error_no']) {
+			if (!empty($tmp['curl_error_no'])) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['curl_error_msg'], null, 'errors');
 				$action = 'createcontainer';
-			} elseif ($tmp['http_code'] != '200') {
+			} elseif ($tmp['http_code'] != 200) {
 				$error++;
 				setEventMessages('Error getting '.$urltograb.': '.$tmp['http_code'], null, 'errors');
 				$action = 'createcontainer';
@@ -989,14 +989,14 @@ if ($action == 'addcontainer' && $usercanedit) {
 
 					/*
 					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
-					if ($tmpgeturl['curl_error_no'])
+					if (!empty($tmpgeturl['curl_error_no']))
 					{
 						$error++;
 						setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 						$errorforsubresource++;
 						$action='createcontainer';
 					}
-					elseif ($tmpgeturl['http_code'] != '200')
+					elseif ($tmpgeturl['http_code'] != 200)
 					{
 						$error++;
 						setEventMessages('Error getting script url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
@@ -1053,12 +1053,12 @@ if ($action == 'addcontainer' && $usercanedit) {
 					}
 
 					$tmpgeturl = getURLContent($urltograbbis, 'GET', '', 1, array(), array('http', 'https'), 0);
-					if ($tmpgeturl['curl_error_no']) {
+					if (!empty($tmpgeturl['curl_error_no'])) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['curl_error_msg'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
 						$action = 'createcontainer';
-					} elseif ($tmpgeturl['http_code'] != '200') {
+					} elseif ($tmpgeturl['http_code'] != 200) {
 						$errorforsubresource++;
 						setEventMessages('Error getting link tag url '.$urltograbbis.': '.$tmpgeturl['http_code'], null, 'errors');
 						dol_syslog('Error getting '.$urltograbbis.': '.$tmpgeturl['curl_error_msg']);
@@ -2982,7 +2982,6 @@ if ($action == 'generatesitemaps' && $usercanedit) {
 
 if ($action == 'removecspsource' && $usercanedit) {
 	$db->begin();
-
 	$sourcetype = "";
 	$sourcecsp = explode("_", GETPOST("sourcecsp"));
 	$directive = $sourcecsp[0];
@@ -2994,19 +2993,18 @@ if ($action == 'removecspsource' && $usercanedit) {
 	if (empty($directive)) {
 		$error++;
 	}
-	if ($error || (!isset($sourcekey) && $directivesarray[$directive]["data-directivetype"] != "none")) {
-		$error++;
-	}
 
-	$directivetype = (string) $directivesarray[$directive]["data-directivetype"];
-	if (isset($sourcekey)) {
-		$sourcetype = $sourcesarray[$directivetype][$sourcekey]["data-sourcetype"];
+	if (!empty($directivesarray[$directive])) {
+		$directivetype = (string) $directivesarray[$directive]["data-directivetype"];
+		if (isset($sourcekey)) {
+			$sourcetype = $sourcesarray[$directivetype][$sourcekey]["data-sourcetype"];
+		}
 	}
 
 	$securityspstring = "";
 	if (!$error && !empty($forceCSPArr)) {
 		if (isset($sourcekey) && !empty($forceCSPArr[$directive][$sourcekey])) {
-			if ($sourcetype == "data") {
+			if ($sourcetype == "data" || preg_match('/data/', $sourcekey)) {
 				$keydata = array_search($sourcedata, $forceCSPArr[$directive][$sourcekey]);
 				if ($keydata !== false) {
 					unset($forceCSPArr[$directive][$sourcekey][$keydata]);
@@ -4378,105 +4376,146 @@ if ($action == 'editsecurity') {
 	$head = websiteconfigPrepareHead($object);
 	print dol_get_fiche_head($head, 'security', $langs->trans("General"), -1, 'website');
 
+	print '<span class="opacitymedium">'.$langs->trans("HTTPHeaderEditor").'. '.$langs->trans("ReservedToAdvancedUsers").'.</span><br><br>';
+
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Parameter").'</td>';
+	print '<td>'.$langs->trans("HTTPHeader").'</td>';
 	print '<td></td>'."\n";
 	print '</tr>';
 
 	// Force RP
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceRP'), $langs->trans("Recommended").': "strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured"').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceRP'), 'HTTP Header Referer-Policy<br><br>'.$langs->trans("Recommended").':<br>"strict-origin-when-cross-origin" '.$langs->trans("or").' "same-origin"=more secured"', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCERP').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCERP" id="WEBSITE_'.$object->id.'_SECURITY_FORCERP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCERP").'"></td>';
 	print '</tr>';
 	// Force STS
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceSTS'), $langs->trans("Example").': "max-age=31536000; includeSubDomains"').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceSTS'), 'HTTP Header Strict-Transport-Security<br><br>'.$langs->trans("Example").':<br>"max-age=31536000; includeSubDomains"', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCESTS').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" id="WEBSITE_'.$object->id.'_SECURITY_FORCESTS" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCESTS").'"></td>';
 	print '</tr>';
 	// Force PP
 	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForcePP'), $langs->trans("Example").': "camera=(), microphone=(), geolocation=*"').'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForcePP'), 'HTTP Header Permissions-Policy<br><br>'.$langs->trans("Example").':<br>"camera=(), microphone=(), geolocation=*"', 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCEPP').'</td>';
 	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" id="WEBSITE_'.$object->id.'_SECURITY_FORCEPP" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCEPP").'"></td>';
 	print '</tr>';
 
 	$examplecsprule = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
-	// Force CSPRO
-	print '<tr class="oddeven">';
-	print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceCSPRO'), $langs->trans("Example").": ".$examplecsprule).'</td>';
-	print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSPRO").'"></td>';
-	print '</tr>';
-	print '</table>';
-	print '</div>';
 
-	// Content Security Policy
-	print '<div class="div-table-responsive-no-min">';
-	print '<table class="centpercent">';
-	print '<tr><td>'.$form->textwithpicto($langs->trans('ContentSecurityPolicy'), $langs->trans("Example").": ".$examplecsprule).'</td></tr>';
-	print '<tr><td>'.$langs->trans("Value").':</span></td><td colspan=2><input style="width:90%;" class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"></td></tr>';
-
-	print '<tr><td></td></tr>';
-
-	print '<tr><td></td>';
-	print '<td>'.$form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth300').'</td>';
+	// Force CSP - Content Security Policy
+	print '<tr class="oddeven nohover">';
+	print '<td class="tdtop">'.$form->textwithpicto($langs->trans('ContentSecurityPolicy'), 'HTTP Header Content-Security-Policy<br><br>'.$langs->trans("Example").":<br>".$examplecsprule, 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSP').'</td>';
 	print '<td>';
-	print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
-	foreach ($selectarrayCSPSources as $key => $values) {
-		print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
-		print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", 1, 0, 0, '', 0, 0, 0, '', 'minwidth300 select_WEBSITE_SECURITY_FORCECSP');
+
+	print '<div class="div-table-responsive-no-min">';
+
+	print '<input class="minwidth500 quatrevingtpercent" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
+
+	if (!empty($forceCSP)) {
+		print '<br>';
+
+		print '<div class="">';
+		print img_picto('', 'graph', 'class="pictofixedwidth"').$langs->trans("HierarchicView").'<br>';
+		print '<div id="selectaddcontentsecuritypolicy" class="hidden">';
+		print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPDirective"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth350 inline-block');
+		print ' ';
+		print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
+		foreach ($selectarrayCSPSources as $key => $values) {
+			print '<div class="div_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth350" id="div_'.$key.'_WEBSITE_SECURITY_FORCECSP">';
+			print $form->selectarray("select_".$key."_WEBSITE_SECURITY_FORCECSP", $values, "select_".$key."_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPSource"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth300 inline-block select_WEBSITE_SECURITY_FORCECSP');
+			print '</div>';
+		}
+		print ' ';
+		print '<div class="div_input_data_WEBSITE_SECURITY_FORCECSP hidden inline-block maxwidth200"><input id="input_data_WEBSITE_SECURITY_FORCECSP" name="input_data_WEBSITE_SECURITY_FORCECSP"></div>';
+		print ' ';
+		print '<div class="div_btn_class_WEBSITE_SECURITY_FORCECSP inline-block maxwidth200"><input type="submit" id="btn_WEBSITE_SECURITY_FORCECSP" name="btn_WEBSITE_SECURITY_FORCECSP" class="butAction small smallpaddingimp" value="'.$langs->trans("Add").'" disabled></div>';
+		print '</div>';
+		print '</div>';
+
+		// Content Security Policy list of selected rules
+		print '<div class="div-table-responsive-no-min">';
+		print '<ul>';
+		foreach ($forceCSPArr as $directive => $sources) {
+			print '<li>';
+			if (in_array($directive, array_keys($selectarrayCSPDirectives))) {
+				print '<span>'.$directive.'</span>';
+			} else {
+				print $form->textwithpicto($directive, $langs->trans("UnknowContentSecurityPolicyDirective"), 1, 'warning');
+			}
+			if (!empty($sources)) {
+				print '<ul>';
+				foreach ($sources as $key => $source) {
+					if (is_array($source)) {
+						print '<li><span>'.$key.'</span>';
+						print '<ul>';
+						foreach ($source as $keysource => $sourcedata) {
+							print '<li><span>'.$sourcedata.'</span>&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'_'.$key.'_'.$sourcedata.'&token='.newToken().'">'.img_delete().'</a></li>';
+						}
+						print '</ul>';
+						print '</li>';
+					} else {
+						print '<li><span>'.$source.'</span>&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'_'.$key.'&token='.newToken().'">'.img_delete().'</a></li>';
+					}
+				}
+				print '</ul>';
+			} else {
+				print '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'&token='.newToken().'">'.img_delete().'</a>';
+			}
+			print '</li>';
+		}
+		print '</ul>';
 		print '</div>';
 	}
+	print '</div>';
+
 	print '</td>';
-	print '<td><div class="div_input_data_WEBSITE_SECURITY_FORCECSP hidden"><input id="input_data_WEBSITE_SECURITY_FORCECSP" name="input_data_WEBSITE_SECURITY_FORCECSP"></div></td>';
-	print '<td><div class="div_btn_class_WEBSITE_SECURITY_FORCECSP hidden"><input type="submit" id="btn_WEBSITE_SECURITY_FORCECSP" name="btn_WEBSITE_SECURITY_FORCECSP" class="butAction" value="'.$langs->trans("Add").'"></div></td>';
 	print '</tr>';
+
+	// Force CSPRO
+	if (getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSPRO")) {
+		print '<tr class="oddeven">';
+		print '<td>'.$form->textwithpicto($langs->trans('WebsiteSecurityForceCSPRO'), 'HTTP Header Content-Security-Policy-Report-Only<br><br>'.$langs->trans("Example").":<br>".$examplecsprule, 1, 'help', 'valignmiddle', 0, 3, 'WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO').'</td>';
+		print '<td><input class="minwidth500" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSPRO" value="'.getDolGlobalString("WEBSITE_".$object->id."_SECURITY_FORCECSPRO").'"></td>';
+		print '</tr>';
+	}
+
 	print '</table>';
 	print '</div>';
 
-	// Content Security Policy list of selected rules
-	print '<div class="div-table-responsive-no-min">';
-	print '<ul>';
-	foreach ($forceCSPArr as $directive => $sources) {
-		print '<li><span>'.$directive.'</span>';
-		if (!empty($sources)) {
-			print '<ul>';
-			foreach ($sources as $key => $source) {
-				if (is_array($source)) {
-					print '<li><span>'.$key.'</span>';
-					print '<ul>';
-					foreach ($source as $keysource => $sourcedata) {
-						print '<li><span>'.$sourcedata.'</span>&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'_'.$key.'_'.$sourcedata.'&token='.newToken().'">'.img_delete().'</a></li>';
-					}
-					print '</ul>';
-					print '</li>';
-				} else {
-					print '<li><span>'.$source.'</span>&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'_'.$key.'&token='.newToken().'">'.img_delete().'</a></li>';
-				}
-			}
-			print '</ul>';
-		} else {
-			print '&nbsp;<a href="'.$_SERVER["PHP_SELF"].'?websiteid='.$websiteid.'&action=removecspsource&sourcecsp='.$directive.'&token='.newToken().'">'.img_delete().'</a>';
-		}
-		print '</li>';
-	}
-	print '</ul>';
+
+	print '<div class="center">';
+
+	print '<input type="submit" class="button small" name="updateandstay" value="'.$langs->trans("Save").'">';
+	print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+
 	print '</div>';
+
 
 	print '<script>
 		$(document).ready(function() {
+			$("#btnaddcontentsecuritypolicy").on("click", function(){
+				if($("#selectaddcontentsecuritypolicy").is(":visible")){
+					console.log("We hide select to add Content Security Policy");
+					$("#selectaddcontentsecuritypolicy").hide();
+				} else {
+					console.log("We show select to add Content Security Policy");
+					$("#selectaddcontentsecuritypolicy").show();
+				}
+			});
+
 			$("#select_identifier_WEBSITE_SECURITY_FORCECSP").on("change", function() {
 				key = $(this).find(":selected").data("directivetype");
 				console.log("We hide all select div");
 				$(".div_WEBSITE_SECURITY_FORCECSP").hide();
 				$(".select_WEBSITE_SECURITY_FORCECSP").val(null).trigger("change");
 				$(".div_input_data_WEBSITE_SECURITY_FORCECSP").hide();
-				$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+				$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",true);
 				if (key == "none"){
-					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").show();
+					$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",false);
 				} else {
 					console.log("We show div select with key "+key);
-					$("#div_"+key+"_WEBSITE_SECURITY_FORCECSP").show();
+					$("#div_"+key+"_WEBSITE_SECURITY_FORCECSP").css("display", "inline-block");
 				}
 			});
 
@@ -4485,14 +4524,14 @@ if ($action == 'editsecurity') {
 				$("#select_source_WEBSITE_SECURITY_FORCECSP").val($(this).val());
 				console.log("We hide and show fields");
 				if (keysource == "data" || keysource == "input") {
-					$(".div_input_data_WEBSITE_SECURITY_FORCECSP").show();
+					$(".div_input_data_WEBSITE_SECURITY_FORCECSP").css("display", "inline-block");
 				} else {
 				 	$("#input_data_WEBSITE_SECURITY_FORCECSP").val("");
 					$(".div_input_data_WEBSITE_SECURITY_FORCECSP").hide();
 					if (keysource != undefined) {
-						$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").show();
+						$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",false);
 					} else {
-						$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+						$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",true);
 					}
 				}
 			});
@@ -4500,10 +4539,10 @@ if ($action == 'editsecurity') {
 			$("#input_data_WEBSITE_SECURITY_FORCECSP").on("change", function(){
 				if ($(this).val() != undefined) {
 					console.log("We show add button");
-					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").show();
+					$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",false);
 				} else {
 					console.log("We hide add button");
-					$(".div_btn_class_WEBSITE_SECURITY_FORCECSP").hide();
+					$("#btn_WEBSITE_SECURITY_FORCECSP").prop("disabled",true);
 				}
 			});
 		});

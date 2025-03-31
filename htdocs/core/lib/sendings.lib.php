@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -273,6 +273,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print load_fiche_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 			}
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="liste centpercent">';
 			print '<tr class="liste_titre">';
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
@@ -310,7 +311,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<tr class="oddeven">';
 
 				// Sending id
-				print '<td class="nowrap left">';
+				print '<td class="tdoverflowmax125">';
 				print $expedition->getNomUrl(1);
 				//print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
@@ -357,7 +358,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
@@ -378,7 +379,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text, $objp->description, 3, 0, '', $i);
+						print $form->textwithtooltip($text, $objp->description, 3, 0, '', (string) $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
@@ -401,7 +402,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Warehouse
 				if (isModEnabled('stock')) {
-					print '<td>';
+					print '<td class="tdoverflowmax125">';
 					if ($objp->warehouse_id > 0) {
 						$warehousestatic->fetch($objp->warehouse_id);
 						print $warehousestatic->getNomUrl(1);
@@ -444,7 +445,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Information on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
+					$expedition->fetchObjectLinked($expedition->id, $expedition->element, null, 'delivery');
 					//var_dump($expedition->linkedObjects);
 
 					$receiving = '';
@@ -461,7 +462,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 						// Ref
 						print '<td>';
-						print $receiving->getNomUrl($db);
+						print $receiving->getNomUrl(1);
 						//print '<a href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
@@ -485,6 +486,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			}
 
 			print '</table>';
+			print '</div>';
 		}
 		$db->free($resql);
 	} else {

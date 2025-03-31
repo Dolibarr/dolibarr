@@ -93,6 +93,7 @@ AllOrders=All orders
 NbOfOrders=Number of orders
 OrdersStatistics=Order's statistics
 OrdersStatisticsSuppliers=Purchase order statistics
+NumberOfOrders=Number of orders
 NumberOfOrdersByMonth=Number of orders by month
 AmountOfOrders=Amount of orders
 AmountOfOrdersHT=Amount of orders (excl. tax)

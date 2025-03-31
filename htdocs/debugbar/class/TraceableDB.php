@@ -381,7 +381,7 @@ class TraceableDB extends DoliDB
 	 * End query tracing
 	 *
 	 * @param      string   $sql       query string
-	 * @param      string   $resql     query result
+	 * @param      mysqli_result|bool|resource   $resql     query result
 	 * @return     void
 	 */
 	protected function endTracing($sql, $resql)

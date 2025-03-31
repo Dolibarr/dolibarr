@@ -527,7 +527,7 @@ class SMTPs
 
 		$hosth = $host;	// so for example 'localhost' or 'smtp-relay.gmail.com'
 
-		if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {
+		if (getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO')) {	// Note that default value is forced to MAIL_SMTP_USE_FROM_FOR_HELO=2 if not set
 			if (!is_numeric(getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO'))) {
 				// If value of MAIL_SMTP_USE_FROM_FOR_HELO is a string, we use it as domain name
 				$hosth = getDolGlobalString('MAIL_SMTP_USE_FROM_FOR_HELO');
@@ -890,7 +890,6 @@ class SMTPs
 	 *
 	 * @param string $_path Path to the sendmail executable
 	 * @return boolean
-	 *
 	 */
 	public function setMailPath($_path)
 	{
@@ -1086,7 +1085,6 @@ class SMTPs
 	 *
 	 * @param string $_strTransEncodeType Content-Transfer-Encoding
 	 * @return void
-	 *
 	 */
 	public function setTransEncodeType($_strTransEncodeType)
 	{
@@ -1230,7 +1228,6 @@ class SMTPs
 	 * @param 	string 	$_type 			TO, CC, or BCC lists to add addrresses into
 	 * @param 	mixed 	$_addrList 		Array or COMMA delimited string of addresses
 	 * @return void
-	 *
 	 */
 	private function _buildAddrList($_type, $_addrList)
 	{
@@ -2300,5 +2297,4 @@ class SMTPs
  * Revision 1.1  2005/03/01 19:22:49  walter
  *  - initial commit
  *  - basic shell with some comments
- *
  */

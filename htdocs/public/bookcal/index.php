@@ -54,11 +54,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
  */
+
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
 $action = GETPOST('action', 'aZ09');
@@ -305,6 +309,14 @@ if ($action == 'add') {	// Test on permission not required here (anonymous actio
  */
 
 $form = new Form($db);
+
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+// TODO Replace DOL_URL_ROOT with $urlwithroot ?
+
 
 llxHeaderVierge('BookingCalendar');
 

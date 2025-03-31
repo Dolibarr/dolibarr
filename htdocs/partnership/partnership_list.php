@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021		NextGestion			<contact@nextgestion.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -1040,7 +1040,7 @@ while ($i < $imaxinloop) {
 				} else {
 					if ($adherent->subscription == 'yes') {
 						print $langs->trans("SubscriptionNotReceived");
-						if ($adherent->statut > 0) {
+						if ($adherent->status > 0) {
 							print " ".img_warning();
 						}
 					} else {

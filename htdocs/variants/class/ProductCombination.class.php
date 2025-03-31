@@ -3,7 +3,7 @@
  * Copyright (C) 2018		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -577,7 +577,6 @@ class ProductCombination
 						} else {
 							$new_price += $variation_price;
 						}
-
 						$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, $i, $new_npr, $new_psq, 0, array(), $parent->default_vat_code);
 
 						if ($ret < 0) {
@@ -607,7 +606,7 @@ class ProductCombination
 					$new_price += $this->variation_price;
 				}
 
-				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq);
+				$ret = $child->updatePrice($new_price, $new_type, $user, $new_vat, $new_min_price, 1, $new_npr, $new_psq, 0, [], $parent->default_vat_code);
 
 				if ($ret < 0) {
 					$this->db->rollback();

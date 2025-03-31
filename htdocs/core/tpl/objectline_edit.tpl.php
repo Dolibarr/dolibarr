@@ -7,7 +7,7 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2018-2024	Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2022		OpenDSI				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Alexandre Spangaro  <alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,9 +43,11 @@
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ * @var Societe $seller
+ * @var Societe $buyer
  */
 
- // Protection to avoid direct call of template
+// Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {
 	print "Error, template page can't be called as URL";
 	exit(1);
@@ -54,8 +56,8 @@ if (empty($object) || !is_object($object)) {
 '
 @phan-var-force Propal|Contrat|Commande|Facture|Expedition|Delivery|FactureFournisseur|FactureFournisseur|SupplierProposal $object
 @phan-var-force PropaleLigne|ContratLigne|CommonObjectLine|CommonInvoiceLine|CommonOrderLine|ExpeditionLigne|DeliveryLine|FactureFournisseurLigneRec|SupplierInvoiceLine|SupplierProposalLine $line
-@phan-var-force ThirdParty $seller
-@phan-var-force ThirdParty $buyer
+@phan-var-force Societe $seller
+@phan-var-force Societe $buyer
 @phan-var-force string $var
 ';
 
@@ -191,7 +193,7 @@ $coldisplay++;
 
 	//Line extrafield
 	if (!empty($extrafields)) {
-		$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', 1, 'line');
+		$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', '1', 'line');
 		if (!empty($temps)) {
 			print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 			print $temps;
@@ -234,7 +236,7 @@ $coldisplay++;
 	}
 	if (!$situationinvoicelinewithparent) {
 		print '<td class="right">';
-		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, $type_tva);
+		print $form->load_tva('tva_tx', GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : ($line->tva_tx.($line->vat_src_code ? (' ('.$line->vat_src_code.')') : '')), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1, (int) $type_tva);
 		print '</td>';
 	} else {
 		print '<td class="right"><input size="1" type="text" class="flat right" name="tva_tx" value="'.price($line->tva_tx).'" readonly />%</td>';

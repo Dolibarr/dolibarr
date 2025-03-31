@@ -1217,10 +1217,10 @@ textarea.centpercent {
 	text-align: justify;
 }
 .pull-left {
-	float: left!important;
+	float: <?php echo $left; ?> !important;
 }
 .pull-right {
-	float: right!important;
+	float: <?php echo $right; ?> !important;
 }
 .nowrap {
 	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
@@ -1251,7 +1251,7 @@ textarea.centpercent {
 	word-break: break-word !important;
 }
 .wordbreak {
-	word-break: break-word;	/* cut fist between word, inside word if not possible */
+	word-break: break-word;	/* cut first between word, inside word if not possible */
 }
 .wordbreakall {
 	word-break: break-all;
@@ -1345,6 +1345,9 @@ td.wordbreak img, td.wordbreakimp img {
 }
 .marginright2 {
 	margin-<?php print $right; ?>: 2px;
+}
+.marginleftlarge {
+	margin-<?php print $left; ?>: 20px !important;
 }
 .paddinglarge {
 	padding: 6px !important;
@@ -2157,7 +2160,7 @@ tr.nobottom td {
 .maxwidth40  { max-width: 40px; }
 .maxwidth50  { max-width: 50px; }
 .maxwidth75  { max-width: 75px; }
-.maxwidthdate  { max-width: 85px; }
+.maxwidthdate  { max-width: 95px; }
 .maxwidth100 { max-width: 100px; }
 .maxwidth125 { max-width: 125px; }
 .maxwidth150 { max-width: 150px; }
@@ -4981,7 +4984,7 @@ tr.liste_titre:last-child th.liste_titre, tr.liste_titre:last-child th.liste_tit
 	/* border-bottom: 1px solid var(--colortopbordertitle1); */
 	border-bottom: none;
 }
-tr.liste_titre_filter th.liste_titre { text-align: unset; }
+tr.liste_titre_filter th.liste_titre:not(.center) { text-align: unset; }
 
 /*
 div.liste_titre {
@@ -5063,7 +5066,7 @@ div.tabBar .noborder {
 }
 div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
-	padding-top: 8px !important;
+	padding-top: 6px !important;
 	padding-bottom: 0px !important;
 }
 
@@ -6321,11 +6324,15 @@ table.jPicker tr:first-of-type td {
 	width: unset !important;
 	height: 50% !important;
 }
+.jPicker div[class="Map"] {
+	max-width: 150px;
+}
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
+	width: 300px !important;
 }
 .jPicker .Grid {
 	background-image: unset !important;
@@ -6338,9 +6345,6 @@ table.jPicker {
 }
 .jPicker td.Text {
 	white-space: nowrap;
-}
-.jPicker td.Text input {
-	height: 1em !important;
 }
 .jPicker .Preview div {
 	height: 36px !important;
@@ -8443,12 +8447,37 @@ table.jPicker {
 }
 
 
+
+/* ============================================================================== */
+/* CSS style used for AI                                                   */
+/* ============================================================================== */
+
+.ai_dropdown {
+	min-width: 400px !important;
+	padding: 12px;
+	left: inherit !important;
+	top: inherit !important;
+	border-radius: 5px !important;
+}
+.ai_feature {
+	background-color: var(--colorbackgrey);
+	padding: 10px;
+	padding-bottom: 6px;
+	padding-top: 6px;
+	border-radius: 5px;
+}
+
+
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
 @media only screen and (max-width: 767px)
 {
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
 
 	#tooltip {
@@ -8742,6 +8771,7 @@ include dol_buildpath($path.'/theme/eldy/emaillayout.inc.php', 0); // actually m
 include dol_buildpath($path.'/theme/'.$theme.'/info-box.inc.php', 0);
 include dol_buildpath($path.'/theme/'.$theme.'/progress.inc.php', 0);
 include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md use same style as eldy theme
+include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
 	print $conf->global->THEME_CUSTOM_CSS;

@@ -214,6 +214,11 @@ if ($object->id > 0) {
 $usercanread   = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'lire')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'lire')));
 $usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 $usercandelete = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'supprimer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'supprimer')));
+$permissiontoeditextra = $usercancreate;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -489,18 +494,19 @@ if (empty($reshook)) {
 	}
 
 	// Quick edit for extrafields
-	if ($action == 'update_extras' && $usercancreate) {
-		$object->oldcopy = dol_clone($object, 2);
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
+
+		$attribute_name = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			$result = $object->insertExtraFields('PRODUCT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'PRODUCT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -530,6 +536,12 @@ if (empty($reshook)) {
 		}
 		if (!empty($duration_value) && empty($duration_unit)) {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentities('Unit')), null, 'errors');
+			$action = "create";
+			$error++;
+		}
+		$stockable_product = (int) ($type == 0 || ($type == 1 && !empty($conf->global->STOCK_SUPPORTS_SERVICES)));
+		if (GETPOST('status_batch') && $stockable_product == 0 && isModEnabled('stock') && isModEnabled('productbatch')) {
+			setEventMessages($langs->trans('ErrorBatchesNeedStockManagement', $langs->transnoentities('Unit')), null, 'errors');
 			$action = "create";
 			$error++;
 		}
@@ -659,6 +671,8 @@ if (empty($reshook)) {
 				$object->fk_unit = null;
 			}
 
+			$object->stockable_product = $stockable_product;
+
 			$accountancy_code_sell = GETPOST('accountancy_code_sell', 'alpha');
 			$accountancy_code_sell_intra = GETPOST('accountancy_code_sell_intra', 'alpha');
 			$accountancy_code_sell_export = GETPOST('accountancy_code_sell_export', 'alpha');
@@ -774,8 +788,8 @@ if (empty($reshook)) {
 			$action = '';
 		} else {
 			if ($object->id > 0) {
-				//Need dol_clone methode 1 (same object class) because update product use hasbatch() method on oldcopy
-				$object->oldcopy = dol_clone($object, 1);
+				// Need dol_clone methode 1 (same object class) because update product use hasbatch() method on oldcopy
+				$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 				if (!getDolGlobalString('PRODUCT_GENERATE_REF_AFTER_FORM')) {
 					$object->ref                = (string) $ref;
@@ -838,6 +852,9 @@ if (empty($reshook)) {
 				} else {
 					$object->fk_default_bom = 0;
 				}
+
+				// managed_in_stock
+				$object->stockable_product   = (int) GETPOSTISSET('stockable_product');
 
 				$units = GETPOSTINT('units');
 				if ($units > 0) {
@@ -1730,8 +1747,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			}
 
 			// Custom code
-			if (!getDolGlobalString('PRODUCT_DISABLE_CUSTOM_INFO') && empty($type)) {
-				print '<tr><td class="wordbreak">'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td></tr>';
+			if (!getDolGlobalString('PRODUCT_DISABLE_CUSTOMS_INFO') && empty($type)) {
+				print '<tr><td class="wordbreak">'.$form->textwithpicto($langs->trans("CustomsCode"), $langs->trans("CustomsCodeHelp")).'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.GETPOST('customcode').'"></td></tr>';
 
 				// Origin country
 				print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
@@ -2086,7 +2103,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								$(document).ready(function() {
 									console.log($("#statusBatchWarning"))
 									$("#status_batch").on("change", function() {
-										if ($("#status_batch")[0].value == 0){
+										if ($("#status_batch")[0].value == 0) {
 											$("#statusBatchMouvToGlobal").show()
 										} else {
 											$("#statusBatchMouvToGlobal").hide()
@@ -2100,7 +2117,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 								$(document).ready(function() {
 									console.log($("#statusBatchWarning"))
 									$("#status_batch").on("change", function() {
-										if ($("#status_batch")[0].value == 2){
+										if ($("#status_batch")[0].value == 2) {
 											$("#statusBatchWarning").show()
 										} else {
 											$("#statusBatchWarning").hide()
@@ -2240,13 +2257,22 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				// Stock
 				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
+					if (isModEnabled('productbatch') && $object->hasbatch()) {
+						print '<tr><td><input type="hidden" id="stockable_product" name="stockable_product" value="on" /></td><td></td></tr>';
+					} else {
+						print '<tr><td><label for="stockable_product">' . $langs->trans("StockableProduct") . '</label></td>';
+						$checked = empty($object->stockable_product) ? "" : "checked";
+						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" '. $checked . ' /></td></tr>';
+					}
+
 					// Default warehouse
-					print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+					print '<tr class="showifstockable'.(empty($object->stockable_product) ? ' hidden' : '').'"><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
 					print img_picto($langs->trans("DefaultWarehouse"), 'stock', 'class="pictofixedwidth"');
-					print $formproduct->selectWarehouses((GETPOSTISSET('fk_default_warehouse') ? GETPOST('fk_default_warehouse') : $object->fk_default_warehouse), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
+					print $formproduct->selectWarehouses((GETPOSTISSET('fk_default_warehouse') ? GETPOST('fk_default_warehouse') : $object->fk_default_warehouse), 'fk_default_warehouse', 'warehouseopen', 1, 0, 0, '', 0, 0, array(), 'minwidth200 maxwidth500 widthcentpercentminusxx');
 					print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=edit&id='.((int) $object->id)).'">';
 					print '<span class="fa fa-plus-circle valignmiddle paddingleft" title="'.$langs->trans("AddWarehouse").'"></span></a>';
 					print '</td></tr>';
+
 					/*
 					print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
 					print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
@@ -2294,6 +2320,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</label>';
 
 					print '</td></tr>';
+
+					if (isModEnabled('stock') && getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
+						print '<tr><td>' . $langs->trans("StockableProduct") . '</td>';
+						$checked = $object->stockable_product == 1 ? "checked" : "";
+						print '<td><input type="checkbox" id="stockable_product" name="stockable_product" ' . $checked . ' /></td></tr>';
+					}
 				} else {
 					if (!getDolGlobalString('PRODUCT_DISABLE_NATURE')) {
 						// Nature
@@ -2306,6 +2338,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if (!$object->isService() && isModEnabled('bom')) {
 					print '<tr><td>'.$form->textwithpicto($langs->trans("DefaultBOM"), $langs->trans("DefaultBOMDesc", $langs->transnoentitiesnoconv("Finished"))).'</td><td>';
 					$bomkey = "Bom:bom/class/bom.class.php:0:(t.status:=:1) AND (t.fk_product:=:".((int) $object->id).')';
+					print img_picto($langs->trans("DefaultBOM"), 'bom', 'class="pictofixedwidth"');
 					print $form->selectForForms($bomkey, 'fk_default_bom', (GETPOSTISSET('fk_default_bom') ? GETPOST('fk_default_bom') : $object->fk_default_bom), 1);
 					print '</td></tr>';
 				}
@@ -2359,9 +2392,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
-				// Custom code
-				if (!$object->isService() && !getDolGlobalString('PRODUCT_DISABLE_CUSTOM_INFO')) {
-					print '<tr><td class="wordbreak">'.$langs->trans("CustomCode").'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.(GETPOSTISSET('customcode') ? GETPOST('customcode') : $object->customcode).'"></td></tr>';
+				// Customs code
+				if (!$object->isService() && !getDolGlobalString('PRODUCT_DISABLE_CUSTOMS_INFO')) {
+					print '<tr><td class="wordbreak">'.$form->textwithpicto($langs->trans("CustomsCode"), $langs->trans("CustomsCodeHelp")).'</td><td><input name="customcode" class="maxwidth100onsmartphone" value="'.(GETPOSTISSET('customcode') ? GETPOST('customcode') : $object->customcode).'"></td></tr>';
 					// Origin country
 					print '<tr><td>'.$langs->trans("CountryOrigin").'</td>';
 					print '<td>';
@@ -2435,11 +2468,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				print '</table>';
 
-				print '<br>';
-
-				print '<table class="border centpercent">';
-
 				if (!getDolGlobalString('PRODUCT_DISABLE_ACCOUNTING')) {
+					print '<hr>';
+
+					print '<table class="border centpercent">';
+
 					if (isModEnabled('accounting')) {
 						/** @var FormAccounting $formaccounting */
 						// Accountancy_code_sell
@@ -2517,9 +2550,20 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						print '<td><input name="accountancy_code_buy_export" class="maxwidth200" value="'.(GETPOSTISSET('accountancy_code_buy_export') ? GETPOST('accountancy_code_buy_export') : $object->accountancy_code_buy_export).'">';
 						print '</td></tr>';
 					}
+
+					print '</table>';
 				}
-				print '</table>';
 			}
+
+			print '<script>';
+			print '$(document).ready(function() {
+            	$("#stockable_product").change(function() {
+	                $(".showifstockable").toggle(this.checked);
+    	        });
+        	});';
+
+			print '</script>';
+
 
 			print dol_get_fiche_end();
 
@@ -2759,14 +2803,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</td></tr>';
 				}
 
-				// Default warehouse
+				// Stockable product / default warehouse
 				if (($object->isProduct() || getDolGlobalInt('STOCK_SUPPORTS_SERVICES')) && isModEnabled('stock')) {
-					$warehouse = new Entrepot($db);
-					$warehouse->fetch($object->fk_default_warehouse);
+					print '<tr><td>' . $form->textwithpicto($langs->trans("StockableProduct"), $langs->trans('StockableProductDescription')) . '</td>';
+					print '<td><input type="checkbox" readonly disabled '.($object->stockable_product == 1 ? 'checked' : '').'></td></tr>';
 
-					print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
-					print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
-					print '</td>';
+					if ($object->isStockManaged()) {
+						$warehouse = new Entrepot($db);
+						$warehouse->fetch($object->fk_default_warehouse);
+
+						print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+						print(!empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+						print '</td>';
+					}
 				}
 
 				if ($object->isService() && isModEnabled('workstation')) {
@@ -2794,10 +2843,11 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				print '</table>';
+
 				print '</div>';
 				print '<div class="fichehalfright">';
-
 				print '<div class="underbanner clearboth"></div>';
+
 				print '<table class="border tableforfield centpercent">';
 
 				if ($object->isService()) {
@@ -2881,23 +2931,18 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						}
 						print "</td></tr>\n";
 					}
-					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE')) {
-						// Brut Surface
-						print '<tr><td>'.$langs->trans("Surface").'</td><td>';
-						if ($object->surface != '') {
+					if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') || !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
+						// Brut Surface / Volume
+						print '<tr><td>';
+						print (getDolGlobalString('PRODUCT_DISABLE_SURFACE') ? '' : $langs->trans("Surface"));
+						print (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && !getDolGlobalString('PRODUCT_DISABLE_VOLUME')) ? ' / ' : '';
+						print (getDolGlobalString('PRODUCT_DISABLE_VOLUME') ? '' : $langs->trans("Volume")).'</td><td>';
+						if (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && $object->surface != '') {
 							print $object->surface." ".measuringUnitString(0, "surface", $object->surface_units);
-						} else {
-							print '&nbsp;';
 						}
-						print "</td></tr>\n";
-					}
-					if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME')) {
-						// Brut Volume
-						print '<tr><td>'.$langs->trans("Volume").'</td><td>';
-						if ($object->volume != '') {
+						print (!getDolGlobalString('PRODUCT_DISABLE_SURFACE') && !getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $object->surface && $object->volume) ? ' / ' : '';
+						if (!getDolGlobalString('PRODUCT_DISABLE_VOLUME') && $object->volume != '') {
 							print $object->volume." ".measuringUnitString(0, "volume", $object->volume_units);
-						} else {
-							print '&nbsp;';
 						}
 						print "</td></tr>\n";
 					}
@@ -2926,8 +2971,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				}
 
 				// Custom code
-				if (!$object->isService() && !getDolGlobalString('PRODUCT_DISABLE_CUSTOM_INFO')) {
-					print '<tr><td>'.$langs->trans("CustomCode").'</td><td>'.$object->customcode.'</td></tr>';
+				if (!$object->isService() && !getDolGlobalString('PRODUCT_DISABLE_CUSTOMS_INFO')) {
+					print '<tr><td>'.$form->textwithpicto($langs->trans("CustomsCode"), $langs->trans("CustomsCodeHelp")).'</td><td>'.dolPrintHTML($object->customcode).'</td></tr>';
 
 					// Origin country code
 					print '<tr><td>'.$langs->trans("Origin").'</td><td>'.getCountry($object->country_id, '', $db);

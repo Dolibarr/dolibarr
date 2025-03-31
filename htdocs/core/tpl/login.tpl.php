@@ -32,6 +32,8 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var Translate $langs
  * @var User $user
  *
+ * @var string $dolibarr_main_force_https
+ *
  * @var string $captcha
  *
  * @var int<0,1> $dol_hide_leftmenu
@@ -166,7 +168,7 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 	// Set a cookie to transfer rollback page information
 	$prefix = dol_getprefix('');
 	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
-		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
 
 	// Auto redirect if OpenID Connect is the only authentication

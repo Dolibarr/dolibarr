@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
@@ -154,7 +154,7 @@ if (!isModEnabled('multicompany')) {
 
 	foreach ($listofentities as $entityid => $entitycursor) {
 		// Check if the user has the right to access the entity
-		if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')	&& !empty($user->entity) && $mc->checkRight($user->id, $entityid) < 0) {
+		if (getDolGlobalInt('MULTICOMPANY_TRANSVERSE_MODE')	&& !empty($user->entity) && $mc->checkRight($user->id, (string) $entityid) < 0) {
 			continue;
 		}
 		$url = DOL_URL_ROOT.'/core/multicompany_page.php?action=switchentity&token='.newToken().'&entity='.((int) $entityid).($backtourl ? '&backtourl='.urlencode($backtourl) : '');

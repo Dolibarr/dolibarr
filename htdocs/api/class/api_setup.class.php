@@ -1582,7 +1582,6 @@ class Setup extends DolibarrApi
 		$pos = $request_data['pos'];
 		$moreparams = array();
 
-		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
 		if (0 > $extrafields->updateExtraField($attrname, $label, $type, (int) $pos, $size, $elementtype, (int) $unique, (int) $required, $default_value, $param, (int) $alwayseditable, $perms, $list, $help, $computed, (string) $entity, $langfile, (string) $enabled, (int) $totalizable, (int) $printable, $moreparams)) {
 			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
@@ -2556,7 +2555,7 @@ class Setup extends DolibarrApi
 			$xmlarray = getURLContent($xmlremote, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only. Same is used into filecheck.php.
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
-			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
+			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != 400 && $xmlarray['http_code'] != 404) {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
 				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);

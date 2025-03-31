@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010	    Pierre Morin            <pierre.morin@auguria.net>
  * Copyright (C) 2013       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024       MDW                     <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -91,7 +91,7 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 
 	$ecmdir = new EcmDirectory($db);
 	if ($section > 0) {
-		$result = $ecmdir->fetch($section);
+		$result = $ecmdir->fetch((int) $section);
 		//if (!($result > 0)) {
 		//dol_print_error($db,$ecmdir->error);
 		//exit;
@@ -398,7 +398,7 @@ if ($type == 'directory') {
 			$textifempty = ($showonrightsize == 'featurenotyetavailable' ? $langs->trans("FeatureNotYetAvailable") : $langs->trans("ECMSelectASection"));
 		}
 
-		$useinecm = null;
+		$useinecm = 0;
 		if ($module == 'medias') {
 			$useinecm = 6;
 			$modulepart = 'medias';

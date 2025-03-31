@@ -8,12 +8,12 @@
  * Copyright (C) 2013-2022	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016  Marcos García			<marcosgdf@gmail.com>
- * Copyright (C) 2016-2023	Alexandre Spangaro		<aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Ferran Marcet	        <fmarcet@2byte.es>
  * Copyright (C) 2022       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
@@ -132,7 +133,7 @@ $result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture', 
 // Common permissions
 $usercanread = ($user->hasRight("fournisseur", "facture", "lire") || $user->hasRight("supplier_invoice", "lire"));
 $usercancreate = ($user->hasRight("fournisseur", "facture", "creer") || $user->hasRight("supplier_invoice", "creer"));
-$usercandelete = ($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer"));
+$usercandelete = (($user->hasRight("fournisseur", "facture", "supprimer") || $user->hasRight("supplier_invoice", "supprimer")) || ($usercancreate && $object->is_erasable() == 1));
 $usercancreatecontract = $user->hasRight("contrat", "creer");
 
 // Advanced permissions
@@ -145,6 +146,11 @@ $permissiondellink = $usercancreate; // Used by the include of actions_dellink.i
 $permissiontoedit = $usercancreate; // Used by the include of actions_lineupdown.inc.php
 $permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $usercandelete;
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $error = 0;
 
@@ -247,13 +253,20 @@ if (empty($reshook)) {
 
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
+				if (isModEnabled('category')) {
+					$categories = GETPOST('categories', 'array');
+					if (method_exists($object, 'setCategories')) {
+						$object->setCategories($categories);
+					}
+				}
+
 				$db->commit();
 
 				// Define output language
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -279,7 +292,7 @@ if (empty($reshook)) {
 
 		$isErasable = $object->is_erasable();
 
-		if (($usercandelete && $isErasable > 0) || ($usercancreate && $isErasable == 1)) {
+		if ($usercandelete && $isErasable > 0) {
 			$revertstock = GETPOST('revertstock');
 
 			if ($revertstock) {
@@ -396,7 +409,7 @@ if (empty($reshook)) {
 			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -454,6 +467,8 @@ if (empty($reshook)) {
 	} elseif ($action == 'set_incoterms' && isModEnabled('incoterm') && $usercancreate) {
 		// Set incoterm
 		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
+	} elseif ($action == 'settags' && isModEnabled('category')) {		// Set tags
+		$result = $object->setCategories(GETPOST('categories', 'array'));
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// payment mode
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
@@ -570,7 +585,7 @@ if (empty($reshook)) {
 		if (empty($error) && !getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1230,7 +1245,7 @@ if (empty($reshook)) {
 									}
 								}
 
-								$amount_ttc_diff = $amountdeposit[0];
+								$amount_ttc_diff = array_key_exists(0, $amountdeposit) ? $amountdeposit[0] : 0;
 							}
 
 							foreach ($amountdeposit as $tva => $amount) {
@@ -1581,7 +1596,7 @@ if (empty($reshook)) {
 
 		// Set if we used free entry or predefined product
 		$predef = '';
-		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
+		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$date_start = dol_mktime(GETPOSTINT('date_start'.$predef.'hour'), GETPOSTINT('date_start'.$predef.'min'), GETPOSTINT('date_start'.$predef.'sec'), GETPOSTINT('date_start'.$predef.'month'), GETPOSTINT('date_start'.$predef.'day'), GETPOSTINT('date_start'.$predef.'year'));
 		$date_end = dol_mktime(GETPOSTINT('date_end'.$predef.'hour'), GETPOSTINT('date_end'.$predef.'min'), GETPOSTINT('date_end'.$predef.'sec'), GETPOSTINT('date_end'.$predef.'month'), GETPOSTINT('date_end'.$predef.'day'), GETPOSTINT('date_end'.$predef.'year'));
 
@@ -1722,7 +1737,7 @@ if (empty($reshook)) {
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (empty($newlang)) {
@@ -1741,15 +1756,12 @@ if (empty($reshook)) {
 					$desc = $productsupplier->desc_supplier;
 				}
 
-				//If text set in desc is the same as product descpription (as now it's preloaded) we add it only one time
-				if (trim($product_desc) == trim($desc) && getDolGlobalString('PRODUIT_AUTOFILL_DESC')) {
-					$product_desc = '';
-				}
-				if (!empty($product_desc) && getDolGlobalString('MAIN_NO_CONCAT_DESCRIPTION')) {
-					$desc = $product_desc;
-				}
-				if (!empty($product_desc) && trim($product_desc) != trim($desc)) {
-					$desc = dol_concatdesc($desc, $product_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
+					// 'DoNotAutofillButAutoConcat'
+					$desc = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+				} else {
+					//'AutoFillFormFieldBeforeSubmit' or 'DoNotUseDescriptionOfProdut' => User has already done the modification they want
+					$desc = $line_desc;
 				}
 
 				$ref_supplier = $productsupplier->ref_supplier;
@@ -1839,7 +1851,7 @@ if (empty($reshook)) {
 			$tva_npr = (preg_match('/\*/', $tva_tx) ? 1 : 0);
 			$tva_tx = str_replace('*', '', $tva_tx);
 			$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
-			$desc = $product_desc;
+			$desc = $line_desc;
 			$type = GETPOSTINT('type');
 			$ref_supplier = GETPOST('fourn_ref', 'alpha');
 
@@ -1862,7 +1874,7 @@ if (empty($reshook)) {
 			$price_base_type = 'HT';
 			$pu_devise = price2num($price_ht_devise, 'CU');
 
-			$result = $object->addline($product_desc, (float) $pu_ht, (float) $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
+			$result = $object->addline($line_desc, (float) $pu_ht, (float) $tva_tx, $localtax1_tx, $localtax2_tx, (float) $qty, 0, $remise_percent, $date_start, $date_end, 0, $tva_npr, $price_base_type, $type, -1, 0, $array_options, $fk_unit, 0, (float) $pu_devise, $ref_supplier);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -1873,7 +1885,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1973,7 +1985,7 @@ if (empty($reshook)) {
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -2037,21 +2049,22 @@ if (empty($reshook)) {
 			exit;
 		}
 	}
-	if ($action == 'update_extras' && $usercancreate) {
-		$object->oldcopy = dol_clone($object, 2);
+	if ($action == 'update_extras' && $permissiontoeditextra) {
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
-		// Fill array 'array_options' with data from add form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
-		// Actions on extra fields
 		if (!$error) {
-			$result = $object->insertExtraFields('BILL_SUPPLIER_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'BILL_SUPPLIER_MODIFY');
 			if ($result < 0) {
-				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
 			}
 		}
 
@@ -2841,6 +2854,15 @@ if ($action == 'create') {
 			print $object->showOptionals($extrafields, 'create');
 		}
 
+		// Categories
+		if (isModEnabled("category")) {
+			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_INVOICE, '', 'parent', 64, 0, 1);
+			$arrayselected = GETPOST('categories', 'array');
+			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print "</td></tr>";
+		}
+
 		// Public note
 		print '<tr><td>'.$langs->trans('NotePublic').'</td>';
 		print '<td>';
@@ -3552,6 +3574,41 @@ if ($action == 'create') {
 				print '</td></tr>';
 			}
 
+			// Categories
+			if (isModEnabled('category')) {
+				print '<tr><td>';
+				print '<table class="nobordernopadding centpercent"><tr><td>';
+				print $langs->trans("Categories");
+				print '<td><td class="right">';
+				if ($usercancreate) {
+					print '<a class="editfielda" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$object->id.'&action=edittags&token='.newToken().'">'.img_edit().'</a>';
+				} else {
+					print '&nbsp;';
+				}
+				print '</td></tr></table>';
+				print '</td>';
+				print '<td>';
+				$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER_INVOICE, '', 'parent', 64, 0, 1);
+				if ($action == 'edittags') {
+					print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+					print '<input type="hidden" name="action" value="settags">';
+					print '<input type="hidden" name="token" value="'.newToken().'">';
+					$c = new Categorie($db);
+					$cats = $c->containing($object->id, Categorie::TYPE_SUPPLIER_INVOICE);
+					$arrayselected = [];
+					foreach ($cats as $cat) {
+						$arrayselected[] = $cat->id;
+					}
+					print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+					print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					print '</form>';
+				} else {
+					print $form->showCategories($object->id, Categorie::TYPE_SUPPLIER_INVOICE, 1);
+				}
+				print "</td></tr>";
+			}
+
+
 			// Other attributes
 			$cols = 2;
 			if ($object->status != $object::STATUS_DRAFT) {
@@ -4175,8 +4232,9 @@ if ($action == 'create') {
 				}
 
 				// Delete
-				$isErasable = $object->is_erasable();
-				if ($action != 'confirm_edit' && ($usercandelete || ($usercancreate && $isErasable == 1))) {	// isErasable = 1 means draft with temporary ref (draft can always be deleted with no need of permissions)
+				if ($action != 'confirm_edit' && $usercandelete) {
+					$isErasable = $object->is_erasable();
+
 					$enableDelete = false;
 					$htmltooltip = '';
 					$params = (empty($conf->use_javascript_ajax) ? array() : array('attr' => array('class' => 'reposition')));

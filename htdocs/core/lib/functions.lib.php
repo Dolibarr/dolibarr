@@ -392,6 +392,52 @@ function isModEnabled($module)
 }
 
 /**
+ *  Return a warning delay
+ *  You can use it like this: if (getWarningDelay('module', 'paramlevel1'))
+ *  It replaces old syntax: if ($conf->module->user->rights->module->level1)
+ *
+ * 	@param	string	$module			Module of permission to check (Example: 'bank', 'contrat', ...)
+ *  @param  string	$parmlevel1		Parameter level1 (Example: 'rappro', 'services', ...)
+ *  @param  string	$parmlevel2		Parameter level2 (Example: 'inactifs', ...)
+ *  @return int						Return the warning delay
+ */
+function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
+{
+		global $conf;
+
+		// For compatibility with bad naming on module
+		$moduletomoduletouse = array(
+			'invoice' => 'facture',
+		);
+		$moduleParmsMapping = array(
+			'product' => 'produit',
+		);
+
+		if (!empty($moduletomoduletouse[$module])) {
+			$module = $moduletomoduletouse[$module];
+		}
+
+		$warningDelayPath = $parmlevel1;
+		if (!empty($moduleParmsMapping[$warningDelayPath])) {
+			$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
+		}
+
+		if ($parmlevel2) {
+			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+				if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+					return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
+				}
+			}
+		} else {
+			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+				return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+			}
+		}
+
+		return 0;
+}
+
+/**
  * isDolTms check if a timestamp is valid.
  *
  * @param  int|string|null $timestamp timestamp to check
@@ -813,7 +859,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	if (empty($check)) {
 		dol_syslog("Deprecated use of GETPOST, called with 1st param = ".$paramname." and a 2nd param that is '', when calling page ".$_SERVER["PHP_SELF"], LOG_WARNING);
 		// Enable this line to know who call the GETPOST with '' $check parameter.
-		//var_dump(debug_backtrace()[0]);
+		//var_dump(getCallerInfoString());
 	}
 
 	if (empty($method)) {
@@ -1370,6 +1416,40 @@ function sanitizeVal($out = '', $check = 'alphanohtml', $filter = null, $options
 	return $out;
 }
 
+/**
+ * Set a cookie
+ *
+ * @param	string	$cookiename		Cookie name
+ * @param	string	$cookievalue	Cookie value
+ * @param	int		$expire			Expire delay. If 0, expire at end of session. -1 means 1 year.
+ * @return	void
+ */
+function dolSetCookie(string $cookiename, string $cookievalue, int $expire = -1)
+{
+	global $dolibarr_main_force_https;
+
+	if ($expire == -1) {
+		$expire = (time() + (86400 * 354));	// keep cookie 1 year.
+	}
+
+	if (PHP_VERSION_ID < 70300) {
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, empty($cookievalue) ? 0 : $expire, '/', '', !(empty($dolibarr_main_force_https) && isHTTPS() === false), true); // add tag httponly
+	} else {
+		// Only available for php >= 7.3
+		$cookieparams = array(
+			'expires' => empty($cookievalue) ? 0 : $expire,
+			'path' => '/',
+			//'domain' => '.mywebsite.com', // the dot at the beginning allows compatibility with subdomains
+			'secure' => !(empty($dolibarr_main_force_https) && isHTTPS() === false),
+			'httponly' => true,
+			'samesite' => 'Lax'	// None || Lax  || Strict
+		);
+		setcookie($cookiename, empty($cookievalue) ? '' : $cookievalue, $cookieparams);
+	}
+	if (empty($cookievalue)) {
+		unset($_COOKIE[$cookiename]);
+	}
+}
 
 if (!function_exists('dol_getprefix')) {
 	/**
@@ -2052,6 +2132,7 @@ function dol_escape_xml($stringtoescape)
  * @param	string	$s						String to print
  * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  * @return	string							String ready for HTML output
+ * @see dolPrintText()
  */
 function dolPrintLabel($s, $escapeonlyhtmltags = 0)
 {
@@ -2064,6 +2145,7 @@ function dolPrintLabel($s, $escapeonlyhtmltags = 0)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
+ * @see dolPrintLabel(), dolPrintHTML()
  */
 function dolPrintText($s)
 {
@@ -2078,11 +2160,18 @@ function dolPrintText($s)
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
  * @return	string					String ready for HTML output (sanitized and escape)
- * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea()
+ * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
  */
 function dolPrintHTML($s, $allowiframe = 0)
 {
-	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr($s), 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
+	// If text is already HTML, we want to escape only dangerous chars else we want to escape all content.
+	//$isAlreadyHTML = dol_textishtml($s);
+
+	// dol_htmlentitiesbr encode all chars except "'" if string is not already HTML, but
+	// encode only special char like é but not &, <, >, ", ' if already HTML.
+	$stringWithEntitesForSpecialChar = dol_htmlentitiesbr($s);
+
+	return dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags($stringWithEntitesForSpecialChar, 1, 1, 1, $allowiframe)), 1, 1, 'common', 0, 1);
 }
 
 /**
@@ -2143,7 +2232,7 @@ function dolPrintHTMLForTextArea($s, $allowiframe = 0)
  */
 function dolPrintPassword($s)
 {
-	return htmlspecialchars($s, ENT_COMPAT, 'UTF-8');
+	return htmlspecialchars($s, ENT_HTML5, 'UTF-8');
 }
 
 
@@ -2151,8 +2240,8 @@ function dolPrintPassword($s)
  *  Returns text escaped for inclusion in HTML alt or title or value tags, or into values of HTML input fields.
  *  When we need to output strings on pages, we should use:
  *        - dolPrintLabel...
- *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1)), 1, 1) for notes or descriptions into textarea, add 'common' if into a html content
- *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
+ *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(...), 1, 1, 1, 0)), 1, 1, 'common', 0, 1) for notes or descriptions into textarea, add 'common' if into a html content
+ *        - dolPrintPassword that is a simple htmlspecialchars(... , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *  @param      string		$stringtoescape			String to escape
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
@@ -2254,12 +2343,13 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 				} while ($diff);
 			}
 
+			$tmp = str_ireplace('&amp', '__ANDNOSEMICOLON__', $tmp);
 			$tmp = str_ireplace('&quot', '__DOUBLEQUOTENOSEMICOLON__', $tmp);
 			$tmp = str_ireplace('&lt', '__LESSTHAN__', $tmp);
 			$tmp = str_ireplace('&gt', '__GREATERTHAN__', $tmp);
 		}
 
-		// Warning: htmlentities encode HTML tags like <abc> & into &amp; and more (but not &lt; &gt; &quotes; &apos; &#39; &amp; that remains untouched).
+		// Warning: htmlentities encode all special chars that remains (except "'" with ENT_COMPAT).
 		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');
 
 		//print $result;
@@ -2276,6 +2366,7 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 
 			$result = str_ireplace('__DOUBLEQUOTE__', '"', $result);
 
+			$result = str_ireplace('__ANDNOSEMICOLON__', '&amp', $result);
 			$result = str_ireplace('__DOUBLEQUOTENOSEMICOLON__', '&quot', $result);
 			$result = str_ireplace('__LESSTHAN__', '&lt', $result);
 			$result = str_ireplace('__GREATERTHAN__', '&gt', $result);
@@ -2366,8 +2457,12 @@ function getCallerInfoString()
 {
 	$backtrace = debug_backtrace();
 	$msg = "";
-	if (count($backtrace) >= 2) {
-		$trace = $backtrace[1];
+	if (count($backtrace) >= 1) {
+		$pos = 1;
+		if (count($backtrace) == 1) {
+			$pos = 0;
+		}
+		$trace = $backtrace[$pos];
 		if (isset($trace['file'], $trace['line'])) {
 			$msg = " From {$trace['file']}:{$trace['line']}.";
 		}
@@ -5207,59 +5302,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				$fa = 'fab';
 			}
 
-			$arrayconvpictotofa = array(
-				'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'ai' => 'magic',
-				'asset' => 'money-check-alt', 'autofill' => 'fill',
-				'back' => 'arrow-left', 'bank_account' => 'university',
-				'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
-				'blank' => 'fw', 'bookcal' => 'calendar-check',
-				'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
-				'bom' => 'shapes',
-				'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
-				'chevron-double-left' => 'angle-double-left', 'chevron-double-right' => 'angle-double-right', 'chevron-double-down' => 'angle-double-down', 'chevron-double-top' => 'angle-double-up',
-				'donation' => 'file-alt', 'dynamicprice' => 'hand-holding-usd',
-				'setup' => 'cog', 'companies' => 'building', 'products' => 'cube', 'commercial' => 'suitcase', 'invoicing' => 'coins',
-				'accounting' => 'search-dollar', 'category' => 'tag', 'dollyrevert' => 'dolly',
-				'file-o' => 'file', 'generate' => 'plus-square', 'hrm' => 'user-tie', 'incoterm' => 'truck-loading',
-				'margin' => 'calculator', 'members' => 'user-friends', 'ticket' => 'ticket-alt', 'globe' => 'external-link-alt', 'lot' => 'barcode',
-				'email' => 'at', 'establishment' => 'building', 'edit' => 'pencil-alt', 'entity' => 'globe',
-				'graph' => 'chart-line', 'grip_title' => 'arrows-alt', 'grip' => 'arrows-alt', 'help' => 'question-circle',
-				'generic' => 'file', 'holiday' => 'umbrella-beach',
-				'info' => 'info-circle', 'info_black' => 'info-circle', 'inventory' => 'boxes', 'intracommreport' => 'globe-europe', 'jobprofile' => 'cogs',
-				'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout' => 'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
-				'member' => 'user-alt', 'meeting' => 'chalkboard-teacher', 'mrp' => 'cubes', 'next' => 'arrow-alt-circle-right',
-				'trip' => 'wallet', 'expensereport' => 'wallet', 'group' => 'users', 'movement' => 'people-carry',
-				'sign-out' => 'sign-out-alt',
-				'switch_off' => 'toggle-off', 'switch_on' => 'toggle-on',  'switch_on_grey' => 'toggle-on', 'switch_on_warning' => 'toggle-on', 'switch_on_red' => 'toggle-on', 'check' => 'check', 'bookmark' => 'star',
-				'bank' => 'university', 'close_title' => 'times', 'delete' => 'trash', 'filter' => 'filter',
-				'list-alt' => 'list-alt', 'calendarlist' => 'bars', 'calendar' => 'calendar-alt', 'calendarmonth' => 'calendar-alt', 'calendarweek' => 'calendar-week', 'calendarday' => 'calendar-day', 'calendarperuser' => 'table',
-				'intervention' => 'ambulance', 'invoice' => 'file-invoice-dollar', 'order' => 'file-invoice',
-				'error' => 'exclamation-triangle', 'warning' => 'exclamation-triangle',
-				'other' => 'square',
-				'playdisabled' => 'play', 'pdf' => 'file-pdf', 'poll' => 'check-double', 'pos' => 'cash-register', 'preview' => 'binoculars', 'project' => 'project-diagram', 'projectpub' => 'project-diagram', 'projecttask' => 'tasks', 'propal' => 'file-signature', 'proposal' => 'file-signature',
-				'partnership' => 'handshake', 'payment' => 'money-check-alt', 'payment_vat' => 'money-check-alt', 'pictoconfirm' => 'check-square', 'phoning' => 'phone', 'phoning_mobile' => 'mobile-alt', 'phoning_fax' => 'fax', 'previous' => 'arrow-alt-circle-left', 'printer' => 'print', 'product' => 'cube', 'puce' => 'angle-right',
-				'recent' => 'check-square', 'reception' => 'dolly', 'recruitmentjobposition' => 'id-card-alt', 'recruitmentcandidature' => 'id-badge',
-				'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
-				'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
-				'service' => 'concierge-bell',
-				'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
-				'status' => 'stop-circle',
-				'stripe' => 'stripe-s',	'supplier' => 'building',
-				'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
-				'title_agenda' => 'calendar-alt',
-				'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
-				'jabber' => 'comment-o',
-				'website' => 'globe-americas', 'workstation' => 'pallet', 'webhook' => 'bullseye', 'world' => 'globe', 'private' => 'user-lock',
-				'conferenceorbooth' => 'chalkboard-teacher', 'eventorganization' => 'project-diagram',
-				'webportal' => 'door-open'
-			);
-			if ($conf->currency == 'EUR') {
-				$arrayconvpictotofa['currency'] = 'euro-sign';
-				$arrayconvpictotofa['multicurrency'] = 'dollar-sign';
-			} else {
-				$arrayconvpictotofa['currency'] = 'dollar-sign';
-				$arrayconvpictotofa['multicurrency'] = 'euro-sign';
-			}
+			$arrayconvpictotofa = getImgPictoConv('fa');
+
 			if ($pictowithouttext == 'off') {
 				$fakey = 'fa-square';
 				$fasize = '1.3em';
@@ -5336,7 +5380,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'ticket' => 'infobox-contrat', 'title_accountancy' => 'infobox-bank_account', 'title_hrm' => 'infobox-holiday', 'expensereport' => 'infobox-expensereport', 'trip' => 'infobox-expensereport', 'title_agenda' => 'infobox-action',
 				'vat' => 'infobox-bank_account',
 				//'title_setup'=>'infobox-action', 'tools'=>'infobox-action',
-				'list-alt' => 'imgforviewmode', 'calendar' => 'imgforviewmode', 'calendarweek' => 'imgforviewmode', 'calendarmonth' => 'imgforviewmode', 'calendarday' => 'imgforviewmode', 'calendarperuser' => 'imgforviewmode'
+				'list-alt' => 'imgforviewmode', 'calendar' => 'imgforviewmode', 'calendarweek' => 'imgforviewmode', 'calendarmonth' => 'imgforviewmode', 'calendarday' => 'imgforviewmode', 'calendarperuser' => 'imgforviewmode', 'calendarpertype' => 'imgforviewmode'
 			);
 			if (!empty($arrayconvpictotomorcess[$pictowithouttext]) && strpos($picto, '_nocolor') === false) {
 				$morecss .= ($morecss ? ' ' : '').$arrayconvpictotomorcess[$pictowithouttext];
@@ -5354,7 +5398,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 				'other' => '#ddd', 'world' => '#986c6a',
 				'partnership' => '#6c6aa8', 'playdisabled' => '#ccc', 'printer' => '#444', 'projectpub' => '#986c6a', 'resize' => '#444', 'rss' => '#cba',
 				//'shipment'=>'#a69944',
-				'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
+				'search-plus' => '#808080', 'security' => '#999', 'square' => '#888', 'stop-circle' => '#888', 'stats' => '#444', 'switch_off' => '#999',
 				'technic' => '#999', 'tick' => '#282', 'timespent' => '#555',
 				'uncheck' => '#800', 'uparrow' => '#555', 'user-cog' => '#999', 'country' => '#aaa', 'globe-americas' => '#aaa', 'region' => '#aaa', 'state' => '#aaa',
 				'website' => '#304', 'workstation' => '#a69944'
@@ -5429,7 +5473,8 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = 0, $srco
 }
 
 /**
- * Get all usage icon name for img_picto
+ * Get all usage icon key usable for img_picto(..., key)
+ *
  * @return string[]
  */
 function getImgPictoNameList()
@@ -5437,24 +5482,24 @@ function getImgPictoNameList()
 	return array(
 		'1downarrow', '1uparrow', '1leftarrow', '1rightarrow', '1uparrow_selected', '1downarrow_selected', '1leftarrow_selected', '1rightarrow_selected',
 		'accountancy', 'accounting_account', 'account', 'accountline', 'action', 'add', 'address', 'ai', 'angle-double-down', 'angle-double-up', 'asset',
-		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'blank', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
+		'back', 'bank_account', 'barcode', 'bank', 'bell', 'bill', 'billa', 'billr', 'billd', 'birthday-cake', 'bom', 'bookcal', 'bookmark', 'briefcase-medical', 'bug', 'building',
 		'card', 'calendarlist', 'calendar', 'calendarmonth', 'calendarweek', 'calendarday', 'calendarperuser', 'calendarpertype', 'hourglass',
 		'cash-register', 'category', 'chart', 'check', 'clock', 'clone', 'close_title', 'code', 'cog', 'collab', 'company', 'contact', 'country', 'contract', 'conversation', 'cron', 'cross', 'cubes',
 		'check-circle', 'check-square', 'circle', 'stop-circle', 'currency', 'multicurrency',
-		'chevron-left', 'chevron-right', 'chevron-down', 'chevron-top',
+		'chevron-left', 'chevron-right', 'chevron-down', 'chevron-up',
 		'chevron-double-left', 'chevron-double-right', 'chevron-double-down', 'chevron-double-top',
 		'commercial', 'companies',
 		'delete', 'dolly', 'dollyrevert', 'donation', 'download', 'dynamicprice',
 		'edit', 'ellipsis-h', 'email', 'entity', 'envelope', 'eraser', 'establishment', 'expensereport', 'external-link-alt', 'external-link-square-alt', 'eye',
 		'filter', 'file', 'file-o', 'file-code', 'file-export', 'file-import', 'file-upload', 'autofill', 'folder', 'folder-open', 'folder-plus', 'font',
-		'gears', 'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
+		'generate', 'generic', 'globe', 'globe-americas', 'graph', 'grip', 'grip_title', 'group',
 		'hands-helping', 'help', 'holiday',
 		'id-card', 'images', 'incoterm', 'info', 'info_black', 'intervention', 'inventory', 'intracommreport', 'jobprofile',
 		'key', 'knowledgemanagement',
 		'label', 'language', 'layout', 'line', 'link', 'list', 'list-alt', 'listlight', 'loan', 'lock', 'lot', 'long-arrow-alt-right',
 		'margin', 'map-marker-alt', 'member', 'meeting', 'minus', 'money-bill-alt', 'movement', 'mrp', 'note', 'next',
 		'off', 'on', 'order',
-		'paiment', 'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
+		'paragraph', 'play', 'pdf', 'phone', 'phoning', 'phoning_mobile', 'phoning_fax', 'playdisabled', 'previous', 'poll', 'pos', 'printer', 'product', 'propal', 'proposal', 'puce',
 		'stock', 'resize', 'service', 'stats',
 		'security', 'setup', 'share-alt', 'sign-out', 'split', 'stripe', 'stripe-s', 'switch_off', 'switch_on', 'switch_on_grey', 'switch_on_warning', 'switch_on_red', 'tools', 'unlink', 'uparrow', 'user', 'user-tie', 'vcard', 'wrench',
 		'discord', 'facebook', 'flickr', 'instagram','linkedin', 'github', 'google', 'jabber', 'meetup', 'microsoft', 'skype', 'slack', 'twitter', 'pinterest', 'reddit', 'snapchat', 'tumblr', 'youtube', 'viadeo', 'google-plus-g', 'whatsapp',
@@ -5463,14 +5508,84 @@ function getImgPictoNameList()
 		'salary', 'shipment', 'state', 'supplier_invoice', 'supplier_invoicea', 'supplier_invoicer', 'supplier_invoiced',
 		'technic', 'ticket',
 		'error', 'warning',
-		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring','rss',
-		'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
+		'recent', 'reception', 'recruitmentcandidature', 'recruitmentjobposition', 'replacement', 'resource', 'recurring', 'rss',
+		'search-plus', 'shapes', 'skill', 'square', 'sort-numeric-down', 'status', 'stop-circle', 'supplier', 'supplier_proposal', 'supplier_order', 'supplier_invoice',
 		'terminal', 'tick', 'timespent', 'title_setup', 'title_accountancy', 'title_bank', 'title_hrm', 'title_agenda', 'trip',
 		'uncheck', 'undo', 'url', 'user-cog', 'user-injured', 'user-md', 'vat', 'website', 'workstation', 'webhook', 'world', 'private',
 		'conferenceorbooth', 'eventorganization',
 		'stamp', 'signature',
 		'webportal'
 	);
+}
+
+/**
+ * Get array to convert the Dolibarr picto keys into font awesome keys
+ *
+ * @param	string		$mode		'fa' to get conversion array for Font-Awesome
+ * @return 	string[]				Array of conversion
+ * @see img_picto()
+ */
+function getImgPictoConv($mode = 'fa')
+{
+	global $conf;
+
+	// Array when the fa picto key is different than the Dolibarr picto key.
+	$arrayconvpictotofa = array(
+		'account' => 'university', 'accounting_account' => 'clipboard-list', 'accountline' => 'receipt', 'accountancy' => 'search-dollar', 'action' => 'calendar-alt', 'add' => 'plus-circle', 'address' => 'address-book', 'ai' => 'magic',
+		'asset' => 'money-check-alt', 'autofill' => 'fill',
+		'back' => 'arrow-left', 'bank_account' => 'university',
+		'bill' => 'file-invoice-dollar', 'billa' => 'file-excel', 'billr' => 'file-invoice-dollar', 'billd' => 'file-medical',
+		'bookcal' => 'calendar-check',
+		'supplier_invoice' => 'file-invoice-dollar', 'supplier_invoicea' => 'file-excel', 'supplier_invoicer' => 'file-invoice-dollar', 'supplier_invoiced' => 'file-medical',
+		'bom' => 'shapes',
+		'card' => 'address-card', 'chart' => 'chart-line', 'company' => 'building', 'contact' => 'address-book', 'contract' => 'suitcase', 'collab' => 'people-arrows', 'conversation' => 'comments', 'country' => 'globe-americas', 'cron' => 'business-time', 'cross' => 'times',
+		'chevron-double-left' => 'angle-double-left', 'chevron-double-right' => 'angle-double-right', 'chevron-double-down' => 'angle-double-down', 'chevron-double-top' => 'angle-double-up',
+		'donation' => 'file-alt', 'dynamicprice' => 'hand-holding-usd',
+		'setup' => 'cog', 'companies' => 'building', 'products' => 'cube', 'commercial' => 'suitcase', 'invoicing' => 'coins',
+		'accounting' => 'search-dollar', 'category' => 'tag', 'dollyrevert' => 'dolly',
+		'file-o' => 'file', 'generate' => 'plus-square', 'hrm' => 'user-tie', 'incoterm' => 'truck-loading',
+		'margin' => 'calculator', 'members' => 'user-friends', 'ticket' => 'ticket-alt', 'globe' => 'external-link-alt', 'lot' => 'barcode',
+		'email' => 'at', 'establishment' => 'building', 'edit' => 'pencil-alt', 'entity' => 'globe',
+		'graph' => 'chart-line', 'grip_title' => 'arrows-alt', 'grip' => 'arrows-alt', 'help' => 'question-circle',
+		'generic' => 'file', 'holiday' => 'umbrella-beach',
+		'info' => 'info-circle', 'info_black' => 'info-circle', 'inventory' => 'boxes', 'intracommreport' => 'globe-europe', 'jobprofile' => 'cogs',
+		'knowledgemanagement' => 'ticket-alt', 'label' => 'layer-group', 'layout' => 'columns', 'line' => 'bars', 'loan' => 'money-bill-alt',
+		'member' => 'user-alt', 'meeting' => 'chalkboard-teacher', 'mrp' => 'cubes', 'next' => 'arrow-alt-circle-right',
+		'trip' => 'wallet', 'expensereport' => 'wallet', 'group' => 'users', 'movement' => 'people-carry',
+		'sign-out' => 'sign-out-alt',
+		'switch_off' => 'toggle-off', 'switch_on' => 'toggle-on',  'switch_on_grey' => 'toggle-on', 'switch_on_warning' => 'toggle-on', 'switch_on_red' => 'toggle-on', 'check' => 'check', 'bookmark' => 'star',
+		'bank' => 'university', 'close_title' => 'times', 'delete' => 'trash', 'filter' => 'filter',
+		'list-alt' => 'list-alt', 'calendarlist' => 'bars', 'calendar' => 'calendar-alt', 'calendarmonth' => 'calendar-alt', 'calendarweek' => 'calendar-week', 'calendarday' => 'calendar-day', 'calendarperuser' => 'table', 'calendarpertype' => 'table',
+		'intervention' => 'ambulance', 'invoice' => 'file-invoice-dollar', 'order' => 'file-invoice',
+		'error' => 'exclamation-triangle', 'warning' => 'exclamation-triangle',
+		'other' => 'square',
+		'playdisabled' => 'play', 'pdf' => 'file-pdf', 'poll' => 'check-double', 'pos' => 'cash-register', 'preview' => 'binoculars', 'project' => 'project-diagram', 'projectpub' => 'project-diagram', 'projecttask' => 'tasks', 'propal' => 'file-signature', 'proposal' => 'file-signature',
+		'partnership' => 'handshake', 'payment' => 'money-check-alt', 'payment_vat' => 'money-check-alt', 'pictoconfirm' => 'check-square', 'phoning' => 'phone', 'phoning_mobile' => 'mobile-alt', 'phoning_fax' => 'fax', 'previous' => 'arrow-alt-circle-left', 'printer' => 'print', 'product' => 'cube', 'puce' => 'angle-right',
+		'recent' => 'check-square', 'reception' => 'dolly', 'recruitmentjobposition' => 'id-card-alt', 'recruitmentcandidature' => 'id-badge',
+		'resize' => 'crop', 'supplier_order' => 'dol-order_supplier', 'supplier_proposal' => 'file-signature',
+		'refresh' => 'redo', 'region' => 'map-marked', 'replacement' => 'exchange-alt', 'resource' => 'laptop-house', 'recurring' => 'history',
+		'service' => 'concierge-bell',
+		'skill' => 'shapes', 'state' => 'map-marked-alt', 'security' => 'key', 'salary' => 'wallet', 'shipment' => 'dolly', 'stock' => 'box-open', 'stats' => 'chart-bar', 'split' => 'code-branch',
+		'status' => 'stop-circle',
+		'stripe' => 'stripe-s',	'supplier' => 'building',
+		'technic' => 'cogs', 'tick' => 'check', 'timespent' => 'clock', 'title_setup' => 'tools', 'title_accountancy' => 'money-check-alt', 'title_bank' => 'university', 'title_hrm' => 'umbrella-beach',
+		'title_agenda' => 'calendar-alt',
+		'uncheck' => 'times', 'uparrow' => 'share', 'url' => 'external-link-alt', 'vat' => 'money-check-alt', 'vcard' => 'arrow-alt-circle-down',
+		'jabber' => 'comment',
+		'website' => 'globe-americas', 'workstation' => 'pallet', 'webhook' => 'bullseye', 'world' => 'globe', 'private' => 'user-lock',
+		'conferenceorbooth' => 'chalkboard-teacher', 'eventorganization' => 'project-diagram',
+		'webportal' => 'door-open'
+	);
+
+	if ($conf->currency == 'EUR') {
+		$arrayconvpictotofa['currency'] = 'euro-sign';
+		$arrayconvpictotofa['multicurrency'] = 'dollar-sign';
+	} else {
+		$arrayconvpictotofa['currency'] = 'dollar-sign';
+		$arrayconvpictotofa['multicurrency'] = 'euro-sign';
+	}
+
+	return $arrayconvpictotofa;
 }
 
 
@@ -6008,7 +6123,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$mimetype = dol_mimetype($file, '', 1);
-	$mimeimg = dol_mimetype($file, '', 2);
+	//$mimeimg = dol_mimetype($file, '', 2);
 	$mimefa = dol_mimetype($file, '', 4);
 
 	if (empty($titlealt)) {
@@ -6016,7 +6131,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	}
 
 	//return img_picto_common($titlealt, 'mime/'.$mimeimg, 'class="'.$morecss.'"');
-	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.$titlealt.'"' : '').'></i>';
+	return '<i class="fa fa-'.$mimefa.' paddingright'.($morecss ? ' '.$morecss : '').'"'.($titlealt ? ' title="'.dolPrintHTMLForAttribute($titlealt).'"' : '').'></i>';
 }
 
 
@@ -6094,7 +6209,7 @@ function info_admin($text, $infoonimgalt = 0, $nodiv = 0, $admin = '1', $morecss
 		if ($picto == 'warning') {
 			$fa = 'exclamation-triangle';
 		}
-		$result = ($nodiv ? '' : '<div class="wordbreakall '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
+		$result = ($nodiv ? '' : '<div class="wordbreak '.$class.($morecss ? ' '.$morecss : '').($textfordropdown ? ' hidden' : '').'">').'<span class="fa fa-'.$fa.'" title="'.dol_escape_htmltag($admin ? $langs->trans('InfoAdmin') : $langs->trans('Note')).'"></span> ';
 		$result .= dol_escape_htmltag($text, 1, 0, 'div,span,b,br,a');
 		$result .= ($nodiv ? '' : '</div>');
 
@@ -7380,10 +7495,10 @@ function get_localtax_by_third($local)
  *  Get tax (VAT) main information from Id.
  *  You can also call getLocalTaxesFromRate() after to get only localtax fields.
  *
- *  @param	int|string	$vatrate		    VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
- *  @param	Societe		$buyer         		Company object
- *  @param	Societe		$seller        		Company object
- *  @param  int<0,1>	$firstparamisid     1 if first param is id into table (use this if you can)
+ *  @param	float|string	$vatrate		    VAT ID or Rate. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	?Societe		$buyer         		Company object
+ *  @param	?Societe		$seller        		Company object
+ *  @param  int<0,1>		$firstparamisid     1 if first param is id into table (use this if you can)
  *  @return	array{}|array{rowid:int,code:string,rate:float,localtax1:float,localtax1_type:string,localtax2:float,localtax2_type:string,npr:float,accountancy_code_sell:string,accountancy_code_buy:string} array('rowid'=> , 'code'=> ...)
  *  @see getLocalTaxesFromRate()
  */
@@ -7458,7 +7573,7 @@ function getTaxesFromId($vatrate, $buyer = null, $seller = null, $firstparamisid
  *  Instead this function must be called when adding a line to get the array of possible values for localtax and type, and then
  *  provide the selected value to the function calcul_price_total.
  *
- *  @param	int|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
+ *  @param	float|string  $vatrate			VAT ID or Rate+Code. Value can be value or the string with code into parenthesis or rowid if $firstparamisid is 1. Example: '8.5' or '8.5 (8.5NPR)' or 123.
  *  @param	int<0,2>    $local              Number of localtax (1 or 2, or 0 to return 1 & 2)
  *  @param	?Societe	$buyer         		Company object
  *  @param	?Societe    $seller        		Company object
@@ -8527,7 +8642,7 @@ function dol_nl2br($stringtoencode, $nl2brmode = 0, $forxml = false)
 }
 
 /**
- * Sanitize a HTML to remove js, dangerous content and external link.
+ * Sanitize a HTML to remove js, dangerous content and external links.
  * This function is used by dolPrintHTML... function for example.
  *
  * @param	string	$stringtoencode				String to encode
@@ -8588,6 +8703,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				// Tidy can't be used for restricthtmlallowunvalid and restricthtmlallowlinkscript
 				// TODO Try to implement a hack for restricthtmlallowlinkscript by renaming tag <link> and <script> ?
 				try {
+					//var_dump($out);
+
 					// Try cleaning using tidy
 					if (extension_loaded('tidy') && class_exists("tidy")) {
 						//print "aaa".$out."\n";
@@ -8602,7 +8719,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 							"indent-attributes" => false,
 							"vertical-space" => false,
 							//'ident' => false,			// Not always supported
-							"wrap" => 0
+							"wrap" => 0,
+							'preserve-entities' => true
 							// HTML5 tags
 							//'new-blocklevel-tags' => 'article aside audio bdi canvas details dialog figcaption figure footer header hgroup main menu menuitem nav section source summary template track video',
 							//'new-blocklevel-tags' => 'footer header section menu menuitem'
@@ -8616,6 +8734,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 
 						//print "xxx".$out;exit;
 					}
+
+					//var_dump($out);
 				} catch (Exception $e) {
 					// If error, invalid HTML string with no way to clean it
 					//print $e->getMessage();
@@ -8629,8 +8749,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 			// Clean some html entities that are useless so text is cleaner
 			$out = preg_replace('/&(tab|newline);/i', ' ', $out);
 
-			// Ckeditor uses the numeric entity for apostrophe so we force it to text entity (all other special chars are
-			// encoded using text entities) so we can then exclude all numeric entities.
+			// Ckeditor uses the numeric entity for apostrophe, so we force it to
+			// the text entity (all other special chars are encoded using text entities) so we can then exclude all numeric entities.
 			$out = preg_replace('/&#39;/i', '&apos;', $out);
 
 			// We replace chars from a/A to z/Z encoded with numeric HTML entities with the real char so we won't loose the chars at the next step (preg_replace).
@@ -8669,7 +8789,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 				$out = dol_string_onlythesehtmlattributes($out);
 			}
 
-			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity)
+			// Restore entity &apos; into &#39; (restricthtml is for html content so we can use html entity) because it is
+			// compatible with HTML 4 used y CKEditor, and HTML 5 (when &apos; works only with HTML5).
 			$out = preg_replace('/&apos;/i', "&#39;", $out);
 
 			// Now remove js
@@ -8726,8 +8847,8 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
 }
 
 /**
- *	This function is called to encode a string into a HTML string but differs from htmlentities because
- * 	a detection is done before to see if text is already HTML or not. Also, all entities but &,<,>," are converted.
+ *	This function is called to encode a string into a HTML string but differs from htmlentities because a detection is
+ *  done before to see if text is already HTML or not. Also, all entities but &,<,>," (because protected by code) and ' (because not included by the ENT_COMPAT mode) are converted.
  *  This permits to encode special chars to entities with no double encoding for already encoded HTML strings.
  * 	This function also remove last EOL or BR if $removelasteolbr=1 (default).
  *  For PDF usage, you can show text by 2 ways:
@@ -8736,7 +8857,7 @@ function dol_htmlwithnojs($stringtoencode, $nouseofiframesandbox = 0, $check = '
  *        Because writeHTMLCell convert also \n into <br>, if function is used to build PDF, nl2brmode must be 1.
  *  Note: When we output string on pages, we should use
  *        - dolPrintHTML... that is dol_escape_htmltag(dol_htmlwithnojs(dol_string_onlythesehtmltags(dol_htmlentitiesbr(), 1, 1, 1), 1, 1) for notes or descriptions,
- *        - dolPrintPassword that is abelhtmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
+ *        - dolPrintPassword that is a simple htmlspecialchars( , ENT_COMPAT, 'UTF-8') for passwords.
  *
  *	@param	string	$stringtoencode		String to encode
  *	@param	int		$nl2brmode			0=Adding br before \n, 1=Replacing \n by br (for use with FPDF writeHTMLCell function for example)
@@ -11861,7 +11982,7 @@ function dolExplodeIntoArray($string, $delimiter = ';', $kv = '=')
 }
 
 /**
- * Explode a search string into an array but do not explode with keys are inside quotes.
+ * Explode a search string into an array but do not explode when keys are inside quotes.
  * For example "a 'b c'" will be array("a", "b c").
  *
  * @param	string				$input		String to explode
@@ -11874,23 +11995,34 @@ function dolExplodeKeepIfQuotes($input)
 	preg_match_all('/"([^"]*)"|\'([^\']*)\'|(\S+)/', $input, $matches);
 
 	// Merge result and delete empty values
-	return array_filter(array_map(
+
+	$result = array_map(
 		/**
-		 * Return first non-empty item, or empty string
-		 *
-		 * @param string $a Possibly empty item - match ""
-		 * @param string $b Possibly empty item - match ''
-		 * @param string $c Non empty string if $a and $b are empty
-		 *
+		 * @param string $a Matched value in double quotes
+		 * @param string $b Matched value in single quotes
+		 * @param string $c Unquoted value
 		 * @return string
 		 */
 		static function ($a, $b, $c) {
-			return $a ?: ($b ?: $c);
+			if ($a !== '') return $a;
+			if ($b !== '') return $b;
+			if ($c !== '') return $c;
+			return '';
 		},
 		$matches[1],
 		$matches[2],
 		$matches[3]
-	));
+	);
+	return array_values(array_filter($result,
+		/**
+		 * Filter out empty strings from the result array.
+		 *
+		 * @param string $val The value to check.
+		 * @return bool True if the value is not an empty string.
+		 */
+		static function ($val) {
+			return $val !== '';
+		}));
 }
 
 
@@ -11903,7 +12035,7 @@ function dolExplodeKeepIfQuotes($input)
 function dol_set_focus($selector)
 {
 	print "\n".'<!-- Set focus onto a specific field -->'."\n";
-	print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
+	print '<script nonce="'.getNonce().'">jQuery(document).ready(function() { console.log("Force focus by dol_set_focus"); jQuery("'.dol_escape_js($selector).'").focus(); });</script>'."\n";
 }
 
 
@@ -11938,7 +12070,7 @@ function dol_getmypid()
  * 										1=value is a numeric test (Example ">5.5 <10"),
  * 										2=value is a list of ID separated with comma (Example '1,3,4'), -2 is for exclude list,
  * 										3=value is list of string separated with comma (Example 'text 1,text 2'), -3 if for exclude list,
- * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search into a multiselect string '1,2,3,4'
+ * 										4=value is a list of ID separated with comma (Example '2,7') to be used to search inside a string '1,2,3,4'
  * @param	integer			$nofirstand	1=Do not output the first 'AND'
  * @return 	string 			$res 		The statement to append to the SQL query
  * @see dolSqlDateFilter()
@@ -11954,7 +12086,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("SeparatorDecimal"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -11977,6 +12109,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$crit = trim($crit);
 		$i2 = 0;	// count the nb of valid criteria added for this this first criteria
 		$newres = '';
+
 		foreach ($fields as $field) {
 			if ($mode == 1) {
 				$tmpcrits = explode('|', $crit);
@@ -12617,6 +12750,11 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$famime = 'file-alt';
 	}
 
+	if ($famime == 'file-o') {
+		// file-o seems to not work in fontawesome 5
+		$famime = 'file';
+	}
+
 	// Return mimetype string
 	switch ((int) $mode) {
 		case 1:
@@ -12822,7 +12960,7 @@ function dolGetBadge($label, $html = '', $type = 'primary', $mode = '', $url = '
 	// TODO: add hook
 
 	// escape all attribute
-	$attr = array_map('dolPrintHtmlForAttribute', $attr);
+	$attr = array_map('dolPrintHTMLForAttribute', $attr);
 
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
@@ -12955,9 +13093,9 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                  30 => array('attr' => array('class'=>''), 'lang'=>'mymodule', 'enabled'=>isModEnabled("mymodule"), 'perm'=>$user->hasRight('mymodule', 'write'), 'label' => 'MyModuleOtherAction', 'urlraw' => '# || external Url || javascript: || tel: || mailto:' ),
  *                                                                                                                                                  );                                                                                                               );
  * @param string    	$id         	Attribute id of action button. Example 'action-delete'. This can be used for full ajax confirm if this code is reused into the ->formconfirm() method.
- * @param int|boolean	$userRight  	User action right
+ * @param int|boolean	$userRight  	User action right. Use 0 if user has no permission. It will add the message "No permission" on tooltip. Use -1 to have button not allowed without adding the message (because an explicit label is already set).
  * // phpcs:disable
- * @param array{confirm?:array{url?:string,title?:string,content?:string,action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
+ * @param array{confirm?:array{url?:string,title?:string,content?:string,use_unsecured_unescapedattr?:bool|string[],action-btn-label?:string,cancel-btn-label?:string,modal?:bool},attr?:array<string,mixed>,areDropdownButtons?:bool,backtopage?:string,lang?:string,enabled?:bool,perm?:int<0,1>,label?:string,url?:string,isDropdown?:int<0,1>,isDropDown?:int<0,1>}	$params = [ // Various params for future : recommended rather than adding more function arguments
  *                                                                                                                                                                                                                                                                                                                                      'attr' => [ // to add or override button attributes
  *                                                                                                                                                                                                                                                                                                                                      'xxxxx' => '', // your xxxxx attribute you want
  *                                                                                                                                                                                                                                                                                                                                      'class' => 'reposition', // to add more css class to the button class attribute
@@ -12974,7 +13112,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
  *                                                                                                                                                                                                                                                                                                                                      ],
  *                                                                                                                                                                                                                                                                                                                                      ]
  * // phpcs:enable
- *                                                                                                                                                                                                                                                                                                                                      Example: array('attr' => array('class' => 'reposition'))
+ *                                                                                                                                                                                                                                                                                                                                                                              Example: array('attr' => array('class' => 'reposition'))
  * @return string               		html button
  */
 function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = '', $id = '', $userRight = 1, $params = array())
@@ -13083,11 +13221,11 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		$attr['aria-label'] = $label;
 	}
 
-	if (empty($userRight)) {
+	if (empty($userRight) || $userRight < 0) {
 		$attr['class'] = 'butActionRefused';
 		$attr['href'] = '';
 		$attr['title'] = (($label && $text && $label != $text) ? $label : '');
-		$attr['title'] = ($attr['title'] ? $attr['title'].'<br>' : '').$langs->trans('NotEnoughPermissions');
+		$attr['title'] = ($attr['title'] ? $attr['title'] . (empty($userRight) ? '<br>' : '') : '').(empty($userRight) ? $langs->trans('NotEnoughPermissions') : '');
 	}
 
 	if (!empty($id)) {
@@ -13138,10 +13276,12 @@ function dolGetButtonAction($label, $text = '', $actionType = 'default', $url = 
 		unset($attr['href']);
 	}
 
-	// escape all attributes
 	$TCompiledAttr = array();
 	foreach ($attr as $key => $value) {
-		if ($key == 'href') {
+		if (!empty($params['use_unsecured_unescapedattr']) && is_array($params['use_unsecured_unescapedattr']) && in_array($key, $params['use_unsecured_unescapedattr'])) {
+			// Not recommended
+			$value = dol_htmlentities($value, ENT_QUOTES | ENT_SUBSTITUTE);
+		} elseif ($key == 'href') {
 			$value = dolPrintHTMLForAttributeUrl($value);
 		} else {
 			$value = dolPrintHTMLForAttribute($value);
@@ -13590,7 +13730,7 @@ function getElementProperties($elementType)
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur') {
+	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -14424,7 +14564,7 @@ function dolForgeSQLCriteriaCallback($matches)
 			$reg = array();
 			$tmpelem = trim($tmpelem);
 			if (preg_match('/^\'(.*)\'$/', $tmpelem, $reg)) {
-				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 1, 1, 1, 1))."'";
+				$tmpelemarray[$tmpkey] = "'".$db->escape($db->sanitize($reg[1], 2, 1, 1, 1))."'";
 			} elseif (ctype_digit((string) $tmpelem)) {	// if only 0-9 chars, no .
 				$tmpelemarray[$tmpkey] = (int) $tmpelem;
 			} elseif (is_numeric((string) $tmpelem)) {	// it can be a float with a .
