@@ -528,6 +528,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_productlot_path();
 			}
+
+			// Scripts for 22.0
+			$afterversionarray = explode('.', '21.0.9');
+			$beforeversionarray = explode('.', '22.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_accountingbookkeeping($entity);
+			}
 		}
 
 
@@ -5121,6 +5128,72 @@ function migrate_contractdet_rank()
 	} else {
 		$error++;
 	}
+	if (!$error) {
+		$db->commit();
+	} else {
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+
+	if (!$resultstring) {
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Migrate Ref in bookkeeping lines
+ *
+ * @param int $entity Entity id
+ * @return  void
+ */
+function migrate_accountingbookkeeping(int $entity)
+{
+	global $db, $langs;
+
+	$error = 0;
+	$resultstring = '';
+
+	// ref migration supports only standard ref numbering model. We set the default ref model if no other model has been set
+	if (!$bookKeepingAddon = getDolGlobalString('BOOKKEEPING_ADDON')) {
+		dolibarr_set_const($db, 'BOOKKEEPING_ADDON', 'mod_bookkeeping_argon', 'chaine', 0, '', $entity);
+		$bookKeepingAddon = 'mod_bookkeeping_argon';
+	}
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationAccountancyBookkeeping')."</b><br>\n";
+
+	if ($bookKeepingAddon === 'mod_bookkeeping_argon') {
+		$db->begin();
+		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM {$db->prefix()}accounting_bookkeeping";
+		$sql .= " WHERE ref IS NULL AND entity = {$entity}";
+		$sql .= " ORDER BY doc_year, doc_month, code_journal, piece_num";
+
+		$resql = $db->query($sql);
+
+		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+		$bookkeeping = new BookKeeping($db);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$bookkeeping->doc_date = dol_mktime(0, 0, 0, $obj->doc_month, 1, $obj->doc_year);
+				$bookkeeping->code_journal = $obj->code_journal;
+				$ref = $bookkeeping->getNextNumRef();
+
+				$sqlUpd = "UPDATE {$db->prefix()}accounting_bookkeeping SET ref='{$ref}' WHERE piece_num = '{$obj->piece_num}' AND entity = {$entity}";
+				$resultstring = '.';
+				print $resultstring;
+				$resqlUpd = $db->query($sqlUpd);
+				if (!$resqlUpd) {
+					dol_print_error($db);
+					$error++;
+				}
+			}
+		} else {
+			$error++;
+		}
+	}
+
+
 	if (!$error) {
 		$db->commit();
 	} else {
