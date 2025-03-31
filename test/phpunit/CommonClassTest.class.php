@@ -187,6 +187,7 @@ abstract class CommonClassTest extends TestCase
 
 
 		if ($nbLinesToShow) {
+			print "## We try to output the last ".$nbLinesToShow." lines of the log file ".basename($this->logfile)." (that has ".$totalLines." lines)".PHP_EOL;
 			$newLines = count($last_lines);
 			if ($newLines > 0) {
 				// Show partial log file contents when requested.

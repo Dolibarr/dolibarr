@@ -118,6 +118,8 @@ $search_total_ht  = GETPOST('search_total_ht', 'alpha');
 $search_total_vat = GETPOST('search_total_vat', 'alpha');
 $search_total_ttc = GETPOST('search_total_ttc', 'alpha');
 $search_warehouse = GETPOST('search_warehouse', 'intcomma');
+$search_note_public = GETPOST('search_note_public', 'alphanohtml');
+$search_note_private = GETPOST('search_note_private', 'alphanohtml');
 
 $search_multicurrency_code = GETPOST('search_multicurrency_code', 'alpha');
 $search_multicurrency_tx = GETPOST('search_multicurrency_tx', 'alpha');
@@ -325,6 +327,8 @@ if (empty($reshook)) {
 		$search_total_vat = '';
 		$search_total_ttc = '';
 		$search_warehouse = '';
+		$search_note_public = '';
+		$search_note_private = '';
 		$search_multicurrency_code = '';
 		$search_multicurrency_tx = '';
 		$search_multicurrency_montant_ht = '';
@@ -1059,6 +1063,12 @@ if ($search_total_ttc != '') {
 }
 if ($search_warehouse != '' && $search_warehouse > 0) {
 	$sql .= natural_search('c.fk_warehouse', $search_warehouse, 1);
+}
+if ($search_note_public != '') {
+	$sql .= natural_search('c.note_public', $search_note_public);
+}
+if ($search_note_private != '') {
+	$sql .= natural_search('c.note_private', $search_note_private);
 }
 if ($search_multicurrency_code != '') {
 	$sql .= " AND c.multicurrency_code = '".$db->escape($search_multicurrency_code)."'";
@@ -1869,11 +1879,13 @@ if (!empty($arrayfields['c.date_cloture']['checked'])) {
 // Note public
 if (!empty($arrayfields['c.note_public']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_public" value="'.dolPrintHTMLForAttribute($search_note_public).'">';
 	print '</td>';
 }
 // Note private
 if (!empty($arrayfields['c.note_private']['checked'])) {
 	print '<td class="liste_titre">';
+	print '<input class="flat width75" type="text" name="search_note_private" value="'.dolPrintHTMLForAttribute($search_note_private).'">';
 	print '</td>';
 }
 // Shippable
@@ -2769,8 +2781,8 @@ while ($i < $imaxinloop) {
 
 		// Note public
 		if (!empty($arrayfields['c.note_public']['checked'])) {
-			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_public);
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_public), 5).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2779,8 +2791,8 @@ while ($i < $imaxinloop) {
 
 		// Note private
 		if (!empty($arrayfields['c.note_private']['checked'])) {
-			print '<td class="sensiblehtmlcontent center">';
-			print dolPrintHTML($obj->note_private);
+			print '<td class="flat maxwidth250imp">';
+			print '<div class="small lineheightsmall">'.dolPrintHTML(dolGetFirstLineOfText($obj->note_private), 5).'</div>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

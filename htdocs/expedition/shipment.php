@@ -97,6 +97,11 @@ $permissiontoadd = $user->hasRight('expedition', 'creer'); // Used by the includ
 $permissiontodelete = $user->hasRight('expedition', 'supprimer') || ($permissiontoadd && ((int) $object->status == $object::STATUS_DRAFT));
 $permissionnote = $user->hasRight('expedition', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('expedition', 'creer'); // Used by the include of actions_dellink.inc.php
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 
 /*
@@ -192,18 +197,19 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'update_extras' && $permissiontoadd) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			// Actions on extra fields
-			$result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'SHIPMENT_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
@@ -225,6 +231,7 @@ if (empty($reshook)) {
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 }
+
 
 /*
  * View
@@ -599,7 +606,8 @@ if ($order_id > 0 || !empty($ref)) {
 		 *  Lines or orders with quantity shipped and remain to ship
 		 *  Note: Qty shipped are already available into $object->expeditions[fk_product]
 		 */
-		print '<table id="tablelines" class="noborder noshadow" width="100%">';
+		print '<div class="div-table-responsive-no-min">';
+		print '<table id="tablelines" class="noborder noshadow centpercent">';
 
 		$sql = "SELECT cd.rowid, cd.fk_product, cd.product_type as type, cd.label, cd.description,";
 		$sql .= " cd.price, cd.tva_tx, cd.subprice,";
@@ -841,14 +849,13 @@ if ($order_id > 0 || !empty($ref)) {
 			$db->free($resql);
 
 			if (!$num) {
-				print '<tr '.$bc[false].'><td colspan="5">'.$langs->trans("NoArticleOfTypeProduct").'<br>';
+				print '<tr><td colspan="5"><span class="opacitymedium">'.$langs->trans("NoArticleOfTypeProduct").'</span></td></tr>';
 			}
-
-			print "</table>";
 		} else {
 			dol_print_error($db);
 		}
 
+		print "</table>";
 		print '</div>';
 
 
