@@ -211,7 +211,7 @@ class MyObject extends CommonObject
 	 public $class_element_line = 'MyObjectline';
 
 	 /**
-	 * @var array<string,mixed>		List of child tables. To test if we can delete object.
+	  * @var array<array<string>|string>		List of child tables. To test if we can delete object.
 	  */
 	 protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
 
