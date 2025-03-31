@@ -1081,11 +1081,12 @@ class MyObject extends CommonObject
 
 		return $this->initAsSpecimenCommon();
 	}
+	
 	//BEGIN MODULEBUILDER LINES
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return	CommonObjectLine[]|int		array of lines if OK, <0 if KO
+	 * 	@return	MyObjectLine[]|int		array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
