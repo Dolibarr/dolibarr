@@ -248,6 +248,8 @@ class Contracts extends DolibarrApi
 	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool 		$pagination_data 	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return array						Array of contrat det objects
+	 * @phan-return ContratLigne[]
+	 * @phpstan-return ContratLigne[]
 	 *
 	 * @url	GET {id}/lines
 	 *
