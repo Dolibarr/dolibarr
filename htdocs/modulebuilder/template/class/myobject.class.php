@@ -211,14 +211,14 @@ class MyObject extends CommonObject
 	 public $class_element_line = 'MyObjectline';
 
 	 /**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string,mixed>		List of child tables. To test if we can delete object.
 	  */
 	 protected $childtables = array('mychildtable' => array('name'=>'MyObject', 'fk_element'=>'fk_myobject'));
 
 	 /**
-	  * @var array    List of child tables. To know object to delete on cascade.
-	  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	  * @var string[]	List of child tables. To know object to delete on cascade.
+	  *               	If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
+	  *               	call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	  */
 	 protected $childtablesoncascade = array('mymodule_myobjectdet');
 
