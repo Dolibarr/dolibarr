@@ -517,6 +517,23 @@ class Expedition extends CommonObject
 					}
 				}
 
+				if (!$error && $this->id && !getDolGlobalInt('SHIPPING_USE_ORDER_CONTACTS') && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin_type) && !empty($this->origin_id)) {   // Get contact from origin object
+					$originforcontact = $this->origin_type;
+					$originidforcontact = $this->origin_id;
+
+					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+					$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+
+					$resqlcontact = $this->db->query($sqlcontact);
+					if ($resqlcontact) {
+						while ($objcontact = $this->db->fetch_object($resqlcontact)) {
+							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
+						}
+					} else {
+						dol_print_error($this->db);
+					}
+				}
+
 				// Actions on extra fields
 				if (!$error) {
 					$result = $this->insertExtraFields();
