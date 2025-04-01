@@ -962,7 +962,7 @@ class ImportCsv extends ModeleImports
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
-								
+
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
