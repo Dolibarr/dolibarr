@@ -255,6 +255,7 @@ if (empty($reshook)) {
 		$object->note = GETPOST('note', 'restricthtml');
 		$object->note_private = GETPOST('note', 'restricthtml');
 		$object->origin = $origin;
+		$object->origin_type = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOSTINT('projectid');
 		$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
@@ -267,7 +268,7 @@ if (empty($reshook)) {
 		$product = new Product($db);
 
 		// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
-		$classname = ucfirst($object->origin);
+		$classname = ucfirst($object->origin_type);
 		$objectsrc = new $classname($db);
 		'@phan-var-force Facture|Commande $objectsrc';
 		$objectsrc->fetch($object->origin_id);

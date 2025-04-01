@@ -8,7 +8,7 @@
  * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2017		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) ---Replace with your own copyright and developer email---
@@ -666,6 +666,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 
 					$sign = 1;
+					$vatrate = '';
 					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
 					if ($object->lines instanceof CommonInvoiceLine) {
 						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
