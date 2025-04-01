@@ -345,9 +345,9 @@ foreach ($search as $key => $val) {
 			continue;
 		}
 		if ($key == 'status' && $search[$key] == -2) {
-			$sql .= ' AND (t.status IN ('.$object::STATUS_VALIDATED.','.$object::STATUS_INPROGRESS.'))';
+			$sql .= " AND (t.status IN (".((int) $object::STATUS_VALIDATED).",".((int) $object::STATUS_INPROGRESS)."))";
 			if ($search_option == 'late') {
-				$sql .= ' AND (t.date_end_planned < \''.$db->idate(dol_now() - $conf->mrp->progress->warning_delay).'\')';
+				$sql .= " AND (t.date_end_planned < '".$db->idate(dol_now() - $conf->mrp->progress->warning_delay)."')";
 			}
 			continue;
 		}
