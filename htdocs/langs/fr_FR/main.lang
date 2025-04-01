@@ -929,6 +929,7 @@ MassFilesArea=Zone des fichiers générés en masse
 ShowTempMassFilesArea=Afficher la zone des fichiers générés en masse
 ConfirmMassDeletion=Confirmation de suppression en masse
 ConfirmMassDeletionQuestion=Êtes-vous sur de vouloir supprimer les %s enregistrement(s) sélectionné(s) ?
+ConfirmMassCancellationQuestion=Êtes-vous sûr de vouloir annuler les %s enregistrement(s) sélectionné(s) ?
 ConfirmMassClone=Confirmation de clonage en masse
 ConfirmMassCloneQuestion=Sélectionner le projet vers lequel cloner
 ConfirmMassCloneToOneProject=Cloner vers le projet %s

@@ -1794,7 +1794,7 @@ abstract class CommonObject
 		$result = array();
 		$i = 0;
 		// Particular case for shipping
-		if ($this->element == 'shipping' && $this->origin_id != 0) {
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $this->element == 'shipping' && $this->origin_id != 0) {
 			$id = $this->origin_id;
 			$element = 'commande';
 		} elseif ($this->element == 'reception' && $this->origin_id != 0) {
