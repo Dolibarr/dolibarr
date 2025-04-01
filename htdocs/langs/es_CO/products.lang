@@ -106,7 +106,6 @@ ProductIsUsed=Este producto es usado
 NewRefForClone=Ref. de nuevo producto / servicio
 CustomerPrices=Precios al cliente
 SuppliersPricesOfProductsOrServices=Precios de proveedores (de productos o servicios)
-CustomCode=Aduana|Mercancía|SA|Código TARIC
 Nature=Naturaleza del producto (crudo / fabricado)
 p=u
 d=re
