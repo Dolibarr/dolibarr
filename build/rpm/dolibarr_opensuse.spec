@@ -70,7 +70,7 @@ cui hai bisogno ed essere facile da usare.
 #---- prepo
 %prep
 %setup -q
-%patch0 -p0 -b .patch
+%patch 0 -p0 -b .patch
 
 
 #---- build
@@ -230,7 +230,6 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/societe
 %_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/supplier_proposal
-%_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/takepos
 %_datadir/dolibarr/htdocs/ticket

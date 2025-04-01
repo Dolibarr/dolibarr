@@ -86,6 +86,19 @@ class TraceableDB extends DoliDB
 		return $this->db->ifsql($test, $resok, $resko);
 	}
 
+	/**
+	 *	format a sql regexp
+	 *
+	 *	@param	string	$subject        field name to test
+	 *	@param	string  $pattern        sql pattern to match
+	 *	@param	int		$sqlstring      0=the string being tested is a hard coded string, 1=the string is a field
+	 *	@return	string          		sql string
+	 */
+	public function regexpsql($subject, $pattern, $sqlstring = 0): string
+	{
+		return $this->db->regexpsql($subject, $pattern, $sqlstring = 0);
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 * Return datas as an array

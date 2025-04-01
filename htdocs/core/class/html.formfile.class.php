@@ -969,10 +969,7 @@ class FormFile
 
 					$out .= '<tr class="oddeven'.((!$genallowed && $i == 1) ? ' trfirstline' : '').'">';
 
-					$documenturl = DOL_URL_ROOT.'/document.php';
-					if (isset($conf->global->DOL_URL_ROOT_DOCUMENT_PHP)) {
-						$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP'); // To use another wrapper
-					}
+					$documenturl = getDolGlobalString('DOL_URL_ROOT_DOCUMENT_PHP', DOL_URL_ROOT.'/document.php'); // DOL_URL_ROOT_DOCUMENT_PHP can be used to set another wrapper
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
@@ -1508,7 +1505,7 @@ class FormFile
 
 
 					// File name
-					print '<td class="minwidth200 tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
+					print '<td class="minwidth200imp tdoverflowmax500" title="'.dolPrintHTMLForAttribute($file['name']).'">';
 
 					// Show file name with link to download
 					//print "XX".$file['name'];	//$file['name'] must be utf8
@@ -1541,7 +1538,7 @@ class FormFile
 						}
 						print '<input type="hidden" name="section_dir" value="'.$section_dir.'">';
 						print '<input type="hidden" name="renamefilefrom" value="'.dol_escape_htmltag($file['name']).'">';
-						print '<input type="text" name="renamefileto" class="quatrevingtpercent" value="'.dol_escape_htmltag($file['name']).'">';
+						print '<input type="text" name="renamefileto" class="centpercentminusx" value="'.dol_escape_htmltag($file['name']).'">';
 						$editline = 1;
 					} else {
 						$filenametoshow = preg_replace('/\.noexe$/', '', $file['name']);
@@ -1613,7 +1610,7 @@ class FormFile
 					}
 
 					// Shared or not - Hash of file
-					print '<td class="center">';
+					print '<td class="center minwidth100 nowraponsmartphone">';
 					if ($relativedir && $filearray[$key]['rowid'] > 0) {	// only if we are in a mode where a scan of dir were done and we have id of file in ECM table
 						if ($editline) {
 							print '<label for="idshareenabled'.$key.'">'.$langs->trans("FileSharedViaALink").'</label> ';
@@ -1638,7 +1635,7 @@ class FormFile
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="quatrevingtpercent minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}

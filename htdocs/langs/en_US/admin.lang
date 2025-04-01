@@ -2432,6 +2432,7 @@ DontForgetCreateTokenOauthMod=A token with the right permissions must have been 
 AuthenticationMethod=Authentication method
 MAIN_MAIL_SMTPS_AUTH_TYPE=Authentication method
 UsePassword=Use a password
+UseAUTHNONE=Use no authentication (try also with or without the SMTP user ID)
 UseAUTHLOGIN=Use a password (AUTH LOGIN)
 UseAUTHPLAIN=Use a password (AUTH PLAIN)
 UseOauth=Use a OAUTH token

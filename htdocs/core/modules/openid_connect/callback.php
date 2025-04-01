@@ -42,8 +42,13 @@ $arrayofjs = array(
 top_htmlhead('', '', 0, 0, $arrayofjs);
 
 $prefix = dol_getprefix('');
-$rollback_url = $_COOKIE["DOL_rollback_url_$prefix"];
-if (empty($rollback_url) || $rollback_url === '/') {
+
+$rollback_url = $_COOKIE["DOL_rollback_url_".$prefix];	// Was set by login page to $_SERVER['REQUEST_URI'] to allow come back to initial requested page
+if (empty($rollback_url) || !preg_match('/^\//', $rollback_url)) {
+	// We accept only value that is an internal relative URL. URL starting with http are not allowed.
+	$rollback_url = '/';
+}
+if ($rollback_url === '/') {
 	$action = $dolibarr_main_url_root . '/index.php?mainmenu=home&leftmenu=';
 } else {
 	$action = $rollback_url;
@@ -51,7 +56,7 @@ if (empty($rollback_url) || $rollback_url === '/') {
 }
 ?>
 
-<form id="login" name="login" method="post" action="<?php echo $action; ?>">
+<form id="login" name="login" method="post" action="<?php echo dolPrintHTMLForAttributeUrl($action); ?>">
 	<!-- Add fields to send OpenID information -->
 	<input type="hidden" name="openid_mode" value="true" />
 	<input type="hidden" name="state" value="<?php echo GETPOST('state'); ?>" />

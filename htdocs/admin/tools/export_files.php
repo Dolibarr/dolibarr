@@ -165,6 +165,7 @@ if ($compression == 'zip') {
 		}
 	}
 
+	global $errormsg;
 	$ret = dol_compress_dir($fulldirtocompress, $outputdir."/".$file, $compression, $excludefiles, $rootdirinzip);
 	if ($ret < 0) {
 		if ($ret == -2) {

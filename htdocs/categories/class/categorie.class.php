@@ -331,7 +331,7 @@ class Categorie extends CommonObject
 		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
-		'date_creation' => array('type' => 'datetime', 'label' => 'Datecreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 75, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 85, 'notnull' => -1, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
@@ -1523,15 +1523,15 @@ class Categorie extends CommonObject
 				}
 
 				if ($url == '') {
-					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$cat->id.'&type='.$cat->type.'" class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
+					$link = '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.((int) $cat->id).'&type='.urlencode($cat->type).'" class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
 					$linkend = '</a>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {
-					$link = '<span class="'.$forced_color.'">';
+					$link = '<span class="'.($i < count($way) ? 'small ': '').$forced_color.'">';
 					$linkend = '</span>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
-					$w[] = '<a class="'.$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.$cat->id.'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
+					$w[] = '<a class="'.($i < count($way) ? 'small ': '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
 			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));

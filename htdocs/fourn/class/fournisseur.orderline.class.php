@@ -460,6 +460,9 @@ class CommandeFournisseurLigne extends CommonOrderLine
 		$sql .= ", product_type=".$this->product_type;
 		$sql .= ", special_code=".(!empty($this->special_code) ? $this->special_code : 0);
 		$sql .= ($this->fk_unit ? ", fk_unit='".$this->db->escape($this->fk_unit)."'" : ", fk_unit=null");
+		if (!empty($this->rang)) {
+			$sql .= ", rang=".((int) $this->rang);
+		}
 
 		// Multicurrency
 		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice);

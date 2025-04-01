@@ -2394,7 +2394,7 @@ if ($id > 0) {
 								} elseif ($valuetoshow == 2) {
 									$valuetoshow = $langs->trans('CurrentNext');
 								}
-								$class = "center";
+								$class = "center tdoverflowmax125";
 							} elseif ($value == 'price' || preg_match('/^amount/i', $value)) {
 								$valuetoshow = price($valuetoshow);
 							}
@@ -2406,6 +2406,8 @@ if ($id > 0) {
 								$key = $langs->trans("PaymentCondition".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "PaymentCondition".strtoupper($obj->code) ? $key : $obj->$value);
 								$valuetoshow = nl2br($valuetoshow);
+								$titletoshow = $valuetoshow;
+								$class = 'small tdoverflowmax200';
 							} elseif ($value == 'label' && $tabname[$id] == 'c_country') {
 								$key = $langs->trans("Country".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "Country".strtoupper($obj->code) ? $key : $obj->$value);
@@ -2433,6 +2435,8 @@ if ($id > 0) {
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_payment_term') {
 								$key = $langs->trans("PaymentConditionShort".strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code) ? $key : $obj->$value);
+								$titletoshow = $key;
+								$class = "tdoverflowmax150";
 							} elseif ($value == 'libelle' && $tabname[$id] == 'c_paiement') {
 								$transavailableforcode = $langs->tab_translate["PaymentType".strtoupper($obj->code)];
 								$key = $langs->trans("PaymentType".strtoupper($obj->code));
@@ -2578,7 +2582,7 @@ if ($id > 0) {
 						// Favorite & EEC
 						// Only for country dictionary
 						if ($id == DICT_COUNTRY) {
-							print '<td class="nowrap center">';
+							print '<td class="nowraponall center">';
 							// Is in EEC
 							if ($iserasable) {
 								print '<a class="reposition" href="'.$url.'action='.$acts[$obj->eec].'_eec&token='.newToken().'">'.$actl[$obj->eec].'</a>';
@@ -2586,7 +2590,7 @@ if ($id > 0) {
 								print '<span class="opacitymedium">'.$langs->trans("AlwaysActive").'</span>';
 							}
 							print '</td>';
-							print '<td class="nowrap center">';
+							print '<td class="nowraponall center">';
 							// Favorite
 							if ($iserasable) {
 								print '<a class="reposition" href="'.$url.'action='.$acts[$obj->favorite].'_favorite&token='.newToken().'">'.$actl[$obj->favorite].'</a>';
@@ -2598,7 +2602,7 @@ if ($id > 0) {
 					}
 
 					// Active
-					print '<td class="nowrap center">';
+					print '<td class="nowraponall center">';
 					if ($canbedisabled) {
 						print '<a class="reposition" href="'.$url.'action='.$acts[$obj->active].'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 					} else {

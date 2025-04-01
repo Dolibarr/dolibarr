@@ -2,6 +2,44 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 21.0.1 compared to 21.0.0 *****
+
+FIX: #33360
+FIX: #33365 Global search for single shipment (#33401)
+FIX: #33404 - to keep the method findNearest an agnostic method.
+FIX: #33435 Warnings
+FIX: Accountancy simplified - with multiple entities, amount of the entry is multiplied by the number of entities (#33370)
+FIX: Add a new email for notification
+FIX: Bad link to download tax vat document
+FIX: Blank page on agenda event per user
+FIX: blank page on smartphone for bank SEPA direct transfer page
+FIX: close all services on contract will close all lines (#33466)
+FIX: Count on supplier invoice list does not match count in DB (#33351)
+FIX: CR on script output
+FIX: CSS center end CSS in total
+FIX: Duplicate load of extrafield ->fetch_optionals()
+FIX: fatal error in notification sending email when error array is empty
+FIX: Link to country setup on company setup page
+FIX: Loading of deliveries in shipping card was loading everything
+FIX: Missing ref_ext in group by in list of product
+FIX: Must make different redirect in paymentok/ko according to frame or not.
+FIX: PAIEMENT Wrong field displayed for DateChequeReceived (#33390)
+FIX: picto for unknown mime type
+FIX: Replace compromised tj-actions/changed-files (#33481)
+FIX: Report by custom group was empty
+FIX: Responsive
+FIX: shipment dispatch origin line (#33415)
+FIX: Show the default duration of a membership type.
+FIX: Sort and search Ref Project column was missing (#33539)
+FIX: syntax error on list of intervention for external users
+FIX: text in tooltip on buttons when pb is not a permission problem
+FIX: Translation of column in list of invoice
+FIX: warnings (#33423)
+FIX: Warning when getNomUrl is called before top_httphead
+FIX: we must retrieve linked order_supplier and no other object (#33602)
+SEC FIX: Reflected XSS reported by 柏天浩
+
+
 ***** ChangeLog for 21.0.0 compared to 20.0 *****
 
 For users:
@@ -144,6 +182,8 @@ NEW: vat rate with department in dict (#31628) (#31627)
 NEW: When we export data of unlaterable log, we add an unalterable line in logs
 NEW Add option THEME_STICKY_TOPMENU = 'scrollleftmenu_after_mainpage' (or 'disabled')
 NEW value for FICHINTER_DISABLE_DETAILS. If FICHINTER_DISABLE_DETAILS is set to '2' details are disabled only on intervention list.
+SEC: security avoid RCE using -'- sequence to pass --checkpoint-action parameter in tar command.
+SEC: FIX Security path transversal with modulepart=medias (viewimage.php and download.php)
 
 PERF: Reduce nb of requests into num_public_holiday
 PERF: Reduce size for VCF files and virtualcard qrcode
@@ -216,6 +256,7 @@ The following changes may create regressions for some external modules, but were
 * The trigger code CATEGORY_LINK and CATEGORY_UNLINK have been replaced with code CATEGORY_MODIFY. You can read ->context['linkto'] or ->context['unlinkoff'] to detect if we want to make a link or unlink.
 * The property ->domiciliation and ->propio on bank accounts has been deprecated and replaced with property ->address and ->owner_name everywhere.
 * If you were using the substitution key __MEMBER_CIVILITY__, you must now use __MEMBER_TITLE__
+* The hidden title of tab that was hidden by the CSS class tabTitleText has been completely removed from HTML content.
 
 
 ***** ChangeLog for 20.0.4 compared to 20.0.3 *****

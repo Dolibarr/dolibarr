@@ -1177,7 +1177,7 @@ class Conf extends stdClass
 				$this->contrat->services->inactifs->warning_delay = getDolGlobalInt('MAIN_DELAY_NOT_ACTIVATED_SERVICES') * 86400;
 				$this->contrat->services->expires->warning_delay = getDolGlobalInt('MAIN_DELAY_RUNNING_SERVICES') * 86400;
 			}
-			if (isset($this->commande)) {
+			if (isset($this->bank)) {
 				$this->bank->rappro	= new stdClass();
 				$this->bank->cheque	= new stdClass();
 				$this->bank->rappro->warning_delay = getDolGlobalInt('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE') * 86400;
