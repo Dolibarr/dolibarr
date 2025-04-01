@@ -1005,9 +1005,9 @@ class ImportCsv extends ModeleImports
 								}
 								$sqlstart .= " SET ".implode(', ', $set).", import_key = '".$this->db->escape($importid)."'";
 
-								
-									$keyfield = 'rowid';
-								
+
+								$keyfield = 'rowid';
+
 								$sqlend = " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {
