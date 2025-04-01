@@ -145,8 +145,14 @@ class Fichinter extends CommonObject
 
 	/**
 	 * @var int status
+	 * @deprecated Use $status instead
 	 */
 	public $statut = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
+
+	/**
+	 * @var int status
+	 */
+	public $status = 0; // 0=draft, 1=validated, 2=invoiced, 3=Terminate
 
 	/**
 	 * @var string description
