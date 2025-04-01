@@ -14121,7 +14121,7 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 /**
  * Return array of extension for executable files of text files that can contains executable code.
  *
- * @return  array			Array of extensions
+ * @return  string[]			Array of extensions
  */
 function getExecutableContent()
 {
