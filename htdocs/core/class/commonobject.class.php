@@ -5339,7 +5339,7 @@ abstract class CommonObject
 				//Line extrafield
 				$line->fetch_optionals();
 
-				if (is_object($hookmanager)) {   // Old code is commented on preceding line.
+				if (is_object($hookmanager)) {
 					if (empty($line->fk_parent_line)) {
 						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
 						$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
