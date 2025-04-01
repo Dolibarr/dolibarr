@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2025	   Jean-Rémi Taponier   <jean-remi@netlogic.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -150,7 +151,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 * Year used in prefix is the beginning fiscal year.
 	 *
 	 * @param BookKeeping $object	Book keeping record
-	 * @return string
+	 * @return string Prefix for this bookkeeping object
 	 */
 	private function getPrefix(BookKeeping $object): string
 	{

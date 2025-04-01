@@ -252,9 +252,8 @@ if (empty($reshook)) {
 	if ($action == 'add' && $permissiontoadd) {
 		$db->begin();
 
-		$object->note = GETPOST('note', 'restricthtml');
-		$object->note_private = GETPOST('note', 'restricthtml');
-		$object->origin = $origin;
+		$object->origin = $origin; // deprecated
+		$object->origin_type = $origin;
 		$object->origin_id = $origin_id;
 		$object->fk_project = GETPOSTINT('projectid');
 		$object->weight = GETPOSTINT('weight') == '' ? "NULL" : GETPOSTINT('weight');
@@ -267,7 +266,7 @@ if (empty($reshook)) {
 		$product = new Product($db);
 
 		// We will loop on each line of the original document to complete the shipping object with various info and quantity to deliver
-		$classname = ucfirst($object->origin);
+		$classname = ucfirst($object->origin_type);
 		$objectsrc = new $classname($db);
 		'@phan-var-force Facture|Commande $objectsrc';
 		$objectsrc->fetch($object->origin_id);
@@ -280,6 +279,7 @@ if (empty($reshook)) {
 		$object->fk_delivery_address = $objectsrc->fk_delivery_address;
 		$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		$object->tracking_number = GETPOST('tracking_number', 'alpha');
+		$object->note = GETPOST('note', 'restricthtml'); // deprecated
 		$object->note_private = GETPOST('note_private', 'restricthtml');
 		$object->note_public = GETPOST('note_public', 'restricthtml');
 		$object->fk_incoterms = GETPOSTINT('incoterm_id');
@@ -326,12 +326,6 @@ if (empty($reshook)) {
 						$sub_qty[$j]['id_batch'] = GETPOSTINT($batch); // the id into llx_product_batch of stock record to move
 						$subtotalqty += $sub_qty[$j]['q'];
 
-						//var_dump($qty);
-						//var_dump($batch);
-						//var_dump($sub_qty[$j]['q']);
-						//var_dump($sub_qty[$j]['id_batch']);
-
-						//var_dump($qty);var_dump($batch);var_dump($sub_qty[$j]['q']);var_dump($sub_qty[$j]['id_batch']);
 						if ($is_batch_or_serial == 2 && ($sub_qty[$j]['q'] > 1 || ($sub_qty[$j]['q'] > 0 && in_array($sub_qty[$j]['id_batch'], $product_batch_used)))) {
 							setEventMessages($langs->trans("TooManyQtyForSerialNumber", $product->ref, ''), null, 'errors');
 							$totalqty = 0;
@@ -405,7 +399,6 @@ if (empty($reshook)) {
 			}
 		}
 
-		//var_dump($batch_line[2]);
 		if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
 			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array');
 			for ($i = 0; $i < $num; $i++) {

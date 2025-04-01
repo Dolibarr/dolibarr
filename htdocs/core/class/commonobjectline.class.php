@@ -269,6 +269,16 @@ abstract class CommonObjectLine extends CommonObject
 	public $multicurrency_total_tva;
 
 	/**
+	 * @var float|string Multicurrency total localtax1
+	 */
+	public $multicurrency_total_localtax1;	// not in database
+
+	/**
+	 * @var float|string Multicurrency total localtax2
+	 */
+	public $multicurrency_total_localtax2;	// not in database
+
+	/**
 	 * @var float Multicurrency total with tax
 	 */
 	public $multicurrency_total_ttc;

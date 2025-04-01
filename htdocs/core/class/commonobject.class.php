@@ -392,12 +392,6 @@ abstract class CommonObject
 	public $state_id;
 
 	/**
-	 * @var	int			State ID
-	 * @deprecated	Use $state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
-	 */
-	public $fk_departement;
-
-	/**
 	 * @var string		State code
 	 * @see getFullAddress(), $state
 	 */
@@ -530,11 +524,6 @@ abstract class CommonObject
 	public $multicurrency_total_tva;
 
 	/**
-	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
-	 */
-	public $multicurrency_total_ttc;
-
-	/**
 	 * @var float|string Multicurrency total localtax1
 	 */
 	public $multicurrency_total_localtax1;	// not in database
@@ -543,6 +532,12 @@ abstract class CommonObject
 	 * @var float|string Multicurrency total localtax2
 	 */
 	public $multicurrency_total_localtax2;	// not in database
+
+	/**
+	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 */
+	public $multicurrency_total_ttc;
+
 
 	/**
 	 * @var ?string
