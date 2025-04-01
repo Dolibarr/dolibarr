@@ -219,7 +219,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 	$objMo = new Mo($db);
 
-	if ($action == 'confirm_cancel' && $confirm == 'yes') {
+	if ($action == 'confirm_cancel' && $confirm == 'yes' && $permissiontoadd) {
 		if (!empty($toselect)) {
 			foreach ($toselect as $key => $idMo) {
 				if ($objMo->fetch($idMo)) {
@@ -244,7 +244,7 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'changedatestart_confirm' || $action == 'changedateend_confirm') {
+	if (($action == 'changedatestart_confirm' || $action == 'changedateend_confirm') && $permissiontoadd) {
 		if ($confirm == 'yes') {
 			$newDate = dol_mktime((int) $hour, (int) $min, (int) 0, (int) $month, (int) $day, (int) $year);
 
