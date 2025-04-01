@@ -1207,12 +1207,7 @@ if ($nboftargetok) {
 			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
-			"$DESTI/package_			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.codeclimate.yml`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.pre-commit-config.yaml`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.vscode`;
-			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.editorconfig' -exec rm {} \\;`;
-			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.travis.yml' -exec rm {} \\;`;
-windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
+			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',
 			"$DESTI/standard/$FILENAMETGZ.zip"=>'standard'
 		);

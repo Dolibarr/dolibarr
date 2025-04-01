@@ -166,7 +166,7 @@ if (isset($max)) {
 }
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UPLOAD_DOC')).'"> '.$langs->trans("Kb");
+print '<input class="flat width75 right" name="MAIN_UPLOAD_DOC" type="text" spellcheck="false" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UPLOAD_DOC')).'"> '.$langs->trans("Kb");
 print '</td>';
 print '</tr>';
 
@@ -176,7 +176,7 @@ print '<td>';
 print $form->textwithpicto($langs->trans("UMask"), $langs->trans("UMaskExplanation"));
 print '</td>';
 print '<td class="nowrap">';
-print '<input class="flat" name="MAIN_UMASK" type="text" size="6" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UMASK')).'">';
+print '<input class="flat width75 right" name="MAIN_UMASK" type="text" spellcheck="false" value="'.dol_escape_htmltag(getDolGlobalString('MAIN_UMASK')).'">';
 print '</td>';
 print '</tr>';
 
@@ -197,7 +197,7 @@ if (ini_get('safe_mode') && getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
 		dol_syslog("safe_mode is on, basedir is ".$basedir.", safe_mode_exec_dir is ".ini_get('safe_mode_exec_dir'), LOG_WARNING);
 	}
 }
-print '<input type="text" '.((defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" value="'.dol_escape_htmltag(GETPOSTISSET('MAIN_ANTIVIRUS_COMMAND') ? GETPOST('MAIN_ANTIVIRUS_COMMAND') : getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')).'">';
+print '<input type="text" '.((defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_COMMAND" class="minwidth500imp" spellcheck="false" value="'.dol_escape_htmltag(GETPOSTISSET('MAIN_ANTIVIRUS_COMMAND') ? GETPOST('MAIN_ANTIVIRUS_COMMAND') : getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')).'">';
 if (defined('MAIN_ANTIVIRUS_COMMAND') && !defined('MAIN_ANTIVIRUS_BYPASS_COMMAND_AND_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
@@ -211,7 +211,7 @@ print '<td>'.$langs->trans("AntiVirusParam").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("AntiVirusParamExample").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag(getDolGlobalString('MAIN_ANTIVIRUS_PARAM')) : '').'">';
+print '<input type="text" '.(defined('MAIN_ANTIVIRUS_PARAM') ? 'disabled ' : '').'name="MAIN_ANTIVIRUS_PARAM" class="minwidth500imp" spellcheck="false" value="'.(getDolGlobalString('MAIN_ANTIVIRUS_PARAM') ? dol_escape_htmltag(getDolGlobalString('MAIN_ANTIVIRUS_PARAM')) : '').'">';
 if (defined('MAIN_ANTIVIRUS_PARAM')) {
 	print '<br><span class="opacitymedium">'.$langs->trans("ValueIsForcedBySystem").'</span>';
 }
@@ -223,7 +223,7 @@ print '<td>'.$langs->trans("UploadExtensionRestriction").'<br>';
 print '<span class="opacitymedium">'.$langs->trans("UploadExtensionRestrictionExemple").'</span>';
 print '</td>';
 print '<td>';
-print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="minwidth500imp" value="'.getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'htm,html,shtml,js,php').'">';
+print '<input type="text" name="MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION" class="minwidth500imp" spellcheck="false" value="'.getDolGlobalString('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', implode(',', getExecutableContent())).'">';
 print "</td>";
 print '</tr>';
 
