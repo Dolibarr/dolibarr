@@ -392,12 +392,6 @@ abstract class CommonObject
 	public $state_id;
 
 	/**
-	 * @var	int			State ID
-	 * @deprecated	Use $state_id. We can remove this property when the field 'fk_departement' have been renamed into 'state_id' in all tables
-	 */
-	public $fk_departement;
-
-	/**
 	 * @var string		State code
 	 * @see getFullAddress(), $state
 	 */
@@ -530,11 +524,6 @@ abstract class CommonObject
 	public $multicurrency_total_tva;
 
 	/**
-	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
-	 */
-	public $multicurrency_total_ttc;
-
-	/**
 	 * @var float|string Multicurrency total localtax1
 	 */
 	public $multicurrency_total_localtax1;	// not in database
@@ -543,6 +532,12 @@ abstract class CommonObject
 	 * @var float|string Multicurrency total localtax2
 	 */
 	public $multicurrency_total_localtax2;	// not in database
+
+	/**
+	 * @var float 		Multicurrency total amount including taxes (TTC = "Toutes Taxes Comprises" in French)
+	 */
+	public $multicurrency_total_ttc;
+
 
 	/**
 	 * @var ?string
@@ -4829,6 +4824,8 @@ abstract class CommonObject
 						$this->status = $status;
 					} elseif ($fieldstatus == 'tobuy') {
 						$this->status_buy = $status;	// @phpstan-ignore-line
+					} elseif ($fieldstatus == 'tobatch') {
+						$this->status_batch = $status;	// @phpstan-ignore-line
 					} else {
 						$this->status = $status;
 					}
@@ -6527,16 +6524,8 @@ abstract class CommonObject
 					$sql .= ", ".$name;
 				}
 				// use geo sql fonction to read as text
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'point') {
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
-				}
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'multipts') {
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
-				}
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'linestrg') {
-					$sql .= ", ST_AsWKT(".$name.") as ".$name;
-				}
-				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] == 'polygon') {
+				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || in_array($extrafields->attributes[$this->table_element]['type'][$name], array('point', 'multipts', 'linestrg', 'polygon'))) {
+					// TODO Add an abstraction method in the database driver
 					$sql .= ", ST_AsWKT(".$name.") as ".$name;
 				}
 			}
@@ -10369,9 +10358,9 @@ abstract class CommonObject
 				}
 				$keys_with_alias[] = $alias . '.' . $fieldname;
 			}
-			return implode(',', $keys_with_alias);
+			return implode(', ', $keys_with_alias);
 		} else {
-			return implode(',', $keys);
+			return implode(', ', $keys);
 		}
 	}
 

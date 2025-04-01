@@ -78,6 +78,7 @@ $ref = GETPOST('ref', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOSTINT('originid');
 $idline = GETPOSTINT('elrowid') ? GETPOSTINT('elrowid') : GETPOSTINT('rowid');
+$attribute = GETPOST('attribute', 'aZ09');
 
 // PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -89,7 +90,7 @@ $datecontrat = '';
 $moreparam = '';
 $note_public = '';
 $note_private = '';
-$usehm = (getDolGlobalString('MAIN_USE_HOURMIN_IN_DATE_RANGE') ? $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE : 0);
+$usehm = getDolGlobalInt('MAIN_USE_HOURMIN_IN_DATE_RANGE');
 
 // Security check
 if ($user->socid) {
@@ -128,6 +129,12 @@ $permissiontodelete = ($user->hasRight('contrat', 'creer') && $object->status ==
 $permissiontoadd   = $user->hasRight('contrat', 'creer');     //  Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontoedit = $permissiontoadd;
 $permissiontoactivate = $user->hasRight('contrat', 'activer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
 $error = 0;
 
 // Security check
@@ -368,7 +375,7 @@ if (empty($reshook)) {
 
 										$outputlangs = $langs;
 										$newlang = '';
-										if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+										if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 											$newlang = GETPOST('lang_id', 'aZ09');
 										}
 										if (empty($newlang)) {
@@ -808,18 +815,12 @@ if (empty($reshook)) {
 
 			$fk_unit = GETPOSTINT('unit');
 
-			// update price_ht with discount
 			// TODO Use object->updateline instead objectline->update
 
-			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
-			if ($remise_percent > 0) {
-				$remise = round(((float) $price_ht * (float) $remise_percent / 100), 2);
-			}
 
 			$objectline->fk_product = GETPOSTINT('idprod');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = (float) $price_ht;
 			$objectline->subprice = (float) price2num(GETPOST('elprice'), 'MU');
 			$objectline->qty = (float) price2num(GETPOST('elqty'), 'MS');
 			$objectline->remise_percent = $remise_percent;
@@ -946,10 +947,10 @@ if (empty($reshook)) {
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("RefNewContract")), null, 'errors');
 		}
-	} elseif ($action == 'update_extras' && $permissiontoadd) {
+	} elseif ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);
 
-		$attribute = GETPOST('attribute', 'alphanohtml');
+		$attribute = GETPOST('attribute', 'aZ09');
 
 		// Fill array 'array_options' with data from update form
 		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
@@ -1609,7 +1610,7 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="notopnoleftnoright allwidth tableforservicepart1 centpercent">';
 
-			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
+			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.qty,";
 			$sql .= " cd.tva_tx, cd.vat_src_code, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
 			$sql .= " cd.date_ouverture_prevue as date_start, cd.date_ouverture as date_start_real,";
 			$sql .= " cd.date_fin_validite as date_end, cd.date_cloture as date_end_real,";

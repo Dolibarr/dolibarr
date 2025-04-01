@@ -2150,7 +2150,7 @@ class Expedition extends CommonObject
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->statut               = self::STATUS_VALIDATED;
+		$this->status = self::STATUS_VALIDATED;
 		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
@@ -2165,8 +2165,8 @@ class Expedition extends CommonObject
 		$this->commande_id          = 0;
 		$this->commande             = $order;
 
-		$this->origin_id            = 1;
-		$this->origin               = 'commande';
+		$this->origin_id = 1;
+		$this->origin_type = 'commande';
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';

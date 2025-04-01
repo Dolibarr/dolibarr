@@ -126,7 +126,6 @@ BuyingPrices=Prix ​​d'achat
 CustomerPrices=Prix ​​client
 SuppliersPrices=Tarifs des vendeurs
 SuppliersPricesOfProductsOrServices=Prix des fournisseurs (de produits ou de services)
-CustomCode=Douanes|Marchandise|HS|Code TARIC
 StateOrigin=État|Province d'origine
 Nature=Nature du produit (brut/fabriqué)
 NatureOfProductShort=Nature du produit

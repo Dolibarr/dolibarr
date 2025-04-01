@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Events
 Agenda=Agenda
+AgendaEvents=Agenda events
 TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Default calendar
