@@ -666,7 +666,6 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 
 					$sign = 1;
-					$vatrate = '';
 					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
 					if ($object->lines instanceof CommonInvoiceLine) {
 						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
