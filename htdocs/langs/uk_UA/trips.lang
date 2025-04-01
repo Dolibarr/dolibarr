@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Записав
 AUTHORPAIEMENT=Оплачено
 AddTrip=Створити звіт про витрати
@@ -13,6 +13,8 @@ byEX_EXP=за рядком (обмеження до %s)
 byEX_MON=по місяцях (обмеження до %s)
 byEX_YEA=за роками (обмеження до %s)
 CANCEL_USER=Видалено
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Категорія транспортного засобу
 ClassifyRefunded=Класифікувати "Відшкодовано"
 CompanyVisited=Компанію/організацію відвідали
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=за роками (без обмежень)
 NoTripsToExportCSV=Немає звіту про витрати для експорту за цей період.
 NOT_AUTHOR=Ви не є автором цього звіту про витрати. Операцію скасовано.
 OnExpense=Лінія витрат
-PDFStandardExpenseReports=Стандартний шаблон для створення PDF-документа для звіту про витрати
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=Оплатіть звіт про витрати
 REFUSEUR=Відмовлено
 RangeIk=Діапазон пробігу
@@ -106,7 +108,7 @@ TripId=Ідентифікаційний звіт про витрати
 TripNDF=Інформаційний звіт про витрати
 TripSociete=Інформаційна компанія
 Trips=Звіти про витрати
-TripsAndExpenses=Звіти про витрати
+TripsAndExpenses=Expense reports
 TripsAndExpensesStatistics=Статистика витрат
 TypeFees=Види зборів
 UploadANewFileNow=Завантажте новий документ зараз
@@ -115,6 +117,10 @@ VALIDOR=Затверджено
 ValidateAndSubmit=Підтвердити та подати на затвердження
 ValidatedWaitingApproval=Перевірено (очікується схвалення)
 ValideTrip=Затвердити звіт про витрати
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Сніданок

@@ -132,5 +132,7 @@ ShowAllPerms=Afișează toate rândurile de permisiuni
 HideAllPerms=Ascunde toate rândurile de permisiuni
 UserPublicPageDesc=Poți activa un card virtual pentru acest utilizator. O adresă URL cu profilul utilizatorului și un cod de bare vor fi disponibile pentru a permite oricui are un smartphone să îl scaneze și să adauge persoana de contact în agenda sa.
 EnablePublicVirtualCard=Activare carte de vizită virtuală utilizator
+ExcludedByFilter=Necalificat de filtre, dar afișat pentru a vedea ierarhia acesteia
 UserEnabledDisabled=Status utilizator modificat: %s
 AlternativeEmailForOAuth2=Email alternativ pentru autentificare OAuth2
+ErrorUpdateCanceledDueToDuplicatedUniqueValue=Eroare, actualizarea a fost anulată deoarece una dintre date, care ar trebui să fie unică, există deja

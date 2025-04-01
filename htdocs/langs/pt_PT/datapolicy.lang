@@ -17,8 +17,9 @@ Module4100Name = Política de Privacidade de Dados
 Module4100Desc = módulo para gerenciar a privacidade de dados (conformidade com o GDPR)
 # Administration page
 datapolicySetup = módulo Configuração da política de privacidade de dados
-Deletion = Exclusão de dados
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s meses
 ONE_YEAR = 1 ano
 NB_YEARS = %s anos
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = Cliente potencial/cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = Nem cliente potencial/Nem cliente
 DATAPOLICY_CONTACT_FOURNISSEUR = Fornecedor
 DATAPOLICY_ADHERENT = Membro
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = Você pode enviar um e-mail do GDPR para todos os seus contatos relevantes (que ainda não receberam um e-mail e para o qual você não registrou nada sobre o contrato do GDPR). Para fazer isso, use o botão a seguir.
 SendAgreement = Mande emails
 AllAgreementSend = Todos os e-mails foram enviados
 TXTLINKDATAPOLICYACCEPT = Texto para o hiperligação, conexão "acordo"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR: Tratamento de dados pessoais
 DATAPOLICY_consentement = Consentimento obtido para o tratamento de dados pessoais

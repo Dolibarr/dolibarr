@@ -8,10 +8,11 @@
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
  * Copyright (C) 2015      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2016      Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2019      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024	Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2019      Tim Otte			    <otte@meuser.it>
  * Copyright (C) 2020      Pierre Ardoin        <mapiolca@me.com>
  * Copyright (C) 2023	   Joachim Kueter		<git-jk@bloxera.com>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +46,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
 if (isModEnabled('barcode')) {
 	dol_include_once('/core/class/html.formbarcode.class.php');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'suppliers', 'bills', 'margins', 'stocks'));
 
@@ -98,7 +109,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('pricesuppliercard', 'globalcard'));
 
 $object = new ProductFournisseur($db);
@@ -131,7 +142,7 @@ if ($cancel) {
 	$action = '';
 }
 
-$parameters = array('socid'=>$socid, 'id_prod'=>$id);
+$parameters = array('socid' => $socid, 'id_prod' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -142,7 +153,7 @@ if (empty($reshook)) {
 		if ($id) {
 			$result = $object->fetch($id);
 			//Need dol_clone methode 1 (same object class) because update product use hasbatch method on oldcopy
-			$object->oldcopy = dol_clone($object, 1);
+			$object->oldcopy = dol_clone($object, 1);  // @phan-suppress-current-line PhanTypeMismatchProperty
 			$object->cost_price = $cost_price;
 			$result = $object->update($object->id, $user);
 			if ($result > 0) {
@@ -187,9 +198,9 @@ if (empty($reshook)) {
 
 	if ($action == 'save_price' && $usercancreate) {
 		$ref_fourn_price_id = GETPOSTINT('ref_fourn_price_id');
-		$id_fourn = GETPOST("id_fourn");
+		$id_fourn = GETPOSTINT("id_fourn");
 		if (empty($id_fourn)) {
-			$id_fourn = GETPOST("search_id_fourn");
+			$id_fourn = GETPOSTINT("search_id_fourn");
 		}
 		$ref_fourn = GETPOST("ref_fourn");
 		if (empty($ref_fourn)) {
@@ -272,7 +283,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($ref_fourn_price_id)) {
-				$ret = $object->add_fournisseur($user, $id_fourn, $ref_fourn_old, $quantity); // This insert record with no value for price. Values are update later with update_buyprice
+				$ret = $object->add_fournisseur($user, $id_fourn, $ref_fourn_old, (float) $quantity); // This inserts record with no value for price. Values are updated later with update_buyprice
 				if ($ret == -3) {
 					$error++;
 
@@ -314,9 +325,9 @@ if (empty($reshook)) {
 					$multicurrency_price = GETPOSTFLOAT("multicurrency_price");
 					$multicurrency_code = GETPOST("multicurrency_code", 'alpha');
 
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $multicurrency_price, GETPOST("multicurrency_price_base_type"), $multicurrency_tx, $multicurrency_code, $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				} else {
-					$ret = $object->update_buyprice($quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOST("oselDispo"), $ref_fourn, $tva_tx, GETPOST("charges"), $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
+					$ret = $object->update_buyprice((float) $quantity, $newprice, $user, GETPOST("price_base_type"), $supplier, GETPOSTINT("oselDispo"), $ref_fourn, (float) $tva_tx, GETPOST("charges"), (float) $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description, $barcode, $fk_barcode_type, $extrafield_values);
 				}
 				if ($ret < 0) {
 					$error++;
@@ -411,7 +422,7 @@ if ($id > 0 || $ref) {
 			if (isModEnabled("product") && isModEnabled("service")) {
 				$typeformat = 'select;0:'.$langs->trans("Product").',1:'.$langs->trans("Service");
 				print '<tr><td class="">';
-				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', $object->type, $object, 0, $typeformat) : $langs->trans('Type');
+				print (!getDolGlobalString('PRODUCT_DENY_CHANGE_PRODUCT_TYPE')) ? $form->editfieldkey("Type", 'fk_product_type', (string) $object->type, $object, 0, $typeformat) : $langs->trans('Type');
 				print '</td><td>';
 				print $form->editfieldval("Type", 'fk_product_type', $object->type, $object, 0, $typeformat);
 				print '</td></tr>';
@@ -422,7 +433,7 @@ if ($id > 0 || $ref) {
 			$textdesc = $langs->trans("CostPriceDescription");
 			$textdesc .= "<br>".$langs->trans("CostPriceUsage");
 			$text = $form->textwithpicto($langs->trans("CostPrice"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
+			print $form->editfieldkey($text, 'cost_price', (string) $object->cost_price, $object, (int) $usercancreate, 'amount:6');
 			print '</td><td>';
 			print $form->editfieldval($text, 'cost_price', $object->cost_price, $object, $usercancreate, 'amount:6');
 			print '</td></tr>';
@@ -435,7 +446,7 @@ if ($id > 0 || $ref) {
 			print '<tr><td class="titlefieldcreate">';
 			$textdesc = $langs->trans("AverageUnitPricePMPDesc");
 			$text = $form->textwithpicto($langs->trans("AverageUnitPricePMPShort"), $textdesc, 1, 'help', '');
-			print $form->editfieldkey($text, 'pmp', $object->pmp, $object, $usercaneditpmp, 'amount:6');
+			print $form->editfieldkey($text, 'pmp', (string) $object->pmp, $object, $usercaneditpmp, 'amount:6');
 			print '</td><td>';
 			print $form->editfieldval($text, 'pmp', ($object->pmp > 0 ? $object->pmp : ''), $object, $usercaneditpmp, 'amount:6');
 			if ($object->pmp > 0) {
@@ -507,9 +518,9 @@ if ($id > 0 || $ref) {
 					$events = array();
 					$events[] = array('method' => 'getVatRates', 'url' => dol_buildpath('/core/ajax/vatrates.php', 1), 'htmlname' => 'tva_tx', 'params' => array());
 					$filter = '(fournisseur:=:1) AND (status:=:1)';
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, 'SelectThirdParty', 0, 0, $events);
+					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(GETPOST("id_fourn", 'alpha'), 'id_fourn', $filter, $langs->transnoentitiesnoconv('SelectThirdParty'), 0, 0, $events);
 
-					$parameters = array('filter'=>$filter, 'html_name'=>'id_fourn', 'selected'=>GETPOST("id_fourn"), 'showempty'=>1, 'prod_id'=>$object->id);
+					$parameters = array('filter' => $filter, 'html_name' => 'id_fourn', 'selected' => GETPOST("id_fourn"), 'showempty' => 1, 'prod_id' => $object->id);
 					$reshook = $hookmanager->executeHooks('formCreateThirdpartyOptions', $parameters, $object, $action);
 					if (empty($reshook)) {
 						if (empty($form->result)) {
@@ -668,7 +679,7 @@ if ($id > 0 || $ref) {
 							on_change();
 						}
 						function on_click() {
-							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=fournisseurs&eid=" + $("#eid").val();
+							window.location = "'.DOL_URL_ROOT.'/product/dynamic_price/editor.php?id='.$id.'&tab=price_suppliers&eid=" + $("#eid").val();
 						}
 						function on_change() {
 							if ($("#eid").val() == 0) {
@@ -690,7 +701,13 @@ if ($id > 0 || $ref) {
 					}
 					print $form->selectMultiCurrency($currencycodetouse, "multicurrency_code", 1);
 					print ' &nbsp; &nbsp; '.$langs->trans("CurrencyRate").' ';
-					print '<input class="flat" name="multicurrency_tx" size="4" value="'.vatrate(GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '')).'">';
+					print '<input class="flat width50" name="multicurrency_tx" value="';
+					print GETPOST('multicurrency_tx');
+					$vatratetoshow = GETPOST('multicurrency_tx') ? GETPOST('multicurrency_tx') : (isset($object->fourn_multicurrency_tx) ? $object->fourn_multicurrency_tx : '');
+					if ($vatratetoshow !== '') {
+						print vatrate($vatratetoshow);
+					}
+					print '">';
 					print '</td>';
 					print '</tr>';
 
@@ -699,7 +716,7 @@ if ($id > 0 || $ref) {
 					$pricesupplierincurrencytouse = (GETPOST('multicurrency_price') ? GETPOST('multicurrency_price') : (isset($object->fourn_multicurrency_price) ? $object->fourn_multicurrency_price : ''));
 					print '<td><input class="flat" name="multicurrency_price" size="8" value="'.price($pricesupplierincurrencytouse).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type"); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOST('multicurrency_price_base_type') ? GETPOST('multicurrency_price_base_type') : 'HT'), "multicurrency_price_base_type", 1); // We keep 'HT' here, multicurrency_price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 
 					// Price qty min
@@ -708,7 +725,7 @@ if ($id > 0 || $ref) {
 					print '<input type="hidden" name="price" value="">';
 					print '<input type="hidden" name="price_base_type" value="">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType('', "disabled_price_base_type");
+					print $form->selectPriceBaseType('', "disabled_price_base_type", 1);
 					print '</td></tr>';
 
 					$currencies = array();
@@ -770,7 +787,7 @@ if ($id > 0 || $ref) {
 					print '<tr><td class="fieldrequired">'.$langs->trans("PriceQtyMin").'</td>';
 					print '<td><input class="flat" name="price" size="8" value="'.(GETPOST('price') ? price(GETPOST('price')) : (isset($object->fourn_price) ? price($object->fourn_price) : '')).'">';
 					print '&nbsp;';
-					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type"); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
+					print $form->selectPriceBaseType((GETPOSTISSET('price_base_type') ? GETPOST('price_base_type') : 'HT'), "price_base_type", 1); // We keep 'HT' here, price_base_type is not yet supported for supplier prices
 					print '</td></tr>';
 				}
 
@@ -778,14 +795,14 @@ if ($id > 0 || $ref) {
 				if (getDolGlobalString('PRODUCT_CHARGES')) {
 					print '<tr>';
 					print '<td>'.$langs->trans("Charges").'</td>';
-					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price($object->fourn_charges) : '')).'">';
+					print '<td><input class="flat" name="charges" size="8" value="'.(GETPOST('charges') ? price(GETPOST('charges')) : (isset($object->fourn_charges) ? price((string) $object->fourn_charges) : '')).'">';
 					print '</td>';
 					print '</tr>';
 				}
 
 				// Discount qty min
 				print '<tr><td>'.$langs->trans("DiscountQtyMin").'</td>';
-				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ? vatrate($object->fourn_remise_percent) : '')).'"> %';
+				print '<td><input class="flat" name="remise_percent" size="4" value="'.(GETPOSTISSET('remise_percent') ? vatrate(price2num(GETPOST('remise_percent'), '', 2)) : (isset($object->fourn_remise_percent) ? vatrate(price2num($object->fourn_remise_percent)) : '')).'"> %';
 				print '</td>';
 				print '</tr>';
 
@@ -885,7 +902,7 @@ if ($id > 0 || $ref) {
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>!empty($id_fourn) ? $id_fourn : 0, 'prod_id'=>$object->id);
+					$parameters = array('id_fourn' => !empty($id_fourn) ? $id_fourn : 0, 'prod_id' => $object->id);
 					$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action);
 					print $hookmanager->resPrint;
 				}
@@ -945,22 +962,22 @@ if ($id > 0 || $ref) {
 				// Definition of fields for lists
 				// Some fields are missing because they are not included in the database query
 				$arrayfields = array(
-					'pfp.datec'=>array('label'=>$langs->trans("AppliedPricesFrom"), 'checked'=>1, 'position'=>1),
-					's.nom'=>array('label'=>$langs->trans("Suppliers"), 'checked'=>1, 'position'=>2),
-					'pfp.fk_availability'=>array('label'=>$langs->trans("Availability"), 'enabled' => getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked'=>0, 'position'=>4),
-					'pfp.quantity'=>array('label'=>$langs->trans("QtyMin"), 'checked'=>1, 'position'=>5),
-					'pfp.unitprice'=>array('label'=>$langs->trans("UnitPriceHT"), 'checked'=>1, 'position'=>9),
-					'pfp.multicurrency_unitprice'=>array('label'=>$langs->trans("UnitPriceHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>0, 'position'=>10),
-					'pfp.charges'=>array('label'=>$langs->trans("Charges"), 'enabled' => getDolGlobalString('PRODUCT_CHARGES'), 'checked'=>0, 'position'=>11),
-					'pfp.delivery_time_days'=>array('label'=>$langs->trans("NbDaysToDelivery"), 'checked'=>-1, 'position'=>13),
-					'pfp.supplier_reputation'=>array('label'=>$langs->trans("ReputationForThisProduct"), 'checked'=>-1, 'position'=>14),
-					'pfp.fk_barcode_type'=>array('label'=>$langs->trans("BarcodeType"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>15),
-					'pfp.barcode'=>array('label'=>$langs->trans("BarcodeValue"), 'enabled' => isModEnabled('barcode'), 'checked'=>0, 'position'=>16),
-					'pfp.packaging'=>array('label'=>$langs->trans("PackagingForThisProduct"), 'enabled' => getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked'=>0, 'position'=>17),
-					'pfp.status'=>array('label'=>$langs->trans("Status"), 'enabled' => 1, 'checked'=>0, 'position'=>40),
-					'pfp.tms'=>array('label'=>$langs->trans("DateModification"), 'enabled' => isModEnabled('barcode'), 'checked'=>1, 'position'=>50),
-					'pfp.price'=>array('label'=>$langs->trans("PriceQtyMinHT"), 'checked'=>1, 'position'=>60),
-					'pfp.multicurrency_price'=>array('label'=>$langs->trans("PriceQtyMinHTCurrency"), 'enabled' => isModEnabled('multicurrency'), 'checked'=>1, 'position'=>70),
+					'pfp.datec' => array('label' => $langs->trans("AppliedPricesFrom"), 'checked' => '1', 'position' => 1),
+					's.nom' => array('label' => $langs->trans("Suppliers"), 'checked' => '1', 'position' => 2),
+					'pfp.fk_availability' => array('label' => $langs->trans("Availability"), 'enabled' => (string) getDolGlobalInt('FOURN_PRODUCT_AVAILABILITY'), 'checked' => '0', 'position' => 4),
+					'pfp.quantity' => array('label' => $langs->trans("QtyMin"), 'checked' => '1', 'position' => 5),
+					'pfp.unitprice' => array('label' => $langs->trans("UnitPriceHT"), 'checked' => '1', 'position' => 9),
+					'pfp.multicurrency_unitprice' => array('label' => $langs->trans("UnitPriceHTCurrency"), 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '0', 'position' => 10),
+					'pfp.charges' => array('label' => $langs->trans("Charges"), 'enabled' => getDolGlobalString('PRODUCT_CHARGES'), 'checked' => '0', 'position' => 11),
+					'pfp.delivery_time_days' => array('label' => $langs->trans("NbDaysToDelivery"), 'checked' => '-1', 'position' => 13),
+					'pfp.supplier_reputation' => array('label' => $langs->trans("ReputationForThisProduct"), 'checked' => '-1', 'position' => 14),
+					'pfp.fk_barcode_type' => array('label' => $langs->trans("BarcodeType"), 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '0', 'position' => 15),
+					'pfp.barcode' => array('label' => $langs->trans("BarcodeValue"), 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '0', 'position' => 16),
+					'pfp.packaging' => array('label' => $langs->trans("PackagingForThisProduct"), 'enabled' => (string) getDolGlobalInt('PRODUCT_USE_SUPPLIER_PACKAGING'), 'checked' => '0', 'position' => 17),
+					'pfp.status' => array('label' => $langs->trans("Status"), 'enabled' => '1', 'checked' => '0', 'position' => 40),
+					'pfp.tms' => array('label' => $langs->trans("DateModification"), 'enabled' => (string) (int) isModEnabled('barcode'), 'checked' => '1', 'position' => 50),
+					'pfp.price' => array('label' => $langs->trans("PriceQtyMinHT"), 'checked' => '1', 'position' => 60),
+					'pfp.multicurrency_price' => array('label' => $langs->trans("PriceQtyMinHTCurrency"), 'enabled' => (string) (int) isModEnabled('multicurrency'), 'checked' => '1', 'position' => 70),
 
 				);
 
@@ -974,10 +991,10 @@ if ($id > 0 || $ref) {
 							// Show field if not hidden
 							if (!empty($extrafields->attributes["product_fournisseur_price"]['list'][$key]) && $extrafields->attributes["product_fournisseur_price"]['list'][$key] != 3) {
 								$extratitle = $langs->trans($value);
-								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => 0,
-																   'position' => (end($arrayfields)['position'] + 1),
-																   'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
-																   'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
+								$arrayfields['ef.' . $key] = array('label'    => $extratitle, 'checked' => '0',
+								'position' => (end($arrayfields)['position'] + 1),
+								'langfile' => $extrafields->attributes["product_fournisseur_price"]['langfile'][$key],
+								'help'     => $extrafields->attributes["product_fournisseur_price"]['help'][$key]);
 							}
 						}
 					}
@@ -987,7 +1004,7 @@ if ($id > 0 || $ref) {
 				include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 				$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+				$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post" name="formulaire">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -997,14 +1014,21 @@ if ($id > 0 || $ref) {
 				print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
 				// Suppliers list title
+				print '<!-- List of supplier prices -->'."\n";
 				print '<div class="div-table-responsive">';
-				print '<table class="liste centpercent">';
+				print '<table class="liste centpercent noborder">';
 
 				$param = "&id=".$object->id;
 
 				$nbfields = 0;
 
 				print '<tr class="liste_titre">';
+
+				// Action column
+				if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch actioncolumn ');
+					$nbfields++;
+				}
 				if (!empty($arrayfields['pfp.datec']['checked'])) {
 					print_liste_field_titre("AppliedPricesFrom", $_SERVER["PHP_SELF"], "pfp.datec", "", $param, "", $sortfield, $sortorder, '', '', 1);
 					$nbfields++;
@@ -1107,16 +1131,30 @@ if ($id > 0 || $ref) {
 				}
 
 				if (is_object($hookmanager)) {
-					$parameters = array('id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id, 'nbfields'=>$nbfields);
+					$parameters = array('id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id, 'nbfields' => $nbfields);
 					$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action);
 				}
-				print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ');
-				$nbfields++;
+				if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+					print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"], "", '', '', '', $sortfield, $sortorder, 'maxwidthsearch center ');
+					$nbfields++;
+				}
 				print "</tr>\n";
 
 				if (is_array($product_fourn_list)) {
 					foreach ($product_fourn_list as $productfourn) {
 						print '<tr class="oddeven">';
+
+						// Action column
+						if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="center nowraponall">';
+							if ($usercancreate) {
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
+								print ' &nbsp; ';
+								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							}
+
+							print '</td>';
+						}
 
 						// Date from
 						if (!empty($arrayfields['pfp.datec']['checked'])) {
@@ -1200,7 +1238,7 @@ if ($id > 0 || $ref) {
 						// Charges
 						if (!empty($arrayfields['pfp.charges']['checked'])) {	// Possible only when getDolGlobalString('PRODUCT_CHARGES') is set
 							print '<td class="right">';
-							print price($productfourn->fourn_charges);
+							print price((string) $productfourn->fourn_charges);
 							print '</td>';
 						}
 
@@ -1229,7 +1267,7 @@ if ($id > 0 || $ref) {
 						if (!empty($arrayfields['pfp.fk_barcode_type']['checked'])) {
 							print '<td class="center">';
 							$productfourn->barcode_type = !empty($productfourn->supplier_fk_barcode_type) ? $productfourn->supplier_fk_barcode_type : 0;
-							$productfourn->fetch_barcode();
+							$productfourn->fetchBarCode();
 							print $productfourn->barcode_type_label ? $productfourn->barcode_type_label : ($productfourn->supplier_barcode ? '<div class="warning">'.$langs->trans("SetDefaultBarcodeType").'<div>' : '');
 							print '</td>';
 						}
@@ -1292,20 +1330,21 @@ if ($id > 0 || $ref) {
 						}
 
 						if (is_object($hookmanager)) {
-							$parameters = array('id_pfp'=>$productfourn->product_fourn_price_id, 'id_fourn'=>(!empty($id_fourn) ? $id_fourn : ''), 'prod_id'=>$object->id);
+							$parameters = array('id_pfp' => $productfourn->product_fourn_price_id, 'id_fourn' => (!empty($id_fourn) ? $id_fourn : ''), 'prod_id' => $object->id);
 							$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action);
 						}
 
 						// Modify-Remove
-						print '<td class="center nowraponall">';
+						if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+							print '<td class="center nowraponall">';
+							if ($usercancreate) {
+								print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
+								print ' &nbsp; ';
+								print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							}
 
-						if ($usercancreate) {
-							print '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=edit_price&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_edit()."</a>";
-							print ' &nbsp; ';
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.((int) $object->id).'&socid='.((int) $productfourn->fourn_id).'&action=ask_remove_pf&token='.newToken().'&rowid='.((int) $productfourn->product_fourn_price_id).'">'.img_picto($langs->trans("Remove"), 'delete').'</a>';
+							print '</td>';
 						}
-
-						print '</td>';
 
 						print '</tr>';
 					}

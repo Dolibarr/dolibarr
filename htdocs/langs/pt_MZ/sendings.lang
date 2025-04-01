@@ -4,3 +4,4 @@ Shipments=Fretes
 StatusSendingDraft=Minuta
 StatusSendingDraftShort=Minuta
 StatusSendingValidatedShort=Validada
+TypeContact_shipping_external_BILLING=Contato de fatura de cliente

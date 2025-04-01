@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = قراءة مهمة مجدولة
 Permission23102 = إنشاء / تحديث المجدولة وظيفة
 Permission23103 = حذف مهمة مجدولة
@@ -30,7 +29,8 @@ CronExecute=تنطلق الان
 CronConfirmExecute=Are you sure you want to execute these scheduled jobs now?
 CronInfo=Scheduled job module allows to schedule jobs to execute them automatically. Jobs can also be started manually.
 CronTask=وظيفة
-CronNone=بلا
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=Not before
 CronDtEnd=Not after
 CronDtNextLaunch=إعدام المقبل
@@ -49,8 +49,8 @@ CronEach=كل
 JobFinished=العمل بدأ وانتهى
 Scheduled=المقرر
 #Page card
-CronAdd= إضافة وظائف
-CronEvery=العمل كل تنفيذ
+CronAdd=إضافة وظائف
+CronEvery=Run job every
 CronObject=المثال / إنشاء عنصر
 CronArgs=البارامترات
 CronSaveSucess=Save successfully

@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Meklēt neapmaksātos piegādātāju rē
 SendEmailsRemindersOnSupplierInvoiceDueDate=Nosūtiet atgādinājumu pa e-pastu par apstiprinātiem un neapmaksātiem piegādātāja rēķiniem
 PaymentMadeForSeveralInvoices=Maksājums veikts par vairākiem rēķiniem
 SituationInvoiceProgressCurrent=Rēķina virzība
+INVOICE_ADD_EPC_QR_CODEPay=Skenējiet šo QR kodu, lai norēķinātos ar viedtālruni, kas atbalsta maksājumu ar EPC QR kodu.

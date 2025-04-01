@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022 Florian HENRY <florian.henry@scopen.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,14 @@ if (!defined('NOREQUIREAJAX')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $invoice_id = GETPOSTINT('id'); // id of thirdparty
 $action = GETPOST('action', 'aZ09');

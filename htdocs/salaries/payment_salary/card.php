@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies', 'salaries'));
 
@@ -104,7 +112,7 @@ $head = array();
 
 $head[$h][0] = DOL_URL_ROOT.'/salaries/payment_salary/card.php?id='.$id;
 $head[$h][1] = $langs->trans("SalaryPayment");
-$hselected = $h;
+$hselected = (string) $h;
 $h++;
 
 /*
@@ -154,9 +162,9 @@ print '</td></tr>';*/
 
 // Date
 print '<tr><td>';
-print $form->editfieldkey("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker');
+print $form->editfieldkey("Date", 'datep', $object->datep, $object, 1, 'datehourpicker');
 print '</td><td>';
-print $form->editfieldval("Date", 'datep', $object->datepaye, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink'=>1));
+print $form->editfieldval("Date", 'datep', $object->datep, $object, 1, 'datehourpicker', '', null, null, '', 0, '', 'id', 'tzuserrel', array('addnowlink' => 1));
 print "</td>";
 print '</tr>';
 
@@ -249,7 +257,7 @@ if ($resql) {
 				// If at least one invoice is paid, disable delete
 				$disable_delete = 1;
 			}
-			$total = $total + $objp->amount;
+			$total += $objp->amount;
 			$i++;
 		}
 	}

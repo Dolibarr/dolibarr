@@ -312,3 +312,7 @@ TaskMergeSuccess=タスクが統合された
 ErrorTaskIdIsMandatory=エラー: タスク ID は必須
 ErrorsTaskMerge=タスクのマージ中にエラーが発生した
 Billable = 請求可能
+ConfirmCloseTask=このタスクを閉じてもよいか?
+ConfirmClosed=確定 タスクが終了した
+TaskStatus=タスクのステータス
+TaskReopened=タスクが再開された

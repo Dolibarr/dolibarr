@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 semana
 AvailabilityTypeAV_2W=2 semanas
 AvailabilityTypeAV_3W=3 semanas
 AvailabilityTypeAV_1M=1 mes
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Comercial seguimento orzamento
 TypeContact_propal_external_BILLING=Contacto cliente de facturación orzamento
 TypeContact_propal_external_CUSTOMER=Contacto cliente seguimento orzamento
 TypeContact_propal_external_SHIPPING=Contacto cliente para envíos
-
 # Document models
 CantBeNoSign=non se pode configurar sen asinar
 CaseFollowedBy=Caso seguido por
@@ -122,3 +120,5 @@ SignSociete_rib=Asinar oa orde
 SignPropal=Aceptar orzamento
 Signed=asinado
 SignedOnly=Só asinado
+ExpeditionSigned=Envío asinado
+SignExpedition=Asinar o envío

@@ -10,7 +10,6 @@ DonationReceipt=Comprobante de donación
 DonationsModels=Modelos de documentos para comprobantes de donación
 DonationRecipient=Destinatario de la donación
 IConfirmDonationReception=El destinatario declara haber recibido, como donación, el siguiente monto
-MinimumAmount=El monto mínimo es %s
 DONATION_ART200=Mostrar el artículo 200 de CGI si está preocupado
 DONATION_ART238=Mostrar el artículo 238 de CGI si usted está preocupado
 DONATION_ART978=Mostrar el articulo 978 de CGI si usted está preocupado
