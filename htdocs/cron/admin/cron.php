@@ -106,7 +106,7 @@ if (getDolGlobalInt('CRON_DISABLE_KEY_CHANGE') > 0) {
 print '<td>';
 if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') != 1) {
 	print '<input type="text" class="flat minwidth300 widthcentpercentminusx"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'.(GETPOST('CRON_KEY') ? GETPOST('CRON_KEY') : getDolGlobalString('CRON_KEY')).'">';
-	if (getDolGlobalString('CRON_DISABLE_KEY_CHANGE') == 0) {
+	if (empty(getDolGlobalString('CRON_DISABLE_KEY_CHANGE')) || getDolGlobalString('CRON_DISABLE_KEY_CHANGE') == 0) {
 		if (!empty($conf->use_javascript_ajax)) {
 			print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 		}
