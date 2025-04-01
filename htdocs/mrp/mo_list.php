@@ -66,6 +66,16 @@ $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+$also_cancel_consumed_and_produced_lines = (GETPOST('alsoCancelConsumedAndProducedLines', 'alpha') ? 1 : 0);
+$changeDate = GETPOST('change_date', 'alpha');
+
+//Data request for date
+$year   = GETPOST('change_dateyear', 'int');
+$month   = GETPOST('change_datemonth', 'int');
+$day   = GETPOST('change_dateday', 'int');
+$hour   = GETPOST('change_datehour', 'int');
+$min   = GETPOST('change_datemin', 'int');
+
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
 	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
@@ -207,6 +217,74 @@ if (empty($reshook)) {
 	$objectlabel = 'Mo';
 	$uploaddir = $conf->mrp->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	$objMo = new Mo($db);
+
+	if ($action == 'confirm_cancel' && $confirm == 'yes' && $permissiontoadd) {
+		if (!empty($toselect)) {
+			foreach ($toselect as $key => $idMo) {
+				if ($objMo->fetch($idMo)) {
+					if ($objMo->status == Mo::STATUS_VALIDATED || $objMo->status == Mo::STATUS_INPROGRESS) {
+						if ($also_cancel_consumed_and_produced_lines) {
+							if ($objMo->cancelConsumedAndProducedLines($user, 0, true, 1)) {
+								$objMo->status = Mo::STATUS_CANCELED;
+							}
+						} else {
+							$objMo->status = Mo::STATUS_CANCELED;
+						}
+						if ($objMo->update($user)) {
+							setEventMessages($langs->trans('CancelMoValidated', $objMo->ref), null, 'mesgs');
+						} else {
+							setEventMessages($langs->trans('ErrorCancelMo', $objMo->ref), null, 'errors');
+						}
+					} else {
+						setEventMessages($langs->trans('ErrorObjectMustHaveStatusValidatedToBeCanceled', $objMo->ref), null, 'errors');
+					}
+				}
+			}
+		}
+	}
+
+	if (($action == 'changedatestart_confirm' || $action == 'changedateend_confirm') && $permissiontoadd) {
+		if ($confirm == 'yes') {
+			$newDate = dol_mktime((int) $hour, (int) $min, (int) 0, (int) $month, (int) $day, (int) $year);
+
+			if (!empty($toselect)) {
+				foreach ($toselect as $key => $idMo) {
+					if ($objMo->fetch($idMo)) {
+						if ($objMo->status == Mo::STATUS_DRAFT) {
+							if (!empty($changeDate)) {
+								if ($action == 'changedatestart_confirm') {
+									if ($newDate < $objMo->date_end_planned) {
+										$objMo->date_start_planned = $newDate;
+									} else {
+										setEventMessages($langs->trans('ErrorModifyMoDateStart', $objMo->ref), null, 'errors');
+										break;
+									}
+								} elseif ($action == 'changedateend_confirm') {
+									if ($newDate > $objMo->date_start_planned) {
+										$objMo->date_end_planned = $newDate;
+									} else {
+										setEventMessages($langs->trans('ErrorModifyMoDateEnd', $objMo->ref), null, 'errors');
+										break;
+									}
+								}
+								if ($objMo->update($user)) {
+									setEventMessages($langs->trans('ModifyMoDate', $objMo->ref), null, 'mesgs');
+								} else {
+									setEventMessages($langs->trans('ErrorModifyMoDate', $objMo->ref), null, 'errors');
+								}
+							} else {
+								setEventMessages($langs->trans('ErrorEmptyChangeDate'), null, 'errors');
+								break;
+							}
+						} else {
+							setEventMessages($langs->trans('ErrorObjectMustHaveStatusDraftToModifyDate', $objMo->ref), null, 'errors');
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 
@@ -418,9 +496,12 @@ $param .= $hookmanager->resPrint;
 
 // List of mass actions available
 $arrayofmassactions = array(
-	//'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
-	//'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'validate'=>img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Validate"),
+	'precancel'=>img_picto('', 'close_title', 'class="pictofixedwidth"').$langs->trans("Cancel"),
+	'generate_doc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
+	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'predatestart'=>img_picto('', 'object_calendar', 'class="pictofixedwidth"').$langs->trans("MoChangeDateStart"),
+	'predateend'=>img_picto('', 'object_calendar', 'class="pictofixedwidth"').$langs->trans("MoChangeDateEnd"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if (!empty($permissiontodelete)) {
@@ -459,6 +540,55 @@ $modelmail = "mo";
 $objecttmp = new Mo($db);
 $trackid = 'mo'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($massaction == 'precancel') {
+	$formquestion = array(
+		array(
+			'label' => $langs->trans('MoCancelConsumedAndProducedLines'),
+			'name' => 'alsoCancelConsumedAndProducedLines',
+			'type' => 'checkbox',
+			'value' => 0
+		),
+	);
+
+	print $formconfirm = $form->formconfirm($_SERVER['PHP_SELF'],
+		$langs->trans('CancelMo'),
+		$langs->trans('ConfirmCancelMo'),
+		'confirm_cancel', $formquestion,
+		1, 0, 200, 500, 1);
+}
+
+if ($massaction == 'predatestart') {
+	$formquestion = array(
+		array(
+			'type' => 'datetime',
+			'tdclass' => 'fieldrequired',
+			'name' => 'change_date',
+			'label' => $langs->trans('ModifyDateStart'),
+			'value' => -1),
+	);
+	print $form->formconfirm($_SERVER['PHP_SELF'],
+		$langs->trans('ConfirmMassChangeDateStart'),
+		$langs->trans('ConfirmMassChangeDateStartQuestion',
+			count($toselect)), 'changedatestart_confirm', $formquestion,
+		'', 0, 200, 500, 1);
+}
+
+if ($massaction == 'predateend') {
+	$formquestion = array(
+		array(
+			'type' => 'datetime',
+			'tdclass' => 'fieldrequired',
+			'name' => 'change_date',
+			'label' => $langs->trans('ModifyDateEnd'),
+			'value' => -1),
+	);
+	print $form->formconfirm($_SERVER['PHP_SELF'],
+		$langs->trans('ConfirmMassChangeDateEnd'),
+		$langs->trans('ConfirmMassChangeDateEndQuestion',
+			count($toselect)), 'changedateend_confirm', $formquestion,
+		'', 0, 200, 500, 1);
+}
 
 if ($search_all) {
 	foreach ($fieldstosearchall as $key => $val) {
