@@ -269,7 +269,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	if (is_null($object)) {
 		$object = new stdClass();
 	}
-	
+
 	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
