@@ -509,6 +509,13 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 				migrate_contractdet_rank();
 			}
 			*/
+
+			// Scripts for 20.0
+			$afterversionarray = explode('.', '19.0.9');
+			$beforeversionarray = explode('.', '20.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_invoice_export_models();
+			}
 		}
 
 
@@ -5059,4 +5066,80 @@ function migrate_contractdet_rank()
 	if (!$resultstring) {
 		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
 	}
+}
+
+/**
+ * Invoice exports been shifted (facture_1 => facture_0, facture_2 => facture_1) in version 20, shift export models accordingly
+ *
+ * @return  void
+ */
+function migrate_invoice_export_models()
+{
+	global $db, $conf, $langs;
+
+	$lock = $conf->export->dir_output.'/invoice_models_migrated.lock';
+	$firstInstallVersion = getDolGlobalString('MAIN_VERSION_FIRST_INSTALL', DOL_VERSION);
+	$migrationNeeded = versioncompare(explode('.', $firstInstallVersion, 3), array(20, 0, -5)) < 0 && !file_exists($lock);
+
+	if (! $migrationNeeded) {
+		touch($lock);
+		return;
+	}
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('InvoiceExportModelsMigration')."</b><br>\n";
+
+	$db->begin();
+
+	$sql1 = "
+		UPDATE ".$db->prefix()."export_model
+		SET type = 'facture_0'
+		WHERE type = 'facture_1'
+	";
+
+	$resql1 = $db->query($sql1);
+
+	if (! $resql1) {
+		dol_print_error($db);
+		$db->rollback();
+		print '</td></tr>';
+		return;
+	}
+
+	$modified1 = $db->affected_rows($resql1);
+
+	print str_repeat('.', $modified1);
+
+	$db->free($resql1);
+
+	$sql2 = "
+		UPDATE ".$db->prefix()."export_model
+		SET type = 'facture_1'
+		WHERE type = 'facture_2'
+	";
+
+	$resql2 = $db->query($sql2);
+
+	if (! $resql2) {
+		dol_print_error($db);
+		$db->rollback();
+		print '</td></tr>';
+		return;
+	}
+
+	$modified2 = $db->affected_rows($resql2);
+
+	print str_repeat('.', $modified2);
+
+	$db->free($resql2);
+
+	if (empty($modified1 + $modified2)) {
+		print $langs->trans('NothingToDo');
+	}
+
+	$db->commit();
+
+	touch($lock);
+
+	echo '</td></tr>';
 }
