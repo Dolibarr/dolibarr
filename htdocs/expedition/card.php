@@ -2921,7 +2921,7 @@ if ($action == 'create') {
 		// Show online signature link
 		$useonlinesignature = getDolGlobalInt('EXPEDITION_ALLOW_ONLINESIGN');
 
-		if ($object->statut != Expedition::STATUS_DRAFT && $useonlinesignature) {
+		if ($object->status != Expedition::STATUS_DRAFT && $useonlinesignature) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 			print showOnlineSignatureUrl('expedition', $object->ref, $object).'<br>';
