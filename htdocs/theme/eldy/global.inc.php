@@ -1046,10 +1046,10 @@ textarea.centpercent {
 	text-align: justify;
 }
 .pull-left {
-	float: left!important;
+	float: <?php echo $left; ?> !important;
 }
 .pull-right {
-	float: right!important;
+	float: <?php echo $right; ?> !important;
 }
 .nowrap {
 	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
@@ -4235,7 +4235,7 @@ div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
-	padding-top: 7px !important;
+	padding-top: 8px !important;
 	padding-bottom: 0px !important;
 	height: unset !important;
 }
@@ -6634,7 +6634,8 @@ div.cke_notifications_area .cke_notification_warning {
 		color: gray;
 		position: relative;
 		right: 0;
-		border-left: 1px solid;
+		border-<?php echo $left; ?>: 1px solid;
+		padding-<?php echo $left; ?>: 10px;
 }
 pre#editfilecontentaceeditorid {
 	margin-top: 5px;

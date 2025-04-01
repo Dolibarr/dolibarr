@@ -123,10 +123,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
 	if ($maxsize && defined('CURLOPT_MAXFILESIZE_LARGE')) {
-		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal
+		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize * 1024);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal
 	}
 	if ($maxsize && defined('CURLOPT_MAXFILESIZE')) {
-		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize);
+		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize * 1024);
 	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5

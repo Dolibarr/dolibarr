@@ -3151,7 +3151,7 @@ class Form
 
 				// include search in supplier ref
 				if (getDolGlobalString('MAIN_SEARCH_PRODUCT_BY_FOURN_REF')) {
-					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' OR ' : '';
+					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' AND ':'';
 					$sqlSupplierSearch .= " pfp.ref_fourn LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				$sql .= ")";
@@ -9067,7 +9067,7 @@ class Form
 	 * @param string 				$morecss 			Add more class to css styles
 	 * @param int<0,1>				$addjscombo 		Add js combo
 	 * @param string 				$moreparamonempty 	Add more param on the empty option line. Not used if show_empty not set
-	 * @param int<0,2> 					$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
+	 * @param int<0,2> 				$disablebademail 	1=Check if a not valid email, 2=Check string '---', and if found into value, disable and colorize entry
 	 * @param int<0,1> 				$nohtmlescape 		No html escaping (not recommended, use 'data-html' if you need to use label with HTML content).
 	 * @return string									HTML select string.
 	 * @see multiselectarray(), selectArrayAjax(), selectArrayFilter()
@@ -9592,11 +9592,11 @@ class Form
 	 * Show a multiselect dropbox from an array.
 	 * If a saved selection of fields exists for user (into $user->conf->MAIN_SELECTEDFIELDS_contextofpage), we use this one instead of default.
 	 *
-	 * @param string 	$htmlname 	Name of HTML field
+	 * @param string 		$htmlname 	Name of HTML field
 	 * @param array<string,array{label:string,checked?:string,enabled?:string,type?:string,langfile?:string,position?:int,help?:string}> 	$array 	Array with array of fields we could show. This array may be modified according to setup of user.
-	 * @param string 	$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
-	 * @param string 	$pos 		Position of the colon in list: 'left' or '' (meaning 'right').
-	 * @return string            	HTML multiselect string
+	 * @param string 		$varpage 	Id of context for page. Can be set by caller with $varpage=(empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage);
+	 * @param int|string 	$pos 		Position of the colon in list: 1 or 'left' or '' (meaning 'right').
+	 * @return string            		HTML multiselect string
 	 * @see selectarray()
 	 */
 	public static function multiSelectArrayWithCheckbox($htmlname, &$array, $varpage, $pos = '')
@@ -9672,7 +9672,7 @@ class Form
             </dt>
             <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
-                    <ul class="'.$htmlname.($pos == '1' ? 'left' : '').'">
+                    <ul class="'.$htmlname.(((string) $pos == '1' || (string) $pos == 'left') ? 'left' : '').'">
                     <li class="liinputsearch">
 						<input class="inputsearch_dropdownselectedfields width90p minwidth200imp" style="width:90%;" type="text" placeholder="'.$langs->trans('Search').'">
 					</li>
@@ -9996,6 +9996,12 @@ class Form
 					'label' => 'LinkToOrder',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'.($dontIncludeCompletedItems ? ' AND t.facture < 1' : ''),
 					'linkname' => 'commande',
+				'subscription' => array(
+					'enabled' => isModEnabled('member'),
+					'perms' => 1,
+					'label' => 'LinkToMemberSubscription',
+					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid, sub.note as ref, '' as ref_client, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
+					'linkname' => 'subscription'),
 				),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),

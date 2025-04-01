@@ -1217,10 +1217,10 @@ textarea.centpercent {
 	text-align: justify;
 }
 .pull-left {
-	float: left!important;
+	float: <?php echo $left; ?> !important;
 }
 .pull-right {
-	float: right!important;
+	float: <?php echo $right; ?> !important;
 }
 .nowrap {
 	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
@@ -5066,7 +5066,7 @@ div.tabBar .noborder {
 }
 div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
-	padding-top: 8px !important;
+	padding-top: 6px !important;
 	padding-bottom: 0px !important;
 }
 

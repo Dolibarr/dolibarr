@@ -1588,7 +1588,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 												if ($count == ($MAXPRODUCT - 1)) {
 													?> onclick="MoreProducts('more')" <?php
 												} else {
-													echo 'onclick="ClickProduct('.$count.')"';
+													echo 'onclick="ClickProduct('.((int) $count).')"';
 												} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {
