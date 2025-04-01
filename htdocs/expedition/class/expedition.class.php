@@ -966,7 +966,7 @@ class Expedition extends CommonObject
 		global $conf;
 
 		if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
-			if ($this->statut == self::STATUS_VALIDATED || $this->statut == self::STATUS_CLOSED) {
+			if ($this->status == self::STATUS_VALIDATED || $this->status == self::STATUS_CLOSED) {
 				// Expedition validee
 				include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 				$delivery = new Delivery($this->db);
@@ -1189,6 +1189,9 @@ class Expedition extends CommonObject
 		if (isset($this->statut)) {
 			$this->statut = (int) $this->statut;
 		}
+		if (isset($this->status)) {
+			$this->status = (int) $this->status;
+		}
 		if (isset($this->trueDepth)) {
 			$this->trueDepth = trim($this->trueDepth);
 		}
@@ -1238,7 +1241,7 @@ class Expedition extends CommonObject
 		$sql .= " fk_address = ".(isset($this->fk_delivery_address) ? $this->fk_delivery_address : "null").",";
 		$sql .= " fk_shipping_method = ".((isset($this->shipping_method_id) && $this->shipping_method_id > 0) ? $this->shipping_method_id : "null").",";
 		$sql .= " tracking_number = ".(isset($this->tracking_number) ? "'".$this->db->escape($this->tracking_number)."'" : "null").",";
-		$sql .= " fk_statut = ".(isset($this->statut) ? $this->statut : "null").",";
+		$sql .= " fk_statut = ".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " fk_projet = ".(isset($this->fk_project) ? $this->fk_project : "null").",";
 		$sql .= " height = ".(($this->trueHeight != '') ? $this->trueHeight : "null").",";
 		$sql .= " width = ".(($this->trueWidth != '') ? $this->trueWidth : "null").",";
@@ -1329,8 +1332,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		if (!$error && isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock))) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1429,7 +1432,7 @@ class Expedition extends CommonObject
 							$this->fetch_origin();
 							$origin_object = $this->origin_object;
 							'@phan-var-force Facture|Commande $origin_object';
-							if ($origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
 								$origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
@@ -1528,8 +1531,8 @@ class Expedition extends CommonObject
 
 		// Stock control
 		if (!$error && isModEnabled('stock') &&
-			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->statut > self::STATUS_DRAFT) ||
-				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->statut == self::STATUS_CLOSED && $also_update_stock))) {
+			((getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT') && $this->status > self::STATUS_DRAFT) ||
+				(getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT_CLOSE') && $this->status == self::STATUS_CLOSED && $also_update_stock))) {
 			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
@@ -1639,7 +1642,7 @@ class Expedition extends CommonObject
 							$this->fetch_origin();
 							$origin_object = $this->origin_object;
 							'@phan-var-force Facture|Commande $origin_object';
-							if ($origin_object->statut == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
+							if ($origin_object->status == Commande::STATUS_SHIPMENTONPROCESS) {     // If order source of shipment is "shipment in progress"
 								// Check if there is no more shipment. If not, we can move back status of order to "validated" instead of "shipment in progress"
 								$origin_object->loadExpeditions();
 								//var_dump($this->$origin->expeditions);exit;
@@ -1922,7 +1925,7 @@ class Expedition extends CommonObject
 	{
 		global $user;
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			$line = new ExpeditionLigne($this->db);
@@ -1962,7 +1965,7 @@ class Expedition extends CommonObject
 
 		$datas = array();
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("Shipment").'</u>';
-		if (isset($this->statut)) {
+		if (isset($this->status)) {
 			$datas['picto'] .= ' '.$this->getLibStatut(5);
 		}
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -2069,7 +2072,7 @@ class Expedition extends CommonObject
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->statut, $mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -2167,7 +2170,7 @@ class Expedition extends CommonObject
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
-		$this->statut               = self::STATUS_VALIDATED;
+		$this->status = self::STATUS_VALIDATED;
 		$this->livraison_id         = 0;
 		$this->date                 = $now;
 		$this->date_creation        = $now;
@@ -2182,8 +2185,8 @@ class Expedition extends CommonObject
 		$this->commande_id          = 0;
 		$this->commande             = $order;
 
-		$this->origin_id            = 1;
-		$this->origin               = 'commande';
+		$this->origin_id = 1;
+		$this->origin_type = 'commande';
 
 		$this->note_private = 'Private note';
 		$this->note_public = 'Public note';
@@ -2386,7 +2389,7 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Protection. This avoid to move stock later when we should not
-		if ($this->statut == self::STATUS_CLOSED) {
+		if ($this->status == self::STATUS_CLOSED) {
 			return 0;
 		}
 
@@ -2600,7 +2603,7 @@ class Expedition extends CommonObject
 	public function setDraft($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -2619,7 +2622,7 @@ class Expedition extends CommonObject
 		$error = 0;
 
 		// Protection. This avoid to move stock later when we should not
-		if ($this->statut == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_VALIDATED) {
 			return 0;
 		}
 
