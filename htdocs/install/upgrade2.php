@@ -5075,9 +5075,9 @@ function migrate_contractdet_rank()
  */
 function migrate_invoice_export_models()
 {
-	global $db, $conf, $langs;
+	global $db, $langs;
 
-	$lock = $conf->export->dir_output.'/invoice_models_migrated.lock';
+	$lock = DOL_DATA_ROOT.'/invoice_models_migrated.lock';
 	$firstInstallVersion = getDolGlobalString('MAIN_VERSION_FIRST_INSTALL', DOL_VERSION);
 	$migrationNeeded = versioncompare(explode('.', $firstInstallVersion, 3), array(20, 0, -5)) < 0 && !file_exists($lock);
 
