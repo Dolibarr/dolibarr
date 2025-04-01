@@ -8,6 +8,8 @@
 .idea
 .editorconfig
 .codeclimate.yml
+.pre-commit-config.yaml
+.mailmap
 Thumbs.db
 dev/build/exe
 dev/build/html
