@@ -709,7 +709,11 @@ class SecurityTest extends CommonClassTest
 		print "result10 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
-		$result = (string) dol_eval("('ex'.'ec')('echo abc')", 1, 0);
+		$result = (string) dol_eval("('ex'.'ec')('ls')", 1, 0);	// This will execute exec of ls
+		print "result11 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
+
+		$result = (string) dol_eval("('ex'.'ec') /* */ (/* */'ls')", 1, 0);	// This will execute exec of ls
 		print "result11 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate (mode 1, found call of a function or method without using the direct name of the function)', $result, 'The string was not detected as evil');
 
@@ -764,30 +768,34 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('1', $result, 'The string was not detected as evil');
 
 
-		// Test option MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL
+		// Test option MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL
 
-		$conf->global->MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL = '.';
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
 
 		$mainmenu = 'ex';
 		$result = (string) dol_eval('$mainmenu.\'ec\'', 1, 0);
-		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('exec', $result, 'With MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL=. we should accept concat');
+		print "resultconcat1 = ".$result."\n";
+		$this->assertStringContainsString('exec', $result, 'With MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL off. we should accept concat');
 
 		$mainmenu = 'ex';
 		$leftmenu = 'ec';
 		$result = (string) dol_eval("\$mainmenu.\$leftmenu", 1, 0);
-		print "result11 = ".$result."\n";
-		$this->assertStringContainsString('exec', $result, 'The string was not detected as evil');
+		print "resultconcat2 = ".$result."\n";
+		$this->assertStringContainsString('exec', $result, 'With MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL off. we should accept concat');
 
-		$conf->global->MAIN_ALLOW_UNSECURED_SPECIAL_CHARS_IN_DOL_EVAL = '';
+		// Test option MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1
+
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1;
+
+		$leftmenu = 'ab';
+		$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
+		print "resultconcat3 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden)', $result, 'Test concat - The string was not reported as a bad syntax when it should');
 
 
 		// Not allowed
 
-		$leftmenu = 'ab';
-		$result = (string) dol_eval("(\$leftmenu.'s')", 1, 0);
-		print "result19 = ".$result."\n";
-		$this->assertStringContainsString('Bad string syntax to evaluate (dot char is forbidden)', $result, 'Test 19 - The string was not detected as evil');
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
 
 		$leftmenu = 'abs';
 		$result = (string) dol_eval('$leftmenu(-5)', 1, 0);
@@ -805,6 +813,10 @@ class SecurityTest extends CommonClassTest
 		$result = (string) dol_eval('\'exec\'("aaa")', 1, 0);
 		print "result23 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', json_encode($result), 'Test 23 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
+
+		$result = (string) dol_eval('1 + 2 <? echo "aaa" ?>', 1, 0, '2');
+		print "result24 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate (The char ? can be used only with a space before and after)', json_encode($result), 'Test 24 - The string was not detected as evil - Can\'t find the string Bad string syntax when i should');
 	}
 
 
