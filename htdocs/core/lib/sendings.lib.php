@@ -72,7 +72,7 @@ function shipping_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $object;
-		if (getDolGlobalInt('SHIPPING_USE_ORDER_CONTACTS') && $object->origin_type == 'commande' && $object->origin_id > 0) {
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->origin_type == 'commande' && $object->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->origin_id);
 		}

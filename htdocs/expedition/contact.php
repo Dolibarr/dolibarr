@@ -67,11 +67,11 @@ if ($id > 0 || !empty($ref)) {
 	}
 
 	// Linked documents
-	if (getDolGlobalInt('SHIPPING_USE_ORDER_CONTACTS') && $typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
+	if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'commande' && $object->origin_object->id && isModEnabled('order')) {
 		$objectsrc = new Commande($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}
-	if (getDolGlobalInt('SHIPPING_USE_ORDER_CONTACTS') && $typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
+	if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $typeobject == 'propal' && $object->origin_object->id && isModEnabled("propal")) {
 		$objectsrc = new Propal($db);
 		$objectsrc->fetch($object->origin_object->id);
 	}

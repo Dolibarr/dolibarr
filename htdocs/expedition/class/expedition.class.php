@@ -517,7 +517,7 @@ class Expedition extends CommonObject
 					}
 				}
 
-				if (!$error && $this->id && !getDolGlobalInt('SHIPPING_USE_ORDER_CONTACTS') && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin_type) && !empty($this->origin_id)) {   // Get contact from origin object
+				if (!$error && $this->id && getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin_type) && !empty($this->origin_id)) {   // Get contact from origin object
 					$originforcontact = $this->origin_type;
 					$originidforcontact = $this->origin_id;
 
