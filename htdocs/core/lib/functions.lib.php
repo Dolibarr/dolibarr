@@ -14119,15 +14119,34 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 }
 
 /**
+ * Return array of extension for executable files of text files that can contains executable code.
+ *
+ * @return  string[]			Array of extensions
+ */
+function getExecutableContent()
+{
+	$arrayofregexextension = array(
+		'htm', 'html', 'shtml', 'js', 'phar', 'php', 'php3', 'php4', 'php5', 'phtml', 'pht', 'pl', 'py', 'cgi', 'ksh', 'sh', 'shtml',
+		'bash', 'bat', 'cmd', 'wpk', 'exe', 'dmg', 'appimage'
+	);
+
+	return $arrayofregexextension;
+}
+
+/**
  * Return if a file can contains executable content
  *
- * @param   string  $filename       File name to test
- * @return  boolean                 True if yes, False if no
+ * @param   string  		$filename       File name to test
+ * @return  boolean			   				True if yes, False if no
  */
 function isAFileWithExecutableContent($filename)
 {
-	if (preg_match('/\.(htm|html|js|phar|php|php\d+|phtml|pht|pl|py|cgi|ksh|sh|shtml|bash|bat|cmd|wpk|exe|dmg)$/i', $filename)) {
-		return true;
+	$arrayofregexextension = getExecutableContent();
+
+	foreach ($arrayofregexextension as $fileextension) {
+		if (preg_match('/\.'.preg_quote($fileextension, '/').'$/i', $filename)) {
+			return true;
+		}
 	}
 
 	return false;

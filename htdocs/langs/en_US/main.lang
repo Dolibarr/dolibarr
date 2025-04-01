@@ -931,6 +931,7 @@ MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk Delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
+ConfirmMassCancellationQuestion = Are you sure you want to cancel the %s selected record(s)?
 ConfirmMassClone=Bulk clone confirmation
 ConfirmMassCloneQuestion=Select project to clone to
 ConfirmMassCloneToOneProject=Clone to project %s

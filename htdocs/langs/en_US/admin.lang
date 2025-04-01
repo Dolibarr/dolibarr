@@ -2654,3 +2654,6 @@ WebhookTargetTypeHelp=Blocking: If an error occurs, an error message is displaye
 Blocking=Blocking
 NoBlocking=No blocking
 MULTICURRENCY_APP_ENDPOINT=API endpoint URL to get live multicurrencies from a source currency
+NoWebsite=No website
+UploadName=Upload
+MAIN_SECURITY_MAXFILESIZE_DOWNLOADED=Max size of downloaded files
