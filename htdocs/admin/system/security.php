@@ -544,6 +544,10 @@ print '<br>';
 print '<br>';
 
 
+print '<strong>'.$langs->trans("MAIN_SECURITY_MAXFILESIZE_DOWNLOADED").'</strong> = '.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': < 100000)</span>')."<br>";
+print '<br>';
+
+
 
 $securityevent = new Events($db);
 $eventstolog = $securityevent->eventstolog;
@@ -572,8 +576,8 @@ if (!empty($eventstolog) && is_array($eventstolog)) {
 if (empty($out)) {
 	print img_warning().' '.$langs->trans("NoSecurityEventsAreAduited", $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit")).'<br>';
 } else {
-	$s = $langs->trans("SeeSetupPage", '{s1}'.$langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit").'{s2}');
-	print ' - '.str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/events.php" target="_blank">', $s));
+	$s = $langs->trans("SeeSetupPage", ' {s1}'.$langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Security").' - '.$langs->transnoentities("Audit").'{s2}');
+	print ' - '.str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/events.php" target="_blank">'.img_picto('', 'url', 'class="pictofixedwidth"'), $s));
 }
 
 print '</div>';
@@ -700,12 +704,18 @@ print '</div>';
 print '<br>';
 print '<br>';
 
+
+
+// Database encryption
+
 print load_fiche_titre($langs->trans("DatabaseEncryption"), '', 'folder');
 
 print '<div class="divsection wordbreak">';
 
 //print '<strong>'.$langs->trans("PasswordEncryption").'</strong>: ';
-print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("Passwords")).' (non reversible encryption, defined into MAIN_SECURITY_HASH_ALGO)</strong> = '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
+print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("Passwords"));
+print $form->textwithpicto('', 'non reversible encryption, defined into MAIN_SECURITY_HASH_ALGO');
+print '</strong>: '.getDolGlobalString('MAIN_SECURITY_HASH_ALGO', '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>')." &nbsp; ";
 if (!getDolGlobalString('MAIN_SECURITY_HASH_ALGO')) {
 	print '<span class="opacitymedium"> &nbsp; &nbsp; (If unset: \'md5\')</span>';
 }
@@ -728,7 +738,9 @@ print '<br>';
 $action = GETPOST('action');
 $exampletodecrypt = GETPOST('exampletodecrypt', 'password');
 
-print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData")).' (reversible encryption done with dolEncrypt/dolDecrypt)</strong> = '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_instance_unique_id<br>';
+print '<strong>'.$langs->trans("AlgorithmFor", $langs->transnoentitiesnoconv("SensitiveData"));
+print $form->textwithpicto('', 'reversible encryption done with dolEncrypt/dolDecrypt');
+print '</strong>: '.constant('MAIN_SECURITY_REVERSIBLE_ALGO').' with key defined into conf.php file in $dolibarr_main_instance_unique_id<br>';
 print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="action" value="doldecrypt">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -825,9 +837,6 @@ if ($execmethod == 2) {
 	print '</span>';
 }
 print '<br>';
-print '<br>';
-
-print '<strong>MAIN_SECURITY_MAXFILESIZE_DOWNLOADED</strong> = '.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', '<span class="opacitymedium">'.$langs->trans("Undefined").' &nbsp; ('.$langs->trans("Recommended").': 100000000)</span>')."<br>";
 print '<br>';
 
 print '<strong>MAIN_RESTRICTHTML_ONLY_VALID_HTML</strong> = '.(getDolGlobalString('MAIN_RESTRICTHTML_ONLY_VALID_HTML') ? '1' : '<span class="opacitymedium">'.$langs->trans("Undefined").'</span>');

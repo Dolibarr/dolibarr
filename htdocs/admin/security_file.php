@@ -105,7 +105,10 @@ if ($action == 'updateform') {
 		$res5 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_COMMAND", trim($antivircommand), 'chaine', 0, '', $conf->entity);
 		$res6 = dolibarr_set_const($db, "MAIN_ANTIVIRUS_PARAM", trim($antivirparam), 'chaine', 0, '', $conf->entity);
 		$res7 = dolibarr_set_const($db, "MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", GETPOST('MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION', 'alpha'), 'chaine', 0, '', $conf->entity);
-		if ($res3 && $res4 && $res5 && $res6 && $res7) {
+
+		$res8 = dolibarr_set_const($db, "MAIN_SECURITY_MAXFILESIZE_DOWNLOADED", GETPOST('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED', 'alpha'), 'chaine', 0, '', $conf->entity);
+
+		if ($res3 && $res4 && $res5 && $res6 && $res7 && $res8) {
 			setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 		}
 	}
@@ -152,7 +155,7 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent nomarginbottom">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameters").'</td>';
+print '<td>'.$langs->trans("Upload").'</td>';
 print '<td></td>';
 print '</tr>';
 
@@ -229,6 +232,34 @@ print '</tr>';
 
 print '</table>';
 print '</div>';
+
+
+print '<br>';
+
+
+// Download options
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="noborder centpercent nomarginbottom">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Download").'</td>';
+print '<td></td>';
+print '</tr>';
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("MAIN_SECURITY_MAXFILESIZE_DOWNLOADED").'<br>';
+//print '<span class="opacitymedium">'.$langs->trans("MAIN_SECURITY_MAXFILESIZE_DOWNLOADED").'</span>';
+print '</td>';
+print '<td>';
+print '<input type="text" name="MAIN_SECURITY_MAXFILESIZE_DOWNLOADED" class="width100 right" spellcheck="false" value="'.getDolGlobalString('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED').'"> '.$langs->trans("Kb");
+print "</td>";
+print '</tr>';
+
+print '</table>';
+print '</div>';
+
+
+
 
 print dol_get_fiche_end();
 
