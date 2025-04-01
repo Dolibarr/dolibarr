@@ -316,3 +316,5 @@ ConfirmCloseTask=Êtes-vous sûr de pour fermer ceci tâche ?
 ConfirmClosed=Confirmer la fermeture de tâche
 TaskStatus=tâche état
 TaskReopened=tâche a rouvert
+PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT=Toujours masquer les projets clôturés dans les liste de sélection
+PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT_help=Seuls les projets ouverts seront affichés dans les listes de sélection de projets

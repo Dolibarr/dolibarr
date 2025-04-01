@@ -6,8 +6,9 @@
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2025		Benjamin Falière	<benjamin@faliere.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -876,6 +877,16 @@ print $form->textwithpicto($langs->transnoentities('PROJECT_DISPLAY_LINKED_BY_CO
 print '</td>';
 print '<td class="right">';
 print ajax_constantonoff('PROJECT_DISPLAY_LINKED_BY_CONTACT');
+print '</td>';
+print '</tr>';
+
+// Discard closed projects in select
+print '<tr class="oddeven">';
+print '<td class="left">';
+print $form->textwithpicto($langs->transnoentities('PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT'), $langs->transnoentities('PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT_help'));
+print '</td>';
+print '<td class="right">';
+print ajax_constantonoff('PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT');
 print '</td>';
 print '</tr>';
 

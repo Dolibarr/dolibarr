@@ -317,3 +317,5 @@ ConfirmClosed=Confirm task closed
 TaskStatus=Task status
 TaskReopened=Task reopened
 ThisContactHasAUser=Warning, you must assign the associated user of this contact (the user '%s', and not the contact '%s') if you want to give access permission on this object to the respective user contact.
+PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT=Always discard closed projects in select list
+PROJECT_ALWAYS_DISCARD_CLOSED_PROJECTS_IN_SELECT_help=Only opened projects are displayed in all project selection list
