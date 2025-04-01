@@ -18,9 +18,8 @@ use Term::ANSIColor;
 
 # Change this to defined target for option 98 and 99
 $PROJECT="dolibarr";
-$PUBLISHSTABLE="eldy,dolibarr\@frs.sourceforge.net:/home/frs/project/dolibarr";
-$PUBLISHBETARC="dolibarr\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
-
+$PUBLISHBETARC="$ENV{'DESTIASSOLOGIN'}\@vmprod1.dolibarr.org:/home/dolibarr/asso.dolibarr.org/dolibarr_documents/website/www.dolibarr.org/files";
+$PUBLISHSTABLE="$ENV{'DESTISFLOGIN'}\@frs.sourceforge.net:/home/frs/project/dolibarr";
 
 #@LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
 @LISTETARGET=("TGZ","ZIP","RPM_GENERIC","RPM_FEDORA","RPM_MANDRIVA","RPM_OPENSUSE","DEB","EXEDOLIWAMP","SNAPSHOT");   # Possible packages
@@ -416,6 +415,10 @@ if ($nboftargetok) {
 	  	print $ret."\n";
 	  	# Copy to final dir
 	  	$NEWDESTI=$DESTI;
+		if ( !-d "$NEWDESTI/signatures" ) {
+			use File::Path qw( make_path );
+		    make_path "$NEWDESTI/signatures" or die "Failed to create path: $NEWDESTI/signatures";
+		}
 		print "Copy \"$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml\" to $NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml\n";
 	    use File::Copy qw(copy);
 	    copy "$SOURCE/htdocs/install/filelist-$MAJOR.$MINOR.$BUILD.xml", "$NEWDESTI/signatures/filelist-$MAJOR.$MINOR.$BUILD.xml";
@@ -972,6 +975,11 @@ if ($nboftargetok) {
 
 			# Removed files we don't need (already removed)
 			#$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.codeclimate.yml`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.pre-commit-config.yaml`;
+			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/.vscode`;
+			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.editorconfig' -exec rm {} \\;`;
+			$ret=`find $BUILDROOT/$PROJECT.tmp/ -type f -name '.travis.yml' -exec rm {} \\;`;
 
 			# Rename upstream changelog to match debian rules
 			$ret=`mv $BUILDROOT/$PROJECT.tmp/ChangeLog $BUILDROOT/$PROJECT.tmp/changelog`;
@@ -1176,7 +1184,8 @@ if ($nboftargetok) {
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_all.deb"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}_amd64.changes"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.dsc"=>'package_debian-ubuntu',
-			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
+			#"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.xz"=>'package_debian-ubuntu',
+			"$DESTI/package_debian-ubuntu/${FILENAMEDEB}.debian.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_debian-ubuntu/${FILENAMEDEBSHORT}.orig.tar.gz"=>'package_debian-ubuntu',
 			"$DESTI/package_windows/$FILENAMEEXEDOLIWAMP.exe"=>'package_windows',
 			"$DESTI/standard/$FILENAMETGZ.tgz"=>'standard',

@@ -689,6 +689,7 @@ class Translate
 				try {
 					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+					// Note: the catch ValueError is possible only when php min will be 8.1
 				} catch (Exception $e) {
 					// No exception managed
 				}
@@ -801,9 +802,13 @@ class Translate
 			}
 
 			if (!preg_match('/^Format/', $key)) {
-				//print $str;
-				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
+				try {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
+					$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
+					// Note: the catch ValueError is possible only when php min will be 8.1
+				} catch (Exception $e) {
+					// No exception managed.
+				}
 			}
 
 			// Remove dangerous sequence we should never have. Not needed into a translated response.

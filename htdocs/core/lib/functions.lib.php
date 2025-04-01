@@ -2446,14 +2446,57 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'ospid' => getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
 		);
 
-		$remoteip = getUserRemoteIP(); // Get ip when page run on a web server
+		// For log, we want the reliable IP first.
+		$remoteip = getUserRemoteIP(1); // Get ip when page run on a web server
 		if (!empty($remoteip)) {
 			$data['ip'] = $remoteip;
 			// This is when server run behind a reverse proxy
-			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != $remoteip) {
-				$data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].' -> '.$data['ip'];
-			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) {
-				$data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
+			// A HTTP_X_FORWARDED_FOR as format "ip real of user, ip of proxy1, ip of proxy2, ..."
+			// $data['ip'] is last
+			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				$tmpips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+				$data['ip'] = '';
+				$foundremoteip = 0;
+				$j = 0;
+				foreach ($tmpips as $tmpip) {
+					$tmpip = trim($tmpip);
+					if (strtolower($tmpip) == strtolower($remoteip)) {
+						$foundremoteip = 1;
+					}
+					if (empty($data['ip'])) {
+						$data['ip'] = $tmpip;
+					} else {
+						$j++;
+						$data['ip'] .= (($j == 1) ? ' [via ' : ',').$tmpip;
+					}
+				}
+				if (!$foundremoteip) {
+					$j++;
+					$data['ip'] .= (($j == 1) ? ' [via ' : ',').$remoteip;
+				}
+				$data['ip'] .= (($j > 0) ? ']' : '');
+			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) ) {
+				$tmpips = explode(',', $_SERVER['HTTP_CLIENT_IP']);
+				$data['ip'] = '';
+				$foundremoteip = 0;
+				$j = 0;
+				foreach ($tmpips as $tmpip) {
+					$tmpip = trim($tmpip);
+					if (strtolower($tmpip) == strtolower($remoteip)) {
+						$foundremoteip = 1;
+					}
+					if (empty($data['ip'])) {
+						$data['ip'] = $tmpip;
+					} else {
+						$j++;
+						$data['ip'] .= (($j == 1) ? ' [via ' : ',').$tmpip;
+					}
+				}
+				if (!$foundremoteip) {
+					$j++;
+					$data['ip'] .= (($j == 1) ? ' [via ' : ',').$remoteip;
+				}
+				$data['ip'] .= (($j > 0) ? ']' : '');
 			}
 		} elseif (!empty($_SERVER['SERVER_ADDR'])) {
 			// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
@@ -4635,27 +4678,39 @@ function dol_print_ip($ip, $mode = 0)
 }
 
 /**
- * Return the IP of remote user.
+ * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (no way to be modified by user but may be wrong if user is using a proxy)
+ * Then REMOTE_ADDR (the last seerver ip in proxy chain).
+ * 			REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
+ * 			Note: that if Apache module "remoteip" module is on, $_SERVER["REMOTE_ADDR"] may be replaced y HTTP_X_FORWARDED_FOR directly
+ * 					from CF-Connecting-IP, but only if remote is in trusted cloudflare list.
  *
- * @return	string		Ip of remote user.
+ * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
+ * @return	string				Real IP of remote user.
  */
-function getUserRemoteIP()
+function getUserRemoteIP($trusted = 0)
 {
-	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
+	if ($trusted) {	// Return only IP we can rely on (not spoofable by the client)
+		$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may be the IP of a proxy
+		// Note that if apache module remoteip has been enabled, REMOTE_ADDR can contain the real client (the value from cloudFlare HTTP_CF_CONNECTING_IP for example)
+		// if the proxy were added in the list of trusted proxy.
+		return $ip;
+	}
+
+	// Try to guess the real IP of client (but this may not be reliable)
+	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]\s]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]\s]/', $_SERVER['HTTP_CLIENT_IP'])) {
 			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been the IP of the proxy and not the client
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may be the IP of the proxy and not the client
 			} else {
 				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
 			}
 		} else {
-			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here but may have been forged by proxy
+			$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_CLIENT_IP']); // value is clean here but may have been forged by proxy
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here but may have been forged by proxy
+		$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_X_FORWARDED_FOR']); // value is clean here but may have been forged by proxy
 	}
 	return $ip;
 }
@@ -5980,7 +6035,7 @@ function img_mime($file, $titlealt = '', $morecss = '')
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$mimetype = dol_mimetype($file, '', 1);
-	$mimeimg = dol_mimetype($file, '', 2);
+	//$mimeimg = dol_mimetype($file, '', 2);
 	$mimefa = dol_mimetype($file, '', 4);
 
 	if (empty($titlealt)) {
@@ -12370,6 +12425,11 @@ function dol_mimetype($file, $default = 'application/octet-stream', $mode = 0)
 		$mime = 'error';
 		$imgmime = 'error.png';
 		$famime = 'file-alt';
+	}
+
+	if ($famime == 'file-o') {
+		// file-o seems to not work in fontawesome 5
+		$famime = 'file';
 	}
 
 	// Return mimetype string

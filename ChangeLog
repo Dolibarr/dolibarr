@@ -2,6 +2,44 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 21.0.1 compared to 21.0.0 *****
+
+FIX: #33360
+FIX: #33365 Global search for single shipment (#33401)
+FIX: #33404 - to keep the method findNearest an agnostic method.
+FIX: #33435 Warnings
+FIX: Accountancy simplified - with multiple entities, amount of the entry is multiplied by the number of entities (#33370)
+FIX: Add a new email for notification
+FIX: Bad link to download tax vat document
+FIX: Blank page on agenda event per user
+FIX: blank page on smartphone for bank SEPA direct transfer page
+FIX: close all services on contract will close all lines (#33466)
+FIX: Count on supplier invoice list does not match count in DB (#33351)
+FIX: CR on script output
+FIX: CSS center end CSS in total
+FIX: Duplicate load of extrafield ->fetch_optionals()
+FIX: fatal error in notification sending email when error array is empty
+FIX: Link to country setup on company setup page
+FIX: Loading of deliveries in shipping card was loading everything
+FIX: Missing ref_ext in group by in list of product
+FIX: Must make different redirect in paymentok/ko according to frame or not.
+FIX: PAIEMENT Wrong field displayed for DateChequeReceived (#33390)
+FIX: picto for unknown mime type
+FIX: Replace compromised tj-actions/changed-files (#33481)
+FIX: Report by custom group was empty
+FIX: Responsive
+FIX: shipment dispatch origin line (#33415)
+FIX: Show the default duration of a membership type.
+FIX: Sort and search Ref Project column was missing (#33539)
+FIX: syntax error on list of intervention for external users
+FIX: text in tooltip on buttons when pb is not a permission problem
+FIX: Translation of column in list of invoice
+FIX: warnings (#33423)
+FIX: Warning when getNomUrl is called before top_httphead
+FIX: we must retrieve linked order_supplier and no other object (#33602)
+SEC FIX: Reflected XSS reported by 柏天浩
+
+
 ***** ChangeLog for 21.0.0 compared to 20.0 *****
 
 For users:

@@ -123,7 +123,7 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut, bc.nbcheque, bc.ref_ext,";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut as status, bc.nbcheque, bc.ref_ext,";
 		$sql .= " bc.date_bordereau as date_bordereau, bc.type,";
 		$sql .= " ba.label as account_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -147,11 +147,12 @@ class RemiseCheque extends CommonObject
 				$this->account_label  = $obj->account_label;
 				$this->author_id      = $obj->fk_user_author;
 				$this->nbcheque       = $obj->nbcheque;
-				$this->statut         = $obj->statut;
+				$this->statut         = $obj->status;
+				$this->status         = $obj->status;
 				$this->ref_ext        = $obj->ref_ext;
 				$this->type           = $obj->type;
 
-				if ($this->statut == 0) {
+				if ($this->status == 0) {
 					$this->ref = "(PROV".$this->id.")";
 				} else {
 					$this->ref = $obj->ref;

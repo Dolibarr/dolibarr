@@ -1574,7 +1574,7 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 	$count = 0;
 
 	while ($count < $MAXPRODUCT) {
-		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'"  '; ?>
+		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
 										<?php if ($count == ($MAXPRODUCT - 2)) {
 											?> onclick="MoreProducts('less')" <?php
 										}
