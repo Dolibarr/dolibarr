@@ -890,9 +890,7 @@ class Fichinter extends CommonObject
 
 		$datas = [];
 		$datas['picto'] = img_picto('', $this->picto).' <u class="paddingrightonly">'.$langs->trans("ShowIntervention").'</u>';
-		if (isset($this->status)) {
-			$datas['picto'] .= ' '.$this->getLibStatut(5);
-		}
+		$datas['picto'] .= ' '.$this->getLibStatut(5);
 		$datas['ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		return $datas;
