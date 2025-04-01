@@ -68,6 +68,7 @@ class Categorie extends CommonObject
 	const TYPE_ORDER				= 'order';
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
+	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 
 
 	/**
@@ -97,7 +98,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 14,
 		'order'					=> 16,
 		'invoice'				=> 17,
-		'supplier_order'		=> 20
+		'supplier_order'		=> 20,
+		'supplier_invoice'		=> 21
 	);
 
 	/**
@@ -123,7 +125,8 @@ class Categorie extends CommonObject
 		14 => 'fichinter',
 		16 => 'order',
 		17 => 'invoice',
-		20 => 'supplier_order'
+		20 => 'supplier_order',
+		21 => 'supplier_invoice'
 	);
 
 	/**
@@ -172,33 +175,35 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'Fichinter',
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
-		'supplier_order'		=> 'CommandeFournisseur'
+		'supplier_order'		=> 'CommandeFournisseur',
+		'supplier_invoice'		=> 'FactureFournisseur'
 	);
 
 	/**
-	 * @var array<string,string> Title Area mapping from type string
+	 * @var array<string,string> 	Title/Label mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product'				=> 'ProductsCategoriesArea',
-		'customer'				=> 'CustomersCategoriesArea',
-		'supplier'				=> 'SuppliersCategoriesArea',
-		'member'				=> 'MembersCategoriesArea',
-		'contact'				=> 'ContactsCategoriesArea',
-		'user'					=> 'UsersCategoriesArea',
-		'account'				=> 'AccountsCategoriesArea', // old for bank account
-		'bank_account'			=> 'AccountsCategoriesArea',
-		'project'				=> 'ProjectsCategoriesArea',
-		'warehouse'				=> 'StocksCategoriesArea',
-		'actioncomm'			=> 'ActioncommCategoriesArea',
-		'website_page'			=> 'WebsitePagesCategoriesArea',
-		'ticket'				=> 'TicketsCategoriesArea',
-		'knowledgemanagement'	=> 'KnowledgemanagementsCategoriesArea',
-		'fichinter'				=> 'FichintersCategoriesArea',
-		'order'					=> 'OrderCategoriesArea',
-		'invoice'				=> 'InvoicesCategoriesArea',
-		'supplier_order'		=> 'SuppliersOrdersCategoriesArea'
+		'product'				=> 'Products',
+		'customer'				=> 'Customers',
+		'supplier'				=> 'Suppliers',
+		'member'				=> 'Members',
+		'contact'				=> 'Contacts',
+		'user'					=> 'Users',
+		'account'				=> 'Accounts', // old for bank account
+		'bank_account'			=> 'BankAccounts',
+		'project'				=> 'Projects',
+		'warehouse'				=> 'Warehouse',
+		'actioncomm'			=> 'AgendaEvents',
+		'website_page'			=> 'WebsitePages',
+		'ticket'				=> 'Tickets',
+		'knowledgemanagement'	=> 'KnowledgeRecords',
+		'fichinter'				=> 'Fichinters',
+		'order'					=> 'Orders',
+		'invoice'				=> 'Invoices',
+		'supplier_order'		=> 'SuppliersOrders',
+		'supplier_invoice'		=> 'SuppliersInvoices'
 	);
 
 	/**
@@ -217,7 +222,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'fichinter',
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
-		'supplier_order'		=> 'commande_fournisseur'
+		'supplier_order'		=> 'commande_fournisseur',
+		'supplier_invoice'		=> 'facture_fourn'
 	);
 
 	/**
@@ -285,6 +291,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ORDER
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
+	 * @see Categorie::TYPE_SUPPLIER_INVOICE
 	 */
 	public $type;
 
@@ -343,19 +350,19 @@ class Categorie extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
 		'entity'	=> array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 5),
-		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
-		'label' => array('type' => 'varchar(180)', 'label' => 'Label', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 1),
+		'fk_parent' => array('type' => 'integer', 'label' => 'ParentCategory', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 0, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'label' => array('type' => 'varchar(180)', 'label' => 'Ref', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1,),
-		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
-		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => 0, 'alwayseditable' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1,),
+		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1,),
 		'position' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
-		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 0, 'alwayseditable' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
-		'date_creation' => array('type' => 'datetime', 'label' => 'Datecreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 75, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 85, 'notnull' => -1, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),

@@ -47,6 +47,9 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
 
 $id_report = GETPOSTINT('id_report');
+if ($id_report <= 0) {
+	$id_report = 1;
+}
 
 $error = 0;
 
@@ -337,6 +340,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$totPerAccount = array();
 	if (!is_array($cats) && $cats < 0) {
 		setEventMessages(null, $AccCat->errors, 'errors');
+	} elseif (is_array($cats) && count($cats) == 0) {
+		print '<tr class="liste_total">';
+		print '<td colspan="15">';
+		print '<span class="opacitymedium">';
+		print $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategory"));
+		print '</span>';
+		print '</td>';
+		print '</tr>';
 	} elseif (is_array($cats) && count($cats) > 0) {
 		// Loop on each custom group of accounts
 		foreach ($cats as $cat) {

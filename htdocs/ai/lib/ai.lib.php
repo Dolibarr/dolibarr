@@ -57,7 +57,7 @@ function getListOfAIServices()
 {
 	global $langs;
 
-	$arrayofia = array(
+	$arrayofai = array(
 		'-1' => $langs->trans('SelectAService'),
 		'chatgpt' => 'ChatGPT',
 		'groq' => 'Groq',
@@ -65,7 +65,7 @@ function getListOfAIServices()
 		//'gemini' => 'Gemini'
 	);
 
-	return $arrayofia;
+	return $arrayofai;
 }
 
 /**

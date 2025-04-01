@@ -1217,10 +1217,10 @@ textarea.centpercent {
 	text-align: justify;
 }
 .pull-left {
-	float: left!important;
+	float: <?php echo $left; ?> !important;
 }
 .pull-right {
-	float: right!important;
+	float: <?php echo $right; ?> !important;
 }
 .nowrap {
 	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
@@ -5066,7 +5066,7 @@ div.tabBar .noborder {
 }
 div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
-	padding-top: 8px !important;
+	padding-top: 6px !important;
 	padding-bottom: 0px !important;
 }
 
@@ -6324,11 +6324,15 @@ table.jPicker tr:first-of-type td {
 	width: unset !important;
 	height: 50% !important;
 }
+.jPicker div[class="Map"] {
+	max-width: 150px;
+}
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
+	width: 300px !important;
 }
 .jPicker .Grid {
 	background-image: unset !important;

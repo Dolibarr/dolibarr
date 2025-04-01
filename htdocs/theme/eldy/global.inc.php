@@ -474,7 +474,7 @@ section.setupsection {
 .field-error-icon { color: #ea1212 !important; }
 
 /* Focus definitions must be after standard definition */
-div.tabBar textarea:focus {
+div.tabBar textarea:focus:not(.textarea-ai_feature) {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
@@ -1046,10 +1046,10 @@ textarea.centpercent {
 	text-align: justify;
 }
 .pull-left {
-	float: left!important;
+	float: <?php echo $left; ?> !important;
 }
 .pull-right {
-	float: right!important;
+	float: <?php echo $right; ?> !important;
 }
 .nowrap {
 	white-space: <?php print($dol_optimize_smallscreen ? 'normal' : 'nowrap'); ?>;
@@ -4235,7 +4235,7 @@ div .tdtop:not(.tagtdnote) {
 	vertical-align: top !important;
 	/*padding-top: 10px !important;
 	padding-bottom: 2px !important; */
-	padding-top: 7px !important;
+	padding-top: 8px !important;
 	padding-bottom: 0px !important;
 	height: unset !important;
 }
@@ -4802,7 +4802,7 @@ td.evenodd, tr.nohoverpair td, #trlinefordates td {
 .trforbreak.nobold td a, .trforbreak.nobold span.secondary {
 	font-weight: normal !important;
 }
-tr.trforbreaknobg:nth-of-type(n+3) td {
+tr.trforbreaknobg:nth-of-type(n+3) td, form.trforbreaknobg div.tagtd {
 	font-weight: 500;
 	border-top: 1pt dashed #aaa !important;
 }
@@ -4813,9 +4813,6 @@ table.dataTable td {
 tr.pair td, tr.impair td, form.impair div.tagtd, form.pair div.tagtd, div.impair div.tagtd, div.pair div.tagtd, div.liste_titre div.tagtd {
 	padding: 7px 8px 7px 8px;
 	border-bottom: 1px solid #ddd;
-}
-form.pair, form.impair {
-	font-weight: normal;
 }
 form.tagtr:last-of-type div.tagtd, tr.pair:last-of-type td, tr.impair:last-of-type td {
 	border-bottom: 0px !important;
@@ -6398,11 +6395,15 @@ table.jPicker tr:first-of-type td {
 	width: unset !important;
 	height: 50% !important;
 }
+.jPicker div[class="Map"] {
+	max-width: 150px;
+}
 table.jPicker {
 	border-radius: 5px;
 	border: 1px solid #bbb !important;
 	background-color: var(--colorbackbody) !important;
 	box-shadow: 0px 0px 10px #ccc;
+	width: 300px !important;
 }
 .jPicker .Grid {
 	background-image: unset !important;
@@ -6633,7 +6634,8 @@ div.cke_notifications_area .cke_notification_warning {
 		color: gray;
 		position: relative;
 		right: 0;
-		border-left: 1px solid;
+		border-<?php echo $left; ?>: 1px solid;
+		padding-<?php echo $left; ?>: 10px;
 }
 pre#editfilecontentaceeditorid {
 	margin-top: 5px;
@@ -8635,6 +8637,7 @@ table.jPicker {
 {
 	.ai_dropdown{
 		min-width : 280px !important;
+		width: calc(100% - 50px);
 	}
 
 	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }

@@ -187,6 +187,11 @@ $uploaddir = $conf->stock->dir_output.'/movements';
 $permissiontoread = $user->hasRight('stock', 'mouvement', 'lire');
 $permissiontoadd = $user->hasRight('stock', 'mouvement', 'creer');
 $permissiontodelete = $user->hasRight('stock', 'mouvement', 'creer'); // There is no deletion permission for stock movement as we should never delete
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $usercanread = $user->hasRight('stock', 'mouvement', 'lire');
 $usercancreate = $user->hasRight('stock', 'mouvement', 'creer');
@@ -332,21 +337,25 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
-if ($action == 'update_extras' && $permissiontoadd) {
+if ($action == 'update_extras' && $permissiontoeditextra) {
 	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
+	$attribute_name = GETPOST('attribute', 'aZ09');
+
 	// Fill array 'array_options' with data from update form
-	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
+	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, $attribute_name);
 	if ($ret < 0) {
 		$error++;
 	}
+
 	if (!$error) {
-		$result = $tmpwarehouse->insertExtraFields();
+		$result = $tmpwarehouse->updateExtraField($attribute_name, 'CONTRACT_MODIFY');
 		if ($result < 0) {
 			setEventMessages($tmpwarehouse->error, $tmpwarehouse->errors, 'errors');
 			$error++;
 		}
 	}
+
 	if ($error) {
 		$action = 'edit_extras';
 	}

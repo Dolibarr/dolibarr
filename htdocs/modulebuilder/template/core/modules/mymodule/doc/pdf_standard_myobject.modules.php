@@ -666,52 +666,54 @@ class pdf_standard_myobject extends ModelePDFMyObject
 
 
 					$sign = 1;
-					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
-					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
-					if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+					// Collection of totals by value of VAT in $this->tva["taux"]=total_tva
+					if ($object->lines instanceof CommonInvoiceLine) {
+						$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
+						if ($prev_progress > 0 && !empty($object->lines[$i]->situation_percent)) { // Compute progress from previous situation
+							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							} else {
+								$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							}
 						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva * ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent;
+							if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
+								$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
+							} else {
+								$tvaligne = $sign * $object->lines[$i]->total_tva;
+							}
 						}
-					} else {
-						if (isModEnabled("multicurrency") && $object->multicurrency_tx != 1) {
-							$tvaligne = $sign * $object->lines[$i]->multicurrency_total_tva;
-						} else {
-							$tvaligne = $sign * $object->lines[$i]->total_tva;
+
+						$localtax1ligne = $object->lines[$i]->total_localtax1;
+						$localtax2ligne = $object->lines[$i]->total_localtax2;
+						$localtax1_rate = $object->lines[$i]->localtax1_tx;
+						$localtax2_rate = $object->lines[$i]->localtax2_tx;
+						$localtax1_type = $object->lines[$i]->localtax1_type;
+						$localtax2_type = $object->lines[$i]->localtax2_type;
+
+						$vatrate = (string) $object->lines[$i]->tva_tx;
+
+						// Retrieve type from database for backward compatibility with old records
+						if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
+							&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
+							$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
+							$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
+							$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
 						}
-					}
 
-					$localtax1ligne = $object->lines[$i]->total_localtax1;
-					$localtax2ligne = $object->lines[$i]->total_localtax2;
-					$localtax1_rate = $object->lines[$i]->localtax1_tx;
-					$localtax2_rate = $object->lines[$i]->localtax2_tx;
-					$localtax1_type = $object->lines[$i]->localtax1_type;
-					$localtax2_type = $object->lines[$i]->localtax2_type;
-
-					$vatrate = (string) $object->lines[$i]->tva_tx;
-
-					// Retrieve type from database for backward compatibility with old records
-					if ((!isset($localtax1_type) || $localtax1_type == '' || !isset($localtax2_type) || $localtax2_type == '') // if tax type not defined
-						&& (!empty($localtax1_rate) || !empty($localtax2_rate))) { // and there is local tax
-						$localtaxtmp_array = getLocalTaxesFromRate($vatrate, 0, $object->thirdparty, $mysoc);
-						$localtax1_type = isset($localtaxtmp_array[0]) ? $localtaxtmp_array[0] : '';
-						$localtax2_type = isset($localtaxtmp_array[2]) ? $localtaxtmp_array[2] : '';
-					}
-
-					// retrieve global local tax
-					if ($localtax1_type && $localtax1ligne != 0) {
-						if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
-							$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
-						} else {
-							$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+						// retrieve global local tax
+						if ($localtax1_type && $localtax1ligne != 0) {
+							if (empty($this->localtax1[$localtax1_type][$localtax1_rate])) {
+								$this->localtax1[$localtax1_type][$localtax1_rate] = $localtax1ligne;
+							} else {
+								$this->localtax1[$localtax1_type][$localtax1_rate] += $localtax1ligne;
+							}
 						}
-					}
-					if ($localtax2_type && $localtax2ligne != 0) {
-						if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
-							$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
-						} else {
-							$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+						if ($localtax2_type && $localtax2ligne != 0) {
+							if (empty($this->localtax2[$localtax2_type][$localtax2_rate])) {
+								$this->localtax2[$localtax2_type][$localtax2_rate] = $localtax2ligne;
+							} else {
+								$this->localtax2[$localtax2_type][$localtax2_rate] += $localtax2ligne;
+							}
 						}
 					}
 
