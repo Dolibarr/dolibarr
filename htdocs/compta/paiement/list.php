@@ -102,6 +102,8 @@ if (!$sortfield) {
 
 $search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
+$arrayofselected = !empty($arrayofselected) && is_array($arrayofselected) ? $arrayofselected : array();
+
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
 	'p.ref' => "RefPayment",
