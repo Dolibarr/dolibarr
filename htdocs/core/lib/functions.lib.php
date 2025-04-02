@@ -13793,6 +13793,13 @@ function getElementProperties($elementType)
 		$module = 'adherent';
 		$subelement = 'adherent';
 		$table_element = 'adherent';
+	} elseif ($elementType == 'subscription') {
+		$classpath = 'adherents/class';
+		$classfile = 'subscription';
+		$module = 'adherent';
+		$subelement = 'subscription';
+		$classname = 'Subscription';
+		$table_element = 'subscription';
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';

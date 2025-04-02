@@ -429,12 +429,29 @@ print load_fiche_titre($langs->trans("Menu").' '.$langs->trans("SecuritySetup"),
 
 print '<div class="divsection wordbreak">';
 
-print '<strong>'.$langs->trans("UseCaptchaCode").'</strong>: ';
+print '<strong>'.$langs->trans("UseCaptchaCode").' - Login</strong>: ';
 print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? '' : img_picto('', 'tick').' ';
 print yn(!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA') ? 0 : 1);
 print '<br>';
 print '<br>';
 
+print '<strong>'.$langs->trans("UseCaptchaCode").' - Ticket</strong>: ';
+print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET') ? '' : img_picto('', 'tick').' ';
+print yn(!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_TICKET') ? 0 : 1);
+print '<br>';
+print '<br>';
+
+print '<strong>'.$langs->trans("UseCaptchaCode").' - Thirdparty public contact form</strong>: ';
+print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRPARTY') ? '' : img_picto('', 'tick').' ';
+print yn(!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRPARTY') ? 0 : 1);
+print '<br>';
+print '<br>';
+
+print '<strong>'.$langs->trans("UseCaptchaCode").' - Membership subscription</strong>: ';
+print !getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER') ? '' : img_picto('', 'tick').' ';
+print yn(!getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER') ? 0 : 1);
+print '<br>';
+print '<br>';
 
 $sessiontimeout = ini_get("session.gc_maxlifetime");
 if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
