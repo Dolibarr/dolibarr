@@ -87,8 +87,8 @@ if (empty($date_startmonth) || empty($date_endmonth)) {
 	$pastmonth = $dates['pastmonth'];
 }
 
-if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
-{
+if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) {
+	// We define date_start and date_end, only if we did not submit the form
 	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
 	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
 }
@@ -105,7 +105,7 @@ $sql .= " WHERE ba.fk_accountancy_journal=".$id_journal;
 $sql .= " AND ba.entity IN (".getEntity('bank_account').')'; // We don't share object for accountancy, we use source object sharing
 // Filter by dates
 if ($date_start && $date_end) {
-    $sql .= " AND b.dateo >= '" . $db->idate($date_start) . "' AND b.dateo <= '" . $db->idate($date_end) . "'";
+	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
 }
 $sql .= " ORDER BY b.dateo";
 
@@ -123,9 +123,9 @@ dol_syslog("accountancy/journal/treasuryjournal.php", LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-    $static_account = new Account($db);
+	$static_account = new Account($db);
 
-    while ($obj = $db->fetch_object($resql)) {
+	while ($obj = $db->fetch_object($resql)) {
 		// Get payment infos (rowid is bank ID)
 		if (!isset($tabpay[$obj->rowid])) {
 			$tabpay[$obj->rowid] = array(
@@ -142,7 +142,7 @@ if ($resql) {
 				$tabpay[$obj->rowid]["lib"] = dol_trunc($obj->label, 60);
 			}
 		}
-        $payment_ids[$obj->bu_type][$obj->rowid] = $obj->rowid;
+		$payment_ids[$obj->bu_type][$obj->rowid] = $obj->rowid;
 
 		// Get bank account infos (rowid is bank ID)
 		if (!isset($tabaccount[$obj->fk_account])) {
@@ -156,10 +156,10 @@ if ($resql) {
 			];
 		}
     }
-    $db->free($resql);
+	$db->free($resql);
 
-    foreach ($payment_ids as $type => $ids) {
-        switch ($type) {
+	foreach ($payment_ids as $type => $ids) {
+		switch ($type) {
             case 'payment':
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
