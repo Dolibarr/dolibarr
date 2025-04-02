@@ -52,19 +52,19 @@ $date_startyear = GETPOSTINT('date_startyear');
 $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
-$in_bookkeeping = GETPOST('in_bookkeeping','aZ09');
+$in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
 if ($in_bookkeeping == '') {
 	$in_bookkeeping = 'notyet';
 }
 
 $now = dol_now();
 
-$action = GETPOST('action','aZ09');
+$action = GETPOST('action', 'aZ09');
 
 $socid = 0;
 // Security check
 if ($user->socid > 0 && empty($id_journal)) {
-    accessforbidden();
+	accessforbidden();
 }
 
 /*
@@ -79,14 +79,13 @@ $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_starty
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
 if (empty($date_startmonth) || empty($date_endmonth)) {
-    // Period by default on transfer
-    $dates = getDefaultDatesForTransfer();
-    $date_start = $dates['date_start'];
-    $date_end = $dates['date_end'];
-    $pastmonthyear = $dates['pastmonthyear'];
-    $pastmonth = $dates['pastmonth'];
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
+	$date_start = $dates['date_start'];
+	$date_end = $dates['date_end'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
 }
-
 
 if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) // We define date_start and date_end, only if we did not submit the form
 {
@@ -985,7 +984,7 @@ if ($resql) {
                 }
                 break;
             case 'banktransfert':
-                // Bank transfert
+                // Bank transfer
                 //------------------------------------------
 				$sql = "SELECT b.rowid, b.amount, b.label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
