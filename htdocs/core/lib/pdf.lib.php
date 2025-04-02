@@ -2577,7 +2577,6 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 		} elseif ($objecttype == 'supplier_proposal') {
 			'@phan-var-force array<SupplierProposal> $objects';
 			$outputlangs->load('supplier_proposal');
-      
 			foreach ($objects as $elementobject) {
 				$linkedobjects[$objecttype]['ref_title'] = $outputlangs->transnoentities("RefSupplierProposal");
 				$linkedobjects[$objecttype]['ref_value'] = $outputlangs->transnoentities($elementobject->ref);
