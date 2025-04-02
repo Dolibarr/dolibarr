@@ -9,6 +9,7 @@
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3479,6 +3480,19 @@ form#login {
 .login_table .tdinputlogin .fa {
 	padding-left: 10px;
 	width: 14px;
+}
+/* Serve as reference for icon that toggles showing the password */
+.login_table #tdpasswordlogin {
+	position: relative;
+}
+.login_table #tdpasswordlogin #togglepassword {
+	position: absolute;
+	top: 10px;
+	right: 5px;
+}
+.login_table #tdpasswordlogin #togglepassword .fa {
+	padding: 0 3px;
+	width: auto;
 }
 
 .login_main_home {

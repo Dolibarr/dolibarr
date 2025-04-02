@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3414,6 +3415,20 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 .login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
 	font-size: 1.1em;
 }
+/* Serve as reference for icon that toggles showing the password */
+.login_table #tdpasswordlogin {
+	position: relative;
+}
+.login_table #tdpasswordlogin #togglepassword {
+	position: absolute;
+	top: 10px;
+	right: 5px;
+}
+.login_table #tdpasswordlogin #togglepassword .fa {
+	padding: 0 3px;
+	width: auto;
+}
+
 /* For the static info message */
 .login_main_home {
 	word-break: break-word;
