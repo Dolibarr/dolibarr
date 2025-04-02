@@ -308,7 +308,7 @@ if ($disablenofollow) {
 <input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo !getDolGlobalString('MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE') ? 'off' : 'on'; ?>" />
 <a href id="togglepassword" tabindex="3"><span class="fa fa-eye"></span></a>
 </div></div>
-<script nonce="<?= getNonce() ?>">
+<script nonce="<?php echo getNonce(); ?>">
 	$(document).ready(function () {
 		$('#togglepassword').on('click', function () {
 			const $passwordInput = $('#password');
