@@ -692,7 +692,7 @@ if (!$error && $action == 'writebookkeeping' && $user->hasRight('accounting', 'b
 		// Introduce a protection. Total of tabtp must be total of tabbq
 
 		// Bank
-		if (!$errorforline && is_array($tabbq[$key])) {
+		if (is_array($tabbq[$key])) {
 			// Line into bank account
 			foreach ($tabbq[$key] as $k => $mt) {
 				if ($mt) {

@@ -629,7 +629,7 @@ if (empty($reshook)) {
 		$monthuser = dol_print_date($dolnowtzuserrel, '%m', 'gmt');
 		$dayuser = dol_print_date($dolnowtzuserrel, '%d', 'gmt');
 		$yearuser = dol_print_date($dolnowtzuserrel, '%Y', 'gmt');
-		$dateinvoice = dol_mktime(0, 0, 0, $monthuser, $dayuser, $yearuser, 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
+		$dateinvoice = dol_mktime(0, 0, 0, (int) $monthuser, (int) $dayuser, (int) $yearuser, 'tzserver');	// If we enter the 02 january, we need to save the 02 january for server
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$invoice->date = $dateinvoice;		// Invoice::create() needs a date with no hours

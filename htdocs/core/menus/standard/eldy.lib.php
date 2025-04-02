@@ -1539,7 +1539,7 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			// Categories
 			if (isModEnabled('category')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=14", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/index.php?leftmenu=cat&amp;type=17", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1907,8 +1907,9 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$i++;
 							}
 						} else {
-							// Should not happen. Entries are added
-							$newmenu->add('', $langs->trans("NoReportDefined"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+							// Should not happen. We keep a link in case it happen to go to the page to explain how to create custom groups.
+							$newmenu->add("/compta/resultat/result.php?mainmenu=accountancy&leftmenu=accountancy_report", $langs->trans("ByPersonalizedAccountGroups"), 3, $user->hasRight('accounting', 'comptarapport', 'lire'));
+							//$newmenu->add('', $langs->trans("NoReportDefined"), 3, 0);
 						}
 					} else {
 						dol_print_error($db);

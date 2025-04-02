@@ -815,18 +815,12 @@ if (empty($reshook)) {
 
 			$fk_unit = GETPOSTINT('unit');
 
-			// update price_ht with discount
 			// TODO Use object->updateline instead objectline->update
 
-			$price_ht =  price2num(GETPOST('elprice'), 'MU');
 			$remise_percent = price2num(GETPOST('elremise_percent'), '', 2);
-			if ($remise_percent > 0) {
-				$remise = round(((float) $price_ht * (float) $remise_percent / 100), 2);
-			}
 
 			$objectline->fk_product = GETPOSTINT('idprod');
 			$objectline->description = GETPOST('product_desc', 'restricthtml');
-			$objectline->price_ht = (float) $price_ht;
 			$objectline->subprice = (float) price2num(GETPOST('elprice'), 'MU');
 			$objectline->qty = (float) price2num(GETPOST('elqty'), 'MS');
 			$objectline->remise_percent = $remise_percent;
@@ -1616,7 +1610,7 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive-no-min">';
 			print '<table class="notopnoleftnoright allwidth tableforservicepart1 centpercent">';
 
-			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
+			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.qty,";
 			$sql .= " cd.tva_tx, cd.vat_src_code, cd.remise_percent, cd.info_bits, cd.subprice, cd.multicurrency_subprice,";
 			$sql .= " cd.date_ouverture_prevue as date_start, cd.date_ouverture as date_start_real,";
 			$sql .= " cd.date_fin_validite as date_end, cd.date_cloture as date_end_real,";
