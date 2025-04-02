@@ -91,32 +91,26 @@ $documentation->showSidebar(); ?>
 							<tr class="oddeven">
 								<td class="left">My Product A</td>
 								<td class="center">13</td>
-								<td class="right"><?php echo price(9.99, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right"><?php echo price(129.87, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right amount"><?php echo price(9.99, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right amount"><?php echo price(129.87, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="oddeven">
 								<td class="left">My Product B</td>
 								<td class="center">21</td>
-								<td class="right"><?php echo price(13.37, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right"><?php echo price(280.77, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right amount"><?php echo price(13.37, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right amount"><?php echo price(280.77, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="oddeven">
 								<td class="left">My Product C</td>
 								<td class="center">7</td>
-								<td class="right"><?php echo price(16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right"><?php echo price(116.62, 0, '', 1, -1, -1, 'auto'); ?></td>
-							</tr>
-							<tr class="oddeven">
-								<td class="left">My Product D</td>
-								<td class="center">17</td>
-								<td class="right"><?php echo price(38.33, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right"><?php echo price(651.61, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right amount"><?php echo price(16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="right amount"><?php echo price(116.62, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 							<tr class="liste_total">
 								<td class="left">Total</td>
-								<td class="center">58</td>
-								<td class="right">--</td>
-								<td class="right"><?php echo price(1178.87, 0, '', 1, -1, -1, 'auto'); ?></td>
+								<td class="center">41</td>
+								<td class="right amount">--</td>
+								<td class="right amount"><?php echo price(527.26, 0, '', 1, -1, -1, 'auto'); ?></td>
 							</tr>
 						</table>
 					</div>
@@ -137,22 +131,22 @@ $documentation->showSidebar(); ?>
 					'	<tr class="oddeven">',
 					'		<td class="left">My Product A</td>',
 					'		<td class="left">13</td>',
-					'		<td class="center">9,99 &euro;</td>',
-					'		<td class="right">129,87 &euro;</td>',
+					'		<td class="center amount">9,99 &euro;</td>',
+					'		<td class="right amount">129,87 &euro;</td>',
 					'	</tr>',
 					'	<tr class="oddeven">',
 					'		<td class="left">My Product B</td>',
 					'		<td class="left">21</td>',
-					'		<td class="center">13,37 &euro;</td>',
-					'		<td class="right">280,77 &euro;</td>',
+					'		<td class="center amount">13,37 &euro;</td>',
+					'		<td class="right amount">280,77 &euro;</td>',
 					'	</tr>',
 					'',
 					'	<!-- Total -->',
 					'	<tr class="liste_total">',
 					'		<td class="left">Total</td>',
 					'		<td class="left">58</td>',
-					'		<td class="center">--</td>',
-					'		<td class="right">1178,87 &euro;</td>',
+					'		<td class="center amount">--</td>',
+					'		<td class="right amount">1178,87 &euro;</td>',
 					'	</tr>',
 					'',
 					'</table>',

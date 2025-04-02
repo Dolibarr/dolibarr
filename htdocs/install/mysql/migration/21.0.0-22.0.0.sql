@@ -196,11 +196,13 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_
 ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN ref VARCHAR(30) AFTER rowid;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN ref VARCHAR(30) AFTER rowid;
 
 ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
 
 ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
-UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__));
+UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
 
 -- invert constant STOCK_ALLOW_NEGATIVE_TRANSFER because it was automatically set to 1, deleting the user config.
 INSERT INTO llx_const (name, entity, value, type, visible, note) SELECT DISTINCT 'STOCK_DISALLOW_NEGATIVE_TRANSFER', entity, 1, 'chaine', 0, '' FROM llx_const c1 WHERE NOT EXISTS (SELECT rowid FROM llx_const c2 WHERE c2.name = 'STOCK_ALLOW_NEGATIVE_TRANSFER' AND c2.value = '1' AND c2.entity = c1.entity);
@@ -220,9 +222,16 @@ UPDATE llx_expeditiondet as ed SET ed.fk_product = (SELECT cd.fk_product FROM ll
 
 ALTER TABLE llx_webhook_target ADD COLUMN type integer DEFAULT 0 NOT NULL AFTER label;
 
+-- remove foreign keys we should not have (bad name and bad use)
+ALTER TABLE llx_webhook_target DROP FOREIGN KEY llx_webhook_target_fk_user_creat;
+ALTER TABLE llx_webhook_target DROP FOREIGN KEY fk_webhook_target_fk_user_creat;
+
 INSERT INTO llx_c_socialnetworks (entity, code, label, url, icon, active) VALUES (__ENTITY__, 'pixelfed', 'Pixelfed', '{socialid}', 'fa-pixelfed', 0);
 
 -- Add input reason on invoice
 ALTER TABLE llx_facture ADD COLUMN fk_input_reason integer NULL DEFAULT NULL AFTER last_main_doc;
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_input_reason (fk_input_reason);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (fk_input_reason) REFERENCES llx_c_input_reason (rowid);
+ALTER TABLE llx_website ADD COLUMN paymentframemode integer DEFAULT 0;
+ALTER TABLE llx_contratdet DROP COLUMN price_ht;
+ALTER TABLE llx_contratdet DROP COLUMN remise;

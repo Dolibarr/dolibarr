@@ -79,7 +79,7 @@ $function = empty($jsonData['function']) ? 'textgeneration' : $jsonData['functio
 $instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
 $format = empty($jsonData['format']) ? '' : $jsonData['format'];	// Can be '' for text, 'html', ...
 
-if ($function == 'texttranslation') {
+if ($function == 'texttranslation' && $format == "html") {
 	$instructions = $jsonData['instructions'];
 } else {
 	$instructions = dol_string_nohtmltag($jsonData['instructions'], 1, 'UTF-8');
@@ -100,7 +100,7 @@ if (is_null($generatedContent) || (is_array($generatedContent) && $generatedCont
 		print "Error API returned no answer";
 	}
 } else {
-	if ($function == 'textgenerationemail' || $function == 'textgenerationwebpage' || $function == "texttranslation") {
+	if ($function == 'textgenerationemail' || $function == 'textgenerationwebpage') {
 		print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
 	} elseif ($function == 'imagegeneration') {
 		// TODO
@@ -110,6 +110,10 @@ if (is_null($generatedContent) || (is_array($generatedContent) && $generatedCont
 		// TODO
 	} else {
 		// Default case 'textgeneration'
-		print dolPrintText($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+		if ($format == "html") {
+			print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+		} else {
+			print dolPrintText($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+		}
 	}
 }
