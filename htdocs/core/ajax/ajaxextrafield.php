@@ -328,20 +328,6 @@ if ($object instanceof CommonObject) {
 		} else {
 			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
-			//$form = new Form($db);
-			//$categcode = $InfoFieldList[5];
-			//if (is_numeric($categcode)) {
-			//	$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]]
-			//}
-			//$categories = $form->select_all_categories($categcode, '', 'parent', 64, $InfoFieldList[6], 1, 1);
-			// $out .= '<option value="0">&nbsp;</option>';
-			// if (is_array($categories)) {
-			// 	foreach ($categories as $category_key => $category_value) {
-			// 		$out .= '<option value="'.$category_key.'"';
-			// 		$out .= ($value == $category_key ? ' selected' : '');
-			// 		$out .= '>'.$category_value.'</option>';
-			// 	}
-			// }
 		}
 	}
 }

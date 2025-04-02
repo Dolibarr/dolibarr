@@ -273,6 +273,7 @@ before_script:
       #echo '\d llx_c_country' | psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis'
 
       # Create pgsql compatibility functions
+      echo "Load functions.sql (may generated errors for tables that does not exists yet)"
       psql 'postgresql://postgres:postgres@127.0.0.1:5432/travis' < htdocs/install/pgsql/functions/functions.sql
     fi
     echo

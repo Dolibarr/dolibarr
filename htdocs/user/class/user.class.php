@@ -292,6 +292,10 @@ class User extends CommonObject
 	/**
 	 * @var int|string
 	 */
+	public $datelastpassvalidation;
+	/**
+	 * @var int|string
+	 */
 	public $datelastlogin;
 	/**
 	 * @var int|string
@@ -662,6 +666,7 @@ class User extends CommonObject
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
 				$this->pass_temp	= $obj->pass_temp;
+				$this->datelastpassvalidation = $obj->datelastpassvalidation;
 				$this->api_key = dolDecrypt($obj->api_key);
 
 				$this->address 		= $obj->address;
@@ -2550,6 +2555,7 @@ class User extends CommonObject
 
 			$sql = "UPDATE ".$this->db->prefix()."user";
 			$sql .= " SET pass_crypted = '".$this->db->escape($password_crypted)."',";
+			$sql .= " datelastpassvalidation = '".$this->db->idate(dol_now())."',";
 			$sql .= " pass_temp = null";
 			if (!empty($flagdelsessionsbefore)) {
 				$sql .= ", flagdelsessionsbefore = '".$this->db->idate($now - 5, 'gmt')."'";
@@ -2562,6 +2568,7 @@ class User extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(get_class($this)."::setPassword", LOG_DEBUG);
+
 			$result = $this->db->query($sql);
 			if ($result) {
 				if ($this->db->affected_rows($result)) {

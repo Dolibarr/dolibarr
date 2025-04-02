@@ -321,7 +321,7 @@ class Invoices extends DolibarrApi
 	/**
 	 * Create invoice object
 	 *
-	 * @param array $request_data   Request datas
+	 * @param array $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int                  ID of invoice
@@ -331,8 +331,13 @@ class Invoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('facture', 'creer')) {
 			throw new RestException(403, "Insuffisant rights");
 		}
-		// Check mandatory fields
-		$request_data = $this->_validate($request_data);
+
+		if (!is_array($request_data)) {
+			$request_data = array();
+		}
+
+		// Check mandatory fields (not using output, only possible exception is important)
+		$this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {

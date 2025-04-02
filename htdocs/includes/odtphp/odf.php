@@ -529,10 +529,11 @@ class Odf
 	 *
 	 * @param string $key name of the variable within the template
 	 * @param string $value path to the picture
+	 * @param float $ratio   Ratio for image
 	 * @throws OdfException
 	 * @return odf
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, float $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -541,8 +542,8 @@ class Odf
 			throw new OdfException("Invalid image");
 		}
 		list ($width, $height) = $size;
-		$width *= self::PIXEL_TO_CM;
-		$height *= self::PIXEL_TO_CM;
+		$width *= self::PIXEL_TO_CM * $ratio;
+		$height *= self::PIXEL_TO_CM * $ratio;
 		$xml = <<<IMG
 			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="aschar" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
 IMG;
@@ -855,11 +856,12 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
+	 * @param 	string 	$name 					Name of ODT file to generate before generating PDF
+	 * @param	int		$dooutputfordownload	Output the file content to make the download
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedPDF($name = "")
+	public function exportAsAttachedPDF($name = "", $dooutputfordownload = 1)
 	{
 		global $conf;
 
@@ -962,16 +964,18 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
-			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
-				if (headers_sent($filename, $linenum)) {
-					throw new OdfException("headers already sent ($filename at $linenum)");
-				}
+			if ($dooutputfordownload) {
+				if (php_sapi_name() != 'cli') {    // If we are in a web context (not into CLI context)
+					if (headers_sent($filename, $linenum)) {
+						throw new OdfException("headers already sent ($filename at $linenum)");
+					}
 
-				if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
-					$name=preg_replace('/\.od(x|t)/i', '', $name);
-					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.basename($name).'.pdf"');
-					readfile($name.".pdf");
+					if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$name = preg_replace('/\.od(x|t)/i', '', $name);
+						header('Content-type: application/pdf');
+						header('Content-Disposition: attachment; filename="' . basename($name) . '.pdf"');
+						readfile($name . ".pdf");
+					}
 				}
 			}
 

@@ -473,7 +473,7 @@ class Target extends CommonObject
 
 
 	/**
-	 * Load list of objects in memory from the database.
+	 * Load in emory the list of all objects from the database.
 	 *
 	 * @param  string      	$sortorder    	Sort Order
 	 * @param  string      	$sortfield    	Sort field

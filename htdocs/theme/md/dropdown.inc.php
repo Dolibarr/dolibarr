@@ -506,23 +506,6 @@ li.liinputsearch {
 
 }
 
-.search-dropdown-body {
-	padding: unset;
-}
-
-.global-search-item {
-	font-size: 1.1em;
-	padding-top: 8px;
-	padding-bottom: 8px;
-}
-
-.global-search-item:before {
-	content: none;
-}
-
-.global-search-header {
-	color: #444 !important;
-}
 
 
 /*
@@ -725,6 +708,11 @@ div.quickaddblock:focus {
 		color: var(--colortextbackvmenu);
 	}
 
+	.dropdown-menu:not(.ai_dropdown) {
+		border: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;
+	}
 
 	#topmenu-global-search-dropdown a.login-dropdown-a,
 	#topmenu-quickadd-dropdown a.login-dropdown-a,

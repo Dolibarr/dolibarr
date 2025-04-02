@@ -3550,19 +3550,19 @@ parameters:
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 4
-			path: ../../../htdocs/comm/mailing/cibles.php
+			path: ../../../htdocs/comm/mailing/targetemailing.php
 
 		-
 			message: '#^Variable \$filter might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/comm/mailing/cibles.php
+			path: ../../../htdocs/comm/mailing/targetemailing.php
 
 		-
 			message: '#^Variable \$mesg might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/comm/mailing/cibles.php
+			path: ../../../htdocs/comm/mailing/targetemailing.php
 
 		-
 			message: '#^Negated boolean expression is always true\.$#'
