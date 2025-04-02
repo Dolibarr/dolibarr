@@ -6,7 +6,7 @@
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015-2020 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2018      Nicolas ZABOURI	    <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023-2024  William Mead        <william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -346,7 +346,7 @@ class Fichinter extends CommonObject
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
 		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : 0);
 		$sql .= ", ".($this->fk_contrat ? ((int) $this->fk_contrat) : 0);
-		$sql .= ", ".((int) $this->statut);
+		$sql .= ", ".((int) $this->status);
 		$sql .= ", ".($this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
@@ -561,7 +561,7 @@ class Fichinter extends CommonObject
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT) {
+		if ($this->status <= self::STATUS_DRAFT) {
 			return 0;
 		}
 
@@ -586,7 +586,8 @@ class Fichinter extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_DRAFT;
+				$this->status = self::STATUS_DRAFT;
+				$this->statut = self::STATUS_DRAFT; // deprecated
 				$this->db->commit();
 				return 1;
 			} else {
@@ -731,7 +732,7 @@ class Fichinter extends CommonObject
 
 		$error = 0;
 
-		if ($this->statut == self::STATUS_CLOSED) {
+		if ($this->status == self::STATUS_CLOSED) {
 			return 0;
 		} else {
 			$this->db->begin();
@@ -757,7 +758,8 @@ class Fichinter extends CommonObject
 				}
 
 				if (!$error) {
-					$this->statut = self::STATUS_CLOSED;
+					$this->status = self::STATUS_CLOSED;
+					$this->statut = self::STATUS_CLOSED; // deprecated
 					$this->db->commit();
 					return 1;
 				} else {
@@ -1344,12 +1346,12 @@ class Fichinter extends CommonObject
 		$this->statut = self::STATUS_DRAFT;	//  deprecated
 
 		// Clear fields
-		$this->user_author_id     = $user->id;
+		$this->user_author_id = $user->id;
 		$this->user_validation_id = 0;
-		$this->date_creation      = '';
-		$this->date_validation    = '';
+		$this->date_creation = '';
+		$this->date_validation = '';
 
-		$this->ref_client         = '';
+		$this->ref_client = '';
 
 		if (!$clone_notes) {
 			$this->note_private = '';
