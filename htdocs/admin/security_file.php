@@ -155,7 +155,7 @@ print '<br>';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent nomarginbottom">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Upload").'</td>';
+print '<td>'.$langs->trans("UploadName").'</td>';
 print '<td></td>';
 print '</tr>';
 

@@ -138,6 +138,7 @@ if ($year > 0) {
 	$sql .= " OR (tva.datev IS NULL AND tva.datev between '" . $db->idate(dol_get_first_day($year)) . "' AND '" . $db->idate(dol_get_last_day($year)) . "')";
 	$sql .= ")";
 }
+$sortfield = (string) $sortfield;  // Avoid phan notice
 if (preg_match('/^cs\./', $sortfield)
 	|| preg_match('/^tva\./', $sortfield)
 	|| preg_match('/^ptva\./', $sortfield)

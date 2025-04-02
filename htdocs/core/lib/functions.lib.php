@@ -12203,7 +12203,6 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	if (!is_array($fields)) {
 		$fields = array($fields);
 	}
-
 	$i1 = 0;	// count the nb of "and" criteria added (all fields / criteria)
 	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
@@ -12341,7 +12340,6 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$i2++; // a criteria for 1 more field was added to string
 			}
 		}
-
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}

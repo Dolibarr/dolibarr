@@ -377,6 +377,10 @@ class Conf extends stdClass
 	 */
 	public $category;
 
+	/**
+	 * @var ?stdClass
+	 */
+	public $mrp;
 
 	/**
 	 * Constructor
@@ -1235,6 +1239,10 @@ class Conf extends stdClass
 			if (isset($this->holiday)) {
 				$this->holiday->approve = new stdClass();
 				$this->holiday->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
+			}
+			if (isset($this->mrp)) {
+				$this->mrp->progress = new stdClass();
+				$this->mrp->progress->warning_delay = getDolGlobalInt('MAIN_DELAY_MRP') * 86400;
 			}
 
 			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
