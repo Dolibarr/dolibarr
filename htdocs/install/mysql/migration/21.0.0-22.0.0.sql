@@ -199,7 +199,7 @@ UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN ref VARCHAR(30) AFTER rowid;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN ref VARCHAR(30) AFTER rowid;
 
-ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
+ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL DEFAULT CURRENT_TIMESTAMP AFTER session_variable;
 
 ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
