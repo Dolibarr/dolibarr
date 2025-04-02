@@ -406,8 +406,11 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 		$sql = "SELECT rowid, code, label, nature";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 		$sql .= " WHERE entity = ".$conf->entity;
+		if (getDolGlobalInt('ACCOUNTING_USE_TREASURY')) {
+			$sql .= " AND nature = 4"; // only bank journal when using treasury
+		}
 		$sql .= " AND active = 1";
-		$sql .= " ORDER BY label DESC";
+		$sql .= " ORDER BY nature ASC, label DESC";
 
 		$resql = $db->query($sql);
 		if ($resql) {
@@ -455,7 +458,13 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 					if ($nature) {
 						$langs->load('accountancy');
 						$journallabel = $langs->transnoentities($objp->label); // Labels in this table are set by loading llx_accounting_abc.sql. Label can be 'ACCOUNTING_SELL_JOURNAL', 'InventoryJournal', ...
-						$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
+
+						if (getDolGlobalInt('ACCOUNTING_USE_TREASURY')) {
+							$journalNaturePrefixUrl = 'treasury';
+						} else {
+							$journalNaturePrefixUrl = $nature;
+						}
+						$newmenu->add('/accountancy/journal/'.$journalNaturePrefixUrl.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $journallabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 					}
 					$i++;
 				}

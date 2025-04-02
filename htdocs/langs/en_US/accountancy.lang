@@ -156,6 +156,7 @@ XLineFailedToBeBinded=%s products/services were not bound to any accounting acco
 ACCOUNTING_LIMIT_LIST_VENTILATION=Maximum number of lines on list and bind page (recommended: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=Begin the sorting of the page "Binding to do" by the most recent elements
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=Begin the sorting of the page "Binding done" by the most recent elements
+ACCOUNTING_USE_TREASURY=Use treasury accounting
 ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
@@ -456,6 +457,10 @@ ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+
+## Warning
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
@@ -477,6 +482,7 @@ ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Try to insert a non balanced transaction in book for %s (Payment ID: %s). Canceled. Surely a bug.
 
 ## Import
 ImportAccountingEntries=Accounting entries
