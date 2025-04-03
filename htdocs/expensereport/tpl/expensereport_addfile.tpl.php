@@ -1,4 +1,13 @@
 <?php
+/* Copyright (C) 2025		MDW	<mdeweerd@users.noreply.github.com>
+ */
+
+/**
+ * @var int $colspan
+ */
+'
+@phan-var-force int $colspan
+';
 
 // Add line to upload new file
 print '<!-- expensereport_addfile.tpl.php -->'."\n";
@@ -13,7 +22,7 @@ if ($action == 'editline') {
 print '<td colspan="'.($action == 'editline' ? $colspan - 1 : $colspan).'">';
 
 $modulepart = 'expensereport';
-$permission = $user->rights->expensereport->creer;
+$permission = $user->hasRight('expensereport', 'creer');
 
 // We define var to enable the feature to add prefix of uploaded files
 $savingdocmask = '';

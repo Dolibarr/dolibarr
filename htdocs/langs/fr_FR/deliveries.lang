@@ -1,12 +1,13 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Livraison
 DeliveryRef=Référence de livraison
-DeliveryCard=Réception de stock
+DeliveryCard=Bon de réception
 DeliveryOrder=Bon de réception
 DeliveryDate=Date de livraison
 CreateDeliveryOrder=Générer bon de réception
 DeliveryStateSaved=Le statut de livraison est enregistré
-SetDeliveryDate=Définir la date d'expédition
+SetDeliveryDate=Définir la date prévue de livraison
+SetShippingDate=Définir la date d'expédition
 ValidateDeliveryReceipt=Valider le bon de livraison
 ValidateDeliveryReceiptConfirm=Êtes-vous sûr de vouloir valider ce bon de livraison ?
 DeleteDeliveryReceipt=Supprimer le bon de livraison

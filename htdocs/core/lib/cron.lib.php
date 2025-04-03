@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <florian.henry@opn-concept.pro>
+ * Copyright (C) 2024		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 /**
  * Return array of tabs to used on pages to setup cron module.
  *
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function cronadmin_prepare_head()
 {
@@ -56,7 +57,7 @@ function cronadmin_prepare_head()
  * Return array of tabs to used on a cron job
  *
  * @param 	Cronjob	$object		Object cron
- * @return 	array				Array of tabs
+ * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function cron_prepare_head(Cronjob $object)
 {
@@ -125,7 +126,7 @@ function dol_print_cron_urls()
 
 	$pathtoscript = '/pathtoscript';
 	if (getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT')) {
-		$pathtoscript = $conf->global->MAIN_DOL_SCRIPTS_ROOT;
+		$pathtoscript = getDolGlobalString('MAIN_DOL_SCRIPTS_ROOT');
 	}
 
 	$file = $pathtoscript.'/scripts/cron/cron_run_jobs.php '.(!getDolGlobalString('CRON_KEY') ? 'securitykey' : '' . getDolGlobalString('CRON_KEY')).' '.$logintouse.' [cronjobid]';

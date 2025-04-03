@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Ny tillgång
 AccountancyCodeAsset=Redovisningskod (tillgång)
 AccountancyCodeDepreciationAsset=Redovisningskod (avskrivningstillgångskonto)
@@ -25,50 +21,34 @@ DeleteType=Radera
 DeleteAnAssetType=Ta bort en tillgångsmodell
 ConfirmDeleteAssetType=Är du säker på att du vill ta bort den här tillgångsmodellen?
 ShowTypeCard=Visa modell '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Tillgångar
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Tillgångsbeskrivning
-
-#
 # Admin page
-#
 AssetSetup=Inställning av tillgångar
 AssetSetupPage=Inställningssida för tillgångar
 ExtraFieldsAssetModel=Kompletterande attribut (tillgångens modell)
-
 AssetsType=Tillgångsmodell
 AssetsTypeId=Tillgångsmodell-id
 AssetsTypeLabel=Tillgångsmodelletikett
 AssetsTypes=Tillgångsmodeller
 ASSET_ACCOUNTANCY_CATEGORY=Redovisningsgrupp för anläggningstillgångar
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
 MenuAssets=Tillgångar
 MenuNewAsset=Ny tillgång
 MenuAssetModels=Modelltillgångar
 MenuListAssets=Lista
 MenuNewAssetModel=Ny tillgångsmodell
 MenuListAssetModels=Lista
-
-#
 # Module
-#
 ConfirmDeleteAsset=Vill du verkligen ta bort den här tillgången?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Avskrivningsmöjligheter
 AssetAccountancyCodes=Redovisningskonton
 AssetDepreciation=Avskrivning
-
-#
 # Asset
-#
 Asset=Tillgång
 Assets=Tillgångar
 AssetReversalAmountHT=Återföringsbelopp (utan skatter)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Ej avskriven
 AssetDisposal=Förfogande
 AssetConfirmDisposalAsk=Är du säker på att du vill göra dig av med tillgången <b> %s </b>?
 AssetConfirmReOpenAsk=Är du säker på att du vill öppna tillgången <b> %s </b> igen?
-
-#
 # Asset status
-#
 AssetInProgress=Pågående
 AssetDisposed=Avyttrad
 AssetRecorded=Redovisad
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Datum för avyttring
 AssetDisposalAmount=Avyttringsvärde
 AssetDisposalType=Typ av avyttring
 AssetDisposalDepreciated=Skriv av överföringsåret
 AssetDisposalSubjectToVat=Avyttring för moms
-
-#
 # Asset model
-#
 AssetModel=Tillgångens modell
 AssetModels=Tillgångens modeller
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Ekonomisk avskrivning
 AssetDepreciationOptionAcceleratedDepreciation=Accelererad avskrivning (skatt)
 AssetDepreciationOptionDepreciationType=Typ av avskrivning
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Linjär
 AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
 AssetDepreciationOptionDepreciationTypeExceptional=Exceptionell
 AssetDepreciationOptionDegressiveRate=Degressiv takt
-AssetDepreciationOptionAcceleratedDepreciation=Accelererad avskrivning (skatt)
 AssetDepreciationOptionDuration=Längd
 AssetDepreciationOptionDurationType=Typ varaktighet
 AssetDepreciationOptionDurationTypeAnnual=Årlig
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Takt (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Avskrivningsunderlag (exkl. moms)
 AssetDepreciationOptionAmountBaseDeductibleHT=Avdragsgill bas (exkl. moms)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Totalt belopp senaste avskrivning (exkl. moms)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Ekonomisk avskrivning
 AssetAccountancyCodeAsset=Tillgång
 AssetAccountancyCodeDepreciationAsset=Avskrivning
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Accelererad avskrivning 
 AssetAccountancyCodeAcceleratedDepreciation=Konto
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Avskrivningar
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Återtagande/provision
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Avskrivningsunderlag (exkl. moms)
 AssetDepreciationBeginDate=Start av avskrivning den
 AssetDepreciationDuration=Längd
@@ -164,11 +125,8 @@ AssetResidualHT=Restvärde (exkl. moms)
 AssetDispatchedInBookkeeping=Bokförda avskrivningar
 AssetFutureDepreciationLine=Framtida avskrivningar
 AssetDepreciationReversal=Återföring
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Id för tillgången eller modellljudet har inte angetts
+AssetErrorAssetOrAssetModelIDNotProvide=Id för tillgången eller den hittade modellen har inte angetts
 AssetErrorFetchAccountancyCodesForMode=Fel vid hämtning av bokföringskontona för avskrivningsläget '%s'
 AssetErrorDeleteAccountancyCodesForMode=Fel vid radering av redovisningskonton från avskrivningsläget '%s'
 AssetErrorInsertAccountancyCodesForMode=Fel vid infogning av bokföringskontona för avskrivningsläget '%s'

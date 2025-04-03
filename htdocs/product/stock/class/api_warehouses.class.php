@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +16,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
- require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 /**
  * API class for warehouses
@@ -29,14 +30,14 @@
 class Warehouses extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'label',
 	);
 
 	/**
-	 * @var Entrepot $warehouse {@type Entrepot}
+	 * @var Entrepot {@type Entrepot}
 	 */
 	public $warehouse;
 
@@ -53,7 +54,7 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Get properties of a warehouse object
 	 *
-	 * Return an array with warehouse informations
+	 * Return an array with warehouse information
 	 *
 	 * @param	int		$id				ID of warehouse
 	 * @return  Object					Object with cleaned properties
@@ -62,8 +63,8 @@ class Warehouses extends DolibarrApi
 	 */
 	public function get($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->warehouse->fetch($id);
@@ -72,7 +73,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id, 'entrepot')) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->warehouse);
@@ -89,8 +90,10 @@ class Warehouses extends DolibarrApi
 	 * @param int		$page		Page number
 	 * @param  int    $category   Use this param to filter list by category
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'WH-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array                Array of warehouse objects
+	 * @phan-return Entrepot[]
+	 * @phpstan-return Entrepot[]
 	 *
 	 * @throws RestException
 	 */
@@ -100,8 +103,8 @@ class Warehouses extends DolibarrApi
 
 		$obj_ret = array();
 
-		if (!DolibarrApiAccess::$user->rights->stock->lire) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
+			throw new RestException(403);
 		}
 
 		$sql = "SELECT t.rowid";
@@ -159,12 +162,14 @@ class Warehouses extends DolibarrApi
 	 * Create warehouse object
 	 *
 	 * @param array $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int  ID of warehouse
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+			throw new RestException(403);
 		}
 
 		// Check mandatory fields
@@ -172,12 +177,12 @@ class Warehouses extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
-				$this->warehouse->context['caller'] = $request_data['caller'];
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$this->warehouse->$field = $value;
+			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 		if ($this->warehouse->create(DolibarrApiAccess::$user) < 0) {
 			throw new RestException(500, "Error creating warehouse", array_merge(array($this->warehouse->error), $this->warehouse->errors));
@@ -188,14 +193,16 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Update warehouse
 	 *
-	 * @param int   $id             Id of warehouse to update
-	 * @param array $request_data   Datas
-	 * @return int
+	 * @param 	int   	$id             	Id of warehouse to update
+	 * @param 	array 	$request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->creer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'creer')) {
+			throw new RestException(403);
 		}
 
 		$result = $this->warehouse->fetch($id);
@@ -204,7 +211,7 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		foreach ($request_data as $field => $value) {
@@ -212,8 +219,8 @@ class Warehouses extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
-				$this->warehouse->context['caller'] = $request_data['caller'];
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->warehouse->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
@@ -223,14 +230,15 @@ class Warehouses extends DolibarrApi
 				}
 				continue;
 			}
+
 			$this->warehouse->$field = $this->_checkValForAPI($field, $value, $this->warehouse);
 		}
 
 		if ($this->warehouse->update($id, DolibarrApiAccess::$user)) {
 			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->warehouse->error);
 		}
-
-		return false;
 	}
 
 	/**
@@ -238,11 +246,13 @@ class Warehouses extends DolibarrApi
 	 *
 	 * @param int $id   Warehouse ID
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->stock->supprimer) {
-			throw new RestException(401);
+		if (!DolibarrApiAccess::$user->hasRight('stock', 'supprimer')) {
+			throw new RestException(403);
 		}
 		$result = $this->warehouse->fetch($id);
 		if (!$result) {
@@ -250,11 +260,11 @@ class Warehouses extends DolibarrApi
 		}
 
 		if (!DolibarrApi::_checkAccessToResource('stock', $this->warehouse->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		if (!$this->warehouse->delete(DolibarrApiAccess::$user)) {
-			throw new RestException(401, 'error when delete warehouse');
+			throw new RestException(403, 'error when delete warehouse');
 		}
 
 		return array(
@@ -288,13 +298,16 @@ class Warehouses extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param array|null    $data    Data to validate
-	 * @return array
+	 * @param ?array<string,string> $data   Data to validate
+	 * @return array<string,string>
 	 *
 	 * @throws RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$warehouse = array();
 		foreach (Warehouses::$FIELDS as $field) {
 			if (!isset($data[$field])) {

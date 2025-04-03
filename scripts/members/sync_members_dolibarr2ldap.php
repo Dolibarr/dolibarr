@@ -3,6 +3,8 @@
 /**
  * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2008 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +37,20 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ */
 
 $langs->load("main");
 
@@ -49,17 +59,20 @@ $version = constant('DOL_VERSION');
 $error = 0;
 $confirmed = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: $script_file now [-y]\n";
-	exit(-1);
+	exit(1);
 }
 
 foreach ($argv as $key => $val) {
@@ -70,7 +83,7 @@ foreach ($argv as $key => $val) {
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-onyl mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $now = $argv[1];
@@ -106,7 +119,7 @@ if (!$confirmed) {
 /*
  * if (getDolGlobalString('LDAP_MEMBER_ACTIVE') {
  * print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
- * exit(-1);
+ * exit(1);
  * }
  */
 
@@ -119,7 +132,7 @@ if ($resql) {
 	$i = 0;
 
 	$ldap = new Ldap();
-	$ldap->connect_bind();
+	$ldap->connectBind();
 
 	while ($i < $num) {
 		$ldap->error = "";
@@ -130,12 +143,12 @@ if ($resql) {
 		$result = $member->fetch($obj->rowid);
 		if ($result < 0) {
 			dol_print_error($db, $member->error);
-			exit(-1);
+			exit(1);
 		}
 		$result = $member->fetch_subscriptions();
 		if ($result < 0) {
 			dol_print_error($db, $member->error);
-			exit(-1);
+			exit(1);
 		}
 
 		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->getFullName($langs);
@@ -148,7 +161,7 @@ if ($resql) {
 		$info = $member->_load_ldap_info();
 		$dn = $member->_load_ldap_dn($info);
 
-		$result = $ldap->add($dn, $info, $user); // Wil fail if already exists
+		$result = $ldap->add($dn, $info, $user); // Will fail if already exists
 		$result = $ldap->update($dn, $info, $user, $olddn);
 		if ($result > 0) {
 			print " - ".$langs->transnoentities("OK");

@@ -200,8 +200,8 @@ MembersStatisticsDesc=Zvolte statistik, které chcete číst ...
 MenuMembersStats=Statistika
 LastMemberDate=Latest membership date
 LatestSubscriptionDate=Latest contribution date
-MemberNature=Nature of the member
-MembersNature=Nature of the members
+MemberNature=Povaha člena
+MembersNature=Nature of members
 Public=%s can publish my membership in <a target="_blank" href="%s">the public register</a>
 MembershipPublic=Public membership
 NewMemberbyWeb=Nový uživatel přidán. Čeká na schválení
@@ -246,3 +246,4 @@ XSubsriptionCreated=%s subscription(s) created
 XSubsriptionErrors=%s subscription(s) where in error
 CreateSubscription=Vytvořit odběr
 WarningNoComplementaryActionDone=No Complementary action on recording will be executed with this massaction
+NewMembership=New membership

@@ -39,7 +39,6 @@ WithdrawalsSetup=Konfigurimi i pagesës së debitit direkt
 CreditTransferSetup=Konfigurimi i transferimit të kredisë
 WithdrawStatistics=Statistikat e pagesave të debitit direkt
 CreditTransferStatistics=Statistikat e transfertave të kredisë
-Rejects=Refuzon
 LastWithdrawalReceipt=Faturat e fundit %s të debitit direkt
 MakeWithdrawRequest=Bëni një kërkesë për pagesë të debitit direkt
 MakeWithdrawRequestStripe=Bëni një kërkesë për pagesë të debitit direkt përmes Stripe
@@ -47,7 +46,7 @@ MakeBankTransferOrder=Bëni një kërkesë për transferim kredie
 WithdrawRequestsDone=%s u regjistruan kërkesa për pagesë të debitit direkt
 BankTransferRequestsDone=%s kërkesat për transferim krediti u regjistruan
 ThirdPartyBankCode=Kodi i bankës së palës së tretë
-NoInvoiceCouldBeWithdrawed=Asnjë faturë nuk u përpunua me sukses. Kontrollo që faturat janë në kompani me një IBAN të vlefshëm dhe që IBAN të ketë një UMR (Unique Mandate Reference) me modalitetin <strong>%s</span span class='notranslate'></strong>.
+NoInvoiceCouldBeWithdrawed=No invoice processed successfully. Check that invoices are on companies with a valid IBAN and that IBAN has a UMR (Unique Mandate Reference) with mode <strong>%s</strong>.
 NoInvoiceCouldBeWithdrawedSupplier=Asnjë faturë nuk u përpunua me sukses. Kontrollo që faturat janë në kompani me një IBAN të vlefshëm.
 NoSalariesCouldBeWithdrawed=Asnjë pagë nuk u përpunua me sukses. Kontrollo që pagat janë për përdoruesit me një IBAN të vlefshëm.
 WithdrawalCantBeCreditedTwice=Kjo faturë tërheqjeje është shënuar tashmë si e kredituar; kjo nuk mund të bëhet dy herë, pasi kjo mund të krijojë pagesa të dyfishta dhe hyrje bankare.
@@ -154,10 +153,10 @@ NoDefaultIBANFound=Nuk u gjet asnjë IBAN i paracaktuar për këtë palë të tr
 InfoCreditSubject=Urdhërpagesa e debitit direkt %s nga banka
 InfoCreditMessage=Urdhërpagesa e debitit direkt %s është paguar nga banka<br>Të dhënat e pagesës: b0ecb2ec87f49 
 InfoTransSubject=Transmetimi i urdhrit të pagesës së debitit direkt %s në bankë
-InfoTransMessage=Urdhri i pagesës së debitit direkt %s është dërguar në bankë nga %s %s</s .<span class='notranslate'><br><br>
-InfoTransData=Shuma: %s<br>Metoda: %s</spanno><span' class='notranslate' ><br>Data: %s
+InfoTransMessage=The direct debit payment order %s has been sent to bank by %s %s.<br><br>
+InfoTransData=Amount: %s<br>Method: %s<br>Date: %s
 InfoRejectSubject=Urdhërpagesa e debitimit direkt u refuzua
-InfoRejectMessage=Përshëndetje,<br><br>urdhri i pagesës së debitit direkt të faturës %s i lidhur me</s kompania <span class='notranslate'>%s, me një shumë prej %s është refuzuar nga banka.b0342fccfda19bz /span><span class='notranslate'><br>--<br>%s
+InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
 ModeWarning=Opsioni për modalitetin real nuk u vendos, ne ndalemi pas këtij simulimi
 ErrorCompanyHasDuplicateDefaultBAN=Kompania me id %s ka më shumë se një llogari bankare të paracaktuar. Nuk ka asnjë mënyrë për të ditur se cilën të përdorni.
 ErrorICSmissing=Mungon ICS në llogarinë bankare %s
@@ -165,10 +164,9 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=Shuma totale e porosisë së 
 WarningSomeDirectDebitOrdersAlreadyExists=Paralajmërim: Tashmë ka disa porosi të Debitit Direkt në pritje (%s) të kërkuara për një shumë prej %s
 WarningSomeCreditTransferAlreadyExists=Paralajmërim: Ka tashmë disa transferta krediti në pritje (%s) të kërkuara për një shumë prej %s
 UsedFor=Përdoret për %s
-Societe_ribSigned=Mandati SEPA Nënshkruar
+Societe_ribSigned=SEPA mandate signed
 NbOfInvoiceToPayByBankTransferForSalaries=Numri i pagave të kualifikuara që presin një pagesë me transfertë krediti
 SalaryWaitingWithdraw=Pagat në pritje të pagesës me transfertë krediti
 RefSalary=Rrogë
 NoSalaryInvoiceToWithdraw=Nuk ka rrogë në pritje të një '%s'. Shko te skeda '%s' në kartën e pagës për të bërë një kërkesë.
 SalaryInvoiceWaitingWithdraw=Pagat në pritje të pagesës me transfertë krediti
-

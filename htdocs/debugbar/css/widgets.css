@@ -1,0 +1,48 @@
+span.phpdebugbar-widgets-value {
+    white-space: pre;
+}
+
+dl.phpdebugbar-widgets-kvlist.phpdebugbar-widgets-hooklist dt {
+    float: left;
+    width: 230px;
+    padding: 5px;
+    border-top: 1px solid #eee;
+    font-weight: bold;
+    clear: both;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+dl.phpdebugbar-widgets-kvlist.phpdebugbar-widgets-hooklist dt span {
+    font-weight: bold;
+}
+dl.phpdebugbar-widgets-kvlist dd {
+    margin-left: 240px;
+    padding: 5px;
+    border-top: 1px solid #eee;
+    cursor: pointer;
+    min-height: 17px;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span {
+    display: inline-block;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span strong{
+    font-weight: bold;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(1) {
+    min-width: 550px;
+    margin-right: 20px;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(2) {
+    min-width: 90px;
+    margin-right: 20px;
+}
+
+dl.phpdebugbar-widgets-kvlist dd span:nth-of-type(3) {
+    min-width: 80px;
+    margin-right: 20px;
+}

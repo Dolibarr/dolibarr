@@ -100,7 +100,8 @@ VirtualStock=الأسهم الافتراضية
 VirtualStockAtDate=مخزون افتراضي في تاريخ مستقبلي
 VirtualStockAtDateDesc=المخزون الظاهري بمجرد الانتهاء من جميع الطلبات المعلقة التي تم التخطيط لمعالجتها قبل التاريخ المختار
 VirtualStockDesc=المخزون الافتراضي هو المخزون الذي سيبقى بعد تنفيذ جميع الإجراءات المفتوحة/المعلقة (التي تؤثر على المخزونات) (استلام أوامر الشراء، وشحن أوامر البيع، وإنتاج أوامر التصنيع، وما إلى ذلك)
-AtDate=في التاريخ
+QtyAtDate=Quantity in stock at date
+MovementsSinceDate=Movements since the date
 IdWarehouse=معرف مخزن
 DescWareHouse=وصف المخزن
 LieuWareHouse=المكان مخزن
@@ -245,7 +246,7 @@ AlwaysShowFullArbo=عرض المسار الكامل للمستودع (المست
 StockAtDatePastDesc=يمكنك هنا عرض الأسهم (الأسهم الحقيقية) في تاريخ معين في الماضي
 StockAtDateFutureDesc=يمكنك عرض الأسهم (الأسهم الافتراضية) هنا في تاريخ معين في المستقبل
 CurrentStock=المخزون الحالي
-InventoryRealQtyHelp=اضبط القيمة على 0 لإعادة تعيين الكمية <br> احتفظ بالحقل فارغًا ، أو أزل السطر ، للإبقاء على حالته دون تغيير
+InventoryRealQtyHelp=The quantity you found in stock when making the inventory. Set value to 0 to reset qty<br>Keep field empty, or remove line, to keep unchanged
 UpdateByScaning=أكمل الكمية الحقيقية عن طريق المسح
 UpdateByScaningProductBarcode=التحديث عن طريق المسح (الرمز الشريطي للمنتج)
 UpdateByScaningLot=التحديث عن طريق المسح (الكثير | الرمز الشريطي التسلسلي)
@@ -255,7 +256,6 @@ ChooseFileToImport=قم بتحميل الملف ثم انقر فوق أيقون�
 SelectAStockMovementFileToImport=حدد ملف حركة المخزون المراد استيراده
 InfoTemplateImport=يجب أن يكون للملف الذي تم تحميله هذا التنسيق (* حقول إلزامية): <br> Source Warehouse * | الهدف المستودع * | المنتج * | الكمية * | يجب أن يكون رقم الدفعة / الرقم التسلسلي <br> فاصل أحرف CSV "<b> %s </b>"
 LabelOfInventoryMovemement=الجرد %s
-ReOpen=إعادة فتح
 ConfirmFinish=هل تؤكد إغلاق الجرد؟ سيؤدي هذا إلى إنشاء جميع حركات المخزون لتحديث المخزون الخاص بك إلى الكمية الحقيقية التي أدخلتها في المخزون.
 ObjectNotFound=لم يتم العثور على %s
 MakeMovementsAndClose=توليد الحركات وإغلاق
@@ -278,11 +278,12 @@ QtyWasAddedToTheScannedBarcode=النجاح !! تمت إضافة الكمية إ
 StockChangeDisabled=تم تعطيل تغيير المخزون
 NoWarehouseDefinedForTerminal=لا يوجد مستودع محدد للمحطة
 ClearQtys=امسح كل الكميات
+ProductValuesUsedBecauseNoValuesForThisWarehouse=No value has been defined for this warehouse so we assume it is zero (no need for this product into the warehouse)
 ModuleStockTransferName=تحويل المخزون المتقدم
 ModuleStockTransferDesc=إدارة متقدمة لتحويل المخزون مع إنشاء صحيفة التحويل
 StockTransferNew=نقل مخزون جديد
 StockTransferList=قائمة تحويلات المخزون
-ConfirmValidateStockTransfer=هل أنت متأكد أنك تريد التحقق من صحة نقل الأسهم هذا باستخدام المرجع <b>%s<span class='notranslate'></b></ فترة>؟
+ConfirmValidateStockTransfer=Are you sure you want to validate this stocks transfer with the reference <b>%s</b> ?
 ConfirmDestock=انخفاض المخزون مع التحويل %s
 ConfirmDestockCancel=إلغاء تخفيض الأسهم بالتحويل %s
 DestockAllProduct=انخفاض المخزونات
@@ -332,3 +333,7 @@ ConfirmDeleteBatch=هل أنت متأكد أنك تريد حذف المجموع�
 WarehouseUsage=استخدام المستودع
 InternalWarehouse=مستودع داخلي
 ExternalWarehouse=مستودع خارجي
+LatestModifiedWarehouses=Latest %s modified warehouses
+LatestStockMovements=Latest %s stock movements
+QtyCurrentlyKnownInStock=System estimated quantity you have in stock. As long as the inventory is not closed, this is a realtime value and it may change if you continue to make stock movement during the inventory (not recommended).
+QtyInStockWhenInventoryWasValidated=System estimated quantity you had in stock when the inventory was validated (before the stock correction)

@@ -16,7 +16,7 @@ CancelPropal=Annulla
 AddProp=Crea preventivo
 ConfirmDeleteProp=Vuoi davvero eliminare questo preventivo?
 ConfirmValidateProp=Vuoi davvero convalidare questa preventivo con riferimento <b>%s</b>?
-ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
+ConfirmCancelPropal=Sei sicuro che vuoi a cancella Proposta commerciale <b>%s</b>?
 LastPropals=Ultime %s proposte
 LastModifiedProposals=Ultime %s proposte modificate
 AllPropals=Tutti i preventivi
@@ -29,7 +29,7 @@ NbOfProposals=Numero di preventivi
 ShowPropal=Visualizza preventivo
 PropalsDraft=Bozze
 PropalsOpened=Aperto
-PropalStatusCanceled=Canceled (Abandoned)
+PropalStatusCanceled=Annullato (abbandonato)
 PropalStatusDraft=Bozza (deve essere convalidata)
 PropalStatusValidated=Convalidato (preventivo aperto)
 PropalStatusSigned=Firmato (da fatturare)
@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 settimana
 AvailabilityTypeAV_2W=2 settimane
 AvailabilityTypeAV_3W=3 settimane
 AvailabilityTypeAV_1M=1 mese
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Responsabile del preventivo
 TypeContact_propal_external_BILLING=Contatto per la fatturazione
 TypeContact_propal_external_CUSTOMER=Responsabile per il cliente
 TypeContact_propal_external_SHIPPING=Contatto cliente per la consegna
-
 # Document models
 CantBeNoSign=non può essere impostato non firmato
 CaseFollowedBy=Caso seguito da
@@ -118,7 +116,9 @@ RefusePropal=Rifiuta la proposta
 Sign=Firma
 SignContract=Firma il contratto
 SignFichinter=Firmare l'intervento
-SignSociete_rib=Sign mandate
+SignSociete_rib=Firmare il mandato
 SignPropal=Accetta proposta
 Signed=firmato
 SignedOnly=Solo firmato
+ExpeditionSigned=Spedizione firmata
+SignExpedition=Firma la spedizione

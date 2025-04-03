@@ -5,6 +5,7 @@
  * Copyright (C) 2011		Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +56,9 @@ if (!defined('NOSESSION')) {
 
 require_once __DIR__.'/../../main.inc.php';
 
+/**
+ * @var Conf $conf
+ */
 
 top_httphead('text/json');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
@@ -96,7 +100,7 @@ $manifest->id = constant('DOL_MAIN_URL_ROOT');
 
 if (getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL')) {
 	$icon = new stdClass();
-	$icon->src = $conf->global->MAIN_MANIFEST_APPLI_LOGO_URL;
+	$icon->src = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL');
 	if ($conf->global->MAIN_MANIFEST_APPLI_LOGO_URL_SIZE) {
 		$icon->sizes = getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE') . "x" . getDolGlobalString('MAIN_MANIFEST_APPLI_LOGO_URL_SIZE');
 	} else {

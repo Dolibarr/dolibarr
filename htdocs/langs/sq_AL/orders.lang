@@ -99,14 +99,14 @@ ListOfOrders=Lista e porosive
 ListOrderLigne=Linjat e porosive
 productobuy=Produkte vetëm për të blerë
 productonly=Vetëm produkte
-disablelinefree=Nuk ka linja falas
+disablelinefree=Vetëm produkte të paracaktuara
 CloseOrder=Mbyll porosinë
 ConfirmCloseOrder=Jeni i sigurt që dëshironi ta caktoni këtë porosi për të dorëzuar? Pasi një porosi të dorëzohet, ajo mund të vendoset në faturim.
 ConfirmDeleteOrder=Jeni i sigurt që dëshironi ta fshini këtë porosi?
-ConfirmValidateOrder=Jeni të sigurt që dëshironi ta vërtetoni këtë porosi me emrin <b>%s<span class='notranslate'>b09a4b739f17f8z ?
-ConfirmUnvalidateOrder=Jeni i sigurt që dëshironi të rivendosni rendin <b>%s<span class='notranslate'></b> në statusin e draftit</pan> ?
+ConfirmValidateOrder=Are you sure you want to validate this order under name <b>%s</b>?
+ConfirmUnvalidateOrder=Are you sure you want to restore order <b>%s</b> to draft status?
 ConfirmCancelOrder=Jeni i sigurt që dëshironi ta anuloni këtë porosi?
-ConfirmMakeOrder=Jeni i sigurt që dëshironi të konfirmoni se e keni bërë këtë porosi në <b>%s<span class='notranslate'>b09a4b739f17f80 >?
+ConfirmMakeOrder=Are you sure you want to confirm you made this order on <b>%s</b>?
 GenerateBill=Gjeneroni faturë
 ClassifyShipped=Klasifikoni dorëzuar
 PassedInShippedStatus=klasifikuar dorëzuar
@@ -125,12 +125,12 @@ OrderMode=Mënyra e porositjes
 AuthorRequest=Kërkoni autor
 UserWithApproveOrderGrant=Përdoruesve u jepet leja e "miratimit të porosive".
 PaymentOrderRef=Pagesa e porosisë %s
-ConfirmCloneOrder=Jeni të sigurt që dëshironi ta klononi këtë porosi <b>%s<span class='notranslate'>b09a4b739f17f8z></s0?
+ConfirmCloneOrder=Are you sure you want to clone this order <b>%s</b>?
 DispatchSupplierOrder=Po merr porosinë e blerjes %s
 FirstApprovalAlreadyDone=Miratimi i parë tashmë është bërë
 SecondApprovalAlreadyDone=Aprovimi i dytë tashmë është bërë
 SupplierOrderReceivedInDolibarr=Porosia e blerjes %s u mor %s
-SupplierOrderSubmitedInDolibarr=Purchase Order %s submitted (%s)
+SupplierOrderSubmitedInDolibarr=Porosia e blerjes %s u dorëzua (%s)
 SupplierOrderClassifiedBilled=Urdhri i blerjes %s u faturua
 OtherOrders=Porositë e tjera
 SupplierOrderValidatedAndApproved=Porosia e furnizuesit është vërtetuar dhe miratuar: %s

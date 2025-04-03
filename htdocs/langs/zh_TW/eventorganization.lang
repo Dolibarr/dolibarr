@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = 活動組織
 EventOrganizationDescription = 使用專案模組組織活動
 EventOrganizationDescriptionLong= 管理活動的組織（節目、會議、參與者或演講者，以及用於建議、投票或註冊的公共頁面）
-#
-# Menu
-#
 EventOrganizationMenuLeft = 已組織的活動
 EventOrganizationConferenceOrBoothMenuLeft = 會議或展位
-
 PaymentEvent=活動的付款
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=登記
 EventOrganizationSetup=活動組織設定
 EventOrganization=活動組織
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = 用於向演講者批次"發送�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = 用於向參與者批次"發送電子郵件"使的電子郵件模板
 EVENTORGANIZATION_FILTERATTENDEES_CAT = 使用表單建立/增加參與者,將清單限制於合作方類別中的合作方
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = 使用表單建立/增加參與者,將清單限制於合作方類別中的合作方類型
-
-#
 # Object
-#
 OrganizedEvent=Organized event
 EventOrganizationConfOrBooth= 會議或展位
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = 管理活動的組織
 ConferenceOrBooth = 會議或展位
 ConferenceOrBoothTab = 會議或展位
@@ -63,10 +50,7 @@ DateOfRegistration = 註冊日期
 ConferenceOrBoothAttendee = 會議或展位參加者
 ApplicantOrVisitor=Applicant or visitor
 Speaker=Speaker
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = 已收到您的會議請求
 YourOrganizationEventBoothRequestWasReceived = 已收到您的展位申請
 EventOrganizationEmailAskConf = 申請會議
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = 活動報名
 EventOrganizationMassEmailAttendees = 與參與者交流
 EventOrganizationMassEmailSpeakers = 與演講者交流
 ToSpeakers=致演講者
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=允許建議會議
 AllowUnknownPeopleSuggestConfHelp=允許不知名的人建議他們想參加的會議
 AllowUnknownPeopleSuggestBooth=允許申請展位
@@ -88,29 +69,29 @@ PriceOfRegistration=註冊價格
 PriceOfRegistrationHelp=註冊或參加活動的費用
 PriceOfBooth=展位認購價
 PriceOfBoothHelp=展位認購價
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=連結會議的ICS
 ConferenceOrBoothInformation=Conference Or Booth information
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=參與者
-ListOfAttendeesOfEvent=活動項目參與者名單
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = 下載 ICS連結
 EVENTORGANIZATION_SECUREKEY = 用於建議會議之公共註冊頁面安全金鑰種子
 SERVICE_BOOTH_LOCATION = 關於展位位置發票行的服務
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = 關於參與者訂閱會議發票行的服務
 NbVotes=票數
-
-#
 # Status
-#
 EvntOrgDraft = 草稿
 EvntOrgSuggested = 已建議
 EvntOrgConfirmed = 已確認
 EvntOrgNotQualified = 不合格
 EvntOrgDone = 完成
 EvntOrgCancelled = 已取消
-
-#
 # Other
-#
 SuggestForm = 建議頁面
 SuggestOrVoteForConfOrBooth = 建議或投票頁面
 EvntOrgRegistrationHelpMessage = 在這裡，您可以為會議投票或為活動推薦新的會議。您也可以在活動期間申請展位。
@@ -133,6 +114,7 @@ EventType = 活動類別
 LabelOfBooth=展位標籤
 LabelOfconference=會議標籤
 ConferenceIsNotConfirmed=無法註冊，會議尚未確認
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s 必須在 %s 之前
 DateMustBeAfterThan=%s 必須在 %s 之後
 MaxNbOfAttendeesReached=The maximum number of participants has been reached
@@ -174,6 +156,7 @@ DateEndEvent=Event end date
 ModifyStatus=Modify status
 ConfirmModifyStatus=Confirm status modification
 ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
-RecordsUpdated = %s Records updated
-RecordUpdated = Record updated
-NoRecordUpdated = No Record updated
+RecordsUpdated=%s Records updated
+RecordUpdated=Record updated
+NoRecordUpdated=No Record updated
+ProfitPerValidatedAttendee=Profit per attendee

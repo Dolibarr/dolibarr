@@ -14,7 +14,6 @@ PARTNERSHIP_BACKLINKS_TO_CHECK=Vínculos de retroceso para comprobar
 ReferingWebsiteCheck=Comprobación del sitio web de referencia
 DatePartnershipEnd=Fecha final
 ReasonDecline=Motivo de rechazo
-ReasonDeclineOrCancel=Reason for refusal or cancellation
 ManagePartnership=Administrar asociación
 PartnershipType=tipo de asociación
 PartnershipCanceled=Cancelado

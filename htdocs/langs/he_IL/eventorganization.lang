@@ -5,38 +5,28 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = ארגון אירועים
 EventOrganizationDescription = ארגון אירועים באמצעות פרויקט מודול
 EventOrganizationDescriptionLong= ניהול ארגון של אירוע (מופע, כנסים, משתתפים או דוברים, עם דפים ציבוריים להצעות, הצבעה או רישום)
-#
-# Menu
-#
 EventOrganizationMenuLeft = אירועים מאורגנים
 EventOrganizationConferenceOrBoothMenuLeft = כנס או דוכן
-
 PaymentEvent=תשלום אירוע
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=הַרשָׁמָה
 EventOrganizationSetup=הגדרת ארגון אירועים
 EventOrganization=ארגון אירועים
 EventOrganizationSetupPage = דף הגדרות ארגון אירועים
 EVENTORGANIZATION_TASK_LABEL = תווית של משימות ליצירה אוטומטית כאשר הפרויקט מאומת
-EVENTORGANIZATION_TASK_LABELTooltip = כאשר אתה מאמת אירוע לארגון, ניתן ליצור כמה משימות באופן אוטומטי בפרויקט<br><br>לדוגמה: <br>שלח קול קורא לוועידות<br>שלח קול קורא לדוכנים<br>אמת הצעות של כנסים<span ='notranslate'><br></span>אמת את האפליקציה לדוכנים<br>פתוח מנויים לאירוע למשתתפים<br> של האירוע לרמקולים<span class='notranslate'><br>שלח תזכורת לאירוע למארחי ביתן<br>שלח תזכורת לאירוע למשתתפים
+EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
 EVENTORGANIZATION_TASK_LABELTooltip2=השאר ריק אם אינך צריך ליצור משימות באופן אוטומטי.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = קטגוריה להוספה לצדדים שלישיים נוצרת באופן אוטומטי כאשר מישהו מציע ועידה
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = קטגוריה להוספה לצדדים שלישיים נוצרה אוטומטית כאשר הם מציעים דוכן
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = תבנית של דוא"ל לשי
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = תבנית דוא"ל לשימוש בעת שליחת אימיילים מתוך העיסוי "שלח מיילים" ברשימת המשתתפים
 EVENTORGANIZATION_FILTERATTENDEES_CAT = בטופס ליצירת/הוספת משתתף, מגביל את רשימת צדדים שלישיים לצדדים שלישיים בקטגוריה
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = בטופס ליצירת/הוספת משתתף, מגביל את רשימת צדדים שלישיים לצדדים שלישיים בעלי אופי
-
-#
 # Object
-#
 OrganizedEvent=אירוע מאורגן
 EventOrganizationConfOrBooth= כנס או דוכן
-EventOrganizationConfOrBoothes=כנסים או דוכנים
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = ניהול ארגון אירוע
 ConferenceOrBooth = כנס או דוכן
 ConferenceOrBoothTab = כנס או דוכן
@@ -63,10 +50,7 @@ DateOfRegistration = תאריך רישום
 ConferenceOrBoothAttendee = משתתף בכנס או בדוכן
 ApplicantOrVisitor=מבקש או מבקר
 Speaker=רַמקוֹל
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = בקשתך לכנס התקבלה
 YourOrganizationEventBoothRequestWasReceived = בקשתך לדוכן התקבלה
 EventOrganizationEmailAskConf = בקשה לכנס
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = הרשמה לאירוע
 EventOrganizationMassEmailAttendees = תקשורת למשתתפים
 EventOrganizationMassEmailSpeakers = תקשורת לרמקולים
 ToSpeakers=לרמקולים
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=אפשר לאנשים להציע כנסים
 AllowUnknownPeopleSuggestConfHelp=אפשר לאנשים לא ידועים להציע ועידה שהם רוצים לקיים
 AllowUnknownPeopleSuggestBooth=אפשר לאנשים להגיש בקשה לדוכן
@@ -88,29 +69,29 @@ PriceOfRegistration=מחיר הרשמה
 PriceOfRegistrationHelp=מחיר לתשלום עבור הרשמה או השתתפות באירוע
 PriceOfBooth=מחיר מנוי לעמוד דוכן
 PriceOfBoothHelp=מחיר מנוי לעמוד דוכן
+EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=קישור ICS לכנסים
 ConferenceOrBoothInformation=מידע על כנס או דוכן
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=משתתפים
-ListOfAttendeesOfEvent=רשימת המשתתפים בפרויקט האירוע
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = הורד קישור ICS
 EVENTORGANIZATION_SECUREKEY = Seed כדי לאבטח את המפתח לדף ההרשמה הציבורי כדי להציע כנס
 SERVICE_BOOTH_LOCATION = שירות המשמש עבור שורת החשבונית לגבי מיקום דוכן
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = שירות המשמש עבור שורת החשבונית על מנוי משתתף לאירוע
 NbVotes=מספר קולות
-
-#
 # Status
-#
 EvntOrgDraft = טְיוּטָה
 EvntOrgSuggested = מוּצָע
 EvntOrgConfirmed = מְאוּשָׁר
 EvntOrgNotQualified = לא מוסמך
 EvntOrgDone = בוצע
 EvntOrgCancelled = מבוטל
-
-#
 # Other
-#
 SuggestForm = דף הצעות
 SuggestOrVoteForConfOrBooth = עמוד להצעה או הצבעה
 EvntOrgRegistrationHelpMessage = כאן תוכלו להצביע לכנס או להציע כנס חדש לאירוע. ניתן גם להגיש בקשה לקבל דוכן במהלך האירוע.
@@ -133,6 +114,7 @@ EventType = סוג אירוע
 LabelOfBooth=תווית דוכן
 LabelOfconference=תווית ועידה
 ConferenceIsNotConfirmed=ההרשמה אינה זמינה, הכנס עדיין לא אושר
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s חייב להיות לפני %s
 DateMustBeAfterThan=%s חייב להיות אחרי %s
 MaxNbOfAttendeesReached=הושג מספר המשתתפים המקסימלי
@@ -174,6 +156,7 @@ DateEndEvent=תאריך סיום האירוע
 ModifyStatus=שנה סטטוס
 ConfirmModifyStatus=אשר את שינוי הסטטוס
 ConfirmModifyStatusQuestion=האם אתה בטוח שברצונך לשנות את %s הרשומות שנבחרו?
-RecordsUpdated = %s הרשומות עודכנו
-RecordUpdated = הרשומה עודכנה
-NoRecordUpdated = לא עודכן רשומה
+RecordsUpdated=%s הרשומות עודכנו
+RecordUpdated=הרשומה עודכנה
+NoRecordUpdated=לא עודכן רשומה
+ProfitPerValidatedAttendee=Profit per attendee

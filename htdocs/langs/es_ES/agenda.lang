@@ -21,7 +21,6 @@ MenuDoneMyActions=Mis eventos terminados
 ListOfEvents=Lista de eventos (calendario predeterminado)
 ActionsAskedBy=Eventos registrados por
 ActionsToDoBy=Eventos asignados a
-ActionsDoneBy=Eventos realizados por
 ActionAssignedTo=Evento asignado a
 ViewCal=Vista mensual
 ViewDay=Vista diaria
@@ -135,12 +134,14 @@ AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio
 DateActionEnd=Fecha finalización
 AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
-AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restringir la salida a acciones que no pertenecen al usuario <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir el evento automático.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays = 1 </b> para incluir eventos de días libres.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Cumpleaños de contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado
@@ -201,4 +202,6 @@ AppointmentDuration = Duración de la cita: %s
 BookingSuccessfullyBooked=Tu reserva ha sido guardada
 BookingReservationHourAfter=Confirmamos la reserva de nuestra reunión en la fecha %s
 BookcalBookingTitle=cita en línea
-Transparency = Transparency
+Transparency = Transparencia
+ReadMore = Read more
+ReadLess = Read less

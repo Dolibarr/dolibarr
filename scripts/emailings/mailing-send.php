@@ -5,6 +5,8 @@
  * Copyright (C) 2005-2013 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2016 Regis Houssin <regis.houssin@inodbox.com>
  * Copyright (C) 2019 		Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +27,7 @@
  * \ingroup mailing
  * \brief 	Script to send a prepared and validated emaling from command line
  */
+
 if (!defined('NOSESSION')) {
 	define('NOSESSION', '1');
 }
@@ -36,12 +39,12 @@ $path = __DIR__.'/';
 // Test if batch mode
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1]) {
 	print "Usage: ".$script_file." (ID_MAILING|all) [userloginforsignature] [maxnbofemails]\n";
-	exit(-1);
+	exit(1);
 }
 
 $id = $argv[1];
@@ -52,7 +55,7 @@ if (isset($argv[2]) || !empty($argv[2])) {
 	$login = '';
 }
 
-$max = 0;
+$max = -1;
 
 if (isset($argv[3]) || !empty($argv[3])) {
 	$max = $argv[3];
@@ -60,9 +63,16 @@ if (isset($argv[3]) || !empty($argv[3])) {
 
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 // Global variables
 $version = DOL_VERSION;
 $error = 0;
@@ -75,8 +85,10 @@ $langs->loadLangs(array("main", "mails"));
 
 if (!isModEnabled('mailing')) {
 	print 'Module Emailing not enabled';
-	exit(-1);
+	exit(1);
 }
+
+$hookmanager->initHooks(array('cli'));
 
 
 /*
@@ -90,22 +102,22 @@ if (getDolGlobalInt('MAILING_DELAY')) {
 	print 'A delay of '.((float) getDolGlobalInt('MAILING_DELAY')).' seconds has been set between each email'."\n";
 }
 
-if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
-}
+//if (getDolGlobalString('MAILING_LIMIT_SENDBYCLI') == '-1') {
+//}
 
 if (!empty($dolibarr_main_db_readonly)) {
 	print "Error: instance in read-only mode\n";
-	exit(-1);
+	exit(1);
 }
 
 $user = new User($db);
 // for signature, we use user send as parameter
 if (!empty($login)) {
-	$user->fetch('', $login);
+	$user->fetch(0, $login);
 }
-
+/** @var DoliDB $db */
 // We get list of emailing id to process
-$sql = "SELECT m.rowid";
+$sql = "SELECT m.rowid, m.statut as status";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " WHERE m.statut IN (1,2)";
 if ($id != 'all') {
@@ -119,11 +131,17 @@ if ($resql) {
 	$j = 0;
 
 	if ($num) {
-		for ($j = 0; $j < $num; $j++) {
+		for ($j = 0; $j < $num && $max != 0; $j++) {
 			$obj = $db->fetch_object($resql);
 
 			dol_syslog("Process mailing with id ".$obj->rowid);
 			print "Process mailing with id ".$obj->rowid."\n";
+
+			if ($obj->status == 1) {
+				$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut = 2 WHERE rowid = ".((int) $obj->rowid);
+				$result_sql = $db->query($sql);
+				dol_syslog("Started mailing campaign ".$obj->rowid, LOG_DEBUG);
+			}
 
 			$emailing = new Mailing($db);
 			$emailing->fetch($obj->rowid);
@@ -151,7 +169,7 @@ if ($resql) {
 			$sql2 .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql2 .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".((int) $id);
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && empty($max)) {
-				$sql2 .= " LIMIT " . getDolGlobalString('MAILING_LIMIT_SENDBYCLI');
+				$sql2 .= " LIMIT " . getDolGlobalInt('MAILING_LIMIT_SENDBYCLI');
 			} elseif (getDolGlobalInt('MAILING_LIMIT_SENDBYCLI') > 0 && $max > 0) {
 				$sql2 .= " LIMIT ".min(getDolGlobalInt('MAILING_LIMIT_SENDBYCLI'), $max);
 			} elseif ($max > 0) {
@@ -185,6 +203,7 @@ if ($resql) {
 						$now = dol_now();
 
 						$obj = $db->fetch_object($resql2);
+						$max--;
 
 						// sendto en RFC2822
 						$sendto = str_replace(',', ' ', dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">");
@@ -244,45 +263,45 @@ if ($resql) {
 							$onlinepaymentenabled++;
 						}
 						if ($onlinepaymentenabled && getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
-							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+							$substitutionarray['__SECUREKEYPAYMENT__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
 							if (!getDolGlobalString('PAYMENT_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
-								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'order'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'invoice'.$obj->source_id, 2);
-								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'order'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_INVOICE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'invoice'.$obj->source_id, '2');
+								$substitutionarray['__SECUREKEYPAYMENT_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . 'contractline'.$obj->source_id, '2');
 							}
 						}
 						/* For backward compatibility */
 						if (isModEnabled('paypal') && getDolGlobalString('PAYPAL_SECURITY_TOKEN')) {
-							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+							$substitutionarray['__SECUREKEYPAYPAL__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_MEMBER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'membersubscription'.$obj->source_id, '2');
 							}
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'order'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_ORDER__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'order'.$obj->source_id, '2');
 							}
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'invoice'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_INVOICE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'invoice'.$obj->source_id, '2');
 							}
 
 							if (!getDolGlobalString('PAYPAL_SECURITY_TOKEN_UNIQUE')) {
-								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), 2);
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN'), '2');
 							} else {
-								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'contractline'.$obj->source_id, 2);
+								$substitutionarray['__SECUREKEYPAYPAL_CONTRACTLINE__'] = dol_hash(getDolGlobalString('PAYPAL_SECURITY_TOKEN') . 'contractline'.$obj->source_id, '2');
 							}
 						}
 
@@ -384,7 +403,7 @@ if ($resql) {
 								}
 
 								if (getDolGlobalInt('MAILING_DELAY')) {
-									usleep((float) getDolGlobalInt('MAILING_DELAY') * 1000000);
+									usleep((int) ((float) getDolGlobalInt('MAILING_DELAY') * 1000000));
 								}
 							}
 						} else {
@@ -405,25 +424,16 @@ if ($resql) {
 						$i++;
 					}
 				} else {
-					$mesg = "Emailing id ".$id." has no recipient to target";
+					//$mesg = "Emailing id ".$id." has no recipient to target";
 					print $mesg."\n";
 					dol_syslog($mesg, LOG_ERR);
-				}
 
-				// Loop finished, set global statut of mail
-				$statut = 2;
-				if (!$nbko) {
-					$statut = 3;
-				}
+					// Loop finished, set global statut of mail
+					$sql = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=3 WHERE rowid=".$obj->rowid;
+					$result_sql = $db->query($sql);
 
-				$sqlenddate = "UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".((int) $statut)." WHERE rowid=".((int) $id);
-
-				dol_syslog("update global status", LOG_DEBUG);
-				print "Update status of emailing id ".$id." to ".$statut."\n";
-				$resqlenddate = $db->query($sqlenddate);
-				if (!$resqlenddate) {
-					dol_print_error($db);
-					$error++;
+					dol_syslog("update global status", LOG_DEBUG);
+					print "Update status of emailing id ".$id." to ".$statut."\n";
 				}
 			} else {
 				dol_print_error($db);

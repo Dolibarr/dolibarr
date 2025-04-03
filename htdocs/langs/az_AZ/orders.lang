@@ -99,14 +99,14 @@ ListOfOrders=Sifarişlərin siyahısı
 ListOrderLigne=Sifariş xətləri
 productobuy=Yalnız almaq üçün məhsullar
 productonly=Yalnız məhsullar
-disablelinefree=Pulsuz xətlər yoxdur
+disablelinefree=Predefined products only
 CloseOrder=Sifarişi bağlayın
 ConfirmCloseOrder=Bu sifarişi çatdırılma olaraq təyin etmək istədiyinizə əminsiniz? Sifariş çatdırıldıqdan sonra onu faktura təyin etmək olar.
 ConfirmDeleteOrder=Bu sifarişi silmək istədiyinizə əminsiniz?
 ConfirmValidateOrder=Bu sifarişi <b>%s</b> adı altında doğrulamaq istədiyinizə əminsiniz ?
 ConfirmUnvalidateOrder=<b>%s</b> statusunu qaralama vəziyyətinə qaytarmaq istədiyinizə əminsiniz ?
 ConfirmCancelOrder=Bu sifarişi ləğv etmək istədiyinizə əminsiniz?
-ConfirmMakeOrder=Bu sifarişi <b>%s<span class='notranslate'></b></span saytında verdiyinizi təsdiqləmək istədiyinizə əminsiniz >?
+ConfirmMakeOrder=Are you sure you want to confirm you made this order on <b>%s</b>?
 GenerateBill=Faktura yaradın
 ClassifyShipped=Təslim edildi
 PassedInShippedStatus=təsnif edilir

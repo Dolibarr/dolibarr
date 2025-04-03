@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Kirjattu toimesta
 AUTHORPAIEMENT=Maksettu toimesta
 AddTrip=Tee uusi kulutosite
@@ -13,6 +13,8 @@ byEX_EXP=rivillä (rajoitus %s)
 byEX_MON=kuukausittain (rajoitus %s)
 byEX_YEA=vuoden mukaan (rajoitus %s)
 CANCEL_USER=Poistettu toimesta
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=Ajoneuvon luokka
 ClassifyRefunded=Merkitse *Maksettu"
 CompanyVisited=Kohdeyritys/organisaatio/syy
@@ -45,9 +47,9 @@ expenseReportRangeMoreThan=enemmän kuin %d
 expenseReportTotalForFive=Esimerkki: <u>d</u> = 5
 ExpenseReportApplyTo=hyväksy
 ExpenseReportApproved=Kulutosite on hyväksytty
-ExpenseReportApprovedMessage=kuluraportti %s hyväksyttiin.<br> – Käyttäjä: %s<br> - Hyväksyjä: %sb0342bccf span>Näytä <span class='notranslate'>kuluraportti napsauttamalla tätä: %s
+ExpenseReportApprovedMessage=The expense report %s was approved.<br> - User: %s<br> - Approved by: %s<br>Click here to show the expense report: %s
 ExpenseReportCanceled=Kulutosite on peruutettu
-ExpenseReportCanceledMessage=kuluraportti %s peruutettiin.<br> - Käyttäjä: %s span> – Peruuttamisen syy: %s<br>Napsauta tätä nähdäksesi kuluraportti >: <span class='notranslate'>%s
+ExpenseReportCanceledMessage=The expense report %s was canceled.<br> - User: %s<br> - Canceled by: %s<br> - Motive for cancellation: %s<br>Click here to show the expense report: %s
 ExpenseReportConstraintViolationError=Enimmäismäärä ylitetty (sääntö %s): %s on suurempi kuin %s ( Kielletyn ylittäminen)
 ExpenseReportConstraintViolationWarning=Enimmäismäärä ylitetty (sääntö %s): %s on suurempi kuin %s ( Ylittää luvan)
 ExpenseReportDateEnd=Päättyen
@@ -62,7 +64,7 @@ ExpenseReportPaidMessage=kuluraportti %s maksettiin.<br> - Käyttäjä: %s<br> �
 ExpenseReportPayment=Kululaskun maksatus
 ExpenseReportRef=Viite. kuluraportti
 ExpenseReportRefused=Kulutosite on hylätty
-ExpenseReportRefusedMessage=kuluraportti %s hylättiin.<br> - Käyttäjä: %s span> - Kieltäytymisen syy: %s<br>Näytä kuluraportti napsauttamalla tätä >: <span class='notranslate'>%s
+ExpenseReportRefusedMessage=The expense report %s was refused.<br> - User: %s<br> - Refused by: %s<br> - Motive for refusal: %s<br>Click here to show the expense report: %s
 ExpenseReportRestrictive=Ylittäminen kielletty
 ExpenseReportRuleErrorOnSave=Virhe: %s
 ExpenseReportRuleSave=Sääntö tallennettu
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=vuoden mukaan (ei rajoituksia)
 NoTripsToExportCSV=Ei kulutositteita tälle kuulle 
 NOT_AUTHOR=Et ole tämän kuluraportti kirjoittaja. Toiminto peruttu.
 OnExpense=Kulutositteen rivi
-PDFStandardExpenseReports=Muodosta PDF 
+PDFStandardExpenseReports=Vakiomalli PDF-dokumentin luomiseen kuluraporttia varten
 PaidTrip=Maksa kululasku
 REFUSEUR=Hylätty toimesta
 RangeIk=Kilometrit
@@ -115,6 +117,10 @@ VALIDOR=Hyväksytty toimesta
 ValidateAndSubmit=Vahvista ja toimita hyväksyttäväksi
 ValidatedWaitingApproval=Vahvistettu, odottaa hyväksyntää.
 ValideTrip=Hyväksy kululasku
+ExpenseReportPayments=Kuluraportin maksut
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Virhe kilometrikulujen laskennassa
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=Aamupala

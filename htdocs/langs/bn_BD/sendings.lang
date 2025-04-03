@@ -8,13 +8,12 @@ Shipments=চালান
 ShowSending=চালান দেখান
 Receivings=ডেলিভারি রসিদ
 SendingsArea=চালান এলাকা
-ListOfSendings=চালানের তালিকা
 SendingMethod=পরিবহণ মাধ্যম
 LastSendings=সর্বশেষ %s চালান
 StatisticsOfSendings=চালানের জন্য পরিসংখ্যান
 NbOfSendings=চালানের সংখ্যা
 NumberOfShipmentsByMonth=মাসে চালানের সংখ্যা
-SendingCard=চালান কার্ড
+SendingCard=Shipment
 NewSending=নতুন চালান
 CreateShipment=চালান তৈরি করুন
 QtyShipped=পরিমাণ পাঠানো হয়েছে
@@ -39,11 +38,12 @@ StatusSendingValidatedShort=Validated
 StatusSendingProcessedShort=প্রক্রিয়াকৃত
 SendingSheet=চালান শীট
 ConfirmDeleteSending=আপনি কি এই চালানটি মুছে ফেলার বিষয়ে নিশ্চিত?
-ConfirmValidateSending=আপনি কি নিশ্চিত <b>%s</b><span class='notranslate'>রেফারেন্স সহ এই চালানটি যাচাই করতে চান >?
+ConfirmValidateSending=Are you sure you want to validate this shipment with the reference <b>%s</b>?
 ConfirmCancelSending=আপনি কি নিশ্চিত আপনি এই চালান বাতিল করতে চান?
 DocumentModelMerou=Merou A5 মডেল
 WarningNoQtyLeftToSend=সতর্কতা, কোনো পণ্য পাঠানোর অপেক্ষায় নেই।
 StatsOnShipmentsOnlyValidated=পরিসংখ্যান শুধুমাত্র বৈধ চালানের জন্য. ব্যবহৃত তারিখটি চালানের বৈধতার তারিখ (পরিকল্পিত বিতরণের তারিখ সর্বদা জানা যায় না)
+DateShipping=Sending date
 DateDeliveryPlanned=প্রসবের পরিকল্পিত তারিখ
 RefDeliveryReceipt=রেফ ডেলিভারি রসিদ
 StatusReceipt=স্ট্যাটাস ডেলিভারি রসিদ
@@ -63,6 +63,10 @@ NoProductToShipFoundIntoStock=গুদামে পাঠানোর জন্
 WeightVolShort=ওজন/ভলিউম
 ValidateOrderFirstBeforeShipment=চালান করতে সক্ষম হওয়ার আগে আপনাকে অবশ্যই প্রথমে অর্ডারটি যাচাই করতে হবে।
 NoLineGoOnTabToAddSome=কোন লাইন নেই, যোগ করতে "%s" ট্যাবে যান
+CreateInvoiceForThisCustomerFromSendings=Create Bills
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -71,16 +75,20 @@ DocumentModelStorm=ডেলিভারি রসিদ এবং এক্স�
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=ধ্রুবক EXPEDITION_ADDON_NUMBER সংজ্ঞায়িত নয়
 SumOfProductVolumes=পণ্যের পরিমাণের যোগফল
 SumOfProductWeights=পণ্যের ওজনের যোগফল
-
 # warehouse details
 DetailWarehouseNumber= গুদাম বিবরণ
 DetailWarehouseFormat= W:%s (Qty: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=সিরিয়াল নম্বর বা ব্যাচের জন্য চালান তৈরির সময় স্টকে প্রবেশের শেষ তারিখ প্রদর্শন করুন
 CreationOptions=চালান তৈরির সময় উপলব্ধ বিকল্প
-
 ShipmentDistribution=চালান বিতরণ
-
 ErrorTooManyCombinationBatchcode=%s লাইনের জন্য কোনও প্রেরণ নেই কারণ গুদাম, পণ্য, ব্যাচ কোডের অনেকগুলি সংমিশ্রণ পাওয়া গেছে (%s)৷
-ErrorNoCombinationBatchcode=warehouse-product-lot/serial (%s, <span class='notranslate'-এর সংমিশ্রণ হিসাবে %s লাইনটি সংরক্ষণ করা যায়নি '>%s</span>, %s) স্টকে পাওয়া যায়নি৷
-
+ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=পাঠানোর পরিমাণ %s লাইনের জন্য অর্ডার করা পরিমাণের চেয়ে বেশি হওয়া উচিত নয়
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Representative following-up shipping
+TypeContact_shipping_external_BILLING=Customer invoice contact
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Customer contact for delivery
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

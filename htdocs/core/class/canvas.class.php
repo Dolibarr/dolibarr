@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2011 		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,14 +44,35 @@ class Canvas
 	 */
 	public $errors = array();
 
+	/**
+	 * @var string
+	 */
 	public $actiontype;
 
+	/**
+	 * @var string Module directory
+	 */
 	public $dirmodule; // Module directory
+	/**
+	 * @var string
+	 */
 	public $targetmodule; // Module concerned by canvas (ex: thirdparty, contact, ...)
+	/**
+	 * @var string
+	 */
 	public $canvas; // Name of canvas (ex: company, individual, product, service, ...)
+	/**
+	 * @var string
+	 */
 	public $card; // Tab (sub-canvas)
 
-	public $template_dir; // Initialized by getCanvas with templates directory
+	/**
+	 * @var string Initialized by getCanvas with templates directory
+	 */
+	public $template_dir;
+	/**
+	 * @var ActionsContactCardCommon|ActionsAdherentCardCommon|ActionsCardProduct|ActionsCardService|ActionsCardCommon
+	 */
 	public $control; // Initialized by getCanvas with controller instance
 
 
@@ -215,14 +237,16 @@ class Canvas
 	 *
 	 * 	@param		string		$action	Action string
 	 * 	@param		int			$id			Object id
-	 * 	@return		mixed					Return return code of doActions of canvas
+	 * 	@return		?mixed					Return return code of doActions of canvas
 	 * 	@see		https://wiki.dolibarr.org/index.php/Canvas_development
 	 */
 	public function doActions(&$action = 'view', $id = 0)
 	{
-		if (method_exists($this->control, 'doActions')) {
-			$ret = $this->control->doActions($action, $id);
+		$control = $this->control;
+		if (method_exists($control, 'doActions')) {
+			$ret = $control->doActions($action, $id);
 			return $ret;
 		}
+		return null;
 	}
 }

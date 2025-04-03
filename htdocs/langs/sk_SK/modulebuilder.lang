@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Táto karta je venovaná háčikom.
 ModuleBuilderDescwidgets=Táto karta je určená na správu/vytváranie miniaplikácií.
 ModuleBuilderDescbuildpackage=Tu môžete vygenerovať súbor balíka „pripravený na distribúciu“ (normalizovaný súbor .zip) vášho modulu a dokumentačný súbor „pripravený na distribúciu“. Kliknutím na tlačidlo vytvoríte balík alebo dokumentačný súbor.
 EnterNameOfModuleToDeleteDesc=Modul môžete vymazať. UPOZORNENIE: Všetky kódovacie súbory modulu (vygenerované alebo vytvorené ručne) A štruktúrované dáta a dokumentácia budú vymazané!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Môžete odstrániť objekt. UPOZORNENIE: Všetky kódovacie súbory (vygenerované alebo vytvorené ručne) súvisiace s objektom budú vymazané!
 DangerZone=Nebezpečná zóna
 BuildPackage=Zostavte balík
 BuildPackageDesc=Môžete si vygenerovať zip balík vašej aplikácie, takže ste pripravení ju distribuovať na ľubovoľnom serveri Dolibarr. Môžete ho tiež distribuovať alebo predávať na trhu ako <a href="https://www.dolistore.com">DoliStore.com</a>.
@@ -91,10 +91,10 @@ ListOfMenusEntries=Zoznam položiek ponuky
 ListOfDictionariesEntries=Zoznam záznamov v slovníkoch
 ListOfPermissionsDefined=Zoznam definovaných povolení
 SeeExamples=Pozrite si príklady tu
-EnabledDesc=Podmienka, aby bolo toto pole aktívne.<br><br>Príklady:<br>1 span class='notranslate'><br></span>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
+EnabledDesc=Condition to have this field active.<br><br>Examples:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=Je pole viditeľné? (Príklady: 0=nikdy viditeľné, 1=viditeľné vo formulároch na vytvorenie/aktualizáciu/zobrazenie, 2=viditeľné iba na zozname, 3=viditeľné iba vo formulári na vytvorenie/aktualizáciu/zobrazenie (nie na zoznamoch), 4=viditeľné na zoznamoch a aktualizovať/zobraziť iba formulár (nie vytvoriť), 5=Viditeľné iba vo formulári zoznamu a zobraziť (nie vytvoriť, neaktualizovať).<br><br> Použitie zápornej hodnoty znamená, že pole sa v zozname predvolene nezobrazuje, ale možno ho vybrať na zobrazenie).
 ItCanBeAnExpression=Môže to byť výraz. Príklad:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=Zobrazte toto pole v kompatibilných dokumentoch PDF, pozíciu môžete spravovať pomocou poľa „Pozícia“.<br><strong>Pre dokument:</strong><br>0 = nezobrazené <br>1 = zobrazenie<br>2 = zobraziť, iba ak nie je prázdne<br><br>b0e7064b span>Pre riadky dokumentu:<span class='notranslate'></strong><br>0 = nezobrazené <br> = zobrazené v stĺpci<br>3 = zobrazenie v stĺpci popisu riadka za popisom<br>4 = zobrazenie v stĺpci popisu za popisom iba ak nie je prázdny
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=Na PDF
 IsAMeasureDesc=Môže sa hodnota poľa kumulovať, aby sa do zoznamu dostal súčet? (Príklady: 1 alebo 0)
 SearchAllDesc=Používa sa pole na vyhľadávanie pomocou nástroja rýchleho vyhľadávania? (Príklady: 1 alebo 0)
@@ -111,7 +111,7 @@ TriggerDefDesc=V spúšťacom súbore definujte kód, ktorý chcete spustiť, ke
 SeeIDsInUse=Pozrite si ID používané vo vašej inštalácii
 SeeReservedIDsRangeHere=Pozrite si rozsah rezervovaných ID
 ToolkitForDevelopers=Sada nástrojov pre vývojárov Dolibarr
-TryToUseTheModuleBuilder=Ak ovládate SQL a PHP, môžete použiť sprievodcu vytváraním natívnych modulov.<br>Povoliť modul <strong>%s</strong> a použite sprievodcu kliknutím na <span class="fa fa-bug"><spante'no ></span></span> v ponuke vpravo hore.<br>Upozornenie: Toto je pokročilá funkcia pre vývojárov, vykonajte <b> span class='notranslate'></b></span> experimentujte na svojej produkčnej stránke!
+TryToUseTheModuleBuilder=If you have knowledge of SQL and PHP, you may use the native module builder wizard.<br>Enable the module <strong>%s</strong> and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu.<br>Warning: This is an advanced developer feature, do <b>not</b> experiment on your production site!
 SeeTopRightMenu=Pozrite si <span class="fa fa-bug"></span> v ponuke vpravo hore
 AddLanguageFile=Pridať jazykový súbor
 YouCanUseTranslationKey=Tu môžete použiť kľúč, ktorý je prekladovým kľúčom nájdeným do jazykového súboru (pozri záložku „Jazyky“)
@@ -148,7 +148,7 @@ CSSListClass=CSS pre zoznam
 NotEditable=Nedá sa upravovať
 ForeignKey=Cudzí kľúč
 ForeignKeyDesc=Ak hodnota tohto poľa musí byť zaručená, že existuje do inej tabuľky. Tu zadajte syntax zodpovedajúcej hodnote: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Príklad:<br>varchar(99)<br>e-mail<br> classtelefón< ='notranslate'><br></span>ip<br>url<br>heslo<span class='b034fccda9b> span>double(24,8)<br>skutočné<br>text<br> <br>dátum<br>datetime<br>časová pečiatka<span class'>'notranslate <br></span>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]b0392f /span><span class='notranslate'><br>'1' znamená, že za kombináciu pridáme tlačidlo + na vytvorenie záznamu<br>'filter' je Podmienka syntaxe univerzálneho filtra, príklad: '((stav:=:1) AND (fk_user:=:__USER_ID__) AND (entita:IN:(__SHARED_ENTITIES__))“
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Toto je typ poľa/atribútu.
 AsciiToHtmlConverter=Konvertor z ascii do HTML
 AsciiToPdfConverter=Konvertor z ascii do formátu PDF
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Povolenie bolo úspešne pridané
 MenuDeletedSuccessfuly=Menu bolo úspešne vymazané
 MenuAddedSuccessfuly=Menu bolo úspešne pridané
 MenuUpdatedSuccessfuly=Menu bolo úspešne aktualizované
+AddAPIsForThisObject=Add APIs for this object
 ApiObjectDeleted=Rozhranie API pre objekt %s bolo úspešne odstránené
 CRUDRead=Čítať
 CRUDCreateWrite=Vytvoriť alebo aktualizovať
@@ -180,9 +181,9 @@ FailedToAddCodeIntoDescriptor=Nepodarilo sa pridať kód do deskriptora. Skontro
 DictionariesCreated=Slovník <b>%s</b> bol úspešne vytvorený
 DictionaryDeleted=Slovník <b>%s</b> bol úspešne odstránený
 PropertyModuleUpdated=Vlastníctvo <b>%s</b> bolo úspešne aktualizované
-InfoForApiFile=* Keď vygenerujete súbor prvýkrát, všetky metódy sa vytvoria <strong>pre každý objekt.</strong><br>* Keď kliknete na <strong>remove</strong>, odstránite iba všetky metódy pre túto triedu ='notranslate'><strong></span>vybratý objekt</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Stránka pre nastavenie modulu
-EmailingSelectors=Emails selectors
+EmailingSelectors=Výber e-mailov
 EmailingSelectorDesc=Tu môžete generovať a upravovať súbory triedy, aby ste poskytli nové selektory cieľov e-mailu pre modul hromadného odosielania e-mailov
 EmailingSelectorFile=Súbor na výber e-mailov
 NoEmailingSelector=Žiadny súbor na výber e-mailov

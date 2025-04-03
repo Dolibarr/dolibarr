@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Dorëzimi
 DeliveryRef=Dorëzimi Ref
-DeliveryCard=Dëftesa e aksioneve
+DeliveryCard=Faturën e dorëzimit
 DeliveryOrder=Faturën e dorëzimit
 DeliveryDate=Data e dorëzimit
 CreateDeliveryOrder=Gjeneroni faturën e dorëzimit
@@ -10,7 +10,7 @@ SetDeliveryDate=Cakto datën e dërgesës
 ValidateDeliveryReceipt=Vërtetoni faturën e dorëzimit
 ValidateDeliveryReceiptConfirm=Jeni i sigurt që dëshironi të vërtetoni këtë faturë dërgese?
 DeleteDeliveryReceipt=Fshi faturën e dorëzimit
-DeleteDeliveryReceiptConfirm=Jeni i sigurt që dëshironi të fshini faturën e dorëzimit <b>%s<span class='notranslate'>b09a4b739f17f>z?
+DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
 DeliveryMethod=Metodat e dërgesës
 TrackingNumber=Numri i gjurmimit
 DeliveryNotValidated=Dorëzimi nuk është vërtetuar

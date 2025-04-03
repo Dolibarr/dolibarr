@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - salaries
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra kontoplanen) brukes som standard for "bruker" tredjeparter
-SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerte kontoen som er definert på brukerkortet, vil kun brukes til underreskontro. Denne vil bli brukt for hovedbok og som standardverdi for underreskontro hvis dedikert brukerkonto for bruker ikke er definert.
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Konto (fra Kontoplanen) brukes som standard for "brukere" på lønn
+SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Den dedikerte kontoen som er definert på brukerkortet vil kun brukes til underreskontro. Denne vil bli brukt for hovedbok, men også som standardverdi for underreskontro dersom ingen dedikert brukerkonto er definert på brukeren.
 SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetalinger
 CREATE_NEW_SALARY_WITHOUT_AUTO_PAYMENT=La som standard alternativet "Opprett automatisk en total betaling" være tomt når du oppretter lønn
 Salary=Lønn
@@ -9,6 +9,8 @@ NewSalary=Ny lønn
 AddSalary=Legg til lønn
 NewSalaryPayment=Nytt lønnskort
 AddSalaryPayment=Legg til lønnsutbetaling
+SalaryID=Lønns-ID
+SalaryAmount=Lønnsbeløp
 SalaryPayment=Lønnsutbetaling
 SalariesPayments=Lønnsutbetalinger
 SalariesPaymentsOf=Lønnsutbetalinger på %s
@@ -25,3 +27,9 @@ SalariesAndPayments=Lønn og utbetalinger
 ConfirmDeleteSalaryPayment=Vil du slette denne lønnsutbetalingen?
 FillFieldFirst=Fyll ansatt-feltet først
 UpdateAmountWithLastSalary=Angi beløp for siste lønn
+MakeTransferRequest=Lag overføringsforespørsel
+VirementOrder=Kredittoverføringsforespørsel
+WithdrawalReceipt=Kredittoverføring ordre
+OrderWaiting=Ventende ordre
+FillEndOfMonth=Fyll med slutten av måneden
+UserPaySlip=Lønnsslipp

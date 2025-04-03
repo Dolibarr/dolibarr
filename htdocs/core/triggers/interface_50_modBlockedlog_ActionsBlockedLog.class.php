@@ -42,8 +42,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "system";
 		$this->description = "Triggers of this module add action for BlockedLog module (Module of unalterable logs).";
-		// 'development', 'experimental', 'dolibarr' or version
-		$this->version = self::VERSION_DOLIBARR;
+		$this->version = self::VERSIONS['prod'];
 		$this->picto = 'technic';
 	}
 
@@ -59,7 +58,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-		if (empty($conf->blockedlog) || empty($conf->blockedlog->enabled)) {
+		if (!isModEnabled('blockedlog')) {
 			return 0; // Module not active, we do nothing
 		}
 
@@ -76,7 +75,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
-		$b->loadTrackedEvents();
+		$b->loadTrackedEvents();			// GEt the list of tracked events into $b->trackedevents
 
 		// Tracked events
 		if (!in_array($action, array_keys($b->trackedevents))) {

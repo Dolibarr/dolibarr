@@ -39,7 +39,6 @@ WithdrawalsSetup=Suoraveloitus maksu
 CreditTransferSetup=Tilisiirron asetukset
 WithdrawStatistics=Suoraveloitus maksu
 CreditTransferStatistics=Tilisiirtotilastot
-Rejects=Hylkäykset
 LastWithdrawalReceipt=Viimeisimmät %s suoraveloituskuitit
 MakeWithdrawRequest=Tee suoraveloitus maksu
 MakeWithdrawRequestStripe=Tee suoraveloituspyyntö maksu Stripen kautta
@@ -125,7 +124,7 @@ WithdrawRequestErrorNilAmount=Tyhjän summan luo suoraveloituspyyntö epäonnist
 SepaMandate=SEPA-suoraveloitusvaltuutus
 SepaMandateShort=SEPA-mandaatti
 PleaseReturnMandate=Palauta tämä toimeksiantolomake sähköpostitse osoitteeseen %s tai postitse osoitteeseen
-SEPALegalText=Allekirjoittamalla tämän valtuutuslomakkeen valtuutat (A) %s ja sen maksu > palveluntarjoaja lähettää pankkillesi ohjeet tilin veloittamiseksi <span class='notranslate'>ja (B) pankkillesi veloittaaksesi tiliäsi lähettäjän %s ohjeiden mukaisesti . Osana oikeuksiasi sinulla on oikeus saada hyvitys pankiltasi pankkisi kanssa tekemäsi sopimuksen ehtojen ja ehtojen mukaisesti. Yllä olevaan toimeksiantoon liittyvät oikeutesi on selitetty tiliotteessa, jonka voit saada pankistasi. Suostut vastaanottamaan Ilmoitukset tulevista veloituksista enintään 2 päivää ennen niiden toteutumista.
+SEPALegalText=By signing this mandate form, you authorize (A) %s and its payment service provider to send instructions to your bank to debit your account and (B) your bank to debit your account in accordance with the instructions from %s. As part of your rights, you are entitled to a refund from your bank under the terms and conditions of your agreement with your bank. Your rights regarding the above mandate are explained in a statement that you can obtain from your bank. You agree to receive notifications about future charges up to 2 days before they occur.
 CreditorIdentifier=Luotonantajan tunniste
 CreditorName=Luotonantajan nimi
 SEPAFillForm=(B) Täytä kaikki * merkityt kentät
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Palkat odottavat tilisiirtona maksu
 RefSalary=Palkka
 NoSalaryInvoiceToWithdraw=Ei palkkaa odottamassa %s. Tee pyyntö siirtymällä palkkakortin välilehteen %s.
 SalaryInvoiceWaitingWithdraw=Palkat odottavat tilisiirtona maksu
-

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2019   Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2022   Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
  */
 
 /**
- * \file    recruitment/lib/recruitment.lib.php
+ * \file    htdocs/recruitment/lib/recruitment.lib.php
  * \ingroup recruitment
  * \brief   Library files with common functions for Recruitment
  */
@@ -25,7 +26,7 @@
 /**
  * Prepare admin pages header
  *
- * @return array
+ * @return array<array{0:string,1:string,2:string}>
  */
 function recruitmentAdminPrepareHead()
 {
@@ -40,35 +41,35 @@ function recruitmentAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = dol_buildpath("/recruitment/admin/setup.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/setup.php';
 	$head[$h][1] = $langs->trans("JobPositions");
 	$head[$h][2] = 'settings';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/recruitment/admin/setup_candidatures.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/setup_candidatures.php';
 	$head[$h][1] = $langs->trans("RecruitmentCandidatures");
 	$head[$h][2] = 'settings_candidatures';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/recruitment/admin/public_interface.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/public_interface.php';
 	$head[$h][1] = $langs->trans("PublicUrl");
 	$head[$h][2] = 'publicurl';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/recruitment/admin/jobposition_extrafields.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/jobposition_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtrafieldsJobPosition");
 	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentjobposition']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'jobposition_extrafields';
 	$h++;
 
-	$head[$h][0] = dol_buildpath("/recruitment/admin/candidature_extrafields.php", 1);
+	$head[$h][0] = DOL_URL_ROOT . '/recruitment/admin/candidature_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtrafieldsApplication");
 	$nbExtrafields = $extrafields->attributes['recruitment_recruitmentcandidature']['count'];
 	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
 	}
 	$head[$h][2] = 'candidature_extrafields';
 	$h++;

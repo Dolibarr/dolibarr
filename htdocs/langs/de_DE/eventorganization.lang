@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Veranstaltungsorganisation
 EventOrganizationDescription =  Veranstaltungsorganisation mit dem Modul 'Projekt- und Aufgabenverwaltung'
 EventOrganizationDescriptionLong= Verwalten Sie die Organisation einer Veranstaltung (Show, Konferenzbeiträge, Teilnehmer oder Referenten, mit öffentlichen Seiten für Vorschläge, Abstimmung oder Registrierung)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Veranstaltungen
 EventOrganizationConferenceOrBoothMenuLeft = Konferenzbeitrag oder Stand
-
 PaymentEvent=Zahlung für eine Veranstaltung
-
-#
+EventFee=Veranstaltungsgebühr
 # Admin page
-#
 NewRegistration=Anmeldung
 EventOrganizationSetup=Einstellungen für die Veranstaltungsorganisation
 EventOrganization=Veranstaltungsorganisation
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = E-Mail-Vorlage, die verwendet we
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = E-Mail-Vorlage, die verwendet werden soll, wenn E-Mails durch Massenaktion „E-Mails senden“ an Teilnehmer gesendet werden
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Schränkt im Formular zum Erstellen/Hinzufügen eines Teilnehmers die Liste der Geschäftspartner auf diejenigen aus der Kategorie ein
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Schränkt im Formular zum Erstellen/Hinzufügen eines Teilnehmers die Liste der Geschäftspartner auf diejenigen des Typs ein
-
-#
 # Object
-#
 OrganizedEvent=Organisierte Veranstaltung
 EventOrganizationConfOrBooth= Konferenzbeitrag oder Stand
-EventOrganizationConfOrBoothes=Konferenzbeiträge oder Stände
+EventOrganizationConfOrBoothes=Konferenzen oder Stände
 ManageOrganizeEvent = Veranstaltung organisieren
 ConferenceOrBooth = Konferenzbeitrag oder Stand
 ConferenceOrBoothTab = Konferenzbeitrag oder Stand
@@ -63,10 +50,7 @@ DateOfRegistration = Datum der Anmeldung
 ConferenceOrBoothAttendee = Referent eines Konferenzbeitrags oder Standinhaber
 ApplicantOrVisitor=Bewerber oder Besucher
 Speaker=Referent
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Ihr Vorschlag für einen Konferenzbeitrag ist eingegangen
 YourOrganizationEventBoothRequestWasReceived = Ihre Anfrage für einen Stand ist eingegangen
 EventOrganizationEmailAskConf = Vorschlag für einen Konferenzbeitrag
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Anmeldung zu einer Veranstaltung
 EventOrganizationMassEmailAttendees = Kommunikation mit den Teilnehmern
 EventOrganizationMassEmailSpeakers = Kommunikation mit den Referenten
 ToSpeakers=An Referenten
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Personen erlauben, Konferenzbeiträge vorzuschlagen
 AllowUnknownPeopleSuggestConfHelp=Unbekannten Personen erlauben, einen Konferenzbeitrag vorzuschlagen, den sie halten möchten
 AllowUnknownPeopleSuggestBooth=Personen erlauben, sich für einen Stand zu bewerben
@@ -88,29 +69,29 @@ PriceOfRegistration=Kosten für die Teilnahme
 PriceOfRegistrationHelp=Preis für die Anmeldung/Teilnahme an der Veranstaltung
 PriceOfBooth=Buchungskosten für einen Stand
 PriceOfBoothHelp=Buchungskosten für einen Stand
+EventOrganizationICSLinkProject=ICS-Verknüpfung für das Ereignis
 EventOrganizationICSLink=Verknüpfe Kalenderdaten (ICS) für Vorträge
 ConferenceOrBoothInformation=Informationen zu Konferenzbeitrag oder Stand
+ConferenceOrBoothFormat=Modus 'Konferenzbeitrag oder Stand'
+ConferenceOrBoothFormatID=ID im Modus 'Konferenzbeitrag oder Stand'
+ConferenceOrBoothFormatCode=Code des Modus 'Konferenzbeitrag oder Stand'
+ConferenceOrBoothFormatLabel=Bezeichnung im Modus 'Konferenzbeitrag oder Stand'
 Attendees=Teilnehmer
-ListOfAttendeesOfEvent=Teilnehmerliste des Veranstaltungsprojekts
+ListOfAttendeesOfEvent=Teilnehmerliste der Veranstaltungsprojekte
+ListOfConfOrBoothOfEvent=Liste von Konferenzen oder Veranstaltungsständen Projekte
 DownloadICSLink = ICS-Link herunterladen
 EVENTORGANIZATION_SECUREKEY = Seed, um den Schlüssel für die öffentliche Registrierungsseite zu sichern, die zum Vorschlagen eines Konferenzbeitrags dient
 SERVICE_BOOTH_LOCATION = Leistung, die für die Rechnungsposition über einen Stand verwendet wird
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Leistung, die für die Rechnungsposition über eine Teilnahmebuchung einer Veranstaltung verwendet wird
 NbVotes=Anzahl der Stimmen
-
-#
 # Status
-#
 EvntOrgDraft = Entwurf
 EvntOrgSuggested = Empfohlen
 EvntOrgConfirmed = Bestätigt
 EvntOrgNotQualified = Nicht qualifiziert
 EvntOrgDone = Erledigt
 EvntOrgCancelled = Storniert
-
-#
 # Other
-#
 SuggestForm = Vorschlagsseite
 SuggestOrVoteForConfOrBooth = Seite für Vorschlag oder Abstimmung
 EvntOrgRegistrationHelpMessage = Hier können Sie für einen Konferenzbeitrag abstimmen oder einen neuen für die Veranstaltung vorschlagen. Sie können sich auch für einen Stand während der Veranstaltung bewerben.
@@ -133,6 +114,7 @@ EventType = Ereignistyp
 LabelOfBooth=Standbezeichnung
 LabelOfconference=Vortragsbezeichnung
 ConferenceIsNotConfirmed=Anmeldung nicht möglich, Konferenz ist noch nicht freigegeben
+EventRegistrationAreClosed=Die Anmeldungen für die Veranstaltung sind geschlossen
 DateMustBeBeforeThan=%s muss vor %s sein
 DateMustBeAfterThan=%s muss nach %s sein
 MaxNbOfAttendeesReached=Die maximale Teilnehmerzahl ist erreicht
@@ -174,6 +156,7 @@ DateEndEvent=Enddatum der Veranstaltung
 ModifyStatus=Status ändern
 ConfirmModifyStatus=Statusänderung bestätigen
 ConfirmModifyStatusQuestion=Sind Sie sicher, dass Sie die %s ausgewählten Datensätze ändern möchten?
-RecordsUpdated = %s Datensätze aktualisiert
-RecordUpdated = Datensatz aktualisiert
-NoRecordUpdated = Kein Datensatz aktualisiert
+RecordsUpdated=%s Datensätze aktualisiert
+RecordUpdated=Datensatz aktualisiert
+NoRecordUpdated=Kein Datensatz aktualisiert
+ProfitPerValidatedAttendee=Gewinn pro Teilnehmer

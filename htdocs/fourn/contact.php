@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("companies");
 
 
@@ -41,10 +51,10 @@ if ($user->socid > 0) {
 	$socid = $user->socid;
 }
 
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -57,11 +67,12 @@ if (!$sortorder) {
 if (!$sortfield) {
 	$sortfield = "p.lastname";
 }
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$begin = '';
 
 
 /*
- * Mode liste
+ * List mode
  */
 
 $sql = "SELECT s.rowid as socid, s.nom as name, st.libelle as stcomm, p.rowid as cidp, p.lastname, p.firstname, p.email, p.phone";
@@ -80,25 +91,24 @@ if (!$user->hasRight("societe", "client", "voir") && !$socid) {
 	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 }
 
+/*
 if (dol_strlen($stcomm)) {
-	$sql .= " AND s.fk_stcomm=$stcomm";
+	$sql .= " AND s.fk_stcomm = ".((int) $stcomm);
 }
-
 if (dol_strlen($begin)) {
-	$sql .= " AND p.lastname LIKE '$begin%'";
+	$sql .= " AND p.lastname LIKE '".$db->escape($begin)."%'";
 }
-
 if ($contactname) {
-	$sql .= " AND p.lastname LIKE '%".strtolower($contactname)."%'";
+	$sql .= " AND p.lastname LIKE '%".$db->escape($contactname)."%'";
 	$sortfield = "p.lastname";
 	$sortorder = "ASC";
 }
-
+*/
 if ($socid) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
 
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit, $offset);
 
 $result = $db->query($sql);

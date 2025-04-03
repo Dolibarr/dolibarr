@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2006-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2017  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /**
  *       \file       htdocs/user/group/ldap.php
  *       \ingroup    ldap
- *       \brief      Page fiche LDAP groupe
+ *       \brief      Page Record LDAP Group
  */
 
 // Load Dolibarr environment
@@ -31,10 +31,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('companies', 'ldap', 'users', 'admin'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 $socid = 0;
@@ -44,16 +52,16 @@ if ($user->socid > 0) {
 
 $object = new UserGroup($db);
 $object->fetch($id, '', true);
-$object->getrights();
+$object->loadRights();
 
 // Users/Groups management only in master entity if transverse mode
 if (isModEnabled('multicompany') && $conf->entity > 1 && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
 	accessforbidden();
 }
 
-$canreadperms = true;
+$permissiontoread = true;
 if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-	$canreadperms = (!empty($user->admin) || !empty($user->rights->user->group_advance->read));
+	$permissiontoread = (!empty($user->admin) || $user->hasRight('user', 'group_advance', 'read'));
 }
 
 
@@ -63,7 +71,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 if ($action == 'dolibarr2ldap') {
 	$ldap = new Ldap();
-	$result = $ldap->connect_bind();
+	$result = $ldap->connectBind();
 
 	if ($result > 0) {
 		$info = $object->_load_ldap_info();
@@ -95,7 +103,7 @@ $form = new Form($db);
 
 $title = $object->name." - ".$langs->trans('LDAP');
 $help_url = '';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-group_ldap');
 
 $head = group_prepare_head($object);
 
@@ -111,7 +119,7 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 // Name (already in dol_banner, we keep it to have the GlobalGroup picto, but we should move it in dol_banner)
-if (!empty($conf->mutlicompany->enabled)) {
+if (isModEnabled('multicompany')) {
 	print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
 	print '<td class="valeur">'.$object->name;
 	if (!$object->entity) {
@@ -162,7 +170,7 @@ if (getDolGlobalInt('LDAP_SYNCHRO_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 
 
 
-// Affichage attributs LDAP
+// Affichage attributes LDAP
 print load_fiche_titre($langs->trans("LDAPInformationsForThisGroup"));
 
 print '<table class="noborder centpercent">';
@@ -174,7 +182,7 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap = new Ldap();
-$result = $ldap->connect_bind();
+$result = $ldap->connectBind();
 if ($result > 0) {
 	$info = $object->_load_ldap_info();
 	$dn = $object->_load_ldap_dn($info, 1);

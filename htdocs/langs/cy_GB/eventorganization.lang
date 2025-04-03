@@ -5,39 +5,29 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Trefniadaeth Digwyddiadau
 EventOrganizationDescription = Trefnu Digwyddiad trwy Brosiect Modiwl
 EventOrganizationDescriptionLong= Rheoli trefniadaeth digwyddiad (sioe, cynadleddau, mynychwyr neu siaradwyr, gyda thudalennau cyhoeddus ar gyfer awgrymiadau, pleidlais neu gofrestru)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Digwyddiadau wedi'u trefnu
 EventOrganizationConferenceOrBoothMenuLeft = Cynhadledd Neu Booth
-
 PaymentEvent=Talu digwyddiad
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Cofrestru
 EventOrganizationSetup=Gosodiad Trefniadaeth Digwyddiad
 EventOrganization=Trefniadaeth digwyddiad
 EventOrganizationSetupPage = Tudalen gosod Trefniadaeth Digwyddiad
 EVENTORGANIZATION_TASK_LABEL = Label o dasgau i'w creu'n awtomatig pan fydd y prosiect yn cael ei ddilysu
 EVENTORGANIZATION_TASK_LABELTooltip = When you validate an event to organize, some tasks can be automatically created in the project<br><br>For example: <br>Send Call for Conferences<br>Send Call for Booths<br>Validate suggestions of Conferences<br>Validate application for Booths<br>Open subscriptions to the event for attendees<br>Send a remind of the event to speakers<br>Send a remind of the event to Booth hosters<br>Send a remind of the event to attendees
-EVENTORGANIZATION_TASK_LABELTooltip2=Keep empty if you don't need to create tasks automatically.
+EVENTORGANIZATION_TASK_LABELTooltip2=Cadwch yn wag os nad oes angen i chi greu tasgau yn awtomatig.
 EVENTORGANIZATION_CATEG_THIRDPARTY_CONF = Categori i ychwanegu at drydydd parti yn cael ei greu yn awtomatig pan fydd rhywun yn awgrymu cynhadledd
 EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH = Categori i ychwanegu at drydydd parti yn cael ei greu yn awtomatig pan fyddant yn awgrymu bwth
 EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF = Templed e-bost i'w anfon ar ôl derbyn awgrym o gynhadledd.
@@ -48,25 +38,19 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Templed e-bost i'w ddefnyddio wr
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Templed e-bost i'w ddefnyddio wrth anfon e-byst o'r massaction "Anfon e-byst" ar restr mynychwyr
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Yn y ffurflen i greu / ychwanegu mynychwr, yn cyfyngu'r rhestr o drydydd partïon i drydydd partïon yn y categori
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Yn y ffurf i greu / ychwanegu mynychwr, yn cyfyngu'r rhestr o drydydd partïon i drydydd partïon â natur
-
-#
 # Object
-#
-OrganizedEvent=Organized event
+OrganizedEvent=Digwyddiad wedi'i drefnu
 EventOrganizationConfOrBooth= Cynhadledd Neu Booth
-EventOrganizationConfOrBoothes=Conferences or Boothes
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Rheoli trefniadaeth digwyddiad
 ConferenceOrBooth = Cynhadledd Neu Booth
 ConferenceOrBoothTab = Cynhadledd Neu Booth
 AmountPaid = Swm a dalwyd
 DateOfRegistration = Dyddiad cofrestru
 ConferenceOrBoothAttendee = Mynychwr y Gynhadledd Neu Booth
-ApplicantOrVisitor=Applicant or visitor
-Speaker=Speaker
-
-#
+ApplicantOrVisitor=Ymgeisydd neu ymwelydd
+Speaker=Llefarydd
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Derbyniwyd eich cais am gynhadledd
 YourOrganizationEventBoothRequestWasReceived = Derbyniwyd eich cais am fwth
 EventOrganizationEmailAskConf = Cais am gynhadledd
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Cofrestru ar gyfer digwyddiad
 EventOrganizationMassEmailAttendees = Cyfathrebu i fynychwyr
 EventOrganizationMassEmailSpeakers = Cyfathrebu â siaradwyr
 ToSpeakers=I siaradwyr
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Caniatáu i bobl awgrymu cynadleddau
 AllowUnknownPeopleSuggestConfHelp=Caniatáu i bobl anhysbys awgrymu cynhadledd y maent am ei gwneud
 AllowUnknownPeopleSuggestBooth=Caniatáu i bobl wneud cais am fwth
@@ -88,44 +69,44 @@ PriceOfRegistration=Pris cofrestru
 PriceOfRegistrationHelp=Pris i'w dalu i gofrestru neu gymryd rhan yn y digwyddiad
 PriceOfBooth=Pris tanysgrifiad i sefyll bwth
 PriceOfBoothHelp=Pris tanysgrifiad i sefyll bwth
+EventOrganizationICSLinkProject=Cysylltwch ICS ar gyfer y digwyddiad
 EventOrganizationICSLink=Cyswllt ICS ar gyfer cynadleddau
-ConferenceOrBoothInformation=Conference Or Booth information
+ConferenceOrBoothInformation=Gwybodaeth Cynhadledd Neu Booth
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Mynychwyr
-ListOfAttendeesOfEvent=Rhestr o fynychwyr prosiect y digwyddiad
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Lawrlwythwch y ddolen ICS
 EVENTORGANIZATION_SECUREKEY = Hedyn i sicrhau'r allwedd ar gyfer y dudalen cofrestru cyhoeddus i awgrymu cynhadledd
 SERVICE_BOOTH_LOCATION = Gwasanaeth a ddefnyddir ar gyfer y rhes anfoneb am leoliad bwth
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Gwasanaeth a ddefnyddir ar gyfer y rhes anfonebau ynghylch tanysgrifiad mynychwr i ddigwyddiad
 NbVotes=Nifer y pleidleisiau
-
-#
 # Status
-#
 EvntOrgDraft = Drafft
 EvntOrgSuggested = Awgrymir
 EvntOrgConfirmed = Cadarnhawyd
 EvntOrgNotQualified = Ddim yn Gymwys
 EvntOrgDone = Wedi'i wneud
-EvntOrgCancelled = Canceled
-
-#
+EvntOrgCancelled = Wedi'i ganslo
 # Other
-#
 SuggestForm = Tudalen awgrymiadau
 SuggestOrVoteForConfOrBooth = Tudalen ar gyfer awgrym neu bleidlais
 EvntOrgRegistrationHelpMessage = Yma, gallwch chi bleidleisio dros gynhadledd neu awgrymu un newydd ar gyfer y digwyddiad. Gallwch hefyd wneud cais i gael bwth yn ystod y digwyddiad.
 EvntOrgRegistrationConfHelpMessage = Yma, gallwch awgrymu cynhadledd newydd i'w hanimeiddio yn ystod y digwyddiad.
 EvntOrgRegistrationBoothHelpMessage = Yma, gallwch wneud cais i gael bwth yn ystod y digwyddiad.
 ListOfSuggestedConferences = Rhestr o gynadleddau a awgrymir
-ListOfSuggestedBooths=Suggested booths
-ListOfConferencesOrBooths=Conferences or booths of event project
+ListOfSuggestedBooths=Bythau a awgrymir
+ListOfConferencesOrBooths=Cynadleddau neu fythau o brosiect digwyddiad
 SuggestConference = Awgrymu cynhadledd newydd
 SuggestBooth = Awgrymu bwth
 ViewAndVote = Gweld a phleidleisio ar gyfer digwyddiadau a awgrymir
 PublicAttendeeSubscriptionGlobalPage = Dolen gyhoeddus i gofrestru i'r digwyddiad
 PublicAttendeeSubscriptionPage = Dolen gyhoeddus ar gyfer cofrestru i'r digwyddiad hwn yn unig
 MissingOrBadSecureKey = Mae'r allwedd ddiogelwch yn annilys neu ar goll
-EvntOrgWelcomeMessage = This form allows you to register as a new participant to the event
+EvntOrgWelcomeMessage = Mae'r ffurflen hon yn eich galluogi i gofrestru fel cyfranogwr newydd i'r digwyddiad
 EvntOrgDuration = Mae'r gynhadledd hon yn dechrau ar %s ac yn gorffen ar %s.
 ConferenceAttendeeFee = Ffi mynychwyr y gynhadledd ar gyfer y digwyddiad : '%s' yn digwydd o %s i %s.
 BoothLocationFee = Lleoliad Booth ar gyfer y digwyddiad : '%s' yn digwydd o %s i %s
@@ -133,9 +114,10 @@ EventType = Math o ddigwyddiad
 LabelOfBooth=Label Booth
 LabelOfconference=Label y gynhadledd
 ConferenceIsNotConfirmed=Nid yw cofrestriad ar gael, nid yw'r gynhadledd wedi'i chadarnhau eto
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=rhaid i %s fod cyn %s
 DateMustBeAfterThan=rhaid i %s fod ar ôl %s
-MaxNbOfAttendeesReached=The maximum number of participants has been reached
+MaxNbOfAttendeesReached=Cyrhaeddwyd y nifer uchaf o gyfranogwyr
 NewSubscription=Cofrestru
 OrganizationEventConfRequestWasReceived=Mae eich awgrym ar gyfer cynhadledd wedi dod i law
 OrganizationEventBoothRequestWasReceived=Mae eich cais am fwth wedi dod i law
@@ -144,9 +126,9 @@ OrganizationEventPaymentOfRegistrationWasReceived=Mae eich taliad ar gyfer eich 
 OrganizationEventBulkMailToAttendees=Mae hwn yn atgoffa am eich cyfranogiad yn y digwyddiad fel mynychwr
 OrganizationEventBulkMailToSpeakers=Dyma nodyn i'ch atgoffa o'ch cyfranogiad yn y digwyddiad fel siaradwr
 OrganizationEventLinkToThirdParty=Cyswllt i drydydd parti (cwsmer, cyflenwr neu bartner)
-OrganizationEvenLabelName=Public name of the conference or booth
+OrganizationEvenLabelName=Enw cyhoeddus y gynhadledd neu'r bwth
 NewSuggestionOfBooth=Cais am fwth
-NewSuggestionOfConference=Application to hold a conference
+NewSuggestionOfConference=Cais i gynnal cynhadledd
 EvntOrgRegistrationWelcomeMessage = Croeso i dudalen awgrymiadau'r gynhadledd neu'r bwth.
 EvntOrgRegistrationConfWelcomeMessage = Croeso i dudalen awgrymiadau'r gynhadledd.
 EvntOrgRegistrationBoothWelcomeMessage = Croeso i dudalen awgrymiadau'r bwth.
@@ -154,8 +136,8 @@ EvntOrgVoteHelpMessage = Yma, gallwch weld a phleidleisio ar gyfer y digwyddiada
 VoteOk = Mae eich pleidlais wedi ei derbyn.
 AlreadyVoted = Rydych chi eisoes wedi pleidleisio dros y digwyddiad hwn.
 VoteError = Mae gwall wedi digwydd yn ystod y bleidlais, ceisiwch eto.
-SubscriptionOk=Your registration has been recorded
-AmountOfRegistrationPaid=Amount of registration paid
+SubscriptionOk=Mae eich cofrestriad wedi'i gofnodi
+AmountOfRegistrationPaid=Swm y cofrestriad a dalwyd
 ConfAttendeeSubscriptionConfirmation = Cadarnhad o'ch tanysgrifiad i ddigwyddiad
 Attendee = Mynychwr
 PaymentConferenceAttendee = Taliad mynychwyr y gynhadledd
@@ -163,17 +145,18 @@ PaymentBoothLocation = Taliad lleoliad Booth
 DeleteConferenceOrBoothAttendee=Dileu mynychwr
 RegistrationAndPaymentWereAlreadyRecorder=Roedd cofrestriad a thaliad eisoes wedi'u cofnodi ar gyfer yr e-bost <b> %s </b>
 EmailAttendee=E-bost mynychwr
-EmailCompany=Company email
+EmailCompany=E-bost cwmni
 EmailCompanyForInvoice=E-bost cwmni (ar gyfer anfoneb, os yw'n wahanol i e-bost mynychwr)
-ErrorSeveralCompaniesWithEmailContactUs=Several companies with this email has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
-ErrorSeveralCompaniesWithNameContactUs=Several companies with this name has been found so we can't validate automatically your registration. Please contact us at %s for a manual validation
+ErrorSeveralCompaniesWithEmailContactUs=Mae sawl cwmni sydd â'r e-bost hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni ar %s i gael dilysiad â llaw
+ErrorSeveralCompaniesWithNameContactUs=Mae sawl cwmni gyda'r enw hwn wedi'u canfod felly ni allwn ddilysu eich cofrestriad yn awtomatig. Cysylltwch â ni ar %s i gael dilysiad â llaw
 NoPublicActionsAllowedForThisEvent=Nid oes unrhyw gamau gweithredu cyhoeddus yn agored i'r cyhoedd ar gyfer y digwyddiad hwn
-MaxNbOfAttendees=Max number of attendees
-DateStartEvent=Event start date
-DateEndEvent=Event end date
-ModifyStatus=Modify status
-ConfirmModifyStatus=Confirm status modification
-ConfirmModifyStatusQuestion=Are you sure you want to modify the %s selected record(s)?
-RecordsUpdated = %s Records updated
-RecordUpdated = Record updated
-NoRecordUpdated = No Record updated
+MaxNbOfAttendees=Uchafswm nifer y mynychwyr
+DateStartEvent=Dyddiad cychwyn y digwyddiad
+DateEndEvent=Dyddiad gorffen y digwyddiad
+ModifyStatus=Addasu statws
+ConfirmModifyStatus=Cadarnhau addasiad statws
+ConfirmModifyStatusQuestion=A ydych yn siŵr eich bod am addasu'r %s cofnod(au) a ddewiswyd?
+RecordsUpdated=%s Diweddarwyd y cofnodion
+RecordUpdated=Cofnod wedi'i ddiweddaru
+NoRecordUpdated=Dim Cofnod wedi'i ddiweddaru
+ProfitPerValidatedAttendee=Profit per attendee

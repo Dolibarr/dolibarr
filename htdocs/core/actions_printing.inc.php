@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2014-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2014-2018 Frederic France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2014-2016  Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014-2024	Frédéric France      	<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +27,15 @@
 // $action must be defined
 // $db, $user, $conf, $langs must be defined
 // Filename to print must be provided into 'file' parameter
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ */
 // Print file
 if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 	$langs->load("printing");
@@ -47,8 +56,10 @@ if ($action == 'print_file' && $user->hasRight('printing', 'read')) {
 			require_once $classfile;
 			$classname = 'printing_'.$driver;
 			$printer = new $classname($db);
-			$langs->load($printer::LANGFILE);
-			//print '<pre>'.print_r($printer, true).'</pre>';
+			'@phan-var-force PrintingDriver $printer';
+			/** @var PrintingDriver $printer */
+			$langs->load('printing');
+			// print '<pre>'.print_r($printer, true).'</pre>';
 
 			if (getDolGlobalString($printer->active)) {
 				$printerfound++;

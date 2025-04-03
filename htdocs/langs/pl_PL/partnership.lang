@@ -91,8 +91,7 @@ CountLastUrlCheckError=Liczba błędów podczas ostatniego sprawdzania adresu UR
 LastCheckBacklink=Data ostatniego sprawdzenia adresu URL
 
 NewPartnershipRequest=Nowa prośba o partnerstwo
-NewPartnershipRequestDesc=Za pomocą tego formularza możesz złożyć wniosek o przyłączenie się do jednego z naszych programów partnerskich. Jeśli potrzebujesz pomocy w wypełnieniu tego formularza, skontaktuj się z nami e-mailem <b>%s<span class='notranslate'></b></ rozpiętość>.
+NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Ta strona musi zawierać co najmniej jeden link do jednej z następujących domen: %s
 
 IPOfApplicant=Adres IP wnioskodawcy
-

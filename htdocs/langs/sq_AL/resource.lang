@@ -9,31 +9,30 @@ ActionsOnResource=Ngjarjet rreth këtij burimi
 ResourcePageIndex=Lista e burimeve
 ResourceSingular=Burim
 ResourceCard=Karta e burimeve
+NewResource=Burim i ri
 AddResource=Krijo një burim
 ResourceFormLabel_ref=Emri i burimit
-ResourceType=Lloji i burimit
 ResourceFormLabel_description=Përshkrimi i burimit
-
+ResourceType=Lloji i burimit
+ResourceTypeID=Resource type ID
+ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Burimet e lidhura me elementin
 
 ShowResource=Trego burimin
-
 ResourceElementPage=Burimet e elementeve
 ResourceCreatedWithSuccess=Burimi u krijua me sukses
 RessourceLineSuccessfullyDeleted=Linja e burimit u fshi me sukses
 RessourceLineSuccessfullyUpdated=Linja e burimit u përditësua me sukses
 ResourceLinkedWithSuccess=Burim i lidhur me suksesin
-
 ConfirmDeleteResource=Konfirmo fshirjen e këtij burimi
 RessourceSuccessfullyDeleted=Burimi u fshi me sukses
 DictionaryResourceType=Lloji i burimeve
-
 SelectResource=Zgjidhni burimin
-
 IdResource=Burimi i identifikimit
 AssetNumber=Numer serial
 ResourceTypeCode=Kodi i llojit të burimit
 ImportDataset_resource_1=Burimet
-
 ErrorResourcesAlreadyInUse=Disa burime janë në përdorim
 ErrorResourceUseInEvent=%s përdoret në ngjarjen %s
+MaxUsers=Përdoruesit maksimalë (vendet, vendet, etj.)
+MaxUsersLabel=Përdoruesit maksimalë

@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,27 +35,69 @@ class ActionsCardProduct
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
 
+	/**
+	 * @var string
+	 */
 	public $name;
+	/**
+	 * @var string
+	 */
 	public $definition;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var string
+	 */
 	public $price_base_type;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code_sell;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code_buy;
+	/**
+	 * @var string
+	 */
 	public $fieldListName;
+	/**
+	 * @var string
+	 */
 	public $next_prev_filter;
 
-	//! Object container
+	/**
+	 * @var Product Object container
+	 */
 	public $object;
 
-	//! Template container
+	/**
+	 * @var array<string,mixed> Template container
+	 */
 	public $tpl = array();
 
-	// List of fiels for action=list
+	/**
+	 * array<array{id:int,name:string,alias:string,title:string,align:string,sort:string,search:string,visible:int<-2,5>,enabled:int<0,1>,order:int}> List of fields for action=list
+	 */
 	public $field_list = array();
 
 	/**
@@ -87,7 +131,7 @@ class ActionsCardProduct
 		$this->name = "product";
 		$this->definition = "Product canvas (default)";
 		$this->fieldListName    = "product_default";
-		$this->next_prev_filter = "canvas='product'";
+		$this->next_prev_filter = "canvas:=:'product'";
 	}
 
 
@@ -95,8 +139,8 @@ class ActionsCardProduct
 	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
-	 *    @param	string	$action    Type of action
-	 *    @param	integer	$id			Id of object
+	 *    @param	string	$action		Type of action
+	 *    @param	int		$id			Id of object
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
@@ -105,6 +149,9 @@ class ActionsCardProduct
 		// phpcs:enable
 		global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
+
+		'@phan-var-force Form $form';
+		'@phan-var-force FormProduct $formproduct';
 
 		$tmpobject = new Product($this->db);
 		if (!empty($id) || !empty($ref)) {
@@ -146,7 +193,7 @@ class ActionsCardProduct
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, '');
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, null);
 		}
 
 		if ($action == 'view') {
@@ -198,23 +245,23 @@ class ActionsCardProduct
 
 			// Finished
 			$statutarray = array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
-			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, $this->object->finished);
+			$this->tpl['finished'] = $form->selectarray('finished', $statutarray, (int) $this->object->finished);
 
 			// Weight
 			$this->tpl['weight'] = $this->object->weight;
-			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", $this->object->weight_units, 0, 2);
+			$this->tpl['weight_units'] = $formproduct->selectMeasuringUnits("weight_units", "weight", (string) $this->object->weight_units, 0, 2);
 
 			// Length
 			$this->tpl['length'] = $this->object->length;
-			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", $this->object->length_units, 0, 2);
+			$this->tpl['length_units'] = $formproduct->selectMeasuringUnits("length_units", "size", (string) $this->object->length_units, 0, 2);
 
 			// Surface
 			$this->tpl['surface'] = $this->object->surface;
-			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", $this->object->surface_units, 0, 2);
+			$this->tpl['surface_units'] = $formproduct->selectMeasuringUnits("surface_units", "surface", (string) $this->object->surface_units, 0, 2);
 
 			// Volume
 			$this->tpl['volume'] = $this->object->volume;
-			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", $this->object->volume_units, 0, 2);
+			$this->tpl['volume_units'] = $formproduct->selectMeasuringUnits("volume_units", "volume", (string) $this->object->volume_units, 0, 2);
 		}
 
 		if ($action == 'view') {
@@ -257,7 +304,7 @@ class ActionsCardProduct
 	 *
 	 *  @return	void
 	 */
-	private function getFieldListCanvas()
+	private function getFieldListCanvas() // @phpstan-ignore-line
 	{
 		global $conf, $langs;
 
@@ -289,7 +336,6 @@ class ActionsCardProduct
 				$fieldlist["visible"]	= $obj->visible;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
-
 				array_push($this->field_list, $fieldlist);
 
 				$i++;

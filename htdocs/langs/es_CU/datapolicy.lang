@@ -6,6 +6,3 @@ DATAPOLICY_TIERS_NIPROSPECT_NICLIENT =Ni prospecto/ni cliente
 DATAPOLICY_CONTACT_PROSPECT =Prospecto
 DATAPOLICY_CONTACT_PROSPECT_CLIENT =Prospecto/Cliente
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT =Ni prospecto/ni cliente
-DATAPOLICYMail =Configuración de correos electrónicos
-DATAPOLICY_POPUP_ANONYME_TEXTE =No puede eliminar este contacto de Dolibarr porque hay elementos relacionados. De acuerdo con el RGPD, harás anónimos todos estos datos para respetar tus obligaciones. Te gustaria continuar ?
-DATAPOLICY_PORTABILITE_CONFIRMATION =Quiere exportar los datos personales de este contacto. Está seguro ?

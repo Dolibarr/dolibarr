@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2011	Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011		Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	/**
 	 *    Constructor
 	 *
-	 *    @param	DoliDB	$db				Handler acces base de donnees
+	 *    @param	DoliDB	$db				Handler access base de donnees
 	 *    @param	string	$dirmodule		Name of directory of module
 	 *    @param	string	$targetmodule	Name of directory of module where canvas is stored
 	 *    @param	string	$canvas			Name of canvas
@@ -122,7 +123,7 @@ class ActionsCardCompany extends ActionsCardCommon
 			$this->tpl['select_companytype'] = $form->selectarray("typent_id", $formcompany->typent_array(0), $this->object->typent_id);
 
 			// Juridical Status
-			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_code);
+			$this->tpl['select_juridicalstatus'] = $formcompany->select_juridicalstatus($this->object->forme_juridique_code, $this->object->country_id);
 
 			// Workforce
 			$this->tpl['select_workforce'] = $form->selectarray("effectif_id", $formcompany->effectif_array(0), $this->object->effectif_id);
@@ -136,7 +137,7 @@ class ActionsCardCompany extends ActionsCardCommon
 					$s .= '<a href="#" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 					$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 				} else {
-					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+					$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", (string) $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 				}
 			} else {
 				$this->tpl['tva_intra'] = $s;
@@ -164,7 +165,7 @@ class ActionsCardCompany extends ActionsCardCommon
 						$s .= '<a href="#" onclick="CheckVAT(document.formsoc.tva_intra.value);">'.$langs->trans("VATIntraCheck").'</a>';
 						$this->tpl['tva_intra'] = $form->textwithpicto($s, $langs->trans("VATIntraCheckDesc", $langs->transnoentitiesnoconv("VATIntraCheck")), 1);
 					} else {
-						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
+						$this->tpl['tva_intra'] = $s.'<a href="'.$langs->transcountry("VATIntraCheckURL", (string) $this->object->country_id).'" target="_blank">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"), 'help').'</a>';
 					}
 				} else {
 					$this->tpl['tva_intra'] = $s;

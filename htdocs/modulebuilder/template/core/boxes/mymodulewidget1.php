@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2004-2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2023  Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) ---Put here your own copyright and developer email---
+/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,32 +50,17 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * @var string Box label (in configuration page)
 	 */
-	public $boxlabel;
+	public $boxlabel = 'MyWidget';
+
+	/**
+	 * @var string Box language file if it needs a specific language file.
+	 */
+	public $lang = 'mymodule@mymodule';
 
 	/**
 	 * @var string[] Module dependencies
 	 */
 	public $depends = array('mymodule');
-
-	/**
-	 * @var DoliDb Database handler
-	 */
-	public $db;
-
-	/**
-	 * @var mixed More parameters
-	 */
-	public $param;
-
-	/**
-	 * @var array Header informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_head = array();
-
-	/**
-	 * @var array Contents informations. Usually created at runtime by loadBox().
-	 */
-	public $info_box_contents = array();
 
 	/**
 	 * @var string 	Widget type ('graph' means the widget is a graph widget)
@@ -91,13 +76,9 @@ class mymodulewidget1 extends ModeleBoxes
 	 */
 	public function __construct(DoliDB $db, $param = '')
 	{
-		global $user, $conf, $langs;
-		// Translations
-		$langs->loadLangs(array("boxes", "mymodule@mymodule"));
+		global $user;
 
 		parent::__construct($db, $param);
-
-		$this->boxlabel = $langs->transnoentitiesnoconv("MyWidget");
 
 		$this->param = $param;
 
@@ -110,8 +91,8 @@ class mymodulewidget1 extends ModeleBoxes
 	/**
 	 * Load data into info_box_contents array to show array later. Called by Dolibarr before displaying the box.
 	 *
-	 * @param int $max Maximum number of records to load
-	 * @return void
+	 * @param	int<0,max>	$max	Maximum number of records to load
+	 * @return	void
 	 */
 	public function loadBox($max = 5)
 	{
@@ -128,7 +109,7 @@ class mymodulewidget1 extends ModeleBoxes
 			// Title text
 			'text' => $text,
 			// Add a link
-			'sublink' => 'http://example.com',
+			'sublink' => 'https://example.com',
 			// Sublink icon placed after the text
 			'subpicto' => 'object_mymodule@mymodule',
 			// Sublink icon HTML alt text
@@ -137,10 +118,10 @@ class mymodulewidget1 extends ModeleBoxes
 			'target' => '',
 			// HTML class attached to the picto and link
 			'subclass' => 'center',
-			// Limit and truncate with "…" the displayed text lenght, 0 = disabled
+			// Limit and truncate with "…" the displayed text length, 0 = disabled
 			'limit' => 0,
 			// Adds translated " (Graph)" to a hidden form value's input (?)
-			'graph' => false
+			'graph' => 0
 		);
 
 		// Populate the contents at runtime
@@ -155,12 +136,12 @@ class mymodulewidget1 extends ModeleBoxes
 					// Main text for content of cell
 					'text' => 'First cell of first line',
 					// Link on 'text' and 'logo' elements
-					'url' => 'http://example.com',
+					'url' => 'https://example.com',
 					// Link's target HTML property
 					'target' => '_blank',
 					// Fist line logo (deprecated. Include instead logo html code into text or text2, and set asis property to true to avoid HTML cleaning)
 					//'logo' => 'monmodule@monmodule',
-					// Unformatted text, added after text. Usefull to add/load javascript code
+					// Unformatted text, added after text. Useful to add/load javascript code
 					'textnoformat' => '',
 
 					// Main text for content of cell (other method)
@@ -169,9 +150,9 @@ class mymodulewidget1 extends ModeleBoxes
 					// Truncates 'text' element to the specified character length, 0 = disabled
 					'maxlength' => 0,
 					// Prevents HTML cleaning (and truncation)
-					'asis' => false,
+					'asis' => 0,
 					// Same for 'text2'
-					'asis2' => true
+					'asis2' => 0
 				),
 				1 => array( // Another column
 					// No TR for n≠0
@@ -202,13 +183,18 @@ class mymodulewidget1 extends ModeleBoxes
 		);
 	}
 
+
+
+
+
+
 	/**
-	 * Method to show box. Called by Dolibarr eatch time it wants to display the box.
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 * @param array $head       Array with properties of box title
-	 * @param array $contents   Array with properties of box lines
-	 * @param int   $nooutput   No print, only return string
-	 * @return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
+	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)
 	{

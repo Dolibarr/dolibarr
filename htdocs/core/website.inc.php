@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2017-2024  Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,8 +19,9 @@
 
 /**
  *	\file			htdocs/core/website.inc.php
- *  \brief			Common file loaded by all website pages (after master.inc.php). It set the new object $weblangs, using parameter 'l'.
- *  				This file is included in top of all container pages and is run only when a web page is called.
+ *  \brief			Common file loaded by all website pages (after master.inc.php). It sets the new object $weblangs.
+ *  				This file is included in top of all container pages (in edit mode, in dolibarr web server mode and in external web server mode).
+ *  				It is run only when a web page is called.
  *  			    The global variable $websitekey must be defined.
  */
 
@@ -46,7 +48,7 @@ if (isset($_SERVER["HTTP_USER_AGENT"]) && is_object($conf) && empty($conf->brows
 	}
 }
 // Define $website
-if (!is_object($website)) {
+if (is_null($website)) {
 	$website = new Website($db);
 	$website->fetch(0, $websitekey);
 }
@@ -57,20 +59,44 @@ if (empty($pageid) && !empty($websitepagefile)) {
 		$pageid = $website->fk_default_home;
 	}
 }
-if (!is_object($websitepage)) {
+if (is_null($websitepage)) {
 	$websitepage = new WebsitePage($db);
 }
 // Define $weblangs
-if (!is_object($weblangs)) {
+if (is_null($weblangs)) {
 	$weblangs = new Translate('', $conf);
 }
-if (!is_object($pagelangs)) {
+if (is_null($pagelangs)) {
 	$pagelangs = new Translate('', $conf);
 }
 if (!empty($pageid) && $pageid > 0) {
 	$websitepage->fetch($pageid);
 
-	$weblangs->setDefaultLang(GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : (empty($_COOKIE['weblangs-shortcode']) ? 'auto' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode'])));
+	// Rule to define weblang of visitor:
+	// 1 - Take parameter lang
+	// 2 - Cookie lang of website (set by a possible js lang selector)
+	// 3 - XX/... found in url page
+	// 4 - auto (so web browser lang)
+	$srclang = GETPOSTISSET('lang') ? GETPOST('lang', 'aZ09') : '';
+	if (empty($srclang)) {
+		$srclang = (empty($_COOKIE['weblangs-shortcode']) ? '' : preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['weblangs-shortcode']));
+	}
+	if (empty($srclang)) {
+		$reg = array();
+		// With Dolibarr server, url is in parameter pageref
+		if (defined('USEDOLIBARRSERVER') && !empty($_GET['pageref']) && preg_match('/^\/?(\w\w)\//', $_GET['pageref'], $reg) && $reg[1] != 'js') {	// We reuse $_GET['pageref'] because $pageref may have been cleaned already from the language code.
+			$srclang = $reg[1];
+		}
+		// With External server, url is in parameter pageref
+		if (defined('USEEXTERNALSERVER') && !empty($_SERVER['PHP_SELF']) && preg_match('/^\/?(\w\w)\//', $_SERVER['PHP_SELF'], $reg) && $reg[1] != 'js') {
+			$srclang = $reg[1];
+		}
+	}
+	if (empty($srclang)) {
+		$srclang= 'auto';
+	}
+	$weblangs->setDefaultLang($srclang);
+
 	$pagelangs->setDefaultLang($websitepage->lang ? $websitepage->lang : $weblangs->shortlang);
 
 	if (!defined('USEDOLIBARREDITOR') && (in_array($websitepage->type_container, array('menu', 'other')) || empty($websitepage->status) && !defined('USEDOLIBARRSERVER'))) {
@@ -108,7 +134,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	//header("X-XSS-Protection: 1");      		// XSS filtering protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
 
 	// Content-Security-Policy-Report-Only
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCECSPRO')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCECSPRO')) {
 		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
 		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
@@ -119,7 +145,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		//
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
-		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSPRO');
+		$contentsecuritypolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCECSPRO');
 
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -141,7 +167,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	}
 
 	// Content-Security-Policy
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCECSP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCECSP')) {
 		// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
 		// For example: to restrict to only local resources, except for css (cloudflare+google), and js (transifex + google tags) and object/iframe (youtube)
 		// default-src 'self'; style-src: https://cdnjs.cloudflare.com https://fonts.googleapis.com; script-src: https://cdn.transifex.com https://www.googletagmanager.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: *;
@@ -152,7 +178,7 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 		//
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src 'self' 'unsafe-inline' 'unsafe-eval' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com;";
 		// $contentsecuritypolicy = "frame-ancestors 'self'; img-src * data:; font-src *; default-src *; script-src 'self' 'unsafe-inline' *.paypal.com *.stripe.com *.google.com *.googleapis.com *.google-analytics.com *.googletagmanager.com; style-src 'self' 'unsafe-inline'; connect-src 'self';";
-		$contentsecuritypolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCECSP');
+		$contentsecuritypolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCECSP');
 
 		if (!is_object($hookmanager)) {
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
@@ -174,32 +200,32 @@ if (!defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {
 	}
 
 	// Referrer-Policy
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCERP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCERP')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCERP should never be defined by page, but the variable used just after may be
 
 		// For public web sites, we use the same default value than "strict-origin-when-cross-origin"
-		$referrerpolicy = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCERP', "strict-origin-when-cross-origin");
+		$referrerpolicy = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCERP', "strict-origin-when-cross-origin");
 
 		header("Referrer-Policy: ".$referrerpolicy);
 	}
 
 	// Strict-Transport-Security
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCESTS')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCESTS')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCESTS should never be defined by page, but the variable used just after may be
 
 		// Example: "max-age=31536000; includeSubDomains"
-		$sts = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCESTS');
+		$sts = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCESTS');
 		if (!empty($sts)) {
 			header("Strict-Transport-Security: ".$sts);
 		}
 	}
 
 	// Permissions-Policy (old name was Feature-Policy)
-	if (!defined('WEBSITE_MAIN_SECURITY_FORCEPP')) {
+	if (!defined('WEBSITE_'.$website->id.'_SECURITY_FORCEPP')) {
 		// The constant WEBSITE_MAIN_SECURITY_FORCEPP should never be defined by page, but the variable used just after may be
 
 		// Example: "camera: 'none'; microphone: 'none';"
-		$pp = getDolGlobalString('WEBSITE_MAIN_SECURITY_FORCEPP');
+		$pp = getDolGlobalString('WEBSITE_'.$website->id.'_SECURITY_FORCEPP');
 		if (!empty($pp)) {
 			header("Permissions-Policy: ".$pp);
 		}
@@ -263,3 +289,22 @@ if (!defined('USEDOLIBARREDITOR') && empty($website->status)) {
 	print '<center><br><br>'.$weblangs->trans("SorryWebsiteIsCurrentlyOffLine").'</center>';
 	exit;
 }
+
+
+// Get session info and obfuscate session cookie and other variables
+$prefix = dol_getprefix('');
+$sessionname = 'DOLSESSID_'.$prefix;
+//$savsessionid = $_COOKIE[$sessionname];
+
+$_COOKIE[$sessionname] = 'obfuscatedcookie';
+unset($conf->file->instance_unique_id);
+
+unset($dolibarr_main_instance_unique_id);
+unset($dolibarr_main_db_host);
+unset($dolibarr_main_db_port);
+unset($dolibarr_main_db_name);
+unset($dolibarr_main_db_user);
+unset($dolibarr_main_db_pass);
+unset($dolibarr_main_db_type);
+unset($dolibarr_main_document_root);
+unset($dolibarr_main_document_root_alt);

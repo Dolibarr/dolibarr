@@ -1,11 +1,13 @@
 <?php
+
 /* Copyright (C) 2002-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004       Eric Seigne				<eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2016  Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +25,8 @@
 
 /**
  *	\file       htdocs/compta/facture/prelevement.php
- *	\ingroup    facture
- *	\brief      Management of direct debit order or credit tranfer of invoices
+ *	\ingroup    invoice
+ *	\brief      Management of direct debit order or credit transfer of invoices
  */
 
 // Load Dolibarr environment
@@ -38,13 +40,25 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 
-$id = (GETPOST('id', 'int') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid')); // For backward compatibility
 $ref = GETPOST('ref', 'alpha');
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
 $type = GETPOST('type', 'aZ09');
 
@@ -62,9 +76,10 @@ if ($type == 'bank-transfer') {
 }
 
 // Load object
+$isdraft = 1;
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
-	$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+	$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 	if ($ret > 0) {
 		$object->fetch_thirdparty();
 	}
@@ -114,7 +129,10 @@ if (empty($reshook)) {
 			}
 			$paymentservice = GETPOST('paymentservice');
 
-			$result = $object->demande_prelevement($user, price2num(GETPOST('withdraw_request_amount', 'alpha')), $newtype, $sourcetype);
+			// Get chosen iban id
+			$iban = GETPOSTINT('accountcustomerid');
+			$amount = GETPOST('withdraw_request_amount', 'alpha');
+			$result = $object->demande_prelevement($user, (float) price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -130,7 +148,7 @@ if (empty($reshook)) {
 
 	if ($action == "delete" && $usercancreate) {
 		if ($object->id > 0) {
-			$result = $object->demande_prelevement_delete($user, GETPOST('did', 'int'));
+			$result = $object->demande_prelevement_delete($user, GETPOSTINT('did'));
 			if ($result == 0) {
 				header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.'&type='.$type);
 				exit;
@@ -140,13 +158,13 @@ if (empty($reshook)) {
 
 	// Make payment with Direct Debit Stripe
 	if ($action == 'sepastripedirectdebit' && $usercancreate) {
-		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'direct-debit', 'facture');
+		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'direct-debit', 'facture');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
 			// We refresh object data
 			$ret = $object->fetch($id, $ref);
-			$isdraft = (($object->statut == Facture::STATUS_DRAFT) ? 1 : 0);
+			$isdraft = (($object->status == Facture::STATUS_DRAFT) ? 1 : 0);
 			if ($ret > 0) {
 				$object->fetch_thirdparty();
 			}
@@ -155,13 +173,13 @@ if (empty($reshook)) {
 
 	// Make payment with Direct Debit Stripe
 	if ($action == 'sepastripecredittransfer' && $usercancreate) {
-		$result = $object->makeStripeSepaRequest($user, GETPOST('did', 'int'), 'bank-transfer', 'supplier_invoice');
+		$result = $object->makeStripeSepaRequest($user, GETPOSTINT('did'), 'bank-transfer', 'supplier_invoice');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
 		} else {
 			// We refresh object data
 			$ret = $object->fetch($id, $ref);
-			$isdraft = (($object->statut == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
+			$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
 			if ($ret > 0) {
 				$object->fetch_thirdparty();
 			}
@@ -179,7 +197,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		if (!$error) {
-			$result = $object->setPaymentTerms(GETPOST('cond_reglement_id', 'int'));
+			$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'));
 			if ($result < 0) {
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -209,10 +227,10 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'setmode' && $usercancreate) {
 		// payment mode
-		$result = $object->setPaymentMethods(GETPOST('mode_reglement_id', 'int'));
+		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 	} elseif ($action == 'setdatef' && $usercancreate) {
-		$newdate = dol_mktime(0, 0, 0, GETPOST('datefmonth', 'int'), GETPOST('datefday', 'int'), GETPOST('datefyear', 'int'), 'tzserver');
-		if ($newdate > (dol_now('tzuserrel') + (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY') ? 0 : $conf->global->INVOICE_MAX_FUTURE_DELAY))) {
+		$newdate = dol_mktime(0, 0, 0, GETPOSTINT('datefmonth'), GETPOSTINT('datefday'), GETPOSTINT('datefyear'), 'tzserver');
+		if ($newdate > (dol_now('tzuserrel') + getDolGlobalInt('INVOICE_MAX_FUTURE_DELAY'))) {
 			if (!getDolGlobalString('INVOICE_MAX_FUTURE_DELAY')) {
 				setEventMessages($langs->trans("WarningInvoiceDateInFuture"), null, 'warnings');
 			} else {
@@ -234,7 +252,7 @@ if (empty($reshook)) {
 			dol_print_error($db, $object->error);
 		}
 	} elseif ($action == 'setdate_lim_reglement' && $usercancreate) {
-		$object->date_echeance = dol_mktime(12, 0, 0, GETPOST('date_lim_reglementmonth', 'int'), GETPOST('date_lim_reglementday', 'int'), GETPOST('date_lim_reglementyear', 'int'));
+		$object->date_echeance = dol_mktime(12, 0, 0, GETPOSTINT('date_lim_reglementmonth'), GETPOSTINT('date_lim_reglementday'), GETPOSTINT('date_lim_reglementyear'));
 		if (!empty($object->date_echeance) && $object->date_echeance < $object->date) {
 			$object->date_echeance = $object->date;
 			setEventMessages($langs->trans("DatePaymentTermCantBeLowerThanObjectDate"), null, 'warnings');
@@ -280,41 +298,42 @@ if ($object->id > 0) {
 	//$resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
-	if ($object->paye) {
+	if ($object->paid) {
 		$resteapayer = 0;
 	}
-	$resteapayeraffiche = $resteapayer;
 
 	if ($type == 'bank-transfer') {
 		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Not recommended
-			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 
-		$absolute_discount = $object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+		$absolute_discount = $object->thirdparty->getAvailableDiscounts(null, $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts(null, $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	} else {
 		if (getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Not recommended
-			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
-			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+			$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
+			$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be subtracted to payments only and not to total of final invoice
 		} else {
 			$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		$absolute_discount = $object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount = $object->thirdparty->getAvailableDiscounts(null, $filterabsolutediscount);
+		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts(null, $filtercreditnote);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	}
 
 	$author = new User($db);
-	if ($object->fk_user_author) {
+	if (!empty($object->user_creation_id)) {
+		$author->fetch($object->user_creation_id);
+	} elseif (!empty($object->fk_user_author)) {	// For backward compatibility
 		$author->fetch($object->fk_user_author);
 	}
 
@@ -329,28 +348,8 @@ if ($object->id > 0) {
 	$numclosed = 0;
 
 	// How many Direct debit or Credit transfer open requests ?
-
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite";
-	$sql .= " , pfd.amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
-	} else {
-		$sql .= " WHERE fk_facture = ".((int) $object->id);
-	}
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.type = 'ban'";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$numopen = $num;
-	} else {
-		dol_print_error($db);
-	}
-
+	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
+	$numopen = count($listofopendirectdebitorcredittransfer);
 
 	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
@@ -364,21 +363,21 @@ if ($object->id > 0) {
 	$morehtmlref = '<div class="refidno">';
 	// Ref customer
 	if ($type == 'bank-transfer') {
-		$morehtmlref .= $form->editfieldkey("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefSupplier", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefSupplierBill", 'ref_supplier', $object->ref_supplier, $object, 0, 'string', '', null, null, '', 1);
 	} else {
-		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
-		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
+		$morehtmlref .= $form->editfieldkey("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', 0, 1);
+		$morehtmlref .= $form->editfieldval("RefCustomer", 'ref_client', $object->ref_customer, $object, 0, 'string', '', null, null, '', 1);
 	}
 	// Thirdparty
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	if ($type == 'bank-transfer') {
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 	} else {
 		if (!getDolGlobalString('MAIN_DISABLE_OTHER_LINK') && $object->thirdparty->id > 0) {
-			$morehtmlref .= ' (<a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)';
+			$morehtmlref .= ' <div class="inline-block valignmiddle">(<a class="valignmiddle" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->thirdparty->id.'&search_company='.urlencode($object->thirdparty->name).'">'.$langs->trans("OtherBills").'</a>)</div>';
 		}
 	}
 	// Project
@@ -390,7 +389,7 @@ if ($object->id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -441,17 +440,19 @@ if ($object->id > 0) {
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 	}
 
-	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0) {
+	// Retrieve credit note ids
+	$object->getListIdAvoirFromInvoice();
+
+	if (!empty($object->creditnote_ids)) {
 		$invoicecredits = array();
-		foreach ($facidavoir as $facid) {
+		foreach ($object->creditnote_ids as $invoiceid) {
 			if ($type == 'bank-transfer') {
-				$facavoir = new FactureFournisseur($db);
+				$creditnote = new FactureFournisseur($db);
 			} else {
-				$facavoir = new Facture($db);
+				$creditnote = new Facture($db);
 			}
-			$facavoir->fetch($facid);
-			$invoicecredits[] = $facavoir->getNomUrl(1);
+			$creditnote->fetch($invoiceid);
+			$invoicecredits[] = $creditnote->getNomUrl(1);
 		}
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir");
 		print ' '. (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
@@ -528,9 +529,9 @@ if ($object->id > 0) {
 	print '</td><td colspan="3">';
 	if ($object->type != $object::TYPE_CREDIT_NOTE) {
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'none');
 		}
 	} else {
 		print '&nbsp;';
@@ -581,9 +582,9 @@ if ($object->id > 0) {
 		$filtertype = 'DBIT';
 	}
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
 
@@ -598,102 +599,103 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 	}
-	print "</td>";
+	print '</td>';
+	print '</tr>';
+	print '</table>';
+	print '</div>';
+
+	print '<div class="fichehalfright">';
+	print '<!-- amounts -->'."\n";
+	print '<div class="underbanner clearboth"></div>'."\n";
+
+	print '<table class="border tableforfield centpercent">';
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
+
+	$sign = 1;
+	if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && $object->type == $object::TYPE_CREDIT_NOTE) {
+		$sign = -1; // We invert sign for output
+	}
+	print '<tr>';
+	// Amount HT
+	print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		// Multicurrency Amount HT
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
 	print '</tr>';
 
-	// IBAN of seller or supplier
-	$title = 'CustomerIBAN';
-	if ($type == 'bank-transfer') {
-		$title = 'SupplierIBAN';
-	}
-	print '<tr><td>'.$langs->trans($title).'</td><td colspan="3">';
-
-	$bac = new CompanyBankAccount($db);
-	$bac->fetch(0, $object->thirdparty->id);
-
-	print $bac->iban.(($bac->iban && $bac->bic) ? ' / ' : '').$bac->bic;
-	if (!empty($bac->iban)) {
-		if ($bac->verif() <= 0) {
-			print img_warning('Error on default bank number for IBAN : '.$bac->error);
-		}
-	} else {
-		if ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-			print img_warning($langs->trans("NoDefaultIBANFound"));
-		}
-	}
-
-	print '</td></tr>';
-
-	print '</table>';
-
-	print '</div>';
-	print '<div class="fichehalfright">';
-	print '<div class="underbanner clearboth"></div>';
-
-	print '<table class="border centpercent tableforfield">';
-
-	if (isModEnabled('multicurrency') && ($object->multicurrency_code != $conf->currency)) {
-		// Multicurrency Amount HT
-		print '<tr><td class="titlefieldmiddle">'.$form->editfieldkey('MulticurrencyAmountHT', 'multicurrency_total_ht', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_ht, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-		print '</tr>';
-
+	print '<tr>';
+	// Amount VAT
+	print '<td>' . $langs->trans('AmountVAT') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 		// Multicurrency Amount VAT
-		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountVAT', 'multicurrency_total_tva', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_tva, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-		print '</tr>';
-
-		// Multicurrency Amount TTC
-		print '<tr><td>'.$form->editfieldkey('MulticurrencyAmountTTC', 'multicurrency_total_ttc', '', $object, 0).'</td>';
-		print '<td class="nowrap">'.price($object->multicurrency_total_ttc, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).'</td>';
-		print '</tr>';
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 	}
-
-	// Amount
-	print '<tr><td class="titlefield">'.$langs->trans('AmountHT').'</td>';
-	print '<td class="nowrap">'.price($object->total_ht, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-
-	// Vat
-	print '<tr><td>'.$langs->trans('AmountVAT').'</td><td colspan="3" class="nowrap">'.price($object->total_tva, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
 	print '</tr>';
 
 	// Amount Local Taxes
-	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
-		print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-		print '<td class="nowrap">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) {
+		print '<tr>';
+		print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($sign * $object->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			$object->multicurrency_total_localtax1 = (float) price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
+
+			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
+		print '</tr>';
 	}
-	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) { 	// Localtax2
-		print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-		print '<td class=nowrap">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+
+	if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) {
+		print '<tr>';
+		print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+		print '<td class="nowrap amountcard right">' . price($sign * $object->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			$object->multicurrency_total_localtax2 = (float) price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
+
+			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
+		print '</tr>';
 	}
 
 	// Revenue stamp
 	if ($selleruserevenustamp) { 	// Test company use revenue stamp
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('RevenueStamp');
 		print '</td>';
 		if ($action != 'editrevenuestamp' && $object->status == $object::STATUS_DRAFT && $user->hasRight('facture', 'creer')) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
 		}
 		print '</tr></table>';
-		print '</td><td>';
+		print '</td><td class="nowrap right">';
 		print price($object->revenuestamp, 1, '', 1, - 1, - 1, $conf->currency);
 		print '</td></tr>';
 	}
 
-	// Total with tax
-	print '<tr><td>'.$langs->trans('AmountTTC').'</td><td class="nowrap">'.price($object->total_ttc, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr>';
+	// Amount TTC
+	print '<td>' . $langs->trans('AmountTTC') . '</td>';
+	print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		// Multicurrency Amount TTC
+		print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+	}
+	print '</tr>';
+
 
 	$resteapayer = price2num($object->total_ttc - $totalpaid - $totalcreditnotes - $totaldeposits, 'MT');
 
 	// Hook to change amount for other reasons, e.g. apply cash discount for payment before agreed date
 	$parameters = array('remaintopay' => $resteapayer);
-	$reshook = $hookmanager->executeHooks('finalizeAmountOfSupplierInvoice', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+	$reshook = $hookmanager->executeHooks('finalizeAmountOfInvoice', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook > 0) {
 		print $hookmanager->resPrint;
 		if (!empty($remaintopay = $hookmanager->resArray['remaintopay'])) {
@@ -702,7 +704,11 @@ if ($object->id > 0) {
 	}
 
 	// TODO Replace this by an include with same code to show already done payment visible in invoice card
-	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans('RemainderToPay').'</td><td class="nowrap right">'.price($resteapayer, 1, '', 1, - 1, - 1, $conf->currency).'</td>';
+	if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+		print '<td></td>';
+	}
+	print '</tr>';
 
 	print '</table>';
 
@@ -752,25 +758,76 @@ if ($object->id > 0) {
 	}
 
 	// Add a transfer request
-	if ($object->statut > $object::STATUS_DRAFT && $object->paye == 0 && $num == 0) {
+	if ($object->status > $object::STATUS_DRAFT && $object->paid == 0 && $num == 0) {
 		if ($resteapayer > 0) {
 			if ($user_perms) {
 				$remaintopaylesspendingdebit = $resteapayer - $pending;
 
-				print '<form method="POST" action="">';
+				$title = $langs->trans("NewStandingOrder");
+				if ($type == 'bank-transfer') {
+					$title = $langs->trans("NewPaymentByBankTransfer");
+				}
+
+				print '<!-- form to select BAN -->';
+				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
 				print '<input type="hidden" name="type" value="'.$type.'" />';
 				print '<input type="hidden" name="action" value="new" />';
-				print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
-				print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-				print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+
+				print '<div class="center formconsumeproduce">';
+
+				print $langs->trans('CustomerIBAN').' ';
+
+				// if societe rib in model invoice, we preselect it
+				$selectedRib = '';
+				if ($object->element == 'invoice' && $object->fk_fac_rec_source) {
+					$facturerec = new FactureRec($db);
+					$facturerec->fetch($object->fk_fac_rec_source);
+					if ($facturerec->fk_societe_rib) {
+						$companyBankAccount = new CompanyBankAccount($db);
+						$res = $companyBankAccount->fetch($facturerec->fk_societe_rib);
+						$selectedRib = $companyBankAccount->id;
+					}
+				}
+
+				$selectedRib = $form->selectRib($selectedRib, 'accountcustomerid', 'fk_soc='.$object->socid, 1, '', 1);
+
+				$defaultRibId = $object->thirdparty->getDefaultRib();
+				if ($defaultRibId) {
+					$companyBankAccount = new CompanyBankAccount($db);
+					$res = $companyBankAccount->fetch($defaultRibId);
+					if ($res > 0 && !$companyBankAccount->verif()) {
+						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
+					}
+				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
+					print img_warning($langs->trans("NoDefaultIBANFound"));
+				}
+
+
+				// Bank Transfer Amount
+				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
+				if ($type == 'bank-transfer') {
+					print $langs->trans('BankTransferAmount');
+				} else {
+					print $langs->trans("WithdrawRequestAmount");
+				}
+				print '</label> ';
+				print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
+
+				// Button
+				print '<br><br>';
+				print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
+				print '<br><br>';
+
+				print '</div>';
+
 				print '</form>';
 
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
-					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediatly..."
+					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
 					print "<br>";
-					//add stripe sepa button
+					// Add stripe sepa button
 					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
 					print '<form method="POST" action="">';
 					print '<input type="hidden" name="token" value="'.newToken().'" />';
@@ -780,7 +837,7 @@ if ($object->id > 0) {
 					print '<input type="hidden" name="paymenservice" value="stripesepa" />';
 					print '<label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').' </label>';
 					print '<input type="text" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'" size="9" />';
-					print '<input type="submit" class="butAction" value="'.$buttonlabel.'" />';
+					print '<input type="submit" class="butAction small" value="'.$buttonlabel.'" />';
 					print '</form>';
 				}
 			} else {
@@ -791,7 +848,7 @@ if ($object->id > 0) {
 		}
 	} else {
 		if ($num == 0) {
-			if ($object->statut > $object::STATUS_DRAFT) {
+			if ($object->status > $object::STATUS_DRAFT) {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("AlreadyPaid")).'">'.$buttonlabel.'</a>';
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("Draft")).'">'.$buttonlabel.'</a>';
@@ -805,19 +862,19 @@ if ($object->id > 0) {
 
 
 	if ($type == 'bank-transfer') {
-		print '<div class="opacitymedium">'.$langs->trans("DoCreditTransferBeforePayments");
+		print '<div class="opacitymedium justify">'.$langs->trans("DoCreditTransferBeforePayments");
 		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
-		print '</div><br>';
+		print '</div><br><br>';
 	} else {
-		print '<div class="opacitymedium">'.$langs->trans("DoStandingOrdersBeforePayments");
+		print '<div class="opacitymedium justify">'.$langs->trans("DoStandingOrdersBeforePayments");
 		if (isModEnabled('stripe') && getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT')) {
 			print ' '.$langs->trans("DoStandingOrdersBeforePayments2");
 		}
 		print ' '.$langs->trans("DoStandingOrdersBeforePayments3");
-		print '</div><br>';
+		print '</div><br><br>';
 	}
 
 	/*
@@ -835,11 +892,12 @@ if ($object->id > 0) {
 	print '<td class="left">'.$langs->trans("DateRequest").'</td>';
 	print '<td>'.$langs->trans("User").'</td>';
 	print '<td class="center">'.$langs->trans("Amount").'</td>';
+	print '<td class="center">'.$langs->trans("IBAN").'</td>';
 	print '<td class="center">'.$langs->trans("DateProcess").'</td>';
 	if ($type == 'bank-transfer') {
-		print '<td class="center">'.$langs->trans("BankTransferReceipt").'</td>';
+		print '<td class="">'.$langs->trans("BankTransferReceipt").'</td>';
 	} else {
-		print '<td class="center">'.$langs->trans("WithdrawalReceipt").'</td>';
+		print '<td class="">'.$langs->trans("WithdrawalReceipt").'</td>';
 	}
 	print '<td>&nbsp;</td>';
 	// Action column
@@ -851,10 +909,12 @@ if ($object->id > 0) {
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande,";
 	$sql .= " pfd.date_traite as date_traite, pfd.amount, pfd.fk_prelevement_bons,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status,";
+	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
+	$sql .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".$db->prefix()."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".$db->prefix()."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".$db->prefix()."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -872,7 +932,7 @@ if ($object->id > 0) {
 
 		$tmpuser = new User($db);
 
-		$num = $db->num_rows($result);
+		$num = $db->num_rows($resql);
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
@@ -906,6 +966,15 @@ if ($object->id > 0) {
 
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
+
+			// Iban
+			print '<td class="center"><span class="iban">';
+			print dolDecrypt($obj->iban);
+			if ($obj->iban && $obj->bic) {
+				print " / ";
+			}
+			print $obj->bic;
+			print '</span></td>';
 
 			// Date process
 			print '<td class="center"><span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span></td>';
@@ -946,8 +1015,10 @@ if ($object->id > 0) {
 			}
 			print '</td>';
 
-			//
-			print '<td class="center">-</td>';
+			// Withraw ref
+			print '<td class="">';
+			//print '<span class="opacitymedium">'.$langs->trans("OrderWaiting").'</span>';
+			print '</td>';
 
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -971,10 +1042,12 @@ if ($object->id > 0) {
 
 	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
-	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on pfd.fk_user_demande = u.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
+	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
+	$sql .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+	$sql .= " LEFT JOIN ".$db->prefix()."user as u on pfd.fk_user_demande = u.rowid";
+	$sql .= " LEFT JOIN ".$db->prefix()."prelevement_bons as pb ON pb.rowid = pfd.fk_prelevement_bons";
+	$sql .= " LEFT JOIN ".$db->prefix()."societe_rib as sr ON sr.rowid = pfd.fk_societe_rib";
 	if ($type == 'bank-transfer') {
 		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
 	} else {
@@ -1013,7 +1086,7 @@ if ($object->id > 0) {
 			}
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
 
 			// User
 			print '<td class="tdoverflowmax125">';
@@ -1023,11 +1096,20 @@ if ($object->id > 0) {
 			// Amount
 			print '<td class="center"><span class="amount">'.price($obj->amount).'</span></td>';
 
+			// Iban
+			print '<td class="center"><span class="iban">';
+			print dolDecrypt($obj->iban);
+			if ($obj->iban && $obj->bic) {
+				print " / ";
+			}
+			print $obj->bic;
+			print '</span></td>';
+
 			// Date process
 			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->date_traite), 'dayhour', 'tzuserrel')."</td>\n";
 
 			// Link to payment request done
-			print '<td class="center minwidth75">';
+			print '<td class="minwidth75">';
 			if ($obj->fk_prelevement_bons > 0) {
 				$withdrawreceipt = new BonPrelevement($db);
 				$withdrawreceipt->id = $obj->fk_prelevement_bons;
@@ -1074,7 +1156,7 @@ if ($object->id > 0) {
 		}
 
 		if (!$numopen && !$numclosed) {
-			print '<tr class="oddeven"><td colspan="7"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
+			print '<tr class="oddeven"><td colspan="8"><span class="opacitymedium">'.$langs->trans("None").'</span></td></tr>';
 		}
 
 		$db->free($resql);

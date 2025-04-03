@@ -2,6 +2,8 @@
 /* Copyright (C) 2012-2013	Christophe Battarel	<christophe.battarel@altairis.fr>
  * Copyright (C) 2014		Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +32,24 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $mesg = '';
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -50,7 +60,7 @@ if (!$sortorder) {
 	$sortorder = "ASC";
 }
 if ($user->hasRight('margins', 'read', 'all')) {
-	$agentid = GETPOST('agentid', 'int');
+	$agentid = GETPOSTINT('agentid');
 } else {
 	$agentid = $user->id;
 }
@@ -64,12 +74,12 @@ if (!$sortfield) {
 
 $startdate = $enddate = '';
 
-$startdateday   = GETPOST('startdateday', 'int');
-$startdatemonth = GETPOST('startdatemonth', 'int');
-$startdateyear  = GETPOST('startdateyear', 'int');
-$enddateday     = GETPOST('enddateday', 'int');
-$enddatemonth   = GETPOST('enddatemonth', 'int');
-$enddateyear    = GETPOST('enddateyear', 'int');
+$startdateday   = GETPOSTINT('startdateday');
+$startdatemonth = GETPOSTINT('startdatemonth');
+$startdateyear  = GETPOSTINT('startdateyear');
+$enddateday     = GETPOSTINT('enddateday');
+$enddatemonth   = GETPOSTINT('enddatemonth');
+$enddateyear    = GETPOSTINT('enddateyear');
 
 if (!empty($startdatemonth)) {
 	$startdate = dol_mktime(0, 0, 0, $startdatemonth, $startdateday, $startdateyear);
@@ -78,12 +88,13 @@ if (!empty($enddatemonth)) {
 	$enddate = dol_mktime(23, 59, 59, $enddatemonth, $enddateday, $enddateyear);
 }
 
+$hookmanager->initHooks(array('marginagentlist'));
+
 // Security check
 $result = restrictedArea($user, 'margins');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $object = new User($db);
-$hookmanager->initHooks(array('marginagentlist'));
 
 /*
  * Actions
@@ -103,7 +114,7 @@ $invoicestatic = new Facture($db);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"));
+llxHeader('', $langs->trans("Margins").' - '.$langs->trans("Agents"), '', '', 0, 0, '', '', '', 'mod-margin page-agentmargins');
 
 $text = $langs->trans("Margins");
 //print load_fiche_titre($text);
@@ -123,17 +134,17 @@ print '<table class="border centpercent">';
 
 print '<tr><td class="titlefield">'.$langs->trans('ContactOfInvoice').'</td>';
 print '<td class="maxwidthonsmartphone" colspan="4">';
-print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, '', $user->hasRight('margins', 'read', 'all') ? 0 : 1, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print img_picto('', 'user').$form->select_dolusers($agentid, 'agentid', 1, null, $user->hasRight('margins', 'read', 'all') ? 0 : 1, '', '', '0', 0, 0, '', 0, '', 'maxwidth300');
 print '</td></tr>';
 
 // Start date
 print '<td>'.$langs->trans('DateStart').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($startdate, 'startdate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($startdate, 'startdate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td>'.$langs->trans('DateEnd').' ('.$langs->trans("DateValidation").')</td>';
 print '<td>';
-print $form->selectDate($enddate, 'enddate', '', '', 1, "sel", 1, 1);
+print $form->selectDate($enddate, 'enddate', 0, 0, 1, "sel", 1, 1);
 print '</td>';
 print '<td style="text-align: center;">';
 print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Refresh')).'" />';
@@ -188,7 +199,7 @@ if (!empty($enddate)) {
 }
 $sql .= " AND d.buy_price_ht IS NOT NULL";
 // We should not use this here. Option ForceBuyingPriceIfNull should have effect only when inserting data. Once data is recorded, it must be used as it is for report.
-// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredicable.
+// We keep it with value ForceBuyingPriceIfNull = 2 for retroactive effect but results are unpredictable.
 if (getDolGlobalInt('ForceBuyingPriceIfNull') == 2) {
 	$sql .= " AND d.buy_price_ht <> 0";
 }
@@ -205,25 +216,25 @@ print '<span class="opacitymedium">'.$langs->trans("MarginPerSaleRepresentativeW
 
 $param = '';
 if (!empty($agentid)) {
-	$param .= "&amp;agentid=".urlencode($agentid);
+	$param .= "&amp;agentid=".urlencode((string) $agentid);
 }
 if (!empty($startdateday)) {
-	$param .= "&amp;startdateday=".urlencode($startdateday);
+	$param .= "&amp;startdateday=".urlencode((string) ($startdateday));
 }
 if (!empty($startdatemonth)) {
-	$param .= "&amp;startdatemonth=".urlencode($startdatemonth);
+	$param .= "&amp;startdatemonth=".urlencode((string) ($startdatemonth));
 }
 if (!empty($startdateyear)) {
-	$param .= "&amp;startdateyear=".urlencode($startdateyear);
+	$param .= "&amp;startdateyear=".urlencode((string) ($startdateyear));
 }
 if (!empty($enddateday)) {
-	$param .= "&amp;enddateday=".urlencode($enddateday);
+	$param .= "&amp;enddateday=".urlencode((string) ($enddateday));
 }
 if (!empty($enddatemonth)) {
-	$param .= "&amp;enddatemonth=".urlencode($enddatemonth);
+	$param .= "&amp;enddatemonth=".urlencode((string) ($enddatemonth));
 }
 if (!empty($enddateyear)) {
-	$param .= "&amp;enddateyear=".urlencode($enddateyear);
+	$param .= "&amp;enddateyear=".urlencode((string) ($enddateyear));
 }
 
 $totalMargin = 0;
@@ -235,6 +246,7 @@ if ($result) {
 	$num = $db->num_rows($result);
 
 	print '<br>';
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition, PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans("MarginDetails"), $page, $_SERVER["PHP_SELF"], "", $sortfield, $sortorder, '', $num, $num, '', 0, '', '', 0, 1);
 
 	if (getDolGlobalString('MARGIN_TYPE') == "1") {
@@ -247,7 +259,7 @@ if ($result) {
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable noborder nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	print '<tr class="liste_titre">';
 	if ($agentid > 0) {
@@ -333,8 +345,8 @@ if ($result) {
 
 			print '<tr class="oddeven">';
 			print "<td>".$group_array['htmlname']."</td>\n";
-			print '<td class="nowrap right"><span class="amount">'.price(price2num($pv, 'MT')).'</span></td>';
-			print '<td class="nowrap right"><span class="amount">'.price(price2num($pa, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num((float) $pv, 'MT')).'</span></td>';
+			print '<td class="nowrap right"><span class="amount">'.price(price2num((float) $pa, 'MT')).'</span></td>';
 			print '<td class="nowrap right"><span class="amount">'.price(price2num($marge, 'MT')).'</span></td>';
 			if (getDolGlobalString('DISPLAY_MARGIN_RATES')) {
 				print '<td class="nowrap right">'.(($marginRate === '') ? 'n/a' : price(price2num($marginRate, 'MT'))."%").'</td>';

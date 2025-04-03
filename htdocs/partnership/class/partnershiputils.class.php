@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2021 NextGestion  <contact@nextgestion.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,17 +39,29 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
  */
 class PartnershipUtils
 {
+	/**
+	 * @var DoliDB
+	 */
 	public $db; //!< To store db handler
+	/**
+	 * @var string
+	 */
 	public $error; //!< To return error code (or message)
+	/**
+	 * @var string[]
+	 */
 	public $errors = array(); //!< To return several error codes (or messages)
 
-	public $output;	// To store output of some cron methods
+	/**
+	 * @var string To store output of some cron methods
+	 */
+	public $output;
 
 
 	/**
 	 *  Constructor
 	 *
-	 *  @param	DoliDb		$db      Database handler
+	 *  @param	DoliDB		$db      Database handler
 	 */
 	public function __construct($db)
 	{
@@ -82,7 +96,7 @@ class PartnershipUtils
 		$this->error = '';
 		$partnershipsprocessed = array();
 
-		$gracedelay = $conf->global->PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL;
+		$gracedelay = getDolGlobalString('PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL');
 		if ($gracedelay < 1) {
 			$this->error = 'BadValueForDelayBeforeCancelCheckSetup';
 			return -1;
@@ -91,7 +105,7 @@ class PartnershipUtils
 		dol_syslog(get_class($this)."::doCancelStatusOfMemberPartnership cancel expired partnerships with grace delay of ".$gracedelay);
 
 		$now = dol_now();
-		$datetotest = dol_time_plus_duree($now, -1 * abs($gracedelay), 'd');
+		$datetotest = dol_time_plus_duree($now, -1 * abs((float) $gracedelay), 'd');
 
 		$this->db->begin();
 
@@ -106,6 +120,7 @@ class PartnershipUtils
 		$sql .= $this->db->order('d.rowid', 'ASC');
 		// Limit is managed into loop later
 
+		$numofexpiredmembers = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numofexpiredmembers = $this->db->num_rows($resql);
@@ -163,7 +178,7 @@ class PartnershipUtils
 							// Define output language
 							$outputlangs = $langs;
 							$newlang = '';
-							if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+							if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 								$newlang = GETPOST('lang_id', 'aZ09');
 							}
 							if (!empty($newlang)) {
@@ -210,7 +225,7 @@ class PartnershipUtils
 									$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 									$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 									$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-									; // Short text ($langs->transnoentities('MailSentBy')...);
+									; // Short text ($langs->transnoentities('MailSentByTo')...);
 									if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 										$object->actionmsg2		= $subject; // Short text
 									}
@@ -321,10 +336,11 @@ class PartnershipUtils
 		}
 		$sql .= " WHERE p.".$fk_partner." > 0";
 		$sql .= " AND p.status = ".((int) $partnership::STATUS_APPROVED); // Only accepted and not yet canceled
-		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referal link.
+		$sql .= " AND (p.last_check_backlink IS NULL OR p.last_check_backlink <= '".$this->db->idate($now - 24 * 3600)."')"; // Never more than 1 check every day to check that website contains a referral link.
 		$sql .= $this->db->order('p.rowid', 'ASC');
 		// Limit is managed into loop later
 
+		$numofexpiredmembers = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numofexpiredmembers = $this->db->num_rows($resql);
@@ -366,8 +382,8 @@ class PartnershipUtils
 					if (!$backlinkfound) {
 						$tmpcount = $object->count_last_url_check_error + 1;
 
-						$nbminbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
-						$nbmaxbacklinkerrorforcancel = getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', $nbminbacklinkerrorforcancel + 2);
+						$nbminbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MIN_BACKLINK_ERROR_FOR_CANCEL', 3);
+						$nbmaxbacklinkerrorforcancel = (int) getDolGlobalString('PARTNERSHIP_MAX_BACKLINK_ERROR_FOR_CANCEL', (int) $nbminbacklinkerrorforcancel + 2);
 
 						// If $nbminbacklinkerrorforemail = 0, no autoemail
 						if ($nbminbacklinkerrorforcancel > 0) {
@@ -388,7 +404,7 @@ class PartnershipUtils
 									// Define output language
 									$outputlangs = $langs;
 									$newlang = '';
-									if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+									if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 										$newlang = GETPOST('lang_id', 'aZ09');
 									}
 									if (!empty($newlang)) {
@@ -433,7 +449,7 @@ class PartnershipUtils
 											$object->actiontypecode = $actiontypecode; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 											$object->actionmsg = $arraydefaultmessage->topic."\n".$arraydefaultmessage->content; // Long text
 											$object->actionmsg2 = $langs->transnoentities("PartnershipSentByEMail", $object->ref);
-											; // Short text ($langs->transnoentities('MailSentBy')...);
+											; // Short text ($langs->transnoentities('MailSentByTo')...);
 											if (getDolGlobalString('MAIN_MAIL_REPLACE_EVENT_TITLE_BY_EMAIL_SUBJECT')) {
 												$object->actionmsg2		= $subject; // Short text
 											}
@@ -524,10 +540,10 @@ class PartnershipUtils
 
 		// $website = 'https://nextgestion.com/'; // For Test
 		$tmpgeturl = getURLContent($website, 'GET', '', 1, array(), array('http', 'https'), 0);
-		if ($tmpgeturl['curl_error_no']) {
+		if (!empty($tmpgeturl['curl_error_no'])) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
-		} elseif ($tmpgeturl['http_code'] != '200') {
+		} elseif ($tmpgeturl['http_code'] != 200) {
 			$error++;
 			dol_syslog('Error getting '.$website.': '.$tmpgeturl['curl_error_msg']);
 		} else {
@@ -537,12 +553,14 @@ class PartnershipUtils
 
 			$xpath = new DOMXPath($dom);
 			$hrefs = $xpath->evaluate("//a");
+			'@phan-var-force DOMNodeList $hrefs';
 
 			for ($i = 0; $i < $hrefs->length; $i++) {
 				$href = $hrefs->item($i);
+				'@phan-var-force DOMElement $href';
 				$url = $href->getAttribute('href');
 				$url = filter_var($url, FILTER_SANITIZE_URL);
-				if (!filter_var($url, FILTER_VALIDATE_URL) === false) {
+				if (!(!filter_var($url, FILTER_VALIDATE_URL))) {
 					$webcontent .= $url;
 				}
 			}

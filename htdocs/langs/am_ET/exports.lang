@@ -46,10 +46,16 @@ LineLabel=የመስመር መለያ
 LineDescription=የመስመር መግለጫ
 LineUnitPrice=የአንድ መስመር ዋጋ
 LineVATRate=የተጨማሪ እሴት ታክስ የመስመር ተመን
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=ለመስመር ብዛት
 LineTotalHT=መጠን ሳይጨምር ለመስመር ግብር
 LineTotalTTC=ለመስመር ከግብር ጋር መጠን
 LineTotalVAT=ለመስመር የቫት መጠን
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=የመስመር አይነት (0=ምርት፣ 1=አገልግሎት)
 FileWithDataToImport=ለማስመጣት በመረጃ ፋይል ያድርጉ
 FileToImport=ለማስመጣት የምንጭ ፋይል
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=እሱን ለመምረጥ የ%s አዶን ጠቅ በ�
 ChooseFileToImport=ፋይሉን ስቀል ከዚያም የ%s አዶን ጠቅ በማድረግ ፋይሉን እንደ ምንጭ አስመጪ ፋይል ለመምረጥ...
 SourceFileFormat=የምንጭ ፋይል ቅርጸት
 FieldsInSourceFile=በምንጭ ፋይል ውስጥ ያሉ መስኮች
-FieldsInTargetDatabase=በዶሊባርር ዳታቤዝ ውስጥ ያሉ የዒላማ መስኮች (ደፋር=አስገዳጅ)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=ምንም መስኮች የሉም
 MoveField=የመስክ አምድ ቁጥር %s አንቀሳቅስ
 ExampleOfImportFile=የማስመጣት_ፋይል_ምሳሌ
@@ -76,45 +82,45 @@ NowClickToTestTheImport=የፋይልዎ ቅርጸት (መስክ እና ሕብረ
 RunSimulateImportFile=የማስመጣት ማስመሰልን ያሂዱ
 FieldNeedSource=ይህ መስክ ከምንጩ ፋይል ውሂብ ይፈልጋል
 SomeMandatoryFieldHaveNoSource=አንዳንድ የግዴታ መስኮች ከውሂብ ፋይል ምንጭ የላቸውም
-InformationOnSourceFile=በምንጭ ፋይል ላይ መረጃ
-InformationOnTargetTables=በዒላማ መስኮች ላይ መረጃ
+InformationOnSourceFile=Source file
+InformationOnTargetTables=Target fields
 SelectAtLeastOneField=ወደ ውጭ ለመላክ ቢያንስ አንድ የምንጭ መስክ በመስኮቹ አምድ ውስጥ ይቀይሩ
 SelectFormat=ይህን የማስመጣት ፋይል ቅርጸት ይምረጡ
 RunImportFile=ውሂብ አስመጣ
 NowClickToRunTheImport=የማስመጣት ማስመሰል ውጤቶችን ያረጋግጡ። ማናቸውንም ስህተቶች ያስተካክሉ እና እንደገና ይሞክሩ።<br>አስመሳይው ምንም ስህተት እንደሌለው ሲገልጽ ውሂቡን ወደ ዳታቤዝ ማስገባት መቀጠል ይችላሉ።
 DataLoadedWithId=የገባው ውሂብ በእያንዳንዱ የውሂብ ጎታ ሠንጠረዥ ውስጥ ይህ የማስመጣት መታወቂያ ያለው ተጨማሪ መስክ ይኖረዋል፡ <b>%s</b>፣ ከዚህ ማስመጣት ጋር የተያያዘ ችግርን በማጣራት ላይ እንዲፈለግ ለማድረግ።
-ErrorMissingMandatoryValue=አስገዳጅ ውሂብ በአምድ <b>%s<span class='notranslate'></b> ላይ ባለው የምንጭ ፋይል ውስጥ ባዶ ነው።
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=አሁንም አሉ <b>%s</b>ሌሎች የውጤት መስመሮች ግን ስህተቶች አሏቸው ተገድቧል።
 TooMuchWarnings=አሁንም አሉ <b>%s</b>ሌሎች የውጤት መስመሮች ግን ማስጠንቀቂያዎች አሉት ተገድቧል።
 EmptyLine=ባዶ መስመር (ይወገዳል)
-CorrectErrorBeforeRunningImport=አንተ <b> አለብህ</b> ሁሉንም ስህተቶች ማረም <b> notranslate'></b></span>አስመጪውን እያሄደ ነው።
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=ፋይሉ የመጣው በቁጥር <b>%s</b> ነው።
 YouCanUseImportIdToFindRecord=በመስክ <b>import_key='%s'በማጣራት በውሂብ ጎታህ ውስጥ ማግኘት ትችላለህ። > </b>።
-NbOfLinesOK=ምንም ስህተቶች እና ማስጠንቀቂያዎች የሌሉባቸው መስመሮች ብዛት፡ <b>%s</b><span class='notranslate'></b>
+NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
 NbOfLinesImported=በተሳካ ሁኔታ የገቡ የመስመሮች ብዛት፡ <b>%s</b>።
 DataComeFromNoWhere=የማስገባት እሴት ከምንጭ ፋይል ውስጥ ከየትም አይመጣም።
 DataComeFromFileFieldNb=የማስገባት እሴት ከአምድ <b>%s</b> ምንጭ ፋይል ይመጣል።
-DataComeFromIdFoundFromRef=ከምንጩ ፋይል የሚመጣው እሴት የሚጠቀመውን የወላጅ ነገር መታወቂያ ለማግኘት ጥቅም ላይ ይውላል (ስለዚህ ነገሩ <b>%s</span ከምንጭ ፋይል ማጣቀሻ ያለው ><span class='notranslate'></b>በመረጃ ቋቱ ውስጥ መኖር አለበት።
-DataComeFromIdFoundFromCodeId=ከምንጩ ፋይል የሚመጣው ኮድ ዋጋ የሚጠቀመው የወላጅ ነገር መታወቂያ ለማግኘት ጥቅም ላይ ይውላል (ስለዚህ ከምንጩ ፋይል የሚገኘው ኮድ በመዝገበ ቃላት <b><span class) ውስጥ መኖር አለበት ='notranslate'>%s</span></b>)። መታወቂያውን ካወቁ ከኮዱ ይልቅ በምንጭ ፋይሉ ውስጥ ሊጠቀሙበት እንደሚችሉ ልብ ይበሉ። ማስመጣት በሁለቱም ሁኔታዎች መስራት አለበት.
+DataComeFromIdFoundFromRef=The value that comes from the source file will be used to find the id of the parent object to use (so the object <b>%s</b> that has the ref. from source file must exist in the database).
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=ከምንጩ ፋይል የሚመጣው ውሂብ በሚከተለው መስክ ውስጥ ይገባል፡-
 DataIDSourceIsInsertedInto=በምንጭ ፋይል ውስጥ ያለውን ውሂብ ተጠቅሞ የተገኘው የወላጅ ነገር መታወቂያ በሚከተለው መስክ ውስጥ ይገባል፡
 DataCodeIDSourceIsInsertedInto=ከኮድ የተገኘው የወላጅ መስመር መታወቂያ በሚከተለው መስክ ውስጥ ይገባል፡
 SourceRequired=የውሂብ ዋጋ ግዴታ ነው
 SourceExample=ሊሆን የሚችል የውሂብ እሴት ምሳሌ
 ExampleAnyRefFoundIntoElement=ለኤለመንት <b>%s</b> የተገኘ ማንኛውም ማጣቀሻ
-ExampleAnyCodeOrIdFoundIntoDictionary=መዝገበ ቃላት ውስጥ የተገኘ ማንኛውም ኮድ (ወይም መታወቂያ) <b>%s<span class='notranslate'></b>s
-CSVFormatDesc=<b>በነጠላ ሰረዝ የተለየ እሴት</b> የፋይል ቅርጸት (.csv)።b0342fccfda19 መስኮች በተከፋፋይ የሚለያዩበት የጽሑፍ ፋይል ቅርጸት ነው [ <span class='notranslate'>%s]። መለያየት በመስክ ይዘት ውስጥ ከተገኘ፣ ሜዳው በክብ ቁምፊ [%s የተጠጋጋ ነው። ክብ ቁምፊን ለማምለጥ የማምለጫ ቁምፊ [ %s ነው.
-Excel95FormatDesc=<b>Excel</b> የፋይል ቅርጸት (.xls)<span class='notranslate'><br> ይህ ነው</s napan napan የ Excel 95 ቅርጸት (BIFF5)።
-Excel2007FormatDesc=<b>Excel</b> የፋይል ቅርጸት (.xlsx)<span class='notranslate'><br> ነው የ Excel 2007 ቅርጸት (የተመን ሉህ ኤምኤል)።
-TsvFormatDesc=<b>ትር የተለየ እሴት</b> የፋይል ቅርጸት (.tsv)<span class='notranslate'>b0342fccfda19 ነው መስኮች በታቡሌተር [tab] የሚለያዩበት የጽሑፍ ፋይል ቅርጸት።
+ExampleAnyCodeOrIdFoundIntoDictionary=Any code (or id) found into dictionary <b>%s</b>
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
+Excel95FormatDesc=<b>Excel</b> file format (.xls)<br>This is the native Excel 95 format (BIFF5).
+Excel2007FormatDesc=<b>Excel</b> file format (.xlsx)<br>This is the native Excel 2007 format (SpreadsheetML).
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 ExportFieldAutomaticallyAdded=መስክ <b>%s</b> በቀጥታ ታክሏል። ተመሳሳይ መስመሮች እንደ የተባዛ መዝገብ እንዲታዩ ያደርግዎታል (ይህ መስክ ሲጨመር ሁሉም መስመሮች የራሳቸው መታወቂያ ይኖራቸዋል እና ይለያያሉ)።
 CsvOptions=የCSV ቅርጸት አማራጮች
 Separator=የመስክ መለያያ
 Enclosure=ሕብረቁምፊ Delimiter
 SpecialCode=ልዩ ኮድ
 ExportStringFilter=%% በጽሁፉ ውስጥ አንድ ወይም ከዚያ በላይ ቁምፊዎችን ለመተካት ይፈቅዳል.
-ExportDateFilter=አይይ, ያኪ, ያሂድም, አንድ አመት / YYYCHED, yyyyme, yyyyme, Yyyymd + yyyymd + yyyymd: span class='notranslate'><br></span> > ዓዓዓህ፣ > ዓዓዓህ፣ > ዓዓዓዓምዲ፡ ማጣሪያዎች በሁሉም በሚቀጥሉት ዓመታት/ወራቶች/ቀናቶች<br> <አህዋይ፣ <አህዋይ፣ አአአአአአአአ፡ ማጣሪያዎች በሁሉም ያለፉት አመታት/ወራቶች/ቀናቶች
-ExportNumericFilter=NNNNN በአንድ እሴት ያጣራል<br>NNNNN+NNNNN በተለያዩ የእሴቶች ክልል ላይ ያጣራል<br><span class='notranslate'>b208912a /span>> NNNNN በከፍተኛ እሴቶች ያጣራል።
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=ከመስመር ቁጥር ጀምሮ አስመጣ
 EndAtLineNb=በመስመር ቁጥር ጨርስ
 ImportFromToLine=ክልል ገድብ (ከ - ወደ)። ለምሳሌ. የራስጌ መስመር(ዎችን) ለመተው።

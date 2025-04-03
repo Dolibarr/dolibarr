@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,35 +35,94 @@ class ActionsCardService
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	public $dirmodule;
+	/**
+	 * @var string
+	 */
 	public $module;
+	/**
+	 * @var string
+	 */
 	public $label;
+	/**
+	 * @var string
+	 */
 	public $price_base_type;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code_sell;
+	/**
+	 * @var string
+	 */
 	public $accountancy_code_buy;
+	/**
+	 * @var string
+	 */
 	public $targetmodule;
+	/**
+	 * @var string
+	 */
 	public $canvas;
+	/**
+	 * @var string
+	 */
 	public $card;
 
+	/**
+	 * @var string
+	 */
 	public $name;
+	/**
+	 * @var string
+	 */
 	public $definition;
+	/**
+	 * @var string
+	 */
 	public $fieldListName;
+	/**
+	 * @var string
+	 */
 	public $next_prev_filter;
 
-	//! Object container
+	/**
+	 * @var Product Object container
+	 */
 	public $object;
 
 	//! Template container
 	public $tpl = array();
 
-	// List of fiels for action=list
+	// List of fields for action=list
 	public $field_list = array();
 
+	/**
+	 * @var string
+	 */
 	public $id;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var string
+	 */
 	public $description;
+	/**
+	 * @var string
+	 */
 	public $note;
+	/**
+	 * @var float
+	 */
 	public $price;
+	/**
+	 * @var float
+	 */
 	public $price_min;
 
 	/**
@@ -96,7 +157,7 @@ class ActionsCardService
 		$this->name = "service";
 		$this->definition = "Services canvas";
 		$this->fieldListName = "product_service";
-		$this->next_prev_filter = "canvas='service'";
+		$this->next_prev_filter = "canvas:=:'service'";
 	}
 
 
@@ -155,7 +216,7 @@ class ActionsCardService
 			$this->tpl['price_base_type'] = $form->selectPriceBaseType($this->price_base_type, "price_base_type");
 
 			// VAT
-			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, '');
+			$this->tpl['tva_tx'] = $form->load_tva("tva_tx", -1, $mysoc, null);
 		}
 
 		if ($action == 'view') {
@@ -232,9 +293,9 @@ class ActionsCardService
 			// Duration
 			$dur = array();
 			if ($this->object->duration_value > 1) {
-				$dur = array("h"=>$langs->trans("Hours"), "d"=>$langs->trans("Days"), "w"=>$langs->trans("Weeks"), "m"=>$langs->trans("Months"), "y"=>$langs->trans("Years"));
+				$dur = array("h" => $langs->trans("Hours"), "d" => $langs->trans("Days"), "w" => $langs->trans("Weeks"), "m" => $langs->trans("Months"), "y" => $langs->trans("Years"));
 			} elseif ($this->object->duration_value > 0) {
-				$dur = array("h"=>$langs->trans("Hour"), "d"=>$langs->trans("Day"), "w"=>$langs->trans("Week"), "m"=>$langs->trans("Month"), "y"=>$langs->trans("Year"));
+				$dur = array("h" => $langs->trans("Hour"), "d" => $langs->trans("Day"), "w" => $langs->trans("Week"), "m" => $langs->trans("Month"), "y" => $langs->trans("Year"));
 			}
 			$this->tpl['duration_unit'] = $langs->trans($dur[$this->object->duration_unit]);
 
@@ -248,7 +309,7 @@ class ActionsCardService
 	 *
 	 *  @return	void
 	 */
-	private function getFieldListCanvas()
+	private function getFieldListCanvas() // @phpstan-ignore-line
 	{
 		global $conf, $langs;
 

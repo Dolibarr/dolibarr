@@ -32,6 +32,7 @@ PRINTIPP_HOST=Print server
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Είσοδος
 PRINTIPP_PASSWORD=Κωδικός
+PRINTIPP_SSL=Χρήση SSL
 NoDefaultPrinterDefined=Δεν έχει οριστεί προ επιλεγμένος εκτυπωτής
 DefaultPrinter=Προεπιλογή εκτυπωτή
 Printer=Eκτυπωτής
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Διαμόρφωση μεταβλητών οδηγώ�
 PrintingDriverDescprintipp=Διαμόρφωση μεταβλητών οδηγών εκτύπωσης Cups.
 PrintTestDescprintgcp=Λίστα εκτυπωτών με δυνατότητα Google Cloud Print.
 PrintTestDescprintipp=Λίστα εκτυπωτών με ρύθμιση μέσω Cups.
+Testbbbb

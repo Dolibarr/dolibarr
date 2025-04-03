@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2012-2018  Charlene BENKE 	<charlie@patas-monkey.com>
- * Copyright (C) 2015-2021  Frederic France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2015-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,20 +34,13 @@ class box_task extends ModeleBoxes
 {
 	public $boxcode = "projettask";
 	public $boximg = "object_projecttask";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("projet");
 
-	/**
-	 * @var DoliDB Database handler.
-	 */
-	public $db;
-
-	public $param;
-	public $enabled = 1; // enable because fixed ;-).
-
-	public $info_box_head = array();
-	public $info_box_contents = array();
-
+	public $enabled = 1;
 
 	/**
 	 *  Constructor
@@ -64,7 +58,7 @@ class box_task extends ModeleBoxes
 		$this->boxlabel = "Tasks";
 		$this->db = $db;
 
-		$this->hidden = (getDolGlobalString('PROJECT_HIDE_TASKS') || empty($user->rights->projet->lire));
+		$this->hidden = (getDolGlobalString('PROJECT_HIDE_TASKS') || !$user->hasRight('projet', 'lire'));
 	}
 
 	/**
@@ -84,7 +78,7 @@ class box_task extends ModeleBoxes
 		$projectstatic = new Project($this->db);
 		$taskstatic = new Task($this->db);
 		$form = new Form($this->db);
-		$cookie_name = 'DOLUSERCOOKIE_boxfilter_task';
+		$cookie_name = 'DOLUSER_boxfilter_task';
 		$boxcontent = '';
 		$socid = $user->socid;
 
@@ -106,12 +100,12 @@ class box_task extends ModeleBoxes
 
 		$this->info_box_head = array(
 			'text' => $textHead,
-			'limit'=> dol_strlen($textHead),
-			'sublink'=>'',
-			'subtext'=>$langs->trans("Filter"),
-			'subpicto'=>'filter.png',
-			'subclass'=>'linkobject boxfilter',
-			'target'=>'none'	// Set '' to get target="_blank"
+			'limit' => dol_strlen($textHead),
+			'sublink' => '',
+			'subtext' => $langs->trans("Filter"),
+			'subpicto' => 'filter.png',
+			'subclass' => 'linkobject boxfilter',
+			'target' => 'none'	// Set '' to get target="_blank"
 		);
 
 		// list the summary of the orders
@@ -134,7 +128,7 @@ class box_task extends ModeleBoxes
 						});
 						</script>';
 				// set cookie by js
-				$boxcontent .= '<script nonce="'.getNonce().'">date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ "; </script>';
+				$boxcontent .= '<script nonce="'.getNonce().'">date = new Date(); date.setTime(date.getTime()+(30*86400000)); document.cookie = "'.$cookie_name.'='.$filterValue.'; expires= " + date.toGMTString() + "; path=/ ; SameSite=Lax"; </script>';
 			}
 			$this->info_box_contents[0][] = array(
 				'tr' => 'class="nohover showiffilter'.$this->boxcode.' hideobject"',
@@ -184,7 +178,7 @@ class box_task extends ModeleBoxes
 					$taskstatic->ref = $objp->ref;
 					$taskstatic->label = $objp->label;
 					$taskstatic->progress = $objp->progress;
-					$taskstatic->fk_statut = $objp->fk_statut;
+					$taskstatic->status = $objp->fk_statut;
 					$taskstatic->date_end = $this->db->jdate($objp->datee);
 					$taskstatic->planned_workload = $objp->planned_workload;
 					$taskstatic->duration_effective = $objp->duration_effective;
@@ -209,12 +203,14 @@ class box_task extends ModeleBoxes
 		}
 	}
 
+
+
 	/**
-	 *	Method to show box
+	 *	Method to show box.  Called when the box needs to be displayed.
 	 *
-	 *	@param	array	$head       Array with properties of box title
-	 *	@param  array	$contents   Array with properties of box lines
-	 *  @param	int		$nooutput	No print, only return string
+	 *	@param	?array<array{text?:string,sublink?:string,subtext?:string,subpicto?:?string,picto?:string,nbcol?:int,limit?:int,subclass?:string,graph?:int<0,1>,target?:string}>   $head       Array with properties of box title
+	 *	@param	?array<array{tr?:string,td?:string,target?:string,text?:string,text2?:string,textnoformat?:string,tooltip?:string,logo?:string,url?:string,maxlength?:int,asis?:int<0,1>}>   $contents   Array with properties of box lines
+	 *	@param	int<0,1>	$nooutput	No print, only return string
 	 *	@return	string
 	 */
 	public function showBox($head = null, $contents = null, $nooutput = 0)

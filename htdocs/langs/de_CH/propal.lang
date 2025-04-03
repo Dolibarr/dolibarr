@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - propal
 ProposalCard=Angebotskarte
-Prospect=Lead
 LastPropals=%s neueste Angebote
 LastModifiedProposals=%s neueste geänderte Offerten
 ProposalsStatistics=Angebote Statistiken

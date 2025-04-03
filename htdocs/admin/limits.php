@@ -3,6 +3,8 @@
  * Copyright (C) 2009-2018	Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2010		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +30,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin'));
 
@@ -45,8 +55,8 @@ $mainmaxdecimalstot = 'MAIN_MAX_DECIMALS_TOT'.(!empty($currencycode) ? '_'.$curr
 $mainmaxdecimalsshown = 'MAIN_MAX_DECIMALS_SHOWN'.(!empty($currencycode) ? '_'.$currencycode : '');
 $mainroundingruletot = 'MAIN_ROUNDING_RULE_TOT'.(!empty($currencycode) ? '_'.$currencycode : '');
 
-$valmainmaxdecimalsunit = GETPOST($mainmaxdecimalsunit, 'int');
-$valmainmaxdecimalstot = GETPOST($mainmaxdecimalstot, 'int');
+$valmainmaxdecimalsunit = GETPOSTINT($mainmaxdecimalsunit);
+$valmainmaxdecimalstot = GETPOSTINT($mainmaxdecimalstot);
 $valmainmaxdecimalsshown = GETPOST($mainmaxdecimalsshown, 'alpha');	// Can be 'x.y' but also 'x...'
 $valmainroundingruletot = price2num(GETPOST($mainroundingruletot, 'alphanohtml'), '', 2);
 
@@ -80,7 +90,7 @@ if ($action == 'update' && !$cancel) {
 	}
 
 	if ($valmainroundingruletot) {
-		if ($valmainroundingruletot * pow(10, $valmainmaxdecimalstot) < 1) {
+		if ((float) $valmainroundingruletot * pow(10, $valmainmaxdecimalstot) < 1) {
 			$langs->load("errors");
 			$error++;
 			setEventMessages($langs->trans("ErrorMAIN_ROUNDING_RULE_TOTCanMAIN_MAX_DECIMALS_TOT"), null, 'errors');
@@ -123,7 +133,7 @@ $form = new Form($db);
 $title = $langs->trans("LimitsSetup");
 $help_url = '';
 
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-admin page-limits');
 
 print load_fiche_titre($title, '', 'title_setup');
 
@@ -163,7 +173,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameters").'</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
@@ -194,7 +204,7 @@ if ($action == 'edit') {
 } else {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="right">'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="right"></td></tr>';
 
 	print '<tr class="oddeven"><td>';
 	print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"), $langs->trans("ParameterActiveForNextInputOnly"));
@@ -233,13 +243,13 @@ if (empty($mysoc->country_code)) {
 	// Show examples
 	print load_fiche_titre($langs->trans("ExamplesWithCurrentSetup"), '', '');
 
-	print '<span class="opacitymedium">'.$langs->trans("Format").':</span> '.price(price2num(1234.56789, 'MT'), 0, $langs, 1, -1, -1, $currencycode)."<br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("NumberFormatForATotalPrice", '1234.56789').':</span> '.price(price2num(1234.56789, 'MT'), 0, $langs, 1, -1, -1, $currencycode)."<br>\n";
 
 	// Always show vat rates with vat 0
 	$s = 2 / 3;
 	$qty = 1;
 	$vat = 0;
-	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
+	$tmparray = calcul_price_total(1, $qty * (float) price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -248,7 +258,7 @@ if (empty($mysoc->country_code)) {
 	$s = 10 / 3;
 	$qty = 1;
 	$vat = 0;
-	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
+	$tmparray = calcul_price_total(1, $qty * (float) price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -257,7 +267,7 @@ if (empty($mysoc->country_code)) {
 	$s = 10 / 3;
 	$qty = 2;
 	$vat = 0;
-	$tmparray = calcul_price_total(1, $qty * price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
+	$tmparray = calcul_price_total(1, $qty * (float) price2num($s, 'MU'), 0, $vat, 0, 0, 0, 'HT', 0, 0, $mysoc);
 	print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 	print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 	print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -277,7 +287,7 @@ if (empty($mysoc->country_code)) {
 		if ($num) {
 			for ($i = 0; $i < $num; $i++) {
 				$obj = $db->fetch_object($resql);
-				$vat_rates[] = array('vat_rate'=>$obj->vat_rate, 'code'=>$obj->vat_code, 'localtax_rate1'=>$obj->localtax_rate1, 'locltax_rate2'=>$obj->localtax_rate2);
+				$vat_rates[] = array('vat_rate' => $obj->vat_rate, 'code' => $obj->vat_code, 'localtax_rate1' => $obj->localtax_rate1, 'locltax_rate2' => $obj->localtax_rate2);
 			}
 		}
 	} else {
@@ -293,7 +303,24 @@ if (empty($mysoc->country_code)) {
 				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);
 
 				$s = 10 / 3;
-				$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+				$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
+				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
+				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
+				print($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
+				print ' &nbsp; -> &nbsp; <span class="opacitymedium">'.$langs->trans("TotalPriceAfterRounding").":</span> ";
+				print $tmparray[0].' / '.$tmparray[1].($tmparray[9] ? '+'.$tmparray[9] : '').($tmparray[10] ? '+'.$tmparray[10] : '').' / '.$tmparray[2];
+				print "<br>\n";
+			}
+
+			if (getDolGlobalString('MAIN_ADD_MORE_EXAMPLE_IN_ACCURANCY_SETUP')) {
+				$qty = 1.234;
+				$vattxt = $vat.($vatarray['code'] ? ' ('.$vatarray['code'].')' : '');
+
+				$localtax_array = getLocalTaxesFromRate($vattxt, 0, $mysoc, $mysoc);
+
+				$s = 10 / 3;
+				$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 				print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 				print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 				print ' - <span class="opacitymedium">'.$langs->trans("VAT").':</span> '.$vat.'%';
@@ -313,7 +340,7 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3;
 		$qty = 1;
 		$vat = 10;
-		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+		$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';
@@ -322,7 +349,7 @@ if (empty($mysoc->country_code)) {
 		$s = 10 / 3;
 		$qty = 2;
 		$vat = 10;
-		$tmparray = calcul_price_total($qty, price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
+		$tmparray = calcul_price_total($qty, (float) price2num($s, 'MU'), 0, $vat, -1, -1, 0, 'HT', 0, 0, $mysoc, $localtax_array);
 		print '<span class="opacitymedium">'.$langs->trans("UnitPriceOfProduct").":</span> ".price2num($s, 'MU');
 		print ' x <span class="opacitymedium">'.$langs->trans("Quantity").":</span> ".$qty;
 		print ' - <span class="opacitymedium">'.$langs->trans("VAT").":</span> ".$vat.'%';

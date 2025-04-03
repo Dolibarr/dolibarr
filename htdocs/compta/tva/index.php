@@ -4,9 +4,10 @@
  * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014      Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018      Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021      Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021      Open-Dsi             <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,33 +35,51 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "compta", "banks", "bills", "companies", "product", "trips", "admin"));
 
 $now = dol_now();
 
 $refresh = GETPOSTISSET('submit') ? true : false;
-$year_current = GETPOSTISSET('year') ? GETPOST('year', 'int') : dol_print_date($now, '%Y', 'tzserver');
+$year_current = GETPOSTISSET('year') ? GETPOSTINT('year') : dol_print_date($now, '%Y', 'tzserver');
 $year_start = $year_current;
-$month_current = GETPOSTISSET('month') ? GETPOST('month', 'int') : dol_print_date($now, '%m', 'tzserver');
+$month_current = GETPOSTISSET('month') ? GETPOSTINT('month') : dol_print_date($now, '%m', 'tzserver');
 $month_start = $month_current;
 
 $refresh = true;
 
 include DOL_DOCUMENT_ROOT.'/compta/tva/initdatesforvat.inc.php';
+'
+@phan-var-force int $date_start
+@phan-var-force int $date_end
+@phan-var-force string $date_start_month
+@phan-var-force string $date_start_year
+@phan-var-force string $date_start_day
+@phan-var-force string $date_end_month
+@phan-var-force string $date_end_year
+@phan-var-force string $date_end_day
+';
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = getDolGlobalString('TAX_MODE');
 if (GETPOSTISSET("modetax")) {
-	$modetax = GETPOST("modetax", 'int');
+	$modetax = GETPOSTINT("modetax");
 }
 if (empty($modetax)) {
 	$modetax = 0;
 }
 
 // Security check
-$socid = GETPOST('socid', 'int');
+$socid = GETPOSTINT('socid');
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -118,11 +137,11 @@ function pt($db, $sql, $date)
 
 			if ($obj->mode == 'claimed') {
 				$amountclaimed = $obj->mm;
-				$totalclaimed = $totalclaimed + $amountclaimed;
+				$totalclaimed += $amountclaimed;
 			}
 			if ($obj->mode == 'paid') {
 				$amountpaid = $obj->mm;
-				$totalpaid = $totalpaid + $amountpaid;
+				$totalpaid += $amountpaid;
 			}
 
 			if ($obj->mode == 'paid') {
@@ -284,6 +303,12 @@ if ($refresh === true) {
 		$x_both = array();
 		//now, from these two arrays, get another array with one rate per line
 		foreach (array_keys($x_coll) as $my_coll_rate) {
+			$x_both[$my_coll_rate] = array(
+				'coll' => array(),
+				'paye' => array(),
+				'detail' => array(),
+				'ptype' => array(),
+			);
 			$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
 			$x_both[$my_coll_rate]['coll']['vat'] = $x_coll[$my_coll_rate]['vat'];
 			$x_both[$my_coll_rate]['paye']['totalht'] = 0;
@@ -390,7 +415,7 @@ if ($refresh === true) {
 		$parameters["month"] = $m;
 		$parameters["type"] = 'vat';
 
-		// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+		// Initialize a technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 		$hookmanager->initHooks(array('externalbalance'));
 		$reshook = $hookmanager->executeHooks('addVatLine', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 
@@ -429,7 +454,7 @@ if ($refresh === true) {
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_coll_total_ht += $temp_ht;
 				$subtot_coll_vat += $temp_vat;
@@ -464,12 +489,12 @@ if ($refresh === true) {
 						//print $langs->trans("NA");
 					} else {
 						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
-							$ratiopaymentinvoice = ($fields['payment_amount'] / $fields['ftotal_ttc']);
+							$ratiopaymentinvoice = ($fields['payment_amount'] / (float) $fields['ftotal_ttc']);
 						}
 					}
 				}
 				//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
-				$temp_ht = $fields['totalht'] * $ratiopaymentinvoice;
+				$temp_ht = (float) $fields['totalht'] * $ratiopaymentinvoice;
 				$temp_vat = $fields['vat'] * $ratiopaymentinvoice;
 				$subtot_paye_total_ht += $temp_ht;
 				$subtot_paye_vat += $temp_vat;
@@ -478,11 +503,11 @@ if ($refresh === true) {
 		}
 		print '<td class="nowrap right"><span class="amount">' . price(price2num($x_paye_sum, 'MT')) . '</span></td>';
 
-		$subtotalcoll = $subtotalcoll + $x_coll_sum;
-		$subtotalpaid = $subtotalpaid + $x_paye_sum;
+		$subtotalcoll += $x_coll_sum;
+		$subtotalpaid += $x_paye_sum;
 
 		$diff = $x_coll_sum - $x_paye_sum;
-		$total = $total + $diff;
+		$total += $diff;
 		$subtotal = price2num($subtotal + $diff, 'MT');
 
 		print '<td class="nowrap right"><span class="amount">' . price(price2num($diff, 'MT')) . '</span></td>' . "\n";

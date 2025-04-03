@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - receptions
 Reception=Recepción
 ReceptionsArea=Area de recepciones
-ListOfReceptions=Lista de recepciones
 StatisticsOfReceptions=Estadisticas para recepciones.
 NbOfReceptions=Cantidad de recepciones
 NumberOfReceptionsByMonth=Número de recepciones por mes.

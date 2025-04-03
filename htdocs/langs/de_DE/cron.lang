@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Geplante Aufgabe einsehen
 Permission23102 = Erstelle/aktualisiere geplanten Job
 Permission23103 = Lösche geplanten Job
@@ -14,7 +13,7 @@ FileToLaunchCronJobs=Befehlszeile zum Überprüfen und Starten von qualifizierte
 CronExplainHowToRunUnix=In Unix-Umgebung sollten Sie die folgenden crontab-Eintrag verwenden, um die Befehlszeile alle 5 Minuten ausführen
 CronExplainHowToRunWin=In Microsoft™ Windows Umgebungen können Sie die Aufgabenplanung benutzen, um die Kommandozeile alle 5 Minuten aufzurufen.
 CronMethodDoesNotExists=Die Klasse %s enthält keine Methode %s
-CronMethodNotAllowed=Die Methode %s der Klasse %s befindet sich in der schwarzen Liste der verbotenen Methoden
+CronMethodNotAllowed=Die Methode %s der Klasse %s befindet sich in der Sperrliste der verbotenen Methoden
 CronJobDefDesc=Cron-Jobprofile sind in der Moduldeskriptordatei definiert. Wenn das Modul aktiviert ist, sind diese geladen und verfügbar, so dass Sie die Jobs über das Menü admin tools %s verwalten können.
 CronJobProfiles=Liste vordefinierter Cron-Job Profile
 # Menu
@@ -30,7 +29,8 @@ CronExecute=Jetzt starten
 CronConfirmExecute=Sind Sie sicher, dass Sie diese geplante Aufträge jetzt ausführen möchten?
 CronInfo=Das Modul "Cron-Jobs" erlaubt es Aufgaben zu bestimmten Zeitpunkten auszuführen. Die Aufgaben können auch manuell gestartet werden.
 CronTask=Job
-CronNone=Keine
+CronNone=Nächster Lauf der geplanten Aufgabe
+CronNotYetRan=Niemals ausgeführt
 CronDtStart=Nicht vor
 CronDtEnd=Nicht nach
 CronDtNextLaunch=Nächste Ausführung
@@ -49,8 +49,8 @@ CronEach=Jede
 JobFinished=Job gestartet und beendet
 Scheduled=Geplant
 #Page card
-CronAdd= Jobs hinzufügen
-CronEvery=Jeden Job ausführen
+CronAdd=Jobs hinzufügen
+CronEvery=Ausführung des Jobs alle
 CronObject=Instanz/Objekt zu erstellen
 CronArgs=Parameter
 CronSaveSucess=Erfolgreich gespeichert
@@ -91,6 +91,7 @@ WarningCronDelayed=Bitte beachten: Aus Leistungsgründen können Ihre Jobs um bi
 DATAPOLICYJob=Datenbereiniger und Anonymisierer
 JobXMustBeEnabled=Job %s muss aktiviert sein
 EmailIfError=E-Mail zur Warnung bei Fehler
+JobNotFound=Job %s wurde in der Liste der Jobs nicht gefunden (versuchen Sie, das Modul zu deaktivieren/aktivieren)
 ErrorInBatch=Fehler beim Ausführen des Jobs %s
 
 # Cron Boxes

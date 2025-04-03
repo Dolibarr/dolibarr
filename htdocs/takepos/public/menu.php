@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) - 2020	Andreu Bisquerra Gaya <jove@bisquerra.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,12 @@ if (!defined('NOBROWSERNOTIF')) {
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 if (!$conf->global->TAKEPOS_QR_MENU) {
 	accessforbidden(); // If Restaurant Menu is disabled never allow NO LOGIN access
 }
@@ -55,7 +61,7 @@ if (!$conf->global->TAKEPOS_QR_MENU) {
 	<div class="grid-container">
 	  <div class="grid-x grid-padding-x menu2">
 		<div class="cell small-12">
-		  <h1><?php print $mysoc->name; ?> - <small><?php print $langs->trans('RestaurantMenu'); ?></small></h1>
+			<h1><?php print $mysoc->name; ?> - <small><?php print $langs->trans('RestaurantMenu'); ?></small></h1>
 
 <?php
 $categorie = new Categorie($db);
@@ -63,7 +69,7 @@ $categories = $categorie->get_full_arbo('product', ((getDolGlobalInt('TAKEPOS_RO
 $levelofrootcategory = 0;
 if (getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID') > 0) {
 	foreach ($categories as $key => $categorycursor) {
-		if ($categorycursor['id'] == $conf->global->TAKEPOS_ROOT_CATEGORY_ID) {
+		if ($categorycursor['id'] == getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID')) {
 			$levelofrootcategory = $categorycursor['level'];
 			break;
 		}
@@ -92,6 +98,7 @@ foreach ($maincategories as $cat) {
 	$object = new Categorie($db);
 	$result = $object->fetch($cat['id']);
 	$prods = $object->getObjectsInCateg("product", 0, 0, 0, $conf->global->TAKEPOS_SORTPRODUCTFIELD, 'ASC');
+	/** @var Product[] $prods */
 	foreach ($prods as $pro) {
 		print '
 		<div class="cell small-6 medium-4">
@@ -109,14 +116,15 @@ foreach ($maincategories as $cat) {
 		</div>
 	</div>
 	<footer class="footer">
-	  <div class="container">
+		<div class="container">
 		<p class="text-muted"><?php print $mysoc->name; ?></p>
-	  </div>
+		</div>
 	</footer>
-  </body>
+</body>
 <!-- partial -->
-  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
-<script src='https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/js/foundation.min.js'></script><script  src="js/script.js"></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/foundation-sites@6.6.3/dist/js/foundation.min.js'></script>
+<script src="js/script.js"></script>
 
 </body>
 </html>

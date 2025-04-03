@@ -4,73 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = 招聘
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = 管理及追蹤新職位的招聘活動
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-Settings = Settings
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = 招聘設定
+RecruitmentSetupPage = 在此輸入招聘模組主要選項的設定
+RecruitmentArea=招聘領域
+PublicInterfaceRecruitmentDesc=職位公告頁面是公開的 URL，用於顯示和回應公開招聘的職位。每個公開招聘的職位都有一個不同的連接，可在每個職位記錄中找到。
+EnablePublicRecruitmentPages=啟用公開職位公告頁面
 
-#
-# About page
-#
-About = About
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-RequestedRemuneration=Requested remuneration
-ProposedRemuneration=Proposed remuneration
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Interview to do
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
+NbOfEmployeesExpected=預期員工數
+JobLabel=職位標籤
+WorkPlace=工作地點
+DateExpected=預期日期
+FutureManager=未來經理
+ResponsibleOfRecruitement=招聘負責人
+IfJobIsLocatedAtAPartner=如果工作地點在合作夥伴處
+PositionToBeFilled=職位
+PositionsToBeFilled=職位
+ListOfPositionsToBeFilled=職位列表
+NewPositionToBeFilled=新職位
+JobOfferToBeFilled=待填補的職位
+ThisIsInformationOnJobPosition=待填補職位的資訊
+ContactForRecruitment=招聘聯絡人
+EmailRecruiter=招聘人員電郵
+ToUseAGenericEmail=使用通用電郵地址。如果未定義，將使用招聘負責人的電郵地址。
+NewCandidature=新申請
+ListOfCandidatures=申請列表
+Remuneration=薪金
+RequestedRemuneration=要求薪金
+ProposedRemuneration=建議薪金
+ContractProposed=合約已提出
+ContractSigned=合約已簽署
+ContractRefused=合約已拒絕
+RecruitmentCandidature=申請
+JobPositions=職位
+RecruitmentCandidatures=申請
+InterviewToDo=需跟進的聯絡人
+AnswerCandidature=申請回覆
+YourCandidature=你的申請
+YourCandidatureAnswerMessage=感謝您的申請。<br>...
+JobClosedTextCandidateFound=該職位已關閉。該職位已被填補。
+JobClosedTextCanceled=該職位已關閉。
+ExtrafieldsJobPosition=補充屬性 (職位)
+ExtrafieldsApplication=補充屬性 (職位申請)
+MakeOffer=發出錄用通知
+WeAreRecruiting=我們正在招聘。以下是待填補的空缺職位...
+NoPositionOpen=目前沒有空缺職位
+ConfirmClose=確認取消
+ConfirmCloseAsk=您確定要取消此招聘申請嗎？
+Recruitment=招聘

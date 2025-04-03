@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022   J-F Bouculat     <jfbouculat@gmail.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +49,10 @@ class MultiCurrencies extends DolibarrApi
 	 * @param int		$limit			Limit for list
 	 * @param int	    $page			Page number
 	 * @param string    $sqlfilters		Other criteria to filter answers separated by a comma. Syntax example "(t.product_id:=:1) and (t.date_creation:<:'20160101')"
-	 * @param string    $properties		Restrict the data returned to theses properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @return array					Array of warehouse objects
+	 * @phan-return MultiCurrency[]
+	 * @phpstan-return MultiCurrency[]
 	 *
 	 * @throws RestException
 	 */
@@ -57,15 +60,15 @@ class MultiCurrencies extends DolibarrApi
 	{
 		global $db;
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
-			throw new RestException(401, "Insufficient rights to read currency");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
+			throw new RestException(403, "Insufficient rights to read currency");
 		}
 
 		$obj_ret = array();
 
 		$sql = "SELECT t.rowid";
 		$sql .= " FROM ".$this->db->prefix()."multicurrency as t";
-		$sql .= ' WHERE 1 = 1';
+		$sql .= " WHERE t.entity IN (".getEntity('multicurrency').")";
 		// Add sql filters
 		if ($sqlfilters) {
 			$errormessage = '';
@@ -109,7 +112,7 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Get properties of a Currency object
 	 *
-	 * Return an array with Currency informations
+	 * Return an array with Currency information
 	 *
 	 * @param	int			$id		ID of Currency
 	 * @return  Object              Object with cleaned properties
@@ -123,8 +126,8 @@ class MultiCurrencies extends DolibarrApi
 			throw new RestException(404, 'Currency not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
-			throw new RestException(401, "Insufficient rights to read currency");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
+			throw new RestException(403, "Insufficient rights to read currency");
 		}
 
 		return $this->_cleanObjectDatas($multicurrency);
@@ -133,7 +136,7 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Get properties of a Currency object by code
 	 *
-	 * Return an array with Currency informations
+	 * Return an array with Currency information
 	 * @url GET /bycode/{code}
 	 *
 	 * @param	string		$code	Code of Currency (ex: EUR)
@@ -144,12 +147,12 @@ class MultiCurrencies extends DolibarrApi
 	public function getByCode($code)
 	{
 		$multicurrency = new MultiCurrency($this->db);
-		if (!$multicurrency->fetch('', $code)) {
+		if (!$multicurrency->fetch(0, $code)) {
 			throw new RestException(404, 'Currency not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
-			throw new RestException(401, "Insufficient rights to read currency");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
+			throw new RestException(403, "Insufficient rights to read currency");
 		}
 
 		return $this->_cleanObjectDatas($multicurrency);
@@ -173,8 +176,8 @@ class MultiCurrencies extends DolibarrApi
 			throw new RestException(404, 'Currency not found');
 		}
 
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->read) {
-			throw new RestException(401, "Insufficient rights to read currency rates");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'read')) {
+			throw new RestException(403, "Insufficient rights to read currency rates");
 		}
 
 		if ($multicurrency->fetchAllCurrencyRate() < 0) {
@@ -193,15 +196,14 @@ class MultiCurrencies extends DolibarrApi
 	 * Create Currency object
 	 *
 	 * @param array $request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return int					ID of Currency
 	 *
 	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->write) {
-			throw new RestException(401, "Insufficient rights to create currency");
-		}
 
 		// Check parameters
 		if (!isset($request_data['code'])) {
@@ -211,9 +213,21 @@ class MultiCurrencies extends DolibarrApi
 			throw new RestException(400, "name field missing");
 		}
 
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'write')) {
+			throw new RestException(403, "Insufficient rights to create currency");
+		}
+
 		$multicurrency = new MultiCurrency($this->db);
-		$multicurrency->code = $request_data['code'];
-		$multicurrency->name = $request_data['name'];
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$multicurrency->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$multicurrency->$field = $this->_checkValForAPI($field, $value, $multicurrency);
+		}
 
 		// Create Currency
 		if ($multicurrency->create(DolibarrApiAccess::$user) < 0) {
@@ -222,7 +236,7 @@ class MultiCurrencies extends DolibarrApi
 
 		// Add default rate if defined
 		if (isset($request_data['rate']) && $request_data['rate'] > 0) {
-			if ($multicurrency->addRate($request_data['rate']) < 0) {
+			if ($multicurrency->addRate((float) $request_data['rate']) < 0) {
 				throw new RestException(500, "Error adding currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 			}
 
@@ -235,16 +249,18 @@ class MultiCurrencies extends DolibarrApi
 	/**
 	 * Update Currency
 	 *
-	 * @param int   $id             Id of Currency to update
-	 * @param array $request_data   Datas
-	 * @return array				The updated Currency
+	 * @param 	int   $id             	Id of Currency to update
+	 * @param 	array $request_data   	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return 	Object					The updated Currency
 	 *
 	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->write) {
-			throw new RestException(401, "Insufficient rights to update currency");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'write')) {
+			throw new RestException(403, "Insufficient rights to update currency");
 		}
 
 		$multicurrency = new MultiCurrency($this->db);
@@ -257,12 +273,12 @@ class MultiCurrencies extends DolibarrApi
 				continue;
 			}
 			if ($field === 'caller') {
-				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again whith the caller
-				$multicurrency->context['caller'] = $request_data['caller'];
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$multicurrency->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
 				continue;
 			}
 
-			$multicurrency->$field = $value;
+			$multicurrency->$field = $this->_checkValForAPI($field, $value, $multicurrency);
 		}
 
 		if ($multicurrency->update(DolibarrApiAccess::$user) < 0) {
@@ -277,13 +293,15 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param   int     $id	Currency ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @throws RestException
 	 */
 	public function delete($id)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->delete) {
-			throw new RestException(401, "Insufficient rights to delete currency");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'delete')) {
+			throw new RestException(403, "Insufficient rights to delete currency");
 		}
 
 		$multicurrency = new MultiCurrency($this->db);
@@ -310,19 +328,21 @@ class MultiCurrencies extends DolibarrApi
 	 *
 	 * @param	int		$id				Currency ID
 	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object|false			Object with cleaned properties
 	 *
 	 * @throws RestException
 	 */
 	public function updateRate($id, $request_data = null)
 	{
-		if (!DolibarrApiAccess::$user->rights->multicurrency->currency->write) {
-			throw new RestException(401, "Insufficient rights to update currency rate");
+		if (!DolibarrApiAccess::$user->hasRight('multicurrency', 'currency', 'write')) {
+			throw new RestException(403, "Insufficient rights to update currency rate");
 		}
 
 		// Check parameters
 		if (!isset($request_data['rate'])) {
-			throw new RestException(400, "rate field missing");
+			throw new RestException(400, "Rate field is missing");
 		}
 
 		$multicurrency = new MultiCurrency($this->db);
@@ -331,7 +351,7 @@ class MultiCurrencies extends DolibarrApi
 		}
 
 		// Add rate
-		if ($multicurrency->addRate($request_data['rate']) < 0) {
+		if ($multicurrency->addRate((float) $request_data['rate']) < 0) {
 			throw new RestException(500, "Error updating currency rate", array_merge(array($multicurrency->error), $multicurrency->errors));
 		}
 
@@ -350,7 +370,7 @@ class MultiCurrencies extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Clear all fields out of interrest
+		// Clear all fields out of interest
 		foreach ($object as $key => $value) {
 			if ($key == "rate") {
 				$object->$key = $this->_cleanObjectDatasRate($object->$key);
@@ -376,7 +396,7 @@ class MultiCurrencies extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		// Clear all fields out of interrest
+		// Clear all fields out of interest
 		foreach ($object as $key => $value) {
 			if ($key == "id" || $key == "rate" || $key == "date_sync") {
 				continue;

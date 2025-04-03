@@ -6,5 +6,5 @@
   },
   "scripts": {
     "test:e2e": "node_modules/cucumber/bin/cucumber-js --require test/acceptance/index.js --require test/acceptance/setup.js --require test/acceptance/stepDefinitions -f node_modules/cucumber-pretty"
-  },
+  }
 }
