@@ -181,12 +181,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: '#^Variable \$filter might not be defined\.$#'
-			identifier: variable.undefined
-			count: 6
-			path: ../../../htdocs/accountancy/bookkeeping/balance.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
