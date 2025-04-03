@@ -999,8 +999,9 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
-		// Test cache $this->attributes[$elementtype]['loaded'] to see if we must do something
-		// TODO
+		if ($elementtype != 'all' && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload) {
+			return $this->attributes[$elementtype]['label'];
+		}
 
 		$array_name_label = array();
 
