@@ -1062,6 +1062,12 @@ if ($resql) {
 	dol_print_error($db);
 }
 
+/**
+ * Filter for payment
+ *
+ * @param	array	$v		Table of payment
+ * @return	bool
+ */
 function payment_filter($v)
 {
 	return isset($v['objects']) && count($v['objects']) > 0;
@@ -1446,7 +1452,7 @@ if (empty($action) || $action == 'view') {
 					if (!empty($amount_vat)) {
 						$amount_vat = price2num($payment_total_vat * $amount_vat / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
 						$total_vat += $amount_vat;
-						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT ').' '.price($vat_infos['tva_tx']).'%', $payment['type_payment'], -$amount_vat);
+						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', $payment['type_payment'], -$amount_vat);
 					}
 					$idx++;
 				}
