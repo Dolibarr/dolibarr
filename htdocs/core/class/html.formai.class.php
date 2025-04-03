@@ -106,7 +106,7 @@ class FormAI extends Form
 		$formadmin = new FormAdmin($this->db);
 
 		if (!is_object($form)) {
-			$form = new Form($db);
+			$form = new Form($this->db);
 		}
 
 		$langs->load("other");
@@ -264,7 +264,6 @@ class FormAI extends Form
 						})
 					}
 				})
-				
 			});
 			</script>
 			";
