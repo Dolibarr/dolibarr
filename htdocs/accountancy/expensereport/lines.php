@@ -101,7 +101,8 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
-
+// Initialize technical objects
+$hookmanager->initHooks(['accountancyexpensereportlines']);
 $formaccounting = new FormAccounting($db);
 
 

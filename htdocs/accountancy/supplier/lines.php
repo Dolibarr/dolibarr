@@ -98,6 +98,8 @@ if (!$sortorder) {
 	}
 }
 
+// Initialize technical objects
+$hookmanager->initHooks(['accountancysupplierlines']);
 $formaccounting = new FormAccounting($db);
 
 // Security check
