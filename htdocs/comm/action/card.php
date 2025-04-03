@@ -108,6 +108,10 @@ if (GETPOST('datep')) {
 	}
 }
 
+$currentyear = (int) dol_print_date(dol_now(), '%Y');
+
+$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : ($currentyear + 1), $tzforfullday ? $tzforfullday : 'tzuserrel');
+
 // Security check
 $socid = GETPOSTINT('socid');
 $id = GETPOSTINT('id');
@@ -457,15 +461,12 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 	if (GETPOSTISSET("contactid")) {
 		$object->contact_id = GETPOSTINT("contactid");
-
-		$object->contact = $contact;	// For backward compatibility
+		$object->fetch_contact();
 	}
 
 	if (GETPOSTINT('socid') > 0) {
 		$object->socid = GETPOSTINT('socid');
 		$object->fetch_thirdparty();
-
-		$object->societe = $object->thirdparty; // For backward compatibility
 	}
 
 	// Check parameters
@@ -506,16 +507,18 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 	}
 
 
-
 	if (!$error) {
 		$db->begin();
+
+		$dayinmonth = dol_print_date($object->datep, '%d');
+		$dayinweek = dol_print_date($object->datep, '%w');
 
 		$selectedrecurrulefreq = 'no';
 		$selectedrecurrulebymonthday = '';
 		$selectedrecurrulebyday = '';
 		$object->recurrule = GETPOSTISSET('recurrulefreq') ? "FREQ=".GETPOST('recurrulefreq', 'alpha') : "";
-		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY' && GETPOSTISSET('BYMONTHDAY')) ? "_BYMONTHDAY".GETPOST('BYMONTHDAY', 'alpha') : "";
-		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY' && GETPOSTISSET('BYDAY')) ? "_BYDAY".GETPOST('BYDAY', 'alpha') : "";
+		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'MONTHLY') ? "_BYMONTHDAY".((int) $dayinmonth) : "";
+		$object->recurrule .= (GETPOST('recurrulefreq', 'alpha') == 'WEEKLY') ? "_BYDAY".((int) $dayinweek) : "";
 
 		$reg1 = array();
 		$reg2 = array();
@@ -719,7 +722,6 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				$error++;
 			}
 			// End date
-			$repeateventlimitdate = dol_mktime(23, 59, 59, GETPOSTISSET("limitmonth") ? GETPOSTINT("limitmonth") : 1, GETPOSTISSET("limitday") ? GETPOSTINT("limitday") : 1, GETPOSTISSET("limityear") && GETPOSTINT("limityear") < 2100 ? GETPOSTINT("limityear") : 2100, $tzforfullday ? $tzforfullday : 'tzuserrel');
 			// Set date of end of event
 			$deltatime = num_between_day($object->datep, $datep);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -1349,12 +1351,26 @@ if ($action == 'create') {
                     });
 					$("#aphour,#apmin").change(function() {
 						if ($("#actioncode").val() == \'AC_RDV\') {
-							console.log("Start date was changed, we modify end date "+(parseInt($("#aphour").val()))+" "+$("#apmin").val()+" -> "+("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
-							$("#p2hour").val(("00" + (parseInt($("#aphour").val()) + 1)).substr(-2,2));
-							$("#p2min").val($("#apmin").val());
-							$("#p2day").val($("#apday").val());
-							$("#p2month").val($("#apmonth").val());
-							$("#p2year").val($("#apyear").val());
+							var oldhour = parseInt($("#aphour").val());
+							var oldmin = parseInt($("#apmin").val());
+							var oldday = parseInt($("#apday").val());
+							var oldmonth = $("#apmonth").val();
+							var oldyear = $("#apyear").val();
+
+							var newhour = oldhour + 1;
+							var newday = oldday;
+							var newmonth = oldmonth;
+							var newyear = oldyear;
+							if (newhour >= 24) {
+								newhour = 0;
+								newday = oldday + 1;
+							}
+							console.log("Start date was changed, we modify end date "+oldhour+" "+oldmin+" -> "+newhour+" "+oldmin);
+							$("#p2hour").val(("00" + newhour).substr(-2,2));
+							$("#p2min").val(oldmin);
+							$("#p2day").val(newday);
+							$("#p2month").val(newmonth);
+							$("#p2year").val(newyear);
 							$("#p2").val($("#ap").val());
 						}
 					});
@@ -1467,6 +1483,7 @@ if ($action == 'create') {
 
 
 		// If recurrulefreq is MONTHLY
+		/*
 		print '<div class="hidden marginrightonly inline-block repeateventBYMONTHDAY">';
 		print $langs->trans("DayOfMonth").': <input type="input" size="2" name="BYMONTHDAY" value="'.$selectedrecurrulebymonthday.'">';
 		print '</div>';
@@ -1474,8 +1491,11 @@ if ($action == 'create') {
 		print '<div class="hidden marginrightonly inline-block repeateventBYDAY">';
 		print $langs->trans("DayOfWeek").': <input type="input" size="4" name="BYDAY" value="'.$selectedrecurrulebyday.'">';
 		print '</div>';
+		*/
+
 		// limit date
-		$repeateventlimitdate = !empty($repeateventlimitdate) ? $repeateventlimitdate : '';
+		$repeateventlimitdate = empty($repeateventlimitdate) ?  (dol_now() + ((24 * 3600 * 365) + 1)) : $repeateventlimitdate;
+
 		print '<div class="hidden marginrightonly inline-block repeateventlimitdate">';
 		print $langs->trans("Until")." ";
 		print $form->selectDate($repeateventlimitdate, 'limit', 0, 0, 0, "action", 1, 0, 0, '', '', '', '', 1, '', '', 'tzuserrel');
@@ -1492,14 +1512,14 @@ if ($action == 'create') {
 					console.log("selectedrulefreq: " + "'.$selectedrecurrulefreq.'");
 					if (jQuery("#recurrulefreq").val() == \'MONTHLY\')
 					{
-						jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
+						/* jQuery(".repeateventBYMONTHDAY").css("display", "inline-block");	*/	/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
 						jQuery(".repeateventBYDAY").hide();
 					}
 					else if (jQuery("#recurrulefreq").val() == \'WEEKLY\')
 					{
 						jQuery(".repeateventBYMONTHDAY").hide();
-						jQuery(".repeateventBYDAY").css("display", "inline-block");		/* use this instead of show because we want inline-block and not block */
+						/* jQuery(".repeateventBYDAY").css("display", "inline-block"); */		/* use this instead of show because we want inline-block and not block */
 						jQuery(".repeateventlimitdate").css("display", "inline-block");
 					}
 					else

@@ -43,6 +43,7 @@ if (empty($user->admin)) {
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 
+$action = GETPOST('action', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'moduleoverview';
 
@@ -80,6 +81,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 $param = '';
 $info_admin = '';
 
+
 /*
  * Actions
  */
@@ -94,7 +96,6 @@ if (empty($reshook)) {
 	// Selection of new fields
 	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 }
-
 
 // Load list of modules
 $moduleList = array();
@@ -228,10 +229,12 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
+if (!GETPOSTINT('hidetitle')) {
+	print_barre_liste($langs->trans("AvailableModules"), empty($page) ? 0 : $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_setup', 0, '', '', 0, 1, 1);
 
-print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
-print '<br>';
+	print '<span class="opacitymedium">'.$langs->trans("ToActivateModule").'</span>';
+	print '<br>';
+}
 print '<br>';
 
 $mode = '';

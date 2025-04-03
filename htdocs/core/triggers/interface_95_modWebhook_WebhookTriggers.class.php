@@ -46,7 +46,9 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 	 */
 	public function __construct($db)
 	{
-		parent::__construct($db);
+		$this->db = $db;
+
+		$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		$this->family = "demo";
 		$this->description = "Webhook triggers.";
 		$this->version = self::VERSIONS['dev'];
@@ -76,7 +78,7 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 		$nbPosts = 0;
 		$errors = 0;
 		$static_object = new Target($this->db);
-		$target_url = $static_object->fetchAll();
+		$target_url = $static_object->fetchAll();	// TODO Replace this with a search with filter on $action trigger to avoid to filter later.
 
 		if (is_numeric($target_url) && $target_url < 0) {
 			dol_syslog("Error Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
@@ -91,11 +93,16 @@ class InterfaceWebhookTriggers extends DolibarrTriggers
 
 		$sendmanualtriggers = (!empty($object->context['sendmanualtriggers']) ? $object->context['sendmanualtriggers'] : "");
 		foreach ($target_url as $key => $tmpobject) {
-			$actionarray = explode(",", $tmpobject->trigger_codes);
+			// Set list of all triggers for this targetinto $actionarray
+			$actionarraytmp = explode(",", $tmpobject->trigger_codes);
+			$actionarray = array();
+			foreach ($actionarraytmp as $val) {
+				$actionarray[] = trim($val);
+			}
 
 			// Test on Target status
 			$testontargetstatus = ($tmpobject->status == Target::STATUS_AUTOMATIC_TRIGGER || ($tmpobject->status == Target::STATUS_MANUAL_TRIGGER && !empty($sendmanualtriggers)));
-			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && is_array($actionarray) && in_array($action, $actionarray)) {
+			if (((!empty($object->context["actiontrigger"]) && in_array($object->context["actiontrigger"], array("sendtrigger", "testsend"))) || $testontargetstatus) && in_array($action, $actionarray)) {
 				// Build the answer object
 				$resobject = new stdClass();
 				$resobject->triggercode = $action;

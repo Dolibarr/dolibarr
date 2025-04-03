@@ -19,6 +19,7 @@
 
  /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
  * @var ?FormAI 		$formai
@@ -104,6 +105,14 @@ if ($showlinktoai) {
 									}
 								}
 							});
+							$(document).on("click", function (event) {
+								aidropdown = $(".ai_dropdown'.$htmlname.'");
+								aidropdownbutton = $("#linkforaiprompt'.$showlinktoai.'");
+								if (!aidropdown.is(event.target) && !aidropdownbutton.is(event.target) && $(event.target).closest(aidropdown).length === 0 && $(event.target).closest(aidropdownbutton).length === 0 && aidropdown.is(":visible")) {
+									console.log("You clicked outside of ai_dropdown - we close it");
+									$(".ai_dropdown'.$htmlname.'").hide();
+								}
+							});
 						});
 					</script>
 					';
@@ -118,6 +127,10 @@ if ($showlinktolayout) {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
 if ($showlinktoai) {
+	if (empty($formai) || $formai instanceof FormAI) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+		$formai = new FormAI($db);
+	}
 	$out .= $formai->getAjaxAICallFunction();
 	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname);
 } else {

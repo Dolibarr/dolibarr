@@ -341,6 +341,12 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
+	if (isModEnabled('mrp')) {
+		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		$board = new Mo($db);
+		$dashboardlines[$board->element] = $board->load_board($user);
+	}
+
 	$object = new stdClass();
 	$parameters = array();
 	$action = '';
@@ -353,7 +359,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	if ($reshook == 0) {
 		$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
 	}
-
 	/* Open object dashboard */
 	$dashboardgroup = array(
 		'action' =>
@@ -451,8 +456,14 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'stats' =>
 					array('holiday'),
 			),
+		'cubes' =>
+			array(
+				'groupName' => 'Mo',
+				'globalStatsKey' => 'mrp',
+				'stats' =>
+					array('mo'),
+			),
 	);
-
 	$object = new stdClass();
 	$parameters = array(
 		'dashboardgroup' => $dashboardgroup
@@ -475,7 +486,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
-
 	// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 	foreach ($valid_dashboardlines as $board) {
 		if (is_numeric($board->nbtodo) && is_numeric($board->nbtodolate) && $board->nbtodolate > 0) {
@@ -527,7 +537,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
-
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
 
@@ -540,6 +549,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 				}
 			}
+
 
 			if (!empty($boards)) {
 				if (!empty($groupElement['lang'])) {
@@ -583,7 +593,20 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
+
+					$dateOrder = '';
+					if ($board->id == 'mo') {
+						$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
+					} else {
+						$dateOrder = $langs->trans("DateReference") . " > " . $langs->trans("DateToday");
+					}
+					$warningDelay = ceil(empty($board->warning_delay) ? 0 : $board->warning_delay);
+					$sign = '';
+					if ($warningDelay >= 0) {
+						$sign = '+';
+					}
+
+					$textLateTitle .= " (" . $langs->trans("Late") . " = $dateOrder $sign$warningDelay " . $langs->trans("days") . ")";
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';

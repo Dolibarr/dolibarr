@@ -882,7 +882,7 @@ while ($i < $imaxinloop) {
 			print $productstatic->getNomUrl(1, '', 24);
 			print $obj->label ? ' - '.dol_trunc($obj->label, 16) : '';
 			if (!empty($obj->description) && getDolGlobalString('PRODUCT_DESC_IN_LIST')) {
-				print '<br><span class="small">'.dol_nl2br($obj->description).'</span>';
+				print '<br><div class="small lineheightsmall">'.dol_nl2br($obj->description).'</div>';
 			}
 		} else {
 			if ($obj->type == 0) {

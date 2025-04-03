@@ -31,20 +31,20 @@
  * The HTML field must be an input text with id=search_$htmlname.
  * This use the jQuery "autocomplete" function. If we want to use the select2, we must instead use input select into functions that call this method.
  *
- * @param string	$selected 			Preselected value
- * @param string	$htmlname 			HTML name of input field
- * @param string	$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
- * @param string	$urloption			More parameters on URL request
- * @param int		$minLength			Minimum number of chars to trigger that Ajax search
- * @param int		$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
+ * @param string		$selected 			Preselected value
+ * @param string|int	$htmlname 			HTML name of input field
+ * @param string		$url 				Ajax Url to call for request: /path/page.php. Must return a json array ('key'=>id, 'value'=>String shown into input field once selected, 'label'=>String shown into combo list)
+ * @param string		$urloption			More parameters on URL request
+ * @param int			$minLength			Minimum number of chars to trigger that Ajax search
+ * @param int			$autoselect			Automatic selection if just one value (trigger("change") on field is done if search return only 1 result)
  * @param array<string,string|string[]>	$ajaxoptions	Multiple options array
  *                                                      - Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
  *                                                      - Ex: array('disabled'=> )
  *                                                      - Ex: array('show'=> )
  *                                                      - Ex: array('update_textarea'=> )
  *                                                      - Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
- * @param string	$moreparams			More params provided to ajax call
- * @return string   					Script
+ * @param string		$moreparams			More params provided to ajax call
+ * @return string   						Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption = '', $minLength = 2, $autoselect = 0, $ajaxoptions = array(), $moreparams = '')
 {
