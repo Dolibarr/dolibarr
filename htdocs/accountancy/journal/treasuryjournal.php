@@ -1327,7 +1327,7 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Test that setup is complete
-	$sql = 'SELECT COUNT(rowid) as nb FROM '.$db->prefix().'bank_account WHERE fk_accountancy_journal IS NULL AND clos = 0';
+	$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."bank_account WHERE fk_accountancy_journal IS NULL AND clos = 0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
