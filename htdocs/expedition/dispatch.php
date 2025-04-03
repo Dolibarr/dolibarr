@@ -140,40 +140,40 @@ if (empty($reshook)) {
 
 		$pos = 0;
 
-	foreach ($_POST as $key => $value) {
-		// without batch module enabled
-		$reg = array();
-		if (preg_match('/^(?:product|productbatch)([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
-			$pos++;
-			$modebatch = null;
-			if (preg_match('/^product([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
-				$modebatch = "barcode";
-			} elseif (preg_match('/^productbatch([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) { // With batchmode enabled
-				$modebatch = "batch";
-			}
+		foreach ($_POST as $key => $value) {
+			// without batch module enabled
+			$reg = array();
+			if (preg_match('/^(?:product|productbatch)([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+				$pos++;
+				$modebatch = null;
+				if (preg_match('/^product([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) {
+					$modebatch = "barcode";
+				} elseif (preg_match('/^productbatch([0-9]+)_([0-9]+)_([0-9]+)$/i', $key, $reg)) { // With batchmode enabled
+					$modebatch = "batch";
+				}
 
-			$numline = $pos;
-			$dispatch_line_suffix = $reg[1].'_'.$reg[2].'_'.$reg[3];
-			if ($modebatch == "barcode") {
-				$prod = "product".$dispatch_line_suffix;
-			} else {
-				$prod = 'productbatch'.$dispatch_line_suffix;
-			}
-			$qty = "qty".$dispatch_line_suffix;
-			$ent = "entrepot".$dispatch_line_suffix;
-			$fk_commandedet = "fk_commandedet".$dispatch_line_suffix;
-			$idline = GETPOSTINT("idline".$dispatch_line_suffix);
-			$warehouse_id = GETPOSTINT($ent);
-			$prod_id = GETPOSTINT($prod);
-			//$pu = "pu".$dispatch_line_suffix; // This is unit price including discount
-			$lot = '';
-			$dDLUO = '';
-			$dDLC = '';
-			if ($modebatch == "batch") { //TODO: Make impossible to input non existing batch code
-				$lot = GETPOST('lot_number'.$dispatch_line_suffix);
-				$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$dispatch_line_suffix.'month'), GETPOSTINT('dluo'.$dispatch_line_suffix.'day'), GETPOSTINT('dluo'.$dispatch_line_suffix.'year'));
-				$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$dispatch_line_suffix.'month'), GETPOSTINT('dlc'.$dispatch_line_suffix.'day'), GETPOSTINT('dlc'.$dispatch_line_suffix.'year'));
-			}
+				$numline = $pos;
+				$dispatch_line_suffix = $reg[1].'_'.$reg[2].'_'.$reg[3];
+				if ($modebatch == "barcode") {
+					$prod = "product".$dispatch_line_suffix;
+				} else {
+					$prod = 'productbatch'.$dispatch_line_suffix;
+				}
+				$qty = "qty".$dispatch_line_suffix;
+				$ent = "entrepot".$dispatch_line_suffix;
+				$fk_commandedet = "fk_commandedet".$dispatch_line_suffix;
+				$idline = GETPOSTINT("idline".$dispatch_line_suffix);
+				$warehouse_id = GETPOSTINT($ent);
+				$prod_id = GETPOSTINT($prod);
+				//$pu = "pu".$dispatch_line_suffix; // This is unit price including discount
+				$lot = '';
+				$dDLUO = '';
+				$dDLC = '';
+				if ($modebatch == "batch") { //TODO: Make impossible to input non existing batch code
+					$lot = GETPOST('lot_number'.$dispatch_line_suffix);
+					$dDLUO = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$dispatch_line_suffix.'month'), GETPOSTINT('dluo'.$dispatch_line_suffix.'day'), GETPOSTINT('dluo'.$dispatch_line_suffix.'year'));
+					$dDLC = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$dispatch_line_suffix.'month'), GETPOSTINT('dlc'.$dispatch_line_suffix.'day'), GETPOSTINT('dlc'.$dispatch_line_suffix.'year'));
+				}
 
 				$newqty = GETPOSTFLOAT($qty, 'MS');
 				//var_dump("modebatch=".$modebatch." newqty=".$newqty." ent=".$ent." idline=".$idline);
@@ -240,15 +240,15 @@ if (empty($reshook)) {
 									$error++;
 								}
 
-							if (!$error && $modebatch == "batch") {
-								if ($newqty > 0) {
-									$suffixkeyfordate = preg_replace('/^productbatch/', '', $key);
-									$sellby = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$suffixkeyfordate.'month'), GETPOSTINT('dlc'.$suffixkeyfordate.'day'), GETPOSTINT('dlc'.$suffixkeyfordate.'year'), '');
-									$eatby = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$suffixkeyfordate.'month'), GETPOSTINT('dluo'.$suffixkeyfordate.'day'), GETPOSTINT('dluo'.$suffixkeyfordate.'year'));
+								if (!$error && $modebatch == "batch") {
+									if ($newqty > 0) {
+										$suffixkeyfordate = preg_replace('/^productbatch/', '', $key);
+										$sellby = dol_mktime(12, 0, 0, GETPOSTINT('dlc'.$suffixkeyfordate.'month'), GETPOSTINT('dlc'.$suffixkeyfordate.'day'), GETPOSTINT('dlc'.$suffixkeyfordate.'year'), '');
+										$eatby = dol_mktime(12, 0, 0, GETPOSTINT('dluo'.$suffixkeyfordate.'month'), GETPOSTINT('dluo'.$suffixkeyfordate.'day'), GETPOSTINT('dluo'.$suffixkeyfordate.'year'));
 
-									$sqlsearchdet = "SELECT rowid FROM ".$db->prefix().$expeditionlinebatch->table_element;
-									$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
-									$resqlsearchdet = $db->query($sqlsearchdet);
+										$sqlsearchdet = "SELECT rowid FROM ".$db->prefix().$expeditionlinebatch->table_element;
+										$sqlsearchdet .= " WHERE fk_expeditiondet = ".((int) $idline);
+										$resqlsearchdet = $db->query($sqlsearchdet);
 
 										$objsearchdet = null;
 										if ($resqlsearchdet) {
@@ -257,42 +257,42 @@ if (empty($reshook)) {
 											dol_print_error($db);
 										}
 
-									if ($objsearchdet) {
-										$sql = "UPDATE ".$db->prefix().$expeditionlinebatch->table_element." SET";
-										$sql .= " batch = '".$db->escape($lot)."'";
-										$sql .= ", eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
-										$sql .= ", sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
-										$sql .= ", qty = ".((float) $newqty);
-										$sql .= ", fk_warehouse = ".((int) $warehouse_id);
-										$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
+										if ($objsearchdet) {
+											$sql = "UPDATE ".$db->prefix().$expeditionlinebatch->table_element." SET";
+											$sql .= " batch = '".$db->escape($lot)."'";
+											$sql .= ", eatby = ".($eatby ? "'".$db->idate($eatby)."'" : "null");
+											$sql .= ", sellby = ".($sellby ? "'".$db->idate($sellby)."'" : "null");
+											$sql .= ", qty = ".((float) $newqty);
+											$sql .= ", fk_warehouse = ".((int) $warehouse_id);
+											$sql .= " WHERE rowid = ".((int) $objsearchdet->rowid);
+										} else {
+											$sql = "INSERT INTO ".$db->prefix().$expeditionlinebatch->table_element." (";
+											$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
+											$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
+											$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
+										}
 									} else {
-										$sql = "INSERT INTO ".$db->prefix().$expeditionlinebatch->table_element." (";
-										$sql .= "fk_expeditiondet, eatby, sellby, batch, qty, fk_origin_stock, fk_warehouse)";
-										$sql .= " VALUES (".((int) $idline).", ".($eatby ? "'".$db->idate($eatby)."'" : "null").", ".($sellby ? "'".$db->idate($sellby)."'" : "null").", ";
-										$sql .= " '".$db->escape($lot)."', ".((float) $newqty).", 0, ".((int) $warehouse_id).")";
+										$sql = "DELETE FROM ".$db->prefix().$expeditionlinebatch->table_element;
+										$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
+										$sql .= " AND batch = '".$db->escape($lot)."'";
 									}
-								} else {
-									$sql = " DELETE FROM ".$db->prefix().$expeditionlinebatch->table_element;
-									$sql .= " WHERE fk_expeditiondet = ".((int) $idline);
-									$sql .= " AND batch = '".$db->escape($lot)."'";
-								}
 
-								$resql = $db->query($sql);
-								if (!$resql) {
-									dol_print_error($db);
-									$error++;
+									$resql = $db->query($sql);
+									if (!$resql) {
+										dol_print_error($db);
+										$error++;
+									}
 								}
 							}
-						}
-					} else {
-						$expeditiondispatch->fk_expedition = $object->id;
-						$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
-						$expeditiondispatch->fk_parent = GETPOSTINT('fk_parent'.$dispatch_line_suffix);
-						$expeditiondispatch->fk_product = $prod_id;
-						if (!($expeditiondispatch->fk_parent > 0)) {
-							$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
-						}
-						$expeditiondispatch->qty = $newqty;
+						} else {
+							$expeditiondispatch->fk_expedition = $object->id;
+							$expeditiondispatch->entrepot_id = GETPOSTINT($ent);
+							$expeditiondispatch->fk_parent = GETPOSTINT('fk_parent'.$dispatch_line_suffix);
+							$expeditiondispatch->fk_product = $prod_id;
+							if (!($expeditiondispatch->fk_parent > 0)) {
+								$expeditiondispatch->fk_elementdet = GETPOSTINT($fk_commandedet);
+							}
+							$expeditiondispatch->qty = $newqty;
 
 							if ($newqty > 0) {
 								$idline = $expeditiondispatch->insert($user);
@@ -301,13 +301,13 @@ if (empty($reshook)) {
 									$error++;
 								}
 
-							if ($modebatch == "batch" && !$error) {
-								$expeditionlinebatch->sellby = $dDLC; // DLC is sellByDate
-								$expeditionlinebatch->eatby = $dDLUO; // DLUO is eatByDate
-								$expeditionlinebatch->batch = $lot;
-								$expeditionlinebatch->qty = $newqty;
-								$expeditionlinebatch->fk_origin_stock = 0;
-								$expeditionlinebatch->fk_warehouse = GETPOSTINT($ent);
+								if ($modebatch == "batch" && !$error) {
+									$expeditionlinebatch->sellby = $dDLC; // DLC is sellByDate
+									$expeditionlinebatch->eatby = $dDLUO; // DLUO is eatByDate
+									$expeditionlinebatch->batch = $lot;
+									$expeditionlinebatch->qty = $newqty;
+									$expeditionlinebatch->fk_origin_stock = 0;
+									$expeditionlinebatch->fk_warehouse = GETPOSTINT($ent);
 
 									$result = $expeditionlinebatch->create($idline);
 									if ($result < 0) {
