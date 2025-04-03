@@ -11,18 +11,17 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 460+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanUndeclaredGlobalVariable : 100+ occurrences
-    // PhanTypeMismatchArgument : 95+ occurrences
-    // PhanTypeMismatchArgumentNullable : 35+ occurrences
+    // PhanUndeclaredGlobalVariable : 95+ occurrences
+    // PhanTypeMismatchArgument : 90+ occurrences
+    // PhanTypeMismatchArgumentNullable : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
     // PhanTypeMismatchDimFetch : 15+ occurrences
     // PhanUndeclaredConstant : 15+ occurrences
     // PhanTypeMismatchArgumentProbablyReal : 10+ occurrences
     // PhanUndeclaredMethod : 9 occurrences
-    // PhanPossiblyUndeclaredGlobalVariable : 7 occurrences
-    // PhanTypeMismatchArgumentNullableInternal : 7 occurrences
     // PhanPluginDuplicateExpressionBinaryOp : 6 occurrences
+    // PhanPossiblyUndeclaredGlobalVariable : 6 occurrences
     // PhanTypeArraySuspiciousNull : 6 occurrences
     // PhanTypeComparisonFromArray : 6 occurrences
     // PhanPluginUndeclaredVariableIsset : 5 occurrences
@@ -33,6 +32,7 @@ return [
     // PhanTypeSuspiciousStringExpression : 2 occurrences
     // PhanPossiblyUndeclaredVariable : 1 occurrence
     // PhanTypeExpectedObjectPropAccessButGotNull : 1 occurrence
+    // PhanTypeMismatchArgumentNullableInternal : 1 occurrence
 
     // Currently, file_suppressions and directory_suppressions are the only supported suppressions
     'file_suppressions' => [
@@ -64,8 +64,8 @@ return [
         'htdocs/comm/action/pertype.php' => ['PhanTypeComparisonFromArray', 'PhanTypeExpectedObjectPropAccess', 'PhanTypeMismatchDimFetch'],
         'htdocs/comm/action/peruser.php' => ['PhanTypeComparisonFromArray', 'PhanTypeMismatchArgument'],
         'htdocs/comm/card.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/mailing/index.php' => ['PhanUndeclaredProperty'],
+        'htdocs/comm/mailing/targetemailing.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
@@ -97,7 +97,6 @@ return [
         'htdocs/compta/localtax/list.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/compta/paiement/card.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/paiement/cheque/list.php' => ['PhanTypeMismatchProperty', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/compta/paiement/list.php' => ['PhanPossiblyUndeclaredGlobalVariable', 'PhanTypeMismatchArgumentNullableInternal', 'PhanUndeclaredGlobalVariable'],
         'htdocs/compta/paiement/rapport.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/prelevement/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/compta/resultat/clientfourn.php' => ['PhanTypeMismatchArgument'],
@@ -107,7 +106,6 @@ return [
         'htdocs/compta/tva/class/paymentvat.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/compta/tva/clients.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument'],
         'htdocs/compta/tva/index.php' => ['PhanTypeMismatchArgument'],
-        'htdocs/compta/tva/payments.php' => ['PhanTypeMismatchArgumentNullable', 'PhanTypeMismatchArgumentNullableInternal'],
         'htdocs/compta/tva/quadri_detail.php' => ['PhanTypeArraySuspiciousNull', 'PhanTypeInvalidDimOffset', 'PhanTypeMismatchArgument'],
         'htdocs/contrat/card.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/core/actions_addupdatedelete.inc.php' => ['PhanTypeMismatchDimFetch', 'PhanUndeclaredProperty'],
@@ -323,7 +321,6 @@ return [
         'htdocs/ticket/class/actions_ticket.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/cticketcategory.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/ticket/class/ticket.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/ticket/contact.php' => ['PhanTypeMismatchArgument'],
         'htdocs/user/class/user.class.php' => ['PhanTypeMismatchArgumentNullable', 'PhanUndeclaredProperty'],
         'htdocs/user/class/usergroup.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/variants/tpl/productattributevalueline_edit.tpl.php' => ['PhanUndeclaredProperty'],
