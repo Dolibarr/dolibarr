@@ -1416,7 +1416,7 @@ if (empty($reshook)) {
 						} else {
 							$error++;
 						}
-						
+
 						if (!$error) {
 							// Hooks
 							$parameters = array('objFrom' => $srcobject);
