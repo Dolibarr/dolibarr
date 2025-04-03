@@ -2597,11 +2597,6 @@ if ($id > 0) {
 		// Full day event
 		print '<tr><td class="titlefieldmiddle">'.$langs->trans("EventOnFullDay").'</td><td>'.yn($object->fulldayevent ? 1 : 0, 3).'</td></tr>';
 
-		// Event into a series
-		if ($object->recurid) {
-			print '<tr><td class="titlefieldmiddle">'.$langs->trans("EventIntoASerie").'</td><td>'.dol_escape_htmltag($object->recurid).'</td></tr>';
-		}
-
 		$rowspan = 4;
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
 			$rowspan++;
@@ -2637,6 +2632,17 @@ if ($id > 0) {
 			print img_warning($langs->trans("Late"));
 		}
 		print '</td></tr>';
+
+		// Recurring event (into a series)
+		if ($object->recurid) {
+			print '<tr><td class="titlefieldmiddle">'.$langs->trans("RecurringEvent").'</td><td>';
+			print img_picto($langs->trans("EventPartOfARecurringSerie", $object->recurid), 'recurring', 'class="pictofixedwidth"');
+			$reg = array();
+			if (preg_match('/FREQ=MONTHLY_BYMONTHDAY(\d+)/', $object->recurrule, $reg)) {
+				print $langs->trans("EveryMonth").' <span class="opacitymedium small">('.$langs->trans("DayOfMonth").' '.$reg[1].' - '.$langs->trans("Until").' '.dol_print_date($object->recurdateend, 'day').')</span>';
+			}
+			print '</td></tr>';
+		}
 
 		// Location
 		if (!getDolGlobalString('AGENDA_DISABLE_LOCATION')) {
@@ -2751,10 +2757,10 @@ if ($id > 0) {
 
 		// Object linked (if link is for thirdparty, contact, project it is a recording error. We should not have links in link table
 		// for such objects because there is already a dedicated field into table llx_actioncomm.
-		if (!empty($object->fk_element) && !empty($object->elementtype) && !in_array($object->elementtype, array('societe', 'contact', 'project'))) {
+		if (!empty($object->elementid) && !empty($object->elementtype) && !in_array($object->elementtype, array('societe', 'contact', 'project'))) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			$link = dolGetElementUrl($object->fk_element, $object->elementtype, 1);
+			$link = dolGetElementUrl($object->elementid, $object->elementtype, ($object->elementtype == 'user' ? -1 : 1));
 			print '<td>';
 			if (empty($link)) {
 				print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';

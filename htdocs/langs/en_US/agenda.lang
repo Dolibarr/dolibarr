@@ -207,3 +207,5 @@ BookcalBookingTitle=Online appointment
 Transparency = Transparency
 ReadMore = Read more
 ReadLess = Read less
+RecurringEvent=Recurring event
+EventPartOfARecurringSerie=Event is part of a recurring serie with ID %s
