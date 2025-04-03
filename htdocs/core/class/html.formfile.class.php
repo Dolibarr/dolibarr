@@ -984,6 +984,9 @@ class FormFile
 					} else {
 						$out .= '<span class="spanoverflow">';
 					}
+					if (getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
+						$out .= $imgpreview;
+					}
 					if (is_object($ecmfile)) {
 						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
 					} else {
@@ -1004,7 +1007,9 @@ class FormFile
 						$out .= '</a>';
 					}
 					$out .= '</span>'."\n";
-					$out .= $imgpreview;
+					if (!getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
+						$out .= $imgpreview;
+					}
 					$out .= '</td>';
 
 					// Show file size
