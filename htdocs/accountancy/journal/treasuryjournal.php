@@ -1085,13 +1085,13 @@ $journal_label = $langs->transnoentitiesnoconv($accountingjournalstatic->label);
 $MAXNBERRORS = 5;
 
 // Write bookkeeping
-if (!$error && $action == 'writebookkeeping') {
+if ($action == 'writebookkeeping') {
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
 		// Set accounting account infos
 		if (!isset($tabaccountingaccount[$accountInfos['account_number']])) {
-			$result = $accountingaccount->fetch(null, $accountInfos['account_number'], true);
+			$result = $accountingaccount->fetch(0, $accountInfos['account_number'], true);
 			if ($result < 0) {
 				setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
 				$error++;
@@ -1113,7 +1113,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 			// Show bank line
 			if ($object_data['amount'] >= 0) {
-				$amount = price2num($object_data['amount'], 'MT') * 1;
+				$amount = (float) price2num($object_data['amount'], 'MT');
 				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
@@ -1140,7 +1140,7 @@ if (!$error && $action == 'writebookkeeping') {
 				if (!empty($operation['total_ht'])) {
 					// Set accounting account infos
 					if (!isset($tabaccountingaccount[$accountancy_code])) {
-						$result = $accountingaccount->fetch(null, $accountancy_code, true);
+						$result = $accountingaccount->fetch(0, $accountancy_code, true);
 						if ($result < 0) {
 							setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
 							$accountancy_code_label = $accountingaccount->errorsToString();
@@ -1192,7 +1192,7 @@ if (!$error && $action == 'writebookkeeping') {
 					if (!empty($amount)) {
 						// Set accounting account infos
 						if (!isset($tabaccountingaccount[$accountancy_code])) {
-							$result = $accountingaccount->fetch(null, $accountancy_code, true);
+							$result = $accountingaccount->fetch(0, $accountancy_code, true);
 							if ($result < 0) {
 								setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
 								$accountancy_code_label = $accountingaccount->errorsToString();
@@ -1228,7 +1228,7 @@ if (!$error && $action == 'writebookkeeping') {
 
 			// Show bank line
 			if ($object_data['amount'] < 0) {
-				$amount = price2num($object_data['amount'], 'MT') * 1;
+				$amount = (float) price2num($object_data['amount'], 'MT');
 				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
@@ -1292,7 +1292,7 @@ if (!$error && $action == 'writebookkeeping') {
 		$param .= '&date_endmonth='.$date_endmonth;
 		$param .= '&date_endyear='.$date_endyear;
 		$param .= '&in_bookkeeping='.$in_bookkeeping;
-		header("Location: ".$_SERVER['PHP_SELF'].($param ? '?'.$param : ''));
+		header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
 		exit;
 	}
 }
@@ -1411,7 +1411,7 @@ if (empty($action) || $action == 'view') {
 			}
 
 			// Operations
-			$payment_total_vat = price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_vat = (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
