@@ -232,6 +232,7 @@ $permissiontoadd = $user->hasRight('accounting', 'mouvements', 'creer');
  */
 
 $param = '';
+$filter = array();
 
 if (GETPOST('cancel', 'alpha')) {
 	$action = 'list';
@@ -300,7 +301,6 @@ if (empty($reshook)) {
 	}
 
 	// Must be after the remove filter action, before the export.
-	$filter = array();
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
 		$tmp = dol_getdate($search_date_start);
