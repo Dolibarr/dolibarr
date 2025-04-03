@@ -820,6 +820,7 @@ class ActionComm extends CommonObject
 		$sql .= " a.fk_element as elementid, a.elementtype,";
 		$sql .= " a.priority, a.fulldayevent, a.location, a.transparency,";
 		$sql .= " a.email_msgid, a.email_subject, a.email_from, a.email_sender, a.email_to, a.email_tocc, a.email_tobcc, a.errors_to,";
+		$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 		$sql .= " c.id as type_id, c.type as type_type, c.code as type_code, c.libelle as type_label, c.color as type_color, c.picto as type_picto,";
 		$sql .= " s.nom as socname,";
 		$sql .= " u.firstname, u.lastname as lastname,";
@@ -901,6 +902,10 @@ class ActionComm extends CommonObject
 				$this->fk_element = $obj->elementid;
 				$this->elementid = $obj->elementid;
 				$this->elementtype = $obj->elementtype;
+
+				$this->recurid = $obj->recurid;
+				$this->recurrule = $obj->recurrule;
+				$this->recurdateend = $this->db->jdate($obj->recurdateend);
 
 				$this->num_vote = $obj->num_vote;
 				$this->event_paid = $obj->event_paid;
@@ -1632,9 +1637,32 @@ class ActionComm extends CommonObject
 		if (!empty($this->location)) {
 			$datas['location'] = '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
 		}
-		if (isset($this->transparency)) {
+		if (isset($this->transparency) && $this->datef && $this->datep != $this->datef && isset($this->transparency)) {
 			$datas['transparency'] = '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
 		}
+
+		$datas['date'] = '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
+		if ($this->datef) {
+			$tmpa = dol_getdate($this->datep);
+			$tmpb = dol_getdate($this->datef);
+			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
+				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
+					$datas['date'] .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
+				}
+			} else {
+				$datas['date'] .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
+			}
+		}
+
+		if (!empty($this->recurid)) {
+			$datas['recurring'] = '<br><b>'.$langs->trans("RecurringEvent").':</b> ';
+			$datas['recurring'] .= img_picto($langs->trans("EventPartOfARecurringSerie", $this->recurid), 'recurring', 'class="pictofixedwidth"');
+			$reg = array();
+			if (preg_match('/FREQ=MONTHLY_BYMONTHDAY(\d+)/', $this->recurrule, $reg)) {
+				$datas['recurring'] .= $langs->trans("EveryMonth").' <span class="opacitymedium small">('.$langs->trans("DayOfMonth").' '.$reg[1].' - '.$langs->trans("Until").' '.dol_print_date($this->recurdateend, 'day').')</span>';
+			}
+		}
+
 		if (!empty($this->email_msgid)) {
 			$langs->load("mails");
 			$datas['space'] = '<br>';
@@ -1718,78 +1746,30 @@ class ActionComm extends CommonObject
 		// Set label of type
 		$labeltype = $this->getTypeLabel(1);
 
-		$tooltip = img_picto('', $this->picto).' <u>'.$langs->trans('Action').'</u>';
-
-		$tooltip .= ' &nbsp; - &nbsp; '.$this->getTypePicto('pictofixedwidth paddingright valignmiddle').$labeltype;
-		if (!empty($this->ref)) {
-			$tooltip .= '<br><b>'.$langs->trans('Ref').':</b> '.dol_escape_htmltag($this->ref);
-		}
-		if (!empty($label)) {
-			$tooltip .= '<br><b>'.$langs->trans('Title').':</b> '.dol_escape_htmltag($label);
-		}
-		if (!empty($this->location)) {
-			$tooltip .= '<br><b>'.$langs->trans('Location').':</b> '.dol_escape_htmltag($this->location);
-		}
-
-		$tooltip .= '<br><b>'.$langs->trans('Date').':</b> '.dol_print_date($this->datep, 'dayhourreduceformat', 'tzuserrel');
-		if ($this->datef) {
-			$tmpa = dol_getdate($this->datep);
-			$tmpb = dol_getdate($this->datef);
-			if ($tmpa['mday'] == $tmpb['mday'] && $tmpa['mon'] == $tmpb['mon'] && $tmpa['year'] == $tmpb['year']) {
-				if ($tmpa['hours'] != $tmpb['hours'] || $tmpa['minutes'] != $tmpb['minutes']) {
-					$tooltip .= '-'.dol_print_date($this->datef, 'hour', 'tzuserrel');
-				}
-			} else {
-				$tooltip .= '-'.dol_print_date($this->datef, 'dayhourreduceformat', 'tzuserrel');
-			}
-		}
-
-		if ($this->datef && $this->datep != $this->datef && isset($this->transparency)) {
-			$tooltip .= '<br><b>'.$langs->trans('Busy').':</b> '.yn($this->transparency);
-		}
-		if (!empty($this->email_msgid)) {
-			$langs->load("mails");
-			$tooltip .= '<br>';
-			//$tooltip .= '<br><b>'.img_picto('', 'email').' '.$langs->trans("Email").'</b>';
-			$tooltip .= '<br><b>'.$langs->trans('MailTopic').':</b> '.dol_escape_htmltag($this->email_subject);
-			$tooltip .= '<br><b>'.$langs->trans('MailFrom').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_from) ? $this->email_from : '');
-			$tooltip .= '<br><b>'.$langs->trans('MailTo').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), !empty($this->email_to) ? $this->email_to : '');
-			if (!empty($this->email_tocc)) {
-				$tooltip .= '<br><b>'.$langs->trans('MailCC').':</b> '.str_replace(array('<', '>'), array('&amp;lt', '&amp;gt'), $this->email_tocc);
-			}
-			/* Disabled because bcc must remain by definition not visible
-			if (!empty($this->email_tobcc)) {
-				$tooltip .= '<br><b>'.$langs->trans('MailCCC').':</b> '.$this->email_tobcc;
-			} */
-		}
-		if (!empty($this->note_private)) {
-			$tooltip .= '<br><hr>';
-			$texttoshow = dolGetFirstLineOfText($this->note_private, 8);	// Try to limit length of content
-			$tooltip .= '<div class="tenlinesmax">';						// Restrict height of content into the tooltip
-			$tooltip .= (dol_textishtml($texttoshow) ? str_replace(array("\r", "\n"), "", $texttoshow) : str_replace(array("\r", "\n"), '<br>', $texttoshow));
-			$tooltip .= '</div>';
-		}
-
 		$linkclose = '';
+
+		$params = [
+			'id' => (string) $this->id,
+			'objecttype' => $this->element.($this->module ? '@'.$this->module : ''),
+			'option' => $option,
+			'nofetch' => 1,
+		];
 		$classfortooltip = 'classfortooltip';
 		$dataparams = '';
 		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
-			$params = [
-				'id' => $this->id,
-				'objecttype' => $this->element,
-				'option' => $option,
-				'nofetch' => 1,
-			];
 			$classfortooltip = 'classforajaxtooltip';
 			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
-			$tooltip = '';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
 		}
+
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowAction");
-				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($tooltip).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($tooltip ? ' title="'.dolPrintHTMLForAttribute($tooltip).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classname.' '.$classfortooltip.'"';
 		} else {
 			$linkclose .= ' class="'.$classname.'"';
@@ -2603,8 +2583,6 @@ class ActionComm extends CommonObject
 	 */
 	public function loadReminders($type = '', $fk_user = 0, $onlypast = true)
 	{
-		global $conf, $langs, $user;
-
 		$error = 0;
 
 		$this->reminders = array();
@@ -2664,7 +2642,7 @@ class ActionComm extends CommonObject
 	 */
 	public function sendEmailsReminder()
 	{
-		global $conf, $langs, $user;
+		global $langs, $user;
 
 		$error = 0;
 		$this->output = '';

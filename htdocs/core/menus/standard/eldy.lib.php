@@ -1781,6 +1781,9 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 				$sql = "SELECT rowid, code, label, nature";
 				$sql .= " FROM ".MAIN_DB_PREFIX."accounting_journal";
 				$sql .= " WHERE entity = ".((int) $conf->entity);
+				if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
+					$sql .= " AND nature = 4"; // only bank journal when using treasury accounting mode
+				}
 				$sql .= " AND active = 1";
 				$sql .= " ORDER BY nature ASC, label DESC";
 
@@ -1839,7 +1842,12 @@ function get_left_menu_accountancy($mainmenu, &$newmenu, $usemenuhider = 1, $lef
 								$key = $langs->trans("AccountingJournalType".$objp->nature);	// $objp->nature is 1, 2, 3 ...
 								$transferlabel = (($objp->nature && $key != "AccountingJournalType".$objp->nature) ? $key.($journallabelwithoutspan != $key ? ' '.$journallabel : '') : $journallabel);
 
-								$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $transferlabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
+								if (getDolGlobalString('ACCOUNTING_MODE') == 'RECETTES-DEPENSES') {
+									$journalNaturePrefixUrl = 'treasury';
+								} else {
+									$journalNaturePrefixUrl = $nature;
+								}
+								$newmenu->add('/accountancy/journal/'.$journalNaturePrefixUrl.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $transferlabel, 2, $user->hasRight('accounting', 'comptarapport', 'lire'));
 							}
 							$i++;
 						}
