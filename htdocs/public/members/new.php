@@ -275,7 +275,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	// Check Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
@@ -827,7 +827,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 
 	// Display Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_MEMBER')) {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 		print '<tr><td class="titlefield"><label><span class="fieldrequired">'.$langs->trans("SecurityCode").'</span></label></td><td>';
 		print '<span class="span-icon-security inline-block">';

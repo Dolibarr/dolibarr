@@ -213,7 +213,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	}
 
 	// Check Captcha code if is enabled
-	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+	if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
 		$sessionkey = 'dol_antispam_value';
 		$ok = (array_key_exists($sessionkey, $_SESSION) && (strtolower($_SESSION[$sessionkey]) == strtolower(GETPOST('code'))));
 		if (!$ok) {
@@ -461,7 +461,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // TODO Move this into generic feature.
 
 // Display Captcha code if is enabled
-if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_THIRDPARTY')) {
 	require_once DOL_DOCUMENT_ROOT . '/core/lib/security2.lib.php';
 	print '<tr><td class="titlefield"><label for="email"><span class="fieldrequired">' . $langs->trans("SecurityCode") . '</span></label></td><td>';
 	print '<span class="span-icon-security inline-block">';

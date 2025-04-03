@@ -155,7 +155,7 @@ $formaccounting = new FormAccounting($db);
 $form = new Form($db);
 
 if (!in_array($action, array('delmouv', 'delmouvconfirm')) && !GETPOSTISSET('begin') && !GETPOSTISSET('formfilteraction') && GETPOST('page', 'alpha') == '' && !GETPOSTINT('noreset') && $user->hasRight('accounting', 'mouvements', 'export')) {
-	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_accountancy_code_start')) {
+	if (empty($search_date_start) && empty($search_date_end) && !GETPOSTISSET('restore_lastsearch_values') && !GETPOST('search_mvt_num') && !GETPOST('search_accountancy_code_start')) {
 		$sql = "SELECT date_start, date_end";
 		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		if (getDolGlobalInt('ACCOUNTANCY_FISCALYEAR_DEFAULT')) {

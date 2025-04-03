@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,7 +410,8 @@ input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 1px;
+	margin: 0 5px 0 1px;
+	transform: scale(1.2);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -3414,6 +3416,23 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 .login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
 	font-size: 1.1em;
 }
+/* Serve as reference for icon that toggles showing the password */
+.login_table #tdpasswordlogin {
+	position: relative;
+}
+.login_table #tdpasswordlogin #togglepassword {
+	position: absolute;
+	top: 1em;
+	right: 5px;
+	background: none;
+	border: none;
+	/* opacity: 0.5; */
+}
+.login_table #tdpasswordlogin #togglepassword .fa {
+	padding: 0 3px;
+	width: auto;
+}
+
 /* For the static info message */
 .login_main_home {
 	word-break: break-word;
@@ -7105,6 +7124,13 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+.heightofcombo {
+	height: 28px;
+}
+.select2-container .select2-selection--single {
+	height: 28px;
+}
 
 span.select2-selection--single.flat[aria-disabled="true"] span.select2-selection__rendered {
 	opacity: 0.5;

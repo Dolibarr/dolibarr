@@ -102,7 +102,7 @@ class FormActions
 			print ajax_combobox('select'.$htmlname, array(), 0, 0, 'resolve', '-1', $morecss);
 
 			if (empty($onlyselect)) {
-				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
+				print ' <input type="text" id="val'.$htmlname.'" name="percentage" class="flat hideifna heightofcombo" value="'.($selected >= 0 ? $selected : '').'" size="2"'.($canedit && ($selected >= 0) ? '' : ' disabled').'>';
 				print '<span class="hideonsmartphone hideifna">%</span>';
 			}
 		} else {

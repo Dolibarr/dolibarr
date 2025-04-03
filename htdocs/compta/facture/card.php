@@ -3875,8 +3875,7 @@ if ($action == 'create') {
 				print '<div class="listofinvoicetype"><div class="">';
 				$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
 				$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
-				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>'."\n";
 			}
@@ -6292,7 +6291,7 @@ if ($action == 'create') {
 		if ($usercancreate
 			&& $object->status == Facture::STATUS_DRAFT
 			&& ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION)) {
-			$compatibleImportElementsList = array('commande', 'propal'); // import from linked elements
+			$compatibleImportElementsList = array('commande', 'propal', 'subscription'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem, $compatibleImportElementsList);
 

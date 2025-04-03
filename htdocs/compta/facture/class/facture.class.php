@@ -5128,7 +5128,6 @@ class Facture extends CommonInvoice
 		if ($resql) {
 			$langs->load("bills");
 			$now = dol_now();
-
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->facture->client->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("CustomerBillsUnpaid");

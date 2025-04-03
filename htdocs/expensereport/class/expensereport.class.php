@@ -2668,17 +2668,19 @@ class ExpenseReport extends CommonObject
 	}
 
 	/**
-	 *	Return if object was dispatched into bookkeeping
+	 *	Return if object was dispatched into bookkeeping.
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Return nb of record, 1=return the transaction ID (piece_num)
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$alreadydispatched = 0;
 
 		$type = 'expense_report';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2691,7 +2693,7 @@ class ExpenseReport extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}

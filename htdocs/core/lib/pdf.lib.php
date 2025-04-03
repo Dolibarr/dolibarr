@@ -564,9 +564,9 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				}
 				// Country
 				if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
+					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
 				} elseif (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
-					$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
+					$stringaddress .= (($stringaddress && !getDolGlobalString('MAIN_PDF_REMOVE_BREAK_BEFORE_COUNTRY')) ? "\n" : '').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
 				}
 
 				if (getDolGlobalString('MAIN_PDF_ADDALSOTARGETDETAILS') || preg_match('/targetwithdetails/', $mode)) {
