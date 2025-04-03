@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 global $conf, $db, $mysoc, $langs, $user;
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta","accountancy","banks","other"));
+$langs->loadLangs(array("compta", "accountancy", "banks", "other"));
 
 // Multi journal
 $id_journal = GETPOSTINT('id_journal');
@@ -95,7 +95,7 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 
 // Get all bank lines
 //-------------------------------------
-$sql  = "SELECT b.rowid, b.dateo as do, b.label, b.fk_type, b.fk_account,";
+$sql = "SELECT b.rowid, b.dateo as do, b.label, b.fk_type, b.fk_account,";
 $sql .= " ba.ref as baref, ba.account_number,";
 $sql .= " bu.type as bu_type";
 $sql .= " FROM ".$db->prefix()."bank as b";
@@ -155,16 +155,16 @@ if ($resql) {
 				'url' => $static_account->getNomUrl(1),
 			];
 		}
-    }
+	}
 	$db->free($resql);
 
 	foreach ($payment_ids as $type => $ids) {
 		switch ($type) {
-            case 'payment':
+			case 'payment':
 				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-                // Customer invoices
-                //------------------------------------------
+				// Customer invoices
+				//------------------------------------------
 				$sql = "SELECT f.rowid, f.ref AS ref, f.total_ht AS invoice_total_ht, f.total_ttc AS invoice_total_ttc,";
 				$sql .= " pf.amount AS amount_payment,";
 				$sql .= " fd.rowid AS row_id, fd.total_ht, fd.total_tva, fd.total_localtax1, fd.total_localtax2, fd.tva_tx, fd.total_ttc, fd.vat_src_code,";
@@ -176,7 +176,7 @@ if ($resql) {
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pf.fk_paiement AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = fd.fk_product";
 				$sql .= " LEFT JOIN ".$db->prefix()."accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
-                // Already in bookkeeping or not
+				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
 					$sql .= " INNER JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=f.rowid";
 				} else {
@@ -195,87 +195,89 @@ if ($resql) {
 				$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id";
 				$sql .= " ORDER BY aa.account_number";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    $langs->load("bills");
-                    $static_invoice = new Facture($db);
-                    $already_sum = array();
-                    $account_vat_sold = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
+				$resql = $db->query($sql);
+				if ($resql) {
+					$langs->load("bills");
+					$static_invoice = new Facture($db);
+					$already_sum = array();
+					$account_vat_sold = getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => $obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => $obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        if (isset($already_sum[$obj->row_id])) continue;
-                        $already_sum[$obj->row_id] = $obj->row_id;
+						if (isset($already_sum[$obj->row_id])) {
+							continue;
+						}
+						$already_sum[$obj->row_id] = $obj->row_id;
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_invoice->id = $obj->rowid;
-                            $static_invoice->ref = $obj->ref;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $obj->ref,
-                                'total_ht' => $obj->invoice_total_ht,
-                                'total_ttc' => $obj->invoice_total_ttc,
-                                'url' => $static_invoice->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_invoice->id = $obj->rowid;
+							$static_invoice->ref = $obj->ref;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $obj->ref,
+								'total_ht' => $obj->invoice_total_ht,
+								'total_ttc' => $obj->invoice_total_ttc,
+								'url' => $static_invoice->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Set accounting account infos
-                        if (!isset($tabaccountingaccount[$obj->accountancy_code])) {
-                            $tabaccountingaccount[$obj->accountancy_code] = array(
-                                'label' => !empty($obj->accountancy_code_label) ? $obj->accountancy_code_label : $langs->trans('NotDefined'),
-                            );
-                        }
+						// Set accounting account infos
+						if (!isset($tabaccountingaccount[$obj->accountancy_code])) {
+							$tabaccountingaccount[$obj->accountancy_code] = array(
+								'label' => !empty($obj->accountancy_code_label) ? $obj->accountancy_code_label : $langs->trans('NotDefined'),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        if (!isset($tabobject[$object_key]['operations'][$obj->accountancy_code])) {
-                            $tabobject[$object_key]['operations'][$obj->accountancy_code] = array(
-                                'total_ht' => 0,
-                            );
-                        }
-                        $tabobject[$object_key]['operations'][$obj->accountancy_code]['total_ht'] += $obj->total_ht;
+						// Add amount for the accountancy code
+						if (!isset($tabobject[$object_key]['operations'][$obj->accountancy_code])) {
+							$tabobject[$object_key]['operations'][$obj->accountancy_code] = array(
+								'total_ht' => 0,
+							);
+						}
+						$tabobject[$object_key]['operations'][$obj->accountancy_code]['total_ht'] += $obj->total_ht;
 
-                        if ($obj->total_tva + $obj->total_localtax1 + $obj->total_localtax2 != 0) {
-                            // Get vat code compta
-                            if (!isset($tabvatdata[$obj->tva_tx][$obj->vat_src_code])) {
-                                $tabvatdata[$obj->tva_tx][$obj->vat_src_code] = getTaxesFromId($obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : ''), $mysoc, $mysoc, 0);
-                            }
-                            $compta_tva = (!empty($tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_sell']) ? $tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_sell'] : $account_vat_sold);
+						if ($obj->total_tva + $obj->total_localtax1 + $obj->total_localtax2 != 0) {
+							// Get vat code compta
+							if (!isset($tabvatdata[$obj->tva_tx][$obj->vat_src_code])) {
+								$tabvatdata[$obj->tva_tx][$obj->vat_src_code] = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+							}
+							$compta_tva = (!empty($tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_sell']) ? $tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_sell'] : $account_vat_sold);
 
-                            // Add amount VAT for the code compta
-                            if (!isset($tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx])) {
-                                $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx] = array(
-                                    'tva_tx' => $obj->tva_tx,
-                                    'total_tva' => 0,
-                                    'total_localtax1' => 0,
-                                    'total_localtax2' => 0,
-                                );
-                            }
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_tva'] += $obj->total_tva;
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax1'] += $obj->total_localtax1;
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax2'] += $obj->total_localtax2;
-                        }
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_supplier':
+							// Add amount VAT for the code compta
+							if (!isset($tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx])) {
+								$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx] = array(
+									'tva_tx' => $obj->tva_tx,
+									'total_tva' => 0,
+									'total_localtax1' => 0,
+									'total_localtax2' => 0,
+								);
+							}
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_tva'] += $obj->total_tva;
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax1'] += $obj->total_localtax1;
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax2'] += $obj->total_localtax2;
+						}
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_supplier':
 				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 
-                // Supplier invoices
-                //------------------------------------------
+				// Supplier invoices
+				//------------------------------------------
 				$sql = "SELECT ff.rowid, ff.ref, ff.total_ht AS supplier_invoice_total_ht, ff.total_ttc AS supplier_invoice_total_ttc,";
 				$sql .= " pff.amount AS amount_payment,";
 				$sql .= " ffd.rowid AS row_id, ffd.total_ht, ffd.tva AS total_tva, ffd.total_localtax1, ffd.total_localtax2, ffd.tva_tx, ffd.total_ttc, ffd.vat_src_code,";
@@ -306,87 +308,89 @@ if ($resql) {
 				$sql .= " GROUP BY ffd.rowid, bu.fk_bank";
 				$sql .= " ORDER BY aa.account_number";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    $langs->load("suppliers");
-                    $static_supplier_invoice = new FactureFournisseur($db);
-                    $already_sum = array();
-                    $account_vat_buy = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
+				$resql = $db->query($sql);
+				if ($resql) {
+					$langs->load("suppliers");
+					$static_supplier_invoice = new FactureFournisseur($db);
+					$already_sum = array();
+					$account_vat_buy = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        if (isset($already_sum[$obj->row_id])) continue;
-                        $already_sum[$obj->row_id] = $obj->row_id;
+						if (isset($already_sum[$obj->row_id])) {
+							continue;
+						}
+						$already_sum[$obj->row_id] = $obj->row_id;
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_supplier_invoice->id = $obj->rowid;
-                            $static_supplier_invoice->ref = $obj->ref;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $obj->ref,
-                                'total_ht' => -$obj->supplier_invoice_total_ht,
-                                'total_ttc' => -$obj->supplier_invoice_total_ttc,
-                                'url' => $static_supplier_invoice->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_supplier_invoice->id = $obj->rowid;
+							$static_supplier_invoice->ref = $obj->ref;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $obj->ref,
+								'total_ht' => -$obj->supplier_invoice_total_ht,
+								'total_ttc' => -$obj->supplier_invoice_total_ttc,
+								'url' => $static_supplier_invoice->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Set accounting account infos
-                        if (!isset($tabaccountingaccount[$obj->accountancy_code])) {
-                            $tabaccountingaccount[$obj->accountancy_code] = array(
-                                'label' => !empty($obj->accountancy_code_label) ? $obj->accountancy_code_label : $langs->trans('NotDefined'),
-                            );
-                        }
+						// Set accounting account infos
+						if (!isset($tabaccountingaccount[$obj->accountancy_code])) {
+							$tabaccountingaccount[$obj->accountancy_code] = array(
+								'label' => !empty($obj->accountancy_code_label) ? $obj->accountancy_code_label : $langs->trans('NotDefined'),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        if (!isset($tabobject[$object_key]['operations'][$obj->accountancy_code])) {
-                            $tabobject[$object_key]['operations'][$obj->accountancy_code] = array(
-                                'total_ht' => 0,
-                            );
-                        }
-                        $tabobject[$object_key]['operations'][$obj->accountancy_code]['total_ht'] -= $obj->total_ht;
+						// Add amount for the accountancy code
+						if (!isset($tabobject[$object_key]['operations'][$obj->accountancy_code])) {
+							$tabobject[$object_key]['operations'][$obj->accountancy_code] = array(
+								'total_ht' => 0,
+							);
+						}
+						$tabobject[$object_key]['operations'][$obj->accountancy_code]['total_ht'] -= $obj->total_ht;
 
-                        if ($obj->total_tva + $obj->total_localtax1 + $obj->total_localtax2 != 0) {
-                            // Get vat code compta
-                            if (!isset($tabvatdata[$obj->tva_tx][$obj->vat_src_code])) {
-                                $tabvatdata[$obj->tva_tx][$obj->vat_src_code] = getTaxesFromId($obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : ''), $mysoc, $mysoc, 0);
-                            }
-                            $compta_tva = (!empty($tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy']) ? $tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy'] : $account_vat_buy);
+						if ($obj->total_tva + $obj->total_localtax1 + $obj->total_localtax2 != 0) {
+							// Get vat code compta
+							if (!isset($tabvatdata[$obj->tva_tx][$obj->vat_src_code])) {
+								$tabvatdata[$obj->tva_tx][$obj->vat_src_code] = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+							}
+							$compta_tva = (!empty($tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy']) ? $tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy'] : $account_vat_buy);
 
-                            // Add amount VAT for the code compta
-                            if (!isset($tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx])) {
-                                $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx] = array(
-                                    'tva_tx' => $obj->tva_tx,
-                                    'total_tva' => 0,
-                                    'total_localtax1' => 0,
-                                    'total_localtax2' => 0,
-                                );
-                            }
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_tva'] -= $obj->total_tva;
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax1'] -= $obj->total_localtax1;
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax2'] -= $obj->total_localtax2;
-                        }
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_expensereport':
-                require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
+							// Add amount VAT for the code compta
+							if (!isset($tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx])) {
+								$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx] = array(
+									'tva_tx' => $obj->tva_tx,
+									'total_tva' => 0,
+									'total_localtax1' => 0,
+									'total_localtax2' => 0,
+								);
+							}
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_tva'] -= $obj->total_tva;
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax1'] -= $obj->total_localtax1;
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax2'] -= $obj->total_localtax2;
+						}
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_expensereport':
+				require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-                // Expense reports
-                //------------------------------------------
+				// Expense reports
+				//------------------------------------------
 				$sql = "SELECT er.rowid, er.ref, er.total_ht AS expense_report_total_ht, er.total_ttc AS expense_report_total_ttc,";
 				$sql .= " per.amount AS amount_payment,";
 				$sql .= " erf.rowid AS row_id, erf.total_ht, erf.total_tva, erf.total_localtax1, erf.total_localtax2, erf.tva_tx, erf.total_ttc, erf.vat_src_code,";
@@ -415,86 +419,88 @@ if ($resql) {
 				$sql .= " GROUP BY erf.rowid, bu.fk_bank, per.amount, aa.label, bu.url_id";
 				$sql .= " ORDER BY aa.account_number";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    $langs->load("trips");
-                    $static_expense_report = new ExpenseReport($db);
-                    $already_sum = array();
-                    $account_vat_buy = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
+				$resql = $db->query($sql);
+				if ($resql) {
+					$langs->load("trips");
+					$static_expense_report = new ExpenseReport($db);
+					$already_sum = array();
+					$account_vat_buy = getDolGlobalString('ACCOUNTING_VAT_BUY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        if (isset($already_sum[$obj->row_id])) continue;
-                        $already_sum[$obj->row_id] = $obj->row_id;
+						if (isset($already_sum[$obj->row_id])) {
+							continue;
+						}
+						$already_sum[$obj->row_id] = $obj->row_id;
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_expense_report->id = $obj->rowid;
-                            $static_expense_report->ref = $obj->ref;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $obj->ref,
-                                'total_ht' => -$obj->expense_report_total_ht,
-                                'total_ttc' => -$obj->expense_report_total_ttc,
-                                'url' => $static_expense_report->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_expense_report->id = $obj->rowid;
+							$static_expense_report->ref = $obj->ref;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $obj->ref,
+								'total_ht' => -$obj->expense_report_total_ht,
+								'total_ttc' => -$obj->expense_report_total_ttc,
+								'url' => $static_expense_report->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Set accounting account infos
-                        $accountancy_code = !empty($obj->accountancy_code) ? $obj->accountancy_code : 'NotDefined';
-                        if (!isset($tabaccountingaccount[$accountancy_code])) {
-                            $tabaccountingaccount[$accountancy_code] = array(
-                                'label' => !empty($obj->accountancy_code_label) ? $obj->accountancy_code_label : $langs->trans('NotDefined'),
-                            );
-                        }
+						// Set accounting account infos
+						$accountancy_code = !empty($obj->accountancy_code) ? $obj->accountancy_code : 'NotDefined';
+						if (!isset($tabaccountingaccount[$accountancy_code])) {
+							$tabaccountingaccount[$accountancy_code] = array(
+								'label' => !empty($obj->accountancy_code_label) ? $obj->accountancy_code_label : $langs->trans('NotDefined'),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        if (!isset($tabobject[$object_key]['operations'][$accountancy_code])) {
-                            $tabobject[$object_key]['operations'][$accountancy_code] = array(
-                                'total_ht' => 0,
-                            );
-                        }
-                        $tabobject[$object_key]['operations'][$accountancy_code]['total_ht'] -= $obj->total_ht;
+						// Add amount for the accountancy code
+						if (!isset($tabobject[$object_key]['operations'][$accountancy_code])) {
+							$tabobject[$object_key]['operations'][$accountancy_code] = array(
+								'total_ht' => 0,
+							);
+						}
+						$tabobject[$object_key]['operations'][$accountancy_code]['total_ht'] -= $obj->total_ht;
 
-                        if ($obj->total_tva + $obj->total_localtax1 + $obj->total_localtax2 != 0) {
-                            // Get vat code compta
-                            if (!isset($tabvatdata[$obj->tva_tx][$obj->vat_src_code])) {
-                                $tabvatdata[$obj->tva_tx][$obj->vat_src_code] = getTaxesFromId($obj->tva_tx . ($obj->vat_src_code ? ' (' . $obj->vat_src_code . ')' : ''), $mysoc, $mysoc, 0);
-                            }
-                            $compta_tva = (!empty($tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy']) ? $tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy'] : $account_vat_buy);
+						if ($obj->total_tva + $obj->total_localtax1 + $obj->total_localtax2 != 0) {
+							// Get vat code compta
+							if (!isset($tabvatdata[$obj->tva_tx][$obj->vat_src_code])) {
+								$tabvatdata[$obj->tva_tx][$obj->vat_src_code] = getTaxesFromId($obj->tva_tx.($obj->vat_src_code ? ' ('.$obj->vat_src_code.')' : ''), $mysoc, $mysoc, 0);
+							}
+							$compta_tva = (!empty($tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy']) ? $tabvatdata[$obj->tva_tx][$obj->vat_src_code]['accountancy_code_buy'] : $account_vat_buy);
 
-                            // Add amount VAT for the code compta
-                            if (!isset($tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx])) {
-                                $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx] = array(
-                                    'tva_tx' => $obj->tva_tx,
-                                    'total_tva' => 0,
-                                    'total_localtax1' => 0,
-                                    'total_localtax2' => 0,
-                                );
-                            }
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_tva'] -= $obj->total_tva;
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax1'] -= $obj->total_localtax1;
-                            $tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax2'] -= $obj->total_localtax2;
-                        }
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_salary':
-                // Payment salaries
-                //------------------------------------------
+							// Add amount VAT for the code compta
+							if (!isset($tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx])) {
+								$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx] = array(
+									'tva_tx' => $obj->tva_tx,
+									'total_tva' => 0,
+									'total_localtax1' => 0,
+									'total_localtax2' => 0,
+								);
+							}
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_tva'] -= $obj->total_tva;
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax1'] -= $obj->total_localtax1;
+							$tabobject[$object_key]['vats'][$compta_tva][$obj->tva_tx]['total_localtax2'] -= $obj->total_localtax2;
+						}
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_salary':
+				// Payment salaries
+				//------------------------------------------
 				$sql = "SELECT ps.rowid,";
 				$sql .= " ps.amount AS amount_payment, ps.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -513,53 +519,53 @@ if ($resql) {
 				}
 				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
-                    $langs->load("salaries");
-                    $static_payment_salary = new PaymentSalary($db);
-                    $account_employee = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT', 'NotDefined'); // NotDefined is a reserved word
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_SALARY_REF_PREFIX', 'PS');
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
+					$langs->load("salaries");
+					$static_payment_salary = new PaymentSalary($db);
+					$account_employee = getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT', 'NotDefined'); // NotDefined is a reserved word
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_SALARY_REF_PREFIX', 'PS');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_payment_salary->id = $obj->rowid;
-                            $static_payment_salary->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => -$obj->amount_payment,
-                                'total_ttc' => -$obj->amount_payment,
-                                'url' => $static_payment_salary->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_payment_salary->id = $obj->rowid;
+							$static_payment_salary->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => -$obj->amount_payment,
+								'total_ttc' => -$obj->amount_payment,
+								'url' => $static_payment_salary->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $tabobject[$object_key]['operations'][$account_employee] = array(
-                            'total_ht' => -$obj->amount_payment,
-                            'label' => $obj->label,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_sc':
-                // Socials contributions
-                //------------------------------------------
+						// Add amount for the accountancy code
+						$tabobject[$object_key]['operations'][$account_employee] = array(
+							'total_ht' => -$obj->amount_payment,
+							'label' => $obj->label,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_sc':
+				// Socials contributions
+				//------------------------------------------
 				$sql = "SELECT cs.rowid, cs.ref, cs.libelle AS label, cs.amount AS sociales_contributions_amount,";
 				$sql .= " pc.amount AS amount_payment,";
 				$sql .= " ccs.accountancy_code,";
@@ -581,55 +587,55 @@ if ($resql) {
 				}
 				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/compta/sociales/class/chargesociales.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 
-                    $langs->load("bills");
-                    $static_sociales_contributions = new ChargeSociales($db);
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_SOCIALES_CONTRIBUTIONS_REF_PREFIX', 'SC');
+					$langs->load("bills");
+					$static_sociales_contributions = new ChargeSociales($db);
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_SOCIALES_CONTRIBUTIONS_REF_PREFIX', 'SC');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_sociales_contributions->id = $obj->rowid;
-                            $static_sociales_contributions->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => -$obj->sociales_contributions_amount,
-                                'total_ttc' => -$obj->sociales_contributions_amount,
-                                'url' => $static_sociales_contributions->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_sociales_contributions->id = $obj->rowid;
+							$static_sociales_contributions->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => -$obj->sociales_contributions_amount,
+								'total_ttc' => -$obj->sociales_contributions_amount,
+								'url' => $static_sociales_contributions->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        $accountancy_code = !empty($obj->accountancy_code) ? $obj->accountancy_code : 'NotDefined';
+						$accountancy_code = !empty($obj->accountancy_code) ? $obj->accountancy_code : 'NotDefined';
 
-                        // Add amount for the accountancy code
-                        $tabobject[$object_key]['operations'][$accountancy_code] = array(
-                            'total_ht' => -$obj->sociales_contributions_amount,
-                            'label' => $obj->label,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_vat':
-                // Payment VAT
-                //------------------------------------------
+						// Add amount for the accountancy code
+						$tabobject[$object_key]['operations'][$accountancy_code] = array(
+							'total_ht' => -$obj->sociales_contributions_amount,
+							'label' => $obj->label,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_vat':
+				// Payment VAT
+				//------------------------------------------
 				$sql = "SELECT t.rowid,";
 				$sql .= " t.amount AS amount_payment, t.label AS label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -648,53 +654,53 @@ if ($resql) {
 					$sql .= " AND ab.rowid IS NULL";
 				}
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/compta/tva/class/tva.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
-                    $langs->load("salaries");
-                    $static_tva = new Tva($db);
-                    $account_pay_vat = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_VAT_REF_PREFIX', 'VAT');
+					$langs->load("salaries");
+					$static_tva = new Tva($db);
+					$account_pay_vat = getDolGlobalString('ACCOUNTING_VAT_PAY_ACCOUNT', 'NotDefined'); // NotDefined is a reserved word
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_VAT_REF_PREFIX', 'VAT');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_tva->id = $obj->rowid;
-                            $static_tva->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => -$obj->amount_payment,
-                                'total_ttc' => -$obj->amount_payment,
-                                'url' => $static_tva->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_tva->id = $obj->rowid;
+							$static_tva->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => -$obj->amount_payment,
+								'total_ttc' => -$obj->amount_payment,
+								'url' => $static_tva->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $tabobject[$object_key]['operations'][$account_pay_vat] = array(
-                            'total_ht' => -$obj->amount_payment,
-                            'label' => $obj->label,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_donation':
-                // Payment donation
+						// Add amount for the accountancy code
+						$tabobject[$object_key]['operations'][$account_pay_vat] = array(
+							'total_ht' => -$obj->amount_payment,
+							'label' => $obj->label,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_donation':
+				// Payment donation
 				//------------------------------------------
 				$sql = "SELECT d.rowid, d.amount AS don_amount,";
 				$sql .= " pd.amount AS amount_payment,";
@@ -715,54 +721,54 @@ if ($resql) {
 				}
 				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
-                    $langs->load("donations");
-                    $static_don = new Don($db);
-                    $account_pay_donation = getDolGlobalString('DONATION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_DONATION_REF_PREFIX', 'D');
+					$langs->load("donations");
+					$static_don = new Don($db);
+					$account_pay_donation = getDolGlobalString('DONATION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_DONATION_REF_PREFIX', 'D');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => $obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => $obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_don->id = $obj->rowid;
-                            $static_don->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => $obj->don_amount,
-                                'total_ttc' => $obj->don_amount,
-                                'url' => $static_don->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_don->id = $obj->rowid;
+							$static_don->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => $obj->don_amount,
+								'total_ttc' => $obj->don_amount,
+								'url' => $static_don->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $tabobject[$object_key]['operations'][$account_pay_donation] = array(
-                            'total_ht' => $obj->don_amount,
-                            'label' => $langs->trans('Donation') . ' ' . $prefix_ref.$obj->rowid,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_loan':
-                // Payment loan
-                //------------------------------------------
+						// Add amount for the accountancy code
+						$tabobject[$object_key]['operations'][$account_pay_donation] = array(
+							'total_ht' => $obj->don_amount,
+							'label' => $langs->trans('Donation').' '.$prefix_ref.$obj->rowid,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_loan':
+				// Payment loan
+				//------------------------------------------
 				$sql = "SELECT l.rowid, l.capital AS loan_capital, l.accountancy_account_capital, l.accountancy_account_interest, l.accountancy_account_insurance, l.label,";
 				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -782,77 +788,77 @@ if ($resql) {
 				}
 				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 
-                    $langs->load("loan");
-                    $static_loan = new Loan($db);
-                    $account_pay_loan_capital = getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL', 'NotDefined'); // NotDefined is a reserved word
-                    $account_pay_loan_interest = getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST', 'NotDefined'); // NotDefined is a reserved word
-                    $account_pay_loan_insurance = getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE', 'NotDefined'); // NotDefined is a reserved word
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_LOAN_REF_PREFIX', 'L');
+					$langs->load("loan");
+					$static_loan = new Loan($db);
+					$account_pay_loan_capital = getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_CAPITAL', 'NotDefined'); // NotDefined is a reserved word
+					$account_pay_loan_interest = getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INTEREST', 'NotDefined'); // NotDefined is a reserved word
+					$account_pay_loan_insurance = getDolGlobalString('LOAN_ACCOUNTING_ACCOUNT_INSURANCE', 'NotDefined'); // NotDefined is a reserved word
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_LOAN_REF_PREFIX', 'L');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        $payment_amount = $obj->amount_capital + $obj->amount_interest + $obj->amount_insurance;
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$payment_amount,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						$payment_amount = $obj->amount_capital + $obj->amount_interest + $obj->amount_insurance;
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$payment_amount,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_loan->id = $obj->rowid;
-                            $static_loan->ref = $prefix_ref . $obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref . $obj->rowid,
-                                'total_ht' => -$obj->loan_capital,
-                                'total_ttc' => -$obj->loan_capital,
-                                'url' => $static_loan->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_loan->id = $obj->rowid;
+							$static_loan->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => -$obj->loan_capital,
+								'total_ttc' => -$obj->loan_capital,
+								'url' => $static_loan->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $accountancy_account_capital = !empty($obj->accountancy_account_capital) ? $obj->accountancy_account_capital : $account_pay_loan_capital;
-                        $tabobject[$object_key]['operations'][$accountancy_account_capital] = array(
-                            // virtual total = loan_capital * amount_capital / payment_amount
-                            'total_ht' => -($obj->loan_capital * $obj->amount_capital / $payment_amount),
-                            'label' => $obj->label . ' ' . $langs->trans('LoanCapital'),
-                        );
+						// Add amount for the accountancy code
+						$accountancy_account_capital = !empty($obj->accountancy_account_capital) ? $obj->accountancy_account_capital : $account_pay_loan_capital;
+						$tabobject[$object_key]['operations'][$accountancy_account_capital] = array(
+							// virtual total = loan_capital * amount_capital / payment_amount
+							'total_ht' => -($obj->loan_capital * $obj->amount_capital / $payment_amount),
+							'label' => $obj->label.' '.$langs->trans('LoanCapital'),
+						);
 
-                        // Add amount for the accountancy code
-                        $accountancy_account_interest = !empty($obj->accountancy_account_interest) ? $obj->accountancy_account_interest : $account_pay_loan_interest;
-                        $tabobject[$object_key]['operations'][$accountancy_account_interest] = array(
-                            // virtual total = loan_capital * amount_interest / payment_amount
-                            'total_ht' => -($obj->loan_capital * $obj->amount_interest / $payment_amount),
-                            'label' => $obj->label . ' ' . $langs->trans('Interest'),
-                        );
+						// Add amount for the accountancy code
+						$accountancy_account_interest = !empty($obj->accountancy_account_interest) ? $obj->accountancy_account_interest : $account_pay_loan_interest;
+						$tabobject[$object_key]['operations'][$accountancy_account_interest] = array(
+							// virtual total = loan_capital * amount_interest / payment_amount
+							'total_ht' => -($obj->loan_capital * $obj->amount_interest / $payment_amount),
+							'label' => $obj->label.' '.$langs->trans('Interest'),
+						);
 
-                        // 526,23 = 569,74 * x / 15 000,00
+						// 526,23 = 569,74 * x / 15 000,00
 
-                        // Add amount for the accountancy code
-                        $accountancy_account_insurance = !empty($obj->accountancy_account_insurance) ? $obj->accountancy_account_insurance : $account_pay_loan_insurance;
-                        $tabobject[$object_key]['operations'][$accountancy_account_insurance] = array(
-                            // virtual total = loan_capital * amount_insurance / payment_amount
-                            'total_ht' => -($obj->loan_capital * $obj->amount_insurance / $payment_amount),
-                            'label' => $obj->label . ' ' . $langs->trans('Insurance'),
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'payment_various':
-                // Payment various
-                //------------------------------------------
+						// Add amount for the accountancy code
+						$accountancy_account_insurance = !empty($obj->accountancy_account_insurance) ? $obj->accountancy_account_insurance : $account_pay_loan_insurance;
+						$tabobject[$object_key]['operations'][$accountancy_account_insurance] = array(
+							// virtual total = loan_capital * amount_insurance / payment_amount
+							'total_ht' => -($obj->loan_capital * $obj->amount_insurance / $payment_amount),
+							'label' => $obj->label.' '.$langs->trans('Insurance'),
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'payment_various':
+				// Payment various
+				//------------------------------------------
 				$sql = "SELECT pv.rowid,";
 				$sql .= " pv.sens AS sens_payment, pv.amount AS amount_payment, pv.label, pv.accountancy_code,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
@@ -871,54 +877,54 @@ if ($resql) {
 					$sql .= " AND ab.rowid IS NULL";
 				}
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/paymentvarious.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
-                    $static_payment_various = new PaymentVarious($db);
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_VARIOUS_REF_PREFIX', 'PM');
+					$static_payment_various = new PaymentVarious($db);
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_VARIOUS_REF_PREFIX', 'PM');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        $payment_amount = (empty($obj->sens_payment) ? -1 : 1) * $obj->amount_payment;
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => $payment_amount,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						$payment_amount = (empty($obj->sens_payment) ? -1 : 1) * $obj->amount_payment;
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => $payment_amount,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_payment_various->id = $obj->rowid;
-                            $static_payment_various->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => $payment_amount,
-                                'total_ttc' => $payment_amount,
-                                'url' => $static_payment_various->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_payment_various->id = $obj->rowid;
+							$static_payment_various->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => $payment_amount,
+								'total_ttc' => $payment_amount,
+								'url' => $static_payment_various->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $accountancy_code = !empty($obj->accountancy_code) ? $obj->accountancy_code : 'NotDefined';
-                        $tabobject[$object_key]['operations'][$obj->accountancy_code] = array(
-                            'total_ht' => $payment_amount,
-                            'label' => $obj->label,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'member':
-                // Subscription member
-                //------------------------------------------
+						// Add amount for the accountancy code
+						$accountancy_code = !empty($obj->accountancy_code) ? $obj->accountancy_code : 'NotDefined';
+						$tabobject[$object_key]['operations'][$obj->accountancy_code] = array(
+							'total_ht' => $payment_amount,
+							'label' => $obj->label,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'member':
+				// Subscription member
+				//------------------------------------------
 				$sql = "SELECT su.rowid,";
 				$sql .= " su.subscription AS amount_payment, su.note AS label,";
 				$sql .= " adh.lastname, adh.firstname,";
@@ -938,54 +944,54 @@ if ($resql) {
 					$sql .= " AND ab.rowid IS NULL";
 				}
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
-                    $langs->load("members");
-                    $static_subscription = new Subscription($db);
-                    $account_subscription = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_SUBSCRIPTION_REF_PREFIX', 'SU');
+					$langs->load("members");
+					$static_subscription = new Subscription($db);
+					$account_subscription = getDolGlobalString('ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT', 'NotDefined'); // NotDefined is a reserved word
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_SUBSCRIPTION_REF_PREFIX', 'SU');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount_payment,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount_payment,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_subscription->id = $obj->rowid;
-                            $static_subscription->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => -$obj->amount_payment,
-                                'total_ttc' => -$obj->amount_payment,
-                                'url' => $static_subscription->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_subscription->id = $obj->rowid;
+							$static_subscription->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => -$obj->amount_payment,
+								'total_ttc' => -$obj->amount_payment,
+								'url' => $static_subscription->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $tabobject[$object_key]['operations'][$account_subscription] = array(
-                            'total_ht' => -$obj->amount_payment,
-                            'label' => $obj->label . ' - ' . $obj->lastname . ' ' . $obj->firstname,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-            case 'banktransfert':
-                // Bank transfer
-                //------------------------------------------
+						// Add amount for the accountancy code
+						$tabobject[$object_key]['operations'][$account_subscription] = array(
+							'total_ht' => -$obj->amount_payment,
+							'label' => $obj->label.' - '.$obj->lastname.' '.$obj->firstname,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+			case 'banktransfert':
+				// Bank transfer
+				//------------------------------------------
 				$sql = "SELECT b.rowid, b.amount, b.label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."bank_url as bu";
@@ -1005,60 +1011,62 @@ if ($resql) {
 					$sql .= " AND ab.rowid IS NULL";
 				}
 
-                $resql = $db->query($sql);
-                if ($resql) {
-                    require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+				$resql = $db->query($sql);
+				if ($resql) {
+					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-                    $static_account_line = new AccountLine($db);
-                    $account_transfer = getDolGlobalString('ACCOUNTING_ACCOUNT_TRANSFER_CASH', 'NotDefined'); // NotDefined is a reserved word
-                    $prefix_ref = getDolGlobalString('MAIN_PAYMENT_TRANSFER_CASH_REF_PREFIX', 'T');
+					$static_account_line = new AccountLine($db);
+					$account_transfer = getDolGlobalString('ACCOUNTING_ACCOUNT_TRANSFER_CASH', 'NotDefined'); // NotDefined is a reserved word
+					$prefix_ref = getDolGlobalString('MAIN_PAYMENT_TRANSFER_CASH_REF_PREFIX', 'T');
 
-                    while ($obj = $db->fetch_object($resql)) {
-                        $object_key = $obj->bu_type . '_' . $obj->rowid;
+					while ($obj = $db->fetch_object($resql)) {
+						$object_key = $obj->bu_type.'_'.$obj->rowid;
 
-                        // Add object in payment
-                        if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
-                            $tabpay[$obj->fk_bank]['objects'][$object_key] = array(
-                                'amount' => -$obj->amount,
-                                'bu_url_id' => $obj->bu_url_id,
-                            );
-                        }
+						// Add object in payment
+						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
+							$tabpay[$obj->fk_bank]['objects'][$object_key] = array(
+								'amount' => -$obj->amount,
+								'bu_url_id' => $obj->bu_url_id,
+							);
+						}
 
-                        // Set object infos
-                        if (!isset($tabobject[$object_key])) {
-                            $static_account_line->id = $obj->rowid;
-                            $static_account_line->rowid = $obj->rowid;
-                            $static_account_line->ref = $prefix_ref.$obj->rowid;
-                            $tabobject[$object_key] = array(
-                                'id' => $obj->rowid,
-                                'ref' => $prefix_ref.$obj->rowid,
-                                'total_ht' => -$obj->amount,
-                                'total_ttc' => -$obj->amount,
-                                'url' => $static_account_line->getNomUrl(1),
-                                'operations' => array(),
-                                'vats' => array(),
-                            );
-                        }
+						// Set object infos
+						if (!isset($tabobject[$object_key])) {
+							$static_account_line->id = $obj->rowid;
+							$static_account_line->rowid = $obj->rowid;
+							$static_account_line->ref = $prefix_ref.$obj->rowid;
+							$tabobject[$object_key] = array(
+								'id' => $obj->rowid,
+								'ref' => $prefix_ref.$obj->rowid,
+								'total_ht' => -$obj->amount,
+								'total_ttc' => -$obj->amount,
+								'url' => $static_account_line->getNomUrl(1),
+								'operations' => array(),
+								'vats' => array(),
+							);
+						}
 
-                        // Add amount for the accountancy code
-                        $tabobject[$object_key]['operations'][$account_transfer] = array(
-                            'total_ht' => -$obj->amount,
-                            'label' => $obj->label,
-                        );
-                    }
-                } else {
-                    dol_print_error($db);
-                }
-                break;
-        }
-    }
+						// Add amount for the accountancy code
+						$tabobject[$object_key]['operations'][$account_transfer] = array(
+							'total_ht' => -$obj->amount,
+							'label' => $obj->label,
+						);
+					}
+				} else {
+					dol_print_error($db);
+				}
+				break;
+		}
+	}
 } else {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
-function payment_filter($v) {
-    return isset($v['objects']) && count($v['objects']) > 0;
+function payment_filter($v)
+{
+	return isset($v['objects']) && count($v['objects']) > 0;
 }
+
 $tabpay = array_filter($tabpay, 'payment_filter');
 
 $accountingaccount = new AccountingAccount($db);
@@ -1072,40 +1080,40 @@ $MAXNBERRORS = 5;
 
 // Write bookkeeping
 if (!$error && $action == 'writebookkeeping') {
-    foreach ($tabpay as $payment_id => $payment) {
-        $accountInfos = $tabaccount[$payment["fk_bank_account"]];
+	foreach ($tabpay as $payment_id => $payment) {
+		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
-        // Set accounting account infos
-        if (!isset($tabaccountingaccount[$accountInfos['account_number']])) {
-            $result = $accountingaccount->fetch(null, $accountInfos['account_number'], true);
-            if ($result < 0) {
-            	setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
+		// Set accounting account infos
+		if (!isset($tabaccountingaccount[$accountInfos['account_number']])) {
+			$result = $accountingaccount->fetch(null, $accountInfos['account_number'], true);
+			if ($result < 0) {
+				setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
 				$error++;
-            	break;
+				break;
 			}
-            $tabaccountingaccount[$accountInfos['account_number']] = array(
-                'label' => $result > 0 ? $accountingaccount->label : $langs->trans('NotDefined'),
-            );
-        }
+			$tabaccountingaccount[$accountInfos['account_number']] = array(
+				'label' => $result > 0 ? $accountingaccount->label : $langs->trans('NotDefined'),
+			);
+		}
 
 
 		$error_for_line = 0;
-        $db->begin();
+		$db->begin();
 
-        foreach ($payment['objects'] as $object_key => $object_data) {
-            $objectInfos = $tabobject[$object_key];
+		foreach ($payment['objects'] as $object_key => $object_data) {
+			$objectInfos = $tabobject[$object_key];
 
-            $total_check = 0;
+			$total_check = 0;
 
-            // Show bank line
-            if ($object_data['amount'] >= 0) {
-                $amount = price2num($object_data['amount'], 'MT') * 1;
-                $total_check += $amount;
+			// Show bank line
+			if ($object_data['amount'] >= 0) {
+				$amount = price2num($object_data['amount'], 'MT') * 1;
+				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
-                $result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
-                if ($result < 0) {
-                    $error_for_line++;
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				if ($result < 0) {
+					$error_for_line++;
 
 					if (!empty($bookkeepingToCreate->warnings)) {
 						setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1113,17 +1121,17 @@ if (!$error && $action == 'writebookkeeping') {
 					if (!empty($bookkeepingToCreate->errors)) {
 						setEventMessages(null, $bookkeepingToCreate->errors, 'errors');
 					}
-                }
-            }
+				}
+			}
 
-            // Operations
-            $payment_total_vat = price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
-            $payment_total_ht = $object_data['amount'] - $payment_total_vat;
-            $total_operation = 0;
-            $idx = 1;
-            $nb_operation = count($objectInfos['operations']);
-            foreach ($objectInfos['operations'] as $accountancy_code => $operation) {
-                if (!empty($operation['total_ht'])) {
+			// Operations
+			$payment_total_vat = price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
+			$total_operation = 0;
+			$idx = 1;
+			$nb_operation = count($objectInfos['operations']);
+			foreach ($objectInfos['operations'] as $accountancy_code => $operation) {
+				if (!empty($operation['total_ht'])) {
 					// Set accounting account infos
 					if (!isset($tabaccountingaccount[$accountancy_code])) {
 						$result = $accountingaccount->fetch(null, $accountancy_code, true);
@@ -1138,19 +1146,19 @@ if (!$error && $action == 'writebookkeeping') {
 						}
 						$tabaccountingaccount[$accountancy_code] = array('label' => $accountancy_code_label);
 					}
-                    $accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
-                    if ($idx < $nb_operation) {
-                        $amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
-                        $total_operation += $amount;
-                    } else {
-                        $amount = $payment_total_ht - $total_operation;
-                    }
-                    $total_check -= $amount;
+					$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
+					if ($idx < $nb_operation) {
+						$amount = price2num($payment_total_ht * $operation['total_ht'] / $objectInfos['total_ht'], 'MT');
+						$total_operation += $amount;
+					} else {
+						$amount = $payment_total_ht - $total_operation;
+					}
+					$total_check -= $amount;
 
 					$bookkeepingToCreate = new BookKeeping($db);
-                    $result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
-                    if ($result < 0) {
-                        $error_for_line++;
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					if ($result < 0) {
+						$error_for_line++;
 
 						if (!empty($bookkeepingToCreate->warnings)) {
 							setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1158,24 +1166,24 @@ if (!$error && $action == 'writebookkeeping') {
 						if (!empty($bookkeepingToCreate->errors)) {
 							setEventMessages(null, $bookkeepingToCreate->errors, 'errors');
 						}
-                    }
-                }
-                $idx++;
-            }
+					}
+				}
+				$idx++;
+			}
 
-            // VATs
-            $total_vat = 0;
-            $idx = 1;
-            $nb_vat = 0;
-            foreach ($objectInfos['vats'] as $accountancy_code => $vats) {
-                foreach ($vats as $vat_tx => $vat_infos) {
-                    $nb_vat++;
-                }
-            }
-            foreach ($objectInfos['vats'] as $accountancy_code => $vats) {
-                foreach ($vats as $vat_tx => $vat_infos) {
-                    $amount = $vat_infos['total_tva'] + $vat_infos['total_localtax1'] + $vat_infos['total_localtax2'];
-                    if (!empty($amount)) {
+			// VATs
+			$total_vat = 0;
+			$idx = 1;
+			$nb_vat = 0;
+			foreach ($objectInfos['vats'] as $accountancy_code => $vats) {
+				foreach ($vats as $vat_tx => $vat_infos) {
+					$nb_vat++;
+				}
+			}
+			foreach ($objectInfos['vats'] as $accountancy_code => $vats) {
+				foreach ($vats as $vat_tx => $vat_infos) {
+					$amount = $vat_infos['total_tva'] + $vat_infos['total_localtax1'] + $vat_infos['total_localtax2'];
+					if (!empty($amount)) {
 						// Set accounting account infos
 						if (!isset($tabaccountingaccount[$accountancy_code])) {
 							$result = $accountingaccount->fetch(null, $accountancy_code, true);
@@ -1190,15 +1198,15 @@ if (!$error && $action == 'writebookkeeping') {
 							}
 							$tabaccountingaccount[$accountancy_code] = array('label' => $accountancy_code_label);
 						}
-                        $accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
-                        $amount = price2num($payment_total_vat * $amount / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
-                        $total_vat += $amount;
-                        $total_check -= $amount;
+						$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
+						$amount = price2num($payment_total_vat * $amount / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
+						$total_vat += $amount;
+						$total_check -= $amount;
 
 						$bookkeepingToCreate = new BookKeeping($db);
-                        $result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT') . ' ' . price($vat_infos['tva_tx']) . '%', -$amount, $journal, $journal_label, '');
-                        if ($result < 0) {
-                            $error_for_line++;
+						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
+						if ($result < 0) {
+							$error_for_line++;
 
 							if (!empty($bookkeepingToCreate->warnings)) {
 								setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1206,21 +1214,21 @@ if (!$error && $action == 'writebookkeeping') {
 							if (!empty($bookkeepingToCreate->errors)) {
 								setEventMessages(null, $bookkeepingToCreate->errors, 'errors');
 							}
-                        }
-                    }
-                    $idx++;
-                }
-            }
+						}
+					}
+					$idx++;
+				}
+			}
 
-            // Show bank line
-            if ($object_data['amount'] < 0) {
-                $amount = price2num($object_data['amount'], 'MT') * 1;
-                $total_check += $amount;
+			// Show bank line
+			if ($object_data['amount'] < 0) {
+				$amount = price2num($object_data['amount'], 'MT') * 1;
+				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
-                $result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
-                if ($result < 0) {
-                    $error_for_line++;
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				if ($result < 0) {
+					$error_for_line++;
 
 					if (!empty($bookkeepingToCreate->warnings)) {
 						setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1228,45 +1236,45 @@ if (!$error && $action == 'writebookkeeping') {
 					if (!empty($bookkeepingToCreate->errors)) {
 						setEventMessages(null, $bookkeepingToCreate->errors, 'errors');
 					}
-                }
-            }
+				}
+			}
 
-            $total_check = price2num($total_check, 'MT');
-            if (!empty($total_check)) {
-                $error_for_line++;
-                setEventMessages($langs->trans('ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled', $objectInfos['ref'], $object_data['bu_url_id']), null, 'errors');
-            }
+			$total_check = price2num($total_check, 'MT');
+			if (!empty($total_check)) {
+				$error_for_line++;
+				setEventMessages($langs->trans('ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled', $objectInfos['ref'], $object_data['bu_url_id']), null, 'errors');
+			}
 
-            if ($error_for_line) {
-                $error++;
+			if ($error_for_line) {
+				$error++;
 
-                if ($error >= $MAXNBERRORS) {
-                    setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped") . ' (>' . $MAXNBERRORS . ')', null, 'errors');
-                    break;  // Break in the foreach
-                }
-            }
-        }
+				if ($error >= $MAXNBERRORS) {
+					setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
+					break;  // Break in the foreach
+				}
+			}
+		}
 
-        if (!$error_for_line) {
-            $db->commit();
-        } else {
-            $db->rollback();
+		if (!$error_for_line) {
+			$db->commit();
+		} else {
+			$db->rollback();
 
-            if ($error >= $MAXNBERRORS) {
-                break;  // Break in the foreach
-            }
-        }
-    }
+			if ($error >= $MAXNBERRORS) {
+				break;  // Break in the foreach
+			}
+		}
+	}
 
-    if (empty($error) && count($tabpay) > 0) {
-        setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
-    } elseif (count($tabpay) == $error) {
-        setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
-    } else {
-        setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
-    }
+	if (empty($error) && count($tabpay) > 0) {
+		setEventMessages($langs->trans("GeneralLedgerIsWritten"), null, 'mesgs');
+	} elseif (count($tabpay) == $error) {
+		setEventMessages($langs->trans("NoNewRecordSaved"), null, 'warnings');
+	} else {
+		setEventMessages($langs->trans("GeneralLedgerSomeRecordWasNotRecorded"), null, 'warnings');
+	}
 
-    $action = '';
+	$action = '';
 
 	// Must reload data, so we make a redirect
 	if (count($tabpay) != $error) {
@@ -1306,13 +1314,13 @@ if (empty($action) || $action == 'view') {
 	$period = $form->selectDate($date_start ?: -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ?: -1, 'date_end', 0, 0, 0, '', 1, 0);
 	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
-    $varlink = 'id_journal=' . $id_journal;
-    $periodlink = '';
-    $exportlink = '';
+	$varlink = 'id_journal='.$id_journal;
+	$periodlink = '';
+	$exportlink = '';
 
-    journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
+	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
-    // Test that setup is complete
+	// Test that setup is complete
 	$sql = 'SELECT COUNT(rowid) as nb FROM '.$db->prefix().'bank_account WHERE fk_accountancy_journal IS NULL AND clos=0';
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -1325,15 +1333,15 @@ if (empty($action) || $action == 'view') {
 		dol_print_error($db);
 	}
 
-    // Button to write into Ledger
-    if (!getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
-        || !getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
-        || !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
+	// Button to write into Ledger
+	if (!getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') || getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER') == '-1'
+		|| !getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') || getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER') == '-1'
+		|| !getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') || getDolGlobalString('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT') == '-1') {
 		print '<br>'.img_warning().' '.$langs->trans("SomeMandatoryStepsOfSetupWereNotDone");
 		print ' : '.$langs->trans("AccountancyAreaDescMisc", 4, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
-    }
+	}
 
-    print '<div class="tabsAction tabsActionNoBottom">';
+	print '<div class="tabsAction tabsActionNoBottom">';
 
 	if (getDolGlobalString('ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL')) {
 		print '<input type="button" class="butAction" name="exportcsv" value="'.$langs->trans("ExportDraftJournal").'" onclick="launch_export();" />';
@@ -1352,7 +1360,7 @@ if (empty($action) || $action == 'view') {
 	}
 	print '</div>';
 
-    // TODO Avoid using js. We can use a direct link with $param
+	// TODO Avoid using js. We can use a direct link with $param
 	print '
 	<script type="text/javascript">
 		function writebookkeeping() {
@@ -1363,10 +1371,10 @@ if (empty($action) || $action == 'view') {
 		}
 	</script>';
 
-    /*
-     * Show result array
-     */
-    print '<br>';
+	/*
+	 * Show result array
+	 */
+	print '<br>';
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
