@@ -1506,6 +1506,15 @@ class ExtraFields
 							// current object id can be use into filter
 							if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
 								$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
+							} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
+								// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
+								// Do nothing if condition is using 'IN' keyword
+								// Replace 'column = $ID$' by "word"
+								$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
+								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+								// Replace '$ID$ = column' by "word"
+								$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+								$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
 							} else {
 								$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 							}
@@ -1751,54 +1760,15 @@ class ExtraFields
 						// current object id can be use into filter
 						if (strpos($InfoFieldList[4], '$ID$') !== false && !empty($objectid)) {
 							$InfoFieldList[4] = str_replace('$ID$', (string) $objectid, $InfoFieldList[4]);
-						} elseif (preg_match("#^.*list.php$#", $_SERVER["PHP_SELF"])) {
-							// Pattern for word=$ID$
-							$word = '\b[a-zA-Z0-9-\.-_]+\b=\$ID\$';
-
-							// Removing spaces around =, ( and )
-							$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-
-							$nbPreg = 1;
-							// While we have parenthesis
-							while ($nbPreg != 0) {
-								// Initialise counters
-								$nbPregRepl = $nbPregSel = 0;
-								// Remove all parenthesis not preceded with '=' sign
-								$InfoFieldList[4] = preg_replace('#([^=])(\([^)^(]*('.$word.')[^)^(]*\))#', '$1 $3 ', $InfoFieldList[4], -1, $nbPregRepl);
-								// Remove all escape characters around '=' and parenthesis
-								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-								// Remove all parentheses preceded with '='
-								$InfoFieldList[4] = preg_replace('#\b[a-zA-Z0-9-\.-_]+\b=\([^)^(]*('.$word.')[^)^(]*\)#', '$1 ', $InfoFieldList[4], -1, $nbPregSel);
-								// On retire les escapes autour des = et parenthèses
-								$InfoFieldList[4] = preg_replace('# *(=|\(|\)) *#', '$1', $InfoFieldList[4]);
-
-								// UPdate the totals counter for the loop
-								$nbPreg = $nbPregRepl + $nbPregSel;
-							}
-
-							// In case there is AND ou OR, before or after
-							$matchCondition = array();
-							preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
-							while (!empty($matchCondition[0])) {
-								// If the two sides differ but are not empty
-								if (!empty($matchCondition[1]) && !empty($matchCondition[3]) && $matchCondition[1] != $matchCondition[3]) {
-									// Nobody sain would do that without parentheses
-									$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
-								} else {
-									if (!empty($matchCondition[1])) {
-										$boolCond = (($matchCondition[1] == "AND") ? ' AND TRUE ' : ' OR FALSE ');
-										$InfoFieldList[4] = str_replace($matchCondition[0], $boolCond.$matchCondition[3], $InfoFieldList[4]);
-									} elseif (!empty($matchCondition[3])) {
-										$boolCond = (($matchCondition[3] == "AND") ? ' TRUE AND ' : ' FALSE OR');
-										$InfoFieldList[4] = str_replace($matchCondition[0], $boolCond, $InfoFieldList[4]);
-									} else {
-										$InfoFieldList[4] = " TRUE ";
-									}
-								}
-
-								// In case there is AND ou OR, before or after
-								preg_match('#(AND|OR|) *('.$word.') *(AND|OR|)#', $InfoFieldList[4], $matchCondition);
-							}
+						} elseif (substr($_SERVER["PHP_SELF"], -8) == 'list.php') {
+							// In filters of list views, we do not want $ID$ replaced by 0. So we remove the '=' condition.
+							// Do nothing if condition is using 'IN' keyword
+							// Replace 'column = $ID$' by "word"
+							$word = '#\b([a-zA-Z0-9-\.-_]+)\b *= *\$ID\$#';
+							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
+							// Replace '$ID$ = column' by "word"
+							$word = '#\$ID\$ *= *\b([a-zA-Z0-9-\.-_]+)\b#';
+							$InfoFieldList[4] = preg_replace($word, '$1', $InfoFieldList[4]);
 						} else {
 							$InfoFieldList[4] = str_replace('$ID$', '0', $InfoFieldList[4]);
 						}

@@ -273,7 +273,6 @@ class DolibarrApi
 		unset($object->country);
 		unset($object->state);
 		unset($object->state_code);
-		unset($object->fk_departement);
 		unset($object->departement);
 		unset($object->departement_code);
 

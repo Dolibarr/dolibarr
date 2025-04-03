@@ -1664,8 +1664,10 @@ while ($i < $imaxinloop) {
 	$object = $product_static;
 
 	$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_prices') : $user->hasRight('product', 'lire');
+	$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
 	if ($product_static->isService()) {
 		$usercancreadprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_prices') : $user->hasRight('service', 'lire');
+		$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
 	}
 
 	if ($mode == 'kanban') {
@@ -2078,7 +2080,7 @@ while ($i < $imaxinloop) {
 		// Better buy price
 		if (!empty($arrayfields['p.minbuyprice']['checked'])) {
 			print  '<td class="right nowraponall">';
-			if ($product_static->status_buy && $obj->bestpurchaseprice != '' && $usercancreadprice) {
+			if ($product_static->status_buy && $obj->bestpurchaseprice != '' && $usercancreadsupplierprice) {
 				if ($product_fourn->find_min_price_product_fournisseur($obj->rowid) > 0) {
 					if ($product_fourn->product_fourn_price_id > 0) {
 						if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
@@ -2099,7 +2101,7 @@ while ($i < $imaxinloop) {
 		// Number of buy prices - Vendor prices
 		if (!empty($arrayfields['p.numbuyprice']['checked'])) {
 			print  '<td class="right">';
-			if ($product_static->status_buy && $usercancreadprice) {
+			if ($product_static->status_buy && $usercancreadsupplierprice) {
 				if (count($productFournList = $product_fourn->list_product_fournisseur_price($obj->rowid)) > 0) {
 					$htmltext = $product_fourn->display_price_product_fournisseur(1, 1, 0, 1, $productFournList);
 					print $form->textwithpicto((string) count($productFournList), $htmltext);
@@ -2124,7 +2126,7 @@ while ($i < $imaxinloop) {
 		// WAP
 		if (!empty($arrayfields['p.pmp']['checked'])) {
 			print '<td class="nowrap right">';
-			if ($usercancreadprice) {
+			if ($usercancreadsupplierprice) {
 				print '<span class="amount">'.price($product_static->pmp, 1, $langs)."</span>";
 			}
 			print '</td>';
@@ -2136,7 +2138,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['p.cost_price']['checked'])) {
 			print '<td class="nowrap right">';
 			//print $obj->cost_price;
-			if ($usercancreadprice) {
+			if ($usercancreadsupplierprice) {
 				print '<span class="amount">'.price($obj->cost_price).' '.$langs->trans("HT").'</span>';
 			}
 			print '</td>';
@@ -2182,15 +2184,15 @@ while ($i < $imaxinloop) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_reel < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				if ($usercancreadprice) {
-					if ($product_static->stock_reel < 0) {
-						print '<span class="warning">';
-					}
-					print price(price2num($product_static->stock_reel, 'MS'), 0, $langs, 1, 0);
-					if ($product_static->stock_reel < 0) {
-						print '</span>';
-					}
+				/* why ? if ($usercancreadprice) { */
+				if ($product_static->stock_reel < 0) {
+					print '<span class="warning">';
 				}
+					print price(price2num($product_static->stock_reel, 'MS'), 0, $langs, 1, 0);
+				if ($product_static->stock_reel < 0) {
+					print '</span>';
+				}
+				/* } */
 			}
 			print '</td>';
 			if (!$i) {
@@ -2204,15 +2206,15 @@ while ($i < $imaxinloop) {
 				if ($obj->seuil_stock_alerte != '' && $product_static->stock_theorique < (float) $obj->seuil_stock_alerte) {
 					print img_warning($langs->trans("StockLowerThanLimit", $obj->seuil_stock_alerte)).' ';
 				}
-				if ($usercancreadprice) {
-					if ($product_static->stock_theorique < 0) {
-						print '<span class="warning">';
-					}
-					print price(price2num($product_static->stock_theorique, 'MS'), 0, $langs, 1, 0);
-					if ($product_static->stock_theorique < 0) {
-						print '</span>';
-					}
+				/* why ? if ($usercancreadprice) { */
+				if ($product_static->stock_theorique < 0) {
+					print '<span class="warning">';
 				}
+					print price(price2num($product_static->stock_theorique, 'MS'), 0, $langs, 1, 0);
+				if ($product_static->stock_theorique < 0) {
+					print '</span>';
+				}
+				/* } */
 			}
 			print '</td>';
 			if (!$i) {

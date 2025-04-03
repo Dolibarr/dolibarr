@@ -381,7 +381,11 @@ if (!getDolGlobalString('MULTICURRENCY_DISABLE_SYNC_CURRENCYLAYER')) {
 	print '<td class="right">';
 	print '<textarea id="response" class="hideobject" name="response"></textarea>';
 	print '<input type="submit" name="modify_apilayer" class="button buttongen" value="'.$langs->trans("Modify").'">';
-	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'" />';
+	print '<input type="submit" id="bt_sync" name="bt_sync_apilayer" class="button buttongen" value="'.$langs->trans('Synchronize').'"';
+	if (!getDolGlobalString('MULTICURRENCY_APP_KEY')) {
+		print ' disabled="disabled"';
+	}
+	print '/>';
 	print '</td></tr>';
 
 	print '<tr class="oddeven">';
