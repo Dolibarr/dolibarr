@@ -3404,7 +3404,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if (method_exists($object, 'getVentilExportCompta')) {
 			$accounted = $object->getVentilExportCompta(1);
 			$langs->load("accountancy");
-			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_mvt_num='.urlencode($accounted).'">'.$langs->trans("Accounted").'</a>' : $langs->trans("NotYetAccounted")).'</span>';
+			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_mvt_num='.urlencode((string) $accounted).'">'.$langs->trans("Accounted").'</a>' : $langs->trans("NotYetAccounted")).'</span>';
 		}
 	}
 
