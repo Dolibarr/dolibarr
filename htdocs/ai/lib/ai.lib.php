@@ -38,7 +38,7 @@ function getListOfAIFeatures()
 		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
 		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused', 'function' => 'TEXT'),
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textsumarize' => array('label' => $langs->trans('TextSumarize'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
+		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
 		'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'IMAGE'),
 		'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'VIDEO'),
 		'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'AUDIO'),
@@ -70,24 +70,24 @@ function getListOfAIServices()
 }
 
 /**
- * Get list for AI sumarize
+ * Get list for AI summarize
  *
  * @return array<int|string,mixed>
  */
-function getListForAISumarize()
+function getListForAISummarize()
 {
 	global $langs;
 
-	$arrayforaisumarize = array(
-		'20_w' => 'SumarizeTwentyWords',
-		'50_w' => 'SumarizeFiftyWords',
-		'100_w' => 'SumarizeHundredWords',
-		'200_w' => 'SumarizeTwoHundredWords',
-		'1_p' => 'SumarizeOneParagraphs',
-		'2_p' => 'SumarizeTwoParagraphs'
+	$arrayforaisummarize = array(
+		'20_w' => 'SummarizeTwentyWords',
+		'50_w' => 'SummarizeFiftyWords',
+		'100_w' => 'SummarizeHundredWords',
+		'200_w' => 'SummarizeTwoHundredWords',
+		'1_p' => 'SummarizeOneParagraphs',
+		'2_p' => 'SummarizeTwoParagraphs'
 	);
 
-	return $arrayforaisumarize;
+	return $arrayforaisummarize;
 }
 
 /**

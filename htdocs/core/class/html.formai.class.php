@@ -128,10 +128,10 @@ class FormAI extends Form
 		$out .= '</div>';
 		$out .= '<br>';
 
-		$sumarizearray = getListForAISumarize();
-		$out .= '<div id="ai_sumarize'.$htmlContent.'" class="ai_sumarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+		$summarizearray = getListForAISummarize();
+		$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 		$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-		$out .= $form->selectarray("ai_sumarize".$htmlContent."_select", $sumarizearray, 0, $langs->trans("SumarizeByAI").'...', 0, 0, 'minwidth250 ai_sumarize'.$htmlContent.'_select', 1);
+		$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
 		$out .= '</div>';
 
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
@@ -146,7 +146,7 @@ class FormAI extends Form
 		$out .= "<script type='text/javascript'>
 			$(document).ready(function() {
 				$('#ai_translation".$htmlContent."_select').data('functionai', 'texttranslation')
-				$('#ai_sumarize".$htmlContent."_select').data('functionai', 'textsumarize')
+				$('#ai_summarize".$htmlContent."_select').data('functionai', 'textsummarize')
 
 				$('#ai_instructions".$htmlContent."').keyup(function(){
 					console.log('We type a key up on #ai_instructions".$htmlContent."');
@@ -178,8 +178,8 @@ class FormAI extends Form
 					}
 				});
 
-				$('#ai_sumarize".$htmlContent."_select').on('change', function() {
-					console.log('We change #ai_sumarize".$htmlContent."_select with lang '+$(this).val());
+				$('#ai_summarize".$htmlContent."_select').on('change', function() {
+					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
 					}
@@ -214,8 +214,8 @@ class FormAI extends Form
 
 						lang = $('#ai_translation'+htmlname+'_select').val();
 						instructions = 'Translate the following text to ' + lang + ': ' + texttomodify;
-					} else if (functionai == 'textsumarize') {
-						width = $('#ai_sumarize'+htmlname+'_select').val();
+					} else if (functionai == 'textsummarize') {
+						width = $('#ai_summarize'+htmlname+'_select').val();
 						arr = width.split('_');
 						width = arr[0];
 						unit = arr[1];
@@ -236,7 +236,7 @@ class FormAI extends Form
 								unit = 'words';
 								break;
 						}
-						instructions = 'Sumarize the following text in ' + width + ' ' + unit + ': ' + texttomodify;
+						instructions = 'Summarize the following text in ' + width + ' ' + unit + ': ' + texttomodify;
 					}else {
 						instructions = userprompt;
 					}
@@ -366,8 +366,8 @@ class FormAI extends Form
 						$('#ai_instructions'+htmlname).val('');
 						$('#ai_translation'+htmlname+'_select').val('-1');
 						$('#ai_translation'+htmlname+'_select').trigger('change');
-						$('#ai_sumarize'+htmlname+'_select').val('-1');
-						$('#ai_sumarize'+htmlname+'_select').trigger('change');
+						$('#ai_summarize'+htmlname+'_select').val('-1');
+						$('#ai_summarize'+htmlname+'_select').trigger('change');
 						$('#ai_status_message'+htmlname).hide();
 						$('#ai_dropdown'+htmlname).hide();
 					},
