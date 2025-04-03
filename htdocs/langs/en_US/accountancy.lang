@@ -316,6 +316,8 @@ NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyccnnnn where yyyy is the year and cc the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Apply mass categories
@@ -474,6 +476,8 @@ ErrorArchiveAddFile=Can't put "%s" file in archive
 ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
+Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
+
 ## Import
 ImportAccountingEntries=Accounting entries
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format

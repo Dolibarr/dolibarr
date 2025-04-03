@@ -249,6 +249,11 @@ class LangTest extends CommonClassTest
 			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
 			$this->assertTrue($result === false, 'Found a bad percent char ％ instead of % in file '.$code.'/'.$file);
 
+			$reg = array();
+			$result = preg_match('/(.*)([^%])%$/m', $filecontent, $reg);	// A sequence of char we don't want
+			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
+			$this->assertTrue($result == 0, 'Found the character % alone in the translation file '.$code.'/'.$file.' on line '.(empty($reg[1]) ? '' : $reg[1]).(empty($reg[2]) ? '' : $reg[2]).'. We probably want %s or %%');
+
 			$result = preg_match('/%n/m', $filecontent);	// A sequence of char we don't want
 			//print $prefix."Result for checking we don't have bad percent char = ".$result.PHP_EOL;
 			$this->assertTrue($result == 0, 'Found a sequence %n in the translation file '.$code.'/'.$file.'. We probably want %s');

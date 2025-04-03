@@ -49,6 +49,7 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 $langs->loadLangs(array('mails', 'admin', 'companies', 'categories'));
 
 $action = GETPOST('action', 'aZ09');
+$toselect   = GETPOST('toselect', 'array'); // Array of ids of elements selected into a list
 
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
