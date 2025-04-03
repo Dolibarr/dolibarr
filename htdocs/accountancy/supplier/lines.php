@@ -121,60 +121,68 @@ $formaccounting = new FormAccounting($db);
  * Actions
  */
 
-// Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
-	$search_societe = '';
-	$search_lineid = '';
-	$search_ref = '';
-	$search_invoice = '';
-	//$search_ref_supplier = '';
-	$search_label = '';
-	$search_desc = '';
-	$search_amount = '';
-	$search_account = '';
-	$search_vat = '';
-	$search_date_startday = '';
-	$search_date_startmonth = '';
-	$search_date_startyear = '';
-	$search_date_endday = '';
-	$search_date_endmonth = '';
-	$search_date_endyear = '';
-	$search_date_start = '';
-	$search_date_end = '';
-	$search_country = '';
-	$search_tvaintra = '';
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('accounting', 'bind', 'write')) {
-	$error = 0;
-
-	if (!(GETPOSTINT('account_parent') >= 0)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+if (empty($reshook)) {
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
+		$search_societe = '';
+		$search_lineid = '';
+		$search_ref = '';
+		$search_invoice = '';
+		//$search_ref_supplier = '';
+		$search_label = '';
+		$search_desc = '';
+		$search_amount = '';
+		$search_account = '';
+		$search_vat = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
+		$search_country = '';
+		$search_tvaintra = '';
 	}
 
-	if (!$error) {
-		$db->begin();
+	if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('accounting', 'bind', 'write')) {
+		$error = 0;
 
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
-		$sql1 .= " SET fk_code_ventilation=".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : '0');
-		$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
-
-		dol_syslog('accountancy/supplier/lines.php::changeaccount sql= '.$sql1);
-		$resql1 = $db->query($sql1);
-		if (!$resql1) {
+		if (!(GETPOSTINT('account_parent') >= 0)) {
 			$error++;
-			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		if (!$error) {
-			$db->commit();
-			setEventMessages($langs->trans("Save"), null, 'mesgs');
-		} else {
-			$db->rollback();
-			setEventMessages($db->lasterror(), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 		}
 
-		$account_parent = ''; // Protection to avoid to mass apply it a second time
+		if (!$error) {
+			$db->begin();
+
+			$sql1 = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det";
+			$sql1 .= " SET fk_code_ventilation=".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : '0');
+			$sql1 .= ' WHERE rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
+
+			dol_syslog('accountancy/supplier/lines.php::changeaccount sql= '.$sql1);
+			$resql1 = $db->query($sql1);
+			if (!$resql1) {
+				$error++;
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+			if (!$error) {
+				$db->commit();
+				setEventMessages($langs->trans("Save"), null, 'mesgs');
+			} else {
+				$db->rollback();
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+
+			$account_parent = ''; // Protection to avoid to mass apply it a second time
+		}
 	}
 }
 
@@ -249,6 +257,9 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = s.rowid AND spe.entity = " . ((int) $conf->entity);
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as co ON co.rowid = s.fk_pays ";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE f.rowid = l.fk_facture_fourn and f.fk_statut >= 1 AND l.fk_code_ventilation <> 0 ";
 // Add search filter like
 if ($search_societe) {
@@ -394,6 +405,10 @@ if ($result) {
 	if ($search_tvaintra) {
 		$param .= "&search_tvaintra=".urlencode($search_tvaintra);
 	}
+	// Add $param from hooks
+	$parameters = array('param' => &$param);
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -420,6 +435,13 @@ if ($result) {
 
 	// We add search filter
 	print '<tr class="liste_titre_filter">';
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print '<td class="liste_titre maxwidthsearch center actioncolumn">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
@@ -443,10 +465,14 @@ if ($result) {
 	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
-	print '<td class="liste_titre center">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print "</td></tr>\n";
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
