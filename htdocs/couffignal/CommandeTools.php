@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
+
 /**
  * Tools for Commande class
  */

@@ -451,6 +451,10 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			return 1;
 		}
 
+		if (!$object->project) {
+			$object->fetch_project();
+		}
+
 		/*** Lang init ***/
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -1179,14 +1183,14 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, $line['values']['Situation'], 0, 'R', 1);
 		}
-		$total_ttc = $recap_lines['TotalTTC']['values']['Situation'];
+		$total_ttc = $this->recap_lines['TotalTTC']['values']['Situation'];
 
 		$pdf->SetTextColor(0, 0, 0);
 
 		$creditnoteamount=$object->getSumCreditNotesUsed();
 		$depositsamount=$object->getSumDepositsUsed();
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
-		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		$resteapayer = price2num(price2num($total_ttc) - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
 		if ($object->paye) $resteapayer=0;
 
 		// Already paid + Deposits
@@ -2276,7 +2280,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 			if ($object->lines[$i]->situation_percent > 0) {
 				$progress = ($object->lines[$i]->situation_percent - $prev_progress) / $object->lines[$i]->situation_percent; // TODO - Control, here another formula was used, dividing by $object->lines[$i]->situation_percent
 			} else {
-				$rogress = 0;
+				$progress = 0;
 			}
 
 			// Compute VAT

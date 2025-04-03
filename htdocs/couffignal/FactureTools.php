@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/couffignal/CommandeTools.php';
 
 /**
