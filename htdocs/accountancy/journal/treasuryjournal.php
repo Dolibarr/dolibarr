@@ -1065,7 +1065,7 @@ if ($resql) {
 /**
  * Filter for payment
  *
- * @param	array	$v		Table of payment
+ * @param	array<string, mixed>	$v		Table of payment
  * @return	bool
  */
 function payment_filter($v)
@@ -1131,7 +1131,7 @@ if ($action == 'writebookkeeping') {
 			}
 
 			// Operations
-			$payment_total_vat = price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
+			$payment_total_vat = (float) price2num($object_data['amount'] * ($objectInfos['total_ttc'] - $objectInfos['total_ht']) / $objectInfos['total_ttc'], 'MT');
 			$payment_total_ht = $object_data['amount'] - $payment_total_vat;
 			$total_operation = 0;
 			$idx = 1;
@@ -1205,7 +1205,7 @@ if ($action == 'writebookkeeping') {
 							$tabaccountingaccount[$accountancy_code] = array('label' => $accountancy_code_label);
 						}
 						$accountingAccountInfos = $tabaccountingaccount[$accountancy_code];
-						$amount = price2num($payment_total_vat * $amount / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
+						$amount = (float) price2num($payment_total_vat * $amount / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
 						$total_vat += $amount;
 						$total_check -= $amount;
 
@@ -1419,7 +1419,7 @@ if (empty($action) || $action == 'view') {
 			foreach ($objectInfos['operations'] as $accountancy_code => $operation) {
 				// Set accounting account infos
 				if (!isset($tabaccountingaccount[$accountancy_code])) {
-					$result = $accountingaccount->fetch(null, $accountancy_code, true);
+					$result = $accountingaccount->fetch(0, $accountancy_code, true);
 					$tabaccountingaccount[$accountancy_code] = array(
 						'label' => $result < 0 ? $accountingaccount->errorsToString() : ($result > 0 ? $accountingaccount->label : $langs->trans('NotDefined')),
 					);
@@ -1450,7 +1450,7 @@ if (empty($action) || $action == 'view') {
 				foreach ($vats as $vat_tx => $vat_infos) {
 					$amount_vat = $vat_infos['total_tva'] + $vat_infos['total_localtax1'] + $vat_infos['total_localtax2'];
 					if (!empty($amount_vat)) {
-						$amount_vat = price2num($payment_total_vat * $amount_vat / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
+						$amount_vat = (float) price2num($payment_total_vat * $amount_vat / ($objectInfos['total_ttc'] - $objectInfos['total_ht']), 'MT');
 						$total_vat += $amount_vat;
 						FormAccounting::printJournalLine($langs, $date, $objectInfos['url'], $accountancy_code, $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', $payment['type_payment'], -$amount_vat);
 					}
