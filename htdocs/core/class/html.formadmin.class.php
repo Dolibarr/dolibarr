@@ -511,10 +511,11 @@ class FormAdmin
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
 	{
-		global $type2label;	// TODO Remove this global
+		$type2label = ExtraFields::getListOfTypesLabels();
 
 		$out = '';
 
+		$out .= '<!-- combo with type of extrafields -->'."\n";
 		$out .= '<select class="flat type" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($type2label as $key => $val) {
 			$selected = '';

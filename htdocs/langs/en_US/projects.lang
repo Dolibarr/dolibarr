@@ -316,3 +316,4 @@ ConfirmCloseTask=Are you sure you want to close this task ?
 ConfirmClosed=Confirm task closed
 TaskStatus=Task status
 TaskReopened=Task reopened
+ThisContactHasAUser=Warning, you must assign the associated user of this contact (the user '%s', and not the contact '%s') if you want to give access permission on this object to the respective user contact.

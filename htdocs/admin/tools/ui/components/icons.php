@@ -111,7 +111,9 @@ $documentation->showSidebar(); ?>
 				<div class="documentation-example">
 					<div class="documentation-img-picto-icon-list">
 						<?php
-						foreach (getImgPictoNameList() as $iconName) {
+						$arrayofdolibarriconkey = getImgPictoNameList();
+
+						foreach ($arrayofdolibarriconkey as $iconName) {
 							$labelAlt = 'Text on title tag for tooltip';
 
 							if ($displayMode == 'kanban') {

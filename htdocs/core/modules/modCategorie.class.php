@@ -177,6 +177,9 @@ class modCategorie extends DolibarrModules
 		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_order'))) {
 			$typeexample .= ($typeexample ? " / " : "")."20=Supplier order";
 		}
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			$typeexample .= ($typeexample ? " / " : "")."21=Supplier invoice";
+		}
 
 		// Definition of vars
 		$this->export_fields_array[$r] = array('cat.rowid' => "CategId", 'cat.label' => "Label", 'cat.type' => "Type", 'cat.description' => "Description", 'cat.fk_parent' => "ParentCategoryID", 'pcat.label' => "ParentCategoryLabel", 'cat.color' => "Color", 'cat.date_creation' => "DateCreation", 'cat.tms' => "DateLastModification");
@@ -535,6 +538,24 @@ class modCategorie extends DolibarrModules
 			);
 		}
 
+		// 21 Supplier invoice
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			++$r;
+			$this->exportTagLinks(
+				$r,
+				'supplier_invoice',
+				'invoice_supplier',
+				'(isModEnabled("fournisseur") && !getDolGlobalString("MAIN_USE_NEW_SUPPLIERMOD")) || (isModEnabled("supplier_invoice"))',
+				['fournisseur', 'facture', 'export'],
+				[
+					'rowid' => [
+						'name' => 'SupplierInvoiceID',
+						'type' => 'Numeric'
+					]
+				]
+			);
+		}
+
 		// Imports
 		//--------
 
@@ -551,7 +572,7 @@ class modCategorie extends DolibarrModules
 			'ca.label' => "Label*", 'ca.type' => "Type*", 'ca.description' => "Description",
 			'ca.fk_parent' => 'ParentCategory'
 		);
-		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20)$');
+		$this->import_regex_array[$r] = array('ca.type' => '^(0|1|2|3|4|5|6|7|8|9|10|11|16|17|20|21)$');
 		$this->import_convertvalue_array[$r] = array(
 			'ca.fk_parent' => array(
 				'rule'          => 'fetchidfromcodeandlabel',
@@ -755,6 +776,18 @@ class modCategorie extends DolibarrModules
 				'/fourn/class/fournisseur.commande.class.php',
 				'CommandeFournisseur',
 				'CommandeFournisseur'
+			);
+		}
+
+		// 21 Supplier invoice
+		if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled('supplier_invoice'))) {
+			++$r;
+			$this->importTagLinks(
+				$r,
+				'supplier_invoice',
+				'/fourn/class/fournisseur.facture.class.php',
+				'invoice_supplier',
+				'FactureFournisseur'
 			);
 		}
 	}

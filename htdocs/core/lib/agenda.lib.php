@@ -150,7 +150,7 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'), 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('Categories'), 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 

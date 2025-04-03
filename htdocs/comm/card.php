@@ -159,6 +159,13 @@ if ($user->socid > 0) {
 }
 $result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
 
+$permissiontoadd = $user->hasRight('societe', 'creer');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
+
 
 /*
  * Actions
@@ -187,7 +194,7 @@ if (empty($reshook)) {
 	}
 
 	// Set accountancy code
-	if ($action == 'setcustomeraccountancycode' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setcustomeraccountancycode' && $permissiontoadd) {
 		$result = $object->fetch($id);
 		$object->code_compta_client = GETPOST("customeraccountancycode");
 		$object->code_compta = $object->code_compta_client; // For Backward compatibility
@@ -199,7 +206,7 @@ if (empty($reshook)) {
 	}
 
 	// Payment terms of the settlement
-	if ($action == 'setconditions' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setconditions' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setPaymentTerms(GETPOSTINT('cond_reglement_id'), GETPOSTINT('cond_reglement_id_deposit_percent'));
 		if ($result < 0) {
@@ -208,7 +215,7 @@ if (empty($reshook)) {
 	}
 
 	// Payment mode
-	if ($action == 'setmode' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setmode' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
 		if ($result < 0) {
@@ -217,7 +224,7 @@ if (empty($reshook)) {
 	}
 
 	// Transport mode
-	if ($action == 'settransportmode' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'settransportmode' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setTransportMode(GETPOSTINT('transport_mode_id'));
 		if ($result < 0) {
@@ -226,7 +233,7 @@ if (empty($reshook)) {
 	}
 
 	// Bank account
-	if ($action == 'setbankaccount' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setbankaccount' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
 		if ($result < 0) {
@@ -235,7 +242,7 @@ if (empty($reshook)) {
 	}
 
 	// customer preferred shipping method
-	if ($action == 'setshippingmethod' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setshippingmethod' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setShippingMethod(GETPOSTINT('shipping_method_id'));
 		if ($result < 0) {
@@ -244,7 +251,7 @@ if (empty($reshook)) {
 	}
 
 	// assujetissement a la TVA
-	if ($action == 'setassujtva' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setassujtva' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->tva_assuj = GETPOSTINT('assujtva_value');
 		$result = $object->update($object->id, $user);
@@ -254,7 +261,7 @@ if (empty($reshook)) {
 	}
 
 	// set prospect level
-	if ($action == 'setprospectlevel' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setprospectlevel' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->fk_prospectlevel = GETPOST('prospect_level_id', 'alpha');
 		$result = $object->update($object->id, $user);
@@ -264,7 +271,7 @@ if (empty($reshook)) {
 	}
 
 	// set communication status
-	if ($action == 'setstcomm' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setstcomm' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->stcomm_id = dol_getIdFromCode($db, GETPOST('stcomm', 'alpha'), 'c_stcomm');
 		$result = $object->update($object->id, $user);
@@ -276,7 +283,7 @@ if (empty($reshook)) {
 	}
 
 	// update outstandng limit
-	if ($action == 'setoutstanding_limit' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setoutstanding_limit' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->outstanding_limit = GETPOST('outstanding_limit');
 		$result = $object->update($object->id, $user);
@@ -286,7 +293,7 @@ if (empty($reshook)) {
 	}
 
 	// update order min amount
-	if ($action == 'setorder_min_amount' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setorder_min_amount' && $permissiontoadd) {
 		$object->fetch($id);
 		$object->order_min_amount = price2num(GETPOST('order_min_amount', 'alpha'));
 		$result = $object->update($object->id, $user);
@@ -296,35 +303,39 @@ if (empty($reshook)) {
 	}
 
 	// Set sales representatives
-	if ($action == 'set_salesrepresentatives' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'set_salesrepresentatives' && $permissiontoadd) {
 		$object->fetch($id);
 		$result = $object->setSalesRep(GETPOST('commercial', 'array'));
 	}
 
-	if ($action == 'update_extras' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->fetch($id);
 
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
 		// Fill array 'array_options' with data from update form
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
+
 		if (!$error) {
-			$result = $object->insertExtraFields('COMPANY_MODIFY');
+			$result = $object->updateExtraField($attribute_name, 'COMPANY_MODIFY');
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
+
 		if ($error) {
 			$action = 'edit_extras';
 		}
 	}
 
 	// warehouse
-	if ($action == 'setwarehouse' && $user->hasRight('societe', 'creer')) {
+	if ($action == 'setwarehouse' && $permissiontoadd) {
 		$result = $object->setWarehouse(GETPOSTINT('fk_warehouse'));
 	}
 }
@@ -392,9 +403,9 @@ if ($object->id > 0) {
 
 			print '<tr>';
 			print '<td>';
-			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $user->hasRight('societe', 'creer'));
+			print $form->editfieldkey("CustomerAccountancyCodeGeneral", 'customeraccountancycodegeneral', length_accountg($object->accountancy_code_customer_general), $object, $permissiontoadd);
 			print '</td><td>';
-			if ($action == 'editcustomeraccountancycodegeneral' && $user->hasRight('societe', 'creer')) {
+			if ($action == 'editcustomeraccountancycodegeneral' && $permissiontoadd) {
 				print $formaccounting->formAccountingAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->accountancy_code_customer_general, 'customeraccountancycodegeneral', 0, 1, '', 1);
 			} else {
 				if ($object->accountancy_code_customer_general > 0) {
@@ -417,9 +428,9 @@ if ($object->id > 0) {
 
 		print '<tr>';
 		print '<td>';
-		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->hasRight('societe', 'creer'));
+		print $form->editfieldkey("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $permissiontoadd);
 		print '</td><td>';
-		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $user->hasRight('societe', 'creer'));
+		print $form->editfieldval("CustomerAccountancyCode", 'customeraccountancycode', $object->code_compta_client, $object, $permissiontoadd);
 		print '</td>';
 		print '</tr>';
 	}
@@ -464,7 +475,7 @@ if ($object->id > 0) {
 	print '<table width="100%" class="nobordernopadding"><tr><td>';
 	print $langs->trans('PaymentConditions');
 	print '<td>';
-	if (($action != 'editconditions') && $user->hasRight('societe', 'creer')) {
+	if (($action != 'editconditions') && $permissiontoadd) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editconditions&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetConditions'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -482,7 +493,7 @@ if ($object->id > 0) {
 	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 	print $langs->trans('PaymentMode');
 	print '<td>';
-	if (($action != 'editmode') && $user->hasRight('societe', 'creer')) {
+	if (($action != 'editmode') && $permissiontoadd) {
 		print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editmode&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 	}
 	print '</tr></table>';
@@ -501,7 +512,7 @@ if ($object->id > 0) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('PaymentBankAccount');
 		print '<td>';
-		if (($action != 'editbankaccount') && $user->hasRight('societe', 'creer')) {
+		if (($action != 'editbankaccount') && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editbankaccount&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetBankAccount'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -523,7 +534,7 @@ if ($object->id > 0) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans("CustomerRelativeDiscountShort");
 		print '<td><td class="right">';
-		if ($user->hasRight('societe', 'creer') && !$user->socid > 0) {
+		if ($permissiontoadd && !$user->socid > 0) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'&action=create&token='.newToken().'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
@@ -536,7 +547,7 @@ if ($object->id > 0) {
 		print '<tr><td class="nowrap">';
 		print $langs->trans("CustomerAbsoluteDiscountShort");
 		print '<td><td class="right">';
-		if ($user->hasRight('societe', 'creer') && !$user->socid > 0) {
+		if ($permissiontoadd && !$user->socid > 0) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'&action=create_remise&token='.newToken().'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
@@ -559,10 +570,10 @@ if ($object->id > 0) {
 	if ($object->client) {
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->hasRight('societe', 'creer'));
+		print $form->editfieldkey("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd);
 		print '</td><td>';
 		$limit_field_type = (getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) ? 'numeric' : 'amount';
-		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $user->hasRight('societe', 'creer'), $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
+		print $form->editfieldval("OutstandingBill", 'outstanding_limit', $object->outstanding_limit, $object, $permissiontoadd, $limit_field_type, ($object->outstanding_limit != '' ? price($object->outstanding_limit) : ''));
 		print '</td>';
 		print '</tr>';
 	}
@@ -572,9 +583,9 @@ if ($object->id > 0) {
 			print '<!-- Minimum amount for orders -->'."\n";
 			print '<tr class="nowrap">';
 			print '<td>';
-			print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->hasRight('societe', 'creer'));
+			print $form->editfieldkey("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $permissiontoadd);
 			print '</td><td>';
-			print $form->editfieldval("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $user->hasRight('societe', 'creer'), $limit_field_type, ($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
+			print $form->editfieldval("OrderMinAmount", 'order_min_amount', $object->order_min_amount, $object, $permissiontoadd, $limit_field_type, ($object->order_min_amount != '' ? price($object->order_min_amount) : ''));
 			print '</td>';
 			print '</tr>';
 		}
@@ -587,7 +598,7 @@ if ($object->id > 0) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans("PriceLevel");
 		print '<td><td class="right">';
-		if ($user->hasRight('societe', 'creer')) {
+		if ($permissiontoadd) {
 			print '<a class="editfielda" href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
 		}
 		print '</td></tr></table>';
@@ -608,7 +619,7 @@ if ($object->id > 0) {
 		$formproduct = new FormProduct($db);
 		print '<tr class="nowrap">';
 		print '<td>';
-		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $user->hasRight('societe', 'creer'));
+		print $form->editfieldkey("Warehouse", 'warehouse', '', $object, $permissiontoadd);
 		print '</td><td>';
 		if ($action == 'editwarehouse') {
 			$formproduct->formSelectWarehouses($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_warehouse, 'fk_warehouse', 1);
@@ -628,7 +639,7 @@ if ($object->id > 0) {
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('SendingMethod');
 		print '<td>';
-		if (($action != 'editshipping') && $user->hasRight('societe', 'creer')) {
+		if (($action != 'editshipping') && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editshipping&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -648,7 +659,7 @@ if ($object->id > 0) {
 		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';
 		print $langs->trans('IntracommReportTransportMode');
 		print '<td>';
-		if (($action != 'edittransportmode') && $user->hasRight('societe', 'creer')) {
+		if (($action != 'edittransportmode') && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edittransportmode&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('SetMode'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -711,7 +722,7 @@ if ($object->id > 0) {
 		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('ProspectLevel');
 		print '<td>';
-		if ($action != 'editlevel' && $user->hasRight('societe', 'creer')) {
+		if ($action != 'editlevel' && $permissiontoadd) {
 			print '<td class="right"><a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?action=editlevel&token='.newToken().'&socid='.$object->id.'">'.img_edit($langs->trans('Modify'), 1).'</a></td>';
 		}
 		print '</tr></table>';
