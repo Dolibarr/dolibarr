@@ -548,10 +548,8 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.doc_date >= '".$db->idate($value)."'";
 		} elseif ($key == 't.doc_date<=') {
 			$sqlwhere[] = "t.doc_date <= '".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date>') {
-			$sqlwhere[] = "t.doc_date > '".$db->idate($value)."'";
-		} elseif ($key == 't.doc_date<') {
-			$sqlwhere[] = "t.doc_date < '".$db->idate($value)."'";
+		} elseif ($key == 't.doc_date') {
+			$sqlwhere[] = "t.doc_date = '".$db->idate($value)."'";
 		} elseif ($key == 't.numero_compte>=') {
 			$sqlwhere[] = "t.numero_compte >= '".$db->escape($value)."'";
 		} elseif ($key == 't.numero_compte<=') {
