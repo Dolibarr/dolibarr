@@ -1085,7 +1085,7 @@ $journal_label = $langs->transnoentitiesnoconv($accountingjournalstatic->label);
 $MAXNBERRORS = 5;
 
 // Write bookkeeping
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
