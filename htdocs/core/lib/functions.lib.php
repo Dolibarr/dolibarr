@@ -1262,12 +1262,12 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 /**
  *  Return a sanitized or empty value after checking value against a rule.
  *
- *  @deprecated
  *  @param  string|array<mixed>	$out	Value to check/clear.
  *  @param  string  		$check		Type of check/sanitizing
  *  @param  ?int     		$filter		Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  ?mixed   		$options	Options to pass to filter_var when $check is set to 'custom'
  *  @return string|array<mixed>			Value sanitized (string or array). It may be '' if format check fails.
+ *  @deprecated
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
@@ -1279,7 +1279,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
  *
  *  @param  string|mixed[]|null	$out	 Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
- *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom' (deprecated). (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  ?mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
  *  @return string|array<mixed>		     Value sanitized (string or array). It may be '' if format check fails.
  */
@@ -3404,7 +3404,7 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		if (method_exists($object, 'getVentilExportCompta')) {
 			$accounted = $object->getVentilExportCompta(1);
 			$langs->load("accountancy");
-			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_mvt_num='.urlencode($accounted).'">'.$langs->trans("Accounted").'</a>' : $langs->trans("NotYetAccounted")).'</span>';
+			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_mvt_num='.((int) $accounted).'">'.$langs->trans("Accounted").'</a>' : $langs->trans("NotYetAccounted")).'</span>';
 		}
 	}
 
