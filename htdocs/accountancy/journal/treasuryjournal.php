@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -101,7 +101,7 @@ $sql .= " bu.type as bu_type";
 $sql .= " FROM ".$db->prefix()."bank as b";
 $sql .= " LEFT JOIN ".$db->prefix()."bank_account as ba on b.fk_account = ba.rowid";
 $sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu ON bu.fk_bank = b.rowid";
-$sql .= " WHERE ba.fk_accountancy_journal=".$id_journal;
+$sql .= " WHERE ba.fk_accountancy_journal=". (int) $id_journal;
 $sql .= " AND ba.entity IN (".getEntity('bank_account').')'; // We don't share object for accountancy, we use source object sharing
 // Filter by dates
 if ($date_start && $date_end) {
