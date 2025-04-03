@@ -101,7 +101,7 @@ $sql .= " bu.type as bu_type";
 $sql .= " FROM ".$db->prefix()."bank as b";
 $sql .= " LEFT JOIN ".$db->prefix()."bank_account as ba on b.fk_account = ba.rowid";
 $sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu ON bu.fk_bank = b.rowid";
-$sql .= " WHERE ba.fk_accountancy_journal=".$id_journal;
+$sql .= " WHERE ba.fk_accountancy_journal = ".((int) $id_journal);
 $sql .= " AND ba.entity IN (".getEntity('bank_account').')'; // We don't share object for accountancy, we use source object sharing
 // Filter by dates
 if ($date_start && $date_end) {
@@ -191,7 +191,7 @@ if ($resql) {
 				$sql .= " AND f.fk_statut > 0";
 				$sql .= " AND fd.product_type IN (0,1)";
 				$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? Facture::TYPE_DEPOSIT."," : "").Facture::TYPE_SITUATION.")";
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id";
 				$sql .= " ORDER BY aa.account_number";
 
@@ -304,7 +304,7 @@ if ($resql) {
 				$sql .= " AND ff.fk_statut > 0";
 				$sql .= " AND ffd.product_type IN (0,1)";
 				$sql .= " AND ff.type IN (".FactureFournisseur::TYPE_STANDARD.",".FactureFournisseur::TYPE_REPLACEMENT.",".FactureFournisseur::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? FactureFournisseur::TYPE_DEPOSIT."," : "").FactureFournisseur::TYPE_SITUATION.")";
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				$sql .= " GROUP BY ffd.rowid, bu.fk_bank";
 				$sql .= " ORDER BY aa.account_number";
 
@@ -415,7 +415,7 @@ if ($resql) {
 					$sql .= " AND ab.rowid IS NULL";
 				}
 				$sql .= " AND er.fk_statut >= ".ExpenseReport::STATUS_APPROVED;
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				$sql .= " GROUP BY erf.rowid, bu.fk_bank, per.amount, aa.label, bu.url_id";
 				$sql .= " ORDER BY aa.account_number";
 
@@ -517,7 +517,7 @@ if ($resql) {
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
 				}
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -585,7 +585,7 @@ if ($resql) {
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
 				}
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -647,7 +647,7 @@ if ($resql) {
 				} else {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=t.rowid";
 				}
-				$sql .= " WHERE bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " WHERE bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				// $sql .= " AND t.entity = " . $conf->entity; // TODO when entity is managed in tva
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
@@ -719,7 +719,7 @@ if ($resql) {
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
 				}
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -786,7 +786,7 @@ if ($resql) {
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
 				}
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 
 				$resql = $db->query($sql);
 				if ($resql) {
@@ -871,7 +871,7 @@ if ($resql) {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=pv.rowid";
 				}
 				$sql .= " WHERE pv.entity IN (".getEntity('payment_various', 0).')';    // We don't share object for accountancy, we use source object sharing
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -938,7 +938,7 @@ if ($resql) {
 				} else {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=su.rowid";
 				}
-				$sql .= " WHERE bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " WHERE bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
 					$sql .= " AND ab.rowid IS NULL";
@@ -1004,7 +1004,7 @@ if ($resql) {
 					$sql .= " LEFT JOIN ".$db->prefix()."accounting_bookkeeping as ab ON ab.fk_doc=bu.fk_bank AND ab.fk_docdet=b.rowid";
 				}
 				$sql .= " WHERE ba.entity IN (".getEntity('bank_account', 0).')'; // We don't share object for accountancy, we use source object sharing
-				$sql .= " AND bu.fk_bank IN (".implode(',', $ids).")";
+				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
 				$sql .= " AND bu.type = '".$db->escape($type)."'";
 				// Not already in bookkeeping
 				if ($in_bookkeeping == 'notyet') {
@@ -1085,7 +1085,7 @@ $journal_label = $langs->transnoentitiesnoconv($accountingjournalstatic->label);
 $MAXNBERRORS = 5;
 
 // Write bookkeeping
-if ($action == 'writebookkeeping') {
+if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
@@ -1327,7 +1327,7 @@ if (empty($action) || $action == 'view') {
 	journalHead($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink);
 
 	// Test that setup is complete
-	$sql = 'SELECT COUNT(rowid) as nb FROM '.$db->prefix().'bank_account WHERE fk_accountancy_journal IS NULL AND clos=0';
+	$sql = "SELECT COUNT(rowid) as nb FROM ".$db->prefix()."bank_account WHERE fk_accountancy_journal IS NULL AND clos = 0";
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);

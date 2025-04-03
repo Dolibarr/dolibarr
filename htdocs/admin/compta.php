@@ -173,7 +173,7 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans('OtherOptions').'</td>';
 print "</tr>\n";
 
-
+/*
 foreach ($list as $key) {
 	print '<tr class="oddeven value">';
 
@@ -186,6 +186,7 @@ foreach ($list as $key) {
 	print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.getDolGlobalString($key).'">';
 	print '</td></tr>';
 }
+*/
 
 // Option to include various payment in results
 print '<tr class="oddeven value">'."\n";

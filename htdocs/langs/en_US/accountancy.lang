@@ -482,7 +482,7 @@ ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not i
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
 ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Try to insert a non balanced transaction in book for %s (Payment ID: %s). Canceled. Surely a bug.
-
+ProductUsage=Product or service usage
 ## Import
 ImportAccountingEntries=Accounting entries
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format
