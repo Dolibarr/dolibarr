@@ -43,10 +43,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'compta', 'accountancy'));
 
-if (!$user->admin) {
-	accessforbidden();
-}
-
 $action = GETPOST('action', 'aZ09');
 
 // Other parameters ACCOUNTING_*
@@ -61,11 +57,20 @@ $list = array(
 	'ACCOUNTING_ACCOUNT_SUPPLIER'
 );
 
+if (!$user->admin) {
+	accessforbidden();
+}
+
+if (!isModEnabled('comptabilite')) {
+	accessforbidden('Module not enabled');
+}
+
+
 /*
  * Actions
  */
 
-$accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'RECETTES-DEPENSES');
+$accounting_mode = getDolGlobalString('ACCOUNTING_MODE', 'CREANCES-DETTES');
 
 if ($action == 'update') {
 	$error = 0;
@@ -151,13 +156,13 @@ print '<table class="noborder centpercent">';
 // case of the parameter ACCOUNTING_MODE
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
+print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
 print "</tr>\n";
-print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
+print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeTrueDesc'));
 print "</td></tr>\n";
-print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
+print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
+print '<td class="opacitymedium">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 
 print "</table>\n";
 
@@ -198,7 +203,7 @@ print '</td></tr>';
 
 print "</table>\n";
 
-print '<br><br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Modify').'"></div>';
+print '<br><br><div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 print '</form>';
 
 // End of page

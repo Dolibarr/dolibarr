@@ -1134,7 +1134,7 @@ class Form
 				$out .= ajax_multiautocompleter('location_incoterms', array(), DOL_URL_ROOT . '/core/ajax/locationincoterms.php') . "\n";
 				//$moreattrib .= ' autocomplete="off"';
 			}
-			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
+			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone heightofcombo" type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
 
 			if (!empty($page)) {
 				$out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="' . $langs->trans("Modify") . '"></form>';
@@ -2523,7 +2523,10 @@ class Form
 			if ($showproperties) {
 				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid))) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
+					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>';
+					$out .= '</span>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -2613,7 +2616,10 @@ class Form
 			if ($showproperties) {
 				if (is_array($listofresourceid) && count($listofresourceid)) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparencyresource" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
+					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ': </span>';
+					$out .= '</span>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}

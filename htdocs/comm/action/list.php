@@ -435,6 +435,7 @@ $sql .= " a.id, a.code, a.label, a.note, a.datep as dp, a.datep2 as dp2, a.fulld
 $sql .= " a.fk_user_author, a.fk_user_action,";
 $sql .= " a.fk_contact, a.note, a.percent as percent,";
 $sql .= " a.fk_element, a.elementtype, a.datec, a.tms as datem,";
+$sql .= " a.recurid, a.recurrule, a.recurdateend,";
 $sql .= " c.code as type_code, c.libelle as type_label, c.color as type_color, c.type as type_type, c.picto as type_picto,";
 $sql .= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 
@@ -977,6 +978,9 @@ while ($i < $imaxinloop) {
 	$actionstatic->percentage = $obj->percent;
 	$actionstatic->authorid = $obj->fk_user_author;
 	$actionstatic->userownerid = $obj->fk_user_action;
+	$actionstatic->recurid = $obj->recurid;
+	$actionstatic->recurrule = $obj->recurrule;
+	$actionstatic->recurdateend = $db->jdate($obj->recurdateend);
 
 	// Initialize $this->userassigned && this->socpeopleassigned array && this->userownerid
 	// but only if we need it

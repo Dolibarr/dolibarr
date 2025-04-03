@@ -2109,14 +2109,14 @@ function getSoapParams()
  * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
- * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'myobject@mymodule', ...)
+ * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', 'user', 'myobject@mymodule', ...)
  * @param 	int		$withpicto		Picto to show
  * @param 	string	$option			More options
  * @return	string					URL of link to object id/type
  */
 function dolGetElementUrl($objectid, $objecttype, $withpicto = 0, $option = '')
 {
-	global $db, $conf, $langs;
+	global $db, $langs;
 
 	$ret = '';
 	$regs = array();

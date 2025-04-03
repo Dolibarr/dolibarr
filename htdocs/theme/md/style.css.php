@@ -952,7 +952,8 @@ input:-webkit-autofill {
 }
 
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 1px;
+	margin: 0 5px 0 1px;
+	transform: scale(1.2);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -7033,6 +7034,12 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.heightofcombo {
+	height: 28px;
+}
+.select2-container .select2-selection--single {
+	height: 28px;
+}
 input.select2-input {
 	border-bottom: none ! important;
 }
