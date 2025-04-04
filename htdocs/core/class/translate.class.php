@@ -801,7 +801,9 @@ class Translate
 				}
 			}
 
-			if (!preg_match('/^Format/', $key)) {
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
+
+			if (strpos($key, 'Format') !== 0) {
 				try {
 					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
@@ -810,6 +812,8 @@ class Translate
 					// No exception managed.
 				}
 			}
+
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
 
 			// Remove dangerous sequence we should never have. Not needed into a translated response.
 			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.

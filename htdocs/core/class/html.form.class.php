@@ -3122,7 +3122,7 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array('filterkey' => &$filterkey);
 		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
@@ -4411,7 +4411,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Load int a cache property the list of possible delivery delays.
+	 * Load int a cache property the list of possible delivery delays.
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */

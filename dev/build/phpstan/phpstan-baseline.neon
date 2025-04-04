@@ -67,20 +67,8 @@ parameters:
 			path: ../../../htdocs/accountancy/admin/index.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''ACCOUNTING_LENGTH…'' and ''ACCOUNTING_LENGTH…'' will always evaluate to true\.$#'
-			identifier: equal.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/index.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 1
-			path: ../../../htdocs/accountancy/admin/index.php
-
-		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
 			count: 1
 			path: ../../../htdocs/accountancy/admin/index.php
 
@@ -175,12 +163,7 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/accountancy/bookkeeping/balance.php
 
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -729,7 +712,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
+			count: 1
 			path: ../../../htdocs/accountancy/journal/bankjournal.php
 
 		-
@@ -3529,24 +3512,6 @@ parameters:
 			path: ../../../htdocs/comm/mailing/card.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 4
-			path: ../../../htdocs/comm/mailing/targetemailing.php
-
-		-
-			message: '#^Variable \$filter might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/mailing/targetemailing.php
-
-		-
-			message: '#^Variable \$mesg might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/comm/mailing/targetemailing.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 2
@@ -3607,6 +3572,24 @@ parameters:
 			path: ../../../htdocs/comm/mailing/list.php
 
 		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 4
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
+			message: '#^Variable \$filter might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
+			message: '#^Variable \$mesg might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: ../../../htdocs/comm/mailing/targetemailing.php
+
+		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -3639,12 +3622,6 @@ parameters:
 		-
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/comm/propal/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
 			count: 2
 			path: ../../../htdocs/comm/propal/card.php
 
@@ -3934,12 +3911,6 @@ parameters:
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 2
 			path: ../../../htdocs/commande/card.php
 
 		-
@@ -5527,12 +5498,6 @@ parameters:
 			path: ../../../htdocs/compta/paiement/list.php
 
 		-
-			message: '#^Variable \$arrayofselected might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/compta/paiement/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6427,12 +6392,6 @@ parameters:
 			path: ../../../htdocs/contact/card.php
 
 		-
-			message: '#^Variable \$triggermodname in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/contact/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Contact\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -6590,12 +6549,6 @@ parameters:
 
 		-
 			message: '#^Variable \$canchangeproduct in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/contrat/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/contrat/card.php
@@ -8301,7 +8254,7 @@ parameters:
 		-
 			message: '#^Property Conf\:\:\$commande \(stdClass\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 3
+			count: 2
 			path: ../../../htdocs/core/class/conf.class.php
 
 		-
@@ -10087,12 +10040,6 @@ parameters:
 			path: ../../../htdocs/core/lib/functions2.lib.php
 
 		-
-			message: '#^Function getURLContent\(\) should return array\{http_code\: int, content\: string, curl_error_no\: int, curl_error_msg\: string\} but returns array\{content\: bool\|string, curl_error_no\: int\<min, \-1\>\|int\<1, max\>, curl_error_msg\: string\}\|array\{http_code\?\: 400, content\?\: non\-falsy\-string\|true, curl_error_no\: '''', curl_error_msg\: ''''\}\|array\{url\: string, content_type\: string\|null, http_code\: int, header_size\: int, request_size\: int, filetime\: int, ssl_verify_result\: int, redirect_count\: int, \.\.\.\}\.$#'
-			identifier: return.type
-			count: 1
-			path: ../../../htdocs/core/lib/geturl.lib.php
-
-		-
 			message: '#^Parameter \#3 \$value of function curl_setopt expects 0\|2, bool given\.$#'
 			identifier: argument.type
 			count: 1
@@ -10483,12 +10430,6 @@ parameters:
 			path: ../../../htdocs/core/menus/standard/empty.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/menus/standard/empty.php
-
-		-
 			message: '#^Loose comparison using \!\= between ''top'' and ''jmobile'' will always evaluate to true\.$#'
 			identifier: notEqual.alwaysTrue
 			count: 1
@@ -10502,12 +10443,6 @@ parameters:
 
 		-
 			message: '#^Loose comparison using \=\= between ''left'' and ''jmobile'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/core/menus/standard/empty.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''top'' and ''jmobile'' will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/core/menus/standard/empty.php
@@ -10545,7 +10480,7 @@ parameters:
 		-
 			message: '#^Variable \$noout in empty\(\) always exists and is always falsy\.$#'
 			identifier: empty.variable
-			count: 8
+			count: 3
 			path: ../../../htdocs/core/menus/standard/empty.php
 
 		-
@@ -12151,12 +12086,6 @@ parameters:
 			path: ../../../htdocs/core/tpl/admin_extrafields_view.tpl.php
 
 		-
-			message: '#^Variable \$id might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/core/tpl/advtarget.tpl.php
-
-		-
 			message: '#^Property CommonObject\:\:\$lines \(array\<CommonObject\|stdClass\>\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -12595,12 +12524,6 @@ parameters:
 			path: ../../../htdocs/core/triggers/interface_90_modSociete_ContactRoles.class.php
 
 		-
-			message: '#^Call to function is_array\(\) with list\<string\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/triggers/interface_95_modWebhook_WebhookTriggers.class.php
-
-		-
 			message: '#^Call to function is_null\(\) with null will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 4
@@ -12873,12 +12796,6 @@ parameters:
 		-
 			message: '#^Variable \$hideref might not be defined\.$#'
 			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/delivery/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/delivery/card.php
 
@@ -13687,18 +13604,6 @@ parameters:
 			path: ../../../htdocs/expedition/card.php
 
 		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
-			message: '#^Variable \$originid might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/expedition/card.php
-
-		-
 			message: '#^Variable \$rowEnd might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -14007,12 +13912,6 @@ parameters:
 		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/expedition/shipment.php
-
-		-
-			message: '#^Variable \$bc might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/expedition/shipment.php
 
@@ -14404,12 +14303,6 @@ parameters:
 			message: '#^Variable \$line might not be defined\.$#'
 			identifier: variable.undefined
 			count: 4
-			path: ../../../htdocs/fichinter/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/fichinter/card.php
 
 		-
@@ -15027,7 +14920,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 3
+			count: 2
 			path: ../../../htdocs/fourn/commande/card.php
 
 		-
@@ -15046,12 +14939,6 @@ parameters:
 			message: '#^Variable \$line might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../../htdocs/fourn/commande/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 2
 			path: ../../../htdocs/fourn/commande/card.php
 
 		-
@@ -15214,12 +15101,6 @@ parameters:
 			message: '#^Variable \$classname might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
-			path: ../../../htdocs/fourn/facture/card.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/fourn/facture/card.php
 
 		-
@@ -21691,12 +21572,6 @@ parameters:
 			path: ../../../htdocs/reception/card.php
 
 		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/reception/card.php
-
-		-
 			message: '#^Variable \$objectsrc might not be defined\.$#'
 			identifier: variable.undefined
 			count: 3
@@ -23251,12 +23126,6 @@ parameters:
 			path: ../../../htdocs/supplier_proposal/card.php
 
 		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/supplier_proposal/card.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(SupplierProposal\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -23653,20 +23522,8 @@ parameters:
 			path: ../../../htdocs/ticket/card.php
 
 		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/ticket/card.php
-
-		-
 			message: '#^Variable \$trackid might not be defined\.$#'
 			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/ticket/card.php
-
-		-
-			message: '#^Variable \$triggermodname in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/ticket/card.php
 
