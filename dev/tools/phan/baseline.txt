@@ -9,7 +9,7 @@
  */
 return [
     // # Issue statistics:
-    // PhanUndeclaredProperty : 460+ occurrences
+    // PhanUndeclaredProperty : 450+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
     // PhanUndeclaredGlobalVariable : 95+ occurrences
     // PhanTypeMismatchArgument : 90+ occurrences
@@ -119,7 +119,6 @@ return [
         'htdocs/core/class/cgenericdic.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/commonobject.class.php' => ['PhanParamTooMany', 'PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commonpeople.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/commonsocialnetworks.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
