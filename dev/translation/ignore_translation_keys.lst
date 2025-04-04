@@ -101,7 +101,6 @@ ActionAC_
 ActionAC_ALL_
 AddSite
 AddSupplier
-AddTicketIntoCategory
 Adherent
 AdherentNotLinkedToThirdParty
 AdvTgtUse
