@@ -87,7 +87,7 @@ function getListForAISummarize()
 		'2_p' => 'SummarizeTwoParagraphs',
 		'25_pc' => 'SummarizeTwentyFivePercent',
 		'50_pc' => 'SummarizeFiftyPercent',
-		'75_pc' => 'SummarizeSeventyFivePercent',
+		'75_pc' => 'SummarizeSeventyFivePercent'
 	);
 
 	return $arrayforaisummarize;
