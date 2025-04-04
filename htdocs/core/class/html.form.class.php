@@ -3039,7 +3039,9 @@ class Form
 		}
 
 		// Add from (left join) from hooks
-		$parameters = array();
+		$parameters = array(
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -3122,7 +3124,10 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array('filterkey' => &$filterkey);
+		$parameters = array(
+			'filterkey' => &$filterkey,
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
