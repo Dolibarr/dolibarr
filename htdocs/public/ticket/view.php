@@ -245,7 +245,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 if ($action == "view_ticket" || $action == "presend" || $action == "close" || $action == "confirm_public_close") {
 	if ($display_ticket) {
 		print '<!-- public view ticket -->';
-		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		// Confirmation close
 		if ($action == 'close') {
@@ -445,7 +445,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 		print '<br>';
 	} else {
 		print '<!-- public view ticket -->';
-		print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+		print '<div class="ticketpublicarea ticketlargemargin">';
 
 		print '<div class="error">Not Allowed<br><a href="'.$_SERVER['PHP_SELF'].'?track_id='.$object->dao->track_id.(!empty($entity) && isModEnabled('multicompany') ? '?entity='.$entity : '').'" rel="nofollow noopener">'.$langs->trans('Back').'</a></div>';
 
@@ -453,7 +453,7 @@ if ($action == "view_ticket" || $action == "presend" || $action == "close" || $a
 	}
 } else {
 	print '<!-- public view ticket -->';
-	print '<div class="ticketpublicarea ticketlargemargin centpercent">';
+	print '<div class="ticketpublicarea ticketlargemargin">';
 
 	print '<div class="center opacitymedium margintoponly marginbottomonly ticketlargemargin">'.$langs->trans("TicketPublicMsgViewLogIn").'</div>';
 
