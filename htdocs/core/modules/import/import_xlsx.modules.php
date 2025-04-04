@@ -1012,6 +1012,7 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										$keyfield = 'rowid';
 										if ($is_table_category_link) {
 											$lastinsertid = 'linktable';
 										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
@@ -1081,8 +1082,9 @@ class ImportXlsx extends ModeleImports
 									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
 								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
-
-								$keyfield = 'rowid';
+								if (empty($keyfield)) {
+									$keyfield = 'rowid';
+								}
 
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
