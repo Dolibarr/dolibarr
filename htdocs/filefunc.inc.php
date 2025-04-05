@@ -322,7 +322,7 @@ $lowercaseClassmap = array_combine(
 );
 
 spl_autoload_register(
-	function ($class) use ($lowercaseClassmap) {
+	function (string $class) use ($lowercaseClassmap): void {
 		$lowercaseClass = strtolower($class);
 		if (empty($lowercaseClassmap[$lowercaseClass])) {
 			// Class not in classmap but still could be required later
