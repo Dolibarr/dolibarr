@@ -196,8 +196,12 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_
 ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN ref VARCHAR(30) AFTER rowid;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN ref VARCHAR(30) AFTER rowid;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_ref (ref);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_ref (ref);
 
 ALTER TABLE llx_session ADD COLUMN date_creation datetime AFTER session_variable;
 UPDATE llx_session SET date_creation = NOW() WHERE date_creation IS NULL;

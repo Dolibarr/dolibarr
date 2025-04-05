@@ -122,7 +122,7 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 	 */
 	public function getNextValue(BookKeeping $object)
 	{
-		global $db;
+		global $conf, $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -135,9 +135,10 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		}
 
 		// Get entities
-		$entity = getEntity('accountingbookkeeping', 1, $object);
+		//$entity = getEntity('accountingbookkeeping', 1, $object);
+		$entity = $conf->entity;	// In accountancy, we can't share entities
 
-		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', '', '', $object->doc_date, 'next', false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', '', '', $object->doc_date, 'next', false, null, $entity, $object);
 
 		return $numFinal;
 	}

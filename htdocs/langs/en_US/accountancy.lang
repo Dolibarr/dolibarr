@@ -316,7 +316,7 @@ NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
-BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyccnnnn where yyyy is the year and cc the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyjjnnnn where yyyy is the year and jj the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
 BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy

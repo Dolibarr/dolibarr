@@ -1932,7 +1932,7 @@ if ($id > 0) {
 
 		// Title line with search input fields
 		print '<!-- line title to search record -->'."\n";
-		print '<tr class="liste_titre liste_titre_filter">';
+		print '<tr class="liste_titre_filter">';
 
 		// Action button
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {

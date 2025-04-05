@@ -41,16 +41,21 @@ class mod_payment_ant extends ModeleNumRefPayments
 	public $error = '';
 
 	/**
-	 * @var string Nom du modele
+	 * @var string Name of sub-module
 	 * @deprecated
 	 * @see $name
 	 */
 	public $nom = 'Ant';
 
 	/**
-	 * @var string model name
+	 * @var string Sub-module name
 	 */
 	public $name = 'Ant';
+
+	/**
+	 * @var int		Position
+	 */
+	public $position = 50;
 
 
 	/**
@@ -102,7 +107,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 */
 	public function getExample()
 	{
-		global $conf, $langs, $mysoc;
+		global $mysoc;
 
 		$old_code_client = $mysoc->code_client;
 		$mysoc->code_client = 'CCCCCCCCCC';
@@ -110,7 +115,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 		$mysoc->code_client = $old_code_client;
 
 		if (!$numExample) {
-			$numExample = $langs->trans('NotConfigured');
+			$numExample = 'NotConfigured';
 		}
 		return $numExample;
 	}
@@ -124,7 +129,7 @@ class mod_payment_ant extends ModeleNumRefPayments
 	 */
 	public function getNextValue($objsoc, $object)
 	{
-		global $db, $conf;
+		global $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 

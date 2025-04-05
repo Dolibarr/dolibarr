@@ -898,20 +898,21 @@ function array2table($data, $tableMarkup = 1, $tableoptions = '', $troptions = '
 /**
  * Return last or next value for a mask (according to area we should not reset)
  *
- * @param   DoliDB		$db				Database handler
- * @param   string		$mask			Mask to use. Must contains {0...0}. Can contains {t..}, {u...}, {user_extra_xxx}, .;.
- * @param   string		$table			Table containing field with counter
- * @param   string		$field			Field containing already used values of counter
- * @param   string		$where			To add a filter on selection (for example to filter on invoice types)
- * @param   null|Societe|''	$objsoc		The company that own the object we need a counter for
- * @param   int|''		$date			Date to use for the {y},{m},{d} tags. is timestamp or '' to use dol_now()
- * @param   string		$mode			'next' for next value or 'last' for last value
- * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
- * @param	?User		$objuser		Object user we need data from.
- * @param	?string		$forceentity	Entity id to force, can be '0' or '1' or '1,2' etc
- * @return 	string						New value (numeric) or error message
+ * @param   DoliDB			$db				Database handler
+ * @param   string			$mask			Mask to use. Must contains {0...0}. Can contains {t..}, {u...}, {user_extra_xxx}, .;.
+ * @param   string			$table			Table containing field with counter
+ * @param   string			$field			Field containing already used values of counter
+ * @param   string			$where			To add a filter on selection (for example to filter on invoice types)
+ * @param   null|Societe|''	$objsoc			The company that own the object we need a counter for
+ * @param   int|''			$date			Date to use for the {y},{m},{d} tags. is timestamp or '' to use dol_now()
+ * @param   string			$mode			'next' for next value or 'last' for last value
+ * @param   bool			$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
+ * @param	?User			$objuser		Object user we need data from.
+ * @param	?string			$forceentity	Entity id to force, can be '0' or '1' or '1,2' etc
+ * @param	?BookKeeping	$objbookkeeping	The record in bookkeeping
+ * @return 	string							New value (numeric) or error message
  */
-function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null)
+function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $date = '', $mode = 'next', $bentityon = true, $objuser = null, $forceentity = null, $objbookkeeping = null)
 {
 	global $user;
 
@@ -999,19 +1000,35 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 
 	// Extract value for user
-	$regType = array();
-	if (preg_match('/\{(u+)\}/i', $mask, $regType)) {
+	$regUser = array();
+	if (preg_match('/\{(u+)\}/i', $mask, $regUser)) {
 		$lastname = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
 		if (is_object($objuser)) {
 			$lastname = $objuser->lastname;
 		}
 
-		$maskuser = $regType[1];
-		$maskuser_value = substr($lastname, 0, dol_strlen($regType[1])); // get n first characters of user firstname (where n is length in mask)
-		$maskuser_value = str_pad($maskuser_value, dol_strlen($regType[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
+		$maskuser = $regUser[1];
+		$maskuser_value = substr($lastname, 0, dol_strlen($regUser[1])); // get n first characters of user firstname (where n is length in mask)
+		$maskuser_value = str_pad($maskuser_value, dol_strlen($regUser[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
 	} else {
 		$maskuser = '';
 		$maskuser_value = '';
+	}
+
+	// Extract value for journal code
+	$regJournal = array();
+	if (preg_match('/\{(jj+)\}/i', $mask, $regJournal)) {
+		$journalcode = 'JJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJJ';
+		if (is_object($objbookkeeping)) {
+			$journalcode = $objbookkeeping->code_journal;
+		}
+
+		$maskjournal = $regJournal[1];
+		$maskjournal_value = substr($journalcode, 0, dol_strlen($regJournal[1])); // get n first characters of journal code (where n is length in mask)
+		$maskjournal_value = str_pad($maskjournal_value, dol_strlen($regJournal[1]), "#", STR_PAD_RIGHT); // we fill on right with # to have same number of char than into mask
+	} else {
+		$maskjournal = '';
+		$maskjournal_value = '';
 	}
 
 	// Personalized field {XXX-1} à {XXX-99}
@@ -1034,12 +1051,15 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$mask = preg_replace('#('.$start.')(.*?)('.$end.')#si', $user->array_options['options_'.$extra], $mask);
 		}
 	}
+
+	// Now define value for all alternative $mask variable we will need to work
 	$maskwithonlyymcode = $mask;
 	$maskwithonlyymcode = preg_replace('/\{(0+)([@\+][0-9\-\+\=]+)?([@\+][0-9\-\+\=]+)?\}/i', $maskcounter, $maskwithonlyymcode);
 	$maskwithonlyymcode = preg_replace('/\{dd\}/i', 'dd', $maskwithonlyymcode);
 	$maskwithonlyymcode = preg_replace('/\{(c+)(0*)\}/i', $maskrefclient, $maskwithonlyymcode);
 	$maskwithonlyymcode = preg_replace('/\{(t+)\}/i', $masktype_value, $maskwithonlyymcode);
 	$maskwithonlyymcode = preg_replace('/\{(u+)\}/i', $maskuser_value, $maskwithonlyymcode);
+	$maskwithonlyymcode = preg_replace('/\{(j+)\}/i', $maskjournal_value, $maskwithonlyymcode);
 	foreach ($maskperso as $key => $val) {
 		$maskwithonlyymcode = preg_replace('/'.preg_quote($val, '/').'/i', $maskpersonew[$key], $maskwithonlyymcode);
 	}
@@ -1053,7 +1073,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	//print "maskwithonlyymcode=".$maskwithonlyymcode." maskwithnocode=".$maskwithnocode."\n<br>";
 	//var_dump($reg);
 
-	// If an offset is asked
+	// If an offset is asked ($reg is parsed from the counter mask)
 	if (!empty($reg[2]) && preg_match('/^\+/', $reg[2])) {
 		$maskoffset = preg_replace('/^\+/', '', $reg[2]);
 	}
@@ -1064,9 +1084,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	// Define $sqlwhere
 	$sqlwhere = '';
 	$yearoffset = 0; // Use year of current $date by default
-	$yearoffsettype = false; // false: no reset, 0,-,=,+: reset at offset SOCIETE_FISCAL_MONTH_START, x=reset at offset x
+	$yearoffsettype = false; // false: no reset, 0,-,=,+: reset at offset month SOCIETE_FISCAL_MONTH_START, x=reset at offset month x
 
-	// If a restore to zero after a month is asked we check if there is already a value for this year.
+	// If a restore to zero after a month is asked we check if there is already a value for this year ($reg is parsed from the counter mask)
 	if (!empty($reg[2]) && preg_match('/^@/', $reg[2])) {
 		$yearoffsettype = preg_replace('/^@/', '', $reg[2]);
 	}
@@ -1108,13 +1128,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			}
 		} else { // if reset is for a specific month in year, we need year
 			if (preg_match('/^(.*)\{(m+)\}\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 3;
+				$posy = 3;	//index in regex
 				$posm = 2;
 			} elseif (preg_match('/^(.*)\{(y+)\}\{(m+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2;
+				$posy = 2;	//index in regex
 				$posm = 3;
 			} elseif (preg_match('/^(.*)\{(y+)\}/i', $maskwithonlyymcode, $reg)) {
-				$posy = 2;
+				$posy = 2;	//index in regex
 				$posm = 0;
 			} else {
 				return 'ErrorCantUseRazIfNoYearInMask';
@@ -1165,7 +1185,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} elseif ($yearlen == 1) {
 			$yearcomp = (int) substr(date('y', $date), 1, 1) + $yearoffset;
 		}
-		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 0 or 1 (0 is same as 1) (regis: $monthcomp can't equal 0)
+		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 1 (0 is same as 1)
 			if ($yearlen == 4) {
 				$yearcomp1 = sprintf("%04d", idate("Y", $date) + $yearoffset + 1);
 			} elseif ($yearlen == 2) {
@@ -1207,10 +1227,22 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = str_replace("%", "_", $maskLike);
 
 	// Replace protected special codes with matching number of _ as wild card character
-	$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
-	$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
-	$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
-	$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
+	if ($resetEveryMonth) {		// Perf optimization, when a reset is requested at each month, we can include the year and month inside the filter
+		$maskLike = preg_replace('/\{yyyy\}/i', $yearcomp, $maskLike);
+		$maskLike = preg_replace('/\{yy\}/i', $yearcomp, $maskLike);
+		$maskLike = preg_replace('/\{y\}/i', $yearcomp, $maskLike);
+		$maskLike = preg_replace('/\{mm\}/i', sprintf("%02d", $monthcomp), $maskLike);
+	} elseif ($maskraz == 1) {	// Perf optimization, when a reset is requested at first month, we can include the year inside the filter, but not the month
+		$maskLike = preg_replace('/\{yyyy\}/i', $yearcomp, $maskLike);
+		$maskLike = preg_replace('/\{yy\}/i', $yearcomp, $maskLike);
+		$maskLike = preg_replace('/\{y\}/i', $yearcomp, $maskLike);
+		$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);		// we can't include the month in the filter
+	} else {
+		$maskLike = preg_replace('/\{yyyy\}/i', '____', $maskLike);
+		$maskLike = preg_replace('/\{yy\}/i', '__', $maskLike);
+		$maskLike = preg_replace('/\{y\}/i', '_', $maskLike);
+		$maskLike = preg_replace('/\{mm\}/i', '__', $maskLike);
+	}
 	$maskLike = preg_replace('/\{dd\}/i', '__', $maskLike);
 	// @phan-suppress-next-line PhanParamSuspiciousOrder
 	$maskLike = str_replace(dol_string_nospecial('{'.$masktri.'}'), str_pad("", dol_strlen($maskcounter), "_"), $maskLike);
@@ -1223,6 +1255,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 	if ($maskuser) {
 		$maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'), $maskuser_value, $maskLike);
+	}
+	if ($maskjournal) {
+		$maskLike = str_replace(dol_string_nospecial('{'.$maskjournal.'}'), $maskjournal_value, $maskLike);
 	}
 	foreach ($maskperso as $key => $val) {
 		$maskLike = str_replace(dol_string_nospecial($maskperso[$key]), $maskpersonew[$key], $maskLike);
@@ -1438,6 +1473,13 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 			$maskuser_maskbefore = '{'.$maskuser.'}';
 			$maskuser_maskafter = $maskuser_value;
 			$numFinal = str_replace($maskuser_maskbefore, $maskuser_maskafter, $numFinal);
+		}
+
+		// Now we replace the journal code
+		if ($maskjournal) {
+			$maskjournal_maskbefore = '{'.$maskjournal.'}';
+			$maskjournal_maskafter = $maskjournal_value;
+			$numFinal = str_replace($maskjournal_maskbefore, $maskjournal_maskafter, $numFinal);
 		}
 	} else {
 		$numFinal = "ErrorBadMode";
