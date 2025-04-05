@@ -151,6 +151,8 @@ function dol_session_rotate($sessionname = '')
 
 /**
  * Register classmap autoloading
+ *
+ * @return void
  */
 function dol_autoload()
 {
