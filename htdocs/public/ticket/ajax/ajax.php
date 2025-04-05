@@ -93,8 +93,6 @@ if ($action == 'getContacts') {	// Test on permission not required here. Access 
 	);
 
 	if (!empty($email)) {
-		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
-
 		$ticket = new Ticket($db);
 		$arrayofcontacts = $ticket->searchContactByEmail($email);
 		if (is_array($arrayofcontacts)) {

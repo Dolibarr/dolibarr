@@ -49,7 +49,6 @@ if (!defined('MAIN_INC_REL_DIR')) {
 	define('MAIN_INC_REL_DIR', '../../');
 }
 require_once __DIR__.'/../../webportal.main.inc.php';
-dol_include_once('/webportal/class/webPortalTheme.class.php');
 
 // Define css type
 top_httphead('text/css');

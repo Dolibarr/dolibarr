@@ -193,7 +193,6 @@ $(document).ready(function() {
 
 
 <?php
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 $productspecimen = new Product($db);
 $productspecimen->initAsSpecimen();
 $object = $productspecimen;

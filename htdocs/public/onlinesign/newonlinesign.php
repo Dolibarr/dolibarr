@@ -56,8 +56,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
 /**
  * @var Conf $conf
@@ -159,23 +157,18 @@ if (!dol_verifyHash($securekeyseed.$type.$ref.(isModEnabled('multicompany') ? $e
 }
 
 if ($source == 'proposal') {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
 	$result = $object->fetch(0, $ref, '', $entity);
 } elseif ($source == 'contract') {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$object = new Contrat($db);
 	$result = $object->fetch(0, $ref);
 } elseif ($source == 'fichinter') {
-	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 	$object = new Fichinter($db);
 	$result = $object->fetch(0, $ref);
 } elseif ($source == 'societe_rib') {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 	$object = new CompanyBankAccount($db);
 	$result = $object->fetch(0, $ref);
 } elseif ($source == 'expedition') {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 	$object = new Expedition($db);
 	$result = $object->fetch(0, $ref);
 } else {

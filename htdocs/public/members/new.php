@@ -64,11 +64,6 @@ define("DOLENTITY", $entity);
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
@@ -357,7 +352,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		if (!$error) {
 			$result = $adh->create($user);
 			if ($result > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$object = $adh;
 
 				$adht = new AdherentType($db);
@@ -368,7 +362,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					$msg = '';
 
 					// Send subscription email
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);

@@ -149,7 +149,6 @@ $ws_id = 0;
 $doactionsthenredirect = 0;
 if ($ws) {
 	$doactionsthenredirect = 1;
-	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	$website = new Website($db);
 	$result = $website->fetch(0, $ws);
 	if ($result > 0) {
@@ -246,7 +245,6 @@ if (!empty($_SESSION['ipaddress'])) {      // To avoid to make action twice
 
 		$ishtml = dol_textishtml($content); // May contain urls
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0);
 
 		$result = $mailfile->sendfile();

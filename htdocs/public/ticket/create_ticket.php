@@ -55,16 +55,11 @@ if (is_numeric($entity)) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 /**
  * @var Conf $conf
@@ -391,7 +386,6 @@ if (empty($reshook)) {
 					$res = $object->fetch($id);
 					if ($res) {
 						// Create form object
-						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 						$formmail = new FormMail($db);
 
@@ -430,7 +424,6 @@ if (empty($reshook)) {
 						if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 							$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 						}
-						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 						$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
 						if ($mailfile->error || !empty($mailfile->errors)) {
 							setEventMessages($mailfile->error, $mailfile->errors, 'errors');
@@ -473,7 +466,6 @@ if (empty($reshook)) {
 							if ($old_MAIN_MAIL_AUTOCOPY_TO !== '') {
 								$conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 							}
-							include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							$mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1, '', '', 'tic'.$object->id, '', 'ticket');
 							if ($mailfile->error || !empty($mailfile->errors)) {
 								setEventMessages($mailfile->error, $mailfile->errors, 'errors');

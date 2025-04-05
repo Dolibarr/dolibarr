@@ -82,12 +82,7 @@ if (defined('MAIN_INC_REL_DIR')) {
 }
 include $relDir.'../../main.inc.php';
 
-require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/public/webportal/lib/webportal.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/webportal/class/context.class.php';
-require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalmember.class.php';
-require_once DOL_DOCUMENT_ROOT . '/webportal/class/webportalpartnership.class.php';
 
 // Init session. Name of session is specific to WEBPORTAL instance.
 // Must be done after the include of filefunc.inc.php so global variables of conf file are defined (like $dolibarr_main_instance_unique_id or $dolibarr_main_force_https).
@@ -113,7 +108,6 @@ if (!defined('NOREQUIREDB') && empty($conf->webportal->enabled)) {
 
 if (!defined('WEBPORTAL_NOREQUIRETRAN') || (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->accessNeedLoggedUser))) {
 	if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
-		include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
 		$langs = new Translate("", $conf);
 		$langcode = (GETPOST('lang', 'aZ09', 1) ? GETPOST('lang', 'aZ09', 1) : (empty($logged_user->conf->MAIN_LANG_DEFAULT) ? (!getDolGlobalString('MAIN_LANG_DEFAULT') ? 'auto' : $conf->global->MAIN_LANG_DEFAULT) : $logged_user->conf->MAIN_LANG_DEFAULT));
 		if (defined('MAIN_LANG_DEFAULT')) {
@@ -274,7 +268,6 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 					if (!$error) {
 						if ($logged_thirdparty->default_lang != $langs->defaultlang && !defined('WEBPORTAL_NOREQUIRETRAN')) {
 							if (!is_object($langs)) { // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
-								include_once DOL_DOCUMENT_ROOT . '/core/class/translate.class.php';
 								$langs = new Translate("", $conf);
 								$langs->setDefaultLang($logged_thirdparty->default_lang);
 							}

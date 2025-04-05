@@ -53,9 +53,6 @@ if (is_numeric($entity)) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 // Init vars
@@ -360,7 +357,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 		if (!$error) {
 			$result = $proj->create($user);
 			if ($result > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 				$object = $proj;
 
 				if ($object->email) {
@@ -368,7 +364,6 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 					$msg = '';
 
 					// Send subscription email
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 					// Set output language
 					$outputlangs = new Translate('', $conf);

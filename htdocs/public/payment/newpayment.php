@@ -69,11 +69,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 /**
  * @var Conf $conf
@@ -232,7 +227,6 @@ $urlok = $urlwithroot.'/public/payment/paymentok.php?';
 $urlko = $urlwithroot.'/public/payment/paymentko.php?';
 
 if ($ws && !defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {	// So defined('USEEXTERNALSERVER') should be set but is not always
-	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	$tmpwebsite = new Website($db);
 	$tmpwebsite->fetch(0, $ws);
 	$urlok = $tmpwebsite->virtualhost.'/public/payment/paymentok.php?';
@@ -596,7 +590,6 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 				$thirdparty->fetch($thirdparty_id);
 
 				// Create Stripe customer
-				include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 				$stripe = new Stripe($db);
 				$stripeacc = $stripe->getStripeAccount($service);
 				$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
@@ -789,7 +782,6 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			$service = 'StripeLive';
 			$servicestatus = 1;
 		}
-		include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 
@@ -1102,8 +1094,6 @@ if ($source == 'order') {
 	$found = true;
 	$langs->load("orders");
 
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-
 	$order = new Commande($db);
 	$result = $order->fetch(0, $ref);
 	if ($result <= 0) {
@@ -1232,8 +1222,6 @@ if ($source == 'invoice') {
 	$found = true;
 	$langs->load("bills");
 	$form->load_cache_types_paiements();
-
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 	$invoice = new Facture($db);
 	$result = $invoice->fetch(0, $ref);
@@ -1374,8 +1362,6 @@ if ($source == 'invoice') {
 if ($source == 'contractline') {
 	$found = true;
 	$langs->load("contracts");
-
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 	$contract = new Contrat($db);
 	$contractline = new ContratLigne($db);
@@ -1574,10 +1560,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 	$tag = "";
 	$found = true;
 	$langs->load("members");
-
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 
 	$member = new Adherent($db);
 	$adht = new AdherentType($db);
@@ -1814,8 +1796,6 @@ if ($source == 'member' || $source == 'membersubscription') {
 if ($source == 'donation') {
 	$found = true;
 	$langs->load("don");
-
-	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 	$don = new Don($db);
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
@@ -2377,8 +2357,6 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 
 		if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT')) {	// Use a SCA ready method
-			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
 			$service = 'StripeLive';
 			$servicestatus = 1;
 			if (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha')) {

@@ -112,9 +112,6 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 //print 'Directory with '.$appli.' websites.<br>';
 
 if (empty($pageid)) {
-	require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-
 	$object = new Website($db);
 	if ($websiteid) {
 		$object->fetch($websiteid);

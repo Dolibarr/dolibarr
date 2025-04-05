@@ -179,7 +179,6 @@ $ws_id = 0;
 $doactionsthenredirect = 0;
 if ($ws) {
 	$doactionsthenredirect = 1;
-	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 	$website = new Website($db);
 	$result = $website->fetch(0, $ws);
 	if ($result > 0) {
@@ -454,9 +453,6 @@ if ($ispaymentok) {
 		// Send confirmation email
 
 		// Record subscription
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 		$adht = new AdherentType($db);
 		$object = new Adherent($db);
 
@@ -718,7 +714,6 @@ if ($ispaymentok) {
 						$thirdparty = new Societe($db);
 						$thirdparty->fetch($thirdparty_id);
 
-						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';	// This also set $stripearrayofkeysbyenv
 						$stripe = new Stripe($db);
 						//$stripeacc = $stripe->getStripeAccount($service);		Already defined previously
 
@@ -832,7 +827,6 @@ if ($ispaymentok) {
 						$msg = '';
 
 						// Send subscription email
-						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 						// Load traductions files required by page
 						$outputlangs->loadLangs(array("main", "members"));
@@ -903,7 +897,6 @@ if ($ispaymentok) {
 		}
 	} elseif (array_key_exists('INV', $tmptag) && $tmptag['INV'] > 0) {
 		// Record payment
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
 		$result = $object->fetch((int) $tmptag['INV']);
 		if ($result) {
@@ -942,7 +935,6 @@ if ($ispaymentok) {
 				$db->begin();
 
 				// Creation of payment line
-				include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 				$paiement = new Paiement($db);
 				$paiement->datepaye = $now;
 				if ($currencyCodeType == $conf->currency) {
@@ -1029,7 +1021,6 @@ if ($ispaymentok) {
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('ORD', $tmptag) && $tmptag['ORD'] > 0) {
-		include_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 		$object = new Commande($db);
 		$result = $object->fetch((int) $tmptag['ORD']);
 		if ($result) {
@@ -1068,14 +1059,12 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
-					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
 					$result = $invoice->createFromOrder($object, $user);
 					if ($result > 0) {
 						$object->classifyBilled($user);
 						$invoice->validate($user);
 						// Creation of payment line
-						include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 						$paiement = new Paiement($db);
 						$paiement->datepaye = $now;
 						if ($currencyCodeType == $conf->currency) {
@@ -1169,7 +1158,6 @@ if ($ispaymentok) {
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('DON', $tmptag) && $tmptag['DON'] > 0) {
-		include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 		$don = new Don($db);
 		$result = $don->fetch((int) $tmptag['DON']);
 		if ($result) {
@@ -1204,7 +1192,6 @@ if ($ispaymentok) {
 				$db->begin();
 
 				// Creation of paiement line for donation
-				include_once DOL_DOCUMENT_ROOT.'/don/class/paymentdonation.class.php';
 				$paiement = new PaymentDonation($db);
 
 				$totalpaid = $FinalPaymentAmt;
@@ -1299,9 +1286,6 @@ if ($ispaymentok) {
 		//      (we need first that the donation module is able to generate a pdf document for the cerfa with pre filled content)
 	} elseif (array_key_exists('ATT', $tmptag) && $tmptag['ATT'] > 0) {
 		// Record payment for registration to an event for an attendee
-		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
 		$result = $object->fetch((int) $ref);  // @phan-suppress-curren-line PhanPluginSuspiciousParamPosition
 		if ($result) {
@@ -1342,7 +1326,6 @@ if ($ispaymentok) {
 					$db->begin();
 
 					// Creation of payment line
-					include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 					$paiement = new Paiement($db);
 					$paiement->datepaye = $now;
 					if ($currencyCodeType == $conf->currency) {
@@ -1446,8 +1429,6 @@ if ($ispaymentok) {
 						if ($resultthirdparty < 0) {
 							setEventMessages($thirdparty->error, $thirdparty->errors, "errors");
 						} else {
-							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 							$formmail = new FormMail($db);
 							// Set output language
 							$outputlangs = new Translate('', $conf);
@@ -1530,9 +1511,6 @@ if ($ispaymentok) {
 		}
 	} elseif (array_key_exists('BOO', $tmptag) && $tmptag['BOO'] > 0) {
 		// Record payment for booth or conference
-		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
 		$result = $object->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		if ($result) {
@@ -1575,7 +1553,6 @@ if ($ispaymentok) {
 					$db->begin();
 
 					// Creation of payment line
-					include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 					$paiement = new Paiement($db);
 					$paiement->datepaye = $now;
 					if ($currencyCodeType == $conf->currency) {
@@ -1649,8 +1626,6 @@ if ($ispaymentok) {
 
 					if (!$error) {
 						// Putting the booth to "suggested" state
-						require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
-						require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 						$booth = new ConferenceOrBooth($db);
 						$resultbooth = $booth->fetch((int) $tmptag['BOO']);
 						if ($resultbooth < 0) {
@@ -1675,8 +1650,6 @@ if ($ispaymentok) {
 										setEventMessages(null, $thirdparty->errors, "errors");
 									} else {
 										// Sending mail
-										require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-										include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 										$formmail = new FormMail($db);
 										// Set output language
 										$outputlangs = new Translate('', $conf);
@@ -1742,7 +1715,6 @@ if ($ispaymentok) {
 			$ispostactionok = -1;
 		}
 	} elseif (array_key_exists('CON', $tmptag) && $tmptag['CON'] > 0) {
-		include_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
 		$object = new Contrat($db);
 		$result = $object->fetch((int) $tmptag['CON']);
 		if ($result) {
@@ -1780,14 +1752,12 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
-					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
 					$result = $invoice->createFromContract($object, $user, array((int) $contract_lines));
 					if ($result > 0) {
 						// $object->classifyBilled($user);
 						$invoice->validate($user);
 						// Creation of payment line
-						include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 						$paiement = new Paiement($db);
 						$paiement->datepaye = $now;
 						if ($currencyCodeType == $conf->currency) {
@@ -1914,7 +1884,6 @@ if ($ispaymentok) {
 		// End call triggers
 	} elseif (get_class($object) == 'stdClass') {
 		//In some cases $object is not instantiated (for payment on custom object) We need to deal with payment
-		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 		$paiement = new Paiement($db);
 		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
 		if ($result < 0) {
@@ -2049,7 +2018,6 @@ if ($ispaymentok) {
 		$ishtml = dol_textishtml($content); // May contain urls
 		$trackid = '';
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();
@@ -2110,7 +2078,6 @@ if ($ispaymentok) {
 		$ishtml = dol_textishtml($content); // May contain urls
 		$trackid = '';
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mailfile = new CMailFile($topic, $sendto, $from, $content, array(), array(), array(), '', '', 0, $ishtml ? 1 : 0, '', '', $trackid, '', 'standard');
 
 		$result = $mailfile->sendfile();

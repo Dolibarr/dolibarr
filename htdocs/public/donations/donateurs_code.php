@@ -65,7 +65,6 @@ function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 // Security check
 if (!isModEnabled('don')) {
