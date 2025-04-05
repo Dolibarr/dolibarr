@@ -69,7 +69,14 @@ $classmapFile .= 'return '.var_export($classmap, true) . ";\n";
 file_put_contents($htdocs.'/classmap.inc.php', $classmapFile);
 
 
-
+/**
+ * Recursively loop inside a directory to find and record class, interface, trait and enum declarations
+ *
+ * @global	array	$classmap	Array of objects found with their location
+ * @global	string	$htdocs		Dolibarr /htdocs path
+ * @param	string	$dir		The directory into which looping
+ * @return	void
+ */
 function classmapScanDir(string $dir): void
 {
 	global $classmap, $htdocs;
@@ -114,6 +121,15 @@ function classmapScanDir(string $dir): void
 	}
 }
 
+/**
+ * Analyze a PHP file to extract class, interface, trait and enum declarations
+ *
+ * @global	array	$classmap	Array of objects found with their location
+ * @global	string	$htdocs		Dolibarr /htdocs path
+ * @param	string	$path		The file into which searching
+ * @return	void
+ * @see https://www.php.net/manual/fr/function.token-get-all.php
+ */
 function classmapScanPhpFile(string $path): void
 {
 	global $classmap, $htdocs;
@@ -184,6 +200,14 @@ function classmapScanPhpFile(string $path): void
 	}
 }
 
+/**
+ * Extract the following non-whotespace token from a token string
+ *
+ * @param	array	$tokens		The token stream
+ * @param	int		$i			The first index from which to search
+ * @return	null|array|string	The token (array or string) or null if not found
+ * @see https://www.php.net/manual/fr/function.token-get-all.php
+ */
 function classmapGetNextNonWhitespaceToken(array $tokens, int $i)
 {
 	while (1) {
