@@ -316,14 +316,20 @@ if (! is_array($classmap)) {
 	exit(1);
 }
 
+$lowercaseClassmap = array_combine(
+	array_map('strtolower', array_keys($classmap)),
+	$classmap,
+);
+
 spl_autoload_register(
-	function ($class) use ($classmap) {
-		if (empty($classmap[$class])) {
+	function ($class) use ($lowercaseClassmap) {
+		$lowercaseClass = strtolower($class);
+		if (empty($lowercaseClassmap[$lowercaseClass])) {
 			// Class not in classmap but still could be required later
 			return;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/'.$classmap[$class];
+		require_once DOL_DOCUMENT_ROOT.'/'.$lowercaseClassmap[$lowercaseClass];
 	}
 );
 
