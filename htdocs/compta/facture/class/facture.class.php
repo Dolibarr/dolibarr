@@ -44,19 +44,8 @@
  *	\brief      File of class to manage invoices
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-}
 
 /**
  *	Class to manage invoices
@@ -557,7 +546,6 @@ class Facture extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
-			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
@@ -813,7 +801,6 @@ class Facture extends CommonInvoice
 				$originforcontact = $this->origin;
 				$originidforcontact = $this->origin_id;
 				if ($originforcontact == 'shipping') {     // shipment and order share the same contacts. If creating from shipment we take data of order
-					require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 					$exp = new Expedition($this->db);
 					$exp->fetch($this->origin_id);
 					$exp->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
@@ -1053,7 +1040,6 @@ class Facture extends CommonInvoice
 
 					// If buyprice not defined from template invoice, we try to guess the best value
 					if (!$buyprice && $_facrec->lines[$i]->fk_product > 0) {
-						require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 						$producttmp = new ProductFournisseur($this->db);
 						$producttmp->fetch($_facrec->lines[$i]->fk_product);
 
@@ -2656,7 +2642,6 @@ class Facture extends CommonInvoice
 		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$this->db->begin();
 
@@ -2695,9 +2680,8 @@ class Facture extends CommonInvoice
 			if ($remise->fk_facture_source > 0) {
 				$srcinvoice = new Facture($this->db);
 				$srcinvoice->fetch($remise->fk_facture_source);
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
 				$formmargin = new FormMargin($this->db);
-				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);
+				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false); // TODO Move this into commonobject
 				$facligne->pa_ht = $arraytmp['pa_total'];
 			}
 
@@ -2922,7 +2906,6 @@ class Facture extends CommonInvoice
 
 			// If we decrease stock on invoice validation, we increase back if a warehouse id was provided
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $idwarehouse != -1) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				$num = count($this->lines);
@@ -3249,9 +3232,6 @@ class Facture extends CommonInvoice
 		$warehouseStatic = null;
 		$productbatch = null;
 		if ($batch_rule > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-			require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 			$productStatic = new Product($this->db);
 			$warehouseStatic = new Entrepot($this->db);
 			$productbatch = new Productbatch($this->db);
@@ -3458,7 +3438,6 @@ class Facture extends CommonInvoice
 
 			// If active (STOCK_CALCULATE_ON_BILL), we decrement the main product and its components at invoice validation
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL') && $idwarehouse > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				// Loop on each line
@@ -3792,7 +3771,6 @@ class Facture extends CommonInvoice
 
 			// If we decrease stock on invoice validation, we increase back
 			if ($this->type != self::TYPE_DEPOSIT && $result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_BILL')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				$num = count($this->lines);
@@ -4736,7 +4714,6 @@ class Facture extends CommonInvoice
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_INVOICE);
 	}
 
@@ -5864,8 +5841,6 @@ class Facture extends CommonInvoice
 		*/
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$formmail = new FormMail($this->db);
 
 		$now = dol_now();
@@ -6031,9 +6006,6 @@ class Facture extends CommonInvoice
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
 
-								// Add a line into event table
-								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 								// Insert record of emails sent
 								$actioncomm = new ActionComm($this->db);
 
@@ -6071,9 +6043,6 @@ class Facture extends CommonInvoice
 							} else {
 								$errormesg = $cMailFile->error.' : '.$to;
 								$error++;
-
-								// Add a line into event table
-								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 								// Insert record of emails sent
 								$actioncomm = new ActionComm($this->db);

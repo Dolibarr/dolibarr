@@ -27,8 +27,6 @@
  *       \brief      File of class to manage product code with elephant rule
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
-
 
 /**
  *  Class to manage product code with elephant rule

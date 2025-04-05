@@ -26,7 +26,6 @@
  *  \ingroup    project
  *  \brief      Module to show validated projects whose tasks are assigned to the connected person, without any time entered by the connected person
  */
-include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 
 
 /**
@@ -88,7 +87,6 @@ class box_validated_projects extends ModeleBoxes
 
 		// list the summary of the orders
 		if ($user->hasRight('projet', 'lire')) {
-			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 			$projectstatic = new Project($this->db);
 
 			$socid = 0;

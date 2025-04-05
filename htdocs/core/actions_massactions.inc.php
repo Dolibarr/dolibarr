@@ -638,7 +638,6 @@ if (!$error && $massaction == 'confirm_presend') {
 					$upload_dir_tmp = $vardir.'/temp'; // TODO Add $keytoavoidconflict in upload_dir path
 
 					// Send mail (substitutionarray must be done just before this)
-					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
@@ -1301,7 +1300,6 @@ if (!$error && ($action == 'affecttag' && $confirm == 'yes') && $permissiontoadd
 	}
 	if (!empty($affecttag_type_array)) {
 		//check if tag type submitted exists into Tag Map categorie class
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categ = new Categorie($db);
 		$to_affecttag_type_array = array();
 		$categ_type_array = $categ->getMapList();
@@ -1782,7 +1780,6 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 						$trackid = 'leav'.$objecttmp->id;
 
-						require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 						$mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
 						// Sending email
@@ -1873,8 +1870,6 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $confirm == 'yes'))) {	// Test on permission not required here, done later
 	$num = 0;
 
-	include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
 	$origin_task = new Task($db);
 	$clone_task = new Task($db);
 	$newproject = new Project($db);
@@ -1903,7 +1898,6 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 			$defaultref = '';
 			$classnamemodtask = getDolGlobalString('PROJECT_TASK_ADDON', 'mod_task_simple');
 			if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . ".php")) {
-				require_once DOL_DOCUMENT_ROOT . "/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON') . '.php';
 				$modTask = new $classnamemodtask();
 				'@phan-var-force ModeleNumRefTask $modTask';
 				$defaultref = $modTask->getNextValue(null, $clone_task);

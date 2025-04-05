@@ -143,7 +143,6 @@ if (is_numeric($result)) {
 }
 
 if (!isset($form) || !is_object($form)) {
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 	$form = new Form($db);
 }
 

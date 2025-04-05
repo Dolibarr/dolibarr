@@ -38,10 +38,7 @@ if (!defined('NOSCANPOSTFORINJECTION')) {
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
 /**
  * @var Conf $conf
@@ -4132,7 +4129,6 @@ if ($module == 'initmodule') {
 						// Combo with list of fields
 						/*
 						if (empty($formadmin)) {
-							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 							$formadmin = new FormAdmin($db);
 						}
 						print $formadmin->selectTypeOfFields($key, GETPOST($key, 'alpha'));
@@ -5983,7 +5979,6 @@ if ($module == 'initmodule') {
 
 		if ($tab == 'triggers') {
 			print '<!-- tab=triggers -->'."\n";
-			require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 
 			$interfaces = new Interfaces($db);
 			$triggers = $interfaces->getTriggersList(array('/'.strtolower($module).'/core/triggers'));
@@ -6142,7 +6137,6 @@ if ($module == 'initmodule') {
 
 		if ($tab == 'widgets') {
 			print '<!-- tab=widgets -->'."\n";
-			require_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 			$widgets = ModeleBoxes::getWidgetsList(array('/'.strtolower($module).'/core/boxes'));
 
@@ -6194,7 +6188,6 @@ if ($module == 'initmodule') {
 
 		if ($tab == 'emailings') {
 			print '<!-- tab=emailings -->'."\n";
-			require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 			$emailingselectors = MailingTargets::getEmailingSelectorsList(array('/'.strtolower($module).'/core/modules/mailings'));
 

@@ -558,7 +558,6 @@ class CMailFile
 			// ------------------------------------------
 			$host = dol_getprefix('email');
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/smtps.class.php';
 			$smtps = new SMTPs();
 			$smtps->setCharSet($conf->file->character_set_client);
 
@@ -853,7 +852,6 @@ class CMailFile
 
 		if (!getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 			if (!is_object($hookmanager)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 				$hookmanager = new HookManager($db);
 			}
 			$hookmanager->initHooks(array('mail'));

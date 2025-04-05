@@ -26,8 +26,6 @@
  *	\brief      Module to build box for events
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 /**
  * Class to manage the box to show events in future
  */
@@ -71,8 +69,6 @@ class box_actions_future extends ModeleBoxes
 
 		$now = dol_now();
 
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$societestatic = new Societe($this->db);
 		$actionstatic = new ActionComm($this->db);
 

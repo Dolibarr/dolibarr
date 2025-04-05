@@ -21,7 +21,6 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 require_once '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 /**
  * @var Conf $conf

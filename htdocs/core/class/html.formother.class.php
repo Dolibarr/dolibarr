@@ -94,7 +94,6 @@ class FormOther
 		$stringaddbarcode = str_replace("tmphtml", $htmltoreplaceby, $stringaddbarcode);
 		$out .= $stringaddbarcode.': <input type="text" name="barcodeproductqty" class="width40 right" value="1"><br>';
 		if ($warehouseselect > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($this->db);
 			$formproduct->loadWarehouses();
 			$out .= img_picto('', 'stock', 'class="pictofixedwidth"');
@@ -413,7 +412,6 @@ class FormOther
 	{
 		// phpcs:enable
 		global $conf, $langs;
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		// For backward compatibility
 		if (is_numeric($type)) {
@@ -670,8 +668,6 @@ class FormOther
 	public function selectProjectTasks($selectedtask = 0, $projectid = 0, $htmlname = 'task_parent', $modeproject = 0, $modetask = 0, $mode = 0, $useempty = 0, $disablechildoftaskid = 0, $filteronprojstatus = '', $morecss = '')
 	{
 		global $user, $langs;
-
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 		//print $modeproject.'-'.$modetask;
 		$task = new Task($this->db);
@@ -1225,7 +1221,6 @@ class FormOther
 	{
 		global $conf, $langs, $db;
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 		// From include
 		'
 		@phan-var-force ModeleBoxes[] $boxactivated

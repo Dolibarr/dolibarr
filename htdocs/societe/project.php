@@ -28,13 +28,9 @@
  *  \brief      Page of third party projects
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+
 
 /**
  * @var Conf $conf
@@ -122,7 +118,6 @@ $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 unset($_SESSION['pageforbacktolist']['project']);
 if ($socid) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 	$langs->load("companies");
 

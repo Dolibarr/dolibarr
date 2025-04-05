@@ -27,9 +27,6 @@
  *	\brief      Module to generate box of products with too low stock
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 
 /**
  * Class to manage the box to show too low stocks products
@@ -73,7 +70,6 @@ class box_produits_alerte_stock extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic = new Product($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleProductsAlertStock", $max));
@@ -165,7 +161,6 @@ class box_produits_alerte_stock extends ModeleBoxes
 					} else { //Parse the dynamic price
 						$productstatic->fetch($objp->rowid, '', '', '1');
 
-						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($productstatic);
 						if ($price_result >= 0) {

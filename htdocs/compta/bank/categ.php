@@ -32,8 +32,6 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
 
 /**
@@ -138,7 +136,6 @@ if ($action != 'edit') {
 }
 
 // Get bank line categorie ID
-include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 $cats = new Categorie($db);
 $catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
 

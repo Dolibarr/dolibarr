@@ -38,9 +38,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 
 
 /**
@@ -825,8 +822,6 @@ class User extends CommonObject
 
 		if (getDolGlobalString('MAIN_ENABLE_DEFAULT_VALUES')) {
 			// Load user->default_values for user. TODO Save this in memcached ?
-			require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
-
 			$defaultValues = new DefaultValues($this->db);
 			$result = $defaultValues->fetchAll('', '', 0, 0, '(t.user_id:in:0,'.$this->id.') AND (entity:in:'.(isset($this->entity) ? $this->entity : $conf->entity).','.$conf->entity.')');	// User 0 (all) + me (if defined)
 			//$result = $defaultValues->fetchAll('', '', 0, 0, array('t.user_id'=>array(0, $this->id), 'entity'=>array((isset($this->entity) ? $this->entity : $conf->entity), $conf->entity)));	// User 0 (all) + me (if defined)
@@ -1636,7 +1631,6 @@ class User extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_USER);
 	}
 
@@ -1820,7 +1814,6 @@ class User extends CommonObject
 			}
 
 			if (getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER') && getDolGlobalString('STOCK_USERSTOCK_AUTOCREATE')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$langs->load("stocks");
 
 				$entrepot = new Entrepot($this->db);
@@ -2315,8 +2308,6 @@ class User extends CommonObject
 				if ($this->fk_member > 0 && !$nosyncmember) {
 					dol_syslog(get_class($this)."::update user is linked with a member. We try to update member too.", LOG_DEBUG);
 
-					require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 					// This user is linked with a member, so we also update member information
 					// if this is an update.
 					$adh = new Adherent($this->db);
@@ -2366,8 +2357,6 @@ class User extends CommonObject
 
 				if ($this->contact_id > 0 && !$nosynccontact) {
 					dol_syslog(get_class($this)."::update user is linked with a contact. We try to update contact too.", LOG_DEBUG);
-
-					require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 					// This user is linked with a contact, so we also update contact information if this is an update.
 					$tmpobj = new Contact($this->db);
@@ -2521,7 +2510,6 @@ class User extends CommonObject
 				// Add a check on rules for password syntax using the setup of the password generator
 				$modGeneratePassClass = 'modGeneratePass'.ucfirst($conf->global->USER_PASSWORD_GENERATED);
 
-				include_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/'.$modGeneratePassClass.'.class.php';
 				if (class_exists($modGeneratePassClass)) {
 					$modGeneratePass = new $modGeneratePassClass($this->db, $conf, $langs, $user);
 					'@phan-var-force ModeleGenPassword $modGeneratePass';
@@ -2577,8 +2565,6 @@ class User extends CommonObject
 					$this->pass_indatabase_crypted = (string) $password_crypted;
 
 					if ($this->fk_member && !$nosyncmember) {
-						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 						// This user is linked with a member, so we also update members information
 						// if this is an update.
 						$adh = new Adherent($this->db);
@@ -2659,8 +2645,6 @@ class User extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 		global $dolibarr_main_url_root;
-
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
 		$msgishtml = 0;
 
@@ -4396,7 +4380,6 @@ class User extends CommonObject
 			$type = $this->table_element;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categorystatic = new Categorie($this->db);
 
 		$sql = "INSERT INTO ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_user)";

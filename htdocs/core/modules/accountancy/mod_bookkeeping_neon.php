@@ -25,7 +25,6 @@
  *  \brief     File of class to manage Bookkeeping numbering rules Neon
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/accountancy/modules_accountancy.php';
 
 /**
  *	Class to manage numbering of thirdparties code

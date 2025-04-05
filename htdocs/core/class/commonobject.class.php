@@ -40,7 +40,6 @@
  *	\brief      File of parent class of all other business classes (invoices, contracts, proposals, orders, ...)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 
 /**
  *	Parent class of all other business classes (invoices, contracts, proposals, orders, ...)
@@ -1149,7 +1148,6 @@ abstract class CommonObject
 			return ''; // No way to known which document name to use
 		}
 
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($this->db);
 		$result = $ecmfile->fetch(0, '', $this->last_main_doc);
 		if ($result < 0) {
@@ -1866,7 +1864,6 @@ abstract class CommonObject
 			return 0;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
 		$result = $contact->fetch($contactid);
 		$this->contact = $contact;
@@ -1887,8 +1884,6 @@ abstract class CommonObject
 		if (empty($this->socid) && empty($this->fk_soc) && empty($force_thirdparty_id)) {
 			return 0;
 		}
-
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 		$idtofetch = isset($this->socid) ? $this->socid : (isset($this->fk_soc) ? $this->fk_soc : 0);
 		if ($force_thirdparty_id) {
@@ -2018,8 +2013,6 @@ abstract class CommonObject
 	 */
 	public function fetchProject()
 	{
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 		if (empty($this->fk_project) && !empty($this->fk_projet)) {
 			$this->fk_project = $this->fk_projet; // For backward compatibility
 		}
@@ -2073,8 +2066,6 @@ abstract class CommonObject
 	public function fetch_product()
 	{
 		// phpcs:enable
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 		// @phan-suppress-next-line PhanUndeclaredProperty
 		if (empty($this->fk_product)) {
 			return 0;
@@ -4103,7 +4094,6 @@ abstract class CommonObject
 			// Situations totals
 			if (!empty($this->situation_cycle_ref) && !empty($this->situation_counter) && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits')) {  // @phan-suppress-current-line PhanUndeclaredProperty
 				'@phan-var-force Facture $this';
-				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';  // Note: possibly useless as $this is normally already Facture, so the class file should be loaded
 				if ($this->type != Facture::TYPE_CREDIT_NOTE) {	// @phpstan-ignore-line
 					if (getDolGlobalInt('INVOICE_USE_SITUATION') != 2) {
 						$prev_sits = $this->get_prev_sits();
@@ -5230,7 +5220,6 @@ abstract class CommonObject
 
 		// Line extrafield
 		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
@@ -5292,7 +5281,6 @@ abstract class CommonObject
 
 		// Line extrafield
 		if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
@@ -6047,7 +6035,6 @@ abstract class CommonObject
 			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
-			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 			$ecmfile = new EcmFiles($this->db);
 			$result = $ecmfile->fetch(0, '', ($rel_dir ? $rel_dir.'/' : '').$filename);
 
@@ -6273,12 +6260,10 @@ abstract class CommonObject
 		}
 		if (!is_object($langs)) {	// If lang was not defined, we set it. It is required by run_triggers().
 			dol_syslog("call_trigger was called with no langs variable defined".getCallerInfoString(), LOG_WARNING);
-			include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 			$langs = new Translate('', $conf);
 			$langs->load("main");
 		}
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 		$interface = new Interfaces($this->db);
 		$result = $interface->run_triggers($triggerName, $this, $user, $langs, $conf);
 
@@ -6501,7 +6486,6 @@ abstract class CommonObject
 		if (!is_array($optionsArray)) {
 			// If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
 			if (!isset($extrafields) || !is_object($extrafields)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 				$extrafields = new ExtraFields($this->db);
 			}
 
@@ -6665,7 +6649,6 @@ abstract class CommonObject
 		if (!empty($this->array_options)) {
 			// Check parameters
 			$langs->load('admin');
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
 
@@ -7153,7 +7136,6 @@ abstract class CommonObject
 		if (!empty($this->array_options) && isset($this->array_options["options_".$key])) {
 			// Check parameters
 			$langs->load('admin');
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extrafields->fetch_name_optionals_label($this->table_element);
 
@@ -7508,7 +7490,6 @@ abstract class CommonObject
 		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
 
 		if (!is_object($form)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
@@ -7734,7 +7715,7 @@ abstract class CommonObject
 					$out .= "</script>";
 					$value = str_replace(',', "\n", $value);
 				}
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out .= (string) $doleditor->Create(1, '', true, '', '', '', $morecss);
 			} else {
@@ -7742,7 +7723,6 @@ abstract class CommonObject
 			}
 		} elseif (preg_match('/^html/', (string) $type)) {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1, '', true, '', '', $moreparam, $morecss);
 			} else {
@@ -8049,7 +8029,6 @@ abstract class CommonObject
 						print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$categcode = $InfoFieldList[5];
 					if (is_numeric($categcode)) {
 						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
@@ -8287,7 +8266,6 @@ abstract class CommonObject
 						print 'Error in request ' . $sql . ' ' . $this->db->lasterror() . '. Check setup of extra parameters.<br>';
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$categcode = $InfoFieldList[5];
 					if (is_numeric($categcode)) {
 						$categcode = Categorie::$MAP_ID_TO_CODE[(int) $InfoFieldList[5]];
@@ -8431,7 +8409,6 @@ abstract class CommonObject
 		// TODO pass the current object as a parameter to give more flexibility (like disable ajax update when canAlwaysBeEdited is false and $object->status is not draft...)
 
 		if (!is_object($form)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
@@ -8722,8 +8699,6 @@ abstract class CommonObject
 						}
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
 					$c = new Categorie($this->db);
@@ -8824,8 +8799,6 @@ abstract class CommonObject
 						}
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
@@ -9001,10 +8974,6 @@ abstract class CommonObject
 	public function validateField($fields, $fieldKey, $fieldValue)
 	{
 		global $langs;
-
-		if (!class_exists('Validate')) {
-			require_once DOL_DOCUMENT_ROOT . '/core/class/validate.class.php';
-		}
 
 		$this->clearFieldError($fieldKey);
 
@@ -9740,7 +9709,6 @@ abstract class CommonObject
 			if (!empty($fk_product) && $fk_product > 0) {
 				$result = 0;
 				if (getDolGlobalString('MARGIN_TYPE') == 'costprice') {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);
 					if ($result <= 0) {
@@ -9753,7 +9721,6 @@ abstract class CommonObject
 						$buyPrice = $product->pmp;
 					}
 				} elseif (getDolGlobalString('MARGIN_TYPE') == 'pmp') {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$product = new Product($this->db);
 					$result = $product->fetch($fk_product);
 					if ($result <= 0) {
@@ -9766,7 +9733,6 @@ abstract class CommonObject
 				}
 
 				if (empty($buyPrice) && isset($conf->global->MARGIN_TYPE) && in_array($conf->global->MARGIN_TYPE, array('1', 'pmp', 'costprice'))) {
-					require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 					$productFournisseur = new ProductFournisseur($this->db);
 					if (($result = $productFournisseur->find_min_price_product_fournisseur($fk_product)) > 0) {
 						$buyPrice = $productFournisseur->fourn_unitprice;
@@ -11217,8 +11183,6 @@ abstract class CommonObject
 	 */
 	public function fetchComments()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/comment.class.php';
-
 		$comment = new Comment($this->db);
 		$result = $comment->fetchAllFor($this->element, $this->id);
 		if ($result < 0) {
@@ -11272,8 +11236,6 @@ abstract class CommonObject
 	 */
 	public function getCategoriesCommon($type_categ)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 		// Get current categories
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, $type_categ, 'id');
@@ -11301,8 +11263,6 @@ abstract class CommonObject
 		}
 
 		dol_syslog(get_class($this)."::setCategoriesCommon Object Id:".$this->id.' type_categ:'.$type_categ.' nb tag add:'.count($categories), LOG_DEBUG);
-
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 		if (empty($type_categ)) {
 			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown category type. Done nothing.', LOG_ERR);
@@ -11376,7 +11336,6 @@ abstract class CommonObject
 			$type = $this->table_element;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categorystatic = new Categorie($this->db);
 
 		$sql = "INSERT INTO ".$this->db->prefix()."categorie_".(empty($categorystatic->MAP_CAT_TABLE[$type]) ? $type : $categorystatic->MAP_CAT_TABLE[$type])." (fk_categorie, fk_product)";
@@ -11427,8 +11386,6 @@ abstract class CommonObject
 					break;
 				case 'task':
 				case 'project_task':
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
 					$project_result = $this->fetchProject();
 					if ($project_result >= 0) {
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';

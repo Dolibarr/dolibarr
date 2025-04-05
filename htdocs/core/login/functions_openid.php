@@ -25,8 +25,6 @@
  *     Use instead the method "OpenID Connect".
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
-
 
 /**
  * Check validity of user/password/entity

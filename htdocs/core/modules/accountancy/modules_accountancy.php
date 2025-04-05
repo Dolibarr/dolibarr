@@ -31,7 +31,6 @@
  *                  and parent class for accountancy numbering models
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 /**
  *  Parent class to manage numbering of Sale Orders

@@ -25,7 +25,6 @@
  *       \brief      File containing class for numbering model of Lot free
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
 
 /**
  *	\class mod_lot_free

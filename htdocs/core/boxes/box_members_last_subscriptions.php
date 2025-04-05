@@ -25,8 +25,6 @@
  *	\brief      Module to show box of last members subscriptions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last members subscriptions
@@ -77,9 +75,6 @@ class box_members_last_subscriptions extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 		$staticmember = new Adherent($this->db);
 		$statictype = new AdherentType($this->db);
 		$subscriptionstatic = new Subscription($this->db);

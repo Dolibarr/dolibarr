@@ -26,8 +26,6 @@
  *	\brief      File of class to offer a selector of emailing targets with Rule 'Poire'.
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-
 
 /**
  *	Class to offer a selector of emailing targets from contacts
@@ -311,7 +309,6 @@ class mailing_contacts1 extends MailingTargets
 
 		// Choose language
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 			$formadmin = new FormAdmin($this->db);
 			$s .= img_picto($langs->trans("DefaultLang"), 'language', 'class="pictofixedwidth"');
 			$s .= $formadmin->select_language(GETPOST('filter_lang', 'aZ09'), 'filter_lang', 0, array(), $langs->trans("DefaultLang"), 0, 0, '', 0, 0, 0, array(), 1);

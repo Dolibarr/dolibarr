@@ -23,7 +23,6 @@
  *		\ingroup    societe
  *		\brief      File for class of customers
  */
-include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 
 /**

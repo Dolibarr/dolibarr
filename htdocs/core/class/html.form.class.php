@@ -321,7 +321,6 @@ class Form
 					// TODO Not yet implemented. See code for extrafields
 				} elseif (preg_match('/^ckeditor/', $typeofdata)) {
 					$tmp = explode(':', $typeofdata); // Example: ckeditor:dolibarr_zzz:width:height:savemethod:toolbarstartexpanded:rows:cols:uselocalbrowser
-					require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 					$doleditor = new DolEditor($htmlname, ($editvalue ? $editvalue : $value), (empty($tmp[2]) ? '' : $tmp[2]), (empty($tmp[3]) ? 100 : (int) $tmp[3]), (empty($tmp[1]) ? 'dolibarr_notes' : $tmp[1]), 'In', (empty($tmp[5]) ? false : (bool) $tmp[5]), (isset($tmp[8]) ? ($tmp[8] ? true : false) : true), true, (empty($tmp[6]) ? 20 : (int) $tmp[6]), (empty($tmp[7]) ? '100' : $tmp[7]));
 					$ret .= $doleditor->Create(1);
 				} elseif ($typeofdata == 'asis') {
@@ -436,7 +435,6 @@ class Form
 
 		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
 			if (!is_object($extralanguages)) {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/extralanguages.class.php';
 				$extralanguages = new ExtraLanguages($this->db);
 			}
 			$extralanguages->fetch_name_extralanguages('societe');
@@ -1353,7 +1351,6 @@ class Form
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 				$societetmp = new Societe($this->db);
 				$societetmp->fetch($selected);
 				$selected_input_value = $societetmp->name;
@@ -1441,7 +1438,6 @@ class Form
 			// No immediate load of all database
 			$placeholder = '';
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 				$contacttmp = new Contact($this->db);
 				$contacttmp->fetch($selected);
 				$selected_input_value = $contacttmp->getFullName($langs);
@@ -1807,7 +1803,6 @@ class Form
 		}
 
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 
@@ -1862,7 +1857,6 @@ class Form
 
 			$i = 0;
 			if ($num) {
-				include_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 				$contactstatic = new Contact($this->db);
 
 				while ($i < $num) {
@@ -2583,8 +2577,6 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 		$formresources = new FormResource($this->db);
 		$resourcestatic = new Dolresource($this->db);
 
@@ -2711,7 +2703,6 @@ class Form
 			$placeholder = (is_numeric($showempty) ? '' : 'placeholder="'.dolPrintHTML($showempty).'"');
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch($selected);
 				$selected_input_value = $producttmpselect->ref;
@@ -2855,8 +2846,6 @@ class Form
 		// phpcs:enable
 		global $db;
 
-		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-
 		$error = 0;
 		$out = '';
 
@@ -2957,7 +2946,6 @@ class Form
 
 		$warehouseStatusArray = array();
 		if (!empty($warehouseStatus)) {
-			require_once DOL_DOCUMENT_ROOT . '/product/stock/class/entrepot.class.php';
 			if (preg_match('/warehouseclosed/', $warehouseStatus)) {
 				$warehouseStatusArray[] = Entrepot::STATUS_CLOSED;
 			}
@@ -3076,7 +3064,6 @@ class Form
 		if (getDolGlobalInt('MAIN_MULTILANGS')) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_lang as pl ON pl.fk_product = p.rowid ";
 			if (getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE') && !empty($socid)) {
-				require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
 				$result = $soc->fetch($socid);
 				if ($result > 0 && !empty($soc->default_lang)) {
@@ -3204,8 +3191,6 @@ class Form
 		dol_syslog(get_class($this) . "::select_produits_list search products", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 
 			$num = $this->db->num_rows($result);
@@ -3287,7 +3272,6 @@ class Form
 						$price_product = new Product($this->db);
 						$price_product->fetch($objp->rowid, '', '', '1');
 
-						require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProduct($price_product);
 						if ($price_result >= 0) {
@@ -3733,7 +3717,6 @@ class Form
 		$selected_input_value = '';
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('PRODUIT_USE_SEARCH_TO_SELECT')) {
 			if ($selected > 0) {
-				require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 				$producttmpselect = new Product($this->db);
 				$producttmpselect->fetch((int) $selected);
 				$selected_input_value = $producttmpselect->ref;
@@ -3876,7 +3859,6 @@ class Form
 		dol_syslog(get_class($this) . "::select_produits_fournisseurs_list", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/product.lib.php';
 
 			$num = $this->db->num_rows($result);
@@ -4012,7 +3994,6 @@ class Form
 						$prod_supplier->fourn_tva_tx = $objp->tva_tx;
 						$prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
 
-						require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -4264,7 +4245,6 @@ class Form
 			if (!$num) {
 				$form .= '<option value="0">-- ' . $langs->trans("NoSupplierPriceDefinedForThisProduct") . ' --</option>';
 			} else {
-				require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 				$form .= '<option value="0">&nbsp;</option>';
 
 				$i = 0;
@@ -4286,7 +4266,6 @@ class Form
 						$prod_supplier->fourn_tva_tx = $objp->tva_tx;
 						$prod_supplier->fk_supplier_price_expression = $objp->fk_supplier_price_expression;
 
-						require_once DOL_DOCUMENT_ROOT . '/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {
@@ -5570,7 +5549,6 @@ class Form
 			$langs->load('banks');
 
 			if ($selected) {
-				require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 				$bankstatic = new Account($this->db);
 				$result = $bankstatic->fetch((int) $selected);
 				if ($result) {
@@ -5609,7 +5587,6 @@ class Form
 			$langs->load('banks');
 
 			if ($selected) {
-				require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 				$bankstatic = new CompanyBankAccount($this->db);
 				$result = $bankstatic->fetch((int) $selected);
 				if ($result) {
@@ -5649,8 +5626,6 @@ class Form
 	{
 		// phpcs:enable
 		global $langs;
-
-		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 
 		$cat = new Categorie($this->db);
 
@@ -6189,7 +6164,6 @@ class Form
 		global $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
-		require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 
 		$out = '';
 
@@ -6472,7 +6446,6 @@ class Form
 			print '</form>';
 		} else {
 			if ($selected) {
-				require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 				$theuser = new User($this->db);
 				$theuser->fetch((int) $selected);
 				print $theuser->getNomUrl(1);
@@ -6763,7 +6736,6 @@ class Form
 			print '</tr></table></form>';
 		} else {
 			if ($selected) {
-				require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 				$contact = new Contact($this->db);
 				$contact->fetch((int) $selected);
 				print $contact->getFullName($langs);
@@ -6806,7 +6778,6 @@ class Form
 			$out .= '</form>';
 		} else {
 			if ($selected) {
-				require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 				$soc = new Societe($this->db);
 				$soc->fetch((int) $selected);
 				$out .= $soc->getNomUrl(0, '');
@@ -7988,7 +7959,6 @@ class Form
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
 				$tickettmpselect = new Ticket($this->db);
 				$tickettmpselect->fetch((int) $selected);
 				$selected_input_value = $tickettmpselect->ref;
@@ -8083,7 +8053,6 @@ class Form
 		dol_syslog(get_class($this) . "::selectTicketsList search tickets", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/ticket.lib.php';
 
 			$num = $this->db->num_rows($result);
@@ -8214,7 +8183,6 @@ class Form
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 				$projecttmpselect = new Project($this->db);
 				$projecttmpselect->fetch((int) $selected);
 				$selected_input_value = $projecttmpselect->ref;
@@ -8308,7 +8276,6 @@ class Form
 		dol_syslog(get_class($this) . "::selectProjectsList search projects", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 			$num = $this->db->num_rows($result);
@@ -8445,7 +8412,6 @@ class Form
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 				$adherenttmpselect = new Adherent($this->db);
 				$adherenttmpselect->fetch((int) $selected);
 				$selected_input_value = $adherenttmpselect->ref;
@@ -8544,7 +8510,6 @@ class Form
 		dol_syslog(get_class($this) . "::selectMembersList search adherents", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/member.lib.php';
 
 			$num = $this->db->num_rows($result);
@@ -9745,8 +9710,6 @@ class Form
 	 */
 	public function showCategories($id, $type, $rendermode = 0, $nolink = 0)
 	{
-		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-
 		$cat = new Categorie($this->db);
 		$categories = $cat->containing($id, $type);
 
@@ -9979,7 +9942,6 @@ class Form
 				$listofidcompanytoscan .= ',' . (int) $object->thirdparty->parent;
 			}
 			if (($object->fk_project > 0) && getDolGlobalString('THIRDPARTY_INCLUDE_PROJECT_THIRDPARY_IN_LINKTO')) {
-				include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 				$tmpproject = new Project($this->db);
 				$tmpproject->fetch($object->fk_project);
 				if ($tmpproject->socid > 0 && ($tmpproject->socid != $object->thirdparty->id)) {
@@ -10504,7 +10466,6 @@ class Form
 
 			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
 				if (!is_object($extralanguages)) {
-					include_once DOL_DOCUMENT_ROOT . '/core/class/extralanguages.class.php';
 					$extralanguages = new ExtraLanguages($this->db);
 				}
 				$extralanguages->fetch_name_extralanguages('societe');
@@ -11201,8 +11162,6 @@ class Form
 	{
 		global $user, $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-
 		if (is_null($usertofilter)) {
 			$usertofilter = $user;
 		}
@@ -11751,7 +11710,6 @@ class Form
 		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
 		global $langs, $form;
 
-		require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 		$formother = new FormOther($this->db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
@@ -12123,7 +12081,6 @@ class Form
 
 		$TModels = array();
 
-		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 		$formmail = new FormMail($this->db);
 		$result = $formmail->fetchAllEMailTemplate($modelType, $user, $langs);
 

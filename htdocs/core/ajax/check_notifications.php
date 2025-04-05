@@ -127,8 +127,6 @@ if (empty($_SESSION['auto_check_events_not_before']) || $time >= $_SESSION['auto
 	// WARNING: Any change in sessions after that will not be saved !
 	session_write_close();
 
-	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 
 	//dol_syslog('$_SESSION[auto_check_events_not_before]='.(empty($_SESSION['auto_check_events_not_before']) ? '' : $_SESSION['auto_check_events_not_before']));
 	dol_syslog('dolnotif_nb_test_for_page='.GETPOST('dolnotif_nb_test_for_page'));

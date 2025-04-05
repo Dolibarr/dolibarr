@@ -26,7 +26,6 @@
  *      \brief      Class file for html component project
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 /**
  *      Class to manage building of HTML components
@@ -102,7 +101,6 @@ class FormProjets extends Form
 			$placeholder = '';
 
 			if ($selected && empty($selected_input_value)) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$project = new Project($this->db);
 				$project->fetch((int) $selected);
 				$selected_input_value = $project->ref;
@@ -158,8 +156,6 @@ class FormProjets extends Form
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
-
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (empty($htmlid)) {
 			$htmlid = $htmlname;
@@ -348,8 +344,6 @@ class FormProjets extends Form
 	public function selectTasks($socid = -1, $selected = 0, $htmlname = 'taskid', $maxlength = 24, $option_only = 0, $show_empty = '1', $discard_closed = 0, $forcefocus = 0, $disabled = 0, $morecss = 'maxwidth500', $projectsListId = '', $showmore = 'all', $usertofilter = null, $nooutput = 0)
 	{
 		global $user, $conf, $langs;
-
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 		if (is_null($usertofilter)) {
 			$usertofilter = $user;
@@ -795,7 +789,6 @@ class FormProjets extends Form
 			'2' => '2',
 		);
 
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$tmpproject = new Project($this->db);
 
 		foreach ($statustohow as $key => $value) {
@@ -830,8 +823,6 @@ class FormProjets extends Form
 	public function selectInvoiceAndLine($selectedInvoiceId = 0, $selectedLineId = 0, $htmlNameInvoice = 'invoiceid', $htmlNameInvoiceLine = 'invoicelineid', $morecss = 'maxwidth500', $filters = array(), $lineOnly = 0)
 	{
 		global $user, $conf, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 
 		$out = '';
 		if (empty($lineOnly)) {

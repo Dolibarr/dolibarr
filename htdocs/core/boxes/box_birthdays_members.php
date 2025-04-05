@@ -25,8 +25,6 @@
  *	\brief      Box for members birthdays
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show members birthdays
@@ -66,7 +64,7 @@ class box_birthdays_members extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
 		$memberstatic = new Adherent($this->db);
 
 		$langs->load("boxes");

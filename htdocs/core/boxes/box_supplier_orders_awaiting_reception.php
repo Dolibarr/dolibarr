@@ -24,7 +24,7 @@
  * \ingroup    fournisseurs
  * \brief      Module that generates the latest supplier orders box
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+
 
 /**
  * Class to manage the box to show last supplier orders awaiting reception
@@ -64,9 +64,7 @@ class box_supplier_orders_awaiting_reception extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$supplierorderstatic = new CommandeFournisseur($this->db);
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleSupplierOrdersAwaitingReception", $max));

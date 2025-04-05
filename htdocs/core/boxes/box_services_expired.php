@@ -22,8 +22,6 @@
  * 		\brief      Module to show the box of last expired services
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show expired services
@@ -64,8 +62,6 @@ class box_services_expired extends ModeleBoxes
 		global $user, $langs, $conf;
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 		$now = dol_now();
 

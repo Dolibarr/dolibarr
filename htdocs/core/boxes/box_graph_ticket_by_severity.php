@@ -24,7 +24,7 @@
  *     \ingroup     ticket
  *     \brief       This box shows open tickets by severity
  */
-require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box
@@ -81,8 +81,6 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 			include DOL_DOCUMENT_ROOT . '/theme/' . $conf->theme . '/theme_vars.inc.php';
 		}
 		$this->max = $max;
-
-		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
 		$text = $langs->trans("BoxTicketSeverity", $max);
 		$this->info_box_head = array(
@@ -156,7 +154,6 @@ class box_graph_ticket_by_severity extends ModeleBoxes
 			$stringtoprint = '';
 			$stringtoprint .= '<div class="div-table-responsive-no-min ">';
 			if (!empty($dataseries) && count($dataseries) > 0) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
 				$totalnb = 0;

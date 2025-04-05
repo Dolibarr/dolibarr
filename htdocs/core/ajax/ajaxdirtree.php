@@ -53,8 +53,6 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
 	$openeddir = GETPOST('openeddir');
 	$modulepart = GETPOST('modulepart');

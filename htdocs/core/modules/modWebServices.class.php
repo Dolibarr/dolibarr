@@ -22,7 +22,7 @@
  *       \ingroup    webservices
  *       \brief      Description and activation file for the module webservices
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *	Class to describe a WebServices module

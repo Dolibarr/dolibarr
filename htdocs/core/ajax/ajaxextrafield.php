@@ -40,7 +40,7 @@ if (!defined('NOHEADERNOFOOTER')) {
 }
 
 include '../../main.inc.php';
-include_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -325,9 +325,6 @@ if ($object instanceof CommonObject) {
 			} else {
 				dol_syslog('Error in request ' . $db->lasterror() . '. Check setup of extra parameters.', LOG_ERR);
 			}
-		} else {
-			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 		}
 	}
 }

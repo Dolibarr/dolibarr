@@ -32,8 +32,6 @@
  *	\brief      File of class to manage bank accounts
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
 
 /**
  *	Class to manage bank accounts
@@ -1199,7 +1197,6 @@ class Account extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_ACCOUNT);
 	}
 
@@ -1406,8 +1403,6 @@ class Account extends CommonObject
 			$langs->load("banks");
 			$now = dol_now();
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
-
 			$response = new WorkboardResponse();
 			$response->warning_delay = $conf->bank->rappro->warning_delay / 60 / 60 / 24;
 			$response->label = $langs->trans("TransactionsToConciliate");
@@ -1539,7 +1534,6 @@ class Account extends CommonObject
 		}
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
-			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_ACCOUNT, 1);
 		}
@@ -1699,7 +1693,6 @@ class Account extends CommonObject
 
 		// If this class is linked to a third party
 		if (!empty($this->socid)) {
-			require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$company = new Societe($this->db);
 			$result = $company->fetch($this->socid);
 			if (!empty($company->country_code)) {
@@ -2052,8 +2045,6 @@ class Account extends CommonObject
 	}
 }
 
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  *	Class to manage bank transaction lines

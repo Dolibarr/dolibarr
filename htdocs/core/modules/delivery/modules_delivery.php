@@ -29,9 +29,6 @@
  *				et la class mere de numerotation des bons de livraisons
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
-
 
 /**
  *	Class mere des modeles de bon de livraison

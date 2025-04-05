@@ -41,12 +41,7 @@
  *	\ingroup    societe
  *	\brief      File for third party class
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonsocialnetworks.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonpeople.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
 /**
@@ -1194,7 +1189,6 @@ class Societe extends CommonObject
 		$this->db->begin();
 
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contact = new Contact($this->db);
 
 		$contact->name              = $this->name_bis;
@@ -1762,8 +1756,6 @@ class Societe extends CommonObject
 				if (!$error && $nbrowsaffected) {
 					// Update information on linked member if it is an update
 					if (!$nosyncmember && isModEnabled('member')) {
-						require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 						dol_syslog(get_class($this)."::update update linked member");
 
 						$lmember = new Adherent($this->db);
@@ -2413,7 +2405,6 @@ class Societe extends CommonObject
 			}
 
 			if (!$error) {
-				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 				$static_cat = new Categorie($this->db);
 				$toute_categs = array();
 
@@ -2728,8 +2719,6 @@ class Societe extends CommonObject
 				$vat_src_code = $reg[1];
 				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate); // Remove code into vatrate.
 			}
-
-			require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc = $this->id;
@@ -3129,7 +3118,6 @@ class Societe extends CommonObject
 		}
 		// show categories for this record only in ajax to not overload lists
 		if (!$nofetch && isModEnabled('category') && $this->client) {
-			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories_customer'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_CUSTOMER, 1, 1);
 		}
@@ -3142,7 +3130,6 @@ class Societe extends CommonObject
 		}
 		// show categories for this record only in ajax to not overload lists
 		if (!$nofetch && isModEnabled('category') && $this->fournisseur) {
-			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			$form = new Form($this->db);
 			$datas['categories_supplier'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_SUPPLIER, 1, 1);
 		}
@@ -3551,7 +3538,6 @@ class Societe extends CommonObject
 	public function contact_array_objects()
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$contacts = array();
 
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".((int) $this->id);
@@ -3627,8 +3613,6 @@ class Societe extends CommonObject
 	public function display_rib($mode = 'label')
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-
 		$bac = new CompanyBankAccount($this->db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$bac->fetch(0, '', $this->id);
@@ -3638,7 +3622,6 @@ class Societe extends CommonObject
 				return $bac->getRibLabel(true);
 			} elseif ($mode == 'rum') {
 				if (empty($bac->rum)) {
-					require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 					$prelevement = new BonPrelevement($this->db);
 					$bac->fetch_thirdparty();
 					$bac->rum = $prelevement->buildRumNumber($bac->thirdparty->code_client, $bac->datec, (string) $bac->id);
@@ -3663,7 +3646,6 @@ class Societe extends CommonObject
 	public function get_all_rib()
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type = 'ban' AND fk_soc = ".((int) $this->id);
 		$result = $this->db->query($sql);
 		if (!$result) {
@@ -3690,7 +3672,6 @@ class Societe extends CommonObject
 	public function getDefaultRib()
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib WHERE type = 'ban' AND default_rib = 1 AND fk_soc = ". (int) $this->id;
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -5203,10 +5184,8 @@ class Societe extends CommonObject
 			$arrayofref = array();
 			$arrayofrefopened = array();
 			if ($mode == 'supplier') {
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$tmpobject = new FactureFournisseur($this->db);
 			} else {
-				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$tmpobject = new Facture($this->db);
 			}
 			while ($obj = $this->db->fetch_object($resql)) {
@@ -5310,7 +5289,6 @@ class Societe extends CommonObject
 		if (!empty($moreparams) && !empty($moreparams['use_companybankid'])) {
 			$modelpath = "core/modules/bank/doc/";
 
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$companybankaccount = new CompanyBankAccount($this->db);
 			$result = $companybankaccount->fetch($moreparams['use_companybankid']);
 			if (!$result) {
@@ -5330,7 +5308,6 @@ class Societe extends CommonObject
 			}
 
 			if (!isset($this->bank_account)) {
-				require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 				$bac = new CompanyBankAccount($this->db);
 				// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 				$result = $bac->fetch(0, '', $this->id);
@@ -5363,8 +5340,6 @@ class Societe extends CommonObject
 	 */
 	public function setCategories($categories, $type_categ)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 		// Decode type
 		if (!in_array($type_categ, array(Categorie::TYPE_CUSTOMER, Categorie::TYPE_SUPPLIER))) {
 			dol_syslog(__METHOD__.': Type '.$type_categ.'is an unknown company category type. Done nothing.', LOG_ERR);
@@ -5523,7 +5498,6 @@ class Societe extends CommonObject
 
 		if ($resql) {
 			// Call triggers
-			include_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 			$interface = new Interfaces($this->db);
 			$result = $interface->run_triggers('COMPANY_MODIFY', $this, $user, $langs, $conf);
 			if ($result < 0) {
@@ -5552,8 +5526,6 @@ class Societe extends CommonObject
 	 */
 	public function fetchPartnerships($mode)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
-
 		$this->partnerships[] = array();
 
 		return 1;
@@ -5757,7 +5729,6 @@ class Societe extends CommonObject
 			}
 
 			// Merge categories
-			include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$static_cat = new Categorie($this->db);
 
 			$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');

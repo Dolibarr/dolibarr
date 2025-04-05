@@ -36,8 +36,6 @@ function show_skin($fuser, $edit = 0)
 	global $conf, $langs, $db;
 	global $bc;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-
 	$formother = new FormOther($db);
 
 	$dirskins = array('/includes/ckeditor/ckeditor/skins');

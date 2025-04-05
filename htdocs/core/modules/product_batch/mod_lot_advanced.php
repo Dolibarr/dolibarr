@@ -28,8 +28,6 @@
  * \brief      File containing class for numbering model of Lot advanced
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
-
 
 /**
  *	Class to manage Batch numbering rules advanced

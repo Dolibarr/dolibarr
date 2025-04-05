@@ -30,9 +30,6 @@
  *  \brief			File with parent class for myobject document models and parent class for myobject numbering models
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
-
 
 /**
  *	Parent class for document models

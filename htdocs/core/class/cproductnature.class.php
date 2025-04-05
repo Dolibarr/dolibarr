@@ -23,9 +23,6 @@
  *      \brief      This file is CRUD class file (Create/Read/Update/Delete) for c_units dictionary
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
 
 /**
  *	Class of dictionary of nature of product (used by imports)

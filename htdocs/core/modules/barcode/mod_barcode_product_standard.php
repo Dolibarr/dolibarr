@@ -27,8 +27,6 @@
  *       \brief      File of class to manage barcode numbering with standard rule
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/modules_barcode.class.php';
-
 
 /**
  *	Class to manage barcode with standard rule

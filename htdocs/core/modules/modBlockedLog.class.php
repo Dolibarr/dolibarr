@@ -22,7 +22,7 @@
  *  \ingroup    blockedlog
  *  \brief      Description and activation file for the module BlockedLog
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *	Class to describe a BlockedLog module
@@ -148,7 +148,6 @@ class modBlockedLog extends DolibarrModules
 	 */
 	public function alreadyUsed()
 	{
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
 		return $b->alreadyUsed(1);
 	}
@@ -169,8 +168,6 @@ class modBlockedLog extends DolibarrModules
 		$sql = array();
 
 		// If already used, we add an entry to show we enable module
-		require_once DOL_DOCUMENT_ROOT . '/blockedlog/class/blockedlog.class.php';
-
 		$object = new stdClass();
 		$object->id = 0;
 		$object->element = 'module';
@@ -214,8 +211,6 @@ class modBlockedLog extends DolibarrModules
 		$sql = array();
 
 		// If already used, we add an entry to show we enable module
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-
 		$object = new stdClass();
 		$object->id = 1;
 		$object->element = 'module';

@@ -26,8 +26,6 @@
  *	\brief      Module to generated widget of best customers (the most invoiced)
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show top-selling customers
@@ -77,7 +75,6 @@ class box_goodcustomers extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$thirdpartystatic = new Societe($this->db);
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleGoodCustomers", $max));

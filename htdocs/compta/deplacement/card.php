@@ -29,11 +29,7 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/trip.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+
 
 /**
  * @var Conf $conf
@@ -207,8 +203,6 @@ $form = new Form($db);
 */
 if ($action == 'create') {
 	//WYSIWYG Editor
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 	print load_fiche_titre($langs->trans("NewTrip"));
 
 	$datec = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
@@ -288,8 +282,6 @@ if ($action == 'create') {
 
 		if ($action == 'edit' && $user->hasRight('deplacement', 'creer')) {
 			//WYSIWYG Editor
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 			$soc = new Societe($db);
 			if ($object->socid) {
 				$soc->fetch($object->socid);

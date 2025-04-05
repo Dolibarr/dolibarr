@@ -25,9 +25,6 @@
  * \brief      File of class to generate target according to rule Fraise
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
 
 /**
  *    Class to generate target according to rule Fraise

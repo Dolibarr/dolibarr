@@ -223,7 +223,6 @@ function societe_prepare_head(Societe $object)
 				$servicestatus = 1;
 			}
 
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 			$societeaccount = new SocieteAccount($db);
 			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus); // Get thirdparty cu_...
 			if ($stripecu) {
@@ -429,7 +428,6 @@ function societe_prepare_head(Societe $object)
 			$totalAttached = $dataretrieved;
 		} else {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-			require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 			$upload_dir = $conf->societe->multidir_output[$object->entity]."/".$object->id;
 			$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 			$nbLinks = Link::count($db, $object->element, $object->id);
@@ -999,8 +997,6 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 			print '</tr>';
 
 			if ($num > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 				$projecttmp = new Project($db);
 
 				$i = 0;
@@ -1119,8 +1115,6 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 				print '</tr>';
 
 				if ($num > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 					$projecttmp = new Project($db);
 
 					$i = 0;
@@ -1210,7 +1204,6 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	global $user, $conf, $extrafields, $hookmanager;
 	global $contextpage;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 	$formcompany = new FormCompany($db);
 	$form = new Form($db);
 
@@ -1848,7 +1841,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$tms_start = '';
 		$tms_end = '';
 	}
-	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
@@ -2211,10 +2203,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 		$formactions = new FormActions($db);
 
@@ -2322,7 +2311,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 		$out .= '</tr>';
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($db);
 		$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
 

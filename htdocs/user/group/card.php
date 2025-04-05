@@ -29,10 +29,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 /**
  * @var Conf $conf
@@ -500,8 +497,7 @@ if ($action == 'create') {
 			print '</div><div class="fichehalfright">';
 
 			// List of actions on element
-			/*include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-			$formactions = new FormActions($db);
+			/*$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'usergroup', $socid, 1, '', $MAXEVENT);*/
 
 			print '</div></div>';

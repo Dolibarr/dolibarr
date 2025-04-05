@@ -24,7 +24,6 @@
  *      \ingroup    supplier
  *      \brief      Fichier de gestion d'une box des factures fournisseurs
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -65,9 +64,6 @@ class box_factures_fourn extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 		$facturestatic = new FactureFournisseur($this->db);
 		$thirdpartystatic = new Fournisseur($this->db);

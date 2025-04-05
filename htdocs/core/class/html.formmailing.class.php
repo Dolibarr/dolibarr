@@ -21,7 +21,7 @@
  *  \ingroup    core
  *	\brief      File of predefined functions for HTML forms for mailing module
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
 
 /**
  *  Class to offer components to list and upload files
@@ -49,7 +49,6 @@ class FormMailing extends Form
 
 		$langs->load("mails");
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 		$mailing = new Mailing($this->db);
 
 		$options = array();

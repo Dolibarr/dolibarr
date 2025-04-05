@@ -30,7 +30,6 @@
  *  \file		htdocs/core/menus/standard/eldy.lib.php
  *  \brief		Library for file eldy menus
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 
 /**

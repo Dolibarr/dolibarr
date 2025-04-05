@@ -25,7 +25,7 @@
  *  \ingroup    project
  *  \brief      Module to show Project activity of the current Year
  */
-include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box to show last project
@@ -84,8 +84,6 @@ class box_project extends ModeleBoxes
 		$i = 0;
 		// list the summary of the orders
 		if ($user->hasRight('projet', 'lire')) {
-			include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$projectstatic = new Project($this->db);
 			$companystatic = new Societe($this->db);
 

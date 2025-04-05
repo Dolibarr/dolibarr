@@ -19,10 +19,6 @@
  */
 
 
-// Load Dolibarr Environment
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-
-
 /**
  *	Class to manage a list of personalised recipients for mailing feature
  */
@@ -275,7 +271,6 @@ class mailing_partnership extends MailingTargets
 		$s .= '</select> ';
 
 		// filter_status_thirdparties
-		include_once DOL_DOCUMENT_ROOT.'/partnership/class/partnership.class.php';
 		$tmppartnership = new Partnership($this->db);
 		$dummy = $tmppartnership->getLibStatut(0);	// We call this only to have $tmppartnership->labelStatus loaded
 

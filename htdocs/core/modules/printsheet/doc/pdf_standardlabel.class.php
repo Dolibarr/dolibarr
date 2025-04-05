@@ -27,7 +27,6 @@
  *  \brief      Fichier de la class permettant d'editer au format PDF des etiquettes au format Avery ou personnalise
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonstickergenerator.class.php';
 
 /**
  *  Class to generate stick sheet with format Avery or other personalised

@@ -24,8 +24,6 @@
  * \brief      File containing class for numbering module Thyme
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/cheque/modules_chequereceipts.php';
-
 
 /**
  *	Class to manage cheque receipts numbering rules Thyme
@@ -96,9 +94,6 @@ class mod_chequereceipt_thyme extends ModeleNumRefChequeReceipts
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/compta/paiement/cheque/class/remisecheque.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$remise = new RemiseCheque($db);
 		$remise->initAsSpecimen();

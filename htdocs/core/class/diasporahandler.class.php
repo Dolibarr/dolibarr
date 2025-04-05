@@ -23,7 +23,7 @@
  *      \brief      Class to manage  socialNetwork (Diaspora)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/socialnetworkmanager.class.php';
+
 /**
 * Class for handling Diaspora API interactions
 */

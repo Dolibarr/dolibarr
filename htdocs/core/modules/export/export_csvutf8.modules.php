@@ -23,10 +23,9 @@
  *		\brief      File of class to build exports with CSV format
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/export/exportcsv.class.php';
-
 // avoid timeout for big export
 set_time_limit(0);
+
 
 /**
  *	Class to build export files with format CSV utf-8

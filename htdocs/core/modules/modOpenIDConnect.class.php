@@ -26,8 +26,6 @@
  *  \ingroup    openid_connect
  *  \brief      Description and activation file for the module OpenID Connect
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-
 
 
 /**

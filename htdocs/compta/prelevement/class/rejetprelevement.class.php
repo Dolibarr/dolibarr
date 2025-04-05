@@ -134,7 +134,6 @@ class RejetPrelevement
 		$bankaccount = ($this->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 		$facs = $this->getListInvoices(1);
 
-		require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 		$lipre = new LignePrelevement($this->db);
 		$lipre->fetch($id);
 
@@ -281,8 +280,6 @@ class RejetPrelevement
 
 			$soc = new Societe($this->db);
 			$soc->fetch($fac->socid);
-
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 
 			$subject = $langs->transnoentities("InfoRejectSubject");
 			$sendto = $emuser->getFullName($langs)." <".$emuser->email.">";

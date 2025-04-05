@@ -33,7 +33,6 @@ if (!defined('NOREQUIREAJAX')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
 /**
  * @var Conf $conf

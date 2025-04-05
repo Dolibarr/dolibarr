@@ -24,8 +24,6 @@
  *  \ingroup    datapolicy
  *  \brief      Description and activation file for the module datapolicy
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-
 
 
 // The class name should start with a lower case mod for Dolibarr to pick it up
@@ -201,7 +199,6 @@ class modDataPolicy extends DolibarrModules
 		global $langs;
 
 		// Create extrafields
-		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 
 		/*

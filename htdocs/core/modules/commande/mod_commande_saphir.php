@@ -27,8 +27,6 @@
  *  \brief     File of class to manage Sales Order numbering rules Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
-
 
 /**
  *	Class to manage Sales Order numbering rules Saphir
@@ -102,9 +100,6 @@ class mod_commande_saphir extends ModeleNumRefCommandes
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$order = new Commande($db);
 		$order->initAsSpecimen();

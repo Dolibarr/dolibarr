@@ -24,7 +24,6 @@
  *  \brief      File of class to manage expedition numbering rules Ribera
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 
 /**
  *	Class to manage expedition numbering rules Ribera
@@ -100,9 +99,6 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/expedition/class/expedition.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$shipment = new Expedition($db);
 		$shipment->initAsSpecimen();

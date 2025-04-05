@@ -25,8 +25,6 @@
  *		\brief      Widget for latest modified BOM
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last modified BOMs
@@ -66,9 +64,6 @@ class box_boms extends ModeleBoxes
 		global $user, $langs, $conf;
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 		$bomstatic = new BOM($this->db);
 		$productstatic = new Product($this->db);

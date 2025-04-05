@@ -34,15 +34,10 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
-require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+
 
 /**
  * @var Conf $conf
@@ -928,7 +923,6 @@ if ($modecompta == 'BOOKKEEPING') {
 		dol_syslog('get loan payments', LOG_DEBUG);
 		$result = $db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 			$loan_static = new Loan($db);
 			while ($obj = $db->fetch_object($result)) {
 				$project_name = !empty($obj->project_name) ? $obj->project_name : $langs->trans("None");

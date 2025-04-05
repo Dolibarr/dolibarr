@@ -1440,8 +1440,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_boxes($option = '')
 	{
 		// phpcs:enable
-		include_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-
 		global $conf;
 
 		$err = 0;
@@ -1612,10 +1610,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public function insert_cronjobs()
 	{
 		// phpcs:enable
-		include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
-		include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
-		include_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-
 		global $conf, $user;
 
 		if (empty($user)) {
@@ -1988,8 +1982,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 			$obj = $this->db->fetch_object($resql);
 
 			if ($obj !== null && !empty($obj->value) && !empty($this->rights)) {
-				include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-
 				// TODO rights parameters with integer indexes are deprecated
 				// $this->rights[$key][0] = $this->rights[$key][self::KEY_ID]
 				// $this->rights[$key][1] = $this->rights[$key][self::KEY_LABEL]
@@ -2174,8 +2166,6 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (!is_array($this->menu) || empty($this->menu)) {
 			return 0;
 		}
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 		dol_syslog(get_class($this)."::insert_menus", LOG_DEBUG);
 

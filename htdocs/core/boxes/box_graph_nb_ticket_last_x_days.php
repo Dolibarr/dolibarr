@@ -24,7 +24,7 @@
  *     \ingroup     ticket
  *     \brief       This box shows the number of new daily tickets the last X days
  */
-require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box to show new daily tickets
@@ -95,7 +95,7 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 		} else {
 			$days = 7;
 		}
-		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
+
 		$text = $langs->trans("BoxTicketLastXDays", $days).'&nbsp;'.img_picto('', 'filter.png', 'id="idsubimgDOLUSER_ticket_last_days" class="linkobject"');
 		$this->info_box_head = array(
 			'text' => $text,
@@ -155,7 +155,6 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 			$stringtoshow .= '</form>';
 			$stringtoshow .= '</div>';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$px1 = new DolGraph();
 
 			$mesg = $px1->isGraphKo();

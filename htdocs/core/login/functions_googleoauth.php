@@ -24,10 +24,6 @@
  */
 
 
-
-//include_once DOL_DOCUMENT_ROOT.'/core/class/openid.class.php';
-
-
 /**
  * Check validity of user/password/entity
  * If test is ko, reason must be filled into $_SESSION["dol_loginmesg"]

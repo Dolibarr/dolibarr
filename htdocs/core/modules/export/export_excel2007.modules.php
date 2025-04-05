@@ -25,12 +25,12 @@
  *	\brief      File of class to generate export file with Excel format
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+
 
 /**
  *	Class to build export files with Excel format

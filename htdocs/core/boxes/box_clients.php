@@ -25,8 +25,6 @@
  *	\brief      Module for generating box to show last customers
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last customers
@@ -76,7 +74,6 @@ class box_clients extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 		$thirdpartystatic = new Client($this->db);
 
 		$this->info_box_head = array(

@@ -54,9 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filter, $dateafterdate, $datebeforedate, $paymentdateafter, $paymentdatebefore, $usestdout, $regenerate = '', $filesuffix = '', $paymentbankid = '', $thirdpartiesid = [], $fileprefix = 'mergedpdf', $donotmerge = 0, $mode = 'invoice')
 {
 	if ($mode == 'invoice') {
-		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
-		require_once DOL_DOCUMENT_ROOT."/core/modules/facture/modules_facture.php";
-
 		$table = "facture";
 		$dir_output = $conf->facture->dir_output;
 		$date = "datef";
@@ -65,9 +62,6 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			$diroutputpdf = $conf->invoice->dir_output.'/temp';
 		}
 	} elseif ($mode == 'order') {
-		require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
-		require_once DOL_DOCUMENT_ROOT."/core/modules/commande/modules_commande.php";
-
 		$table = "commande";
 		$dir_output = $conf->order->dir_output;
 		$date = "date";
@@ -76,9 +70,6 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			$diroutputpdf = $conf->order->dir_output.'/temp';
 		}
 	} elseif ($mode == 'proposal') {
-		require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
-		require_once DOL_DOCUMENT_ROOT."/core/modules/propale/modules_propale.php";
-
 		$table = "propal";
 		$dir_output = $conf->propal->dir_output;
 		$date = "datep";
@@ -87,9 +78,6 @@ function rebuild_merge_pdf($db, $langs, $conf, $diroutputpdf, $newlangid, $filte
 			$diroutputpdf = $conf->propal->dir_output.'/temp';
 		}
 	} elseif ($mode == 'shipment') {
-		require_once DOL_DOCUMENT_ROOT."/expedition/class/expedition.class.php";
-		require_once DOL_DOCUMENT_ROOT."/core/modules/expedition/modules_expedition.php";
-
 		$table = "propal";
 		$dir_output = $conf->shipment->dir_output;
 		$date = "date";

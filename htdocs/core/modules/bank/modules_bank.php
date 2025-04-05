@@ -24,7 +24,6 @@
  *      \brief      File that contain parent class for bank models
  *                  and parent class for bank numbering models
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 
 /**

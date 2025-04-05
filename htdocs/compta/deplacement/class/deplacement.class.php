@@ -26,7 +26,6 @@
  *      \brief      File of class to manage trips
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *		Class to manage trips and working credit notes

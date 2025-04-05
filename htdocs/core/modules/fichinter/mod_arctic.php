@@ -27,7 +27,7 @@
  *	\ingroup    Intervention card
  *	\brief      File with Arctic numbering module for interventions
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/fichinter/modules_fichinter.php';
+
 
 /**
  *	Class to manage numbering of intervention cards with rule Arctic.

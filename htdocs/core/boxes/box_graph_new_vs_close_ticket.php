@@ -24,7 +24,7 @@
  *     \ingroup     ticket
  *     \brief       This box shows the number of new daily tickets the last X days
  */
-require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box
@@ -128,7 +128,6 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 			$stringtoprint = '';
 			$stringtoprint .= '<div class="div-table-responsive-no-min ">';
 			if (!empty($data) && count($data) > 0) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 				$px1 = new DolGraph();
 				$mesg = $px1->isGraphKo();
 				if (!$mesg) {

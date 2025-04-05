@@ -23,8 +23,7 @@
  *       \ingroup    invoices
  *       \brief      File for class managaging the statistics of travel and expense notes
  */
-include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+
 
 /**
  *	Class to manage the statistics of travel and expense notes

@@ -28,13 +28,10 @@
  *     				Used when the unstable option MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES is on.
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+
 
 /**
  * @var Conf $conf
@@ -216,9 +213,6 @@ if ($id > 0 || !empty($ref)) {
 
 		// additional list with adherents of company
 		if (isModEnabled('member') && $user->hasRight('adherent', 'lire')) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
-
 			$membertypestatic = new AdherentType($db);
 			$memberstatic = new Adherent($db);
 

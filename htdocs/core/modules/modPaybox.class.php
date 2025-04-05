@@ -24,7 +24,6 @@
  *  \ingroup    paybox
  *  \brief      Description and activation file for the module Paybox
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**

@@ -27,7 +27,7 @@
  *  \ingroup    workstation
  *  \brief      Description and activation file for the module Workstation
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *  Description and activation class for module Workstation
@@ -375,7 +375,6 @@ class modWorkstation extends DolibarrModules
 		}
 
 		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
 		//$result1=$extrafields->addExtraField('workstation_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'workstation@workstation', '$conf->workstation->enabled');
 		//$result2=$extrafields->addExtraField('workstation_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'workstation@workstation', '$conf->workstation->enabled');

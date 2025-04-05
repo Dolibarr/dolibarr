@@ -27,7 +27,7 @@
  *  \ingroup    mrp
  *  \brief      Description and activation file for the module Mrp
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *  Description and activation class for module Mrp

@@ -25,8 +25,6 @@
  * \ingroup core
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
 
 /**
  * Class CGenericDic

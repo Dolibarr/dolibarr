@@ -28,8 +28,6 @@
  *  \brief     File of class to manage Bookkeeping numbering rules Helium
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/accountancy/modules_accountancy.php';
-
 
 /**
  *	Class to manage Bookkeeping numbering rules Helium, configurable numbering model
@@ -103,8 +101,6 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
 		$bookkeeping = new BookKeeping($db);
 		$bookkeeping->initAsSpecimen();

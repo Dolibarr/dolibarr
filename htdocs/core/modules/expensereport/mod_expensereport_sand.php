@@ -24,8 +24,6 @@
  * \brief      Fichier contenant la class du modele de numerotation de reference de note de frais Sand
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expensereport.php';
-
 
 /**
  *	Class to manage expense report numbering rules Sand

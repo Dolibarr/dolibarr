@@ -25,8 +25,6 @@
  *  \brief      Description and activation file for the module Reception
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-
 
 /**
  *	Class to describe and enable module Reception
@@ -167,7 +165,6 @@ class modReception extends DolibarrModules
 		//--------
 		$r = 0;
 
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$shipment = new CommandeFournisseur($this->db);
 		$contact_arrays = $shipment->liste_type_contact('external', '', 0, 0, '');
 		if (is_array($contact_arrays) && count($contact_arrays) > 0) {

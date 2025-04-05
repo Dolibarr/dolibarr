@@ -23,8 +23,6 @@
  *      \brief      Class to manage social network Mastodon
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/socialnetworkmanager.class.php';
-
 
 /**
  * Class for handler Mastodon

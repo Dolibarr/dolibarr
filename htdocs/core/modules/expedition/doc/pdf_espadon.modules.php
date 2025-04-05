@@ -30,10 +30,10 @@
  *	\brief      Class file allowing Espadon shipping template generation
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 
 /**
  *	Class to build sending documents with model Espadon
@@ -245,7 +245,6 @@ class pdf_espadon extends ModelePdfExpedition
 			if (file_exists($dir)) {
 				// Add pdfgeneration hook
 				if (!is_object($hookmanager)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
@@ -525,8 +524,6 @@ class pdf_espadon extends ModelePdfExpedition
 				$height_barcode = 0;
 				//$pdf->Rect($this->marge_gauche, $this->marge_haute, $this->page_largeur-$this->marge_gauche-$this->marge_droite, 30);
 				if (isModEnabled('barcode') && getDolGlobalString('BARCODE_ON_SHIPPING_PDF')) {
-					require_once DOL_DOCUMENT_ROOT.'/core/modules/barcode/doc/tcpdfbarcode.modules.php';
-
 					$encoding = 'QRCODE';
 					$module = new modTcpdfbarcode();
 					$barcode_path = '';

@@ -24,7 +24,7 @@
  *     \ingroup     knowledgerecord
  *     \brief       This box shows latest created knowledgerecords
  */
-require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box
@@ -76,8 +76,6 @@ class box_last_modified_knowledgerecord extends ModeleBoxes
 		global $user, $langs;
 
 		$this->max = $max;
-
-		require_once DOL_DOCUMENT_ROOT."/knowledgemanagement/class/knowledgerecord.class.php";
 
 		$text = $langs->trans("BoxLastModifiedKnowledgerecordDescription", $max);
 		$this->info_box_head = array(

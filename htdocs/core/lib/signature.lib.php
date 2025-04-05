@@ -119,14 +119,12 @@ function getOnlineSignatureUrl($mode, $type, $ref = '', $localorexternal = 1, $o
 		if ($mode == 1) {
 			$out .= '&hashp=<span style="color: #666666">hash_of_file</span>';
 		} else {
-			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$propaltmp = new Propal($db);
 			$res = $propaltmp->fetch(0, $ref);
 			if ($res <= 0) {
 				return 'FailedToGetProposal';
 			}
 
-			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 			$ecmfile = new EcmFiles($db);
 
 			$ecmfile->fetch(0, '', $propaltmp->last_main_doc);

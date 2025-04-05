@@ -90,7 +90,6 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
-		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$cats = new Categorie($this->db);
 		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
 
@@ -150,7 +149,6 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
-		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$cats = new Categorie($this->db);
 		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
 
@@ -343,7 +341,6 @@ class BankCateg // extends CommonObject
 	{
 		global $conf;
 
-		include_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 		$cats = new Categorie($this->db);
 		$catTypeID = $cats->getMapId()[Categorie::TYPE_BANK_LINE];
 

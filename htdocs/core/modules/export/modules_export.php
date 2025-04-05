@@ -23,8 +23,6 @@
  *	\brief      File of parent class for export modules
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-
 
 /**
  *	Parent class for export modules

@@ -25,7 +25,6 @@
  *  \brief      File of class to manage Asset numbering rules standard
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/asset/modules_asset.php';
 
 /**
  *	Class to manage the Standard numbering rule for Asset

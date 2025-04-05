@@ -24,8 +24,6 @@
  * \brief 		Class file to manage Dolibarr database access
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/db/Database.interface.php';
-
 
 /**
  * Class to manage Dolibarr database access

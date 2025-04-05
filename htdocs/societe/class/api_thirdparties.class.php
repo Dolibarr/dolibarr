@@ -51,12 +51,6 @@ class Thirdparties extends DolibarrApi
 		global $db;
 		$this->db = $db;
 
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-
 		$this->company = new Societe($this->db);
 
 		if (getDolGlobalString('SOCIETE_EMAIL_MANDATORY')) {
@@ -1088,7 +1082,6 @@ class Thirdparties extends DolibarrApi
 		 throw new RestException(404, 'Thirdparty not found');
 		 }*/
 
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_replacable_invoices($id);
 		if ($result < 0) {
@@ -1134,7 +1127,6 @@ class Thirdparties extends DolibarrApi
 		 throw new RestException(404, 'Thirdparty not found');
 		 }*/
 
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$invoice = new Facture($this->db);
 		$result = $invoice->list_qualified_avoir_invoices($id);
 		if (!is_array($result) && $result < 0) {
@@ -1533,7 +1525,6 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (empty($account->rum)) {
-			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
 			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();
@@ -1588,7 +1579,6 @@ class Thirdparties extends DolibarrApi
 		}
 
 		if (empty($account->rum)) {
-			require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 			$prelevement = new BonPrelevement($this->db);
 			$account->rum = $prelevement->buildRumNumber($this->company->code_client, $account->datec, (string) $account->id);
 			$account->date_rum = dol_now();

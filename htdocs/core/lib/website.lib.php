@@ -527,7 +527,6 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 
 	// We make redirect using the alternative alias, we must find the real $containerref
 	if ($containeraliasalt) {
-		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 		$tmpwebsitepage = new WebsitePage($db);
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$result = $tmpwebsitepage->fetch(0, (string) $website->id, '', $containeraliasalt);
@@ -551,7 +550,6 @@ function redirectToContainer($containerref, $containeraliasalt = '', $containeri
 	if (defined('USEDOLIBARRSERVER')) {	// When page called from Dolibarr server
 		// Check new container exists
 		if (!$containeraliasalt) {	// If containeraliasalt set, we already did the test
-			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 			$tmpwebsitepage = new WebsitePage($db);
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 			$result = $tmpwebsitepage->fetch(0, (string) $website->id, $containerref);
@@ -773,7 +771,6 @@ function getStructuredData($type, $data = array())
 		$ret .= '</script>'."\n";
 	} elseif ($type == 'blogpost') {
 		if (!empty($websitepage->author_alias)) {
-			//include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 			//$tmpuser = new User($db);
 			//$restmpuser = $tmpuser->fetch($websitepage->fk_user_creat);
 
@@ -1266,8 +1263,6 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
 	$found = 0;
 
 	if (!$error && (empty($max) || ($found < $max)) && (preg_match('/meta/', $algo) || preg_match('/content/', $algo))) {
-		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
-
 		$sql = 'SELECT wp.rowid FROM '.MAIN_DB_PREFIX.'website_page as wp';
 		if (is_array($otherfilters) && !empty($otherfilters['category'])) {
 			$sql .= ', '.MAIN_DB_PREFIX.'categorie_website_page as cwp';

@@ -202,7 +202,6 @@ class Utils
 
 				// Update cachenbofdoc
 				if (isModEnabled('ecm') && $choice == 'allfiles') {
-					require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 					$ecmdirstatic = new EcmDirectory($this->db);
 					$result = $ecmdirstatic->refreshcachenboffile(1);
 				}
@@ -937,7 +936,6 @@ class Utils
 				$currentdir = getcwd();
 				chdir($dirofmodule);
 
-				require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 				$utils = new Utils($this->db);
 
 				// Build HTML doc
@@ -1375,7 +1373,6 @@ class Utils
 
 		$mailfile = null;
 		if (!$error) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 			$mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
 			if ($mailfile->error) {
 				$error++;
@@ -1416,9 +1413,6 @@ class Utils
 	{
 		global $db, $user;
 		dol_syslog("Utils::cleanUnfinishedCronjob Starting cleaning");
-
-		// Import Cronjob class if not present
-		require_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 
 		// Get this job object
 		$this_job = new Cronjob($db);

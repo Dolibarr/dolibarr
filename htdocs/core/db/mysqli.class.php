@@ -28,7 +28,6 @@
  *	\brief      Class file to manage Dolibarr database access for a MySQL database
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/db/DoliDB.class.php';
 
 /**
  *	Class to manage Dolibarr database access for a MySQL database using the MySQLi extension

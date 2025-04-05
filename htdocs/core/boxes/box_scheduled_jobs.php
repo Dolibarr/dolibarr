@@ -25,8 +25,6 @@
  *      \brief      Widget of scheduled jobs
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last contracted products/services lines
@@ -70,7 +68,6 @@ class box_scheduled_jobs extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxScheduledJobs", $max), 'nbcol' => 4);
 
 		if ($user->hasRight('cron', 'read')) {
-			include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
 			$cronstatic = new Cronjob($this->db);
 			$resultarray = array();
 

@@ -21,7 +21,6 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
 /**
  * API class for accounts
@@ -215,8 +214,6 @@ class BankAccounts extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('banque', 'configurer')) {
 			throw new RestException(403);
 		}
-
-		require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($this->db);
 		$resultAccountFrom = $accountfrom->fetch($bankaccount_from_id);

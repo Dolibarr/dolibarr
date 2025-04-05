@@ -25,8 +25,6 @@
  *	\brief      Module Dolibarr state base
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last thirdparties
@@ -154,30 +152,6 @@ class box_dolibarr_state_board extends ModeleBoxes
 				'ticket' => 'Ticket',
 				'dolresource' => 'Dolresource'
 			);
-			$includes = array(
-				'users' => DOL_DOCUMENT_ROOT . "/user/class/user.class.php",
-				'members' => DOL_DOCUMENT_ROOT . "/adherents/class/adherent.class.php",
-				'customers' => DOL_DOCUMENT_ROOT . "/societe/class/client.class.php",
-				'prospects' => DOL_DOCUMENT_ROOT . "/societe/class/client.class.php",
-				'suppliers' => DOL_DOCUMENT_ROOT . "/fourn/class/fournisseur.class.php",
-				'contacts' => DOL_DOCUMENT_ROOT . "/contact/class/contact.class.php",
-				'products' => DOL_DOCUMENT_ROOT . "/product/class/product.class.php",
-				'services' => DOL_DOCUMENT_ROOT . "/product/class/product.class.php",
-				'proposals' => DOL_DOCUMENT_ROOT . "/comm/propal/class/propal.class.php",
-				'orders' => DOL_DOCUMENT_ROOT . "/commande/class/commande.class.php",
-				'invoices' => DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php",
-				'donations' => DOL_DOCUMENT_ROOT . "/don/class/don.class.php",
-				'contracts' => DOL_DOCUMENT_ROOT . "/contrat/class/contrat.class.php",
-				'interventions' => DOL_DOCUMENT_ROOT . "/fichinter/class/fichinter.class.php",
-				'supplier_orders' => DOL_DOCUMENT_ROOT . "/fourn/class/fournisseur.commande.class.php",
-				'supplier_invoices' => DOL_DOCUMENT_ROOT . "/fourn/class/fournisseur.facture.class.php",
-				'supplier_proposals' => DOL_DOCUMENT_ROOT . "/supplier_proposal/class/supplier_proposal.class.php",
-				'projects' => DOL_DOCUMENT_ROOT . "/projet/class/project.class.php",
-				'expensereports' => DOL_DOCUMENT_ROOT . "/expensereport/class/expensereport.class.php",
-				'holidays' => DOL_DOCUMENT_ROOT . "/holiday/class/holiday.class.php",
-				'ticket' => DOL_DOCUMENT_ROOT . "/ticket/class/ticket.class.php",
-				'dolresource' => DOL_DOCUMENT_ROOT . "/resource/class/dolresource.class.php"
-			);
 			$links = array(
 				'users' => DOL_URL_ROOT . '/user/list.php',
 				'members' => DOL_URL_ROOT . '/adherents/list.php?statut=1&mainmenu=members',
@@ -251,9 +225,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 					}
 
 					if (!isset($boardloaded[$classkeyforcache]) || !is_object($boardloaded[$classkeyforcache])) {
-						include_once $includes[$val]; // Loading a class cost around 1Mb
-
-						$board = new $class($this->db);
+						$board = new $class($this->db); // Loading a class cost around 1Mb
 						if (method_exists($board, 'load_state_board')) {
 							// @phan-suppress-next-line PhanUndeclaredMethod  (Legacy, not present in core).
 							$board->load_state_board();

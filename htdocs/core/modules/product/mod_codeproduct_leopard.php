@@ -25,8 +25,6 @@
  *       \brief      Fichier de la class des gestion leopard des codes produits
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
-
 
 /**
  *	\class 		mod_codeproduct_leopard

@@ -27,7 +27,7 @@
  *  \ingroup    knowledgemanagement
  *  \brief      Description and activation file for module KnowledgeManagement
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *  Description and activation class for module KnowledgeManagement
@@ -433,7 +433,6 @@ class modKnowledgeManagement extends DolibarrModules
 		}
 
 		// Create extrafields during init
-		//include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		//$extrafields = new ExtraFields($this->db);
 		//$result1=$extrafields->addExtraField('knowledgemanagement_myattr1', "New Attr 1 label", 'boolean', 1,  3, 'thirdparty',   0, 0, '', '', 1, '', 0, 0, '', '', 'knowledgemanagement@knowledgemanagement', '$conf->knowledgemanagement->enabled');
 		//$result2=$extrafields->addExtraField('knowledgemanagement_myattr2', "New Attr 2 label", 'varchar', 1, 10, 'project',      0, 0, '', '', 1, '', 0, 0, '', '', 'knowledgemanagement@knowledgemanagement', '$conf->knowledgemanagement->enabled');

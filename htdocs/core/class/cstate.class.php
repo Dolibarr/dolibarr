@@ -22,9 +22,6 @@
  *      \brief      This file is a CRUD class file (Create/Read/Update/Delete) for c_departements dictionary
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondict.class.php';
-
 
 /**
  *  Class to manage dictionary States (used by imports)

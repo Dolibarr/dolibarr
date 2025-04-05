@@ -81,11 +81,9 @@ if (!$res) {
 	die("Include of main fails");
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/mymodule_myobject.lib.php');
+
 
 /**
  * @var Conf $conf
@@ -380,7 +378,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// if ($action == 'xxx') {
 	// 	$text = $langs->trans('ConfirmActionXxx', $object->ref);
 	// 	if (isModEnabled('notification')) {
-	// 		require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 	// 		$notify = new Notify($db);
 	// 		$text .= '<br>';
 	// 		$text .= $notify->confirmMessage('MYOBJECT_CLOSE', $object->socid, $object);
@@ -646,7 +643,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// List of actions on element
 		if ($includeeventlist) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, $object->element.'@'.$object->module, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);
 		}

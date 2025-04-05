@@ -28,9 +28,6 @@
  *  \brief      File with parent class for generating products to PDF and File of class to manage product numbering
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
-
 
 /**
  *	Parent class to manage intervention document templates

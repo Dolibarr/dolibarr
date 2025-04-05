@@ -857,8 +857,6 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 {
 	global $mysoc, $conf;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbank.class.php';
-
 	$diffsizetitle = getDolGlobalInt('PDF_DIFFSIZE_TITLE', 3);
 	$diffsizecontent = getDolGlobalInt('PDF_DIFFSIZE_CONTENT', 4);
 	$pdf->SetXY($curx, $cury);
@@ -1517,15 +1515,9 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 	$multilangsactive = getDolGlobalInt('MAIN_MULTILANGS');
 
 	if ($issupplierline) {
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$prodser = new ProductFournisseur($db);
 	} else {
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$prodser = new Product($db);
-
-		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-			include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-		}
 	}
 
 	//id
@@ -1798,7 +1790,6 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 
 	// Add an additional description for the category products
 	if (getDolGlobalString('CATEGORY_ADD_DESC_INTO_DOC') && $idprod && isModEnabled('category')) {
-		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$categstatic = new Categorie($db);
 		// recovering the list of all the categories linked to product
 		$tblcateg = $categstatic->containing($idprod, Categorie::TYPE_PRODUCT);
@@ -1842,8 +1833,6 @@ function pdf_getlinedesc($object, $i, $outputlangs, $hideref = 0, $hidedesc = 0,
 		//var_dump($object->lines[$i]->details_entrepot);		// array from llx_expeditiondet (we can have several lines for one fk_origin_line)
 		//var_dump($object->lines[$i]->detail_batch);			// array from llx_expeditiondet_batch (each line with a lot is linked to llx_expeditiondet)
 
-		include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
 		$tmpwarehouse = new Entrepot($db);
 		$tmpproductbatch = new Productbatch($db);
 
@@ -2629,7 +2618,6 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 					if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
 						$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
 						if (!empty($elementobject->linkedObjectsIds['commande'])) {
-							include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 							$order = new Commande($db);
 							$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
 							if ($ret < 1) {
@@ -2656,7 +2644,6 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 				if (empty($object->linkedObjects['commande']) && $object->element != 'commande') {    // There is not already a link to order and object is not the order, so we show also info with order
 					$elementobject->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0);
 					if (!empty($elementobject->linkedObjectsIds['commande'])) {
-						include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 						$order = new Commande($db);
 						$ret = $order->fetch(reset($elementobject->linkedObjectsIds['commande']));
 						if ($ret < 1) {

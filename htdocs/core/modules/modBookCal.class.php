@@ -26,7 +26,7 @@
  *  \ingroup    bookcal
  *  \brief      Description and activation file for module BookCal
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *  Description and activation class for module BookCal

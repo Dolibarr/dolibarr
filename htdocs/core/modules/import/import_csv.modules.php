@@ -27,8 +27,6 @@
  *		\brief      File to load import files with CSV format
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/import/modules_import.php';
-
 
 /**
  *	Class to import CSV files
@@ -462,8 +460,7 @@ class ImportCsv extends ModeleImports
 											$param_array = array('', $newval);
 											if ($class == 'AccountingAccount') {
 												//var_dump($arrayrecord[0]['val']);
-												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
-												 $tmpchartofaccount = new AccountancySystem($this->db);
+												/*$tmpchartofaccount = new AccountancySystem($this->db);
 												 $tmpchartofaccount->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 												 //var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
 												 if ((! (getDolGlobalInt('CHARTOFACCOUNTS') > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])

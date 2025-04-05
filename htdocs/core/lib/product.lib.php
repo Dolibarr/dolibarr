@@ -122,8 +122,6 @@ function product_prepare_head($object)
 	if (isModEnabled('variants') && ($object->isProduct() || $object->isService())) {
 		global $db;
 
-		require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-
 		$prodcomb = new ProductCombination($db);
 
 		if ($prodcomb->fetchByFkProductChild($object->id) <= 0) {
@@ -200,7 +198,6 @@ function product_prepare_head($object)
 
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = '';
 	if (isModEnabled("product") && ($object->type == Product::TYPE_PRODUCT)) {
 		$upload_dir = $conf->product->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
@@ -272,7 +269,6 @@ function productlot_prepare_head($object)
 
 	// Attachments
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
@@ -922,7 +918,6 @@ function measuringUnitString($unitid, $measuring_style = '', $unitscale = null, 
 	}
 
 	if (empty($measuring_unit_cache[$unitid.'_'.$measuring_style.'_'.$unitscale.'_'.$use_short_label])) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
 
 		if ($measuring_style == '' && $unitscale == '') {

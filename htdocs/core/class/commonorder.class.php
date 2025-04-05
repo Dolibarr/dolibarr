@@ -23,9 +23,6 @@
  *       \brief      File of the superclass of orders classes (customer and supplier)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  *      Superclass for orders classes
@@ -80,7 +77,6 @@ abstract class CommonOrder extends CommonObject
 	 */
 	public function getNbLinesProductOrServiceOnBuy($ignoreFree = false)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$product = new Product($this->db);
 		$return = 0;
 		foreach ($this->lines as $line) {

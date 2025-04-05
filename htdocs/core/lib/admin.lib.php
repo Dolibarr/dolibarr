@@ -587,7 +587,6 @@ function dolibarr_del_const($db, $name, $entity = 1)
 		return -1;
 	}
 	if (! is_object($hookmanager)) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
 
@@ -682,7 +681,6 @@ function dolibarr_set_const($db, $name, $value, $type = 'chaine', $visible = 0, 
 		exit;
 	}
 	if (! is_object($hookmanager)) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
 
@@ -1356,7 +1354,6 @@ function unActivateModule($value, $requiredby = 1)
 	} else { // We come here when we try to unactivate a module when module does not exists anymore in sources
 		//print $dir.$modFile;exit;
 		// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 		$genericMod = new DolibarrModules($db);
 		$genericMod->name = preg_replace('/^mod/i', '', $modName);
 		$genericMod->rights_class = strtolower(preg_replace('/^mod/i', '', $modName));
@@ -1886,13 +1883,11 @@ function form_constantes($tableau, $strictw3c = 2, $helptext = '', $text = 'Valu
 					print $obj->value;
 					print "</textarea>\n";
 				} elseif ($obj->type == 'html') {
-					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					$doleditor = new DolEditor('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 					$doleditor->Create();
 				} elseif ($obj->type == 'yesno') {
 					print $form->selectyesno('constvalue'.(empty($strictw3c) ? '' : ($strictw3c == 3 ? '_'.$const : '[]')), $obj->value, 1, false, 0, 1);
 				} elseif (preg_match('/emailtemplate/', $obj->type)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 					$formmail = new FormMail($db);
 
 					$tmp = explode(':', $obj->type);

@@ -23,9 +23,6 @@
  *  \brief		Class for various payment
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
 
 /**
  *  Class to manage various payments
@@ -535,8 +532,6 @@ class PaymentVarious extends CommonObject
 			if ($this->id > 0) {
 				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
-					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 					$acc = new Account($this->db);
 					$result = $acc->fetch($this->fk_account);
 					if ($result <= 0) {

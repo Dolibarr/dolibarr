@@ -171,7 +171,6 @@ function showDirectPublicLink($object)
 {
 	global $conf, $langs;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 	$email = CMailFile::getValidAddress($object->origin_email, 2);
 	$url = '';
 	if ($email) {

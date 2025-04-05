@@ -133,15 +133,10 @@ if (!is_string($objecttype) || empty($objecttype)) {
 }
 '@phan-var-force string $objecttype';  // Help phan that suggests $objecttype can be null
 
-require_once DOL_DOCUMENT_ROOT."/core/class/extrafields.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.form.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/customreports.lib.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/dolgraph.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/doleditor.class.php";
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("companies", "other", "exports", "sendings"));

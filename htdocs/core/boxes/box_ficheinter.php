@@ -24,8 +24,6 @@
  * 		\brief      Box to show last interventions
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last interventions
@@ -66,7 +64,6 @@ class box_ficheinter extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$ficheinterstatic = new Fichinter($this->db);
 		$thirdpartystatic = new Societe($this->db);
 

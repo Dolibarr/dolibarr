@@ -23,7 +23,7 @@
  *  \ingroup    socialnetworks
  *  \brief      Description and activation file for the module SocialNetworks
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *	Class to describe a SocialNetworks module

@@ -23,7 +23,6 @@
  *  \brief      Module to Task activity of the current year
  */
 
-include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 
@@ -72,9 +71,9 @@ class box_task extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		$this->max = $max;
-		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
-		include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 		require_once DOL_DOCUMENT_ROOT."/core/lib/project.lib.php";
+
 		$projectstatic = new Project($this->db);
 		$taskstatic = new Task($this->db);
 		$form = new Form($this->db);

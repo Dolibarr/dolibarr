@@ -20,7 +20,7 @@
  *  \ingroup    Accountancy (Double entries)
  *	\brief      File of class with all html predefined components
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
 
 /**
  *	Class to manage generation of HTML components for accounting management

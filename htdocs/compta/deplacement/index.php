@@ -26,8 +26,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
+
 
 /**
  * @var Conf $conf
@@ -132,7 +131,6 @@ foreach ($listoftype as $code => $label) {
 if ($conf->use_javascript_ajax) {
 	print '<tr><td align="center" colspan="4">';
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 	$dolgraph = new DolGraph();
 	$dolgraph->SetData($dataseries);
 	$dolgraph->setShowLegend(2);

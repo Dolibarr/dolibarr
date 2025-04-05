@@ -24,7 +24,6 @@
  *	\ingroup    mailing
  *	\brief      File of class to offer a selector of emailing targets of users.
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 
 
 /**

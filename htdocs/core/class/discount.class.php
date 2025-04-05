@@ -26,7 +26,6 @@
  *		\brief      File of class to manage absolute discounts
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  *		Class to manage absolute discounts
@@ -336,7 +335,6 @@ class DiscountAbsolute extends CommonObject
 
 		$userid = $user->id;
 		if (!($userid > 0)) {		// For example when record is saved into an anonymous context with a not loaded object $user.
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$tmpinvoice = new Facture($this->db);
 			$tmpinvoice->fetch($this->fk_facture_source);
 			$userid = $tmpinvoice->user_creation_id; // We use the author of invoice
@@ -444,7 +442,6 @@ class DiscountAbsolute extends CommonObject
 
 		dol_syslog(get_class($this)."::delete Delete discount", LOG_DEBUG);
 
-		require_once DOL_DOCUMENT_ROOT. '/core/class/commoninvoice.class.php';
 		$result = $this->db->query($sql);
 		if ($result) {
 			// If source of discount was a credit note or deposit, we change source statut.

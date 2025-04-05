@@ -179,7 +179,6 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			setEventMessages($langs->trans("ErrorFailToDeleteFile", $urlfile), null, 'errors');
 		}
 	} elseif ($linkid) {	// delete of external link
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$link = new Link($db);
 		$link->fetch($linkid);
 		$res = $link->delete($user);
@@ -207,8 +206,6 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 		}
 	}
 } elseif ($action == 'confirm_updateline' && GETPOST('save', 'alpha') && GETPOST('link', 'alpha') && !empty($permissiontoadd)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
-
 	$link = new Link($db);
 	$f = $link->fetch(GETPOSTINT('linkid'));
 	if ($f) {
@@ -336,7 +333,6 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 	if (GETPOSTINT('ecmfileid') > 0) {
 		$shareenabled = GETPOST('shareenabled', 'alpha');
 
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(GETPOSTINT('ecmfileid'));
 		if ($result > 0) {

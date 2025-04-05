@@ -105,7 +105,6 @@ if (GETPOST('removeAll', 'alpha')) {
 		$listofmimes = explode(';', $_SESSION["listofmimes".$keytoavoidconflict]);
 	}
 
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->trackid = $trackid;
 
@@ -301,8 +300,6 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
 			//$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-
 			$langs->load("commercial");
 
 			$reg = array();
@@ -376,7 +373,6 @@ if (($action == 'send' || $action == 'relance') && !GETPOST('addfile') && !GETPO
 			}
 
 			// Create form object
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($db);
 			$formmail->trackid = $trackid; // $trackid must be defined
 

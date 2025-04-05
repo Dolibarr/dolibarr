@@ -25,7 +25,7 @@
  *	\ingroup    expedition
  *	\brief      Fichier contenant la class du modele de numerotation de reference de livraison Saphir
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/delivery/modules_delivery.php';
+
 
 /**
  *	\class      mod_delivery_saphir
@@ -107,9 +107,6 @@ class mod_delivery_saphir extends ModeleNumRefDeliveryOrder
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/delivery/class/delivery.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$delivery = new Delivery($db);
 		$delivery->initAsSpecimen();

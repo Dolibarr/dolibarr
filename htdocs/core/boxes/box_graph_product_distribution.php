@@ -22,8 +22,7 @@
  *	\ingroup    invoices
  *	\brief      Box to show graph of invoices per month
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+
 
 /**
  * Class to manage the box to show last invoices
@@ -70,10 +69,6 @@ class box_graph_product_distribution extends ModeleBoxes
 		$dir = $conf->user->dir_temp;
 
 		$refreshaction = 'refresh_'.$this->boxcode;
-
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 		$param_year = 'DOLUSER_box_'.$this->boxcode.'_year';
 		$param_showinvoicenb = 'DOLUSER_box_'.$this->boxcode.'_showinvoicenb';
@@ -150,7 +145,6 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showpropalnb) {
 				$langs->load("propal");
-				include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propalestats.class.php';
 
 				$showpointvalue = 1;
 				$nocolor = 0;
@@ -212,7 +206,6 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showordernb) {
 				$langs->load("orders");
-				include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 
 				$showpointvalue = 1;
 				$nocolor = 0;
@@ -277,7 +270,6 @@ class box_graph_product_distribution extends ModeleBoxes
 			// Build graphic number of object. $data = array(array('Lib',val1,val2,val3),...)
 			if ($showinvoicenb) {
 				$langs->load("bills");
-				include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facturestats.class.php';
 
 				$showpointvalue = 1;
 				$nocolor = 0;

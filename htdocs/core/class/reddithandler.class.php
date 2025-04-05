@@ -23,7 +23,6 @@
  *      \brief      Class to manage each socialNetwork (Reddit, etc.)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/socialnetworkmanager.class.php';
 
 /**
  * Class for handler Reddit

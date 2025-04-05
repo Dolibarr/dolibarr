@@ -24,8 +24,6 @@
  *   \brief			Fichier de la class de gestion des triggers
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-
 
 /**
  *   Class to manage triggers

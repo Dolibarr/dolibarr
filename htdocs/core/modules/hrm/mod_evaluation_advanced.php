@@ -27,8 +27,6 @@
  * \brief      File containing class for advanced numbering model of Evaluation
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/modules/hrm/modules_evaluation.php';
-
 
 /**
  *	Class to manage customer evaluation numbering rules advanced

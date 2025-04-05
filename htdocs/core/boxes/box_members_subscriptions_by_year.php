@@ -25,8 +25,6 @@
  *	\brief      Module to show box of members
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last modofied members
@@ -74,8 +72,6 @@ class box_members_subscriptions_by_year extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent_type.class.php';
 		$memberstatic = new Adherent($this->db);
 		$statictype = new AdherentType($this->db);
 

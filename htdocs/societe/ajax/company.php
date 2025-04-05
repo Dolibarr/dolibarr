@@ -43,7 +43,6 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 /**
  * @var Conf $conf
@@ -85,8 +84,6 @@ top_httphead('application/json');
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('societe', 'lire')) {
-	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-
 	$outjson = array();
 
 	if ($object->id > 0) {
@@ -100,8 +97,6 @@ if (!empty($action) && $action == 'fetch' && !empty($id) && $user->hasRight('soc
 
 	echo json_encode($outjson);
 } else {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
 	if ($htmlname === '') {
 		return;
 	}

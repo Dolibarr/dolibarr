@@ -1097,7 +1097,6 @@ class ExtraFields
 		global $conf, $langs, $form;
 
 		if (!is_object($form)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form = new Form($this->db);
 		}
 
@@ -1259,7 +1258,6 @@ class ExtraFields
 			}
 		} elseif ($type == 'text') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, false, ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
@@ -1267,7 +1265,6 @@ class ExtraFields
 			}
 		} elseif ($type == 'html') {
 			if (!preg_match('/search_/', $keyprefix)) {		// If keyprefix is search_ or search_options_, we must just use a simple text field
-				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($keyprefix.$key.$keysuffix, $value, '', 200, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor') && getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), ROWS_5, '90%');
 				$out = (string) $doleditor->Create(1);
 			} else {
@@ -1626,7 +1623,6 @@ class ExtraFields
 							print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
 						}
 					} else {
-						require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 						$categcode = $InfoFieldList[5];
 						if (is_numeric($categcode)) {
 							$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
@@ -1879,7 +1875,6 @@ class ExtraFields
 						print 'Error in request '.$sql.' '.$this->db->lasterror().'. Check setup of extra parameters.<br>';
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 					$categcode = $InfoFieldList[5];
 					if (is_numeric($categcode)) {
 						$categcode = Categorie::$MAP_ID_TO_CODE[$InfoFieldList[5]];
@@ -1913,7 +1908,6 @@ class ExtraFields
 
 			$out = $form->selectForForms($objectdesc, $keyprefix.$key.$keysuffix, $value, $showempty, '', '', $morecss, '', 0, 0, '', $objectfield);
 		} elseif (in_array($type, ['point', 'multipts', 'linestrg', 'polygon'])) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 			$dolgeophp = new DolGeoPHP($this->db);
 			$geojson = '{}';
 			$centroidjson = getDolGlobalString('MAIN_INFO_SOCIETE_GEO_COORDINATES', '{}');
@@ -1923,7 +1917,6 @@ class ExtraFields
 				$centroidjson = $tmparray['centroidjson'];
 			}
 			if (!preg_match('/search_/', $keyprefix)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/geomapeditor.class.php';
 				$geomapeditor = new GeoMapEditor();
 				$out .= $geomapeditor->getHtml($keyprefix.$key.$keysuffix, $geojson, $centroidjson, $type);
 			} else {
@@ -2205,7 +2198,6 @@ class ExtraFields
 					$toprint = array();
 					$obj = $this->db->fetch_object($resql);
 					if ($obj->rowid) {
-						require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 						$c = new Categorie($this->db);
 						$result = $c->fetch($obj->rowid);
 						if ($result > 0) {
@@ -2313,8 +2305,6 @@ class ExtraFields
 						}
 					}
 				} else {
-					require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-
 					$toprint = array();
 					while ($obj = $this->db->fetch_object($resql)) {
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
@@ -2368,7 +2358,6 @@ class ExtraFields
 			}
 		} elseif ($type == 'point') {
 			if (!empty($value)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
 				$value = $dolgeophp->getXYString($value);
 			} else {
@@ -2376,7 +2365,6 @@ class ExtraFields
 			}
 		} elseif (in_array($type, ['multipts', 'linestrg', 'polygon'])) {
 			if (!empty($value)) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 				$dolgeophp = new DolGeoPHP($this->db);
 				$value = $dolgeophp->getPointString($value);
 			} else {
@@ -2744,7 +2732,6 @@ class ExtraFields
 					$value_key = GETPOST("options_".$key, 'restricthtml');
 				} elseif (in_array($key_type, ['point', 'multipts', 'linestrg', 'polygon'])) {
 					// construct point
-					require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeophp.class.php';
 					$geojson = GETPOST("options_".$key, 'restricthtml');
 					if ($geojson != '{}') {
 						$dolgeophp = new DolGeoPHP($this->db);

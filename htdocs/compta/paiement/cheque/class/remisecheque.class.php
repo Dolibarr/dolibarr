@@ -26,8 +26,6 @@
  *	\ingroup    compta
  *	\brief      File with class to manage cheque delivery receipts
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 
 /**
@@ -619,7 +617,6 @@ class RemiseCheque extends CommonObject
 		// Charge le modele
 		$file = "pdf_".$model.".class.php";
 		if (file_exists($dir.$file)) {
-			include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			include_once $dir.$file;
 
 			$classname = 'BordereauCheque'.ucfirst($model);

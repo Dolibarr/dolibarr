@@ -25,7 +25,6 @@
  *		\ingroup    invoice
  *		\brief      File for the ChargesSociales class
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**
@@ -348,7 +347,6 @@ class ChargeSociales extends CommonObject
 		$this->db->begin();
 
 		// Get bank transaction lines for this social contributions
-		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$account = new Account($this->db);
 		$lines_url = $account->get_url(0, $this->id, 'sc');
 

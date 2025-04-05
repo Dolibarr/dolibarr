@@ -469,8 +469,6 @@ function isDolTms($timestamp)
  */
 function getDoliDBInstance($type, $host, $user, $pass, $name, $port)
 {
-	require_once DOL_DOCUMENT_ROOT."/core/db/".$type.'.class.php';
-
 	$class = 'DoliDB'.ucfirst($type);
 	$db = new $class($type, $host, $user, $pass, $name, $port);
 	return $db;
@@ -498,7 +496,6 @@ function getEntity($element, $shared = 1, $currentobject = null)
 	global $conf, $mc, $hookmanager, $object, $action, $db;
 
 	if (!is_object($hookmanager)) {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
 
@@ -4863,7 +4860,6 @@ function dolGetCountryCodeFromIp($ip)
 		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='/usr/share/GeoIP/GeoIP.dat';    Note that this must be downloaded datafile (not same than datafile provided with ubuntu packages)
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 		$geoip = new DolGeoIP('country', $datafile);
 		//print 'ip='.$ip.' databaseType='.$geoip->gi->databaseType." GEOIP_CITY_EDITION_REV1=".GEOIP_CITY_EDITION_REV1."\n";
 		$countrycode = $geoip->getCountryCodeFromIP($ip);
@@ -4890,7 +4886,6 @@ function dol_user_country()
 		$datafile = getDolGlobalString('GEOIPMAXMIND_COUNTRY_DATAFILE');
 		//$ip='24.24.24.24';
 		//$datafile='E:\Mes Sites\Web\Admin1\awstats\maxmind\GeoIP.dat';
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 		$geoip = new DolGeoIP('country', $datafile);
 		$countrycode = $geoip->getCountryCodeFromIP($ip);
 		$ret = $countrycode;
@@ -6308,7 +6303,6 @@ function dol_print_error($db = null, $error = '', $errors = null)
 
 	// If error occurs before the $lang object was loaded
 	if (!$langs) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
 		$langs->load("main");
 	}
@@ -7704,8 +7698,6 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 {
 	global $db, $mysoc;
 
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 	$ret = 0;
 	$found = 0;
 
@@ -7798,10 +7790,6 @@ function get_product_vat_for_country($idprod, $thirdpartytouse, $idprodfournpric
 function get_product_localtax_for_country($idprod, $local, $thirdpartytouse)
 {
 	global $db, $mysoc;
-
-	if (!class_exists('Product')) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-	}
 
 	$ret = 0;
 	$found = 0;
@@ -8007,16 +7995,10 @@ function get_default_npr(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	global $db;
 
 	if ($idprodfournprice > 0) {
-		if (!class_exists('ProductFournisseur')) {
-			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-		}
 		$prodprice = new ProductFournisseur($db);
 		$prodprice->fetch_product_fournisseur_price($idprodfournprice);
 		return $prodprice->fourn_tva_npr;
 	} elseif ($idprod > 0) {
-		if (!class_exists('Product')) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		}
 		$prod = new Product($db);
 		$prod->fetch($idprod);
 		return $prod->tva_npr;
@@ -14011,7 +13993,6 @@ function getElementProperties($elementType)
 
 	// Add  hook
 	if (!is_object($hookmanager)) {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 		$hookmanager = new HookManager($db);
 	}
 	$hookmanager->initHooks(array('elementproperties'));
@@ -14851,8 +14832,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 	global $param, $massactionbutton;
 
-	require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
-
 	// Check parameters
 	if (!is_object($filterobj) && !is_object($objcon)) {
 		dol_print_error(null, 'BadParameter');
@@ -15168,10 +15147,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
 		$formactions = new FormActions($db);
 
@@ -15269,7 +15245,6 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 			$out .= getTitleFieldOfList($tmp);
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($db);
 		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
 
@@ -15652,7 +15627,6 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 	global $action, $object;
 
 	if (!is_object($langs)) {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
 		$langs->setDefaultLang();
 	}
@@ -15678,7 +15652,6 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 
 	if (empty($showonlymessage)) {
 		if (empty($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));

@@ -30,8 +30,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 
 /**
  *	Class to generate event report
@@ -205,7 +204,6 @@ class pdf_standard_actions
 		if (file_exists($dir)) {
 			// Add pdfgeneration hook
 			if (!is_object($hookmanager)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 				$hookmanager = new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('pdfgeneration'));
@@ -253,7 +251,6 @@ class pdf_standard_actions
 
 			// Add pdfgeneration hook
 			if (!is_object($hookmanager)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 				$hookmanager = new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('pdfgeneration'));

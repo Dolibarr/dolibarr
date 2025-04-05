@@ -31,10 +31,10 @@
  *	\brief      File of class to generate evaluation report from standard model
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/hrm/modules_evaluation.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 /**
  *	Class to generate Evaluation Pdf based on standard model
@@ -215,7 +215,6 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			if (file_exists($dir)) {
 				// Add pdfgeneration hook
 				if (!is_object($hookmanager)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
@@ -623,7 +622,6 @@ class pdf_standard_evaluation extends ModelePDFEvaluation
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities('Employee').' : '.$outputlangs->convToOutputCharset(ucfirst($employee->firstname) . ' ' . strtoupper($employee->lastname));
 
 			// Position
-			include_once DOL_DOCUMENT_ROOT.'/hrm/class/job.class.php';
 			$job = new Job($db);
 			$job->fetch($object->fk_job);
 			$carac_emetteur .= ($carac_emetteur ? "\n" : '').$outputlangs->transnoentities('JobProfile').' : '.$outputlangs->convToOutputCharset($job->label);

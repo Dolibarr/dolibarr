@@ -24,7 +24,6 @@
  *      \brief      File to provide printing with PrintIPP
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
 /**
  *   Class to provide printing with PrintIPP

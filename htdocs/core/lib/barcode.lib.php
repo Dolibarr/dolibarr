@@ -362,7 +362,6 @@ function barcode_encode_genbarcode($code, $encoding)
 	$outputfile = $conf->user->dir_temp.'/genbarcode.tmp'; // File used with popen method
 
 	// Execute a CLI
-	include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
 	$result = $utils->executeCLI($fullcommandclear, $outputfile);
 

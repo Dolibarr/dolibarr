@@ -25,8 +25,6 @@
  *		\brief      Module for generating the display of the shipment box
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last shipments
@@ -68,10 +66,6 @@ class box_shipments extends ModeleBoxes
 		$langs->loadLangs(array('orders', 'sendings'));
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 		$shipmentstatic = new Expedition($this->db);
 		$orderstatic = new Commande($this->db);

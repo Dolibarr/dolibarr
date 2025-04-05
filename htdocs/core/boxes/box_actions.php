@@ -26,8 +26,6 @@
  *	\brief      Module to build box for events
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 /**
  * Class to manage the box to show last events
  */
@@ -72,8 +70,6 @@ class box_actions extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		$societestatic = new Societe($this->db);
 		$actionstatic = new ActionComm($this->db);
 

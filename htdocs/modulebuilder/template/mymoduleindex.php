@@ -61,7 +61,6 @@ if (!$res) {
 	die("Include of main fails");
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 /**
  * @var Conf $conf

@@ -25,8 +25,6 @@
  *		\brief      Widget for latest sale orders
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last customer orders
@@ -69,9 +67,6 @@ class box_commandes extends ModeleBoxes
 		$langs->load('orders');
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 		$commandestatic = new Commande($this->db);
 		$societestatic = new Societe($this->db);

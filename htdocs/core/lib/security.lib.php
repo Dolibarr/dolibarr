@@ -1097,7 +1097,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 			if (isModEnabled('project') && !$user->hasRight('projet', 'all', 'lire')) {
 				$projectid = $objectid;
 
-				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic = new Project($db);
 				$tmps = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
 
@@ -1119,7 +1118,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 				$task->fetch((int) $objectid);
 				$projectid = $task->fk_project;
 
-				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$projectstatic = new Project($db);
 				$tmps = $projectstatic->getProjectsAuthorizedForUser($user, 0, 1, 0);
 
@@ -1190,7 +1188,6 @@ function checkUserAccessToObject($user, array $featuresarray, $object = 0, $tabl
 		if ($feature === 'agenda' && ((int) $objectid) > 0) {
 			// Also check owner or attendee for users without allactions->read
 			if (/* $objectid > 0 && */ !$user->hasRight('agenda', 'allactions', 'read')) {
-				require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$action = new ActionComm($db);
 				$action->fetch((int) $objectid);
 				if ($action->authorid != $user->id && $action->userownerid != $user->id && !(array_key_exists($user->id, $action->userassigned))) {
@@ -1291,7 +1288,6 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	global $action, $object;
 
 	if (!is_object($langs)) {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 		$langs = new Translate('', $conf);
 		$langs->setDefaultLang();
 	}
@@ -1316,7 +1312,6 @@ function accessforbidden($message = '', $printheader = 1, $printfooter = 1, $sho
 	print '<br>';
 	if (empty($showonlymessage)) {
 		if (empty($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($db);
 			// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 			$hookmanager->initHooks(array('main'));

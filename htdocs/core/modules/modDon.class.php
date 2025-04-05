@@ -27,8 +27,6 @@
  *	\brief      Description and activation file for the module Donation
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-
 
 /**
  *	Class to describe and enable module Donation

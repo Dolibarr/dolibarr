@@ -29,17 +29,7 @@
  * \brief      File of withdrawal receipts class
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/paiementfourn.class.php';
-require_once DOL_DOCUMENT_ROOT . '/salaries/class/salary.class.php';
-require_once DOL_DOCUMENT_ROOT . '/salaries/class/paymentsalary.class.php';
-require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-require_once DOL_DOCUMENT_ROOT . '/user/class/userbankaccount.class.php';
 
 
 /**
@@ -1070,9 +1060,6 @@ class BonPrelevement extends CommonObject
 
 		dol_syslog(__METHOD__ . " Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format." type=".$type." did=".$did." fk_bank_account=".$fk_bank_account." sourcetype=".$sourcetype, LOG_DEBUG);
 
-		require_once DOL_DOCUMENT_ROOT . "/compta/facture/class/facture.class.php";
-		require_once DOL_DOCUMENT_ROOT . "/societe/class/societe.class.php";
-
 		// Check params
 		if ($type != 'bank-transfer') {
 			if (empty($format)) {
@@ -1226,9 +1213,6 @@ class BonPrelevement extends CommonObject
 
 		if (!$error) {
 			// Make some checks
-			require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-			require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 
 			$tmpsoc = new Societe($this->db);

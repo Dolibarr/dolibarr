@@ -29,7 +29,6 @@
  *	\brief      File with Universal ref numbering module for takepos
  */
 
-dol_include_once('/core/modules/takepos/modules_takepos.php');
 
 /**
  *	Class to manage ref numbering of takepos cards with rule universal.

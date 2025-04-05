@@ -117,7 +117,6 @@ function commande_prepare_head(Commande $object)
 	}
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->commande->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
@@ -324,7 +323,6 @@ function getCustomerOrderPieChart($socid = 0)
 		if (!empty($conf->use_javascript_ajax)) {
 			$result .= '<tr class="oddeven"><td align="center" colspan="2">';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
 			$dolgraph->SetDataColor(array_values($colorseries));

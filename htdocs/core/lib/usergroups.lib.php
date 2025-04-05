@@ -179,7 +179,6 @@ function user_prepare_head(User $object)
 
 		// Attached files
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$upload_dir = $conf->user->dir_output."/".$object->id;
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $object->element, $object->id);
@@ -348,8 +347,6 @@ function user_admin_prepare_head()
 function showSkins($fuser, $edit = 0, $foruserprofile = false)
 {
 	global $conf, $langs, $db, $form;
-
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 	$formother = new FormOther($db);
 

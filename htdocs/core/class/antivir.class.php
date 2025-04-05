@@ -88,7 +88,6 @@ class AntiVir
 		// Create a clean fullcommand
 		dol_syslog("AntiVir::dol_avscan_file Run command=".$fullcommand." with safe_mode ".($safemode ? "on" : "off"));
 		// Run CLI command.
-		include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 		$utils = new Utils($this->db);
 		$outputfile = $conf->user->dir_temp.'/antivir.tmp';
 

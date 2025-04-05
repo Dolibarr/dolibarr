@@ -22,8 +22,6 @@
  *      \ingroup    tax
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
 
 /**
  *	Class to manage local tax
@@ -542,8 +540,6 @@ class Localtax extends CommonObject
 				$ok = 1;
 				if (isModEnabled("bank")) {
 					// Insertion dans llx_bank
-					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 					$acc = new Account($this->db);
 					$result = $acc->fetch($this->accountid);
 					if ($result <= 0) {

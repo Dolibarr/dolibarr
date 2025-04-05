@@ -24,7 +24,7 @@
  *     \ingroup     ticket
  *     \brief       This box shows latest modified tickets
  */
-require_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+
 
 /**
  * Class to manage the box to show last modified tickets
@@ -64,8 +64,6 @@ class box_last_modified_ticket extends ModeleBoxes
 		global $user, $langs;
 
 		$this->max = $max;
-
-		require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
 
 		$text = $langs->trans("BoxLastModifiedTicketDescription", $max);
 		$this->info_box_head = array(

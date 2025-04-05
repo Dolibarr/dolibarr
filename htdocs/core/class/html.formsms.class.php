@@ -23,7 +23,6 @@
  *       \ingroup    core
  *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**

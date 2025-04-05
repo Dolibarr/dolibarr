@@ -25,8 +25,6 @@
  *		\brief      Module to generated widget of suspense account
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show suspense account
@@ -62,8 +60,6 @@ class box_accountancy_suspense_account extends ModeleBoxes
 	public function loadBox($max = 1)
 	{
 		global $user, $langs, $conf;
-
-		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 		//$bookkeepingstatic = new BookKeeping($this->db);
 

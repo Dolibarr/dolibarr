@@ -32,8 +32,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-require_once DOL_DOCUMENT_ROOT . '/core/modules/import/modules_import.php';
-
 
 /**
  *	Class to import Excel files
@@ -526,8 +524,7 @@ class ImportXlsx extends ModeleImports
 											$param_array = array('', $newval);
 											if ($class == 'AccountingAccount') {
 												//var_dump($arrayrecord[0]['val']);
-												/*include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancysystem.class.php';
-												$tmpchartofaccount = new AccountancySystem($this->db);
+												/*$tmpchartofaccount = new AccountancySystem($this->db);
 												$tmpchartofaccount->fetch(getDolGlobalInt('CHARTOFACCOUNTS'));
 												//var_dump($tmpchartofaccount->ref.' - '.$arrayrecord[0]['val']);
 												if ((! (getDolGlobalInt('CHARTOFACCOUNTS') > 0)) || $tmpchartofaccount->ref != $arrayrecord[0]['val'])

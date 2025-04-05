@@ -524,9 +524,6 @@ function getRandomPassword($generic = false, $replaceambiguouschars = null, $len
 		}
 	} elseif (getDolGlobalString('USER_PASSWORD_GENERATED')) {
 		$nomclass = "modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-		$nomfichier = $nomclass.".class.php";
-		//print DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomclass;
-		require_once DOL_DOCUMENT_ROOT."/core/modules/security/generate/".$nomfichier;
 		$genhandler = new $nomclass($db, $conf, $langs, $user);
 		'@phan-var-force ModeleGenPassword $genhandler';
 		$generated_password = $genhandler->getNewGeneratedPassword();

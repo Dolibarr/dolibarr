@@ -25,8 +25,6 @@
  * \brief      Module to generate box of suppliers
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last suppliers
@@ -68,7 +66,6 @@ class box_fournisseurs extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$this->info_box_head = array(

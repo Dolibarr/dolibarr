@@ -30,15 +30,11 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
 
 /**
  * @var Conf $conf
@@ -118,7 +114,6 @@ if (empty($reshook)) {
 		if ($id_bankaccount != getDolGlobalInt($default_account)) {
 			$res = dolibarr_set_const($db, $default_account, $id_bankaccount, 'chaine', 0, '', $conf->entity); // Set as default
 		}
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bank = new Account($db);
 		$bank->fetch(getDolGlobalInt($default_account));
 		// ICS is not mandatory with payment by bank transfer
@@ -556,13 +551,6 @@ if ($resql) {
 	print '</tr>';
 
 	if ($num) {
-		if ($sourcetype != 'salary') {
-			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
-		} else {
-			require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
-			require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-		}
-
 		while ($i < $num && $i < $limit) {
 			$obj = $db->fetch_object($resql);
 			if ($sourcetype != 'salary') {

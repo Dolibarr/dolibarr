@@ -24,7 +24,7 @@
  * \ingroup    fournisseurs
  * \brief      Module that generates the latest supplier orders box
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+
 
 /**
  * Class that manages the box showing latest supplier orders
@@ -67,9 +67,7 @@ class box_supplier_orders extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$supplierorderstatic = new CommandeFournisseur($this->db);
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 		$thirdpartystatic = new Fournisseur($this->db);
 
 		$text = $langs->trans("BoxTitleLatest".(getDolGlobalString('MAIN_LASTBOX_ON_OBJECT_DATE') ? "" : "Modified")."SupplierOrders", $max);

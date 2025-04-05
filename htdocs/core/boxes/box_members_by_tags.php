@@ -26,8 +26,6 @@
  *	\brief      Module to show box of members by tags
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show (last modified) members by tags
@@ -75,7 +73,6 @@ class box_members_by_tags extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
 		$staticmember = new Adherent($this->db);
 
 		$now = dol_now();
@@ -85,8 +82,6 @@ class box_members_by_tags extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByTags").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
 		if ($user->hasRight('adherent', 'lire')) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
-			require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 
 			// Show array

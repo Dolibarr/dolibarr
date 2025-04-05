@@ -27,8 +27,6 @@
  * \brief      File containing class for numbering model of BOMs advanced
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/bom/modules_bom.php';
-
 
 /**
  *	Class to manage customer Bom numbering rules advanced

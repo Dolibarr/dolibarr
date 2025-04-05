@@ -24,8 +24,6 @@
  * 		\brief      Module de generation de l'affichage de la box contracts
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last contracts
@@ -65,8 +63,6 @@ class box_contracts extends ModeleBoxes
 		global $user, $langs, $conf;
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 		$this->info_box_head = array(
 			'text' => '<span class="valignmiddle">'.$langs->trans("BoxTitleLastContracts", $max).'</span><a class="paddingleft valignmiddle" href="'.DOL_URL_ROOT.'/contrat/list.php?sortfield=c.tms&sortorder=DESC"><span class="badge">...</span></a>'

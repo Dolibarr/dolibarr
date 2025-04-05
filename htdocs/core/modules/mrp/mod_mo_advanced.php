@@ -28,8 +28,6 @@
  * \brief      File containing class for numbering model of MOs advanced
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/mrp/modules_mo.php';
-
 
 /**
  *	Class to manage MO numbering rules advanced
@@ -103,9 +101,6 @@ class mod_mo_advanced extends ModeleNumRefMos
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 		$mo = new Mo($db);
 		$mo->initAsSpecimen();

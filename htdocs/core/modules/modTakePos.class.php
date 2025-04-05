@@ -25,8 +25,6 @@
  *  \ingroup    takepos
  *  \brief      Description and activation file for the module TakePos
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -330,7 +328,6 @@ class modTakePos extends DolibarrModules
 
 		// Create cash account CASH-POS / DefaultCashPOSLabel if not exists
 		if (!getDolGlobalInt('CASHDESK_ID_BANKACCOUNT_CASH1')) {
-			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$cashaccount = new Account($this->db);
 			$searchaccountid = $cashaccount->fetch(0, "CASH-POS");
 			if ($searchaccountid == 0) {

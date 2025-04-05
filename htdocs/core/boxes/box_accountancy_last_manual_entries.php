@@ -25,8 +25,6 @@
  *		\brief      Module to generated widget of last manual entries
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last manual entries
@@ -62,8 +60,6 @@ class box_accountancy_last_manual_entries extends ModeleBoxes
 	public function loadBox($max = 5)
 	{
 		global $user, $langs, $conf;
-
-		include_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 
 		$bookkeepingstatic = new BookKeeping($this->db);
 

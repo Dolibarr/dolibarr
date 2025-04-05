@@ -24,7 +24,7 @@
  *  \ingroup    order
  *  \brief      File of class to manage Sales Order numbering rules Marbre
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
+
 
 /**
  *	Class to manage Sales Order numbering rules Marbre

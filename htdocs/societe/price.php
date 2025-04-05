@@ -30,13 +30,11 @@
  * \brief   Page to show product prices by customer
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+
 
 /**
  * @var Conf $conf
@@ -49,7 +47,6 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  */
 
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 	$prodcustprice = new ProductCustomerPrice($db);
 }
 

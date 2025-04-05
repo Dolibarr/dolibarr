@@ -23,8 +23,6 @@
  *	\brief      Description and activation file for the module geoipmaxmind
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-
 
 /**
  *	Class to describe and enable module Import

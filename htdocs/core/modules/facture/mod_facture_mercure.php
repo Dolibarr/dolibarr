@@ -29,7 +29,6 @@
  *	\ingroup    invoice
  *	\brief      File containing class for numbering module Mercure
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 
 
 /**

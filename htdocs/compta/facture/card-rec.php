@@ -34,17 +34,8 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-if (isModEnabled('project')) {
-	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	//include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-}
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
 
 /**
  * @var Conf $conf
@@ -1207,7 +1198,6 @@ if ($action == 'create') {
 
 		// Model pdf
 		print "<tr><td>".$langs->trans('Model')."</td><td>";
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$list = ModelePDFFactures::liste_modeles($db);
 		print img_picto('', 'generic', 'class="pictofixedwidth"');
 		// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
@@ -1563,7 +1553,6 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmodelpdf') {
-			include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 			$list = array();
 			$models = ModelePDFFactures::liste_modeles($db);
 			foreach ($models as $k => $model) {
@@ -1850,7 +1839,6 @@ if ($action == 'create') {
 		$morehtmlcenter = '';
 
 		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$morehtmlcenter = '';
 		$somethingshown = $formactions->showactions($object, $object->element, (is_object($object->thirdparty) ? $object->thirdparty->id : 0), 1, '', $MAXEVENT, '', $morehtmlcenter);

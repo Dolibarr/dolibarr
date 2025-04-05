@@ -24,7 +24,7 @@
  *	\ingroup    invoices
  *	\brief      Module de generation de l'affichage de la box factures
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
+
 
 /**
  * Class to manage the box to show last invoices
@@ -64,9 +64,6 @@ class box_factures extends ModeleBoxes
 		global $conf, $user, $langs;
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
 		$facturestatic = new Facture($this->db);
 		$societestatic = new Societe($this->db);

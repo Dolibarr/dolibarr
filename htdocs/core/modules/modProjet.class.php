@@ -30,7 +30,6 @@
  *	\ingroup    projet
  *	\brief      Description and activation file for the module project
  */
-include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**

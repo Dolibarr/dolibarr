@@ -23,10 +23,9 @@
  *    \brief      Page of Balance sheet
  */
 
-
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
 
 /**
  * @var Conf $conf

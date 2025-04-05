@@ -26,8 +26,6 @@
  *	\brief      Module to show box of members
  */
 
-include_once DOL_DOCUMENT_ROOT . '/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last modofied members
@@ -75,8 +73,6 @@ class box_members_by_type extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/adherents/class/adherent_type.class.php';
 		$staticmember = new Adherent($this->db);
 
 		$now = dol_now();
@@ -86,7 +82,6 @@ class box_members_by_type extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleMembersByType").($numberyears ? ' ('.($year - $numberyears).' - '.$year.')' : ''));
 
 		if ($user->hasRight('adherent', 'lire')) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherentstats.class.php';
 			$stats = new AdherentStats($this->db, $user->socid, $user->id);
 			// Show array
 			$sumMembers = $stats->countMembersByTypeAndStatus($numberyears);

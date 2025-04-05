@@ -26,10 +26,6 @@
  */
 
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-
-
 /**
  * Class to manage the box to show last prospects
  */

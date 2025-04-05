@@ -24,7 +24,6 @@
  *  \ingroup    hrm
  *  \brief      File of class to manage Evaluation numbering rules standard
  */
-require_once DOL_DOCUMENT_ROOT . '/core/modules/hrm/modules_evaluation.php';
 
 
 /**

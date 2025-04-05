@@ -23,7 +23,6 @@
  *      \ingroup    fournisseur
  *      \brief      Widget to show remain to get on purchase invoices
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -63,9 +62,6 @@ class box_factures_fourn_imp extends ModeleBoxes
 
 		$this->max = $max;
 		//$this->max = 1000;
-
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
 		$facturestatic = new FactureFournisseur($this->db);
 		$thirdpartystatic = new Fournisseur($this->db);

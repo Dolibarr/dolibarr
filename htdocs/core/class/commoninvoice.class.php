@@ -27,8 +27,6 @@
  *       \brief      File of the superclass of invoice classes (customer and supplier)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
 
 /**
  * 	Superclass for invoice classes
@@ -369,8 +367,6 @@ abstract class CommonInvoice extends CommonObject
 			return 0.0;
 		}*/
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumDepositsUsed($this, $multicurrency);
 
@@ -397,8 +393,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getSumCreditNotesUsed($multicurrency = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumCreditNotesUsed($this, $multicurrency);
 		if ($result >= 0) {
@@ -423,8 +417,6 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getSumFromThisCreditNotesNotUsed($multicurrency = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getSumFromThisCreditNotesNotUsed($this, $multicurrency);
 		if ($result >= 0) {
@@ -1122,7 +1114,6 @@ abstract class CommonInvoice extends CommonObject
 		dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
 
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
-			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
 			$bac->fetch($ribId, '', $this->socid);
 
@@ -1284,7 +1275,6 @@ abstract class CommonInvoice extends CommonObject
 
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			// Get the default payment mode for BAN payment of the third party
-			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);	// Table societe_rib
 			$result = $bac->fetch(0, '', $this->socid, 1, 'ban');
 			if ($result <= 0 || empty($bac->id)) {
@@ -1323,7 +1313,6 @@ abstract class CommonInvoice extends CommonObject
 				$amount = $obj->amount;
 
 				if (is_numeric($amount) && $amount != 0) {
-					require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 					$companypaymentmode = new CompanyPaymentMode($this->db);	// table societe_rib
 					$companypaymentmode->fetch($bac->id);
 
@@ -1365,7 +1354,6 @@ abstract class CommonInvoice extends CommonObject
 					$this->db->begin();
 
 					// Create a prelevement_bon
-					require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 					$bon = new BonPrelevement($this->db);
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
@@ -1419,7 +1407,7 @@ abstract class CommonInvoice extends CommonObject
 								$thirdparty = new Societe($this->db);
 								$resultthirdparty = $thirdparty->fetch($this->socid);
 
-								include_once DOL_DOCUMENT_ROOT . '/stripe/class/stripe.class.php';        // This include the include of htdocs/stripe/config.php
+								// This include the include of htdocs/stripe/config.php
 								// So it inits or erases the $stripearrayofkeysbyenv
 								$stripe = new Stripe($this->db);
 
@@ -1676,7 +1664,6 @@ abstract class CommonInvoice extends CommonObject
 
 								if ($description) {
 									dol_syslog("* Record event for credit transfer or direct debit request result - " . $description);
-									require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 									// Insert record of payment (success or error)
 									$actioncomm = new ActionComm($this->db);
@@ -1839,7 +1826,6 @@ abstract class CommonInvoice extends CommonObject
 		];
 
 		// Add the bank account information
-		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bankAccount = new Account($this->db);
 		if ($this->fk_account > 0) {
 			$bankAccount->fetch($this->fk_account);
@@ -1964,7 +1950,6 @@ abstract class CommonInvoice extends CommonObject
 			$complementaryinfo .= '/30/'.$this->thirdparty->tva_intra;
 		}
 
-		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$bankaccount = new Account($this->db);
 
 		// Header
@@ -2041,9 +2026,6 @@ abstract class CommonInvoice extends CommonObject
 	}
 }
 
-
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
  *	Parent class of all other business classes for details of elements (invoices, contracts, proposals, orders, ...)

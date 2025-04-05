@@ -25,8 +25,6 @@
  * Put detailed description here.
  */
 
-include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
-
 
 /**
  * Class to manage the box

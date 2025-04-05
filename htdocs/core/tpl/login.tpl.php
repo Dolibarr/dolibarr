@@ -176,7 +176,7 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 	if ($conf->file->main_authentication === 'openid_connect') {
 		// Avoid redirection hell
 		if (empty(GETPOST('openid_mode'))) {
-			dol_include_once('/core/lib/openid_connect.lib.php');
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
 			header("Location: " . openid_connect_get_url(), true, 302);
 		} elseif (!empty($_SESSION['dol_loginmesg'])) {
 			// Show login error without the login form
@@ -450,7 +450,7 @@ if ($forgetpasslink || $helpcenterlink) {
 }
 
 if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->main_authentication) && preg_match('/openid/', $conf->file->main_authentication)) {
-	dol_include_once('/core/lib/openid_connect.lib.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/openid_connect.lib.php';
 	$langs->load("users");
 
 	print '<div class="center" style="margin-top: 20px; margin-bottom: 10px">';

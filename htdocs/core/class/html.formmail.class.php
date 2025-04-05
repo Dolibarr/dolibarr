@@ -29,7 +29,6 @@
  *       \ingroup    core
  *       \brief      Fichier de la class permettant la generation du formulaire html d'envoi de mail unitaire
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 
 
 /**
@@ -473,14 +472,12 @@ class FormMail extends Form
 		global $conf, $langs, $user, $hookmanager, $form;
 
 		// Required to show preview wof mail attachments
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 		$formfile = new FormFile($this->db);
 
 		if (!is_object($form)) {
 			$form = new Form($this->db);
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 		$formai = new FormAI($this->db);
 
 		// Load translation files required by the page
@@ -1122,7 +1119,6 @@ class FormMail extends Form
 					}
 
 					// Editor wysiwyg
-					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 					if ($this->withfckeditor == -1) {
 						if (getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
 							$this->withfckeditor = 1;
@@ -1504,7 +1500,6 @@ class FormMail extends Form
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/emaillayout.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
 		// Fetch blogs
 		$websitepage = new WebsitePage($this->db);
@@ -2088,8 +2083,6 @@ class FormMail extends Form
 	}
 }
 
-
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 /**
  * Object of table llx_c_email_templates

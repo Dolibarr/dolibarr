@@ -33,11 +33,9 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
 
 /**
  * @var Conf $conf
@@ -407,7 +405,6 @@ if ($result) {
 					print '<br>';
 				}
 				if ($links[$key]['type'] == 'payment') {
-					require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 					$paymenttmp = new Paiement($db);
 					$paymenttmp->fetch($links[$key]['url_id']);
 					$paymenttmp->ref = $langs->trans("Payment").' '.$paymenttmp->ref;
@@ -417,7 +414,6 @@ if ($result) {
 					print '</a>';*/
 					print $paymenttmp->getNomUrl(1);
 				} elseif ($links[$key]['type'] == 'payment_supplier') {
-					require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 					$paymenttmp = new PaiementFourn($db);
 					$paymenttmp->fetch($links[$key]['url_id']);
 					$paymenttmp->ref = $langs->trans("Payment").' '.$paymenttmp->ref;
@@ -515,7 +511,6 @@ if ($result) {
 			$form->select_types_paiements($objp->fk_type, "value", '', 2);
 			print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
 			if ($objp->receiptid) {
-				include_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 				$receipt = new RemiseCheque($db);
 				$receipt->fetch($objp->receiptid);
 				print ' &nbsp; &nbsp; '.$langs->trans("CheckReceipt").': '.$receipt->getNomUrl(2);

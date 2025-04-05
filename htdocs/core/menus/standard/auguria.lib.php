@@ -23,8 +23,6 @@
  *  \file		htdocs/core/menus/standard/auguria.lib.php
  *  \brief		Library for file auguria menus
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
-
 
 
 /**
@@ -368,8 +366,6 @@ function print_left_auguria_menu($db, $menu_array_before, $menu_array_after, &$t
 
 	// We update newmenu for special dynamic menus
 	if (isModEnabled('bank') && $user->hasRight('banque', 'lire') && $mainmenu == 'bank') {	// Entry for each bank account
-		include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php'; // Required for to get Account::TYPE_CASH for example
-
 		$sql = "SELECT rowid, label, courant, rappro, courant";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql .= " WHERE entity = ".$conf->entity;

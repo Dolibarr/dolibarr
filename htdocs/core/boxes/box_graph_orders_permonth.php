@@ -22,7 +22,6 @@
  *	\ingroup    orders
  *	\brief      Box to show graph of orders per month
  */
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
 
 
 /**
@@ -66,7 +65,6 @@ class box_graph_orders_permonth extends ModeleBoxes
 
 		$refreshaction = 'refresh_'.$this->boxcode;
 
-		//include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		//$commandestatic=new Commande($this->db);
 
 		$startmonth = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
@@ -106,8 +104,6 @@ class box_graph_orders_permonth extends ModeleBoxes
 			$param_shownb = 'DOLUSER_box_'.$this->boxcode.'_shownb';
 			$param_showtot = 'DOLUSER_box_'.$this->boxcode.'_showtot';
 
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-			include_once DOL_DOCUMENT_ROOT.'/commande/class/commandestats.class.php';
 			$autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 			if (in_array('DOLUSER_box_'.$this->boxcode, $autosetarray)) {
 				$endyear = GETPOSTINT($param_year);

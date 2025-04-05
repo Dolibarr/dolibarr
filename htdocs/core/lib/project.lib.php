@@ -28,7 +28,6 @@
  * \brief      Functions used by project module
  * \ingroup    project
  */
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 
 /**
@@ -80,7 +79,6 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbTasks = $dataretrieved;
 		} else {
-			require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 			$taskstatic = new Task($db);
 			$nbTasks = count($taskstatic->getTasksArray(null, null, $project->id, 0, 0));
 			dol_setcache($cachekey, $nbTasks, 120);	// If setting cache fails, this is not a problem, so we do not test result.
@@ -214,7 +212,6 @@ function project_prepare_head(Project $project, $moreparam = '')
 	}
 
 	if (isModEnabled('ticket') && $user->hasRight('ticket', 'read')) {
-		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$Tickettatic = new Ticket($db);
 		$nbTicket = $Tickettatic->getCountOfItemsLinkedByObjectID($project->id, 'fk_project', 'ticket');
 		$head[$h][0] = DOL_URL_ROOT.'/ticket/list.php?projectid='.((int) $project->id);
@@ -240,7 +237,6 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbConfOrBooth = $dataretrieved;
 		} else {
-			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 			$conforbooth = new ConferenceOrBooth($db);
 			$result = $conforbooth->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $project->id).")");
 			//,
@@ -256,7 +252,6 @@ function project_prepare_head(Project $project, $moreparam = '')
 		if (!is_null($dataretrieved)) {
 			$nbAttendees = $dataretrieved;
 		} else {
-			require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 			$conforboothattendee = new ConferenceOrBoothAttendee($db);
 			$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $project->id).')');
 
@@ -312,7 +307,6 @@ function project_prepare_head(Project $project, $moreparam = '')
 		$totalAttached = $dataretrieved;
 	} else {
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$upload_dir = $conf->project->multidir_output[empty($project->entity) ? 1 : $project->entity]."/".dol_sanitizeFileName($project->ref);
 		$nbFiles = count(dol_dir_list($upload_dir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 		$nbLinks = Link::count($db, $project->element, $project->id);
@@ -443,7 +437,6 @@ function task_prepare_head($object)
 	$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/document.php?id='.$object->id.(GETPOST('withproject') ? '&withproject=1' : '');
 	$filesdir = $conf->project->multidir_output[$object->entity]."/".dol_sanitizeFileName($object->project->ref).'/'.dol_sanitizeFileName($object->ref);
 	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	include_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$nbFiles = count(dol_dir_list($filesdir, 'files', 0, '', '(\.meta|_preview.*\.png)$'));
 	$nbLinks = Link::count($db, $object->element, $object->id);
 	$head[$h][1] = $langs->trans('Documents');
@@ -2574,8 +2567,6 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks 
 	global $theme_datacolor;
 
 	$maxofloop = (!getDolGlobalString('MAIN_MAXLIST_OVERLOAD') ? 500 : $conf->global->MAIN_MAXLIST_OVERLOAD);
-
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 	$listofstatus = array_keys($listofoppstatus);
 

@@ -756,7 +756,6 @@ abstract class CommonDocGenerator
 			$bank_account = null;
 
 			if (property_exists($object, 'fk_account') && $object->fk_account > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 				$bank_account = new Account($this->db);
 				$bank_account->fetch($object->fk_account);
 			}
@@ -950,7 +949,6 @@ abstract class CommonDocGenerator
 		// Retrieve extrafields
 		$extrafieldkey = $line->table_element;
 		$array_key = "line";
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extrafields->fetch_name_optionals_label($extrafieldkey, true);
 		$line->fetch_optionals();

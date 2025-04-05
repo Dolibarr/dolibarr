@@ -19,10 +19,6 @@
  */
 
 
-// Load Dolibarr Environment
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
-
-
 /**
  *	Class to manage a list of personalised recipients for mailing feature
  */
@@ -200,7 +196,6 @@ class mailing_eventorganization extends MailingTargets
 
 		$langs->load("companies");
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 		$formproject = new FormProjets($this->db);
 
 		$s = img_picto($langs->trans("OrganizedEvent"), 'project', 'class="pictofixedwidth"');

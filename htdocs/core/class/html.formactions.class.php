@@ -176,8 +176,6 @@ class FormActions
 	{
 		global $langs, $user, $hookmanager;
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 		$sortfield = 'a.datep,a.id';
 		$sortorder = 'DESC,DESC';
 
@@ -378,8 +376,6 @@ class FormActions
 			$form = new Form($this->db);
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 		$caction = new CActionComm($this->db);
 
 		// Suggest a list with manual events or all auto events

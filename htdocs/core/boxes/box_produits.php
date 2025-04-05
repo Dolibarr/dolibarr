@@ -25,9 +25,6 @@
  *	\brief      Module to generate box of last products/services
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-
 
 /**
  * Class to manage the box to show last products
@@ -169,7 +166,6 @@ class box_produits extends ModeleBoxes
 							//Parse the dynamic price
 							$productstatic->fetch($objp->rowid, '', '', '1');
 
-							require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 							$priceparser = new PriceParser($this->db);
 							$price_result = $priceparser->parseProduct($productstatic);
 							if ($price_result >= 0) {

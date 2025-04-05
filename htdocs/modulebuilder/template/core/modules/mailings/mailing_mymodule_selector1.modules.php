@@ -9,7 +9,6 @@
  * Code that need to be changed in this file are marked by "CHANGE THIS" tag.
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
 dol_include_once("/mymodule/class/myobject.class.php");
 
 

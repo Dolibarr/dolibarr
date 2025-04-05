@@ -437,7 +437,6 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 
 			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename)) {     // If not a tmp file
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
-				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($db);
 
 				// Add entry into database
@@ -859,7 +858,6 @@ function dol_copy($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 			//var_dump($rel_filetorenamebefore.' - '.$rel_filetocopyafter);exit;
 
 			dol_syslog("Try to copy also entries in database for: ".$rel_filetocopyafter, LOG_DEBUG);
-			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 
 			$ecmfiletarget = new EcmFiles($db);
 			$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetocopyafter);
@@ -1112,7 +1110,6 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 				//var_dump($rel_filetorenamebefore.' - '.$rel_filetorenameafter);exit;
 
 				dol_syslog("Try to rename also entries in database for full relative path before = ".$rel_filetorenamebefore." after = ".$rel_filetorenameafter, LOG_DEBUG);
-				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 
 				$ecmfiletarget = new EcmFiles($db);
 				$resultecmtarget = $ecmfiletarget->fetch(0, '', $rel_filetorenameafter);
@@ -1320,9 +1317,6 @@ function dolCheckVirus($src_file, $dest_file = '')
 	}
 
 	if (getDolGlobalString('MAIN_ANTIVIRUS_COMMAND')) {
-		if (!class_exists('AntiVir')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/antivir.class.php';
-		}
 		$antivir = new AntiVir($db);
 		$result = $antivir->dol_avscan_file($src_file);
 		if ($result < 0) {	// If virus or error, we stop here
@@ -1592,7 +1586,6 @@ function dol_delete_file($file, $disableglob = 0, $nophperrors = 0, $nohook = 0,
 								$rel_filetodelete = preg_replace('/\.noexe$/', '', $rel_filetodelete);
 
 								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
-								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 								$ecmfile = new EcmFiles($db);
 								$result = $ecmfile->fetch(0, '', $rel_filetodelete);
 								if ($result >= 0 && $ecmfile->id > 0) {
@@ -2046,7 +2039,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 
 					// Update session
 					if (empty($updatesessionordb)) {
-						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 						$formmail->trackid = $trackid;
 						$formmail->add_attached_files($destfull, $destfile, $TFile['type'][$i]);
@@ -2098,7 +2090,6 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 			setEventMessages($langs->trans("ErrorFailedToCreateDir", $upload_dir), null, 'errors');
 		}
 	} elseif ($link) {
-		require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 		$linkObject = new Link($db);
 		$linkObject->entity = $conf->entity;
 		$linkObject->url = $link;
@@ -2167,7 +2158,6 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
 				setEventMessages($langs->trans("FileWasRemoved", $filetodelete), null, 'mesgs');
 			}
 			if (empty($donotupdatesession)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->trackid = $trackid;
 				$formmail->remove_attached_files($keytodelete);
@@ -2207,7 +2197,6 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 		$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
 		$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
 
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$ecmfile->filepath = $rel_dir;
 		$ecmfile->filename = $filename;
@@ -2269,7 +2258,6 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 				// Use the method pdftotext to generate a HTML
 				if (preg_match('/pdftotext/i', $useFullTextIndexation)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 					$utils = new Utils($db);
 					$outputfile = $conf->admin->dir_temp.'/tmppdftotext.'.$user->id.'.out'; // File used with popen method
 
@@ -2295,7 +2283,6 @@ function addFileIntoDatabaseIndex($dir, $file, $fullpathorig = '', $mode = 'uplo
 
 				// Use the method docling to generate a .md (https://ds4sd.github.io/docling/)
 				if (preg_match('/docling/i', $useFullTextIndexation)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 					$utils = new Utils($db);
 					$outputfile = $conf->admin->dir_temp.'/tmpdocling.'.$user->id.'.out'; // File used with popen method
 
@@ -2677,7 +2664,6 @@ function dol_uncompress($inputfile, $outputdir)
 
 		return array('error' => 'ErrNoZipEngine');
 	} elseif (in_array($fileinfo["extension"], array('gz', 'bz2', 'zst'))) {
-		include_once DOL_DOCUMENT_ROOT."/core/class/utils.class.php";
 		$utils = new Utils($db);
 
 		dol_mkdir(dol_sanitizePathName($outputdir));
@@ -3066,7 +3052,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 			// If we known $id of holiday, call checkUserAccessToObject to check permission on properties and hierarchy of leave request
 			if ($refname && !$fuser->hasRight('holiday', 'readall') && !preg_match('/^specimen/i', $original_file)) {
-				include_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 				$tmpholiday = new Holiday($db);
 				$tmpholiday->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('holiday'), $tmpholiday, 'holiday', '', '', 'rowid', '');
@@ -3078,7 +3063,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 			// If we known $id of expensereport, call checkUserAccessToObject to check permission on properties and hierarchy of expense report
 			if ($refname && !$fuser->hasRight('expensereport', 'readall') && !preg_match('/^specimen/i', $original_file)) {
-				include_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 				$tmpexpensereport = new ExpenseReport($db);
 				$tmpexpensereport->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('expensereport'), $tmpexpensereport, 'expensereport', '', '', 'rowid', '');
@@ -3156,7 +3140,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on the given agenda event on properties and assigned users
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
-				include_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 				$tmpobject = new ActionComm($db);
 				$tmpobject->fetch((int) $refname);
 				$accessallowed = checkUserAccessToObject($user, array('agenda'), $tmpobject->id, 'actioncomm&societe', 'myactions|allactions', 'fk_soc', 'id', '');
@@ -3337,7 +3320,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
-				include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$tmpproject = new Project($db);
 				$tmpproject->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('projet'), $tmpproject->id, 'projet&project', '', '', 'rowid', '');
@@ -3350,7 +3332,6 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 			$accessallowed = 1;
 			// If we known $id of project, call checkUserAccessToObject to check permission on properties and contact of project
 			if ($refname && !preg_match('/^specimen/i', $original_file)) {
-				include_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 				$tmptask = new Task($db);
 				$tmptask->fetch(0, $refname);
 				$accessallowed = checkUserAccessToObject($user, array('projet_task'), $tmptask->id, 'projet_task&project', '', '', 'rowid', '');

@@ -26,8 +26,6 @@
  * \brief      Module de generation de l'affichage de la box propales
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last proposals
@@ -69,8 +67,6 @@ class box_propales extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-		include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$propalstatic = new Propal($this->db);
 		$societestatic = new Societe($this->db);
 

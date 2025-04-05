@@ -24,7 +24,6 @@
  *  \brief      File of class to manage contract numbering rules Magre
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
 
 /**
  *	Class to manage contract numbering rules Magre
@@ -90,9 +89,6 @@ class mod_contract_magre extends ModelNumRefContracts
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/contrat/class/contrat.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$contract = new Contrat($db);
 		$contract->initAsSpecimen();

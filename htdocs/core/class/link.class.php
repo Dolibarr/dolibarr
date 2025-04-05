@@ -22,7 +22,6 @@
  *	\ingroup    link
  *	\brief      File for link class
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 
 
 /**

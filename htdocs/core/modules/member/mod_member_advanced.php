@@ -24,8 +24,6 @@
  *	\brief      File with class to manage the numbering module Advanced for member references
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_member.class.php';
-
 
 /**
  * 	Class to manage the numbering module Advanced for member references

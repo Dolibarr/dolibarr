@@ -26,8 +26,6 @@
  *  \brief      File of class to manage contract numbering rules Olive
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/contract/modules_contract.php';
-
 
 /**
  * 	Class to manage contract numbering rules Olive

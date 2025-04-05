@@ -26,7 +26,6 @@
  *      \ingroup    expensereport
  *      \brief      Description and activation file for the module ExpenseReport
  */
-include_once DOL_DOCUMENT_ROOT."/core/modules/DolibarrModules.class.php";
 
 
 /**

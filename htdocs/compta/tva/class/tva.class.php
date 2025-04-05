@@ -26,9 +26,6 @@
  *      \ingroup    tax
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
 
 /**
  *  Class to manage VAT - Value-added tax
@@ -670,8 +667,6 @@ class Tva extends CommonObject
 				$ok = 1;
 				if (isModEnabled("bank") && !empty($this->amount)) {
 					// Insert into llx_bank
-					require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 					$acc = new Account($this->db);
 					$result = $acc->fetch($this->accountid);
 					if ($result <= 0) {

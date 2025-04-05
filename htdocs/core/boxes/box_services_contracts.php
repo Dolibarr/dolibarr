@@ -25,8 +25,6 @@
  *      \brief      Widget of sells products
  */
 
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-
 
 /**
  * Class to manage the box to show last contracted products/services lines
@@ -67,8 +65,6 @@ class box_services_contracts extends ModeleBoxes
 		global $user, $langs, $conf;
 
 		$this->max = $max;
-
-		include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 
 		$form = new Form($this->db);
 

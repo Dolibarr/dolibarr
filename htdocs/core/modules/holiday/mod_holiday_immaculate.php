@@ -25,7 +25,6 @@
  *  \brief      File of class to manage holiday numbering rules Immaculate
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/holiday/modules_holiday.php';
 
 /**
  *	Class to manage holiday numbering rules Immaculate
@@ -90,7 +89,6 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	public function getExample()
 	{
 		global $db, $langs, $user;
-		require_once DOL_DOCUMENT_ROOT . '/holiday/class/holiday.class.php';
 
 		$holiday = new Holiday($db);
 		$holiday->initAsSpecimen();
