@@ -28,8 +28,6 @@
  * \brief      File containing class for numbering model of SN advanced
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
-
 
 /**
  *	Class to manage Batch numbering rules advanced
@@ -116,8 +114,6 @@ class mod_sn_advanced extends ModeleNumRefBatch
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$thirdparty = new Societe($db);
 		$thirdparty->initAsSpecimen();

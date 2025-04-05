@@ -26,7 +26,6 @@
  *	\brief      File of class to build ODT documents for tickets
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -210,7 +209,6 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 
 		// Add odtgeneration hook
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));

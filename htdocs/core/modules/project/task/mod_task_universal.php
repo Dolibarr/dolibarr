@@ -24,8 +24,6 @@
  *	\brief      Fichier contenant la class du modele de numerotation de reference de projet Universal
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
-
 
 /**
  * 	Class du modele de numerotation de reference de projet Universal

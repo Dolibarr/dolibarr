@@ -2775,8 +2775,6 @@ class Societe extends CommonObject
 	 */
 	public function getAvailableDiscounts($user = null, $filter = '', $maxvalue = 0, $discount_type = 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-
 		$discountstatic = new DiscountAbsolute($this->db);
 		$result = $discountstatic->getAvailableDiscounts($this, $user, $filter, $maxvalue, $discount_type);
 		if ($result >= 0) {

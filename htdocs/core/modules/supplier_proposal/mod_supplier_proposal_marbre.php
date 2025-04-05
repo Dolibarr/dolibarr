@@ -25,8 +25,6 @@
  *		\brief      File of class to manage commercial proposal numbering rules Marbre
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
-
 
 /**
  * Class to manage the Marbre numbering rule for Request for quotation

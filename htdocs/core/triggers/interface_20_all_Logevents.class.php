@@ -25,7 +25,6 @@
  *  \brief      Trigger file for log events
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 /**
  *  Class of triggers for security audit events
@@ -114,8 +113,6 @@ class InterfaceLogevents extends DolibarrTriggers
 		$this->initEventData(InterfaceLogevents::EVENT_ACTION_DICT[$action], $object);
 
 		// Add entry in event table
-		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
 		$event = new Events($this->db);
 		$event->type = $action;
 		$event->dateevent = $this->event_date;

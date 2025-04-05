@@ -28,50 +28,12 @@
  *	\brief      File of class to build ODT documents for third parties
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doc.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-if (isModEnabled("propal")) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-}
-if (isModEnabled('invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (isModEnabled('invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-}
-if (isModEnabled('order')) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-}
-if (isModEnabled("supplier_invoice")) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-}
-if (isModEnabled("supplier_order")) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-}
-if (isModEnabled('contract')) {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
-if (isModEnabled('intervention')) {
-	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
-if (isModEnabled('agenda')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-}
-if (isModEnabled('shipping')) {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-}
+
 
 /**
  *	Class to build documents using ODF templates generator
@@ -166,7 +128,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 			$array_key.'_statut' => $object->getLibStatut()
 		);
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extrafields->fetch_name_optionals_label($object->table_element, true);
 		$object->fetch_optionals();
@@ -207,7 +168,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 			'task_note_public' => $task->note_public
 		);
 
-		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extrafields->fetch_name_optionals_label($task->table_element, true);
 		$task->fetch_optionals();
@@ -252,7 +212,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 			$ret[$pc.'phone_mobile'] = $ct->phone_mobile;
 
 			// fetch external user extrafields
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 			$extrafields->fetch_name_optionals_label($ct->table_element, true);
 			$extrafields_num = $ct->fetch_optionals();
@@ -507,7 +466,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		// Add odtgeneration hook
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));

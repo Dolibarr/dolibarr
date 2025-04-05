@@ -24,8 +24,6 @@
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**

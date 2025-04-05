@@ -28,7 +28,6 @@
  *              - The class name must be InterfaceMytrigger
  *              - The property name must be Mytrigger
  */
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
@@ -74,7 +73,6 @@ class InterfaceStripe extends DolibarrTriggers
 			return 0;
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
 
 		$ok = 1;

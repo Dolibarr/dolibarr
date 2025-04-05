@@ -20,7 +20,6 @@
  *	\ingroup    thirdparty
  *	\brief      File for class for Thirdparty card controller with individual canvas
  */
-include_once DOL_DOCUMENT_ROOT.'/societe/canvas/actions_card_common.class.php';
 
 
 /**

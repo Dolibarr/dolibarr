@@ -38,8 +38,6 @@ if (empty($conf) || !is_object($conf)) {
 }
 
 
-require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
-
 $form = new Form($db);
 $formresources = new FormResource($db);
 

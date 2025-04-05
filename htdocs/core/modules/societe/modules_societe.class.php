@@ -26,8 +26,6 @@
  *		\ingroup    societe
  *		\brief      File with parent class of submodules to manage numbering and document generation
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
 
 
 /**

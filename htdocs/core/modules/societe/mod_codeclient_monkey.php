@@ -26,8 +26,6 @@
  *       \brief      Fichier de la class des gestion lion des codes clients
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
-
 
 /**
  *	Class permettant la gestion monkey des codes tiers

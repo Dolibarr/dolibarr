@@ -46,7 +46,9 @@ if (!defined('NOREQUIREMENU')) {
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+
+
+
 /**
  * @var Conf $conf
  * @var DoliDB $db

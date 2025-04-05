@@ -27,8 +27,6 @@
  * \brief      File that contains the numbering module rules Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
-
 
 /**
  * Class of file that contains the numbering module rules Saphir
@@ -110,9 +108,6 @@ class mod_propale_saphir extends ModeleNumRefPropales
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$propal = new Propal($db);
 		$propal->initAsSpecimen();

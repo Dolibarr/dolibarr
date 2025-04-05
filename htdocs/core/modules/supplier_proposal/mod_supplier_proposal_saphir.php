@@ -26,8 +26,6 @@
  * \brief      File that contains the numbering module rules Saphir
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_proposal/modules_supplier_proposal.php';
-
 
 /**
  * Class of file that contains the numbering module rules Saphir

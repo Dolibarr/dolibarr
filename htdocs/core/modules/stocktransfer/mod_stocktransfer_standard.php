@@ -25,7 +25,6 @@
  *  \ingroup    stocktransfer
  *  \brief      File of class to manage StockTransfer numbering rules standard
  */
-require_once DOL_DOCUMENT_ROOT . '/core/modules/stocktransfer/modules_stocktransfer.php';
 
 
 /**

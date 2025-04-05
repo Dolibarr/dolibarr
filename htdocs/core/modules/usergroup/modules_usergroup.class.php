@@ -25,8 +25,6 @@
  *  \brief      File with parent class for generating contracts to PDF and File of class to manage contract numbering
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-
 
 /**
  *	Parent class to manage intervention document templates

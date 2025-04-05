@@ -24,9 +24,6 @@
  *		\brief      File to manage captcha generation according to dolibarr native code
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/security/captcha/modules_captcha.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modGeneratePassStandard.class.php';
-
 
 /**
  *	Class to generate a password according to a dolibarr standard rule (12 random chars)

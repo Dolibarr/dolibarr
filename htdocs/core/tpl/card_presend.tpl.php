@@ -156,7 +156,6 @@ if ($action == 'presend') {
 	print dol_get_fiche_head([], '', '', -1);
 
 	// Create form for email
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 
 	$formmail->param['langsmodels'] = (empty($newlang) ? $langs->defaultlang : $newlang);
@@ -376,8 +375,6 @@ if ($action == 'presend') {
 	$contactarr = $tmpobject->liste_contact(-1, 'external', 0, '', 1);
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactstatic = new Contact($db);
 		$tmpcompany = new Societe($db);
 

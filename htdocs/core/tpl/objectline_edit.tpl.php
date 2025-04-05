@@ -173,7 +173,6 @@ $coldisplay++;
 
 	if (!$situationinvoicelinewithparent) {
 		// editor wysiwyg
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = ROWS_2;
 		if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 			$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');
@@ -289,7 +288,6 @@ $coldisplay++;
 		$unit_type = false;
 		// limit unit select to unit type
 		if (!empty($line->fk_unit) && !getDolGlobalString('MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE')) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 			$cUnit = new CUnits($line->db);
 			if ($cUnit->fetch($line->fk_unit) > 0) {
 				if (!empty($cUnit->unit_type)) {

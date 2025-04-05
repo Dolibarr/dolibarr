@@ -35,8 +35,6 @@
  *	\brief      File of Class to generate PDF proposal with Azur template
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
@@ -301,7 +299,6 @@ class pdf_azur extends ModelePDFPropales
 			if (file_exists($dir)) {
 				// Add pdfgeneration hook
 				if (!is_object($hookmanager)) {
-					include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 					$hookmanager = new HookManager($this->db);
 				}
 				$hookmanager->initHooks(array('pdfgeneration'));
@@ -793,8 +790,6 @@ class pdf_azur extends ModelePDFPropales
 
 				//If propal merge product PDF is active
 				if (getDolGlobalString('PRODUIT_PDF_MERGE_PROPAL')) {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
-
 					$already_merged = array();
 					foreach ($object->lines as $line) {
 						if (!empty($line->fk_product) && !(in_array($line->fk_product, $already_merged))) {

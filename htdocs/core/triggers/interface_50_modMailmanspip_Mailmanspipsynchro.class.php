@@ -23,7 +23,6 @@
  *  \ingroup    core
  *  \brief      File to manage triggers Mailman and Spip
  */
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
@@ -63,9 +62,6 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
 		if (empty($conf->mailmanspip) || empty($conf->mailmanspip->enabled)) {
 			return 0; // Module not active, we do nothing
 		}
-
-		require_once DOL_DOCUMENT_ROOT."/mailmanspip/class/mailmanspip.class.php";
-		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		if ($action == 'CATEGORY_LINK') {
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);

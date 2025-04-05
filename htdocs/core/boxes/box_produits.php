@@ -68,7 +68,6 @@ class box_produits extends ModeleBoxes
 
 		$this->max = $max;
 
-		include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$productstatic = new Product($this->db);
 
 		$this->info_box_head = array(

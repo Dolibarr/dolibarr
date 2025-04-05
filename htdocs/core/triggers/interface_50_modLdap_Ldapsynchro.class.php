@@ -24,8 +24,6 @@
  *  \brief      Fichier de gestion des triggers LDAP
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-
 
 /**
  *  Class of triggers for ldap module
@@ -72,9 +70,6 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			dol_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
 			return 0;
 		}
-
-		require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
-		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		$result = 0;
 
@@ -438,7 +433,6 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 						if ($object->typeid > 0) {
-							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
 							$membertype = new AdherentType($this->db);
 							$membertype->fetch($object->typeid);
 							$membertype->listMembersForMemberType('', 1);
@@ -552,8 +546,6 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 					// For member type
 					if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
-						require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
-
 						/*
 						 * Change member info
 						 */
@@ -668,8 +660,6 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 					// For member type
 					if (getDolGlobalString('LDAP_MEMBER_TYPE_ACTIVE') && getDolGlobalInt('LDAP_MEMBER_TYPE_ACTIVE') === Ldap::SYNCHRO_DOLIBARR_TO_LDAP) {
 						if ($object->typeid > 0) {
-							require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent_type.class.php";
-
 							/*
 							 * Remove member in member type
 							 */

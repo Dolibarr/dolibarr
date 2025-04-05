@@ -26,8 +26,6 @@
  *	\brief      File for class for 'orchidee' type numbering the supplier orders
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
-
 
 /**
  *	Class providing the 'Orchidee' numbering models for supplier orders
@@ -111,9 +109,6 @@ class mod_commande_fournisseur_orchidee extends ModeleNumRefSuppliersOrders
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$supplierorder = new CommandeFournisseur($db);
 		$supplierorder->initAsSpecimen();

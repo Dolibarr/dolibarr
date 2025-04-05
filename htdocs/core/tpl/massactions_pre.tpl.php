@@ -93,7 +93,6 @@ if ($massaction == 'preclonetasks') {
 }
 
 if ($massaction == 'preaffecttag' && isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$categ = new Categorie($db);
 	$categ_types = array();
 	$categ_type_array = $categ->getMapList();
@@ -254,7 +253,6 @@ if ($massaction == 'presend') {
 	print dol_get_fiche_head([], '', '');
 
 	// Create mail form
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
 	$formmail->withform = -1;
 	$formmail->fromtype = (GETPOST('fromtype') ? GETPOST('fromtype') : (getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE') ? $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE : 'user'));
@@ -366,7 +364,6 @@ if ($massaction == 'presend') {
 }
 
 if ($massaction == 'edit_extrafields') {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 	$elementtype = $objecttmp->element;
 	/** @var CommonObject $objecttmp */
 	$extrafields = new ExtraFields($db);

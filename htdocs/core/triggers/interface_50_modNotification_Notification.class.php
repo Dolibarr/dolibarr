@@ -24,8 +24,6 @@
  *  \ingroup    notification
  *  \brief      File of class of triggers for notification module
  */
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 
 /**
@@ -76,7 +74,6 @@ class InterfaceNotification extends DolibarrTriggers
 		}
 
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('notification'));
@@ -117,7 +114,6 @@ class InterfaceNotification extends DolibarrTriggers
 		global $hookmanager;
 
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('notification'));

@@ -149,12 +149,10 @@ if (($line->info_bits & 2) == 2) {
 	print '</a>';
 	if ($line->description) {
 		if ($line->description == '(CREDIT_NOTE)' && $line->fk_remise_except > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromCreditNote", $discount->getNomUrl(0));
 		} elseif ($line->description == '(DEPOSIT)' && $line->fk_remise_except > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromDeposit", $discount->getNomUrl(0));
@@ -163,12 +161,10 @@ if (($line->info_bits & 2) == 2) {
 				print ' ('.dol_print_date($discount->datec).')';
 			}
 		} elseif ($line->description == '(EXCESS RECEIVED)' && $objp->fk_remise_except > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessReceived", $discount->getNomUrl(0));
 		} elseif ($line->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fetch($line->fk_remise_except);
 			print($txt ? ' - ' : '').$langs->transnoentities("DiscountFromExcessPaid", $discount->getNomUrl(0));
@@ -292,7 +288,6 @@ $reshook = $hookmanager->executeHooks('objectLineView_ProductSupplier', $paramet
 print $hookmanager->resPrint;
 if (empty($reshook)) {
 	if ($user->hasRight('fournisseur', 'lire') && isset($line->fk_fournprice) && $line->fk_fournprice > 0 && !getDolGlobalString('SUPPLIER_HIDE_SUPPLIER_OBJECTLINES')) {
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 		$productfourn = new ProductFournisseur($this->db);
 		$productfourn->fetch_product_fournisseur_price($line->fk_fournprice);
 		print '<div class="clearboth"></div>';

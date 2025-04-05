@@ -232,7 +232,6 @@ if ($size <= 255 && in_array($type, array('text', 'html'))) {
 if (in_array($type, array_keys($typewecanchangeinto))) {
 	// Combo with list of fields
 	if (empty($formadmin)) {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 		$formadmin = new FormAdmin($db);
 	}
 	print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha') ? GETPOST('type', 'alpha') : $type, $typewecanchangeinto);

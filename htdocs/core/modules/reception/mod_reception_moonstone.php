@@ -24,7 +24,6 @@
  *  \brief      File of class to manage reception numbering rules Moonstone
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/reception/modules_reception.php';
 
 /**
  *	Class to manage reception numbering rules Moonstone

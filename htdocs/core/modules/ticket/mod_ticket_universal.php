@@ -24,7 +24,6 @@
  *    \brief      File with class to manage the numbering module Universal for Ticket references
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
 
 /**
  *  Class to manage the numbering module Universal for Ticket references
@@ -105,9 +104,6 @@ class mod_ticket_universal extends ModeleNumRefTicket
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/ticket/class/ticket.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$ticket = new Ticket($db);
 		$ticket->initAsSpecimen();

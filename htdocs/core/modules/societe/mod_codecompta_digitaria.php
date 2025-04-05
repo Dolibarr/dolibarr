@@ -26,7 +26,6 @@
  *      \ingroup    societe
  *      \brief      File of class to manage accountancy code of thirdparties with Digitaria rules
  */
-require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
 
 
 /**

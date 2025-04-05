@@ -25,7 +25,7 @@
  *  \ingroup    workstation
  *  \brief      File of class to manage Workstation numbering rules standard
  */
-require_once DOL_DOCUMENT_ROOT . '/core/modules/workstation/modules_workstation.php';
+
 
 /**
  * Class to manage the Standard numbering rule for Workstation

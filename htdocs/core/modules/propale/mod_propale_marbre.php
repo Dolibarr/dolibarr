@@ -25,8 +25,6 @@
  *		\brief      File of class to manage commercial proposal numbering rules Marbre
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
-
 
 /**
  *	Class to manage business proposition rules Marbre

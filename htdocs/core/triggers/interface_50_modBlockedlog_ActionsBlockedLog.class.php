@@ -22,8 +22,6 @@
  *  \brief      Trigger file for blockedlog module
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-
 
 /**
  *  Class of triggered functions for agenda module
@@ -73,7 +71,6 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 
 		dol_syslog("Trigger '".$this->name."' for action '".$action."' launched by ".__FILE__.". id=".$object->id);
 
-		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 		$b = new BlockedLog($this->db);
 		$b->loadTrackedEvents();			// GEt the list of tracked events into $b->trackedevents
 

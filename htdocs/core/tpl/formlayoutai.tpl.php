@@ -128,7 +128,6 @@ if ($showlinktolayout) {
 }
 if ($showlinktoai) {
 	if (empty($formai) || $formai instanceof FormAI) {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 		$formai = new FormAI($db);
 	}
 	$out .= $formai->getAjaxAICallFunction();

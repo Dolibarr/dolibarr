@@ -24,8 +24,6 @@
  *   \brief      File containing the Universal project reference numbering model class
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/project/modules_project.php';
-
 
 /**
  * 	Class to manage the numbering module Universal for project references
@@ -112,9 +110,6 @@ class mod_project_universal extends ModeleNumRefProjects
 	public function getExample()
 	{
 		global $db, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$project = new Project($db);
 		$project->initAsSpecimen();

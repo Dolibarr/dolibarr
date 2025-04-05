@@ -29,8 +29,6 @@
  *	\brief      File containing the Tulip Class of numbering models of suppliers invoices references
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
-
 
 /**
  * \class      mod_facture_fournisseur_tulip

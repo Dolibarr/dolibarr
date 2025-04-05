@@ -26,8 +26,6 @@
  *      \brief      File to manage no password generation.
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
-
 
 /**
  *	Class to generate a password according to personal rules

@@ -27,7 +27,7 @@
  * \ingroup agenda
  * \brief Trigger file for company - contactroles
  */
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
+
 
 /**
  * Class of triggered functions for agenda module
@@ -76,7 +76,6 @@ class InterfaceContactRoles extends DolibarrTriggers
 			$socid = (property_exists($object, 'socid') ? $object->socid : $object->fk_soc);
 
 			if (!empty($socid) && $socid > 0) {
-				require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 				$contactdefault = new Contact($this->db);
 				$contactdefault->socid = $socid;
 

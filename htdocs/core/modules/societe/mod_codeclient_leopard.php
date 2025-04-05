@@ -25,8 +25,6 @@
  *       \brief      Fichier de la class des gestion leopard des codes clients
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
-
 
 /**
  *	Class to manage numbering of thirdparties code

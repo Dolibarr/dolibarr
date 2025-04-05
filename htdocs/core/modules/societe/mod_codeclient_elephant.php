@@ -29,8 +29,6 @@
  *       \brief      File of class to manage third party code with elephant rule
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/societe/modules_societe.class.php';
-
 
 /**
  *	Class to manage third party code with elephant rule

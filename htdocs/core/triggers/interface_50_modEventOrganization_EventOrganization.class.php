@@ -23,8 +23,6 @@
  *  \brief      Trigger file for Event Organization module
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-
 
 /**
  *  Class of triggered functions for agenda module

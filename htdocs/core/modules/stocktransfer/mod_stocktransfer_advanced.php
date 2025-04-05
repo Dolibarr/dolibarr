@@ -28,8 +28,6 @@
  * \brief      File containing class for advanced numbering model of StockTransfer
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/modules/stocktransfer/modules_stocktransfer.php';
-
 
 /**
  *	Class to manage customer Bom numbering rules advanced

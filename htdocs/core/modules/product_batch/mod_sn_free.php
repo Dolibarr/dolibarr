@@ -25,7 +25,6 @@
  *       \brief      File containing class for numbering model of SN free
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
 
 /**
  *	\class 		mod_codeproduct_leopard
@@ -77,8 +76,6 @@ class mod_sn_free extends ModeleNumRefBatch
 	public function getExample()
 	{
 		global $db;
-
-		require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 
 		$thirdparty = new Societe($db);
 		$thirdparty->initAsSpecimen();

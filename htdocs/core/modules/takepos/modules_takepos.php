@@ -27,8 +27,6 @@
  *  \brief      File containing the parent class for the numbering of cash register receipts
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
-
 
 /**
  *  Parent Class of the models to number the cash register receipts

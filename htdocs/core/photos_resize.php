@@ -132,7 +132,6 @@ if (!$accessallowed) {
 // Define dir according to modulepart
 $dir = '';
 if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'service' || $modulepart == 'produit|service') {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 	$object = new Product($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -148,7 +147,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		}
 	}
 } elseif ($modulepart == 'project') {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	$object = new Project($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -158,7 +156,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->project->multidir_output[$object->entity]; // By default
 	}
 } elseif ($modulepart == 'propal') {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 	$object = new Propal($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -168,7 +165,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->propal->multidir_output[$object->entity]; // By default
 	}
 } elseif ($modulepart == 'holiday') {
-	require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 	$object = new Holiday($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -178,7 +174,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'member') {
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 	$object = new Adherent($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -188,7 +183,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->adherent->dir_output; // By default
 	}
 } elseif ($modulepart == 'societe') {
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$object = new Societe($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -198,7 +192,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output;
 	}
 } elseif ($modulepart == 'user') {
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$object = new User($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -208,7 +201,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'expensereport') {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 	$object = new ExpenseReport($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -218,7 +210,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->expensereport->dir_output; // By default
 	}
 } elseif ($modulepart == 'tax') {
-	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 	$object = new ChargeSociales($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -228,7 +219,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'ticket') {
-	require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 	$object = new Ticket($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -238,7 +228,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'bom') {
-	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 	$object = new BOM($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -248,7 +237,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'mrp') {
-	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 	$object = new Mo($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -258,7 +246,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'bank') {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 	$object = new Account($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -268,7 +255,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->bank->dir_output; // By default
 	}
 } elseif ($modulepart == 'facture') {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$object = new Facture($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -278,7 +264,6 @@ if ($modulepart == 'produit' || $modulepart == 'product' || $modulepart == 'serv
 		$dir = $conf->$modulepart->dir_output; // By default
 	}
 } elseif ($modulepart == 'facture_fourn' || $modulepart == 'facture_fournisseur') {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 	$object = new FactureFournisseur($db);
 	if ($id > 0) {
 		$result = $object->fetch($id);
@@ -374,7 +359,6 @@ if ($action == 'confirm_resize' && GETPOSTISSET("file") && GETPOSTISSET("sizex")
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $fullpath);
 		$rel_filename = preg_replace('/^[\\/]/', '', $rel_filename);
 
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
 		if ($result > 0) {   // If found
@@ -437,7 +421,6 @@ if ($action == 'confirm_crop') {
 		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $fullpath);
 		$rel_filename = preg_replace('/^[\\/]/', '', $rel_filename);
 
-		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 		$ecmfile = new EcmFiles($db);
 		$result = $ecmfile->fetch(0, '', $rel_filename);
 		if ($result > 0) {   // If found

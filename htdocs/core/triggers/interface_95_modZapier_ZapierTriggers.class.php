@@ -22,8 +22,6 @@
  * \brief   File for Zappier Triggers.
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-
 
 /**
  *  Class of triggers for Zapier module

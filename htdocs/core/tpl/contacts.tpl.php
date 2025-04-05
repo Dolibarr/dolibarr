@@ -52,9 +52,6 @@ if (empty($preselectedtypeofcontact)) {
 	$preselectedtypeofcontact = 0;
 }
 
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
 $module = $object->element;
 
 // Special cases

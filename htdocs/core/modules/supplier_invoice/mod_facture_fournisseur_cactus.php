@@ -27,8 +27,6 @@
  *		\brief      File containing class for the numbering module Cactus
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_invoice/modules_facturefournisseur.php';
-
 
 /**
  *  Cactus Class of numbering models of suppliers invoices references

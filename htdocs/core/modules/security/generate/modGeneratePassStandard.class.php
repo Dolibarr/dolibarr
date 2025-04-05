@@ -23,8 +23,6 @@
  *		\brief      File to manage password generation according to standard rule
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/security/generate/modules_genpassword.php';
-
 
 /**
  *	Class to generate a password according to a dolibarr standard rule (12 random chars)
