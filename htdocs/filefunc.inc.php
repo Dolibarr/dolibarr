@@ -149,6 +149,9 @@ function dol_session_rotate($sessionname = '')
 	//var_dump("oldsessionid=".$oldsessionid." - newsessionid=".$newsessionid);
 }
 
+/**
+ * Register classmap autoloading
+ */
 function dol_autoload()
 {
 	// Autoloading needs to be after the definition of DOL_DOCUMENT_ROOT
