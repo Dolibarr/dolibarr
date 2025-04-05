@@ -27,9 +27,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-include_once DOL_DOCUMENT_ROOT.'/core/boxes/modules_boxes.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 include_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
 
 /**
  * @var Conf $conf

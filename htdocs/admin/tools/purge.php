@@ -75,7 +75,6 @@ if ($action == 'purge' && !preg_match('/^confirm/i', $choice) && ($choice != 'al
 		error_reporting($err);
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 	$utils = new Utils($db);
 
 	$result = $utils->purgeFiles($choice, $nbsecondsold);

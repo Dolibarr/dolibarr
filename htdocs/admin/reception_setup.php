@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/reception.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+
 
 /**
  * @var Conf $conf
@@ -480,7 +480,6 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 }
 else
 {
-	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$doleditor=new DolEditor($variablename, getDolGlobalString($variablename),'',80,'dolibarr_notes');
 	print $doleditor->Create();
 }

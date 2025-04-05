@@ -465,7 +465,6 @@ class Documentation
 	 */
 	public function showCode($lines = array(), $option = 'html')
 	{
-		require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 		print '<div class="documentation-code">';
 
 		if (isset($lines[0])) {

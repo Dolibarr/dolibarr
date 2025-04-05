@@ -32,7 +32,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 /**
  * @var Conf $conf
@@ -109,7 +109,6 @@ if (($action == 'testsubscribe' || $action == 'testunsubscribe') && getDolGlobal
 		$langs->load("errors");
 		setEventMessages($langs->trans("ErrorBadEMail", $email), null, 'errors');
 	} else {
-		include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
 		$mailmanspip = new MailmanSpip($db);
 
 		$object = new stdClass();

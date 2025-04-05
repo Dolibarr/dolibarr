@@ -953,7 +953,6 @@ if ($action == 'edit') {
 	} else {
 		$id = (int) preg_replace('/senderprofile_/', '', getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'));
 		if ($id > 0) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
 			$emailsenderprofile = new EmailSenderProfile($db);
 			$emailsenderprofile->fetch($id);
 			print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
@@ -1144,7 +1143,6 @@ if ($action == 'edit') {
 		print '<div id="formmailaftertstconnect" name="formmailaftertstconnect"></div>';
 		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
-		include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$mail = new CMailFile('', '', '', '', array(), array(), array(), '', '', 0, 0, '', '', '', $trackid, $sendcontext);
 		$result = $mail->check_server_port($server, $port);
 		if ($result) {
@@ -1169,7 +1167,6 @@ if ($action == 'edit') {
 		print dol_get_fiche_head(array(), '', '', -1);
 
 		// Create form object
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
 		$formmail->trackid = (($action == 'testhtml') ? "testhtml" : "test");
 		$formmail->fromname = (GETPOSTISSET('fromname') ? GETPOST('fromname') : getDolGlobalString('MAIN_MAIL_EMAIL_FROM'));

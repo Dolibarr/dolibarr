@@ -531,7 +531,6 @@ if ($mode == 'feature') {
 	} else {
 		$yesno = '<span class="opacitymedium">'.$langs->trans("No").'</span>';
 	}
-	require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
 	$interfaces = new Interfaces($db);
 	$triggers = $interfaces->getTriggersList(array((($objMod->isCoreOrExternalModule() == 'external') ? '/'.$moduledir : '').'/core/triggers'));
 	foreach ($triggers as $triggercursor) {

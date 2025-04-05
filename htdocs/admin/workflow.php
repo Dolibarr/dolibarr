@@ -357,8 +357,6 @@ foreach ($workflowcodes as $key => $params) {
 	}
 
 	if ($key == 'WORKFLOW_TICKET_LINK_CONTRACT' && getDolGlobalString('WORKFLOW_TICKET_LINK_CONTRACT')) {
-		require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
-
 		$formcategory = new FormCategory($db);
 
 		$htmlname = "product_category_id";

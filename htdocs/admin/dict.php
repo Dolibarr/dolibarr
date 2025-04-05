@@ -38,13 +38,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/socialnetwork.lib.php';
 
 // constants for IDs of core dictionaries
@@ -2571,7 +2567,6 @@ if ($id > 0) {
 								$class = "center";
 							} elseif ($value == 'accountancy_code' || $value == 'accountancy_code_sell' || $value == 'accountancy_code_buy') {
 								if (isModEnabled('accounting')) {
-									require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 									$tmpaccountingaccount = new AccountingAccount($db);
 									$tmpaccountingaccount->fetch(0, $valuetoshow, 1);
 									$titletoshow = $langs->transnoentitiesnoconv("Pcgtype").': '.$tmpaccountingaccount->pcg_type;

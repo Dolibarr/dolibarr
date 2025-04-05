@@ -40,8 +40,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
 
 '
 @phan-var-force string $dolibarr_main_url_root_alt
@@ -287,7 +285,6 @@ if ($action == 'install' && $allowonlineinstall) {
 				if (!$error) {
 					if (GETPOST('checkforcompliance') == 'on') {
 						try {
-							$res = include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 							$dolibarrmodule = new DolibarrModules($db);
 							$checkRes = $dolibarrmodule->checkForcompliance($modulename);
 

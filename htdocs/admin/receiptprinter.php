@@ -28,11 +28,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/receiptprinter.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
+
 
 /**
  * @var Conf $conf
@@ -212,7 +210,6 @@ if ($action == 'testtemplate' && $user->admin) {
 
 	// if (! $error) {
 	// test
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 	$object = new Facture($db);
 	$object->initAsSpecimen();
 	//$object->fetch(18);

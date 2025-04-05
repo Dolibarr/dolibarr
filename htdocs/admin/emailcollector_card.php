@@ -28,13 +28,6 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
-
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-include_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
-include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectorfilter.class.php';
-include_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollectoraction.class.php';
 include_once DOL_DOCUMENT_ROOT.'/emailcollector/lib/emailcollector.lib.php';
 
 use Webklex\PHPIMAP\ClientManager;

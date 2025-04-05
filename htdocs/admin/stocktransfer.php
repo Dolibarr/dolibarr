@@ -27,11 +27,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer.lib.php';
+
 
 /**
  * @var Conf $conf

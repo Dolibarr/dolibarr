@@ -30,7 +30,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/bom/lib/bom.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+
 
 /**
  * @var Conf $conf

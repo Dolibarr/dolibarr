@@ -29,10 +29,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/html.formcategory.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticket.lib.php";
-require_once DOL_DOCUMENT_ROOT."/ticket/class/ticket.class.php";
+
 
 /**
  * @var Conf $conf
@@ -691,7 +690,6 @@ print '</tr>';
 $mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
 print '</td><td>';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
 $doleditor->Create();
 print '</td>';
@@ -703,7 +701,6 @@ print '</td></tr>';
 $mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
 print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
 print '</td><td>';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 $doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
 $doleditor->Create();
 print '</td>';

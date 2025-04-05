@@ -25,11 +25,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/eventorganization.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 /**
  * @var Conf $conf
@@ -202,13 +200,11 @@ if ($action == 'edit') {
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
 			} elseif ($val['type'] == 'html') {
-				require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 				$doleditor = new DolEditor($constname, getDolGlobalString($constname), '', 160, 'dolibarr_notes', '', false, false, isModEnabled('fckeditor'), ROWS_5, '90%');
 				$doleditor->Create();
 			} elseif ($val['type'] == 'yesno') {
 				print $form->selectyesno($constname, getDolGlobalString($constname), 1);
 			} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 
 				$tmp = explode(':', $val['type']);
@@ -228,15 +224,12 @@ if ($action == 'edit') {
 				}
 				print $form->selectarray($constname, $arrayofmessagename, getDolGlobalString($constname), 'None', 0, 0, '', 0, 0, 0, '', '', 1);
 			} elseif (preg_match('/category:/', $val['type'])) {
-				require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 				$formother = new FormOther($db);
 
 				$tmp = explode(':', $val['type']);
 				print img_picto('', 'category', 'class="pictofixedwidth"');
 				print $formother->select_categories($tmp[1], getDolGlobalInt($constname), $constname, 0, $langs->trans('CustomersProspectsCategoriesShort'));
 			} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', '1');
 			} elseif ($val['type'] == 'securekey') {
@@ -289,7 +282,6 @@ if ($action == 'edit') {
 					print ajax_constantonoff($constname);
 				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
 					if (getDolGlobalString($constname)) {
-						include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 						$formmail = new FormMail($db);
 
 						$tmp = explode(':', $val['type']);

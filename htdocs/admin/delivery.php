@@ -30,11 +30,12 @@
  *      \ingroup    delivery
  *      \brief      age to setup extra fields of delivery
  */
+
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
+
 
 /**
  * @var Conf $conf
@@ -508,7 +509,6 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	if (!getDolGlobalString('PDF_ALLOW_HTML_FOR_FREE_TEXT')) {
 		print '<textarea name="'.$variablename.'" class="flat" cols="120">'.getDolGlobalString($variablename).'</textarea>';
 	} else {
-		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$doleditor = new DolEditor($variablename, getDolGlobalString($variablename), '', 80, 'dolibarr_notes');
 		print $doleditor->Create();
 	}

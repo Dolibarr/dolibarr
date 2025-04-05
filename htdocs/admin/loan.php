@@ -26,12 +26,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
-// Class
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-}
+
 
 /**
  * @var Conf $conf

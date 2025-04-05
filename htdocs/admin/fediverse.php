@@ -34,10 +34,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/socialnetwork.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/modSocialNetworks.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/fediverseparser.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/boxes/box_fediverse.php';
+
 
 /**
  * @var Conf $conf

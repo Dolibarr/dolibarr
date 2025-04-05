@@ -20,6 +20,7 @@
 // Load Dolibarr environment
 require '../../../../main.inc.php';
 
+
 /**
  * @var DoliDB $db
  * @var HookManager $hookmanager
@@ -31,9 +32,6 @@ require '../../../../main.inc.php';
 if ($user->socid > 0) {
 	accessforbidden();
 }
-
-// Includes
-require_once DOL_DOCUMENT_ROOT . '/admin/tools/ui/class/documentation.class.php';
 
 // Load documentation translations
 $langs->load('uxdocumentation');
@@ -97,6 +95,7 @@ $documentation->showSidebar(); ?>
 				'// Load Dolibarr environment',
 				'require \'../../../../main.inc.php\';',
 				'',
+				'',
 				'/**',
 				' * @var DoliDB $db',
 				' * @var HookManager $hookmanager',
@@ -108,9 +107,6 @@ $documentation->showSidebar(); ?>
 				'if ($user->socid > 0) {',
 				'	accessforbidden();',
 				'}',
-				'',
-				'// Includes',
-				'require_once DOL_DOCUMENT_ROOT . \'/admin/tools/ui/class/documentation.class.php\';',
 				'',
 				'// Load documentation translations',
 				'$langs->load(\'uxdocumentation\');',

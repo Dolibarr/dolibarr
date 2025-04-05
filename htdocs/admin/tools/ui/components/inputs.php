@@ -28,12 +28,9 @@ require '../../../../main.inc.php';
  */
 
 // Protection if external user
-if ($user->socid > 0) : accessforbidden();
-endif;
-
-// Includes
-dol_include_once('admin/tools/ui/class/documentation.class.php');
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+if ($user->socid > 0) {
+	accessforbidden();
+}
 
 // Load documentation translations
 $langs->load('uxdocumentation');
