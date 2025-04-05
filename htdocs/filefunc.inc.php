@@ -87,6 +87,7 @@ if (!defined('LOG_DEBUG')) {
 
 // End of common declaration part
 if (defined('DOL_INC_FOR_VERSION_ERROR')) {
+	dol_autoload();
 	return;
 }
 
@@ -148,6 +149,40 @@ function dol_session_rotate($sessionname = '')
 	//var_dump("oldsessionid=".$oldsessionid." - newsessionid=".$newsessionid);
 }
 
+function dol_autoload()
+{
+	// Autoloading needs to be after the definition of DOL_DOCUMENT_ROOT
+	$classmap = @require_once 'classmap.inc.php';
+
+	if (! is_array($classmap)) {
+		print "Error: Dolibarr code seems to be incomplete (file ".DOL_DOCUMENT_ROOT."/classmap.inc.php not found).<br>\n";
+		print "Please check that you correctly deployed all the files.<br>\n";
+		exit(1);
+	}
+
+	$lowercaseClassmap = array_combine(
+		array_map('strtolower', array_keys($classmap)),
+		$classmap,
+	);
+
+	spl_autoload_register(
+		function (string $class) use ($lowercaseClassmap) {
+			global $dolibarr_main_document_root;
+
+			$lowercaseClass = strtolower($class);
+			if (empty($lowercaseClassmap[$lowercaseClass])) {
+				// Class not in classmap but still could be required later
+				return;
+			}
+
+			if (defined('DOL_DOCUMENT_ROOT')) {
+				require_once DOL_DOCUMENT_ROOT.'/'.$lowercaseClassmap[$lowercaseClass];
+			} elseif (! empty($dolibarr_main_document_root)) {
+				require_once $dolibarr_main_document_root.'/'.$lowercaseClassmap[$lowercaseClass];
+			}
+		}
+	);
+}
 
 
 // Define localization of conf file
@@ -307,32 +342,7 @@ if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	exit(1);
 }
 
-// Autoloading needs to be after the definition of DOL_DOCUMENT_ROOT
-$classmap = @require_once 'classmap.inc.php';
-
-if (! is_array($classmap)) {
-	print "Error: Dolibarr code seems to be incomplete (file ".DOL_DOCUMENT_ROOT."/classmap.inc.php not found).<br>\n";
-	print "Please check that you correctly deployed all the files.<br>\n";
-	exit(1);
-}
-
-$lowercaseClassmap = array_combine(
-	array_map('strtolower', array_keys($classmap)),
-	$classmap,
-);
-
-spl_autoload_register(
-	function (string $class) use ($lowercaseClassmap) {
-		$lowercaseClass = strtolower($class);
-		if (empty($lowercaseClassmap[$lowercaseClass])) {
-			// Class not in classmap but still could be required later
-			return;
-		}
-
-		require_once DOL_DOCUMENT_ROOT.'/'.$lowercaseClassmap[$lowercaseClass];
-	}
-);
-
+dol_autoload();
 
 // Included by default (must be before the CSRF check so wa can use the dol_syslog)
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';

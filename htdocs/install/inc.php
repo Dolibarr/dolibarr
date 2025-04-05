@@ -42,8 +42,6 @@ if (!defined('DOL_DOCUMENT_ROOT')) {
 	define('DOL_DOCUMENT_ROOT', '..');
 }
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -434,11 +432,6 @@ function conf($dolibarr_main_document_root)
 	global $character_set_client;
 	global $dolibarr_main_instance_unique_id;
 	global $dolibarr_main_cookie_cryptkey;
-
-	$return = @include_once $dolibarr_main_document_root.'/core/class/conf.class.php';
-	if (!$return) {
-		return -1;
-	}
 
 	$conf = new Conf();
 	$conf->db->type = trim($dolibarr_main_db_type);

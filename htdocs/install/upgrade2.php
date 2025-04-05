@@ -47,13 +47,7 @@ if (!file_exists($conffile)) {
 	print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
 require_once $conffile;
-require_once $dolibarr_main_document_root.'/compta/facture/class/facture.class.php';
-require_once $dolibarr_main_document_root.'/comm/propal/class/propal.class.php';
-require_once $dolibarr_main_document_root.'/contrat/class/contrat.class.php';
-require_once $dolibarr_main_document_root.'/commande/class/commande.class.php';
-require_once $dolibarr_main_document_root.'/fourn/class/fournisseur.commande.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
-require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
@@ -182,7 +176,6 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 	$listofentities = array(1);
 
 	// Create the global $hookmanager object
-	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 	$hookmanager = new HookManager($db);
 	$hookmanager->initHooks(array('upgrade2'));
 
@@ -2014,7 +2007,6 @@ function migrate_modeles($db, $langs, $conf)
 	dolibarr_install_syslog("upgrade2::migrate_modeles");
 
 	if (isModEnabled('invoice')) {
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 		$modellist = ModelePDFFactures::liste_modeles($db);
 		if (count($modellist) == 0) {
 			// Aucun model par default.
@@ -2027,7 +2019,6 @@ function migrate_modeles($db, $langs, $conf)
 	}
 
 	if (isModEnabled('order')) {
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$modellist = ModelePDFCommandes::liste_modeles($db);
 		if (count($modellist) == 0) {
 			// Aucun model par default.
@@ -2040,7 +2031,6 @@ function migrate_modeles($db, $langs, $conf)
 	}
 
 	if (isModEnabled("shipping")) {
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/expedition/modules_expedition.php';
 		$modellist = ModelePdfExpedition::liste_modeles($db);
 		if (count($modellist) == 0) {
 			// Aucun model par default.
@@ -3679,8 +3669,6 @@ function migrate_reset_blocked_log($db, $langs, $conf)
 {
 	global $user;
 
-	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
-
 	print '<tr><td colspan="4">';
 
 	print '<br>';
@@ -4242,7 +4230,6 @@ function migrate_reload_modules($db, $langs, $conf, $listofmodule = array(), $fo
 	}
 
 	if (!is_object($user)) {
-		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($db);	// To avoid error during migration
 	}
 
@@ -4414,7 +4401,6 @@ function migrate_productlot_path()
 	global $conf, $db, $langs, $user;
 
 	if (!is_object($user)) {
-		include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user = new User($db);	// To avoid error during migration
 	}
 
@@ -4466,7 +4452,6 @@ function migrate_user_photospath()
 
 	print '<b>'.$langs->trans('MigrationUserPhotoPath')."</b><br>\n";
 
-	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$fuser = new User($db);
 	if (!is_object($user)) {
 		$user = $fuser; // To avoid error during migration
@@ -4555,7 +4540,6 @@ function migrate_user_photospath2()
 
 	print '<b>'.$langs->trans('MigrationUserPhotoPath')."</b><br>\n";
 
-	include_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 	$fuser = new User($db);
 	if (!is_object($user)) {
 		$user = $fuser; // To avoid error during migration
@@ -5247,7 +5231,6 @@ function migrate_accountingbookkeeping(int $entity)
 
 		$resql = $db->query($sql);
 
-		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 		$bookkeeping = new BookKeeping($db);
 		if ($resql) {
 			while ($obj = $db->fetch_object($resql)) {

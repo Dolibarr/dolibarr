@@ -28,7 +28,6 @@ if ($rss) {
 
 // If we have a hash public (hashp), we guess the original_file.
 if (!empty($hashp)) {
-	include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 	$ecmfile = new EcmFiles($db);
 	$result = $ecmfile->fetch(0, '', '', '', $hashp);
 	if ($result > 0) {
@@ -98,8 +97,6 @@ if ($rss) {
 	$filename = $original_file;
 	$dir_temp = $conf->website->dir_temp;
 
-	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
-	include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 	$website = new Website($db);
 	$websitepage = new WebsitePage($db);
 

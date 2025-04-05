@@ -50,7 +50,6 @@ if (file_exists($conffile)) {
 
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
-require_once $dolibarr_main_document_root.'/core/class/extrafields.class.php';
 require_once 'lib/repair.lib.php';
 
 $step = 2;
@@ -866,29 +865,21 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 		$object_instance = null;
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
-			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 			$object_instance = new Societe($db);
 		}
 		if ($modulepart == 'invoice') {
-			include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$object_instance = new Facture($db);
 		} elseif ($modulepart == 'invoice_supplier') {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 			$object_instance = new FactureFournisseur($db);
 		} elseif ($modulepart == 'propal') {
-			include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$object_instance = new Propal($db);
 		} elseif ($modulepart == 'order') {
-			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$object_instance = new Commande($db);
 		} elseif ($modulepart == 'order_supplier') {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 			$object_instance = new CommandeFournisseur($db);
 		} elseif ($modulepart == 'contract') {
-			include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 			$object_instance = new Contrat($db);
 		} elseif ($modulepart == 'tax') {
-			include_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 			$object_instance = new ChargeSociales($db);
 		}
 
@@ -1830,9 +1821,6 @@ if ($ok && GETPOST('repair_link_dispatch_lines_supplier_order_lines')) {
 
 // Repair llx_commande_fournisseur to eliminate duplicate reference
 if ($ok && GETPOST('repair_supplier_order_duplicate_ref')) {
-	require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
-	include_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-
 	$db->begin();
 
 	$err = 0;

@@ -27,7 +27,6 @@
 
 
 include_once 'inc.php';
-require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
