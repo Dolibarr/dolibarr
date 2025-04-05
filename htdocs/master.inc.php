@@ -36,8 +36,6 @@
 // Include the conf.php and functions.lib.php and security.lib.php. This defined the constants like DOL_DOCUMENT_ROOT, DOL_DATA_ROOT, DOL_URL_ROOT...
 // This file may have been already required by main.inc.php. But may not by scripts. So, here the require_once must be kept.
 require_once 'filefunc.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/conf.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 /**
  * @var Translate $langs
  *
@@ -130,12 +128,6 @@ if (!empty($dolibarr_main_document_root_alt)) {
 }
 
 // Load the main includes of common libraries
-if (!defined('NOREQUIREUSER')) {
-	require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php'; // Need 500ko memory
-}
-if (!defined('NOREQUIRETRAN')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/translate.class.php';
-}
 if (!defined('NOREQUIRESOC')) {
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 }

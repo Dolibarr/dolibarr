@@ -307,6 +307,26 @@ if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
 	exit(1);
 }
 
+// Autoloading needs to be after the definition of DOL_DOCUMENT_ROOT
+$classmap = @require_once 'classmap.inc.php';
+
+if (! is_array($classmap)) {
+	print "Error: Dolibarr code seems to be incomplete (file ".DOL_DOCUMENT_ROOT."/classmap.inc.php not found).<br>\n";
+	print "Please check that you correctly deployed all the files.<br>\n";
+	exit(1);
+}
+
+spl_autoload_register(
+	function ($class) use ($classmap) {
+		if (empty($classmap[$class])) {
+			// Class not in classmap but still could be required later
+			return;
+		}
+
+		require_once DOL_DOCUMENT_ROOT.'/'.$classmap[$class];
+	}
+);
+
 
 // Included by default (must be before the CSRF check so wa can use the dol_syslog)
 include_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
