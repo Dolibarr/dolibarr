@@ -110,10 +110,10 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->objectlink->fetch($id);
 		if ($result) {
 			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->sourcetype), 'lire')) {
-				throw new RestException(403);
+				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
 			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->targettype), 'lire')) {
-				throw new RestException(403);
+				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
 			throw new RestException(404, 'Object Link not found');
