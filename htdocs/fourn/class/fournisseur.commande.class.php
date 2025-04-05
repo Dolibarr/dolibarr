@@ -37,14 +37,6 @@
  *	\brief      File of class to manage suppliers orders
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonorder.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.orderline.class.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-if (isModEnabled('productbatch')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-}
-
 
 /**
  *	Class to manage predefined suppliers products
@@ -1336,7 +1328,6 @@ class CommandeFournisseur extends CommonOrder
 
 				// If stock is incremented on validate order, we must increment it
 				if (!$error && $movetoapprovestatus && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER')) {
-					require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 					$langs->load("agenda");
 
 					$cpt = count($this->lines);
@@ -2303,7 +2294,6 @@ class CommandeFournisseur extends CommonOrder
 		global $conf, $langs;
 
 		$error = 0;
-		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 		// Check parameters (if test are wrong here, there is bug into caller)
 		if ($entrepot <= 0) {
@@ -3052,7 +3042,6 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_ORDER);
 	}
 
@@ -3270,8 +3259,6 @@ class CommandeFournisseur extends CommonOrder
 	public function initAsSpecimen()
 	{
 		global $user, $langs, $conf;
-
-		include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 
 		dol_syslog(get_class($this)."::initAsSpecimen");
 
@@ -3713,8 +3700,6 @@ class CommandeFournisseur extends CommonOrder
 	public function calcAndSetStatusDispatch(User $user, $closeopenorder = 1, $comment = '')
 	{
 		if (isModEnabled("supplier_order")) {
-			require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
-
 			$qtydelivered = array();
 			$qtywished = array();
 
@@ -3732,7 +3717,6 @@ class CommandeFournisseur extends CommonOrder
 				return $ret;
 			} else {
 				if (is_array($supplierorderdispatch->lines) && count($supplierorderdispatch->lines) > 0) {
-					require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 					$date_liv = dol_now();
 
 					// Build array with quantity deliverd by product

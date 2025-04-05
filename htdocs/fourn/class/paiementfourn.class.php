@@ -30,9 +30,7 @@
  *		\ingroup    fournisseur, facture
  *		\brief      File of class to manage payments of suppliers invoices
  */
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
+
 
 /**
  *	Class to manage payments for supplier invoices
@@ -305,7 +303,6 @@ class PaiementFourn extends Paiement
 										';
 
 										// Insert one discount by VAT rate category
-										require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 										$discount = new DiscountAbsolute($this->db);
 										$discount->fetch(0, 0, $invoice->id);
 										if (empty($discount->id)) {    // If the invoice was not yet converted into a discount (this may have been done manually before we come here)
@@ -920,8 +917,6 @@ class PaiementFourn extends Paiement
 	public function fetch_thirdparty($force_thirdparty_id = 0)
 	{
 		// phpcs:enable
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-
 		if (empty($force_thirdparty_id)) {
 			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
 			if (!empty($billsarray)) {

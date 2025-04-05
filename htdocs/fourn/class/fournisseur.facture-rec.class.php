@@ -31,10 +31,6 @@
  *	\brief      File for class to manage invoice templates
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture-rec.ligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
@@ -795,7 +791,6 @@ class FactureFournisseurRec extends CommonInvoice
 		// Retrieve all extrafield for line
 		// fetch optionals attributes and labels
 		/*if (!is_object($extrafields)) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($this->db);
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line, true);

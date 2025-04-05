@@ -34,17 +34,8 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
-require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
-if (isModEnabled('project')) {
-	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-}
-require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
+
 
 /**
  * @var Conf $conf
@@ -1046,7 +1037,6 @@ if ($action == 'create') {
 
 		// Model pdf
 		print "<tr><td>" . $langs->trans('Model') . "</td><td>";
-		include_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_invoice/modules_facturefournisseur.php';
 		$list = ModelePDFSuppliersInvoices::liste_modeles($db);
 		print $form->selectarray('modelpdf', $list, $conf->global->INVOICE_SUPPLIER_ADDON_PDF);
 		print "</td></tr>";
@@ -1327,7 +1317,6 @@ if ($action == 'create') {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editmodelpdf') {
-			include_once DOL_DOCUMENT_ROOT . '/core/modules/supplier_invoice/modules_facturefournisseur.php';
 			$list = array();
 			$models = ModelePDFSuppliersInvoices::liste_modeles($db);
 			foreach ($models as $k => $model) {

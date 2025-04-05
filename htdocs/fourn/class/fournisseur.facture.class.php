@@ -37,15 +37,6 @@
  *  \brief      File of class to manage suppliers invoices
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.ligne.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-}
 
 /**
  *	Class to manage suppliers invoices
@@ -437,7 +428,6 @@ class FactureFournisseur extends CommonInvoice
 		if ($this->fac_rec > 0) {
 			$this->fk_fac_rec_source = $this->fac_rec;
 
-			require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture-rec.class.php';
 			$_facrec = new FactureFournisseurRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
@@ -761,7 +751,6 @@ class FactureFournisseur extends CommonInvoice
 
 					// If buyprice not defined from template invoice, we try to guess the best value
 					if (! $buyprice && $_facrec->lines[$i]->fk_product > 0) {
-						require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 						$producttmp = new ProductFournisseur($this->db);
 						$producttmp->fetch($_facrec->lines[$i]->fk_product);
 
@@ -1351,7 +1340,6 @@ class FactureFournisseur extends CommonInvoice
 		global $conf, $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$this->db->begin();
 
@@ -1392,7 +1380,6 @@ class FactureFournisseur extends CommonInvoice
 				$srcinvoice = new FactureFournisseur($this->db);
 				$srcinvoice->fetch($remise->fk_invoice_supplier_source);
 				$totalcostpriceofinvoice = 0;
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php'; // TODO Move this into commonobject
 				$formmargin = new FormMargin($this->db);
 				$arraytmp = $formmargin->getMarginInfosArray($srcinvoice, false);
 				$facligne->pa_ht = $arraytmp['pa_total'];
@@ -1893,7 +1880,6 @@ class FactureFournisseur extends CommonInvoice
 		if ($resql) {
 			// Si on incrémente le produit principal et ses composants à la validation de facture fournisseur
 			if (!$error && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				$cpt = count($this->lines);
@@ -2035,7 +2021,6 @@ class FactureFournisseur extends CommonInvoice
 
 			// Si on incremente le produit principal et ses composants a la validation de facture fournisseur, on decremente
 			if ($result >= 0 && isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_BILL')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 				$langs->load("agenda");
 
 				$cpt = count($this->lines);
@@ -2998,7 +2983,6 @@ class FactureFournisseur extends CommonInvoice
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_SUPPLIER_INVOICE);
 	}
 
@@ -3065,7 +3049,6 @@ class FactureFournisseur extends CommonInvoice
 	public function initAsSpecimen($option = '')
 	{
 		global $langs, $conf;
-		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 		$now = dol_now();
 
@@ -3510,8 +3493,6 @@ class FactureFournisseur extends CommonInvoice
 		}
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 		$formmail = new FormMail($this->db);
 
 		$now = dol_now();
@@ -3679,9 +3660,6 @@ class FactureFournisseur extends CommonInvoice
 							if ($cMailFile->sendfile()) {
 								$nbMailSend++;
 
-								// Add a line into event table
-								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 								// Insert record of emails sent
 								$actioncomm = new ActionComm($this->db);
 
@@ -3719,9 +3697,6 @@ class FactureFournisseur extends CommonInvoice
 							} else {
 								$errormesg = $cMailFile->error.' : '.$to;
 								$error++;
-
-								// Add a line into event table
-								require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
 								// Insert record of emails sent
 								$actioncomm = new ActionComm($this->db);

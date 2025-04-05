@@ -31,7 +31,6 @@
  *	\brief      File for class to manage invoice template lines
  */
 
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.ligne.class.php';
 
 /**
  *	Class to manage supplier invoice lines of templates.

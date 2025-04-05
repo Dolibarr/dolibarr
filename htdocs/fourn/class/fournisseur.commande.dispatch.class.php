@@ -26,9 +26,6 @@
  *              Initially built by build_class_from_table on 2015-02-24 10:38
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT."/reception/class/receptionlinebatch.class.php";
-
 
 /**
  *  Class to manage table ReceptionLineBatch.

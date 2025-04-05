@@ -32,10 +32,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+
 
 /**
  * @var Conf $conf
@@ -230,8 +227,7 @@ if (!empty($object->id)) {
 	print load_fiche_titre($langs->trans("ActionsOnOrder"), '', '');
 
 	// List of actions on element
-	/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-	$formactions=new FormActions($db);
+	/*$formactions=new FormActions($db);
 	$somethingshown = $formactions->showactions($object,'project',0);*/
 
 	// List of todo actions

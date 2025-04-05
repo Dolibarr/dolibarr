@@ -30,10 +30,6 @@
  * 	\brief      File of class to manage predefined suppliers products
  */
 
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/productfournisseurprice.class.php';
-
 
 /**
  * 	Class to manage predefined suppliers products
@@ -785,7 +781,6 @@ class ProductFournisseur extends Product
 				$this->packaging = $obj->packaging;
 
 				if (isModEnabled('dynamicprices') && empty($ignore_expression) && !empty($this->fk_supplier_price_expression)) {
-					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($this);
 					if ($price_result >= 0) {
@@ -897,7 +892,6 @@ class ProductFournisseur extends Product
 				}
 
 				if (isModEnabled('dynamicprices') && !empty($prodfourn->fk_supplier_price_expression)) {
-					require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prodfourn);
 					if ($price_result >= 0) {
@@ -1011,7 +1005,6 @@ class ProductFournisseur extends Product
 						$prod_supplier->fourn_tva_tx = $record["tva_tx"];
 						$prod_supplier->fk_supplier_price_expression = $record["fk_supplier_price_expression"];
 
-						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($this->db);
 						$price_result = $priceparser->parseProductSupplier($prod_supplier);
 						if ($price_result >= 0) {

@@ -37,8 +37,6 @@
  *	\brief      File of class to manage supplier order lines
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 /**
  *  Class to manage line orders

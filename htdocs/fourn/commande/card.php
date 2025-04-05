@@ -39,37 +39,11 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_order/modules_commandefournisseur.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-
-if (isModEnabled('supplier_proposal')) {
-	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-}
-if (isModEnabled("product")) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-}
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
 require_once NUSOAP_PATH.'/nusoap.php'; // Include SOAP
 
-if (isModEnabled('variants')) {
-	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-}
-
-if (isModEnabled('stock')) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.dispatch.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-}
 
 /**
  * @var Conf $conf
@@ -2019,7 +1993,6 @@ if ($action == 'create') {
 		} else {
 			$text = $langs->trans('ConfirmValidateOrder', $newref);
 			if (isModEnabled('notification')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('ORDER_SUPPLIER_VALIDATE', $object->socid, $object);
@@ -2041,7 +2014,6 @@ if ($action == 'create') {
 		$formquestion = array();
 		if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_SUPPLIER_VALIDATE_ORDER') && $qualified_for_stock_change) {
 			$langs->load("stocks");
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			$forcecombo = 0;
 			if ($conf->browser->name == 'ie') {
@@ -2056,7 +2028,6 @@ if ($action == 'create') {
 		}
 		$text = $langs->trans("ConfirmApproveThisOrder", $object->ref);
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_APPROVE', $object->socid, $object);
@@ -2091,7 +2062,6 @@ if ($action == 'create') {
 			)
 		);
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text = '';
 			$text .= '<br>';
@@ -2105,14 +2075,12 @@ if ($action == 'create') {
 		$formquestion = array();
 		$date_com = dol_mktime(GETPOSTINT('rehour'), GETPOSTINT('remin'), GETPOSTINT('resec'), GETPOSTINT("remonth"), GETPOSTINT("reday"), GETPOSTINT("reyear"));
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text = '';
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('ORDER_SUPPLIER_SUBMIT', $object->socid, $object);
 		}
 		if (isModEnabled('webhook')) {
-			require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 			$targetstatic = new Target($db);
 			if ($targetstatic->isTriggerCodeManualTarget('ORDER_SUPPLIER_SUBMIT') > 0) {
 				$formquestion[] = array('type' => 'checkbox', 'name' => 'manual_trigger_send', 'label' => $langs->trans("QuestionSendManualTrigger"));
@@ -2877,7 +2845,6 @@ if ($action == 'create') {
 			}
 
 			// List of actions on element
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'order_supplier', $socid, 1, 'listaction'.($genallowed ? 'largetitle' : ''));
 

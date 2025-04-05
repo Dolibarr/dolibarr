@@ -30,11 +30,7 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
 
 /**
@@ -400,7 +396,6 @@ if ($result > 0) {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 
 		// Generated documents
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/supplier_payment/modules_supplier_payment.php';
 		$modellist = ModelePDFSuppliersPayments::liste_modeles($db);
 		if (is_array($modellist)) {
 			$ref = dol_sanitizeFileName($object->ref);
@@ -418,8 +413,7 @@ if ($result > 0) {
 		//print '<br>';
 
 		// List of actions on element
-		/*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
-		$formactions=new FormActions($db);
+		/*$include_onceformactions=new FormActions($db);
 		$somethingshown = $formactions->showactions($object,'supplier_payment',$socid,1,'listaction'.($genallowed?'largetitle':''));
 		*/
 
