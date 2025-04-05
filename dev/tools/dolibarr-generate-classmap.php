@@ -29,9 +29,25 @@ if (php_sapi_name() !== 'cli') {
 }
 
 
-$htdocs = realpath(__DIR__ . '/../../htdocs');
+// We need $conf to add external module locations to exceptions
+require_once __DIR__ . '/../../htdocs/master.inc.php';
+
+$htdocs = $conf->file->dol_document_root['main'];
 
 $classmap = array();
+$exceptions = array(
+	$htdocs.'/includes', // Most of external libraries have their own autoloading scripts
+	$htdocs.'/core/menus', // Each menu manager defines its own `MenuManager` classes
+);
+
+foreach ($conf->file->dol_document_root as $key => $dir) {
+	if ($key === 'main') {
+		continue;
+	}
+
+	$exceptions[] = $dir;
+}
+
 
 classmapScanDir($htdocs);
 
@@ -79,7 +95,11 @@ file_put_contents($htdocs.'/classmap.inc.php', $classmapFile);
  */
 function classmapScanDir(string $dir): void
 {
-	global $classmap, $htdocs;
+	global $exceptions;
+
+	if (in_array($dir, $exceptions)) {
+		return;
+	}
 
 	$dirContent = scandir($dir);
 
@@ -89,16 +109,6 @@ function classmapScanDir(string $dir): void
 		}
 
 		$path = $dir.'/'.$child;
-
-		// Exclude /htdocs/includes : most of its contents have their own autoloading scripts
-		if ($path === $htdocs.'/includes') {
-			continue;
-		}
-
-		// Exclude /htdocs/core/menus : each menu manager defines its own `MenuManager` classes
-		if ($path === $htdocs.'/core/menus') {
-			continue;
-		}
 
 		if (! is_dir($path)) {
 			$phpExtension = substr($child, -4, 4);
