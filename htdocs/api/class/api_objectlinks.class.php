@@ -53,18 +53,28 @@ class ObjectLinks extends DolibarrApi
 	 * @param   int         $id				ID of objectlink
 	 * @return  Object						Object with cleaned properties
 	 *
-	 * @throws	RestException
+	 * @url	GET objectlinks/{id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
 	 */
 	public function get($id)
 	{
 		return $this->_fetch($id);
 	}
 
+
 	/**
 	 * Delete an object link
 	 *
 	 * @param   int     $id         object link ID
 	 * @return  array
+	 *
+	 * @url	DELETE objectlinks/{id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
 	 */
 	public function delete($id)
 	{
@@ -101,7 +111,8 @@ class ObjectLinks extends DolibarrApi
 	 * @param   int         $id             ID of objectlink
 	 * @return  Object						Object with cleaned properties
 	 *
-	 * @throws	RestException
+	 * @throws	RestException 403
+	 * @throws	RestException 404
 	 */
 	private function _fetch($id)
 	{
