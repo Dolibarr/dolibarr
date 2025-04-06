@@ -68,9 +68,8 @@ class ObjectLink extends CommonObject
 	/**
 	 * Constructor of the class
 	 */
-	public function __construct()
+	public function __construct($db)
 	{
-		global $db;
 		$this->db = $db;
 	}
 
