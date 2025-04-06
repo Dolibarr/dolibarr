@@ -31,6 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/objectlink.class.php';
 class ObjectLinks extends DolibarrApi
 {
 	/**
+	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 */
+	public static $FIELDS = array(
+		'fk_source',
+		'sourcetype',
+		'fk_target',
+		'targettype'
+	);
+
+	/**
 	 * @var ObjectLink $objectlink {@type ObjectLink}
 	 */
 	public $objectlink;
