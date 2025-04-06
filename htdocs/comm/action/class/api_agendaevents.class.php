@@ -19,8 +19,6 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 
 /**
  * API class for Agenda Events

@@ -41,9 +41,8 @@
  *	\brief      File of class to manage proposal lines
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
+
 
 /**
  *	Class to manage commercial proposal lines

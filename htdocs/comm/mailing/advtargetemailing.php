@@ -27,15 +27,8 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmailing.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/advthirdparties.modules.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/advtargetemailing.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/html.formadvtargetemailing.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+
 
 /**
  * @var Conf $conf
@@ -894,7 +887,6 @@ if ($object->fetch($id) >= 0) {
 			$socstatic = new Societe($db);
 			$elementtype = $socstatic->table_element;
 			// fetch optionals attributes and labels
-			require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 			$extrafields = new ExtraFields($db);
 			$extrafields->fetch_name_optionals_label($elementtype);
 			foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {

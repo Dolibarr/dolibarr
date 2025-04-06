@@ -43,25 +43,9 @@
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/propale/modules_propale.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/propal.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
 
-if (isModEnabled('variants')) {
-	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-}
 
 /**
  * @var Conf $conf
@@ -786,8 +770,6 @@ if (empty($reshook)) {
 					!$error && GETPOSTINT('statut') == $object::STATUS_SIGNED && GETPOST('generate_deposit') == 'on'
 					&& !empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
-					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-
 					$date = dol_mktime(0, 0, 0, GETPOSTINT('datefmonth'), GETPOSTINT('datefday'), GETPOSTINT('datefyear'));
 					$forceFields = array();
 
@@ -1170,7 +1152,6 @@ if (empty($reshook)) {
 
 				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					// If price per customer
-					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
 					$prodcustprice = new ProductCustomerPrice($db);
 					$filter = array('t.fk_product' => (string) $prod->id, 't.fk_soc' => (string) $object->thirdparty->id);
 
@@ -1234,8 +1215,6 @@ if (empty($reshook)) {
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 					// If price per customer
-					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => (string) $prod->id, 't.fk_soc' => (string) $object->thirdparty->id);
@@ -2212,7 +2191,6 @@ if ($action == 'create') {
 		$formproduct = null;
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr class="field_warehouse_id"><td class="titlefieldcreate">'.$langs->trans('Warehouse').'</td><td class="valuefieldcreate">';
 			print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses($warehouse_id, 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
@@ -2482,8 +2460,6 @@ if ($action == 'create') {
 			$deposit_percent_from_payment_terms = getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 			if (!empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
-				require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-
 				$object->fetchObjectLinked();
 
 				$eligibleForDepositGeneration = true;
@@ -2606,7 +2582,6 @@ if ($action == 'create') {
 		}
 
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$formquestion = array_merge($formquestion, array(
 				array('type' => 'onecolumn', 'value' => $notify->confirmMessage('PROPAL_CLOSE_SIGNED', $object->socid, $object)),
@@ -2648,7 +2623,6 @@ if ($action == 'create') {
 
 		$text = $langs->trans('ConfirmValidateProp', $numref);
 		if (isModEnabled('notification')) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
 			$text .= $notify->confirmMessage('PROPAL_VALIDATE', $object->socid, $object);
@@ -2921,7 +2895,6 @@ if ($action == 'create') {
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_PROPAL')) {
 			$langs->load('stocks');
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr class="field_warehouse_id"><td>';
 			$editenable = $usercancreate;
@@ -3406,7 +3379,6 @@ if ($action == 'create') {
 		$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/comm/propal/agenda.php?id='.$object->id);
 
 		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$somethingshown = $formactions->showactions($object, 'propal', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 

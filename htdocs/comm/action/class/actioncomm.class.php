@@ -28,10 +28,6 @@
  *       \ingroup    agenda
  *       \brief      File of class to manage agenda events (actions)
  */
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncommreminder.class.php';
 
 
 /**
@@ -1338,7 +1334,6 @@ class ActionComm extends CommonObject
 
 		// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 		if (!is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('agendadao'));
@@ -1690,9 +1685,7 @@ class ActionComm extends CommonObject
 
 		// show categories for this record only in ajax to not overload lists
 		if (isModEnabled('category') && !$nofetch) {
-			require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 			if (empty($form)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 				$form = new Form($this->db);
 			}
 			$tmpcategstring = $form->showCategories($this->id, Categorie::TYPE_ACTIONCOMM, 1);
@@ -1911,7 +1904,6 @@ class ActionComm extends CommonObject
 		if (!empty($conf->cache['actioncommgetypelabel'])) {
 			$arraylist = $conf->cache['actioncommgetypelabel'];
 		} else {
-			require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 			$caction = new CActionComm($this->db);
 			$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
 			$conf->cache['actioncommgetypelabel'] = $arraylist;
@@ -1958,7 +1950,6 @@ class ActionComm extends CommonObject
 		}
 
 		// Get current categories
-		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		$c = new Categorie($this->db);
 		$existing = $c->containing($this->id, Categorie::TYPE_ACTIONCOMM, 'id');
 
@@ -2678,7 +2669,6 @@ class ActionComm extends CommonObject
 		$resql = $this->db->query($sql);
 
 		if ($resql) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$formmail = new FormMail($this->db);
 			$to = null;  // Ensure 'to' is defined for static analysis
 

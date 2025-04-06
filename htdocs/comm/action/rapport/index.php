@@ -28,9 +28,7 @@
 // Load Dolibarr environment
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
 
 /**
  * @var Conf $conf
@@ -76,8 +74,6 @@ if (!$user->hasRight("agenda", "allactions", "read")) {
  */
 
 if ($action == 'builddoc' && $user->hasRight("agenda", "allactions", "read")) {
-	require_once DOL_DOCUMENT_ROOT.'/core/modules/action/doc/pdf_standard_actions.class.php';
-
 	$cat = new pdf_standard_actions($db, $month, $year);
 	$result = $cat->write_file(null, $langs);
 	if ($result < 0) {

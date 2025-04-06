@@ -23,9 +23,6 @@
  * \brief       This file is a CRUD class file for ActionCommReminder (Create/Read/Update/Delete)
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-
 
 /**
  * Class for ActionCommReminder

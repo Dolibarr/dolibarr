@@ -23,8 +23,6 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-
 
 /**
  * API class for orders

@@ -38,38 +38,10 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-if (isModEnabled('invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-}
-if (isModEnabled("propal")) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-}
-if (isModEnabled('order')) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-}
-if (isModEnabled("shipping")) {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-}
-if (isModEnabled('contract')) {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
-if (isModEnabled('member')) {
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-}
-if (isModEnabled('intervention')) {
-	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
 if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 }
+
 
 /**
  * @var Conf $conf
@@ -615,7 +587,6 @@ if ($object->id > 0) {
 	// Warehouse
 	if (isModEnabled('stock') && getDolGlobalString('SOCIETE_ASK_FOR_WAREHOUSE')) {
 		$langs->load('stocks');
-		require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 		$formproduct = new FormProduct($db);
 		print '<tr class="nowrap">';
 		print '<td>';

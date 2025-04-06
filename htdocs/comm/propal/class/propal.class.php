@@ -41,12 +41,8 @@
  *	\brief      File of class to manage proposals
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propaleligne.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+
 
 /**
  *	Class to manage proposals
@@ -536,7 +532,6 @@ class Propal extends CommonObject
 		global $langs;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-		include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 		$this->db->begin();
 
@@ -1511,11 +1506,6 @@ class Propal extends CommonObject
 		// update prices
 		if ($update_prices === true || $update_desc === true) {
 			if ($objsoc->id > 0 && !empty($object->lines)) {
-				if ($update_prices === true && getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
-					// If price per customer
-					require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
-				}
-
 				foreach ($object->lines as $line) {
 					$line->id = 0;
 
@@ -1954,8 +1944,6 @@ class Propal extends CommonObject
 		dol_syslog(get_class($this)."::fetch_lines", LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result) {
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-
 			$num = $this->db->num_rows($result);
 
 			$i = 0;
