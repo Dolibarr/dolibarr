@@ -34,10 +34,10 @@ class ObjectLinks extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
-		'fk_source',
-		'sourcetype',
-		'fk_target',
-		'targettype'
+		(int) 'fk_source',
+		(string) 'sourcetype',
+		(int) 'fk_target',
+		(string) 'targettype'
 	);
 
 	/**
