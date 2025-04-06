@@ -38,7 +38,8 @@ if (!defined('NOREQUIRESOC')) {
 	define('NOREQUIRESOC', '1');
 }
 require '../../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT."/product/stock/class/entrepot.class.php";
+
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -127,7 +128,6 @@ if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'l
 }
 
 if ($action == "addnewlineproduct" && $user->hasRight('stock', 'creer')) {
-	require_once DOL_DOCUMENT_ROOT."/product/inventory/class/inventory.class.php";
 	$inventoryline = new InventoryLine($db);
 	if (!empty($fk_inventory)) {
 		$inventoryline->fk_inventory = $fk_inventory;

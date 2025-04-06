@@ -224,9 +224,6 @@ class MouvementStock extends CommonObject
 		// phpcs:enable
 		global $conf, $langs;
 
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".json_encode($skip_batch));
 
@@ -468,7 +465,6 @@ class MouvementStock extends CommonObject
 				}
 				if (!$foundforbatch || $qtyisnotenough) {
 					$langs->load("stocks");
-					include_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 					$tmpwarehouse = new Entrepot($this->db);
 					$tmpwarehouse->fetch($entrepot_id);
 
@@ -1014,43 +1010,33 @@ class MouvementStock extends CommonObject
 
 		switch ($origin_type) {
 			case 'commande':
-				require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 				$origin = new Commande($this->db);
 				break;
 			case 'shipping':
-				require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 				$origin = new Expedition($this->db);
 				break;
 			case 'facture':
-				require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 				$origin = new Facture($this->db);
 				break;
 			case 'order_supplier':
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 				$origin = new CommandeFournisseur($this->db);
 				break;
 			case 'invoice_supplier':
-				require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 				$origin = new FactureFournisseur($this->db);
 				break;
 			case 'project':
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 				$origin = new Project($this->db);
 				break;
 			case 'mo':
-				require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 				$origin = new Mo($this->db);
 				break;
 			case 'user':
-				require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 				$origin = new User($this->db);
 				break;
 			case 'reception':
-				require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
 				$origin = new Reception($this->db);
 				break;
 			case 'inventory':
-				require_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 				$origin = new Inventory($this->db);
 				break;
 			default:

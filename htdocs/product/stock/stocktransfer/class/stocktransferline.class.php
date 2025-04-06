@@ -24,10 +24,6 @@
  * \brief       This file is a CRUD class file for StockTransferLine (Create/Read/Update/Delete)
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for StockTransferLine
@@ -435,10 +431,6 @@ class StockTransferLine extends CommonObjectLine
 	public function doStockMovement($label, $code_inv, $fk_entrepot, $direction = 1)
 	{
 		global $user, $langs;
-
-		require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
-		include_once DOL_DOCUMENT_ROOT . '/product/stock/class/mouvementstock.class.php';
-		include_once DOL_DOCUMENT_ROOT . '/product/stock/stocktransfer/class/stocktransfer.class.php';
 
 		$p = new Product($this->db);
 		$p->fetch($this->fk_product);

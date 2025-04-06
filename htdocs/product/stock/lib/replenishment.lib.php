@@ -22,7 +22,6 @@
  *  \brief      Contains functions used in replenish.php and replenishorders.php
  */
 
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
 /**
  * Check if there is still some dispatching of stock to do.

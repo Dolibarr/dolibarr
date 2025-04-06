@@ -38,14 +38,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-if (isModEnabled('barcode')) {
-	dol_include_once('/core/class/html.formbarcode.class.php');
-}
+
 
 /**
  * @var Conf $conf
@@ -335,7 +328,6 @@ if (empty($reshook)) {
 				} else {
 					if (isModEnabled('dynamicprices') && $price_expression !== '') {
 						//Check the expression validity by parsing it
-						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$object->fk_supplier_price_expression = $price_expression;
 						$price_result = $priceparser->parseProductSupplier($object);
@@ -833,9 +825,6 @@ if ($id > 0 || $ref) {
 
 				// Product description of the supplier
 				if (getDolGlobalString('PRODUIT_FOURN_TEXTS')) {
-					//WYSIWYG Editor
-					require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 					print '<tr>';
 					print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
 					print '<td>';

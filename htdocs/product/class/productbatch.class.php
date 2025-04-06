@@ -26,8 +26,6 @@
  *  			Manage table llx_product_batch (should have been named product_stock_batch)
  */
 
-require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-
 
 /**
  *	Manage record for batch number management

@@ -45,17 +45,12 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+if (isModEnabled('accounting')) {
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+}
+
 
 /**
  * @var Conf $conf
@@ -66,26 +61,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  * @var User $user
  */
 
-if (isModEnabled('propal')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-}
-if (isModEnabled('invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-}
-if (isModEnabled('order')) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-}
-if (isModEnabled('accounting')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-}
 if (isModEnabled('bom')) {
-	require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 	$langs->load("mrp");
-}
-if (isModEnabled('workstation')) {
-	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 }
 
 // Load translation files required by the page
@@ -187,7 +164,6 @@ $modulepart = 'product';
 $canvas = !empty($object->canvas) ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
 if (!empty($canvas)) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db, $action);
 	$objcanvas->getCanvas('product', 'card', $canvas);
 }
@@ -1164,8 +1140,6 @@ if (empty($reshook)) {
 				$pu_ttc = $object->multiprices_ttc[$soc->price_level];
 				$price_base_type = $object->multiprices_base_type[$soc->price_level];
 			} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
-				require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 				$prodcustprice = new ProductCustomerPrice($db);
 
 				$filter = array('t.fk_product' => (string) $object->id, 't.fk_soc' => (string) $soc->id);
@@ -1419,9 +1393,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 	// When used in standard mode
 	// -----------------------------------------
 	if ($action == 'create' && $usercancreate) {
-		//WYSIWYG Editor
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 		if (!empty($conf->use_javascript_ajax)) {
 			print '<script type="text/javascript">';
 			print '$(document).ready(function () {
@@ -1594,7 +1565,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						$fk_barcode_type = 0;
 					}
 				}
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 				$formbarcode = new FormBarCode($db);
 				print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 				print '</td>';
@@ -1999,9 +1969,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 		// Card in edit mode
 		if ($action == 'edit' && $usercancreate) {
-			//WYSIWYG Editor
-			require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 			if (!empty($conf->use_javascript_ajax)) {
 				print '<script type="text/javascript">';
 				print '$(document).ready(function () {
@@ -2224,7 +2191,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							$fk_barcode_type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
 						}
 					}
-					require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 					$formbarcode = new FormBarCode($db);
 					print $formbarcode->selectBarcodeType($fk_barcode_type, 'fk_barcode_type', 1);
 					print '</td></tr>';
@@ -2627,7 +2593,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</tr></table>';
 					print '</td><td>';
 					if ($action == 'editbarcodetype' || $action == 'editbarcode') {
-						require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 						$formbarcode = new FormBarCode($db);
 					}
 
@@ -2852,7 +2817,6 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 
 				if ($object->isService()) {
 					// Duration
-					require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 					$measuringUnits = new CUnits($db);
 					$durations = [];
 					$plural = '';
@@ -3275,7 +3239,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 	$morehtmlcenter .= '</div>';
 
 	// List of actions on element
-	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 	$formactions = new FormActions($db);
 	$somethingshown = $formactions->showactions($object, 'product', 0, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for product
 

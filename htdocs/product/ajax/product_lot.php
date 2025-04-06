@@ -41,7 +41,7 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php'; // Load $user and permissions
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+
 
 /**
  * @var Conf $conf

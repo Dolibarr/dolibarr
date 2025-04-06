@@ -29,13 +29,10 @@
  *  \brief      Homepage products and services
  */
 
-
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
+
 
 /**
  * @var Conf $conf
@@ -76,7 +73,6 @@ $resultboxes = FormOther::getBoxesArea($user, "4");
 
 if (GETPOST('addbox')) {
 	// Add box (when submit is done from a form when ajax disabled)
-	require_once DOL_DOCUMENT_ROOT.'/core/class/infobox.class.php';
 	$zone = GETPOSTINT('areacode');
 	$userid = GETPOSTINT('userid');
 	$boxorder = GETPOST('boxorder', 'aZ09');
@@ -230,7 +226,6 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesOnPurchase"), round($SommeE));
 			$dataseries[] = array($langs->transnoentitiesnoconv("ServicesNotOnSell"), round($SommeF));
 		}
-		include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 		$dolgraph = new DolGraph();
 		$dolgraph->SetData($dataseries);
 		$dolgraph->setShowLegend(2);
@@ -249,7 +244,6 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 
 $graphcat = '';
 if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODUCTS') && $user->hasRight('categorie', 'read')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$graphcat .= '<br>';
 	$graphcat .= '<div class="div-table-responsive-no-min">';
 	$graphcat .= '<table class="noborder centpercent">';
@@ -285,7 +279,6 @@ if (isModEnabled('category') && getDolGlobalString('CATEGORY_GRAPHSTATS_ON_PRODU
 			if ($i > $nbmax) {
 				$dataseries[] = array($langs->transnoentitiesnoconv("Other"), round($rest));
 			}
-			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 			$dolgraph = new DolGraph();
 			$dolgraph->SetData($dataseries);
 			$dolgraph->setShowLegend(2);
@@ -435,7 +428,6 @@ if ((isModEnabled("product") || isModEnabled("service")) && ($user->hasRight("pr
 						$product = new Product($db);
 						$product->fetch($objp->rowid);
 
-						require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 						$priceparser = new PriceParser($db);
 						$price_result = $priceparser->parseProduct($product);
 						if ($price_result >= 0) {
@@ -543,8 +535,6 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'read')) {
 // Latest movements
 $latestmovement = '';
 if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
-	include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
 	$sql = "SELECT p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.tobatch, p.tosell, p.tobuy,";
 	$sql .= " e.ref as warehouse_ref, e.rowid as warehouse_id, e.ref as warehouse_label, e.lieu, e.statut as warehouse_status,";
 	$sql .= " m.rowid as mid, m.label as mlabel, m.inventorycode as mcode, m.value as qty, m.datem, m.batch, m.eatby, m.sellby";

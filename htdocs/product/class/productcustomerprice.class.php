@@ -23,8 +23,7 @@
  * \ingroup produit
  * \brief File of class to manage predefined price products or services by customer
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+
 
 /**
  * File of class to manage predefined price products or services by customer

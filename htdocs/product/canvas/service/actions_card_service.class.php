@@ -22,7 +22,6 @@
  *	\ingroup    service
  *	\brief      File with class of actions for canvas service
  */
-include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
 
 /**

@@ -24,9 +24,6 @@
  *  \brief      This file is an CRUD class file (Create/Read/Update/Delete)
  */
 
-require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-
 
 /**
  *	Put here description of your class

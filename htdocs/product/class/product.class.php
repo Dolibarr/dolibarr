@@ -38,10 +38,7 @@
  *    \brief      File of class to manage the predefined products or services
  */
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/productbatch.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
+
 
 /**
  * Class to manage products or services
@@ -1742,7 +1739,6 @@ class Product extends CommonObject
 								$error++;
 							} else {
 								// to keep old entries with the new dir
-								require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmfiles.class.php';
 								$ecmfiles = new EcmFiles($this->db);
 								$ecmfiles->updateAfterRename("produit/".dol_sanitizeFileName($this->oldcopy->ref), "produit/".dol_sanitizeFileName($this->ref));
 							}
@@ -1752,8 +1748,6 @@ class Product extends CommonObject
 
 				if (!$error) {
 					if (isModEnabled('variants')) {
-						include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-
 						$comb = new ProductCombination($this->db);
 
 						foreach ($comb->fetchAllByFkProductParent($this->id) as $currcomb) {
@@ -1861,9 +1855,6 @@ class Product extends CommonObject
 			}
 
 			if (!$error) {
-				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-				include_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination2ValuePair.class.php';
-
 				//If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
 
@@ -2368,8 +2359,6 @@ class Product extends CommonObject
 
 		// if price by customer / level
 		if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 			$prodcustprice = new ProductCustomerPrice($this->db);
 
 			$filter = array('t.fk_product' => (string) $this->id, 't.fk_soc' => (string) $thirdparty_buyer->id);
@@ -2437,8 +2426,6 @@ class Product extends CommonObject
 			}
 		} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 			// If price per customer
-			require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 			$prodcustprice = new ProductCustomerPrice($this->db);
 
 			$filter = array('t.fk_product' => (string) $this->id, 't.fk_soc' => (string) $thirdparty_buyer->id);
@@ -2569,7 +2556,6 @@ class Product extends CommonObject
 					$prod_supplier->fourn_tva_tx = $obj->tva_tx;
 					$prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
 
-					include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProductSupplier($prod_supplier);
 					if ($price_result >= 0) {
@@ -2633,7 +2619,6 @@ class Product extends CommonObject
 							$prod_supplier->fourn_tva_tx = $obj->tva_tx;
 							$prod_supplier->fk_supplier_price_expression = $obj->fk_supplier_price_expression;
 
-							include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 							$priceparser = new PriceParser($this->db);
 							$price_result = $priceparser->parseProductSupplier($prod_supplier);
 							if ($result >= 0) {
@@ -3310,7 +3295,6 @@ class Product extends CommonObject
 				}
 
 				if (isModEnabled('dynamicprices') && !empty($this->fk_price_expression) && empty($ignore_expression)) {
-					include_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 					$priceparser = new PriceParser($this->db);
 					$price_result = $priceparser->parseProduct($this);
 					if ($price_result >= 0) {
@@ -3673,8 +3657,6 @@ class Product extends CommonObject
 					$this->stats_commande['qty'] -= $adeduire;
 				} else {
 					// If option DECREASE_ONLY_UNINVOICEDPRODUCTS is off, we make a compensation with lines of invoices linked to the order
-					include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
 					// For every order having invoice already validated we need to decrease stock cause it's in physical stock
 					$adeduire = 0;
 					$sql = "SELECT sum(".$this->db->ifsql('f.type=2', '-1', '1')." * fd.qty) as count FROM ".MAIN_DB_PREFIX."facturedet as fd ";
@@ -5815,7 +5797,6 @@ class Product extends CommonObject
 			}
 			// show categories for this record only in ajax to not overload lists
 			if (isModEnabled('category') && !$nofetch) {
-				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 				$form = new Form($this->db);
 				$datas['categories'] = '<br>' . $form->showCategories($this->id, Categorie::TYPE_PRODUCT, 1);
 			}
@@ -6113,8 +6094,6 @@ class Product extends CommonObject
 		if ($id_entrepot) {
 			$this->db->begin();
 
-			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
 			// Ensure $nbpiece is a number and positive
 			$nbpiece = (float) $nbpiece;
 			if ($nbpiece < 0) {
@@ -6177,8 +6156,6 @@ class Product extends CommonObject
 		// phpcs:enable
 		if ($id_entrepot) {
 			$this->db->begin();
-
-			include_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 
 			// Ensure $nbpiece is a number and positive
 			$nbpiece = (float) $nbpiece;
@@ -6328,7 +6305,6 @@ class Product extends CommonObject
 			$stock_commande_client = $this->stats_commande['qty'];
 		}
 		if (isModEnabled("shipping")) {
-			require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 			$filterShipmentStatus = '';
 			if (getDolGlobalString('STOCK_CALCULATE_ON_SHIPMENT')) {
 				$filterShipmentStatus = Expedition::STATUS_VALIDATED.','.Expedition::STATUS_CLOSED;
@@ -6892,7 +6868,6 @@ class Product extends CommonObject
 		$maxpricesupplier = 0;
 
 		if (getDolGlobalString('PRODUCT_MINIMUM_RECOMMENDED_PRICE')) {
-			include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 			$product_fourn = new ProductFournisseur($this->db);
 			$product_fourn_list = $product_fourn->list_product_fournisseur_price($this->id, '', '');
 
@@ -6923,7 +6898,6 @@ class Product extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PRODUCT);
 	}
 

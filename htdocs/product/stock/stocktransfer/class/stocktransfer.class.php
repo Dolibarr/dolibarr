@@ -24,12 +24,6 @@
  * \brief       This file is a CRUD class file for StockTransfer (Create/Read/Update/Delete)
  */
 
-// Put here all includes required by your class file
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
-
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for StockTransfer
@@ -409,7 +403,6 @@ class StockTransfer extends CommonObject
 	 */
 	public function fetchLines()
 	{
-		require_once DOL_DOCUMENT_ROOT . '/product/stock/stocktransfer/class/stocktransferline.class.php';
 		$this->lines = array();
 
 		$result = $this->fetchLinesCommon();

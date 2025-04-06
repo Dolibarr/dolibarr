@@ -18,8 +18,6 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-
 
 /**
  * API class for stock movements

@@ -40,10 +40,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
 
 /**
  * @var Conf $conf
@@ -56,8 +53,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $prodcustprice = null;
 if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 	$prodcustprice = new ProductCustomerPrice($db);
 }
 
@@ -294,7 +289,6 @@ if (empty($reshook)) {
 
 			if ($object->fk_price_expression != 0) {
 				//Check the expression validity by parsing it
-				require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 				$priceparser = new PriceParser($db);
 
 				if ($priceparser->parseProduct($object) < 0) {

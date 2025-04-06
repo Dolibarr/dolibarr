@@ -23,7 +23,6 @@
  *	\brief      File for class with methods for building product related HTML components
  */
 
-require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 /**
  *	Class with static methods for building HTML components related to products
@@ -529,7 +528,6 @@ class FormProduct
 			print '</tr></table></form>';
 		} else {
 			if ($selected) {
-				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 				$warehousestatic = new Entrepot($this->db);
 				$warehousestatic->fetch($selected);
 				print $warehousestatic->getNomUrl();
@@ -580,7 +578,6 @@ class FormProduct
 		$placeholderID = ($mode == 2 ? '99999999' : '-1'); // we don't want ajaxcombobox replace clearing option in mode 2
 
 		// TODO Use a cache
-		require_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$measuringUnits = new CUnits($db);
 
 		$filter = array();
@@ -657,7 +654,6 @@ class FormProduct
 		$return = '';
 
 		// TODO Use a cache
-		require_once DOL_DOCUMENT_ROOT.'/core/class/cproductnature.class.php';
 		$productNature = new CProductNature($db);
 
 		$filter = array();
@@ -839,7 +835,6 @@ class FormProduct
 		}
 
 		if (empty($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('productdao'));
@@ -905,7 +900,6 @@ class FormProduct
 			$batch_count = 0;
 			global $hookmanager;
 			if (empty($hookmanager)) {
-				include_once DOL_DOCUMENT_ROOT . '/core/class/hookmanager.class.php';
 				$hookmanager = new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('productdao'));

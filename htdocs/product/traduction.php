@@ -31,8 +31,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+
 
 /**
  * @var Conf $conf
@@ -249,9 +248,6 @@ print "\n".'</div>'."\n";
 
 
 if ($action == 'edit') {
-	//WYSIWYG Editor
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vedit">';
@@ -323,9 +319,6 @@ if ($action == 'edit') {
  */
 
 if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-	//WYSIWYG Editor
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-
 	print '<br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
