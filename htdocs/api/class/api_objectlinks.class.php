@@ -53,7 +53,7 @@ class ObjectLinks extends DolibarrApi
 	 * @param   int         $id				ID of objectlink
 	 * @return  Object						Object with cleaned properties
 	 *
-	 * @url	GET objectlinks/{id}
+	 * @url	GET {id}
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -63,6 +63,51 @@ class ObjectLinks extends DolibarrApi
 		return $this->_fetch($id);
 	}
 
+	/**
+	 *	Create object link
+	 *
+	 * 	Examples: Only set "notrigger": 1 because 0 is the default value.
+	 *  Linking subscriptions for when you sell membership as part of another sale
+	 *  {"fk_source":"1679","sourcetype":"propal","fk_target":"1233","targettype":"commande"}
+	 *  {"fk_source":"167","sourcetype":"facture","fk_target":"123","targettype":"subscription"}
+	 *
+	 *  @param 		array   $request_data   Request data, see Example above for required parameters. Currently unused is relationtype. notrigger is default 0, which means to trigger, else set notrigger: 1
+	 *  @return		array
+	 *
+	 * @url POST
+	 *
+	 * @throws RestException 304
+	 * @throws RestException 403
+	 * @throws RestException 500
+	 */
+	public function create($request_data = null)
+	{
+		// Permission check
+		if (!DolibarrApiAccess::$user->hasRight((string) $sourcetype, 'creer')) {
+			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$sourcetype);
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $targettype, 'creer')) {
+			throw new RestException(403, 'denied access to create the objectlinks targettype='.$targettype);
+		}
+
+		//$result = $this->objectlink->create(DolibarrApiAccess::$user, $fk_source, $sourcetype, $fk_target, $targettype, $relationtype, $notrigger);
+		$result = -1;
+
+		if ($result < 0 ) {
+			throw new RestException(500, 'Error when create objectlink : '.$this->objectlink->error);
+		}
+
+		if ($result == 0 ) {
+			throw new RestException(304, 'Object link already exists');
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'object link created'
+			)
+		);
+	}
 
 	/**
 	 * Delete an object link
@@ -70,7 +115,7 @@ class ObjectLinks extends DolibarrApi
 	 * @param   int     $id         object link ID
 	 * @return  array
 	 *
-	 * @url	DELETE objectlinks/{id}
+	 * @url	DELETE {id}
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
