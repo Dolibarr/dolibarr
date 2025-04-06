@@ -45,9 +45,10 @@ define('EVEN_IF_ONLY_LOGIN_ALLOWED', 1); // Set this define to 0 if you want to 
 // Include and load Dolibarr environment variables
 require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
-require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/images.lib.php";
+
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -105,21 +106,18 @@ $nbok = $nbko = 0;
 $tmpobject = null;
 if ($subdir == 'propale' || $subdir == 'proposal') {
 	if (isModEnabled('propal')) {
-		require_once DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php";
 		$tmpobject = new Propal($db);
 	} else {
 		print 'Error, module not enabled'."\n";
 	}
 } elseif ($subdir == 'commande' || $subdir == 'order') {
 	if (isModEnabled('order')) {
-		require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 		$tmpobject = new Commande($db);
 	} else {
 		print 'Error, module not enabled'."\n";
 	}
 } elseif ($subdir == 'facture' || $subdir == 'invoice') {
 	if (isModEnabled('invoice')) {
-		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
 		$tmpobject = new Facture($db);
 	} else {
 		print 'Error, module not enabled'."\n";
