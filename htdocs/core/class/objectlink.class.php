@@ -132,8 +132,7 @@ class ObjectLink extends CommonObject
 		$sql .= " AND sourcetype=".((string) $sourcetype);
 		$sql .= " AND fk_target=".((int) $fk_target);
 		$sql .= " AND targettype=".((string) $targettype);
-		if ($relationtype)
-		{
+		if ($relationtype) {
 			$sql .= " AND relationtype=".((string) $relationtype);
 		}
 
@@ -230,8 +229,7 @@ class ObjectLink extends CommonObject
 		$error = 0;
 
 		$alreadyexists = $this->fetchByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype);
-		if ($alreadyexists == 1)
-		{
+		if ($alreadyexists == 1) {
 			return 0;
 		}
 
