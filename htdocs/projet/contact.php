@@ -26,14 +26,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
+
 
 /**
  * @var Conf $conf
@@ -185,7 +179,6 @@ if (empty($reshook)) {
 		$errorgrouparray = array();
 
 		if ($groupid > 0) {
-			require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 			$usergroup = new UserGroup($db);
 			$result = $usergroup->fetch($groupid);
 			if ($result > 0) {
@@ -239,7 +232,6 @@ if (empty($reshook)) {
 
 				$affecttotask = GETPOST('tasksavailable', 'intcomma');
 				if (!empty($affecttotask)) {
-					require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 					$task_to_affect = explode(',', $affecttotask);
 					if (!empty($task_to_affect)) {
 						foreach ($task_to_affect as $task_id) {

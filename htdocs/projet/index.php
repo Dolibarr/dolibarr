@@ -28,11 +28,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
 
 /**
  * @var Conf $conf

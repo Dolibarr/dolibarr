@@ -19,8 +19,6 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
 /**
  * API class for projects
@@ -452,7 +450,6 @@ class Projects extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 		$userp = DolibarrApiAccess::$user;
 		if ($userid > 0) {

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-include_once DOL_DOCUMENT_ROOT.'/core/class/stats.class.php';
+
 include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
@@ -72,7 +72,6 @@ class ProjectStats extends Stats
 
 		$this->db = $db;
 
-		require_once 'project.class.php';
 		$this->project = new Project($this->db);
 
 		$this->from = MAIN_DB_PREFIX.$this->project->table_element;

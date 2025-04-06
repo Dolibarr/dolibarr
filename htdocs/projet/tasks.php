@@ -26,16 +26,9 @@
  */
 
 require "../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
+
 
 /**
  * @var Conf $conf
@@ -866,7 +859,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	print '<td>';
 
 	// WYSIWYG editor
-	include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 	$nbrows = 0;
 	if (getDolGlobalString('MAIN_INPUT_DESC_HEIGHT')) {
 		$nbrows = getDolGlobalString('MAIN_INPUT_DESC_HEIGHT');

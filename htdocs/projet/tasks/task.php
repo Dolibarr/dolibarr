@@ -27,15 +27,9 @@
  */
 
 require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+
 
 /**
  * @var Conf $conf
@@ -569,7 +563,6 @@ if ($id > 0 || !empty($ref)) {
 		print '<td>';
 
 		// WYSIWYG editor
-		include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 		$nbrows = getDolGlobalInt('MAIN_INPUT_DESC_HEIGHT', 0);
 		$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_details', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_SOCIETE'), $nbrows, '90%');
 		print $doleditor->Create();
@@ -836,7 +829,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</div><div class="fichehalfright">';
 
 		// List of actions on element
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
 		$formactions->showactions($object, 'project_task', 0, 1, '', 10, 'withproject='.$withproject);
 

@@ -29,11 +29,6 @@
  *      \brief      This file is a CRUD class file for Task (Create/Read/Update/Delete)
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/timespent.class.php';
-
 
 /**
  * 	Class to manage tasks
@@ -2289,7 +2284,6 @@ class Task extends CommonObjectLine
 		$defaultref = '';
 		$obj = !getDolGlobalString('PROJECT_TASK_ADDON') ? 'mod_task_simple' : $conf->global->PROJECT_TASK_ADDON;
 		if (getDolGlobalString('PROJECT_TASK_ADDON') && is_readable(DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').".php")) {
-			require_once DOL_DOCUMENT_ROOT."/core/modules/project/task/" . getDolGlobalString('PROJECT_TASK_ADDON').'.php';
 			$modTask = new $obj();
 			'@phan-var-force ModeleNumRefTask $modTask';
 			$defaultref = $modTask->getNextValue(null, $clone_task);

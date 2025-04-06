@@ -31,7 +31,7 @@
  * 		\ingroup    projet
  * 		\brief      File of class to manage projects
  */
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+
 
 /**
  *	Class to manage projects
@@ -1910,8 +1910,6 @@ class Project extends CommonObject
 
 			//Duplicate task
 			if ($clone_task) {
-				require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-
 				$taskstatic = new Task($this->db);
 
 				// Security check
@@ -2466,7 +2464,6 @@ class Project extends CommonObject
 	 */
 	public function setCategories($categories)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 		return parent::setCategoriesCommon($categories, Categorie::TYPE_PROJECT);
 	}
 
@@ -2480,7 +2477,6 @@ class Project extends CommonObject
 	 */
 	public function getLinesArray($user, $loadRoleMode = 1)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 		$taskstatic = new Task($this->db);
 
 		$this->lines = $taskstatic->getTasksArray(null, $user, $this->id, 0, 0, '', '-1', '', 0, 0, null, 0, array(), 0, $loadRoleMode);
@@ -2711,8 +2707,6 @@ class Project extends CommonObject
 
 				$reportContent .= '</table>';
 
-				require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-
 				// PREPARE EMAIL
 				$errormesg = '';
 
@@ -2730,8 +2724,6 @@ class Project extends CommonObject
 					$nbMailSend++;
 
 					// Add a line into event table
-					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 					// Insert record of emails sent
 					$actioncomm = new ActionComm($this->db);
 
@@ -2765,8 +2757,6 @@ class Project extends CommonObject
 					$error++;
 
 					// Add a line into event table
-					require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-
 					// Insert record of emails sent
 					$actioncomm = new ActionComm($this->db);
 

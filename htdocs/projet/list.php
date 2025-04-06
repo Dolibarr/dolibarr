@@ -35,16 +35,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
+
 
 /**
  * @var Conf $conf
@@ -2270,7 +2262,6 @@ if (in_array('builddoc', array_keys($arrayofmassactions)) && ($nbtotalofrecords 
 		$hidegeneratedfilelistifempty = 0;
 	}
 
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 
 	// Show list of available documents

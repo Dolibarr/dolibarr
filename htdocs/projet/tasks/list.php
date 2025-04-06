@@ -29,12 +29,9 @@
  */
 
 require "../../main.inc.php";
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
+
 
 /**
  * @var Conf $conf
@@ -798,7 +795,6 @@ $moreforfilter = '';
 
 // Filter on categories
 if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	$moreforfilter .= '<div class="divsearchfield">';
 	$tmptitle = $langs->trans('ProjectCategories');
 	$moreforfilter .= img_picto($tmptitle, 'category', 'class="pictofixedwidth"').$formother->select_categories('project', (int) $search_categ, 'search_categ', 1, $tmptitle, 'maxwidth300');

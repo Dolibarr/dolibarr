@@ -32,80 +32,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-if (isModEnabled('agenda')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-}
-if (isModEnabled('bank')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
-}
-if (isModEnabled('category')) {
-	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-}
-if (isModEnabled('order')) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-}
-if (isModEnabled('contract')) {
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-}
-if (isModEnabled('deplacement')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
-}
-if (isModEnabled('don')) {
-	require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
-}
-if (isModEnabled('shipping')) {
-	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
-}
-if (isModEnabled('expensereport')) {
-	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
-}
-if (isModEnabled('invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
-}
-if (isModEnabled('intervention')) {
-	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-}
-if (isModEnabled('loan')) {
-	require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/loan/class/loanschedule.class.php';
-}
-if (isModEnabled('mrp')) {
-	require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
-}
-if (isModEnabled('propal')) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-}
-if (isModEnabled('salaries')) {
-	require_once DOL_DOCUMENT_ROOT.'/salaries/class/salary.class.php';
-}
-if (isModEnabled('stock')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
-}
-if (isModEnabled('supplier_invoice')) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-}
-if (isModEnabled('supplier_order')) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-}
-if (isModEnabled('supplier_proposal')) {
-	require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
-}
-if (isModEnabled('tax')) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
-}
-if (isModEnabled('stocktransfer')) {
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransferline.class.php';
-}
 
 /**
  * @var Conf $conf
@@ -1039,7 +968,6 @@ print '</tr>';
 
 // and the cost per attendee
 if ($object->usage_organize_event) {
-	require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 	$conforboothattendee = new ConferenceOrBoothAttendee($db);
 	$result = $conforboothattendee->fetchAll('', '', 0, 0, '(t.fk_project:=:'.((int) $object->id).') AND (t.status:=:'.ConferenceOrBoothAttendee::STATUS_VALIDATED.')');
 
