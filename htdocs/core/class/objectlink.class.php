@@ -114,6 +114,55 @@ class ObjectLink extends CommonObject
 	}
 
 	/**
+	 *	fetch object link By Values, not id
+	 *
+	 *  @param		int		$fk_source		source id of object we link from
+	 *  @param		string	$sourcetype		type of the source object
+	 *  @param		int		$fk_target		target id of object we link to
+	 *  @param		string	$targettype 	type of the target object
+	 *  @param		string	$relationtype 	type of the relation, usually null
+	 *	@return 	int			        	Return integer <0 if KO, >0 if OK
+	 */
+	public function fetchByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null)
+	{
+		$sql = "SELECT rowid, fk_source, sourcetype, fk_target,";
+		$sql .= " targettype, relationtype FROM";
+		$sql .= " ".MAIN_DB_PREFIX.$this->table_element;
+		$sql .= " WHERE fk_source=".((int) $fk_source);
+		$sql .= " AND sourcetype=".((string) $sourcetype);
+		$sql .= " AND fk_target=".((int) $fk_target);
+		$sql .= " AND targettype=".((string) $targettype);
+		if ($relationtype)
+		{
+			$sql .= " AND relationtype=".((string) $relationtype);
+		}
+
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result) {
+			$obj = $this->db->fetch_object($result);
+			if ($obj) {
+				$this->id = $obj->rowid;
+				//$this->entity = $obj->entity;
+
+				$this->fk_source = $obj->fk_source;
+				$this->sourcetype = $obj->sourcetype;
+				$this->fk_target = $obj->fk_target;
+				$this->targettype = $obj->targettype;
+				$this->relationtype = $obj->relationtype;
+
+				return 1;
+			} else {
+				$this->error = 'Object link with id '.$rowid.' not found sql='.$sql;
+				return 0;
+			}
+		} else {
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
+
+	/**
 	 *	Delete the object link
 	 *
 	 *	@param	User	$user		User object
@@ -180,6 +229,12 @@ class ObjectLink extends CommonObject
 		global $conf, $langs;
 		$error = 0;
 
+		$alreadyexists = $this->fetchByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype);
+		if ($alreadyexists == 1)
+		{
+			return 0;
+		}
+
 		// Clean parameters
 		dol_syslog(get_class($this)."::create user=".$user->id);
 
@@ -202,7 +257,8 @@ class ObjectLink extends CommonObject
 		dol_syslog("sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			return 0;
+			$this->db->commit();
+			return 1;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
