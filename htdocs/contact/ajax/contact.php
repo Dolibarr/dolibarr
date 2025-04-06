@@ -43,7 +43,7 @@ if (!defined('NOREQUIRESOC')) {
 
 // Load Dolibarr environment
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
 
 /**
  * @var Conf $conf
@@ -87,8 +87,6 @@ top_httphead('application/json');
 //print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 if ($action == 'fetch' && !empty($id) && $permissiontoread) {
-	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
-
 	$outjson = array();
 
 	if ($object->id > 0) {
@@ -102,8 +100,6 @@ if ($action == 'fetch' && !empty($id) && $permissiontoread) {
 
 	echo json_encode($outjson);
 } elseif ($permissiontoread) {		// $action can be 'getContacts'
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-
 	if (empty($htmlname)) {
 		return 'Error value for parameter htmlname';
 	}

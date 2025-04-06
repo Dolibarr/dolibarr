@@ -25,7 +25,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
 
 /**
  * @var Conf $conf
@@ -62,7 +62,6 @@ if ($reshook < 0) {
 $form = new Form($db);
 
 if ($id) {
-	require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
 	$object = new Contact($db);

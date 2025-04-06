@@ -21,7 +21,7 @@
  *	\ingroup    thirdparty
  *	\brief      File for the class Thirdparty contact card controller (default canvas)
  */
-include_once DOL_DOCUMENT_ROOT.'/contact/canvas/actions_contactcard_common.class.php';
+
 
 /**
  *	\class      ActionsContactCardDefault
