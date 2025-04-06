@@ -85,12 +85,16 @@ class ObjectLinks extends DolibarrApi
 		// Check mandatory fields
 		$result = $this->_validate($request_data);
 
-		// Permission check
-		if (!DolibarrApiAccess::$user->hasRight((string) $request_data->sourcetype, 'creer')) {
-			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$sourcetype);
+		foreach ($request_data as $field => $value) {
+			$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $request_data->targettype, 'creer')) {
-			throw new RestException(403, 'denied access to create the objectlinks targettype='.$targettype);
+
+		// Permission check
+		if (!DolibarrApiAccess::$user->hasRight((string) $this->objectlink->sourcetype, 'creer')) {
+			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$this->objectlink->sourcetype);
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $this->objectlink->targettype, 'creer')) {
+			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
 		//$result = $this->objectlink->create(DolibarrApiAccess::$user, $fk_source, $sourcetype, $fk_target, $targettype, $relationtype, $notrigger);
