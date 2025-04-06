@@ -93,7 +93,7 @@ class ObjectLink extends CommonObject
 			$obj = $this->db->fetch_object($result);
 			if ($obj) {
 				$this->id = $obj->rowid;
-				$this->entity = $obj->entity;
+				//$this->entity = $obj->entity;
 
 				$this->fk_source = $obj->fk_source;
 				$this->sourcetype = $obj->sourcetype;
@@ -120,7 +120,7 @@ class ObjectLink extends CommonObject
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
-	public function delete($user, $rowid, $notrigger = 0)
+	public function delete($user, $notrigger = 0)
 	{
 
 		global $conf, $langs;
