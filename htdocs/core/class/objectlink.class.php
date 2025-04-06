@@ -249,7 +249,7 @@ class ObjectLink extends CommonObject
 		$sql .= " VALUES (".((int) $this->fk_source).", ".((string) $this->sourcetype).",";
 		$sql .= ((int) $this->fk_target).", ".((string) $this->targettype);
 		if ($relationtype) {
-			$sql .= ", ".((string) $this->targettype);
+			$sql .= ", ".((string) $this->relationtype);
 		}
 		$sql .= ")";
 
