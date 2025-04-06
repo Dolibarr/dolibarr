@@ -20,7 +20,6 @@
 
 use Luracast\Restler\RestException;
 
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
 /**
  * API class for orders
@@ -1004,8 +1003,6 @@ class Orders extends DolibarrApi
 	 */
 	public function createOrderFromProposal($proposalid)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
 		}
@@ -1048,7 +1045,6 @@ class Orders extends DolibarrApi
 	 */
 	public function getOrderShipments($id)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'lire')) {
 			throw new RestException(403);
 		}
@@ -1104,7 +1100,6 @@ class Orders extends DolibarrApi
 	 */
 	public function createOrderShipment($id, $warehouse_id)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 		if (!DolibarrApiAccess::$user->hasRight('expedition', 'creer')) {
 			throw new RestException(403);
 		}

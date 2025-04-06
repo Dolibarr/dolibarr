@@ -36,7 +36,6 @@
  *  \brief      class for order lines
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
 

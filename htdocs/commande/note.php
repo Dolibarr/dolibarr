@@ -30,10 +30,7 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
+
 
 /**
  * @var Conf $conf

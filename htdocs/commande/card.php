@@ -40,31 +40,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formorder.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/order.lib.php';
-
-require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-
-if (isModEnabled("propal")) {
-	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-}
-
-if (isModEnabled('project')) {
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-}
-
-if (isModEnabled('variants')) {
-	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
-}
 
 
 /**
@@ -925,8 +902,6 @@ if (empty($reshook)) {
 
 				if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 					// If price per customer
-					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => (string) $prod->id, 't.fk_soc' => (string) $object->thirdparty->id);
@@ -994,8 +969,6 @@ if (empty($reshook)) {
 					}
 				} elseif (getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
 					// If price per customer
-					require_once DOL_DOCUMENT_ROOT.'/product/class/productcustomerprice.class.php';
-
 					$prodcustprice = new ProductCustomerPrice($db);
 
 					$filter = array('t.fk_product' => (string) $prod->id, 't.fk_soc' => (string) $object->thirdparty->id);
@@ -1541,8 +1514,6 @@ if (empty($reshook)) {
 					GETPOST('generate_deposit', 'alpha') == 'on' && !empty($deposit_percent_from_payment_terms)
 					&& isModEnabled('invoice') && $user->hasRight('facture', 'creer')
 				) {
-					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-
 					$date = dol_mktime(0, 0, 0, GETPOSTINT('datefmonth'), GETPOSTINT('datefday'), GETPOSTINT('datefyear'));
 					$forceFields = array();
 
@@ -2153,7 +2124,6 @@ if ($action == 'create' && $usercancreate) {
 
 		// Warehouse
 		if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
-			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			print '<tr><td>'.$langs->trans('Warehouse').'</td><td>';
 			print img_picto('', 'stock', 'class="pictofixedwidth"').$formproduct->selectWarehouses((GETPOSTISSET('warehouse_id') ? GETPOST('warehouse_id') : $warehouse_id), 'warehouse_id', '', 1, 0, 0, '', 0, 0, array(), 'maxwidth500 widthcentpercentminusxx');
@@ -2221,7 +2191,6 @@ if ($action == 'create' && $usercancreate) {
 		// Template to use by default
 		print '<tr><td>'.$langs->trans('DefaultModel').'</td>';
 		print '<td>';
-		include_once DOL_DOCUMENT_ROOT.'/core/modules/commande/modules_commande.php';
 		$liste = ModelePDFCommandes::liste_modeles($db);
 		$preselected = getDolGlobalString('COMMANDE_ADDON_PDF');
 		print img_picto('', 'pdf', 'class="pictofixedwidth"');
@@ -2390,7 +2359,6 @@ if ($action == 'create' && $usercancreate) {
 
 			$text = $langs->trans('ConfirmValidateOrder', $numref);
 			if (isModEnabled('notification')) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 				$notify = new Notify($db);
 				$text .= '<br>';
 				$text .= $notify->confirmMessage('ORDER_VALIDATE', $object->socid, $object);
@@ -2406,7 +2374,6 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
@@ -2448,8 +2415,6 @@ if ($action == 'create' && $usercancreate) {
 				$deposit_percent_from_payment_terms = (float) getDictionaryValue('c_payment_term', 'deposit_percent', $object->cond_reglement_id);
 
 				if (!empty($deposit_percent_from_payment_terms) && isModEnabled('invoice') && $user->hasRight('facture', 'creer')) {
-					require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
-
 					$object->fetchObjectLinked();
 
 					$eligibleForDepositGeneration = true;
@@ -2569,7 +2534,6 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
@@ -2608,7 +2572,6 @@ if ($action == 'create' && $usercancreate) {
 			$formquestion = array();
 			if (isModEnabled('stock') && getDolGlobalString('STOCK_CALCULATE_ON_VALIDATE_ORDER') && $qualified_for_stock_change) {
 				$langs->load("stocks");
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
 				$forcecombo = 0;
 				if ($conf->browser->name == 'ie') {
@@ -2817,7 +2780,6 @@ if ($action == 'create' && $usercancreate) {
 			// Warehouse
 			if (isModEnabled('stock') && getDolGlobalString('WAREHOUSE_ASK_WAREHOUSE_DURING_ORDER')) {
 				$langs->load('stocks');
-				require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
 				print '<tr><td>';
 				$editenable = $usercancreate;
@@ -3375,7 +3337,6 @@ if ($action == 'create' && $usercancreate) {
 			$morehtmlcenter = dolGetButtonTitle($langs->trans('SeeAll'), '', 'fa fa-bars imgforviewmode', DOL_URL_ROOT.'/commande/agenda.php?id='.$object->id);
 
 			// List of actions on element
-			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 			$formactions = new FormActions($db);
 			$somethingshown = $formactions->showactions($object, 'order', $socid, 1, '', $MAXEVENT, '', $morehtmlcenter); // Show all action for thirdparty
 
