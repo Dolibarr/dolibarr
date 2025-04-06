@@ -107,7 +107,7 @@ class ObjectLinks extends DolibarrApi
 			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
-		$result = $this->objectlink->create(DolibarrApiAccess::$user, $fk_source, $sourcetype, $fk_target, $targettype, $relationtype, $notrigger);
+		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $notrigger);
 
 		if ($result < 0 ) {
 			throw new RestException(500, 'Error when create objectlink : '.$this->objectlink->error);
