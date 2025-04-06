@@ -82,11 +82,14 @@ class ObjectLinks extends DolibarrApi
 	 */
 	public function create($request_data = null)
 	{
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
 		// Permission check
-		if (!DolibarrApiAccess::$user->hasRight((string) $sourcetype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $request_data->sourcetype, 'creer')) {
 			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$sourcetype);
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $targettype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $request_data->targettype, 'creer')) {
 			throw new RestException(403, 'denied access to create the objectlinks targettype='.$targettype);
 		}
 
@@ -267,5 +270,25 @@ class ObjectLinks extends DolibarrApi
 		unset($object->specimen);
 
 		return $object;
+	}
+
+	// source before modifications was api_orders.class.php
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param   array           $data   Array with data to verify
+	 * @return  array
+	 * @throws  RestException 400
+	 */
+	private function _validate($data)
+	{
+		$objectlink = array();
+		foreach (ObjectLink::$FIELDS as $field) {
+			if (!isset($data[$field])) {
+				throw new RestException(400, $field." field missing");
+			}
+			$objectlink[$field] = $data[$field];
+		}
+		return $objectlink;
 	}
 }
