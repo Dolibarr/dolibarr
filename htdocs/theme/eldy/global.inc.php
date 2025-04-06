@@ -7197,6 +7197,7 @@ div.tabsElem a.tab {
 .ticketpublicarea {
 	margin-left: 15%;
 	margin-right: 15%;
+	width: 70%;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
