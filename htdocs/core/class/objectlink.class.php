@@ -80,7 +80,8 @@ class ObjectLink extends CommonObject
 	 *	@param      int			$rowid       	row Id of object link
 	 *	@return     int         				>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($rowid) {
+	public function fetch($rowid)
+	{
 		$sql = "SELECT rowid, fk_source, sourcetype, fk_target,";
 		$sql .= " targettype, relationtype FROM";
 		$sql .= " ".MAIN_DB_PREFIX.$this->table_element;
@@ -119,7 +120,8 @@ class ObjectLink extends CommonObject
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
-	public function delete($user, $rowid, $notrigger = 0) {
+	public function delete($user, $rowid, $notrigger = 0)
+	{
 
 		global $conf, $langs;
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -139,7 +141,7 @@ class ObjectLink extends CommonObject
 			// End call triggers
 		}
 
-		// Delete object link 	
+		// Delete object link
 		if (!$error) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".((int) $this->id);
 			$res = $this->db->query($sql);
@@ -160,7 +162,7 @@ class ObjectLink extends CommonObject
 			return -1;
 		}
 	}
-	 
+
 	/**
 	 *	Create object link
 	 *
@@ -173,7 +175,7 @@ class ObjectLink extends CommonObject
 	 *	@param		int	    $notrigger		Disable all triggers
 	 *	@return 	int			        	Return integer <0 if KO, >0 if OK
 	 */
-	public function create($user, $fk_source, $sourcetype, $fk_target, $targettype, $relationtype = Null, $notrigger = 0)
+	public function create($user, $fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null, $notrigger = 0)
 	{
 		global $conf, $langs;
 		$error = 0;
@@ -207,5 +209,4 @@ class ObjectLink extends CommonObject
 			return -1;
 		}
 	}
-
 }
