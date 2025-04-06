@@ -68,16 +68,14 @@ class ObjectLinks extends DolibarrApi
 	 */
 	public function delete($id)
 	{
-		// Reverse permission check. First we find out which kind of objects are linked, and if the user has rights to that then we present it.
+		// Reverse permission check. First we find out which kind of objects are linked, and if the user has rights to that then we delete it.
 		$result = $this->objectlink->fetch($id);
-
-		$result = $this->db->query($sql);
 		if ($result) {
-			if (!DolibarrApiAccess::$user->hasRight(((string) $result->sourcetype), 'lire')) {
-				throw new RestException(403);
+			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->sourcetype), 'supprimer')) {
+				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $result->targettype), 'lire')) {
-				throw new RestException(403);
+			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->targettype), 'supprimer')) {
+				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
 			throw new RestException(404, 'Object Link not found');
