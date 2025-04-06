@@ -116,7 +116,6 @@ class ObjectLink extends CommonObject
 	 *	Delete the object link
 	 *
 	 *	@param	User	$user		User object
-	 *	@param	int		$rowid		rowid of object link
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 * 	@return	int					Return integer <=0 if KO, >0 if OK
 	 */
