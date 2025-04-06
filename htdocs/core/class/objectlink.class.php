@@ -152,7 +152,7 @@ class ObjectLink extends CommonObject
 
 				return 1;
 			} else {
-				$this->error = 'Object link with id '.$rowid.' not found sql='.$sql;
+				$this->error = 'Object link not found sql='.$sql;
 				return 0;
 			}
 		} else {
