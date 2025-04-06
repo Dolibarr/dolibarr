@@ -34,10 +34,8 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+
 
 /**
  * @var Conf $conf
@@ -125,7 +123,6 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 	$tmpobject = null;
 	$elementtype = '';
 	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$tmpobject = new Product($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'product';
@@ -138,52 +135,42 @@ if ($id > 0 && $removeelem > 0 && $action == 'unlink') {	// Test on permission n
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'customer';
 	} elseif ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$tmpobject = new Adherent($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'member';
 	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$tmpobject = new Contact($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'contact';
 	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer')) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$tmpobject = new Account($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'account';
 	} elseif ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$tmpobject = new Project($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'project';
 	} elseif ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$tmpobject = new User($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'user';
 	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
-		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$tmpobject = new Ticket($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'ticket';
 	} elseif ($type == Categorie::TYPE_FICHINTER && $user->hasRight('ficheinter', 'write')) {
-		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$tmpobject = new Fichinter($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'fichinter';
 	} elseif ($type == Categorie::TYPE_ORDER && $user->hasRight('commande', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$tmpobject = new Commande($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'order';
 	} elseif ($type == Categorie::TYPE_INVOICE && $user->hasRight('facture', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$tmpobject = new Facture($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'invoice';
 	} elseif ($type == Categorie::TYPE_SUPPLIER_ORDER && $user->hasRight('fournisseur', 'commande', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$tmpobject = new CommandeFournisseur($db);
 		$result = $tmpobject->fetch($removeelem);
 		$elementtype = 'supplier_order';
@@ -219,59 +206,45 @@ if ($elemid && $action == 'addintocategory') {	// Test on permission not require
 	$newobject = null;
 	$elementtype = '';
 	if ($type == Categorie::TYPE_PRODUCT && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		$newobject = new Product($db);
 		$elementtype = 'product';
 	} elseif ($type == Categorie::TYPE_CUSTOMER && $user->hasRight('societe', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$newobject = new Societe($db);
 		$elementtype = 'customer';
 	} elseif ($type == Categorie::TYPE_SUPPLIER && $user->hasRight('societe', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$newobject = new Societe($db);
 		$elementtype = 'supplier';
 	} elseif ($type == Categorie::TYPE_TICKET && $user->hasRight('ticket', 'write')) {
-		require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
 		$newobject = new Ticket($db);
 		$elementtype = 'ticket';
 	} elseif ($type == Categorie::TYPE_FICHINTER && $user->hasRight('ficheinter', 'write')) {
-		require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 		$newobject = new Fichinter($db);
 		$elementtype = 'fichinter';
 	} elseif ($type == Categorie::TYPE_PROJECT && $user->hasRight('projet', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 		$newobject = new Project($db);
 		$elementtype = 'project';
 	} elseif ($type == Categorie::TYPE_MEMBER && $user->hasRight('adherent', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$newobject = new Adherent($db);
 		$elementtype = 'member';
 	} elseif ($type == Categorie::TYPE_CONTACT && $user->hasRight('societe', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		$newobject = new Contact($db);
 		$elementtype = 'contact';
 	} elseif ($type == Categorie::TYPE_USER && $user->hasRight('user', 'user', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$newobject = new User($db);
 		$elementtype = 'user';
 	} elseif ($type == Categorie::TYPE_ACCOUNT && $user->hasRight('banque', 'configurer')) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 		$newobject = new Account($db);
 		$elementtype = 'bank_account';
 	} elseif ($type == Categorie::TYPE_ORDER && $user->hasRight('commande', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 		$newobject = new Commande($db);
 		$elementtype = 'order';
 	} elseif ($type == Categorie::TYPE_INVOICE && $user->hasRight('facture', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$newobject = new Facture($db);
 		$elementtype = 'invoice';
 	} elseif ($type == Categorie::TYPE_SUPPLIER_ORDER && $user->hasRight('fournisseur', 'commande', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 		$newobject = new CommandeFournisseur($db);
 		$elementtype = 'supplier_order';
 	} elseif ($type == Categorie::TYPE_SUPPLIER_INVOICE && $user->hasRight('fournisseur', 'facture', 'creer')) {
-		require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 		$newobject = new FactureFournisseur($db);
 		$elementtype = 'supplier_invoice';
 	} else {
@@ -449,22 +422,6 @@ if ($cats < 0) {
 	$categstatic = new Categorie($db);
 
 	$fulltree = $categstatic->get_full_arbo($type, $object->id, 1);
-
-	// Load possible missing includes
-	if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
-		if ($type == Categorie::TYPE_MEMBER) {
-			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-		}
-		if ($type == Categorie::TYPE_ACCOUNT) {
-			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-		}
-		if ($type == Categorie::TYPE_PROJECT) {
-			require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-		}
-		if ($type == Categorie::TYPE_USER) {
-			require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-		}
-	}
 
 	// Define data (format for treeview)
 	$data = array();
@@ -804,8 +761,6 @@ if ($type == Categorie::TYPE_SUPPLIER) {
 // List of members
 if ($type == Categorie::TYPE_MEMBER) {
 	if ($user->hasRight("adherent", "read")) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-
 		$permission = $user->hasRight('adherent', 'creer');
 		$showclassifyform = $user->hasRight('adherent', 'creer');
 
@@ -974,8 +929,6 @@ if ($type == Categorie::TYPE_CONTACT) {
 // List of bank accounts
 if ($type == Categorie::TYPE_ACCOUNT) {
 	if ($user->hasRight("banque", "read")) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-
 		$permission = $user->hasRight('banque', 'creer');
 		$showclassifyform = $user->hasRight('banque', 'creer');
 
@@ -1057,8 +1010,6 @@ if ($type == Categorie::TYPE_ACCOUNT) {
 // List of Project
 if ($type == Categorie::TYPE_PROJECT) {
 	if ($user->hasRight("project", "read")) {
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
 		$permission = $user->hasRight('projet', 'creer');
 		$showclassifyform = $user->hasRight('projet', 'creer');
 
@@ -1139,7 +1090,6 @@ if ($type == Categorie::TYPE_PROJECT) {
 // List of users
 if ($type == Categorie::TYPE_USER) {
 	if ($user->hasRight("user", "user", "read")) {
-		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$showclassifyform = $user->hasRight("user", "user", "creer");
 
 		$users = $object->getObjectsInCateg($type, 0, 0, 0, 'lastname');
@@ -1218,8 +1168,6 @@ if ($type == Categorie::TYPE_USER) {
 if ($type == Categorie::TYPE_WAREHOUSE) {
 	if ($user->hasRight("stock", "read")) {
 		$permission = $user->hasRight('stock', 'creer');
-
-		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 		$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
 		if ($objects < 0) {
@@ -1377,7 +1325,6 @@ if ($type == Categorie::TYPE_FICHINTER) {
 		} else {
 			// Form to add record into a category
 			if ($showclassifyform) {
-				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formintervention.class.php';
 				$formfichinter = new FormIntervention($db);
 
 				print '<br>';
@@ -1454,8 +1401,6 @@ if ($type == Categorie::TYPE_FICHINTER) {
 
 // List of Orders
 if ($type == Categorie::TYPE_ORDER) {
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-
 	$permission = $user->rights->commande->creer;
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
@@ -1535,8 +1480,6 @@ if ($type == Categorie::TYPE_ORDER) {
 
 // List of Invoices
 if ($type == Categorie::TYPE_INVOICE) {
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
 	$permission = $user->rights->facture->creer;
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
@@ -1616,8 +1559,6 @@ if ($type == Categorie::TYPE_INVOICE) {
 
 // List of Supplier Orders
 if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-
 	$permission = $user->rights->fournisseur->commande->creer;
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);
@@ -1698,8 +1639,6 @@ if ($type == Categorie::TYPE_SUPPLIER_ORDER) {
 
 // List of Supplier Invoices
 if ($type == Categorie::TYPE_SUPPLIER_INVOICE) {
-	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
-
 	$permission = $user->rights->fournisseur->facture->creer;
 
 	$objects = $object->getObjectsInCateg($type, 0, $limit, $offset);

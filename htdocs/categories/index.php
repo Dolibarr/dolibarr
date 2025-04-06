@@ -31,9 +31,9 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+
 
 /**
  * @var Conf $conf
@@ -101,21 +101,6 @@ $cate_arbo = $categstatic->get_full_arbo($typetext);
 // Define fulltree array
 $fulltree = $cate_arbo;
 
-// Load possible missing includes
-if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
-	if ($type == Categorie::TYPE_MEMBER) {
-		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	}
-	if ($type == Categorie::TYPE_ACCOUNT) {
-		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-	}
-	if ($type == Categorie::TYPE_PROJECT) {
-		require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	}
-	if ($type == Categorie::TYPE_USER) {
-		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-	}
-}
 
 // Define data (format for treeview)
 $data = array();
