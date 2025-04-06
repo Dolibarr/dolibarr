@@ -297,7 +297,7 @@ class ObjectLinks extends DolibarrApi
 	private function _validate($data)
 	{
 		$objectlink = array();
-		foreach (ObjectLink::$FIELDS as $field) {
+		foreach (ObjectLinks::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, $field." field missing");
 			}
