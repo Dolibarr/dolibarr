@@ -219,3 +219,4 @@ NodoUpgradeAfterDB=No action requested by external modules after upgrade of data
 NodoUpgradeAfterFiles=No action requested by external modules after upgrade of files or directories
 MigrationContractLineRank=Migrate Contract Line to use Rank (and enable Reorder)
 MigrationProductLotPath=Migrate Product Batch files path
+InvoiceExportModelsMigration=Migrate invoice export models

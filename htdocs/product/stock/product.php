@@ -355,7 +355,7 @@ if ($action == "transfert_stock" && !$cancel && $usercanupdatestock) {
 		$error++;
 		$action = 'transfert';
 	}
-	if (!GETPOSTINT("nbpiece")) {
+	if (!GETPOST("nbpiece")) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("NumberOfUnit")), null, 'errors');
 		$error++;
 		$action = 'transfert';

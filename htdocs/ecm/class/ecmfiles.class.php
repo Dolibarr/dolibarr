@@ -1014,6 +1014,8 @@ class EcmFiles extends CommonObject
 				$tmppath = preg_replace('/^(\d+\/)?fournisseur\/commande\//', '', $this->filepath);
 			} elseif ($option == 'tax-vat') {	// Remove part "tax/vat/"
 				$tmppath = preg_replace('/^(\d+\/)?tax\/vat\//', '', $this->filepath);
+			} elseif ($option == 'remisecheque') {	// Remove part "tax/vat/"
+				$tmppath = preg_replace('/^bank\/checkdeposits\//', '', $this->filepath);
 			} else {
 				if ((int) $this->entity > 1) {
 					// Remove the part "entityid/commande/" into "entityid/commande/REFXXX" to get only the ref
@@ -1023,8 +1025,6 @@ class EcmFiles extends CommonObject
 					$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
 				}
 			}
-			//var_dump($this->filepath);
-
 			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.((int) $this->entity);
 		} else {
 			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;

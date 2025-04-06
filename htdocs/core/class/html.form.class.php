@@ -2613,7 +2613,7 @@ class Form
 			if ($showproperties) {
 				if (is_array($listofresourceid) && count($listofresourceid)) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparencyresource" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}

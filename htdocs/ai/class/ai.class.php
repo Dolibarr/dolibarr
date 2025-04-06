@@ -289,7 +289,7 @@ class Ai
 				'error' => true,
 				'message' => $errormessage,
 				'code' => (empty($response['http_code']) ? 0 : $response['http_code']),
-				'curl_error_no' => (!empty($response['curl_error_no']) ? $response['curl_error_no'] : ''),
+				'curl_error_no' => $response['curl_error_no']??'',
 				'format' => $format,
 				'service' => $this->apiService,
 				'function' => $function
