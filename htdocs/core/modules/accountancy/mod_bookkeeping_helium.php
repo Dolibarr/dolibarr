@@ -142,7 +142,7 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		//$entity = getEntity('accountingbookkeeping', 1, $object);
 		$entity = $conf->entity;	// In accountancy, we can't share entities
 
-		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', '', '', $object->doc_date, 'next', false, null, $entity, $object);
+		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', '', '', $object->doc_date, 'next', false, null, (string) $entity, $object);
 
 		return $numFinal;
 	}
