@@ -618,7 +618,7 @@ class AccountancyCategory // extends CommonObject
 	}
 
 	/**
-	 * Function to show result of an accounting account from the ledger with a direction and a period
+	 * Function to set the property ->sdc (and ->sdcperaccount) that is the result of an accounting account from the ledger with a direction and a period
 	 *
 	 * @param int|array<?string>	$cpt 	Accounting account or array of accounting account
 	 * @param int 		$date_start			Date start
@@ -712,7 +712,7 @@ class AccountancyCategory // extends CommonObject
 	 * Function to get an array of all active custom groups (llx_c_accunting_categories) with their accounts from the chart of account (ll_accounting_acount)
 	 *
 	 * @param	int				$catid		Custom group ID
-	 * @return array<string,array<int,array{id:int,code:string,label:string,position:string,category_type:string,formula:string,sens:string,account_number:string,account_label:string}>>|int<-1,-1>   		    Result in table (array), -1 if KO
+	 * @return array<string,array<int,array{id:int,code:string,label:string,position:string,category_type:string,formula:string,sens:string,dc:string,account_number:string,account_label:string}>>|int<-1,-1>   		    Result in table (array), -1 if KO
 	 * @see getCats(), getCptsCat()
 	 */
 	public function getCatsCpts($catid = 0)
@@ -756,6 +756,7 @@ class AccountancyCategory // extends CommonObject
 						'category_type' => $obj->category_type,
 						'formula' => $obj->formula,
 						'sens' => $obj->sens,
+						'dc' => $obj->sens,
 						'account_number' => $obj->account_number,
 						'account_label' => $obj->account_label
 					);
@@ -776,7 +777,7 @@ class AccountancyCategory // extends CommonObject
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @param	int			$active				1= active, 0=not active
 	 * @param	int			$id_report			id of the report
-	 * @return	never|array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,bc:string}>|int	Array of groups or -1 if error
+	 * @return	never|array<array{rowid:string,code:string,label:string,formula:string,position:string,category_type:string,sens:string,dc:string}>|int	Array of groups or -1 if error
 	 * @see getCatsCpts(), getCptsCat()
 	 */
 	public function getCats($categorytype = -1, $active = 1, $id_report = 1)
@@ -784,11 +785,11 @@ class AccountancyCategory // extends CommonObject
 		global $conf, $mysoc;
 
 		if (empty($mysoc->country_id)) {
-			dol_print_error(null, 'Call to select_accounting_account with mysoc country not yet defined');
+			dol_print_error(null, 'Call to getCats with mysoc country not yet defined');
 			exit();
 		}
 
-		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens";
+		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type, c.sens, c.fk_report";
 		$sql .= " FROM ".$this->db->prefix().$this->table_element." as c";
 		$sql .= " WHERE c.active = " . (int) $active;
 		$sql .= " AND c.fk_report=".((int) $id_report);
@@ -817,7 +818,7 @@ class AccountancyCategory // extends CommonObject
 							'category_type' => $obj->category_type,
 							'formula' => $obj->formula,
 							'sens' => $obj->sens,
-							'bc' => $obj->sens
+							'dc' => $obj->sens
 					);
 					$i++;
 				}

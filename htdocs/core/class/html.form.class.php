@@ -1134,7 +1134,7 @@ class Form
 				$out .= ajax_multiautocompleter('location_incoterms', array(), DOL_URL_ROOT . '/core/ajax/locationincoterms.php') . "\n";
 				//$moreattrib .= ' autocomplete="off"';
 			}
-			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
+			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone heightofcombo" type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
 
 			if (!empty($page)) {
 				$out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="' . $langs->trans("Modify") . '"></form>';
@@ -1827,6 +1827,13 @@ class Form
 		}
 		if (getDolGlobalString('CONTACT_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql .= " AND sp.statut <> 0";
+		}
+		// filter user access
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".(int) $user->id .")";
+		}
+		if ($user->socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $user->socid);
 		}
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
@@ -2523,7 +2530,10 @@ class Form
 			if ($showproperties) {
 				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid))) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
+					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>';
+					$out .= '</span>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -2613,7 +2623,10 @@ class Form
 			if ($showproperties) {
 				if (is_array($listofresourceid) && count($listofresourceid)) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparencyresource" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
+					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ': </span>';
+					$out .= '</span>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -3033,7 +3046,9 @@ class Form
 		}
 
 		// Add from (left join) from hooks
-		$parameters = array();
+		$parameters = array(
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -3116,7 +3131,10 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array(
+			'filterkey' => &$filterkey,
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
@@ -3151,7 +3169,7 @@ class Form
 
 				// include search in supplier ref
 				if (getDolGlobalString('MAIN_SEARCH_PRODUCT_BY_FOURN_REF')) {
-					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' OR ' : '';
+					$sqlSupplierSearch .= !empty($sqlSupplierSearch) ? ' AND ':'';
 					$sqlSupplierSearch .= " pfp.ref_fourn LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				}
 				$sql .= ")";
@@ -4405,7 +4423,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Load int a cache property the list of possible delivery delays.
+	 * Load int a cache property the list of possible delivery delays.
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -9996,6 +10014,12 @@ class Form
 					'label' => 'LinkToOrder',
 					'sql' => "SELECT s.rowid as socid, s.nom as name, s.client, t.rowid, t.ref, t.ref_client, t.total_ht FROM " . $this->db->prefix() . "societe as s, " . $this->db->prefix() . "commande as t WHERE t.fk_soc = s.rowid AND t.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND t.entity IN (' . getEntity('commande') . ')'.($dontIncludeCompletedItems ? ' AND t.facture < 1' : ''),
 					'linkname' => 'commande',
+				'subscription' => array(
+					'enabled' => isModEnabled('member'),
+					'perms' => 1,
+					'label' => 'LinkToMemberSubscription',
+					'sql' => "SELECT a.fk_soc as socid, CONCAT(a.firstname, ' ', a.lastname) as name, a.entity as client, sub.rowid, sub.note as ref, '' as ref_client, sub.subscription as total_ht FROM " . $this->db->prefix() . "adherent as a, " . $this->db->prefix() . "subscription as sub WHERE sub.fk_adherent = a.rowid AND a.fk_soc IN (" . $this->db->sanitize($listofidcompanytoscan) . ') AND a.entity IN (' . getEntity('subscription') . ')',
+					'linkname' => 'subscription'),
 				),
 				'invoice' => array(
 					'enabled' => isModEnabled('invoice'),

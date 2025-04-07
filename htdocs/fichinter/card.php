@@ -118,7 +118,7 @@ $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
 $permissionnote = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->hasRight('ficheinter', 'creer'); // Used by the include of actions_dellink.inc.php
-$permissiontodelete = (($object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->hasRight('ficheinter', 'supprimer'));
+$permissiontodelete = (($object->status == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer')) || $user->hasRight('ficheinter', 'supprimer'));
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontoeditextra = $permissiontoadd;
 if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
@@ -1555,7 +1555,7 @@ if ($action == 'create') {
 					print "</td>\n";
 
 					// Icon to edit and delete
-					if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer')) {
+					if ($object->status == 0 && $user->hasRight('ficheinter', 'creer')) {
 						print '<td class="center">';
 						print '<a class="editfielda marginrightonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&line_id='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
@@ -1585,7 +1585,7 @@ if ($action == 'create') {
 				}
 
 				// Line in update mode
-				if ($object->statut == 0 && $action == 'editline' && $user->hasRight('ficheinter', 'creer') && GETPOSTINT('line_id') == $objp->rowid) {
+				if ($object->status == 0 && $action == 'editline' && $user->hasRight('ficheinter', 'creer') && GETPOSTINT('line_id') == $objp->rowid) {
 					print '<tr class="oddeven nohover">';
 
 					// No.
@@ -1648,7 +1648,7 @@ if ($action == 'create') {
 			$db->free($resql);
 
 			// Add new line
-			if ($object->statut == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2')) {
+			if ($object->status == 0 && $user->hasRight('ficheinter', 'creer') && $action != 'editline' && (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2')) {
 				if (!$num) {
 					print '<br>';
 					print '<table class="noborder centpercent">';
@@ -1766,7 +1766,7 @@ if ($action == 'create') {
 		if ($user->socid == 0) {
 			if ($action != 'editdescription' && ($action != 'presend')) {
 				// Validate
-				if ($object->statut == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
+				if ($object->status == Fichinter::STATUS_DRAFT && (count($object->lines) > 0 || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '1')) {
 					if ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'validate'))) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=validate&token='.newToken().'">'.$langs->trans("Validate").'</a></div>';
 					} else {
@@ -1775,7 +1775,7 @@ if ($action == 'create') {
 				}
 
 				// Modify
-				if ($object->statut == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
+				if ($object->status == Fichinter::STATUS_VALIDATED && ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'creer')) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('ficheinter', 'ficheinter_advance', 'unvalidate')))) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&action=modify&token='.newToken().'">';
 					if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') || getDolGlobalString('FICHINTER_DISABLE_DETAILS') == '2') {
 						print $langs->trans("Modify");
@@ -1786,7 +1786,7 @@ if ($action == 'create') {
 				}
 
 				// Reopen
-				if ($object->statut >= Fichinter::STATUS_CLOSED) {
+				if ($object->status >= Fichinter::STATUS_CLOSED) {
 					if ($user->hasRight('ficheinter', 'creer')) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=reopen&token='.newToken().'">'.$langs->trans('ReOpen').'</a></div>';
 					} else {
@@ -1796,7 +1796,7 @@ if ($action == 'create') {
 
 				// Send
 				if (empty($user->socid)) {
-					if ($object->statut > Fichinter::STATUS_DRAFT) {
+					if ($object->status > Fichinter::STATUS_DRAFT) {
 						if (!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') || $user->hasRight('ficheinter', 'ficheinter_advance', 'send')) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&token='.newToken().'&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a></div>';
 						} else {
@@ -1806,7 +1806,7 @@ if ($action == 'create') {
 				}
 
 				// Create intervention model
-				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 && $object->statut == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer') && (count($object->lines) > 0)) {
+				if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 1 && $object->status == Fichinter::STATUS_DRAFT && $user->hasRight('ficheinter', 'creer') && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
 					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans("ChangeIntoRepeatableIntervention").'</a>';
 					print '</div>';
@@ -1814,9 +1814,9 @@ if ($action == 'create') {
 
 				$arrayofcreatebutton = array();
 				// Proposal
-				if (isModEnabled("service") && isModEnabled("propal") && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled("service") && isModEnabled("propal") && $object->status > Fichinter::STATUS_DRAFT) {
 					$langs->load("propal");
-					if ($object->statut < Fichinter::STATUS_BILLED) {
+					if ($object->status < Fichinter::STATUS_BILLED) {
 						$arrayofcreatebutton[] = array(
 							'url' => '/comm/propal/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
 							'label' => $langs->trans('AddProp'),
@@ -1828,9 +1828,9 @@ if ($action == 'create') {
 				}
 
 				// Invoicing
-				if (isModEnabled('invoice') && $object->statut > Fichinter::STATUS_DRAFT) {
+				if (isModEnabled('invoice') && $object->status > Fichinter::STATUS_DRAFT) {
 					$langs->load("bills");
-					if ($object->statut < Fichinter::STATUS_BILLED) {
+					if ($object->status < Fichinter::STATUS_BILLED) {
 						$arrayofcreatebutton[] = array(
 							'url' => '/compta/facture/card.php?action=create&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid,
 							'label' => $langs->trans('AddBill'),
@@ -1841,7 +1841,7 @@ if ($action == 'create') {
 					}
 
 					if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {    // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
-						if ($object->statut != Fichinter::STATUS_BILLED) {
+						if ($object->status != Fichinter::STATUS_BILLED) {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifybilled&token='.newToken().'">'.$langs->trans("InterventionClassifyBilled").'</a></div>';
 						} else {
 							print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifyunbilled&token='.newToken().'">'.$langs->trans("InterventionClassifyUnBilled").'</a></div>';
@@ -1854,7 +1854,7 @@ if ($action == 'create') {
 				}
 
 				// Sign
-				if ($object->statut > Fichinter::STATUS_DRAFT) {
+				if ($object->status > Fichinter::STATUS_DRAFT) {
 					if ($object->signed_status != Fichinter::$SIGNED_STATUSES['STATUS_SIGNED_ALL']) {
 						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=sign&token=' . newToken() . '">' . $langs->trans("InterventionSign") . '</a></div>';
 					} else {
@@ -1863,7 +1863,7 @@ if ($action == 'create') {
 				}
 
 				// Done
-				if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED') && $object->statut > Fichinter::STATUS_DRAFT && $object->statut < Fichinter::STATUS_CLOSED) {
+				if (!getDolGlobalString('FICHINTER_CLASSIFY_BILLED') && $object->status > Fichinter::STATUS_DRAFT && $object->status < Fichinter::STATUS_CLOSED) {
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=classifydone&token='.newToken().'">'.$langs->trans("InterventionClassifyDone").'</a></div>';
 				}
 
@@ -1904,13 +1904,13 @@ if ($action == 'create') {
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 		// Show direct download link
-		if ($object->statut != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD')) {
+		if ($object->status != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_EXTERNAL_DOWNLOAD')) {
 			print '<br><!-- Link to download main doc -->'."\n";
 			print showDirectDownloadLink($object).'<br>';
 		}
 
 		// Show online signature link
-		if ($object->statut != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN')) {
+		if ($object->status != Fichinter::STATUS_DRAFT && getDolGlobalString('FICHINTER_ALLOW_ONLINE_SIGN')) {
 			print '<br><!-- Link to sign -->';
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 

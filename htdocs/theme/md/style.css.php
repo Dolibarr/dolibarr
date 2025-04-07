@@ -9,6 +9,7 @@
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -951,7 +952,8 @@ input:-webkit-autofill {
 }
 
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 1px;
+	margin: 0 5px 0 1px;
+	transform: scale(1.2);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -3431,6 +3433,7 @@ form#login {
 	max-width: 530px;
 	color: #aaa !important;
 	padding-bottom: 20px;
+	font-size: 0.9em;
 	/* text-shadow: 1px 1px 1px #FFF; */
 }
 .login_table label {
@@ -3480,6 +3483,22 @@ form#login {
 	padding-left: 10px;
 	width: 14px;
 }
+/* Serve as reference for icon that toggles showing the password */
+.login_table #tdpasswordlogin {
+	position: relative;
+}
+.login_table #tdpasswordlogin #togglepassword {
+	position: absolute;
+	top: 0.7em;
+	right: 5px;
+	background: none;
+	border: none;
+	/* opacity: 0.5; */
+}
+.login_table #tdpasswordlogin #togglepassword .fa {
+	padding: 0 3px;
+	width: auto;
+}
 
 .login_main_home {
 	word-break: break-word;
@@ -3498,6 +3517,7 @@ div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 245px;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-left: 16px;
 	padding-right: 16px;
 	text-align: center;
@@ -3523,7 +3543,7 @@ table.login_table_securitycode tr td {
 	border: 1px solid #f4f4f4;
 }
 #img_logo, .img_logo {
-	max-width: 170px;
+	max-width: 160px;
 	max-height: 90px;
 }
 .loginbuttonexternal {
@@ -7016,6 +7036,12 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.heightofcombo {
+	height: 28px;
+}
+.select2-container .select2-selection--single {
+	height: 28px;
+}
 input.select2-input {
 	border-bottom: none ! important;
 }

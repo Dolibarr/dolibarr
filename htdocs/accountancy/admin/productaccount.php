@@ -485,15 +485,14 @@ if ($resql) {
 	print '<input type="hidden" name="page_y" value="">';
 
 	print load_fiche_titre($langs->trans("ProductsBinding"), '', 'title_accountancy');
-	print '<br>';
 
 	print '<span class="opacitymedium">'.$langs->trans("InitAccountancyDesc").'</span><br>';
 	print '<br>';
 
-	// Select mode
+	// Select usage
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans('Options').'</td><td>'.$langs->trans('Description').'</td>';
+	print '<td>'.$langs->trans('ProductUsage').'</td><td></td>';
 	print "</tr>\n";
 	print '<tr class="oddeven"><td><input type="radio" id="accounting_product_mode1" name="accounting_product_mode" value="ACCOUNTANCY_SELL"'.($accounting_product_mode == 'ACCOUNTANCY_SELL' ? ' checked' : '').'> <label for="accounting_product_mode1">'.$langs->trans('OptionModeProductSell').'</label></td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
@@ -518,8 +517,10 @@ if ($resql) {
 
 	print '<div class="center"><input type="submit" class="button" value="'.$langs->trans('Refresh').'" name="changetype"></div>';
 
-	print "<br>\n";
+	print "<br><br>\n";
 
+
+	$object = new Product($db);
 
 	// Filter on categories
 	$moreforfilter = '';

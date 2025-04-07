@@ -197,3 +197,4 @@ XNewLinesConciliated=%s new line(s) conciliated
 InSepa=SEPA Area
 CountryIsInSepa=Countries in Sepa area
 Bank_line=Bank transaction line
+BankId=Bank line ID

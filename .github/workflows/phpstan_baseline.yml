@@ -39,7 +39,7 @@ jobs:
         with:
           php-version: ${{ env.PHP_VERSION }}
           coverage: none # disable xdebug, pcov
-          tools: phpstan, cs2pr
+          tools: phpstan:2.1.8, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
               mysql, pgsql, sqlite3, ldap, xml, mcrypt
         env:

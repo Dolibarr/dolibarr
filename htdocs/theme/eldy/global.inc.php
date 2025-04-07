@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -409,7 +410,8 @@ input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 1px;
+	margin: 0 5px 0 1px;
+	transform: scale(1.2);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -2200,7 +2202,7 @@ datalist {
 
 	div#login_left, div#login_right {
 		min-width: 150px !important;
-		max-width: 200px !important;
+		max-width: 240px !important;
 		padding-left: 5px !important;
 		padding-right: 5px !important;
 	}
@@ -2255,7 +2257,7 @@ datalist {
 		min-width: 20px;
 	}
 	.trinputlogin input[type=text], input[type=password] {
-		max-width: 140px;
+		max-width: 180px;
 	}
 	.vmenu .searchform input {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
@@ -3393,6 +3395,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
+	margin-right: 10px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
@@ -3414,6 +3417,23 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 .login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
 	font-size: 1.1em;
 }
+/* Serve as reference for icon that toggles showing the password */
+.login_table #tdpasswordlogin {
+	position: relative;
+}
+.login_table #tdpasswordlogin #togglepassword {
+	position: absolute;
+	top: 0.7em;
+	right: 5px;
+	background: none;
+	border: none;
+	/* opacity: 0.5; */
+}
+.login_table #tdpasswordlogin #togglepassword .fa {
+	padding: 0 3px;
+	width: auto;
+}
+
 /* For the static info message */
 .login_main_home {
 	word-break: break-word;
@@ -3433,6 +3453,7 @@ div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 245px;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-left: 16px;
 	padding-right: 16px;
 	text-align: center;
@@ -3458,7 +3479,7 @@ table.login_table_securitycode tr td {
 	border: 1px solid #DDDDDD;
 }
 #img_logo, .img_logo {
-	max-width: 170px;
+	max-width: 160px;
 	max-height: 90px;
 }
 
@@ -7105,6 +7126,13 @@ div.dataTables_length select {
 /* ============================================================================== */
 /*  Select2                                                                       */
 /* ============================================================================== */
+
+.heightofcombo {
+	height: 28px;
+}
+.select2-container .select2-selection--single {
+	height: 28px;
+}
 
 span.select2-selection--single.flat[aria-disabled="true"] span.select2-selection__rendered {
 	opacity: 0.5;

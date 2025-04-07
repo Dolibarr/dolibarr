@@ -234,7 +234,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform">';
-	print '<div class="publicnewticketform2 flexcontainer centpercent" style="min-height: 100%;">';
+	print '<div class="publicnewticketform2 centpercent" style="min-height: 100%;">';
 
 	print '<header class="center centpercent">';
 

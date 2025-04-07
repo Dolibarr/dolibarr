@@ -377,6 +377,10 @@ class Conf extends stdClass
 	 */
 	public $category;
 
+	/**
+	 * @var ?stdClass
+	 */
+	public $mrp;
 
 	/**
 	 * Constructor
@@ -968,9 +972,9 @@ class Conf extends stdClass
 				$this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30; // Less than 1 minutes to be sure
 			}
 
-			// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+			// Option for accounting modules (simple or double parties). Define mode of calculation of reports.
 			if (empty($this->global->ACCOUNTING_MODE)) {
-				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+				$this->global->ACCOUNTING_MODE = 'CREANCES-DETTES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES' (default)
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
@@ -1235,6 +1239,10 @@ class Conf extends stdClass
 			if (isset($this->holiday)) {
 				$this->holiday->approve = new stdClass();
 				$this->holiday->approve->warning_delay = getDolGlobalInt('MAIN_DELAY_HOLIDAYS') * 86400;
+			}
+			if (isset($this->mrp)) {
+				$this->mrp->progress = new stdClass();
+				$this->mrp->progress->warning_delay = getDolGlobalInt('MAIN_DELAY_MRP') * 86400;
 			}
 
 			if ((getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) && !getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT')) {
