@@ -105,8 +105,8 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $object = new FactureFournisseurRec($db);
-if (($id > 0 || $title) && $action != 'create' && $action != 'add') {
-	$ret = $object->fetch($id, $title);
+if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
+	$ret = $object->fetch($id, $ref);
 	if (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
@@ -324,9 +324,6 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'setlabel' && $permissiontoadd) {
-		// Set bank account
-		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);
 	} elseif ($action == 'setbankaccount' && $permissiontoadd) {
 		// Set bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
@@ -394,15 +391,8 @@ if (empty($reshook)) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'setlabel' && $permissiontoadd) {
-		// Set label
-		$object->fetch($id);
-		$object->label = GETPOST('label');
-		$object->label = $object->label;
-		$result = $object->update($user);
-
-		if ($result < 0) {
-			dol_print_error($db);
-		}
+		// Set bank account
+		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);
 	}
 
 	// Delete line
