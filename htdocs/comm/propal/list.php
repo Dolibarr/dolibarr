@@ -1782,8 +1782,13 @@ while ($i < $imaxinloop) {
 		$param .= "&search_option=".urlencode($search_option);
 	}
 
-	$object->fetch($obj->rowid);
-	$object->fetch_optionals();
+	$object->id = $obj->rowid;
+	$object->ref = $obj->ref;
+	$object->ref_customer = $obj->ref_client;	
+	$object->note_public = $obj->note_public;	
+	$object->note_private = $obj->note_private;
+	$object->statut = $obj->status;	
+	$object->status = $obj->status;
 
 	$companystatic->id = $obj->socid;
 	$companystatic->name = $obj->name;
