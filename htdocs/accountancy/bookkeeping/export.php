@@ -556,12 +556,12 @@ if (count($filter) > 0) {
 			$sqlwhere[] = "t.subledger_account >= '".$db->escape($value)."'";
 		} elseif ($key == 't.subledger_account<=') {
 			$sqlwhere[] = "t.subledger_account <= '".$db->escape($value)."'";
-		} elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') {
-			$sqlwhere[] = $db->sanitize($key).'='.((int) $value);
+			// } elseif ($key == 't.fk_doc' || $key == 't.fk_docdet' || $key == 't.piece_num') { // these fields doesn't exists
+			// 	$sqlwhere[] = $db->sanitize($key).'='.((int) $value);
 		} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 			$sqlwhere[] = $db->sanitize($key)." LIKE '".$db->escape($db->escapeforlike($value))."%'";
-		} elseif ($key == 't.subledger_account') {
-			$sqlwhere[] = natural_search($key, $value, 0, 1);
+			// } elseif ($key == 't.subledger_account') { // this code is unreachable, test is always false
+			// 	$sqlwhere[] = natural_search($key, $value, 0, 1);
 		} elseif ($key == 't.tms>=') {
 			$sqlwhere[] = "t.tms >= '".$db->idate($value)."'";
 		} elseif ($key == 't.tms<=') {
