@@ -75,18 +75,17 @@ class FactureFournisseurRec extends CommonInvoice
 	protected $table_ref_field = 'titre';
 
 	/**
-	 * @var string 	The label of recurring invoice
+	 * @var string 	The ref of the recurring invoice
 	 * @deprecated	Use $title
 	 */
 	public $titre;
 	/**
-	 * @var string The label of recurring invoice
+	 * @var string 	The ref of the recurring invoice
 	 */
 	public $title;
 
 	/**
 	 * @var string
-	 * @deprecated
 	 */
 	public $ref_supplier;
 	/**
@@ -351,7 +350,9 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->title = empty($this->title) ? '' : $this->title;
 		$keyforref = $this->table_ref_field;
 		$this->ref = $this->$keyforref;
+
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
+
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		$this->suspended = empty($this->suspended) ? 0 : $this->suspended;
 		// No frequency defined then no next date to execution
