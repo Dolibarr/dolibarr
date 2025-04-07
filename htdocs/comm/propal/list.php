@@ -572,6 +572,7 @@ if (isModEnabled('margin')) {
 $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
+$userstatic = new User($db);
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 $selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
@@ -890,9 +891,6 @@ if (!$resql) {
 	dol_print_error($db);
 	exit;
 }
-
-$object = new Propal($db);
-$userstatic = new User($db);
 
 if ($socid > 0) {
 	$soc = new Societe($db);
