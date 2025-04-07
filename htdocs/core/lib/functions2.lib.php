@@ -1154,7 +1154,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 
 		// Define $yearcomp and $monthcomp (that will be use in the select where to search max number)
 		$monthcomp = $maskraz;
-		$yearcomp = 0;
+		$yearcomp = '';
 
 		if (!empty($yearoffsettype) && !is_numeric($yearoffsettype) && $yearoffsettype != '=') {	// $yearoffsettype is - or +
 			$currentyear = (int) date("Y", $date);
@@ -1183,7 +1183,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 		} elseif ($yearlen == 2) {
 			$yearcomp = sprintf("%02d", idate("y", $date) + $yearoffset);
 		} elseif ($yearlen == 1) {
-			$yearcomp = (int) substr(date('y', $date), 1, 1) + $yearoffset;
+			$yearcomp = (string) ((int) substr(date('y', $date), 1, 1) + $yearoffset);
 		}
 		if ($monthcomp > 1 && empty($resetEveryMonth)) {	// Test with month is useless if monthcomp = 1 (0 is same as 1)
 			if ($yearlen == 4) {
@@ -1227,7 +1227,7 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	$maskLike = str_replace("%", "_", $maskLike);
 
 	// Replace protected special codes with matching number of _ as wild card character
-	if ($resetEveryMonth) {		// Perf optimization, when a reset is requested at each month, we can include the year and month inside the filter
+	if ($resetEveryMonth ) {		// Perf optimization, when a reset is requested at each month, we can include the year and month inside the filter
 		$maskLike = preg_replace('/\{yyyy\}/i', $yearcomp, $maskLike);
 		$maskLike = preg_replace('/\{yy\}/i', $yearcomp, $maskLike);
 		$maskLike = preg_replace('/\{y\}/i', $yearcomp, $maskLike);
