@@ -190,6 +190,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= 'dol_syslog("--- Prepare content of page '.((int) $objectpage->id).' - '.$objectpage->pageurl.'");'."\n";
 		}
 		$tplcontent .= "ob_start();\n";
+		$tplcontent .= "try {\n";
 		$tplcontent .= "// END PHP ?>\n";
 		if (getDolGlobalString('WEBSITE_FORCE_DOCTYPE_HTML5')) {
 			$tplcontent .= "<!DOCTYPE html>\n";
@@ -328,6 +329,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= '</html>'."\n";
 
 		$tplcontent .= '<?php // BEGIN PHP'."\n";
+		$tplcontent .= '} catch(Exception $e) { print $e->getMessage(); }'."\n";
 		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean();'."\n";	// replace with ob_get_clean ?
 
 		$tplcontent .= "// Now fix the content for SEO or multilanguage\n";
