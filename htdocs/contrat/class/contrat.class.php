@@ -1466,7 +1466,7 @@ class Contrat extends CommonObject
 	 * 	@param  float		$pu_ttc             Prix unitaire TTC
 	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
-	 *  @param  float		$pa_ht				Buying price HT
+	 *  @param  float|string			$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)
 	 *  @param	array<string,mixed>		$array_options		extrafields array
 	 * 	@param 	?int		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int			$rang 				Position
@@ -1691,7 +1691,7 @@ class Contrat extends CommonObject
 	 *	@param	string		$price_base_type	HT or TTC
 	 * 	@param  int			$info_bits			Bits of type of lines
 	 * 	@param  int			$fk_fournprice		Fourn price id
-	 *  @param  float		$pa_ht				Buying price HT
+	 *  @param  float|string	$pa_ht				Buying price HT (Can be '' to keep AWP unchanged or a float value)
 	 *  @param	array<string,mixed>		$array_options		extrafields array
 	 * 	@param 	string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param 	int			$rang 				Position

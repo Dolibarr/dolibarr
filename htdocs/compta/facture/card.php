@@ -2481,7 +2481,7 @@ if (empty($reshook)) {
 			 */
 
 			// Margin
-			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
+			$fournprice = (int) (GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 
@@ -2680,7 +2680,7 @@ if (empty($reshook)) {
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
 
 		// Add buying price
-		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$fournprice = (int) (GETPOST('fournprice') ? GETPOST('fournprice') : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		// Prepare a price equivalent for minimum price check
@@ -2871,7 +2871,7 @@ if (empty($reshook)) {
 				$type,
 				GETPOSTINT('fk_parent_line'),
 				0,
-				$fournprice,
+				(int) $fournprice,
 				$buyingprice,
 				$label,
 				$special_code,

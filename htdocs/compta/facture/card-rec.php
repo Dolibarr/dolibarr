@@ -63,6 +63,7 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 $lineid = GETPOSTINT('lineid');
 $ref = GETPOST('ref', 'alpha');
+$socid = 0;
 if ($user->socid) {
 	$socid = $user->socid;
 }
@@ -706,7 +707,7 @@ if (empty($reshook)) {
 			$date_end_fill = GETPOSTINT('date_end_fill');
 
 			// Margin
-			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
+			$fournprice = (int) (GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes
@@ -725,7 +726,7 @@ if (empty($reshook)) {
 				setEventMessages($mesg, null, 'errors');
 			} else {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, (int) $buyingprice, $fk_parent_line);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, 0, $pu_ttc, $type, -1, $special_code, $label, (int) $fk_unit, 0, $date_start_fill, $date_end_fill, (int) $fournprice, $buyingprice, $fk_parent_line);
 
 				if ($result > 0) {
 					// Define output language and generate document
@@ -824,7 +825,7 @@ if (empty($reshook)) {
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
 
 		// Add buying price
-		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$fournprice = (int) (GETPOST('fournprice') ? GETPOST('fournprice') : '');
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		// Extrafields

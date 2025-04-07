@@ -62,9 +62,9 @@ $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $
 
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 $lineid = GETPOSTINT('lineid');
-$title = GETPOST('title', 'alpha');
-$libelle = GETPOST('libelle', 'alpha');
-$ref_supplier = GETPOST('ref_supplier', 'alpha');
+$ref = GETPOST('title', 'alphanohtml') ? GETPOST('title', 'alphanohtml') : GETPOST('ref', 'alphanohtml');
+$label = GETPOST('label', 'alphanohtml');
+$ref_supplier = GETPOST('ref_supplier', 'alphanohtml');
 $projectid = GETPOSTINT('projectid');
 $year_date_when = GETPOST('year_date_when');
 $month_date_when = GETPOST('month_date_when');
@@ -96,8 +96,8 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $object = new FactureFournisseurRec($db);
-if (($id > 0 || $title) && $action != 'create' && $action != 'add') {
-	$ret = $object->fetch($id, $title);
+if (($id > 0 || $ref) && $action != 'create' && $action != 'add') {
+	$ret = $object->fetch($id, $ref);
 	if (! $ret) {
 		setEventMessages($langs->trans("ErrorRecordNotFound"), null, 'errors');
 	}
@@ -209,8 +209,8 @@ if (empty($reshook)) {
 		if (! $error) {
 			$object->subtype               = GETPOSTINT('subtype');
 			$object->title                 = GETPOST('title', 'alphanohtml');
-			$object->libelle               = GETPOST('libelle', 'alpha');	// deprecated
-			$object->label                 = GETPOST('libelle', 'alpha');
+			$object->ref                   = GETPOST('title', 'alphanohtml');
+			$object->label                 = GETPOST('label', 'alpha');
 			$object->ref_supplier          = GETPOST('ref_supplier', 'alphanohtml');
 
 			$object->note_private          = GETPOST('note_private', 'restricthtml');
@@ -271,7 +271,6 @@ if (empty($reshook)) {
 	}
 
 	// Delete
-	//TODO : Droits
 	if ($action == 'confirm_deleteinvoice' && $confirm == 'yes' && $permissiontodelete) {
 		$object->delete($user);
 
@@ -302,17 +301,16 @@ if (empty($reshook)) {
 			}
 		}
 	} elseif ($action == 'settitle' && $permissiontoadd) {
-		$result = $object->setValueFrom('titre', $title, '', null, 'text', '', $user);
+		$result = $object->setValueFrom('titre', $ref, '', null, 'text', '', $user);
 
 		if ($result > 0) {
-			$object->titre = $title;	// deprecated
-			$object->title = $title;
-			$object->ref = $object->title;
+			$object->title = $ref;
+			$object->ref = $ref;
 		} else {
 			$error++;
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 				$langs->load("errors");
-				setEventMessages($langs->trans('ErrorTitreAlreadyExists', $title), null, 'errors');
+				setEventMessages($langs->trans('ErrorTitreAlreadyExists', $ref), null, 'errors');
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
@@ -383,16 +381,9 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmulticurrencyrate' && $permissiontoadd) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
-	} elseif ($action == 'setlibelle' && $permissiontoadd) {
-		// Set label
-		$object->fetch($id);
-		$object->label = GETPOST('libelle');
-		$object->libelle = $object->label;
-		$result = $object->update($user);
-
-		if ($result < 0) {
-			dol_print_error($db);
-		}
+	} elseif ($action == 'setlabel' && $permissiontoadd) {
+		// Set bank account
+		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);
 	}
 
 	// Delete line
@@ -676,7 +667,7 @@ if (empty($reshook)) {
 			$date_end_fill = GETPOSTINT('date_end_fill');
 
 			// Margin
-			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
+			$fournprice = (int) (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes
@@ -989,7 +980,7 @@ if ($action == 'create') {
 
 		// Label
 		print '<tr><td class="titlefieldcreate">' . $langs->trans("Label") . '</td><td>';
-		print '<input class="flat quatrevingtpercent" type="text" name="libelle" value="' . $object->label . '">';
+		print '<input class="flat quatrevingtpercent" type="text" name="label" value="' . $object->label . '">';
 		print '</td></tr>';
 
 		// Author
@@ -1246,8 +1237,8 @@ if ($action == 'create') {
 
 		// Label
 		print '<tr>';
-		print '<td>' . $form->editfieldkey("Label", 'libelle', $object->libelle, $object, (int) $usercancreate) . '</td>';
-		print '<td>' . $form->editfieldval("Label", 'libelle', $object->libelle, $object, $usercancreate) . '</td>';
+		print '<td>' . $form->editfieldkey("Label", 'label', $object->label, $object, (int) $usercancreate) . '</td>';
+		print '<td>' . $form->editfieldval("Label", 'label', $object->label, $object, $usercancreate) . '</td>';
 		print '</tr>';
 
 		// Payment term

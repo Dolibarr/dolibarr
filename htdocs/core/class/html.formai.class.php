@@ -110,6 +110,8 @@ class FormAI extends Form
 
 		$langs->load("other");
 
+		$messageaiwait = '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
+
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
 		$out = '<!-- getSectionForAIEnhancement -->';
@@ -134,7 +136,7 @@ class FormAI extends Form
 		$out .= '</div>';
 
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
-		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
+		$out .= $messageaiwait;
 		$out .= '</div>';
 
 		if ($function == 'imagegeneration') {
@@ -190,10 +192,12 @@ class FormAI extends Form
 					var userprompt = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
+
 					instructions = '';
-					htmlname = '".$htmlContent."';
+					htmlname = '".dol_escape_js($htmlContent)."';
 					format = '".dol_escape_js($format)."';
 					functionai = $(element).data('functionai');
+					texttomodify = '';
 
 					console.log('htmlname='+htmlname);
 					if ($('#'+htmlname).is('div')) {
@@ -210,9 +214,12 @@ class FormAI extends Form
 							}
 						}
 						*/
-
-						lang = $('#ai_translation'+htmlname+'_select').val();
-						instructions = 'Translate the following text to ' + lang + ': ' + texttomodify;
+						if (!texttomodify) {
+							instructions = '';
+						} else {
+							lang = $('#ai_translation'+htmlname+'_select').val();
+							instructions = 'Translate only the following text to ' + lang + ': ' + texttomodify;
+						}
 					} else if (functionai == 'textsummarize') {
 						width = $('#ai_summarize'+htmlname+'_select').val();
 						arr = width.split('_');
@@ -220,7 +227,7 @@ class FormAI extends Form
 						unit = arr[1];
 						if (width == undefined || unit == undefined){
 							console.log('Bad value so we choose 20 words')
-							width = '20';
+							width = '50';
 							unit = 'w';
 						}
 						switch(unit){
@@ -243,7 +250,9 @@ class FormAI extends Form
 						instructions = userprompt;
 					}
 
+					/* Show message API running */
 					$('#ai_status_message".$htmlContent."').show();
+					$('#ai_status_message".$htmlContent."').html('".dol_escape_js($messageaiwait)."');
 					$('.icon-container .loader').show();
 
 					setTimeout(function() {
@@ -251,7 +260,7 @@ class FormAI extends Form
 						$('#ai_status_message".$htmlContent."').hide();
 					}, 30000);
 
-					console.log(instructions);
+					console.log('Instruction forged by javascript = '+instructions);
 
 					callAIGenerator(functionai, instructions, format, htmlname);
 				}
@@ -323,9 +332,11 @@ class FormAI extends Form
 						}
 					},
 					error: function(xhr, status, error) {
-						alert(error);
-						console.error('error ajax', status, error);
-						$('#ai_status_message').hide();
+						/* alert(error); */
+						console.log('error ajax', status, error);
+						/*$('#ai_status_message'+htmlname).hide();*/
+						$('#ai_status_message'+htmlname).val(error);
+						$('#ai_status_message'+htmlname).html(error);
 					}
 				});
 			} else {
@@ -373,9 +384,16 @@ class FormAI extends Form
 						$('#ai_dropdown'+htmlname).hide();
 					},
 					error: function(xhr, status, error) {
-						alert(error);
-						console.error('error ajax', status, error);
-						$('#ai_status_message'+htmlname).hide();
+						/* alert(error); */
+						console.log('error ajax ', status, error);
+						/* $('#ai_status_message'+htmlname).hide(); */
+						if (xhr.responseText) {
+							$('#ai_status_message'+htmlname).val(xhr.responseText);
+							$('#ai_status_message'+htmlname).html(xhr.responseText);
+						} else {
+							$('#ai_status_message'+htmlname).val(error);
+							$('#ai_status_message'+htmlname).html(error);
+						}
 					}
 
 				});

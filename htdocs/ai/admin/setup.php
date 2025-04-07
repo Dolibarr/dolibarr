@@ -76,7 +76,8 @@ $item = $formSetup->newItem('AI_API_SERVICE');	// Name of constant must end with
 $item->setAsSelect($arrayofai);
 $item->cssClass = 'minwidth150';
 
-foreach ($arrayofai as $ia => $ialabel) {
+foreach ($arrayofai as $ia => $iarecord) {
+	$ialabel = $iarecord['label'];
 	// Setup conf AI_PUBLIC_INTERFACE_TOPIC
 	/*$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_ENDPOINT');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->defaultFieldValue = '';
@@ -92,7 +93,7 @@ foreach ($arrayofai as $ia => $ialabel) {
 	$item = $formSetup->newItem('AI_API_'.strtoupper($ia).'_URL');	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	$item->nameText = $langs->trans("AI_API_URL").' ('.$ialabel.')';
 	$item->defaultFieldValue = '';
-	$item->fieldParams['trClass'] = 'iaservice '.$ia;
+	$item->fieldParams['trClass'] = 'iaservice iaurl '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
 }
 
@@ -122,8 +123,6 @@ $action = 'edit';
 /*
  * View
  */
-
-$form = new Form($db);
 
 $help_url = '';
 $title = "AiSetup";
@@ -160,11 +159,29 @@ if (empty($setupnotempty)) {
 print '<script type="text/javascript">
     jQuery(document).ready(function() {
 		function showHideAIService(aiservice) {
-			console.log("We select the AI service "+aiservice);
+			console.log("showHideAIService: We select the AI service "+aiservice);
 			jQuery(".iaservice").hide();
 
 			if (aiservice != "-1") {
 				jQuery(".iaservice."+aiservice).show();
+				const arrayofia = {';
+$i = 0;
+foreach ($arrayofai as $key => $airecord) {
+	if ($key == -1) {
+		continue;
+	}
+	if ($i) {
+		print ', ';
+	}
+	$i++;
+	print dol_escape_js($key).': \''.dol_escape_js($airecord['url']).'\'';
+}
+print '};
+				console.log("Check URL for .iaurl."+aiservice+" .input"+aiservice);
+				if (jQuery(".iaurl."+aiservice+" .input"+aiservice).val() == \'\') {
+					console.log("URL is empty, we fill with default value of IA selected");
+					jQuery(".iaurl."+aiservice+" .input"+aiservice).val(arrayofia[aiservice]);
+				}
 			}
 		}
 
@@ -217,7 +234,7 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 		// Fill $out
 		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 
-		$out .= '<br><textarea id="'.$key.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+		$out .= '<br><textarea id="'.$key.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="5"></textarea>';	// The div
 	//}
 
 	/*

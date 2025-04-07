@@ -101,6 +101,11 @@ class Menubase
 	public $url;
 
 	/**
+	 * @var int 	1=Allow to show the top menu URL into a frame
+	 */
+	public $showtopmenuinframe;
+
+	/**
 	 * @var string Target of Url link
 	 */
 	public $target;

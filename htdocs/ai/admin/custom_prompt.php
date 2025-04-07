@@ -412,7 +412,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 
 
 if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
-	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]), $newbutton, '');
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), $newbutton, '');
 	print $formSetup->generateOutput(true);
 }
 
