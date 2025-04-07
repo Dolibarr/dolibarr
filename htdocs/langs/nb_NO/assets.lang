@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 NewAsset=Ny aktiva
 AccountancyCodeAsset=Regnskapskode (aktiva)
 AccountancyCodeDepreciationAsset=Regnskapskode (aktiva avskrivningskonto)
@@ -25,50 +21,34 @@ DeleteType=Slett
 DeleteAnAssetType=Slett en aktivamodell
 ConfirmDeleteAssetType=Er du sikker på at du vil slette denne aktivamodellen?
 ShowTypeCard=Vis modell '%s'
-
 # Module label 'ModuleAssetsName'
 ModuleAssetsName=Aktiva
 # Module description 'ModuleAssetsDesc'
 ModuleAssetsDesc=Aktiva beskrivelse
-
-#
 # Admin page
-#
 AssetSetup=Aktiva oppsett
 AssetSetupPage=Innstillingsside for aktiva
 ExtraFieldsAssetModel=Komplementære attributter (aktivets modell)
-
 AssetsType=Aktivamodell
 AssetsTypeId=Aktivamodell-ID
 AssetsTypeLabel=Aktivamodell-etikett
 AssetsTypes=Aktivamodeller
 ASSET_ACCOUNTANCY_CATEGORY=Regnskapsgruppe for eiendeler
-
-#
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Forholdsmessig periode i dager for beregning av amortisering over ett år
 # Menu
-#
 MenuAssets=Eiendeler
 MenuNewAsset=Ny eiendel
 MenuAssetModels=Modell eiendeler
 MenuListAssets=Liste
 MenuNewAssetModel=Ny eiendelsmodell
 MenuListAssetModels=Liste
-
-#
 # Module
-#
 ConfirmDeleteAsset=Vil du virkelig fjerne denne eiendelen?
-
-#
 # Tab
-#
 AssetDepreciationOptions=Avskrivningsmuligheter
 AssetAccountancyCodes=Regnskapskonti
 AssetDepreciation=Avskrivninger
-
-#
 # Asset
-#
 Asset=Ressurs
 Assets=Aktiva
 AssetReversalAmountHT=Tilbakeføringsbeløp (uten avgifter)
@@ -89,32 +69,20 @@ AssetNotDepreciated=Ikke avskrevet
 AssetDisposal=Avhending
 AssetConfirmDisposalAsk=Er du sikker på at du vil avhende eiendelen <b> %s </b>?
 AssetConfirmReOpenAsk=Er du sikker på at du vil gjenåpne ressursen <b> %s </b>?
-
-#
 # Asset status
-#
 AssetInProgress=Pågår
 AssetDisposed=Avhendet
 AssetRecorded=Regnskapsført
-
-#
 # Asset disposal
-#
 AssetDisposalDate=Dato for avhending
 AssetDisposalAmount=Avhendingsverdi
 AssetDisposalType=Type avhending
 AssetDisposalDepreciated=Avskriv overføringsåret
 AssetDisposalSubjectToVat=Avhending MVA-pliktig
-
-#
 # Asset model
-#
 AssetModel=Eiendel modell
 AssetModels=Eiendel modeller
-
-#
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Økonomisk avskrivning
 AssetDepreciationOptionAcceleratedDepreciation=Akselerert avskrivning (skatt)
 AssetDepreciationOptionDepreciationType=Type avskrivning
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Lineær
 AssetDepreciationOptionDepreciationTypeDegressive=Degressiv
 AssetDepreciationOptionDepreciationTypeExceptional=Eksepsjonell
 AssetDepreciationOptionDegressiveRate=Degressiv rate
-AssetDepreciationOptionAcceleratedDepreciation=Akselerert avskrivning (skatt)
 AssetDepreciationOptionDuration=Varighet
 AssetDepreciationOptionDurationType=Type varighet
 AssetDepreciationOptionDurationTypeAnnual=Årlig
@@ -132,15 +99,12 @@ AssetDepreciationOptionRate=Takst (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Avskrivningsgrunnlag (ekskl. mva)
 AssetDepreciationOptionAmountBaseDeductibleHT=Egenandelsgrunnlag (ekskl. mva)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Totalbeløp siste avskrivning (ekskl. MVA)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Økonomisk avskrivning
 AssetAccountancyCodeAsset=Ressurs
 AssetAccountancyCodeDepreciationAsset=Avskrivninger
 AssetAccountancyCodeDepreciationExpense=Avskrivninger
-AssetAccountancyCodeValueAssetSold=Verdien av avhendet eiendel 
+AssetAccountancyCodeValueAssetSold=Verdien av avhendet eiendel
 AssetAccountancyCodeReceivableOnAssignment=Tilgodehavende ved avhending
 AssetAccountancyCodeProceedsFromSales=Inntekter fra avhending
 AssetAccountancyCodeVatCollected=Innkrevd MVA
@@ -149,10 +113,7 @@ AssetAccountancyCodeDepreciationAcceleratedDepreciation=Akselerert avskrivning (
 AssetAccountancyCodeAcceleratedDepreciation=Konto
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Avskrivninger
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Tilbaketakelse/provisjon
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Avskrivningsgrunnlag (ekskl. mva)
 AssetDepreciationBeginDate=Start av avskrivning pr
 AssetDepreciationDuration=Varighet
@@ -164,11 +125,8 @@ AssetResidualHT=Restverdi (ekskl. mva)
 AssetDispatchedInBookkeeping=Avskrivninger bokført
 AssetFutureDepreciationLine=Fremtidige avskrivninger
 AssetDepreciationReversal=Reversering
-
-#
 # Errors
-#
-AssetErrorAssetOrAssetModelIDNotProvide=Aktiva-ID eller modell-ID er ikke oppgitt
+AssetErrorAssetOrAssetModelIDNotProvide=ID-en til eiendelen eller modellen som ble funnet, er ikke oppgitt
 AssetErrorFetchAccountancyCodesForMode=Feil ved henting av regnskapskonto for '%s' avskrivningsmodus
 AssetErrorDeleteAccountancyCodesForMode=Feil ved sletting av regnskapskontoer fra '%s' avskrivningsmodus
 AssetErrorInsertAccountancyCodesForMode=Feil ved innsetting av regnskapskontoer for avskrivningsmodus '%s'

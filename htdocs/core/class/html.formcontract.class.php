@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012-2018  Charlene BENKE	<charlie@patas-monkey.com>
+ * Copyright (C) 2025		MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,9 +62,9 @@ class FormContract
 	 *	@param	int		$showRef	Show customer and supplier reference on each contract (when found)
 	 *  @param	int		$noouput	1=Return the output instead of display
 	 *  @param	string	$morecss	More CSS
-	 *	@return int         		Nbr of contract if OK, <0 if KO
+	 *	@return int|string          If nooutput = 0: Nbr of contract if OK, <0 if KO, If nooutput = 1: The HTML select string
 	 */
-	public function select_contract($socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
+	public function select_contract($socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0, $morecss = 'minwidth150')
 	{
 		// phpcs:enable
 		global $user, $conf, $langs;
@@ -98,7 +99,7 @@ class FormContract
 		dol_syslog(get_class($this)."::select_contract", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
+			$ret .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) {
 				$ret .= '<option value="0">&nbsp;</option>';
 			}
@@ -180,17 +181,17 @@ class FormContract
 	/**
 	 *  Show a form to select a contract
 	 *
-	 *  @param  int     $page       Page
+	 *  @param  string  $page       Page
 	 *  @param  int     $socid      Id third party (-1=all, 0=only contracts not linked to a third party, id=contracts not linked or linked to third party id)
 	 *  @param  int     $selected   Id contract preselected
 	 *  @param  string  $htmlname   Nom de la zone html
 	 *  @param  int     $maxlength	Maximum length of label
 	 *  @param  int     $showempty	Show empty line
 	 *  @param  int     $showRef    Show customer and supplier reference on each contract (when found)
-	 *  @param	int		$noouput	1=Return the output instead of display
+	 *  @param	int<0,1>	$nooutput	1=Return the output instead of display
 	 *  @return string|void         html string
 	 */
-	public function formSelectContract($page, $socid = -1, $selected = '', $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $noouput = 0)
+	public function formSelectContract($page, $socid = -1, $selected = 0, $htmlname = 'contrattid', $maxlength = 16, $showempty = 1, $showRef = 0, $nooutput = 0)
 	{
 		global $langs;
 
@@ -201,7 +202,7 @@ class FormContract
 		$ret .= '<input type="submit" class="button smallpaddingimp valignmiddle" value="'.$langs->trans("Modify").'">';
 		$ret .= '</form>';
 
-		if ($noouput) {
+		if ($nooutput) {
 			return $ret;
 		}
 

@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = طے شدہ کام پڑھیں
 Permission23102 = شیڈول شدہ جاب بنائیں/اپ ڈیٹ کریں۔
 Permission23103 = طے شدہ کام کو حذف کریں۔
@@ -13,8 +12,8 @@ KeyForCronAccess=کرون جابز شروع کرنے کے لیے URL کے لیے
 FileToLaunchCronJobs=کوالیفائیڈ کرون جابز کو چیک کرنے اور لانچ کرنے کے لیے کمانڈ لائن
 CronExplainHowToRunUnix=یونکس ماحول پر آپ کو ہر 5 منٹ میں کمانڈ لائن چلانے کے لیے درج ذیل کرونٹاب انٹری کا استعمال کرنا چاہیے۔
 CronExplainHowToRunWin=مائیکروسافٹ (ٹی ایم) ونڈوز ماحول پر آپ ہر 5 منٹ میں کمانڈ لائن چلانے کے لیے شیڈول ٹاسک ٹولز استعمال کر سکتے ہیں۔
-CronMethodDoesNotExists=Class %s does not contain any method %s
-CronMethodNotAllowed=کلاس %s کا طریقہ %s حرام طریقوں کی بلیک لسٹ میں ہے
+CronMethodDoesNotExists=کلاس %s میں کوئی طریقہ نہیں ہے %s
+CronMethodNotAllowed=طریقہ %s کلاس کا %s ممنوع طریقوں کی بلاک لسٹ میں ہے
 CronJobDefDesc=کرون جاب پروفائلز کی وضاحت ماڈیول ڈسکرپٹر فائل میں کی گئی ہے۔ جب ماڈیول فعال ہو جاتا ہے، تو وہ لوڈ اور دستیاب ہو جاتے ہیں تاکہ آپ ایڈمن ٹولز مینو %s سے جابز کا انتظام کر سکیں۔
 CronJobProfiles=پہلے سے طے شدہ کرون جاب پروفائلز کی فہرست
 # Menu
@@ -26,11 +25,12 @@ CronCommand=کمانڈ
 CronList=طے شدہ ملازمتیں۔
 CronDelete=طے شدہ ملازمتوں کو حذف کریں۔
 CronConfirmDelete=کیا آپ واقعی ان شیڈول کردہ جابز کو حذف کرنا چاہتے ہیں؟
-CronExecute=Launch now
+CronExecute=ابھی لانچ کریں۔
 CronConfirmExecute=کیا آپ واقعی ان طے شدہ ملازمتوں کو ابھی انجام دینا چاہتے ہیں؟
 CronInfo=شیڈول کردہ جاب ماڈیول ملازمتوں کو خود بخود انجام دینے کے لیے شیڈول کرنے کی اجازت دیتا ہے۔ ملازمتیں دستی طور پر بھی شروع کی جا سکتی ہیں۔
 CronTask=جاب
-CronNone=کوئی نہیں۔
+CronNone=Next run of scheduled task
+CronNotYetRan=Never executed
 CronDtStart=پہلے نہیں۔
 CronDtEnd=کے بعد نہیں۔
 CronDtNextLaunch=اگلی پھانسی
@@ -49,8 +49,8 @@ CronEach=ہر کوئی
 JobFinished=کام شروع ہوا اور ختم ہوا۔
 Scheduled=طے شدہ
 #Page card
-CronAdd= ملازمتیں شامل کریں۔
-CronEvery=ہر ایک کا کام انجام دیں۔
+CronAdd=ملازمتیں شامل کریں۔
+CronEvery=Run job every
 CronObject=مثال/تخلیق کے لیے آبجیکٹ
 CronArgs=پیرامیٹرز
 CronSaveSucess=کامیابی سے محفوظ کریں۔
@@ -58,7 +58,7 @@ CronNote=تبصرہ
 CronFieldMandatory=فیلڈز %s لازمی ہے۔
 CronErrEndDateStartDt=اختتامی تاریخ تاریخ آغاز سے پہلے کی نہیں ہو سکتی
 StatusAtInstall=ماڈیول کی تنصیب کی حالت
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=شیڈولنگ کو فعال کریں۔
 CronStatusInactiveBtn=غیر فعال کریں۔
 CronTaskInactive=یہ کام غیر فعال ہے (شیڈول نہیں ہے)
 CronId=آئی ڈی
@@ -67,7 +67,7 @@ CronModuleHelp=Dolibarr ماڈیول ڈائرکٹری کا نام (بیرونی 
 CronClassFileHelp=لوڈ کرنے کے لیے متعلقہ راستہ اور فائل کا نام (راستہ ویب سرور روٹ ڈائرکٹری سے متعلق ہے)۔ <BR> مثال کے طور پر Dolibarr پروڈکٹ آبجیکٹ کے بازیافت کے طریقہ کار کو کال کرنے کے لیے
 CronObjectHelp=لوڈ کرنے کے لیے آبجیکٹ کا نام۔ <BR> مثال کے طور پر Dolibarr پروڈکٹ آبجیکٹ /htdocs/product/class/product.class.php کے بازیافت طریقہ کو کال کرنے کے لئے، کلاس فائل کے نام کی قدر <br> <i> ہے
 CronMethodHelp=لانچ کرنے کا آبجیکٹ طریقہ۔ <BR> مثال کے طور پر Dolibarr پروڈکٹ آبجیکٹ /htdocs/product/class/product.class.php کے بازیافت طریقہ کو کال کرنے کے لئے، طریقہ کی قدر <br> <i> ہے
-CronArgsHelp=طریقہ کار کے دلائل۔ <BR> مثال کے طور پر Dolibarr پروڈکٹ آبجیکٹ /htdocs/product/class/product.class.php کے بازیافت کے طریقہ کو کال کرنے کے لئے، پیرامیٹرز کی قدر <br> <i> 0، ProductRef71e8181fcz0 ہو سکتی ہے
+CronArgsHelp=طریقہ کار کے دلائل۔ <BR> مثال کے طور پر Dolibarr پروڈکٹ آبجیکٹ /htdocs/product/class/product.class.php کے بازیافت طریقہ کو کال کرنے کے لیے، پیرامیٹرز کی قدر ہو سکتی ہے<br><i>0, ProductRef</i>
 CronCommandHelp=چلانے کے لیے سسٹم کمانڈ لائن۔
 CronCreateJob=نئی طے شدہ ملازمت بنائیں
 CronFrom=سے
@@ -82,19 +82,20 @@ UseMenuModuleToolsToAddCronJobs=مینو میں جائیں " <a href="%s"> ہو�
 JobDisabled=ملازمت غیر فعال
 MakeLocalDatabaseDumpShort=مقامی ڈیٹا بیس کا بیک اپ
 MakeLocalDatabaseDump=ایک مقامی ڈیٹا بیس ڈمپ بنائیں۔ پیرامیٹرز ہیں: کمپریشن ('gz' یا 'bz' یا 'none')، بیک اپ کی قسم ('mysql'، 'pgsql'، 'auto')، 1، 'auto' یا فائل کا نام، رکھنے کے لیے بیک اپ فائلوں کی تعداد
-MakeSendLocalDatabaseDumpShort=Send local database backup
-MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+MakeSendLocalDatabaseDumpShort=مقامی ڈیٹا بیس کا بیک اپ بھیجیں۔
+MakeSendLocalDatabaseDump=ای میل کے ذریعے مقامی ڈیٹا بیس کا بیک اپ بھیجیں۔ پیرامیٹرز ہیں: سے، سے، موضوع، پیغام، فائل کا نام (بھیجی گئی فائل کا نام)، فلٹر ('sql' صرف ڈیٹا بیس کے بیک اپ کے لیے)
+BackupIsTooLargeSend=معذرت، آخری بیک اپ فائل اتنی بڑی ہے کہ ای میل کے ذریعے بھیجی جا سکے۔
+CleanUnfinishedCronjobShort=نامکمل کرون جاب کو صاف کریں۔
+CleanUnfinishedCronjob=جب عمل مزید نہیں چل رہا ہے تو کلین کرون جاب پروسیسنگ میں پھنس گیا ہے۔
 WarningCronDelayed=توجہ، کارکردگی کے مقصد کے لیے، فعال ملازمتوں کے نفاذ کی اگلی تاریخ جو بھی ہو، آپ کی ملازمتوں کو چلانے سے پہلے زیادہ سے زیادہ %s گھنٹے تک تاخیر ہو سکتی ہے۔
 DATAPOLICYJob=ڈیٹا کلینر اور گمنام
 JobXMustBeEnabled=جاب %s کا فعال ہونا ضروری ہے۔
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+EmailIfError=غلطی پر انتباہ کے لیے ای میل
+JobNotFound=ملازمت %s ملازمتوں کی فہرست میں نہیں ملی (ماڈیول کو غیر فعال/فعال کرنے کی کوشش کریں)
+ErrorInBatch=کام چلاتے وقت خرابی %s
 
 # Cron Boxes
 LastExecutedScheduledJob=آخری بار طے شدہ کام
 NextScheduledJobExecute=اگلا طے شدہ کام انجام دینے کے لیے
 NumberScheduledJobError=غلطی سے طے شدہ کاموں کی تعداد
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+NumberScheduledJobNeverFinished=طے شدہ ملازمتوں کی تعداد کبھی ختم نہیں ہوئی۔

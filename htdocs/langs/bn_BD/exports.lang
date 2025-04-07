@@ -46,10 +46,16 @@ LineLabel=Label of line
 LineDescription=Description of line
 LineUnitPrice=Unit price of line
 LineVATRate=VAT Rate of line
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=Quantity for line
 LineTotalHT=পরিমাণ বাদ। লাইনের জন্য ট্যাক্স
 LineTotalTTC=Amount with tax for line
 LineTotalVAT=Amount of VAT for line
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Type of line (0=product, 1=service)
 FileWithDataToImport=File with data to import
 FileToImport=Source file to import
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=এটি নির্বাচন করতে %s �
 ChooseFileToImport=ফাইল আপলোড করুন তারপর সোর্স ইম্পোর্ট ফাইল হিসাবে ফাইল নির্বাচন করতে %s আইকনে ক্লিক করুন...
 SourceFileFormat=Source file format
 FieldsInSourceFile=Fields in source file
-FieldsInTargetDatabase=Target fields in Dolibarr database (bold=mandatory)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=No fields
 MoveField=Move field column number %s
 ExampleOfImportFile=Example_of_import_file
@@ -72,30 +78,30 @@ FieldsTarget=Targeted fields
 FieldTarget=Targeted field
 FieldSource=Source field
 NbOfSourceLines=Number of lines in source file
-NowClickToTestTheImport=আপনার ফাইলের ফাইল ফরম্যাট (ক্ষেত্র এবং স্ট্রিং ডিলিমিটার) দেখানো বিকল্পগুলির সাথে মেলে এবং আপনি হেডার লাইনটি বাদ দিয়েছেন কিনা তা পরীক্ষা করে দেখুন, অথবা এইগুলি নিম্নলিখিত সিমুলেশনে ত্রুটি হিসাবে ফ্ল্যাগ করা হবে।<br></span span>একটি চালানোর জন্য "<span class='notranslate'><b>%s</b>" বোতামে ক্লিক করুন ফাইলের গঠন/বিষয়বস্তু পরীক্ষা করুন এবং আমদানি প্রক্রিয়া অনুকরণ করুন।<br><b>আপনার ডাটাবেসে কোনো ডেটা পরিবর্তন করা হবে না</b>।
+NowClickToTestTheImport=Check that the file format (field and string delimiters) of your file matches the options shown and that you have omitted the header line, or these will be flagged as errors in the following simulation.<br>Click on the "<b>%s</b>" button to run a check of the file structure/contents and simulate the import process.<br><b>No data will be changed in your database</b>.
 RunSimulateImportFile=আমদানি সিমুলেশন চালান
 FieldNeedSource=This field requires data from the source file
 SomeMandatoryFieldHaveNoSource=Some mandatory fields have no source from data file
-InformationOnSourceFile=Information on source file
-InformationOnTargetTables=Information on target fields
+InformationOnSourceFile=Source file
+InformationOnTargetTables=Target fields
 SelectAtLeastOneField=Switch at least one source field in the column of fields to export
 SelectFormat=Choose this import file format
 RunImportFile=তথ্য আমদানি
 NowClickToRunTheImport=আমদানি সিমুলেশন ফলাফল পরীক্ষা করুন. কোনো ত্রুটি সংশোধন করুন এবং পুনরায় পরীক্ষা করুন।<br>যখন সিমুলেশন কোনো ত্রুটির প্রতিবেদন করে না আপনি ডাটাবেসে ডেটা আমদানি করতে এগিয়ে যেতে পারেন।
 DataLoadedWithId=এই আমদানি আইডি সহ প্রতিটি ডাটাবেস টেবিলে আমদানি করা ডেটার একটি অতিরিক্ত ক্ষেত্র থাকবে: <b>%s</b>, এই আমদানির সাথে সম্পর্কিত একটি সমস্যা তদন্তের ক্ষেত্রে এটি অনুসন্ধানযোগ্য হওয়ার অনুমতি দিতে৷
-ErrorMissingMandatoryValue=<b>%s</b><span class='notranslate'> কলামের উৎস ফাইলে বাধ্যতামূলক ডেটা খালি।
+ErrorMissingMandatoryValue=Mandatory data is empty in the source file in column <b>%s</b>.
 TooMuchErrors=এখনও <b>%s</b> ত্রুটি সহ অন্যান্য উত্স লাইন আছে কিন্তু আউটপুট আছে সীমিত করা হয়েছে।
 TooMuchWarnings=এখনও <b>%s</b> সতর্কতা সহ অন্যান্য উত্স লাইন আছে কিন্তু আউটপুট আছে সীমিত করা হয়েছে।
 EmptyLine=Empty line (will be discarded)
-CorrectErrorBeforeRunningImport=আপনাকে <b>অবশ্যই</b> সমস্ত ত্রুটি সংশোধন করতে হবে <b>আগে <span=' notranslate'></b></span> নিশ্চিত আমদানি চলছে৷
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=File was imported with number <b>%s</b>.
-YouCanUseImportIdToFindRecord=আপনি <b>import_key='%s'<span class='notranslate' ফিল্টার করে আপনার ডাটাবেসের সমস্ত আমদানি করা রেকর্ড খুঁজে পেতে পারেন '></b></span>।
+YouCanUseImportIdToFindRecord=You can find all the imported records in your database by filtering on field <b>import_key='%s'</b>.
 NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
 NbOfLinesImported=Number of lines successfully imported: <b>%s</b>.
 DataComeFromNoWhere=Value to insert comes from nowhere in source file.
 DataComeFromFileFieldNb=সন্নিবেশ করার মান উৎস ফাইলে <b>%s</b> থেকে আসে।
 DataComeFromIdFoundFromRef=সোর্স ফাইল থেকে আসা মানটি ব্যবহার করার জন্য মূল বস্তুর আইডি খুঁজতে ব্যবহার করা হবে (তাই বস্তুটি <b>%s</b> যার রেফ. ফ্রম সোর্স ফাইলটি ডাটাবেসে বিদ্যমান থাকতে হবে)।
-DataComeFromIdFoundFromCodeId=সোর্স ফাইল থেকে আসা কোডের মান ব্যবহার করা হবে প্যারেন্ট অবজেক্টের আইডি খুঁজে বের করার জন্য (সুতরাং সোর্স ফাইলের কোডটি ডিকশনারিতে থাকা আবশ্যক <b><span ক্লাস ='notranslate'>%s</span></b>)। মনে রাখবেন যে আপনি যদি আইডিটি জানেন তবে আপনি কোডের পরিবর্তে সোর্স ফাইলে এটি ব্যবহার করতে পারেন। আমদানি উভয় ক্ষেত্রেই কাজ করা উচিত।
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=Data coming from source file will be inserted into the following field:
 DataIDSourceIsInsertedInto=মূল বস্তুর আইডি, যা উৎস ফাইলের ডেটা ব্যবহার করে পাওয়া গেছে, নিম্নলিখিত ক্ষেত্রে সন্নিবেশ করা হবে:
 DataCodeIDSourceIsInsertedInto=প্যারেন্ট লাইনের আইডি, যা কোড থেকে পাওয়া গেছে, নিম্নলিখিত ক্ষেত্রে ঢোকানো হবে:
@@ -113,7 +119,7 @@ Separator=ক্ষেত্র বিভাজক
 Enclosure=স্ট্রিং ডিলিমিটার
 SpecialCode=Special code
 ExportStringFilter=%% allows replacing one or more characters in the text
-ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: এক বছর/মাস/দিনের দ্বারা ফিল্টার করুন<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD+YYYYMMDD বছর/মাস/মাস রেঞ্জের বেশি বছর span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMDD: পরবর্তী সমস্ত বছর/মাস/দিনে ফিল্টার<br> < YYYY, <YYYY, YYYYMMDD: আগের সমস্ত বছর/মাস/দিনে ফিল্টার
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
 ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Import starting from line number
 EndAtLineNb=End at line number

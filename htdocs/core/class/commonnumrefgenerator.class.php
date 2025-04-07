@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2023	Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,46 +31,77 @@
 abstract class CommonNumRefGenerator
 {
 	/**
-	 * @var string Model name
+	 * @var string              Model name
 	 */
 	public $name = '';
 
 	/**
-	 * @var string Version
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'experimental'|'dolibarr'	Version
 	 */
 	public $version = '';
 
 	/**
-	 * @var string Error code (or message)
+	 * @var string              Error code (or message)
 	 */
 	public $error = '';
 
 	/**
-	 * @var string[]    Array of error strings
+	 * @var string[]            Array of error strings
 	 */
 	public $errors = array();
 
 	/**
-	 * @var DoliDB Database handler.
+	 * @var DoliDB              Database handler.
 	 */
 	protected $db;
 
+	/**
+	 * @var int<0,1>            Is Code optional 0 or 1
+	 */
+	public $code_null;
 
-	/**     Return model name
-	 * 		TODO Replace with getName()
+	/**
+	 * @var int<0,1>            Is Code editable 0 or 1
+	 */
+	public $code_modifiable;
+
+	/**
+	 * @var int<0,1>            Is Code editable if invalid 0 or 1
+	 */
+	public $code_modifiable_invalide;
+
+	/**
+	 * @var int<0,1>            Is Code editable if null
+	 */
+	public $code_modifiable_null;
+
+	/**
+	 * @var int<0,1>            Automatic numbering 0 or 1
+	 */
+	public $code_auto;
+
+	/**
+	 * @var int<0,1>             The third party prefix field must be filled in when using {pre}
+	 */
+	public $prefixIsRequired;
+
+
+	/** Return model name
 	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Model name
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Model name
+	 *  @deprecated Use getName() instead
+	 *  @see getName()
 	 */
 	public function getNom($langs)
 	{
-		return empty($this->name) ? get_class($this) : $this->name;
+		return $this->getName($langs);
 	}
 
-	/**     Return model name
+	/** Return model name
 	 *
-	 *		@param	Translate	$langs		Object langs
-	 *      @return string      			Model name
+	 *  @param	Translate	$langs		Object langs
+	 *  @return string      			Model name
 	 */
 	public function getName($langs)
 	{
@@ -100,7 +133,7 @@ abstract class CommonNumRefGenerator
 	 *  Checks if the numbers already in the database do not
 	 *  cause conflicts that would prevent this numbering working.
 	 *
-	 *	@param	Object		$object		Object we need next value for
+	 *	@param	CommonObject	$object	Object we need next value for
 	 *	@return boolean     			false if conflict, true if ok
 	 */
 	public function canBeActivated($object)

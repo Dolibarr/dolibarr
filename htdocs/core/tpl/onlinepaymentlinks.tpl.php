@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur <eldy@destailleur.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +15,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+/**
+ * @var Conf $conf
+ * @var Translate $langs
+ * @var string $servicename
+ */
+'
+@phan-var-force string $servicename
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
@@ -30,7 +38,7 @@ print '<u>'.$langs->trans("FollowingUrlAreAvailableToMakePayments").':</u><br><b
 print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnFreeAmount", $servicename).':</span><br>';
 print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'free')."</strong><br><br>\n";
 
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	print '<div id="order"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnOrder", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'order')."</strong><br>\n";
@@ -52,7 +60,7 @@ if (isModEnabled('commande')) {
 	}
 	print '<br>';
 }
-if (isModEnabled('facture')) {
+if (isModEnabled('invoice')) {
 	print '<div id="invoice"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnInvoice", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'invoice')."</strong><br>\n";
@@ -74,7 +82,7 @@ if (isModEnabled('facture')) {
 	}
 	print '<br>';
 }
-if (isModEnabled('contrat')) {
+if (isModEnabled('contract')) {
 	print '<div id="contractline"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnContractLine", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'contractline')."</strong><br>\n";
@@ -96,7 +104,7 @@ if (isModEnabled('contrat')) {
 	}
 	print '<br>';
 }
-if (isModEnabled('adherent')) {
+if (isModEnabled('member')) {
 	print '<div id="membersubscription"></div>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans("ToOfferALinkForOnlinePaymentOnMemberSubscription", $servicename).':</span><br>';
 	print '<strong class="wordbreak">'.getOnlinePaymentUrl(1, 'membersubscription')."</strong><br>\n";
@@ -148,5 +156,9 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 print dolJSToSetRandomPassword($constname);
 
 print info_admin($langs->trans("YouCanAddTagOnUrl"));
+
+if (isModEnabled('website')) {
+	print info_admin($langs->trans("YouCanEmbedOnWebsite"));
+}
 
 print '<!-- END PHP TEMPLATE ONLINEPAYMENTLINKS -->';

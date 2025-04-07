@@ -1,19 +1,19 @@
 README
 ======
 
-Scripts in this directory can be used to reload or save a demo database.
-Install of package "dialog" is required.
+The scripts in this directory can be used to reload or save a demo database.
+The package `dialog` is required.
 
 
 Init demo
 -------------
 
-The script initdemo.sh will erase current database with data intodev/initdemo/mysqldump_dolibarr_x.y.z.sql and copy files into documents_demo into officiel document directory.
+The script `initdemo.sh` will erase the current database with data from `dev/initdemo/mysqldump_dolibarr_x.y.z.sql` and copy files from `documents_demo` to the official document directory.
 
-Do a chmod 700 initdemo.sh
-then run ./initdemo.sh to launch Graphic User Interface.
+You may need to execute `chmod 700 initdemo.sh`
+then run `./initdemo.sh` to launch the Graphical User Interface.
 
-After loading the demo files, admin login may be:
+After loading the demo files, the admin login may be one of the following:
 - admin / admin
 or
 - admin / adminadmin
@@ -22,11 +22,10 @@ or
 Update demo
 -------------
 
-The goal of script dev/initdemo/updatedemo.php is to update dates into the demo data so samples are up to date.
+The goal of the script `dev/initdemo/updatedemo.php` is to update the dates in the demo data so that samples are up to date.
 
 
 Save demo
 -------------
 
-The script dev/initdemo.savedemo.sh will save current database into a database dump file.
-
+The script `dev/initdemo.savedemo.sh` will save the current database into a database dump file.

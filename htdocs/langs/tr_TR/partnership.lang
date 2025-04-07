@@ -4,95 +4,73 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-ModulePartnershipName=Partnership management
-PartnershipDescription=Module Partnership management
-PartnershipDescriptionLong= Module Partnership management
-Partnership=Partnership
-Partnerships=Partnerships
-AddPartnership=Add partnership
-CancelPartnershipForExpiredMembers=Partnership: Cancel partnership of members with expired subscriptions
-PartnershipCheckBacklink=Partnership: Check referring backlink
-
-#
+ModulePartnershipName=Ortaklık yönetimi
+PartnershipDescription=Modül Ortaklığı yönetimi
+PartnershipDescriptionLong= Modül Ortaklığı yönetimi
+Partnership=ortaklık
+Partnerships=ortaklıklar
+AddPartnership=Ortaklık ekle
+CancelPartnershipForExpiredMembers=Ortaklık: iptal abonelik süresi dolmuş üyelerin ortaklığı
+PartnershipCheckBacklink=Ortaklık: Yönlendiren geri bağlantıyı kontrol edin
 # Menu
-#
-NewPartnership=New Partnership
-NewPartnershipbyWeb=Your partnership request has been added successfully. We may contact you soon...
-ListOfPartnerships=List of partnership
-
-#
+NewPartnership=Yeni Ortaklık
+NewPartnershipbyWeb=Ortaklık isteğiniz başarıyla eklendi. Yakında sizinle iletişime geçebiliriz...
+ListOfPartnerships=ortaklık listesi
 # Admin page
-#
-PartnershipSetup=Partnership setup
-PartnershipAbout=About Partnership
-PartnershipAboutPage=Partnership about page
-partnershipforthirdpartyormember=Partner status must be set on a 'third party' or a 'member'
-PARTNERSHIP_IS_MANAGED_FOR=Partnership managed for
-PARTNERSHIP_BACKLINKS_TO_CHECK=Backlinks to check
-PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nb of days before canceling status of a partnership when a subscription has expired
-ReferingWebsiteCheck=Check of website referring
-ReferingWebsiteCheckDesc=You can enable a feature to check that your partners has added a backlink to your website domains on their own website.
-PublicFormRegistrationPartnerDesc=Dolibarr can provide you a public URL/website to allow external visitors to request to be part of the partnership program.
-
-#
+PartnershipSetup=Ortaklık kurulumu
+PartnershipAbout=Ortaklık Hakkında
+PartnershipAboutPage=Sayfa hakkında ortaklık
+partnershipforthirdpartyormember=İş ortağı durumu "üçüncü taraf" veya "üye" olarak ayarlanmalıdır
+PARTNERSHIP_IS_MANAGED_FOR=Şunun için yönetilen ortaklık
+PARTNERSHIP_BACKLINKS_TO_CHECK=Kontrol edilecek geri bağlantılar
+PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Aboneliğin süresi dolduğunda ortaklık durumunun iptal edilmesinden önceki gün sayısı
+ReferingWebsiteCheck=Yönlendiren web sitesinin kontrolü
+ReferingWebsiteCheckDesc=Ortaklarınızın kendi web sitelerinde web sitenizin alan adlarına bir geri bağlantı ekleyip eklemediğini kontrol etmek için bir özelliği etkinleştirebilirsiniz.
+PublicFormRegistrationPartnerDesc=Dolibarr, harici ziyaretçilerin ortaklık programının bir parçası olmayı talep etmelerine olanak sağlamak için size genel bir URL/web sitesi sağlayabilir.
 # Object
-#
-DeletePartnership=Delete a partnership
-PartnershipDedicatedToThisThirdParty=Partnership dedicated to this third party
-PartnershipDedicatedToThisMember=Partnership dedicated to this member
+DeletePartnership=Ortaklığı silme
+PartnershipDedicatedToThisThirdParty=Bu üçüncü tarafa adanmış ortaklık
+PartnershipDedicatedToThisMember=Bu üyeye özel ortaklık
 DatePartnershipStart=Başlangıç tarihi
 DatePartnershipEnd=Bitiş tarihi
 ReasonDecline=Reddetme nedeni
-ReasonDeclineOrCancel=Reason for refusal or cancellation
-PartnershipAlreadyExist=Partnership already exist
-ManagePartnership=Manage partnership
-BacklinkNotFoundOnPartnerWebsite=Backlink not found on partner website
-ConfirmClosePartnershipAsk=Are you sure you want to cancel this partnership?
-PartnershipType=Partnership type
-PartnershipRefApproved=Partnership %s approved
-KeywordToCheckInWebsite=If you want to check that a given keyword is present into the website of each partner, define this keyword here
+ReasonDeclineOrCancel=Reddetme veya iptal nedeni
+PartnershipAlreadyExist=Ortaklık zaten mevcut
+ManagePartnership=Ortaklığı yönet
+BacklinkNotFoundOnPartnerWebsite=Ortak web sitesinde geri bağlantı bulunamadı
+ConfirmClosePartnershipAsk=Bu ortaklığı iptal yapmak istediğinizden emin misiniz?
+PartnershipType=Ortaklık türü
+PartnershipRefApproved=Ortaklık %s onaylandı
+KeywordToCheckInWebsite=Belirli bir anahtar kelimenin her bir ortağın web sitesinde mevcut olup olmadığını kontrol etmek istiyorsanız, bu anahtar kelimeyi burada tanımlayın
 PartnershipDraft=Ödeme emri
 PartnershipAccepted=Kabul edildi
 PartnershipRefused=Reddedildi
 PartnershipCanceled=İptal edildi
-PartnershipManagedFor=Partners are
-
-#
+PartnershipManagedFor=Ortaklar
 # Template Mail
-#
-SendingEmailOnPartnershipWillSoonBeCanceled=Partnership will soon be canceled
-SendingEmailOnPartnershipRefused=Partnership refused
-SendingEmailOnPartnershipAccepted=Partnership accepted
-SendingEmailOnPartnershipCanceled=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledTopic=Partnership will soon be canceled
-YourPartnershipRefusedTopic=Partnership refused
-YourPartnershipAcceptedTopic=Partnership accepted
-YourPartnershipCanceledTopic=Partnership canceled
-
-YourPartnershipWillSoonBeCanceledContent=We would like to inform you that our partnership will soon be canceled (we did not get renewal or a prerequisite for our partnership have not been met). Please contact us if you received this due to an error.
-YourPartnershipRefusedContent=We would like to inform you that your partnership request has been refused. Prerequisites have not been met. Please contact us if you need more information.
-YourPartnershipAcceptedContent=We would like to inform you that your partnership request has been accepted.
-YourPartnershipCanceledContent=We would like to inform you that our partnership has been canceled. Please contact us if you need more information.
-
+SendingEmailOnPartnershipWillSoonBeCanceled=Ortaklık yakında iptal edilecek
+SendingEmailOnPartnershipRefused=Ortaklık reddedildi
+SendingEmailOnPartnershipAccepted=Ortaklık kabul edildi
+SendingEmailOnPartnershipCanceled=Ortaklık iptal edildi
+YourPartnershipWillSoonBeCanceledTopic=Ortaklık yakında iptal edilecek
+YourPartnershipRefusedTopic=Ortaklık reddedildi
+YourPartnershipAcceptedTopic=Ortaklık kabul edildi
+YourPartnershipCanceledTopic=Ortaklık iptal edildi
+YourPartnershipWillSoonBeCanceledContent=Ortaklığımızın yakında sona ereceğini (yenileme alamadığımız veya ortaklığımız için bir önkoşulun karşılanmadığı) bildirmek isteriz. Bunu bir hata nedeniyle aldıysanız lütfen bizimle iletişime geçin.
+YourPartnershipRefusedContent=Ortaklık talebinizin reddedildiğini size bildirmek isteriz. Önkoşullar karşılanmadı. Daha fazla bilgiye ihtiyacınız varsa lütfen bizimle iletişime geçin.
+YourPartnershipAcceptedContent=Ortaklık talebinizin kabul edildiğini size bildirmek isteriz.
+YourPartnershipCanceledContent=Ortaklığımızın iptal edildiğini size bildirmek isteriz. Daha fazla bilgiye ihtiyacınız varsa lütfen bizimle iletişime geçin.
 CountLastUrlCheckError=Son URL kontrolü için hataların sayısı
 LastCheckBacklink=Son URL kontrolünün tarihi
-
-NewPartnershipRequest=New partnership request
-NewPartnershipRequestDesc=This form allows you to request to be part of one of our partnership program. If you need help to fill this form, please contact by email <b>%s</b>.
-ThisUrlMustContainsAtLeastOneLinkToWebsite=This page must contains at least one link to one of the following domain: %s
-
-IPOfApplicant=IP of applicant
-
+NewPartnershipRequest=Yeni ortaklık talebi
+NewPartnershipRequestDesc=Bu form, ortaklık programımızın bir parçası olmayı talep etmenizi sağlar. Bu formu doldurmak için yardıma ihtiyacınız varsa lütfen e-postayla iletişime geçin <b>%s</b></b>%s</b></b>%s</b> açıklık >.
+ThisUrlMustContainsAtLeastOneLinkToWebsite=Bu sayfa şu alan adlarından birine giden en az bir bağlantı içermelidir: %s
+IPOfApplicant=Başvuru sahibinin IP'si

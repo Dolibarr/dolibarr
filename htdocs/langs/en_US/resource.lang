@@ -9,6 +9,7 @@ ActionsOnResource=Events about this resource
 ResourcePageIndex=Resources list
 ResourceSingular=Resource
 ResourceCard=Resource card
+NewResource=New resource
 AddResource=Create a resource
 ResourceFormLabel_ref=Resource name
 ResourceFormLabel_description=Resource description
@@ -18,23 +19,20 @@ ResourceTypeLabel=Resource type label
 ResourcesLinkedToElement=Resources linked to element
 
 ShowResource=Show resource
-
 ResourceElementPage=Element resources
 ResourceCreatedWithSuccess=Resource successfully created
 RessourceLineSuccessfullyDeleted=Resource line successfully deleted
 RessourceLineSuccessfullyUpdated=Resource line successfully updated
 ResourceLinkedWithSuccess=Resource linked with success
-
 ConfirmDeleteResource=Confirm to delete this resource
 RessourceSuccessfullyDeleted=Resource successfully deleted
 DictionaryResourceType=Type of resources
-
 SelectResource=Select resource
-
 IdResource=Id resource
 AssetNumber=Serial number
 ResourceTypeCode=Resource type code
 ImportDataset_resource_1=Resources
-
 ErrorResourcesAlreadyInUse=Some resources are in use
 ErrorResourceUseInEvent=%s used in %s event
+MaxUsers=Maximum users (places, seats, etc.)
+MaxUsersLabel=Maximum users

@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2018-2020  Thibault FOUCART       <support@ptibogxiv.net>
- * Copyright (C) 2018       Fédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2023       Laurent Destailleur    <eldy@users.sourceforge.net>
+/* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
+ * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+// Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) {
 	define("DOLENTITY", $entity);
@@ -54,26 +56,30 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // You can find your endpoint's secret in your webhook settings
-if (isset($_GET['connect'])) {
-	if (isset($_GET['test'])) {
-		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
+if (GETPOSTISSET('connect')) {
+	if (GETPOSTISSET('test')) {
+		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	} else {
-		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_LIVE_WEBHOOK_CONNECT_KEY');
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
 } else {
-	if (isset($_GET['test'])) {
-		$endpoint_secret = $conf->global->STRIPE_TEST_WEBHOOK_KEY;
+	if (GETPOSTISSET('test')) {
+		$endpoint_secret = getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY');
 		$service = 'StripeTest';
 		$servicestatus = 0;
 	} else {
-		$endpoint_secret = $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
+		$endpoint_secret = getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY');
 		$service = 'StripeLive';
 		$servicestatus = 1;
 	}
@@ -90,8 +96,8 @@ if (empty($endpoint_secret)) {
 if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
-	$user->fetch($conf->global->STRIPE_USER_ACCOUNT_FOR_ACTIONS);
-	$user->getrights();
+	$user->fetch(getDolGlobalInt('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
+	$user->loadRights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
 }
@@ -162,9 +168,9 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 $stripe = new Stripe($db);
 
 // Subject
-$societeName = $conf->global->MAIN_INFO_SOCIETE_NOM;
+$societeName = getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
-	$societeName = $conf->global->MAIN_APPLICATION_TITLE;
+	$societeName = getDolGlobalString('MAIN_APPLICATION_TITLE');
 }
 
 top_httphead();
@@ -172,13 +178,14 @@ top_httphead();
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 
 
-if ($event->type == 'payout.created') {
+if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	// When a payout is created by Stripe to transfer money to your account
 	$error = 0;
 
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0) {
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
+		$subject = '['.$societeName.'] Notification - Stripe payout scheduled';
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 		} else {
@@ -214,9 +221,10 @@ if ($event->type == 'payout.created') {
 		http_response_code(500);
 		return -1;
 	}
-} elseif ($event->type == 'payout.paid') {
+} elseif ($event->type == 'payout.paid' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	// When a payout to transfer money to your account is completely done
 	$error = 0;
-	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", null, 'chaine', 0, '', $conf->entity);
+	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
 	if ($result) {
 		$langs->load("errors");
 
@@ -227,28 +235,30 @@ if ($event->type == 'payout.created') {
 		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 		$accountfrom = new Account($db);
-		$accountfrom->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS);
+		$accountfrom->fetch(getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'));
 
 		$accountto = new Account($db);
-		$accountto->fetch($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS);
+		$accountto->fetch(getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS'));
 
 		if (($accountto->id != $accountfrom->id) && empty($error)) {
 			$bank_line_id_from = 0;
 			$bank_line_id_to = 0;
 			$result = 0;
 
-			// By default, electronic transfert from bank to bank
+			// By default, electronic transfer from bank to bank
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
+			$db->begin();
+
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * price2num($amount), '', '', $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', 0, $user);
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
 			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), '', 0, $user);
 			}
 			if (!($bank_line_id_to > 0)) {
 				$error++;
@@ -266,37 +276,46 @@ if ($event->type == 'payout.created') {
 			if (!($result > 0)) {
 				$error++;
 			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+
+			// Send email
+			if (!$error) {
+				$subject = '['.$societeName.'] - NotificationOTIFICATION] Stripe payout done';
+				if (!empty($user->email)) {
+					$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
+				} else {
+					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+				}
+				$replyto = $sendto;
+				$sendtocc = '';
+				if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
+				}
+
+				$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+				$mailfile = new CMailFile(
+					$subject,
+					$sendto,
+					$replyto,
+					$message,
+					array(),
+					array(),
+					array(),
+					$sendtocc,
+					'',
+					0,
+					-1
+				);
+
+				$ret = $mailfile->sendfile();
+			}
 		}
-
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
-		if (!empty($user->email)) {
-			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
-		} else {
-			$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
-		}
-		$replyto = $sendto;
-		$sendtocc = '';
-		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
-		}
-
-		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
-
-		$mailfile = new CMailFile(
-			$subject,
-			$sendto,
-			$replyto,
-			$message,
-			array(),
-			array(),
-			array(),
-			$sendtocc,
-			'',
-			0,
-			-1
-		);
-
-		$ret = $mailfile->sendfile();
 
 		return 1;
 	} else {
@@ -311,11 +330,14 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'customer.source.delete') {
 	//TODO: delete customer's source
 } elseif ($event->type == 'customer.deleted') {
+	// When a customer account is delete on Stripe side
 	$db->begin();
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' AND site = 'stripe'";
 	$db->query($sql);
 	$db->commit();
-} elseif ($event->type == 'payment_intent.succeeded') {		// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+} elseif ($event->type == 'payment_intent.succeeded') {
+	// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+
 	//dol_syslog("object = ".var_export($event->data, true));
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	global $stripearrayofkeysbyenv;
@@ -328,15 +350,15 @@ if ($event->type == 'payout.created') {
 	$paymentmethodstripeid = $object->payment_method;
 	$customer_id = $object->customer;
 	$invoice_id = "";
-	$paymentTypeId = "";			// payment type according to Stripe
-	$paymentTypeIdInDolibarr = "";	// payment type according to Dolibarr
+	$paymentTypeCode = "";			// payment type according to Stripe
+	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
 	$payment_amount = 0;
 	$payment_amountInDolibarr = 0;
 
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID);
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
-	$sql .= " FROM llx_prelevement_demande as pi";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
 	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
 	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
 
@@ -345,14 +367,14 @@ if ($event->type == 'payout.created') {
 		$obj = $db->fetch_object($result);
 		if ($obj) {
 			if ($obj->type == 'ban') {
+				$pdid = $obj->rowid;
+				$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 				if ($obj->traite == 1) {
 					// This is a direct-debit with an order (llx_bon_prelevement) ALREADY generated, so
 					// it means we received here the confirmation that payment request is finished.
-					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
-					$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 					$payment_amountInDolibarr = $obj->amount;
-					$paymentTypeIdInDolibarr = $obj->type;
+					$paymentTypeCodeInDolibarr = $obj->type;
 
 					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
 				} else {
@@ -360,12 +382,12 @@ if ($event->type == 'payout.created') {
 				}
 			}
 			if ($obj->type == 'card' || empty($obj->type)) {
+				$pdid = $obj->rowid;
 				if ($obj->traite == 0) {
 					// This is a card payment not already flagged as sent to Stripe.
-					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
 					$payment_amountInDolibarr = $obj->amount;
-					$paymentTypeIdInDolibarr = empty($obj->type) ? 'card' : $obj->type;
+					$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1");
 				} else {
@@ -384,7 +406,7 @@ if ($event->type == 'payout.created') {
 		return -1;
 	}
 
-	if ($paymentTypeIdInDolibarr) {
+	if ($paymentTypeCodeInDolibarr) {
 		// Here, we need to do something. A $invoice_id has been found.
 
 		$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
@@ -394,23 +416,25 @@ if ($event->type == 'payout.created') {
 		$s = new \Stripe\StripeClient($stripeacc);
 
 		$paymentmethodstripe = $s->paymentMethods->retrieve($paymentmethodstripeid);
-		$paymentTypeId =  $paymentmethodstripe->type;
-		if ($paymentTypeId == "ban" || $paymentTypeId == "sepa_debit") {
-			$paymentTypeId = "PRE";
-		} elseif ($paymentTypeId == "card") {
-			$paymentTypeId = "CB";
+		$paymentTypeCode =  $paymentmethodstripe->type;
+		if ($paymentTypeCode == "ban" || $paymentTypeCode == "sepa_debit") {
+			$paymentTypeCode = "PRE";
+		} elseif ($paymentTypeCode == "card") {
+			$paymentTypeCode = "CB";
 		}
 
 		$payment_amount = $payment_amountInDolibarr;
 		// TODO Check payment_amount in Stripe (received) is same than the one in Dolibarr
 
-		if ($paymentTypeId == "CB" && ($paymentTypeIdInDolibarr == 'card' || empty($paymentTypeIdInDolibarr))) {
+		$postactionmessages = array();
+
+		if ($paymentTypeCode == "CB" && ($paymentTypeCodeInDolibarr == 'card' || empty($paymentTypeCodeInDolibarr))) {
 			// Case payment type in Stripe and into prelevement_demande are both CARD.
 			// For this case, payment should already have been recorded so we just update flag of payment request if not yet 1
 
 			// TODO Set traite to 1
 			dol_syslog("TODO update flag traite to 1");
-		} elseif ($paymentTypeId == "PRE" && $paymentTypeIdInDolibarr == 'ban') {
+		} elseif ($paymentTypeCode == "PRE" && $paymentTypeCodeInDolibarr == 'ban') {
 			// Case payment type in Stripe and into prelevement_demande are both BAN.
 			// For this case, payment on invoice (not yet recorded) must be done and direct debit order must be closed.
 
@@ -422,20 +446,33 @@ if ($event->type == 'payout.created') {
 			} else {
 				$paiement->multicurrency_amounts = [$invoice_id => $payment_amount];   // Array with all payments dispatching
 
-				$postactionmessages[] = 'Payment was done in a different currency than currency expected of company';
+				$postactionmessages[] = 'Payment was done in a currency ('.$currencyCodeType.') other than the expected currency of company ('.$conf->currency.')';
 				$ispostactionok = -1;
 				// Not yet supported, so error
 				$error++;
 			}
-			$paiement->paiementid = $paymentTypeId;
+
+			// Get ID of payment PRE
+			$paiement->paiementcode = $paymentTypeCode;
+			$sql = "SELECT id FROM ".MAIN_DB_PREFIX."c_paiement";
+			$sql .= " WHERE code = '".$db->escape($paymentTypeCode)."'";
+			$sql .= " AND entity IN (".getEntity('c_paiement').")";
+			$resql = $db->query($sql);
+			if ($resql) {
+				$obj = $db->fetch_object($resql);
+				$paiement->paiementid = $obj->id;
+			} else {
+				$error++;
+			}
+
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'StripeSepa payment ' . dol_print_date($now, 'standard') . ' using ' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'StripeSepa payment received by IPN webhook - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
 
 			$ispaymentdone = 0;
-			$sql = "SELECT p.rowid FROM llx_paiement as p";
+			$sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."paiement as p";
 			$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 			$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 			$result = $db->query($sql);
@@ -449,12 +486,12 @@ if ($event->type == 'payout.created') {
 			$db->begin();
 
 			if (!$error && !$ispaymentdone) {
-				dol_syslog('* Record payment for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document');
+				dol_syslog('* Record payment type PRE for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document.');
 
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);
 				if ($paiement_id < 0) {
-					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+					$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 					$ispostactionok = -1;
 					$error++;
 
@@ -466,10 +503,10 @@ if ($event->type == 'payout.created') {
 				}
 			}
 
-			if (!$error && isModEnabled('banque')) {
-				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payement now we have created before).
+			if (!$error && isModEnabled('bank')) {
+				// Search again the payment to see if it is already linked to a bank payment record (We should always find the payment that was created before).
 				$ispaymentdone = 0;
-				$sql = "SELECT p.rowid, p.fk_bank FROM llx_paiement as p";
+				$sql = "SELECT p.rowid, p.fk_bank FROM ".MAIN_DB_PREFIX."paiement as p";
 				$sql .= " WHERE p.ext_payment_id = '".$db->escape($paiement->ext_payment_id)."'";
 				$sql .= " AND p.ext_payment_site = '".$db->escape($paiement->ext_payment_site)."'";
 				$sql .= " AND p.fk_bank <> 0";
@@ -492,7 +529,7 @@ if ($event->type == 'payout.created') {
 						$label = '(CustomerInvoicePayment)';
 						$result = $paiement->addPaymentToBank($user, 'payment', $label, $bankaccountid, $customer_id, '');
 						if ($result < 0) {
-							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . join("<br>\n", $paiement->errors);
+							$postactionmessages[] = $paiement->error . ($paiement->error ? ' ' : '') . implode("<br>\n", $paiement->errors);
 							$ispostactionok = -1;
 							$error++;
 						} else {
@@ -573,12 +610,13 @@ if ($event->type == 'payout.created') {
 				return -1;
 			}
 		} else {
-			dol_syslog("The payment mode of this payment is ".$paymentTypeId." in Stripe and ".$paymentTypeIdInDolibarr." in Dolibarr. This case is not managed by the IPN");
+			dol_syslog("The payment mode of this payment is ".$paymentTypeCode." in Stripe and ".$paymentTypeCodeInDolibarr." in Dolibarr. This case is not managed by the IPN");
 		}
 	} else {
 		dol_syslog("Nothing to do in database because we don't know paymentTypeIdInDolibarr");
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
+	// When a try to take payment has failed. Useful for asynchronous SEPA payment that fails.
 	dol_syslog("A try to make a payment has failed");
 
 	$object = $event->data->object;
@@ -674,6 +712,7 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {
+	// When we link a payment method with a customer on Stripe side
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 	$societeaccount = new SocieteAccount($db);
@@ -684,21 +723,24 @@ if ($event->type == 'payout.created') {
 	if ($idthirdparty > 0) {
 		// If the payment mode attached is to a stripe account owned by an external customer in societe_account (so a thirdparty that has a Stripe account),
 		// we can create the payment mode
-		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
+		$companypaymentmode->stripe_card_ref = $event->data->object->id;
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
-		$companypaymentmode->label           = null;
-		$companypaymentmode->number          = $db->escape($event->data->object->id);
-		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->card_type       = $db->escape($event->data->object->card->branding);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->label           = '';
+		$companypaymentmode->number          = $event->data->object->id;
+		$companypaymentmode->last_four       = $event->data->object->card->last4;
+		$companypaymentmode->card_type       = $event->data->object->card->branding;
+
+		$companypaymentmode->owner_name      = $event->data->object->billing_details->name;
+		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We may still need this formodulebuilder because name of field is "proprio"
+
+		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
+		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
-		$companypaymentmode->type            = $db->escape($event->data->object->type);
-		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+		$companypaymentmode->type            = $event->data->object->type;
+		$companypaymentmode->country_code    = $event->data->object->card->country;
 		$companypaymentmode->status          = $servicestatus;
 
 		// TODO Check that a payment mode $companypaymentmode->stripe_card_ref does not exists yet to avoid to create duplicates
@@ -713,24 +755,27 @@ if ($event->type == 'payout.created') {
 				$db->commit();
 			} else {
 				$db->rollback();
+				http_response_code(500);
+				return -1;
 			}
 		}
 	}
 } elseif ($event->type == 'payment_method.updated') {
+	// When we update a payment method on Stripe side
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	$companypaymentmode = new CompanyPaymentMode($db);
 	$companypaymentmode->fetch(0, '', 0, '', " AND stripe_card_ref = '".$db->escape($event->data->object->id)."'");
 	if ($companypaymentmode->id > 0) {
 		// If we found a payment mode with the ID
 		$companypaymentmode->bank            = null;
-		$companypaymentmode->label           = null;
+		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
 		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
-		$companypaymentmode->exp_date_month  = $db->escape($event->data->object->card->exp_month);
-		$companypaymentmode->exp_date_year   = $db->escape($event->data->object->card->exp_year);
+		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
+		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = (int) $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
 		$companypaymentmode->type            = $db->escape($event->data->object->type);
 		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
@@ -750,6 +795,7 @@ if ($event->type == 'payout.created') {
 		}
 	}
 } elseif ($event->type == 'payment_method.detached') {
+	// When we remove a payment method on Stripe side
 	$db->begin();
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_rib WHERE number = '".$db->escape($event->data->object->id)."' and status = ".((int) $servicestatus);
 	$db->query($sql);
@@ -760,6 +806,149 @@ if ($event->type == 'payout.created') {
 	// Deprecated. TODO: Redirect to paymentko.php
 } elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated == true)) {
 	// Deprecated.
+} elseif ($event->type == 'charge.dispute.closed') {
+	// When a dispute to cancel a SEPA payment is finished
+	dol_syslog("object = ".var_export($event->data, true));
+} elseif ($event->type == 'charge.dispute.funds_withdrawn') {
+	// When a dispute/withdraw to cancel a SEPA payment is done
+	dol_syslog("object = ".var_export($event->data, true));
+
+	global $stripearrayofkeysbyenv;
+	$error = 0;
+	$errormsg = '';
+	$object = $event->data->object;
+	$TRANSACTIONID = $object->payment_intent;
+	$ipaddress = $object->metadata->ipaddress;
+	$now = dol_now();
+	$currencyCodeType = strtoupper($object->currency);
+	$paymentmethodstripeid = $object->payment_method;
+	$customer_id = $object->customer;
+	$reason = $object->reason;
+	$amountdisputestripe = $object->amoutndispute;	// In stripe format
+	$amountdispute = $amountdisputestripe;			// In real currency format
+
+	$invoice_id = 0;
+	$paymentTypeCode = "";			// payment type according to Stripe
+	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
+	$payment_amount = 0;
+	$payment_amountInDolibarr = 0;
+
+	dol_syslog("Try to find the payment in database for the payment_intent id = ".$TRANSACTIONID);
+
+	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
+	$sql .= " WHERE pi.ext_payment_id = '".$db->escape($TRANSACTIONID)."'";
+	$sql .= " AND pi.ext_payment_site = '".$db->escape($service)."'";
+
+	$result = $db->query($sql);
+	if ($result) {
+		$obj = $db->fetch_object($result);
+		if ($obj) {
+			if ($obj->type == 'ban') {
+				// This is a direct-debit with an order (llx_bon_prelevement).
+				$pdid = $obj->rowid;
+				$invoice_id = $obj->fk_facture;
+				$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
+				$payment_amountInDolibarr = $obj->amount;
+				$paymentTypeCodeInDolibarr = $obj->type;
+
+				dol_syslog("Found the payment intent for ban in database (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
+			}
+			if ($obj->type == 'card' || empty($obj->type)) {
+				// This is a card payment.
+				$pdid = $obj->rowid;
+				$invoice_id = $obj->fk_facture;
+				$payment_amountInDolibarr = $obj->amount;
+				$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
+
+				dol_syslog("Found the payment intent for card in database (pdid = ".$pdid.")");
+			}
+		} else {
+			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.");
+			http_response_code(200);
+			print "Payment intent ".$TRANSACTIONID." not found into database, so ignored.";
+			return 1;
+		}
+	} else {
+		http_response_code(500);
+		print $db->lasterror();
+		return -1;
+	}
+
+	dol_syslog("objinvoiceid=".$invoice_id);
+	$tmpinvoice = new Facture($db);
+	$tmpinvoice->fetch($invoice_id);
+	$tmpinvoice->fetch_thirdparty();
+
+	dol_syslog("The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr);
+
+	if ($amountdispute != $payment_amountInDolibarr) {
+		http_response_code(500);
+		print "The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr.". Amount differs, we don't know what to do.";
+		return -1;
+	}
+
+	$accountfrom = new Account($db);
+	$accountfrom->fetch(getDolGlobalInt('STRIPE_BANK_ACCOUNT_FOR_PAYMENTS'));
+
+	// Now we add a negative payment
+	$paiement = new Paiement($db);
+
+	$amounts = array();
+	$amounts[$tmpinvoice->id] = -1 * $payment_amountInDolibarr;
+
+	$paiement->datepaye = dol_now();
+	$paiement->amounts = $amounts; // Array with all payments dispatching with invoice id
+	/*$paiement->multicurrency_amounts = $multicurrency_amounts; // Array with all payments dispatching
+	$paiement->multicurrency_code = $multicurrency_code; // Array with all currency of payments dispatching
+	$paiement->multicurrency_tx = $multicurrency_tx; // Array with all currency tx of payments dispatching
+	*/
+	$paiement->paiementid   = dol_getIdFromCode($db, 'PRE', 'c_paiement', 'code', 'id', 1);
+	$paiement->num_payment  = $object->id;	// A string like 'du_...'
+	$paiement->note_public = 'Fund withdrawn by bank. Reason: '.$reason;
+	$paiement->note_private = '';
+	$paiement->fk_account   = $accountfrom->id;
+
+	$db->begin();
+
+	$alreadytransferedinaccounting = $tmpinvoice->getVentilExportCompta();
+
+	if ($alreadytransferedinaccounting) {
+		// TODO Test if invoice already in accountancy.
+		// What to do ?
+		$errormsg = 'Error: the invoice '.$tmpinvoice->id.' is already transferred into accounting. Don\'t know what to do.';
+		$error++;
+	}
+
+	if (! $error && $tmpinvoice->status == Facture::STATUS_CLOSED) {
+		// Switch back the invoice to status validated
+		$result = $tmpinvoice->setStatut(Facture::STATUS_VALIDATED);
+		if ($result < 0) {
+			$errormsg = $tmpinvoice->error.implode(', ', $tmpinvoice->errors);
+			$error++;
+		}
+	}
+
+	if (! $error) {
+		$paiement_id = $paiement->create($user, 0, $tmpinvoice->thirdparty); // This include regenerating documents
+		if ($paiement_id < 0) {
+			$errormsg = $paiement->error.implode(', ', $paiement->errors);
+			$error++;
+		}
+	}
+
+	if (!$error) {
+		//$db->commit();	// Code not yet enough tested
+		$db->rollback();
+		http_response_code(500);
+		return -1;
+	} else {
+		$db->rollback();
+		http_response_code(500);
+		print $errormsg;
+		return -1;
+	}
 }
+
 
 // End of page. Default return HTTP code will be 200

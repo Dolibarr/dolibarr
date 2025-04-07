@@ -32,7 +32,7 @@ StatusReceptionProcessedShort=Өңделді
 ReceptionSheet=Қабылдау парағы
 ValidateReception=Қабылдауды растау
 ConfirmDeleteReception=Бұл қабылдауды шынымен жойғыңыз келе ме?
-ConfirmValidateReception=Бұл қабылдауды <b>%s<span class='notranslate'></b></span сілтеме арқылы растағыңыз келетініне сенімдісіз бе >?
+ConfirmValidateReception=Are you sure you want to validate this reception with the reference <b>%s</b>?
 ConfirmCancelReception=Бұл қабылдаудан бас тартқыңыз келетініне сенімдісіз бе?
 StatsOnReceptionsOnlyValidated=Тек расталған қабылдаулар бойынша жүргізілген статистика. Қолданылған күн - қабылдауды растау күні (жоспарланған жеткізу күні әрқашан белгілі емес).
 SendReceptionByEMail=Қабылдауды электрондық пошта арқылы жіберіңіз

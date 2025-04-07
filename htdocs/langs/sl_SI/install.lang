@@ -88,7 +88,7 @@ LoginAlreadyExists=Že obstaja
 DolibarrAdminLogin=Uporabniško ime Dolibarr administratorja
 AdminLoginAlreadyExists=Skrbniški račun Dolibarr ' <b> %s </b> ' že obstaja. Vrnite se, če želite ustvariti še enega.
 FailedToCreateAdminLogin=Ustvarjanje skrbniškega računa Dolibarr ni uspelo.
-WarningRemoveInstallDir=Warning, for security reasons, once the installation process is complete, you must add a file called <b>install.lock</b> into the Dolibarr document directory in order to prevent the accidental/malicious use of the install tools again.
+WarningRemoveInstallDir=Opozorilo, ko je postopek namestitve končan, morate iz varnostnih razlogov dodati datoteko z imenom <b>install.lock</b> v Imenik dokumentov Dolibarr, da preprečite ponovno nenamerno/zlonamerno uporabo orodij za namestitev.
 FunctionNotAvailableInThisPHP=Ni na voljo v tem PHP-ju
 ChoosedMigrateScript=Izberite skript za selitev
 DataMigration=Selitev baze podatkov (podatki)
@@ -129,7 +129,7 @@ MigrationCustomerOrderShipping=Preselitev pošiljanja za shranjevanje prodajnih 
 MigrationShippingDelivery=Nadgraditev skladišča za odpremo
 MigrationShippingDelivery2=Nadgraditev skladišča za odpremo 2
 MigrationFinished=Prenos končan
-LastStepDesc= <strong> Zadnji korak </strong> : Tukaj določite prijavo in geslo, ki ju želite uporabiti za povezavo z Dolibarr. <b> Ne izgubite tega, saj je glavni račun za upravljanje vseh drugih/dodatnih uporabniških računov. </b>
+LastStepDesc=<strong>Zadnji korak</strong>: Tukaj določite prijavo in geslo, ki ju želite uporabiti za povezavo z Dolibarr. <b>Ne izgubite tega, saj je to glavni račun za upravljanje vseh drugih/dodatnih uporabniških računov.</b>
 ActivateModule=Vključite modul %s
 ShowEditTechnicalParameters=Kliknite tukaj za prikaz/popravek naprednih parametrov (expertni način)
 WarningUpgrade=Opozorilo:\nSte najprej zagnali varnostno kopijo baze podatkov?\nTo je zelo priporočljivo. Med tem postopkom je lahko možna izguba podatkov (na primer zaradi napak v mysql različici 5.5.40/41/42/43), zato je bistveno, da naredite popoln izpis vaše baze podatkov, preden začnete s selitvijo.\n\nKliknite V redu, da začnete postopek selitve ...
@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Uporabili ste čarovnika za nastavitev Dolibarr iz paketa L
 KeepDefaultValuesMamp=Uporabili ste čarovnika za nastavitev Dolibarr iz DoliMampa, zato so tukaj predlagane vrednosti že optimizirane. Spremenite jih le, če veste, kaj počnete.
 KeepDefaultValuesProxmox=Uporabili ste čarovnika za nastavitev Dolibarr iz virtualne naprave Proxmox, zato so tukaj predlagane vrednosti že optimizirane. Spremenite jih le, če veste, kaj počnete.
 UpgradeExternalModule=Zaženite namenski postopek nadgradnje zunanjega modula
-SetAtLeastOneOptionAsUrlParameter=Nastavite vsaj eno možnost kot parameter v URL-ju. Na primer: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nič za čiščenje/brisanje
 NothingToDo=Nič za početi
 #########
@@ -208,10 +208,10 @@ HideNotAvailableOptions=Skrij nerazpoložljive možnosti
 ErrorFoundDuringMigration=Med postopkom selitve so bile sporočene napake, zato naslednji korak ni na voljo. Če želite prezreti napake, lahko <a href="%s"> kliknete tukaj </a> , vendar aplikacija ali nekatere funkcije morda ne bodo delovale pravilno, dokler napake ne bodo odpravljene.
 YouTryInstallDisabledByDirLock=Aplikacija se je poskušala samonadgraditi, vendar so bile strani za namestitev/nadgradnjo onemogočene zaradi varnosti (imenik preimenovan s pripono .lock). <br>
 YouTryInstallDisabledByFileLock=Aplikacija se je poskušala samonadgraditi, vendar so bile strani za namestitev/nadgradnjo onemogočene zaradi varnosti (zaradi obstoja zaklepne datoteke <strong> install.lock </strong> v imeniku dokumentov dolibarr). <br>
-YouTryUpgradeDisabledByMissingFileUnLock=The application tried to self-upgrade, but the upgrade process is currently not allowed.<br>
+YouTryUpgradeDisabledByMissingFileUnLock=Aplikacija se je poskušala samonadgraditi, vendar postopek nadgradnje trenutno ni dovoljen.<br>
 ClickHereToGoToApp=Kliknite tukaj, da odprete svojo prijavo
 ClickOnLinkOrRemoveManualy=Če je nadgradnja v teku, počakajte. Če ne, kliknite naslednjo povezavo. Če vedno vidite isto stran, morate odstraniti/preimenovati datoteko install.lock v imeniku dokumentov.
-ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must create a file upgrade.unlock into the Dolibarr documents directory.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Naloženo
 FunctionTest=Test delovanja
 NodoUpgradeAfterDB=Zunanji moduli po nadgradnji baze podatkov ne zahtevajo nobenega dejanja

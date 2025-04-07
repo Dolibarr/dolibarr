@@ -56,6 +56,8 @@ ExportAccountancy=এক্সপোর্ট অ্যাকাউন্টে�
 WarningDataDisappearsWhenDataIsExported=সতর্কতা, এই তালিকায় শুধুমাত্র অ্যাকাউন্টিং এন্ট্রি রয়েছে যা ইতিমধ্যে রপ্তানি করা হয়নি (রপ্তানির তারিখ খালি)। আপনি যদি ইতিমধ্যে রপ্তানি করা অ্যাকাউন্টিং এন্ট্রিগুলি অন্তর্ভুক্ত করতে চান তবে উপরের বোতামটিতে ক্লিক করুন৷
 VueByAccountAccounting=অ্যাকাউন্টিং অ্যাকাউন্ট দ্বারা দেখুন
 VueBySubAccountAccounting=অ্যাকাউন্টিং উপ-অ্যাকাউন্ট দ্বারা দেখুন
+AccountingAccountByDefault=Accounting account by default
+AccountingAccountByDefaultShort=Account by default
 
 MainAccountForCustomersNotDefined=মূল অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) গ্রাহকদের জন্য সেটআপে সংজ্ঞায়িত করা হয়নি
 MainAccountForSuppliersNotDefined=বিক্রেতাদের জন্য মূল অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) সেটআপে সংজ্ঞায়িত করা হয়নি
@@ -64,18 +66,15 @@ MainAccountForVatPaymentNotDefined=VAT প্রদানের জন্য অ
 MainAccountForSubscriptionPaymentNotDefined=সদস্যতা প্রদানের জন্য অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) সেটআপে সংজ্ঞায়িত করা হয়নি
 MainAccountForRetainedWarrantyNotDefined=অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) ধরে রাখা ওয়ারেন্টির জন্য সেটআপে সংজ্ঞায়িত করা হয়নি
 UserAccountNotDefined=ব্যবহারকারীর জন্য অ্যাকাউন্টিং অ্যাকাউন্ট সেটআপে সংজ্ঞায়িত করা হয়নি
-
 AccountancyArea=অ্যাকাউন্টিং এলাকা
 AccountancyAreaDescIntro=অ্যাকাউন্টেন্সি মডিউলের ব্যবহার কয়েকটি ধাপে করা হয়:
 AccountancyAreaDescActionOnce=নিম্নলিখিত ক্রিয়াগুলি সাধারণত শুধুমাত্র একবার বা বছরে একবার সম্পাদিত হয়...
 AccountancyAreaDescActionOnceBis=অ্যাকাউন্টিংয়ে ডেটা স্থানান্তর করার সময় আপনাকে স্বয়ংক্রিয়ভাবে সঠিক ডিফল্ট অ্যাকাউন্টিং অ্যাকাউন্টের পরামর্শ দিয়ে ভবিষ্যতে আপনার সময় বাঁচাতে পরবর্তী পদক্ষেপগুলি করা উচিত
 AccountancyAreaDescActionFreq=নিম্নলিখিত ক্রিয়াগুলি সাধারণত খুব বড় কোম্পানিগুলির জন্য প্রতি মাসে, সপ্তাহে বা দিনে সম্পাদিত হয়...
-
 AccountancyAreaDescJournalSetup=ধাপ %s: মেনু %s থেকে আপনার জার্নাল তালিকার বিষয়বস্তু পরীক্ষা করুন
 AccountancyAreaDescChartModel=ধাপ %s: চেক করুন যে অ্যাকাউন্টের চার্টের একটি মডেল বিদ্যমান আছে বা মেনু থেকে একটি তৈরি করুন %s
 AccountancyAreaDescChart=ধাপ %s: নির্বাচন করুন এবং|অথবা মেনু %s থেকে আপনার অ্যাকাউন্টের চার্ট সম্পূর্ণ করুন
-
-AccountancyAreaDescFiscalPeriod=ধাপ %s: ডিফল্টভাবে একটি আর্থিক বছর সংজ্ঞায়িত করুন যেখানে আপনার অ্যাকাউন্টিং এন্ট্রিগুলিকে একীভূত করতে হবে। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
+AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
 AccountancyAreaDescVat=ধাপ %s: প্রতিটি ভ্যাট হারের জন্য অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
 AccountancyAreaDescDefault=ধাপ %s: ডিফল্ট অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
 AccountancyAreaDescExpenseReport=ধাপ %s: প্রতিটি ধরনের ব্যয় প্রতিবেদনের জন্য ডিফল্ট অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
@@ -87,12 +86,10 @@ AccountancyAreaDescMisc=ধাপ %s: বিবিধ লেনদেনের �
 AccountancyAreaDescLoan=ধাপ %s: ঋণের জন্য ডিফল্ট অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
 AccountancyAreaDescBank=ধাপ %s: প্রতিটি ব্যাঙ্ক এবং আর্থিক অ্যাকাউন্টের জন্য অ্যাকাউন্টিং অ্যাকাউন্ট এবং জার্নাল কোড সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
 AccountancyAreaDescProd=ধাপ %s: আপনার পণ্য/পরিষেবাগুলিতে অ্যাকাউন্টিং অ্যাকাউন্ট সংজ্ঞায়িত করুন। এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
-
 AccountancyAreaDescBind=পদক্ষেপ %s: বিদ্যমান %s লাইন এবং অ্যাকাউন্টিং অ্যাকাউন্টের মধ্যে বাঁধাই পরীক্ষা করুন, তাই অ্যাপ্লিকেশন লেজারে লেনদেন জার্নালাইজ করতে সক্ষম হবে এক ক্লিকে। সম্পূর্ণ অনুপস্থিত বাঁধাই. এর জন্য, %s মেনু এন্ট্রি ব্যবহার করুন।
 AccountancyAreaDescWriteRecords=ধাপ %s: লেজারে লেনদেন লিখুন। এর জন্য, <strong>%s</strong> মেনুতে যান এবং বোতামে ক্লিক করুন <strong>%s</strong>।
 AccountancyAreaDescAnalyze=ধাপ %s: রিপোর্টিং পড়ুন বা অন্য বুককিপারদের জন্য এক্সপোর্ট ফাইল তৈরি করুন।
 AccountancyAreaDescClosePeriod=ধাপ %s: সময়কাল বন্ধ করুন যাতে আমরা ভবিষ্যতে একই সময়ের মধ্যে আর ডেটা স্থানান্তর করতে পারি না।
-
 TheFiscalPeriodIsNotDefined=সেটআপের একটি বাধ্যতামূলক পদক্ষেপ সম্পূর্ণ হয়নি (আর্থিক সময়কাল সংজ্ঞায়িত করা হয়নি)
 TheJournalCodeIsNotDefinedOnSomeBankAccount=সেটআপের একটি বাধ্যতামূলক পদক্ষেপ সম্পূর্ণ হয়নি (সব ব্যাঙ্ক অ্যাকাউন্টের জন্য অ্যাকাউন্টিং কোড জার্নাল সংজ্ঞায়িত নয়)
 Selectchartofaccounts=অ্যাকাউন্টের সক্রিয় চার্ট নির্বাচন করুন
@@ -111,7 +108,7 @@ DataUsedToSuggestAccount=অ্যাকাউন্ট সাজেস্ট �
 AccountAccountingSuggest=অ্যাকাউন্ট প্রস্তাবিত
 MenuDefaultAccounts=ডিফল্ট অ্যাকাউন্ট
 MenuBankAccounts=Bank accounts
-MenuVatAccounts=ভ্যাট অ্যাকাউন্ট
+MenuVatAccounts=VAT accounts
 MenuTaxAccounts=ট্যাক্স অ্যাকাউন্ট
 MenuExpenseReportAccounts=খরচ রিপোর্ট অ্যাকাউন্ট
 MenuLoanAccounts=ঋণ হিসাব
@@ -144,8 +141,6 @@ ExpenseReportLines=ব্যয়ের প্রতিবেদনের ল�
 ExpenseReportLinesDone=ব্যয় প্রতিবেদনের আবদ্ধ লাইন
 IntoAccount=অ্যাকাউন্টিং অ্যাকাউন্টের সাথে লাইন বাঁধুন
 TotalForAccount=মোট হিসাব হিসাব
-
-
 Ventilate=বাঁধাই করা
 LineId=আইডি লাইন
 Processing=Processing
@@ -158,22 +153,22 @@ VentilatedinAccount=অ্যাকাউন্টিং অ্যাকাউ�
 NotVentilatedinAccount=হিসাব-নিকাশের সাথে আবদ্ধ নয়
 XLineSuccessfullyBinded=%s পণ্য/পরিষেবা সফলভাবে একটি অ্যাকাউন্টিং অ্যাকাউন্টে আবদ্ধ
 XLineFailedToBeBinded=%s পণ্য/পরিষেবা কোনো অ্যাকাউন্টিং অ্যাকাউন্টে আবদ্ধ ছিল না
-
 ACCOUNTING_LIMIT_LIST_VENTILATION=তালিকা এবং বাঁধাই পৃষ্ঠায় সর্বাধিক লাইনের সংখ্যা (প্রস্তাবিত: 50)
 ACCOUNTING_LIST_SORT_VENTILATION_TODO=সাম্প্রতিক উপাদানগুলির দ্বারা "করতে বাঁধাই" পৃষ্ঠার সাজানো শুরু করুন৷
 ACCOUNTING_LIST_SORT_VENTILATION_DONE=সাম্প্রতিক উপাদানগুলির দ্বারা "বাইন্ডিং সম্পন্ন" পৃষ্ঠার সাজানো শুরু করুন
-
 ACCOUNTING_LENGTH_DESCRIPTION=x অক্ষরের পরে তালিকায় পণ্য ও পরিষেবার বিবরণ ছেঁটে দিন (সেরা = ৫০)
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=x অক্ষরের পরে তালিকায় পণ্য ও পরিষেবার অ্যাকাউন্টের বিবরণ ফর্ম ছেঁটে দিন (সেরা = ৫০)
 ACCOUNTING_LENGTH_GACCOUNT=সাধারণ অ্যাকাউন্টিং অ্যাকাউন্টের দৈর্ঘ্য (যদি আপনি এখানে 6 মান সেট করেন, তাহলে '706' অ্যাকাউন্টটি স্ক্রিনে '706000'-এর মতো প্রদর্শিত হবে)
 ACCOUNTING_LENGTH_AACCOUNT=তৃতীয় পক্ষের অ্যাকাউন্টিং অ্যাকাউন্টগুলির দৈর্ঘ্য (যদি আপনি এখানে 6 তে মান সেট করেন, তাহলে '401' অ্যাকাউন্টটি স্ক্রিনে '401000'-এর মতো প্রদর্শিত হবে)
 ACCOUNTING_MANAGE_ZERO=একটি অ্যাকাউন্টিং অ্যাকাউন্টের শেষে বিভিন্ন সংখ্যক শূন্য পরিচালনা করার অনুমতি দিন। কিছু দেশ (যেমন সুইজারল্যান্ড) দ্বারা প্রয়োজন। যদি অফ সেট করা থাকে (ডিফল্ট), আপনি ভার্চুয়াল শূন্য যোগ করতে অ্যাপ্লিকেশনটিকে জিজ্ঞাসা করতে নিম্নলিখিত দুটি প্যারামিটার সেট করতে পারেন।
+ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=ব্যাঙ্ক অ্যাকাউন্টে লেনদেনের সরাসরি রেকর্ডিং অক্ষম করুন
+ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
 ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=জার্নালে খসড়া রপ্তানি সক্ষম করুন৷
 ACCOUNTANCY_COMBO_FOR_AUX=সাবসিডিয়ারি অ্যাকাউন্টের জন্য কম্বো তালিকা সক্ষম করুন (যদি আপনার অনেক তৃতীয় পক্ষ থাকে তবে ধীর হতে পারে, মানটির একটি অংশ অনুসন্ধান করার ক্ষমতা বিরতি)
 ACCOUNTING_DATE_START_BINDING=তারিখ এই তারিখের নিচে হলে অ্যাকাউন্টেন্সিতে বাঁধাই এবং স্থানান্তর অক্ষম করুন (এই তারিখের আগে লেনদেনগুলি ডিফল্টরূপে বাদ দেওয়া হবে)
 ACCOUNTING_DEFAULT_PERIOD_ON_TRANSFER=অ্যাকাউন্টেন্সিতে ডেটা স্থানান্তর করতে পৃষ্ঠায়, ডিফল্টরূপে নির্বাচিত সময়কাল কী
-
+ACCOUNTING_LABEL_OPERATION_ON_TRANSFER=When accounting is generated, default operation label
 ACCOUNTING_SELL_JOURNAL=বিক্রয় জার্নাল - বিক্রয় এবং রিটার্ন
 ACCOUNTING_PURCHASE_JOURNAL=ক্রয় জার্নাল - ক্রয় এবং রিটার্ন
 ACCOUNTING_BANK_JOURNAL=নগদ জার্নাল - রসিদ এবং বিতরণ
@@ -182,40 +177,35 @@ ACCOUNTING_MISCELLANEOUS_JOURNAL=সাধারণ সাময়িক পত
 ACCOUNTING_HAS_NEW_JOURNAL=নতুন জার্নাল আছে
 ACCOUNTING_INVENTORY_JOURNAL=ইনভেন্টরি জার্নাল
 ACCOUNTING_SOCIAL_JOURNAL=Social journal
-
 ACCOUNTING_RESULT_PROFIT=ফলাফল হিসাব হিসাব (লাভ)
 ACCOUNTING_RESULT_LOSS=ফলাফল হিসাব হিসাব (ক্ষতি)
 ACCOUNTING_CLOSURE_DEFAULT_JOURNAL=বন্ধের জার্নাল
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=ব্যালেন্স শীট অ্যাকাউন্টের জন্য ব্যবহৃত অ্যাকাউন্টিং গ্রুপ (কমা দ্বারা পৃথক)
-ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=আয় বিবরণীর জন্য ব্যবহৃত অ্যাকাউন্টিং গ্রুপ (কমা দ্বারা পৃথক)
-
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNT=Accounting groups used for calculation of the balance sheet
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_BALANCE_SHEET_ACCOUNTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the balance sheet. Use a comma to separate each value.<br>Example: CAPIT,IMMO,STOCK,FINAN,THIRDPARTY
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENT=Accounting groups used for calculation of the income statement
+ACCOUNTING_CLOSURE_ACCOUNTING_GROUPS_USED_FOR_INCOME_STATEMENTHelp=Set here the list of accounting groups (defined in the chart of account) that must be used to find all accounts to calculate the income statement. Use a comma to separate each value.<br>Example: INCOME,EXPENSE
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=ট্রানজিশনাল ব্যাঙ্ক ট্রান্সফারের জন্য অ্যাকাউন্ট হিসাবে ব্যবহার করা অ্যাকাউন্ট (একাউন্টের চার্ট থেকে)
 TransitionalAccount=ট্রানজিশনাল ব্যাঙ্ক ট্রান্সফার অ্যাকাউন্ট
-
 ACCOUNTING_ACCOUNT_SUSPENSE=অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) প্রাপ্ত বা প্রদত্ত অর্থের জন্য অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে প্রাপ্ত বা প্রদত্ত অর্থ "অপেক্ষা[ইং]" এর মধ্যে
 DONATION_ACCOUNTINGACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) অনুদান নিবন্ধন করতে ব্যবহার করা হবে (দান মডিউল)
 ADHERENT_SUBSCRIPTION_ACCOUNTINGACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) সদস্যতা সদস্যতা নিবন্ধন করতে ব্যবহার করা হবে (সদস্য মডিউল - যদি সদস্যতা চালান ছাড়া রেকর্ড করা হয়)
-
 ACCOUNTING_ACCOUNT_CUSTOMER_DEPOSIT=গ্রাহক আমানত নিবন্ধন করার জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে)
 UseAuxiliaryAccountOnCustomerDeposit=ডাউন পেমেন্টের লাইনের জন্য সাবসিডিয়ারি লেজারে পৃথক অ্যাকাউন্ট হিসাবে গ্রাহক অ্যাকাউন্ট সংরক্ষণ করুন (অক্ষম থাকলে, ডাউন পেমেন্ট লাইনের জন্য পৃথক অ্যাকাউন্ট খালি থাকবে)
 ACCOUNTING_ACCOUNT_SUPPLIER_DEPOSIT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) ডিফল্ট হিসাবে ব্যবহার করতে হবে
 UseAuxiliaryAccountOnSupplierDeposit=ডাউন পেমেন্ট লাইনের জন্য সাবসিডিয়ারি লেজারে পৃথক অ্যাকাউন্ট হিসাবে সরবরাহকারীর অ্যাকাউন্ট সংরক্ষণ করুন (অক্ষম থাকলে, ডাউন পেমেন্ট লাইনের জন্য পৃথক অ্যাকাউন্ট খালি থাকবে)
 ACCOUNTING_ACCOUNT_CUSTOMER_RETAINED_WARRANTY=গ্রাহক ধরে রাখা ওয়ারেন্টি নিবন্ধন করার জন্য ডিফল্টরূপে অ্যাকাউন্টিং অ্যাকাউন্ট
-
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) একই দেশের মধ্যে কেনা পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (পণ্য পত্রকে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
 ACCOUNTING_PRODUCT_BUY_INTRA_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) EEC থেকে অন্য EEC দেশে কেনা পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (প্রোডাক্ট শীটে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
 ACCOUNTING_PRODUCT_BUY_EXPORT_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) অন্য কোনো বিদেশী দেশ থেকে কেনা এবং আমদানি করা পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (যদি পণ্য শীটে সংজ্ঞায়িত না থাকে তবে ব্যবহার করা হয়)
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) বিক্রি হওয়া পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (প্রোডাক্ট শীটে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
 ACCOUNTING_PRODUCT_SOLD_INTRA_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) EEC থেকে অন্য EEC দেশে বিক্রি হওয়া পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (যদি পণ্য শীটে সংজ্ঞায়িত না হয় তবে ব্যবহৃত হয়)
 ACCOUNTING_PRODUCT_SOLD_EXPORT_ACCOUNT=অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) অন্য কোন বিদেশী দেশে বিক্রি এবং রপ্তানি করা পণ্যগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (যদি পণ্য শীটে সংজ্ঞায়িত না থাকে তবে ব্যবহার করা হয়)
-
 ACCOUNTING_SERVICE_BUY_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) একই দেশের মধ্যে কেনা পরিষেবাগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (পরিষেবা শীটে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
 ACCOUNTING_SERVICE_BUY_INTRA_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) EEC থেকে অন্য EEC দেশে কেনা পরিষেবাগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (যদি পরিষেবা শীটে সংজ্ঞায়িত না থাকে তবে ব্যবহার করা হয়)
 ACCOUNTING_SERVICE_BUY_EXPORT_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) অন্য বিদেশ থেকে কেনা এবং আমদানি করা পরিষেবাগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (পরিষেবা শীটে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) বিক্রি হওয়া পরিষেবাগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (পরিষেবা শীটে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
 ACCOUNTING_SERVICE_SOLD_INTRA_ACCOUNT=অ্যাকাউন্ট (চার্ট অফ অ্যাকাউন্ট থেকে) EEC থেকে অন্য EEC দেশে বিক্রি করা পরিষেবাগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (যদি পরিষেবা শীটে সংজ্ঞায়িত না থাকে তবে ব্যবহার করা হয়)
 ACCOUNTING_SERVICE_SOLD_EXPORT_ACCOUNT=অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) অন্য কোন বিদেশী দেশে বিক্রি এবং রপ্তানি করা পরিষেবাগুলির জন্য ডিফল্ট অ্যাকাউন্ট হিসাবে ব্যবহার করা হবে (পরিষেবা পত্রে সংজ্ঞায়িত না থাকলে ব্যবহার করা হয়)
-
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
@@ -229,15 +219,18 @@ Codejournal=Journal
 JournalLabel=জার্নাল লেবেল
 NumPiece=পিস নম্বর
 TransactionNumShort=সংখ্যা লেনদেন
+AccountingReport=Custom reports
 AccountingCategory=অ্যাকাউন্টের কাস্টম গ্রুপ
 AccountingCategories=অ্যাকাউন্টের কাস্টম গ্রুপ
 GroupByAccountAccounting=সাধারণ লেজার অ্যাকাউন্ট দ্বারা গোষ্ঠী
 GroupBySubAccountAccounting=সাবলেজার অ্যাকাউন্ট দ্বারা গোষ্ঠী
+AccountingAccountReportsDesc=You can define here some reports of accounting account. They will be used for personalized accounting reports.
 AccountingAccountGroupsDesc=আপনি এখানে অ্যাকাউন্টিং অ্যাকাউন্টের কয়েকটি গ্রুপ সংজ্ঞায়িত করতে পারেন। এগুলি ব্যক্তিগতকৃত অ্যাকাউন্টিং প্রতিবেদনের জন্য ব্যবহার করা হবে।
 ByAccounts=অ্যাকাউন্টস দ্বারা
 ByPredefinedAccountGroups=পূর্বনির্ধারিত গ্রুপ দ্বারা
 ByPersonalizedAccountGroups=ব্যক্তিগতকৃত গ্রুপ দ্বারা
-ByYear=বছর দ্বারা
+Personalized=Personalized
+NoReportDefined=No personalized reports defined
 NotMatch=সেট না
 DeleteMvt=অ্যাকাউন্টিং থেকে কিছু লাইন মুছুন
 DelMonth=মুছে ফেলার মাস
@@ -269,6 +262,7 @@ UnknownAccountForThirdparty=অজানা তৃতীয় পক্ষে�
 UnknownAccountForThirdpartyBlocking=অজানা তৃতীয় পক্ষের অ্যাকাউন্ট। ব্লকিং ত্রুটি
 ThirdpartyAccountNotDefinedOrThirdPartyUnknown=Subledger অ্যাকাউন্ট সংজ্ঞায়িত নয় বা তৃতীয় পক্ষ বা ব্যবহারকারী অজানা। আমরা %s ব্যবহার করব
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored=তৃতীয় পক্ষের অজানা এবং সাবলেজার পেমেন্টে সংজ্ঞায়িত নয়। আমরা সাবলেজার অ্যাকাউন্টের মান খালি রাখব।
+ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2=Subledger account not defined or third party or user unknown. We will keep the subledger account value empty.
 ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking=Subledger অ্যাকাউন্ট সংজ্ঞায়িত নয় বা তৃতীয় পক্ষ বা ব্যবহারকারী অজানা। ব্লকিং ত্রুটি।
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=অজানা তৃতীয় পক্ষের অ্যাকাউন্ট এবং অপেক্ষার অ্যাকাউন্ট সংজ্ঞায়িত করা হয়নি। ব্লকিং ত্রুটি
 PaymentsNotLinkedToProduct=অর্থপ্রদান কোনো পণ্য / পরিষেবার সাথে সংযুক্ত নয়
@@ -276,21 +270,17 @@ OpeningBalance=খোলার ব্যালেন্স
 ShowOpeningBalance=খোলার ব্যালেন্স দেখান
 HideOpeningBalance=খোলার ব্যালেন্স লুকান
 ShowSubtotalByGroup=স্তর অনুসারে সাবটোটাল দেখান
-
 Pcgtype=অ্যাকাউন্টের গ্রুপ
 PcgtypeDesc=অ্যাকাউন্টের গ্রুপ কিছু অ্যাকাউন্টিং রিপোর্টের জন্য পূর্বনির্ধারিত 'ফিল্টার' এবং 'গ্রুপিং' মানদণ্ড হিসাবে ব্যবহৃত হয়। উদাহরণস্বরূপ, 'আয়' বা 'ব্যয়' ব্যয়/আয় প্রতিবেদন তৈরির জন্য পণ্যের অ্যাকাউন্টিং অ্যাকাউন্টের জন্য গ্রুপ হিসাবে ব্যবহৃত হয়।
 AccountingCategoriesDesc=ফিল্টার ব্যবহার বা কাস্টম রিপোর্ট তৈরি করা সহজ করার জন্য অ্যাকাউন্টের কাস্টম গ্রুপ অ্যাকাউন্টিং অ্যাকাউন্টগুলিকে একটি নামে গ্রুপ করতে ব্যবহার করা যেতে পারে।
-
 Reconcilable=মিলনযোগ্য
-
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
-
 DescVentilCustomer=এখানে অ্যাকাউন্টের চার্ট থেকে একটি পণ্য অ্যাকাউন্টে আবদ্ধ (বা না) গ্রাহক চালান লাইনের তালিকা দেখুন
 DescVentilMore=বেশিরভাগ ক্ষেত্রে, আপনি যদি পূর্বনির্ধারিত পণ্য বা পরিষেবা ব্যবহার করেন এবং আপনি পণ্য/পরিষেবা কার্ডে অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) সেট করেন, তাহলে অ্যাপ্লিকেশনটি আপনার চালান লাইন এবং আপনার চার্টের অ্যাকাউন্টিং অ্যাকাউন্টের মধ্যে সমস্ত বাঁধাই করতে সক্ষম হবে অ্যাকাউন্টগুলির, বোতামের সাথে শুধুমাত্র এক ক্লিকে <strong>"%s"</strong> > যদি পণ্য/পরিষেবা কার্ডে অ্যাকাউন্ট সেট করা না থাকে বা আপনার যদি এখনও কিছু লাইন থাকে যা কোনো অ্যাকাউন্টে আবদ্ধ না থাকে, তাহলে আপনাকে মেনু থেকে একটি ম্যানুয়াল বাইন্ডিং করতে হবে "<strong>%s</strong>"।
 DescVentilDoneCustomer=এখানে অ্যাকাউন্টের চার্ট থেকে চালান গ্রাহকদের লাইন এবং তাদের পণ্য অ্যাকাউন্টের তালিকা দেখুন
 DescVentilTodoCustomer=অ্যাকাউন্টের চার্ট থেকে একটি পণ্য অ্যাকাউন্টের সাথে ইতিমধ্যেই আবদ্ধ নয় চালান লাইনগুলি আবদ্ধ করুন৷
-ChangeAccount=নিম্নলিখিত অ্যাকাউন্টের সাথে নির্বাচিত লাইনগুলির জন্য পণ্য/পরিষেবা অ্যাকাউন্ট (অ্যাকাউন্টের চার্ট থেকে) পরিবর্তন করুন:
+ChangeAccount=Change the product/service accounting account of the selected lines with:
 Vide=-
 DescVentilSupplier=এখানে অ্যাকাউন্টের চার্ট থেকে পণ্য অ্যাকাউন্টে আবদ্ধ বা এখনও আবদ্ধ নয় এমন বিক্রেতার চালান লাইনের তালিকা দেখুন (শুধুমাত্র অ্যাকাউন্টে ইতিমধ্যে স্থানান্তরিত হয়নি এমন রেকর্ড দৃশ্যমান)
 DescVentilDoneSupplier=এখানে বিক্রেতার চালানের লাইনের তালিকা এবং তাদের অ্যাকাউন্টিং অ্যাকাউন্টের সাথে পরামর্শ করুন
@@ -298,19 +288,16 @@ DescVentilTodoExpenseReport=ফি অ্যাকাউন্টিং অ্�
 DescVentilExpenseReport=একটি ফি অ্যাকাউন্টিং অ্যাকাউন্টে আবদ্ধ (বা না) ব্যয় প্রতিবেদন লাইনের তালিকাটি এখানে দেখুন
 DescVentilExpenseReportMore=আপনি যদি খরচ রিপোর্ট লাইনের প্রকারের উপর অ্যাকাউন্টিং অ্যাকাউন্ট সেটআপ করেন, তাহলে অ্যাপ্লিকেশনটি আপনার খরচ রিপোর্ট লাইন এবং আপনার অ্যাকাউন্টের তালিকার অ্যাকাউন্টিং অ্যাকাউন্টের মধ্যে সমস্ত বাঁধাই করতে সক্ষম হবে, বোতামটি দিয়ে শুধুমাত্র এক ক্লিকে <strong>"%s"</strong>। যদি অ্যাকাউন্টটি ফি অভিধানে সেট করা না থাকে বা আপনার যদি এখনও কিছু লাইন থাকে যা কোনো অ্যাকাউন্টে আবদ্ধ না থাকে, তাহলে আপনাকে মেনু থেকে একটি ম্যানুয়াল বাইন্ডিং করতে হবে "<strong>%s</strong>"।
 DescVentilDoneExpenseReport=এখানে খরচের রিপোর্টের লাইনের তালিকা এবং তাদের ফি অ্যাকাউন্টিং অ্যাকাউন্টের সাথে পরামর্শ করুন
-
 Closure=বার্ষিক বন্ধ
 AccountancyClosureStep1Desc=মাস অনুযায়ী চলাচলের সংখ্যা এখনও যাচাই করা এবং লক করা হয়নি এখানে পরামর্শ করুন
-OverviewOfMovementsNotValidated=আন্দোলনের ওভারভিউ বৈধ এবং লক করা হয়নি
+OverviewOfMovementsNotValidated=Overview of movements not yet validated and locked
 AllMovementsWereRecordedAsValidated=সমস্ত আন্দোলন বৈধ এবং লক হিসাবে রেকর্ড করা হয়েছিল
 NotAllMovementsCouldBeRecordedAsValidated=সব আন্দোলন বৈধ এবং লক হিসাবে রেকর্ড করা যাবে না
 ValidateMovements=বৈধ এবং লক আন্দোলন
 DescValidateMovements=লেখার কোন পরিবর্তন বা মুছে ফেলা, অক্ষর এবং মুছে ফেলা নিষিদ্ধ করা হবে। একটি অনুশীলনের জন্য সমস্ত এন্ট্রি অবশ্যই বৈধ হতে হবে অন্যথায় বন্ধ করা সম্ভব হবে না
-
 ValidateHistory=স্বয়ংক্রিয়ভাবে আবদ্ধ করুন
 AutomaticBindingDone=স্বয়ংক্রিয় বাইন্ডিং সম্পন্ন হয়েছে (%s) - কিছু রেকর্ডের জন্য স্বয়ংক্রিয় বাঁধাই সম্ভব নয় (%s)
 DoManualBindingForFailedRecord=স্বয়ংক্রিয়ভাবে লিঙ্ক না হওয়া %s সারিগুলির জন্য আপনাকে একটি ম্যানুয়াল লিঙ্ক করতে হবে৷
-
 ErrorAccountancyCodeIsAlreadyUse=ত্রুটি, আপনি অ্যাকাউন্টের চার্টের এই অ্যাকাউন্টটি সরাতে বা নিষ্ক্রিয় করতে পারবেন না কারণ এটি ব্যবহার করা হয়েছে৷
 MvtNotCorrectlyBalanced=আন্দোলন সঠিকভাবে ভারসাম্যপূর্ণ নয়। ডেবিট = %s & ক্রেডিট = %s
 Balancing=ব্যালেন্সিং
@@ -323,19 +310,19 @@ ChangeBinding=বাঁধাই পরিবর্তন করুন
 Accounted=খাতায় হিসাব করা
 NotYetAccounted=এখনও অ্যাকাউন্টিং স্থানান্তর করা হয়নি
 ShowTutorial=টিউটোরিয়াল দেখান
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=সতর্কতা, সাবলেজার অ্যাকাউন্ট ছাড়া সমস্ত লাইন এই ভিউ থেকে ফিল্টার করা এবং বাদ দেওয়া হয়েছে
 AccountRemovedFromCurrentChartOfAccount=অ্যাকাউন্টিং অ্যাকাউন্ট যা অ্যাকাউন্টের বর্তমান চার্টে বিদ্যমান নেই
-
+WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
 ## Admin
-BindingOptions=বাইন্ডিং অপশন
+BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=ভর বিভাগ প্রয়োগ করুন
 AddAccountFromBookKeepingWithNoCategories=ব্যক্তিগতকৃত গোষ্ঠীতে এখনও উপলব্ধ অ্যাকাউন্ট নেই৷
 CategoryDeleted=অ্যাকাউন্টিং অ্যাকাউন্টের জন্য বিভাগ সরানো হয়েছে
 AccountingJournals=অ্যাকাউন্টিং জার্নাল
 AccountingJournal=অ্যাকাউন্টিং জার্নাল
 NewAccountingJournal=নতুন অ্যাকাউন্টিং জার্নাল
-ShowAccountingJournal=অ্যাকাউন্টিং জার্নাল দেখান
 NatureOfJournal=জার্নালের প্রকৃতি
 AccountingJournalType1=বিবিধ অপারেশন
 AccountingJournalType2=বিক্রয়
@@ -346,14 +333,14 @@ AccountingJournalType8=ইনভেন্টরি
 AccountingJournalType9=ধরে রাখা উপার্জন
 GenerationOfAccountingEntries=অ্যাকাউন্টিং এন্ট্রি প্রজন্ম
 ErrorAccountingJournalIsAlreadyUse=এই জার্নাল ইতিমধ্যে ব্যবহার করা হয়
-AccountingAccountForSalesTaxAreDefinedInto=দ্রষ্টব্য: বিক্রয় করের জন্য অ্যাকাউন্টিং অ্যাকাউন্ট <b>%s</b>মেনুতে সংজ্ঞায়িত করা হয়েছে - <span class='notranslate'><b>%s</b>
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 NumberOfAccountancyEntries=এন্ট্রি সংখ্যা
 NumberOfAccountancyMovements=আন্দোলনের সংখ্যা
 ACCOUNTING_DISABLE_BINDING_ON_SALES=বিক্রয়ের ক্ষেত্রে অ্যাকাউন্টেন্সিতে বাঁধাই এবং স্থানান্তর অক্ষম করুন (কাস্টমার ইনভয়েস অ্যাকাউন্টিংয়ে বিবেচনা করা হবে না)
 ACCOUNTING_DISABLE_BINDING_ON_PURCHASES=ক্রয়ের ক্ষেত্রে অ্যাকাউন্টেন্সিতে বাঁধাই এবং স্থানান্তর অক্ষম করুন (বিক্রেতার চালান অ্যাকাউন্টিংয়ে বিবেচনায় নেওয়া হবে না)
 ACCOUNTING_DISABLE_BINDING_ON_EXPENSEREPORTS=ব্যয়ের প্রতিবেদনে হিসাববিজ্ঞানে বাঁধাই এবং স্থানান্তর অক্ষম করুন (ব্যয় প্রতিবেদন অ্যাকাউন্টিংয়ে বিবেচনা করা হবে না)
 ACCOUNTING_ENABLE_LETTERING=অ্যাকাউন্টিং এ লেটারিং ফাংশন সক্রিয় করুন
-ACCOUNTING_ENABLE_LETTERING_DESC=যখন এই বিকল্পগুলি সক্রিয় করা হয়, আপনি প্রতিটি অ্যাকাউন্টিং এন্ট্রিতে একটি কোড সংজ্ঞায়িত করতে পারেন যাতে আপনি বিভিন্ন অ্যাকাউন্টিং আন্দোলনকে একসাথে গোষ্ঠী করতে পারেন। অতীতে, যখন বিভিন্ন জার্নাল স্বাধীনভাবে পরিচালিত হত, তখন এই বৈশিষ্ট্যটি বিভিন্ন জার্নালের আন্দোলনের লাইনগুলিকে একত্রিত করার জন্য প্রয়োজনীয় ছিল। যাইহোক, Dolibarr অ্যাকাউন্টেন্সির সাথে, এই ধরনের একটি ট্র্যাকিং কোড, যাকে বলা হয় "<b>%s</b><span class='notranslate'> span>" ইতিমধ্যেই স্বয়ংক্রিয়ভাবে সংরক্ষিত হয়েছে, তাই একটি স্বয়ংক্রিয় অক্ষর ইতিমধ্যেই সম্পন্ন হয়েছে, ত্রুটির কোনো ঝুঁকি নেই তাই এই বৈশিষ্ট্যটি সাধারণ ব্যবহারের জন্য অকেজো হয়ে পড়েছে। ম্যানুয়াল লেটারিং বৈশিষ্ট্য শেষ ব্যবহারকারীদের জন্য সরবরাহ করা হয়েছে যারা অ্যাকাউন্টেন্সিতে ডেটা স্থানান্তর করার জন্য কম্পিউটার ইঞ্জিনকে সত্যিই বিশ্বাস করেন না।
+ACCOUNTING_ENABLE_LETTERING_DESC=When this options is enabled, you can define, on each accounting entry, a code so you can group different accounting movements together. In the past, when different journals was managed independently, this feature was necessary to group movement lines of different journals together. However, with Dolibarr accountancy, such a tracking code, called "<b>%s</b>" is already saved automatically, so an automatic lettering is already done, with no risk of error so this feature has become useless for a common usage. Manual lettering feature is provided for end users that really don't trust the computer engine making the transfer of data in accountancy.
 EnablingThisFeatureIsNotNecessary=একটি কঠোর অ্যাকাউন্টিং ব্যবস্থাপনার জন্য এই বৈশিষ্ট্যটি সক্ষম করার আর প্রয়োজন নেই৷
 ACCOUNTING_ENABLE_AUTOLETTERING=অ্যাকাউন্টিংয়ে স্থানান্তর করার সময় স্বয়ংক্রিয় অক্ষর সক্ষম করুন
 ACCOUNTING_ENABLE_AUTOLETTERING_DESC=অক্ষরের জন্য কোডটি স্বয়ংক্রিয়ভাবে তৈরি এবং বৃদ্ধি পায় এবং শেষ ব্যবহারকারী দ্বারা নির্বাচিত হয় না
@@ -361,8 +348,9 @@ ACCOUNTING_LETTERING_NBLETTERS=লেটারিং কোড তৈরি ক�
 ACCOUNTING_LETTERING_NBLETTERS_DESC=কিছু অ্যাকাউন্টিং সফ্টওয়্যার শুধুমাত্র একটি দুই-অক্ষরের কোড গ্রহণ করে। এই প্যারামিটার আপনাকে এই দিকটি সেট করতে দেয়। অক্ষরের ডিফল্ট সংখ্যা তিনটি।
 OptionsAdvanced=উন্নত বিকল্প
 ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE=সরবরাহকারী ক্রয়ের উপর ভ্যাট রিভার্স চার্জ পরিচালনা সক্রিয় করুন
-ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=যখন এই বিকল্পটি সক্রিয় থাকে, তখন আপনি সংজ্ঞায়িত করতে পারেন যে একটি সরবরাহকারী বা একটি প্রদত্ত বিক্রেতার চালানকে অবশ্যই অ্যাকাউন্টেন্সিতে স্থানান্তর করতে হবে: একটি অতিরিক্ত ডেবিট এবং একটি ক্রেডিট লাইন 2টি প্রদত্ত অ্যাকাউন্টে অ্যাকাউন্টিংয়ে তৈরি হবে "< এ সংজ্ঞায়িত অ্যাকাউন্টের চার্ট থেকে span class='notranslate'>%s</span>" সেটআপ পৃষ্ঠা৷
-
+ACCOUNTING_FORCE_ENABLE_VAT_REVERSE_CHARGE_DESC=When this option is enabled, you can define that a supplier or a given vendor invoice must be transferred into accountancy differently: A additional debit and a credit line will generated into the accounting on 2 given accounts from the chart of account defined into the "%s" setup page.
+ACCOUNTING_ENABLE_TABONTHIRDPARTY=Activate a tab on third-party cards to view the subsidiary ledger
+ACCOUNTING_ENABLE_TABONTHIRDPARTY_DESC=When this option is enabled, a new tab is showing in third-party cards to view and manage accounting for the third-party as to reconcile, print & more
 ## Export
 NotExportLettering=ফাইল তৈরি করার সময় অক্ষর রপ্তানি করবেন না
 NotifiedExportDate=রপ্তানি করা <span class="warning"> হিসাবে এখনও রপ্তানি হয়নি লাইনগুলিকে ফ্ল্যাগ করুন (রপ্তানি করা হিসাবে পতাকাঙ্কিত একটি লাইন সংশোধন করতে, আপনাকে পুরো লেনদেনটি মুছে ফেলতে হবে এবং অ্যাকাউন্টিংয়ে পুনরায় স্থানান্তর করতে হবে)</span>
@@ -372,7 +360,7 @@ DateValidationAndLock=তারিখ বৈধতা এবং লক
 ConfirmExportFile=অ্যাকাউন্টিং রপ্তানি ফাইল প্রজন্মের নিশ্চিতকরণ?
 ExportDraftJournal=খসড়া জার্নাল রপ্তানি করুন
 Modelcsv=Model of export
-Selectmodelcsv=Select a model of export
+Selectmodelcsv=Select the default format for export
 Modelcsv_normal=Classic export
 Modelcsv_CEGID=CEGID বিশেষজ্ঞ কম্প্যাবিলিটির জন্য রপ্তানি করুন
 Modelcsv_COALA=ঋষি কয়লা জন্য রপ্তানি
@@ -394,7 +382,6 @@ Modelcsv_Gestinumv3=Gestinum (v3) এর জন্য রপ্তানি ক�
 Modelcsv_Gestinumv5=Gestinum (v5) এর জন্য রপ্তানি করুন
 Modelcsv_charlemagne=অ্যাপলিম শার্লেমেনের জন্য রপ্তানি করুন
 ChartofaccountsId=অ্যাকাউন্টস আইডির চার্ট
-
 ## Tools - Init accounting account on product / service
 InitAccountancy=হিসাববিজ্ঞান শুরু করুন
 InitAccountancyDesc=এই পৃষ্ঠাটি এমন পণ্য এবং পরিষেবাগুলিতে একটি অ্যাকাউন্টিং অ্যাকাউন্ট শুরু করতে ব্যবহার করা যেতে পারে যেগুলিতে বিক্রয় এবং ক্রয়ের জন্য সংজ্ঞায়িত অ্যাকাউন্টিং অ্যাকাউন্ট নেই।
@@ -423,18 +410,21 @@ AccountRemovedFromGroup=গ্রুপ থেকে অ্যাকাউন্
 SaleLocal=স্থানীয় বিক্রয়
 SaleExport=রপ্তানি বিক্রয়
 SaleEEC=EEC-তে বিক্রয়
-SaleEECWithVAT=ভ্যাট সহ EEC-তে বিক্রয় শূন্য নয়, তাই আমরা মনে করি এটি একটি অন্তর্মুখী বিক্রয় নয় এবং প্রস্তাবিত অ্যাকাউন্টটি মানক পণ্য অ্যাকাউন্ট।
-SaleEECWithoutVATNumber=কোনো ভ্যাট ছাড়াই EEC-তে বিক্রয় কিন্তু তৃতীয় পক্ষের VAT ID সংজ্ঞায়িত করা হয়নি। আমরা স্ট্যান্ডার্ড বিক্রয়ের জন্য অ্যাকাউন্টে ফিরে যাই। আপনি তৃতীয় পক্ষের ভ্যাট আইডি ঠিক করতে পারেন, অথবা প্রয়োজনে বাঁধার জন্য প্রস্তাবিত পণ্য অ্যাকাউন্ট পরিবর্তন করতে পারেন।
+SaleEECWithVAT=Sale is in EEC with a VAT not null, so we suppose this is NOT an intracommunautary sale and the suggested account is the standard product account.
+SaleEECWithoutVATNumber=Sale is in EEC with no VAT but the VAT ID of third party is not defined. We fall back on the account for standard sales. You can fix the VAT ID of the third party, or change the product account suggested for binding if needed.
+AnySale=Any sale
 ForbiddenTransactionAlreadyExported=নিষিদ্ধ: লেনদেন বৈধ করা হয়েছে এবং/অথবা রপ্তানি করা হয়েছে।
 ForbiddenTransactionAlreadyValidated=নিষিদ্ধ: লেনদেন বৈধ করা হয়েছে.
+DataMustHaveBeenTransferredInAccounting=The transfer of data in accounting must have been done
+IfTransactionHasDueDate=For transactions related to documents that need payment
 ## Dictionary
 Range=অ্যাকাউন্টিং অ্যাকাউন্টের পরিসর
 Calculated=গণনা করা হয়েছে
 Formula=সূত্র
-
 ## Reconcile
 LetteringAuto=স্বয়ংক্রিয় মিলন
 LetteringManual=ম্যানুয়াল পুনর্মিলন
+LetteringPartial=Reconcile partial
 Unlettering=অমিল
 UnletteringAuto=অটো মিলন
 UnletteringManual=সামঞ্জস্যহীন ম্যানুয়াল
@@ -444,11 +434,10 @@ AccountancyLetteringModifiedSuccessfully=%s পুনর্মিলন সফ�
 AccountancyNoUnletteringModified=কোন অমীমাংসিত সংশোধন করা হয়েছে
 AccountancyOneUnletteringModifiedSuccessfully=একটি অমিল সফলভাবে সংশোধন করা হয়েছে৷
 AccountancyUnletteringModifiedSuccessfully=%s মিলন সফলভাবে সংশোধন করা হয়েছে
-
 ## Closure
-AccountancyClosureStep1=ধাপ 1: আন্দোলনগুলিকে যাচাই এবং লক করুন
-AccountancyClosureStep2=ধাপ 2: আর্থিক সময়কাল বন্ধ করুন
-AccountancyClosureStep3=ধাপ 3 : এক্সট্রাক্ট এন্ট্রি (ঐচ্ছিক)
+AccountancyClosureStep1=Validate and lock the movements
+AccountancyClosureStep2=Close the fiscal period
+AccountancyClosureStep3=Extract entries (Optional)
 AccountancyClosureClose=আর্থিক সময়কাল বন্ধ করুন
 AccountancyClosureAccountingReversal="রক্ষিত উপার্জন" এন্ট্রি বের করুন এবং রেকর্ড করুন
 AccountancyClosureStep3NewFiscalPeriod=পরবর্তী আর্থিক সময়কাল
@@ -456,7 +445,6 @@ AccountancyClosureGenerateClosureBookkeepingRecords=পরবর্তী অর
 AccountancyClosureSeparateAuxiliaryAccounts="রিটেইনড আর্নিং" এন্ট্রি তৈরি করার সময়, সাব-লেজার অ্যাকাউন্টের বিশদ বিবরণ দিন
 AccountancyClosureCloseSuccessfully=আর্থিক সময়কাল সফলভাবে বন্ধ করা হয়েছে
 AccountancyClosureInsertAccountingReversalSuccessfully="রক্ষিত উপার্জন" এর জন্য বুককিপিং এন্ট্রিগুলি সফলভাবে সন্নিবেশ করা হয়েছে৷
-
 ## Confirm box
 ConfirmMassUnletteringAuto=বাল্ক স্বয়ংক্রিয় মিলন নিশ্চিতকরণ
 ConfirmMassUnletteringManual=বাল্ক ম্যানুয়াল মিলন নিশ্চিতকরণ
@@ -465,7 +453,6 @@ ConfirmMassDeleteBookkeepingWriting=বাল্ক মুছে ফেলা �
 ConfirmMassDeleteBookkeepingWritingQuestion=এটি অ্যাকাউন্টিং থেকে লেনদেন মুছে ফেলবে (একই লেনদেনের সাথে সম্পর্কিত সমস্ত লাইন এন্ট্রি মুছে ফেলা হবে)। আপনি কি %s নির্বাচিত এন্ট্রিগুলি মুছতে চান?
 AccountancyClosureConfirmClose=আপনি কি নিশ্চিত আপনি বর্তমান আর্থিক সময়কাল বন্ধ করতে চান? <span class="warning">আপনি বোঝেন যে আর্থিক সময়কাল বন্ধ করা একটি অপরিবর্তনীয় ক্রিয়া এবং এই সময়ের মধ্যে এন্ট্রিগুলির কোনও পরিবর্তন বা মুছে ফেলাকে স্থায়ীভাবে ব্লক করবে</span> .
 AccountancyClosureConfirmAccountingReversal=আপনি কি "রক্ষিত উপার্জন" এর জন্য এন্ট্রি রেকর্ড করার বিষয়ে নিশ্চিত?
-
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=সেটআপের কিছু বাধ্যতামূলক পদক্ষেপ করা হয়নি, অনুগ্রহ করে সেগুলি সম্পূর্ণ করুন৷
 ErrorNoAccountingCategoryForThisCountry=দেশের জন্য কোনো অ্যাকাউন্টিং অ্যাকাউন্ট গ্রুপ উপলব্ধ নেই %s (দেখুন %s - %s - %s)
@@ -483,10 +470,9 @@ AccountancyErrorMismatchBalanceAmount=ব্যালেন্স (%s) 0 এর 
 AccountancyErrorLetteringBookkeeping=লেনদেন সংক্রান্ত ত্রুটি ঘটেছে: %s
 ErrorAccountNumberAlreadyExists=অ্যাকাউন্টিং নম্বর %s ইতিমধ্যেই বিদ্যমান
 ErrorArchiveAddFile=আর্কাইভে "%s" ফাইল রাখা যাবে না
-ErrorNoFiscalPeriodActiveFound=কোনো সক্রিয় আর্থিক সময়কাল পাওয়া যায়নি
+ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=বুককিপিং ডক তারিখ সক্রিয় আর্থিক সময়ের মধ্যে নেই
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=বুককিপিং ডক তারিখ একটি বন্ধ আর্থিক সময়ের মধ্যে আছে
-
 ## Import
 ImportAccountingEntries=অ্যাকাউন্টিং এন্ট্রি
 ImportAccountingEntriesFECFormat=অ্যাকাউন্টিং এন্ট্রি - FEC বিন্যাস
@@ -508,11 +494,9 @@ FECFormatReconcilableDate=পুনর্মিলনযোগ্য তার�
 FECFormatValidateDate=পিস তারিখ যাচাই করা হয়েছে (ValidDate)
 FECFormatMulticurrencyAmount=বহুমূদ্রার পরিমাণ (মন্টেন্টডেভাইজ)
 FECFormatMulticurrencyCode=মাল্টিকারেন্সি কোড (আইডিভাইস)
-
 DateExport=তারিখ রপ্তানি
 WarningReportNotReliable=সতর্কতা, এই প্রতিবেদনটি লেজারের উপর ভিত্তি করে নয়, তাই লেজারে ম্যানুয়ালি পরিবর্তিত লেনদেন ধারণ করে না। আপনার জার্নালাইজেশন আপ টু ডেট হলে, বুককিপিং ভিউ আরও সঠিক।
 ExpenseReportJournal=খরচ রিপোর্ট জার্নাল
 DocsAlreadyExportedAreIncluded=ইতিমধ্যে রপ্তানি করা নথি অন্তর্ভুক্ত করা হয়েছে৷
 ClickToShowAlreadyExportedLines=ইতিমধ্যে রপ্তানি করা লাইন দেখাতে ক্লিক করুন
-
 NAccounts=%s অ্যাকাউন্ট

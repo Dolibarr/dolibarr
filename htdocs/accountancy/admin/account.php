@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +32,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('accountancy', 'admin', 'bills', 'compta', 'salaries'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
-$id = GETPOST('id', 'int');
-$rowid = GETPOST('rowid', 'int');
+$id = GETPOSTINT('id');
+$rowid = GETPOSTINT('rowid');
 $massaction = GETPOST('massaction', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'accountingaccountlist'; // To manage different context of search
@@ -48,11 +58,14 @@ $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
+$search_reconcilable = GETPOST("search_reconcilable", 'int');
+$search_centralized = GETPOST("search_centralized", 'int');
+$search_active = GETPOST("search_active", 'int');
 $toselect = GETPOST('toselect', 'array');
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
 
-$chartofaccounts = GETPOST('chartofaccounts', 'int');
+$chartofaccounts = GETPOSTINT('chartofaccounts');
 
 $permissiontoadd = $user->hasRight('accounting', 'chartofaccount');
 $permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
@@ -61,18 +74,20 @@ $permissiontodelete = $user->hasRight('accounting', 'chartofaccount');
 if ($user->socid > 0) {
 	accessforbidden();
 }
-if (!$user->hasRight('accounting', 'chartofaccount')) {
+if (!$permissiontoadd) {
 	accessforbidden();
 }
+// now $permissiontoadd or $user->hasRight('accounting', 'chartofaccount') are always equal to 1
 
 // Load variable for pagination
-$limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOST('pageplusone') - 1) : GETPOST("page", 'int');
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -84,15 +99,16 @@ if (!$sortorder) {
 }
 
 $arrayfields = array(
-	'aa.account_number'=>array('label'=>"AccountNumber", 'checked'=>1),
-	'aa.label'=>array('label'=>"Label", 'checked'=>1),
-	'aa.labelshort'=>array('label'=>"LabelToShow", 'checked'=>1),
-	'aa.account_parent'=>array('label'=>"Accountparent", 'checked'=>1),
-	'aa.pcg_type'=>array('label'=>"Pcgtype", 'checked'=>1, 'help'=>'PcgtypeDesc'),
-	'categories'=>array('label'=>"AccountingCategories", 'checked'=>-1, 'help'=>'AccountingCategoriesDesc'),
-	'aa.reconcilable'=>array('label'=>"Reconcilable", 'checked'=>1),
-	'aa.import_key'=>array('label'=>"ImportId", 'checked'=>-1, 'help'=>''),
-	'aa.active'=>array('label'=>"Activated", 'checked'=>1)
+	'aa.account_number' => array('label' => "AccountNumber", 'checked' => '1'),
+	'aa.label' => array('label' => "Label", 'checked' => '1'),
+	'aa.labelshort' => array('label' => "LabelToShow", 'checked' => '1'),
+	'aa.account_parent' => array('label' => "Accountparent", 'checked' => '1'),
+	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => '1', 'help' => 'PcgtypeDesc'),
+	'categories' => array('label' => "AccountingCategories", 'checked' => '-1', 'help' => 'AccountingCategoriesDesc'),
+	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => '1'),
+	'aa.centralized' => array('label' => "Centralized", 'checked' => '1'),
+	'aa.import_key' => array('label' => "ImportId", 'checked' => '-1', 'help' => ''),
+	'aa.active' => array('label' => "Activated", 'checked' => '1')
 );
 
 if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
@@ -102,7 +118,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 
 $accounting = new AccountingAccount($db);
 
-// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('accountancyadminaccount'));
 
 
@@ -145,13 +161,17 @@ if (empty($reshook)) {
 		$search_accountparent = "";
 		$search_pcgtype = "";
 		$search_import_key = "";
+		$search_reconcilable = "";
+		$search_centralized = "";
+		$search_active = "";
 		$search_array_options = array();
 	}
-	if ((GETPOST('valid_change_chart', 'alpha') && GETPOST('chartofaccounts', 'int') > 0)	// explicit click on button 'Change and load' with js on
-		|| (GETPOST('chartofaccounts', 'int') > 0 && GETPOST('chartofaccounts', 'int') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
+	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
+		|| (GETPOSTINT('chartofaccounts') > 0 && GETPOSTINT('chartofaccounts') != getDolGlobalInt('CHARTOFACCOUNTS'))) {	// a submit of form is done and chartofaccounts combo has been modified
 		$error = 0;
 
-		if ($chartofaccounts > 0 && $permissiontoadd) {
+		if ($chartofaccounts > 0 /* && $permissiontoadd */) {
+			$country_code = '';
 			// Get language code for this $chartofaccounts
 			$sql = 'SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
 			$sql .= ' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
@@ -197,25 +217,25 @@ if (empty($reshook)) {
 		}
 	}
 
-	if ($action == 'disable' && $permissiontoadd) {
+	if ($action == 'disable' /* && $permissiontoadd */) {
 		if ($accounting->fetch($id)) {
-			$mode = GETPOST('mode', 'int');
+			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountDeactivate($id, $mode);
+			if ($result < 0) {
+				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			}
 		}
 
 		$action = 'update';
-		if ($result < 0) {
-			setEventMessages($accounting->error, $accounting->errors, 'errors');
-		}
-	} elseif ($action == 'enable' && $permissiontoadd) {
+	} elseif ($action == 'enable' /* && $permissiontoadd */) {
 		if ($accounting->fetch($id)) {
-			$mode = GETPOST('mode', 'int');
+			$mode = GETPOSTINT('mode');
 			$result = $accounting->accountActivate($id, $mode);
+			if ($result < 0) {
+				setEventMessages($accounting->error, $accounting->errors, 'errors');
+			}
 		}
 		$action = 'update';
-		if ($result < 0) {
-			setEventMessages($accounting->error, $accounting->errors, 'errors');
-		}
 	}
 }
 
@@ -228,7 +248,7 @@ $formaccounting = new FormAccounting($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans("ListAccounts"), $help_url);
+llxHeader('', $langs->trans("ListAccounts"), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_account');
 
 if ($action == 'delete') {
 	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('DeleteAccount'), $langs->trans('ConfirmDeleteAccount'), 'confirm_delete', '', 0, 1);
@@ -238,7 +258,7 @@ if ($action == 'delete') {
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
-$sql .= " aa.reconcilable, aa.active, aa.import_key,";
+$sql .= " aa.reconcilable, aa.centralized, aa.active, aa.import_key,";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 
 // Add fields from hooks
@@ -304,6 +324,15 @@ if (strlen(trim($search_accountparent)) && $search_accountparent != '-1') {
 if (strlen(trim($search_pcgtype))) {
 	$sql .= natural_search("aa.pcg_type", $search_pcgtype);
 }
+if ($search_reconcilable != '' && $search_reconcilable != '-1') {
+	$sql .= " AND aa.reconcilable = ".((int) $search_reconcilable);
+}
+if ($search_centralized != '' && $search_centralized != '-1') {
+	$sql .= " AND aa.centralized = ".((int) $search_centralized);
+}
+if ($search_active != '' && $search_active != '-1') {
+	$sql .= " AND aa.active = ".((int) $search_active);
+}
 if (strlen(trim($search_import_key))) {
 	$sql .= natural_search("aa.import_key", $search_import_key);
 }
@@ -329,7 +358,7 @@ if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
 
 $sql .= $db->plimit($limit + 1, $offset);
 
-dol_syslog('accountancy/admin/account.php:: $sql='.$sql);
+dol_syslog("accountancy/admin/account.php:: sql=".$sql);
 $resql = $db->query($sql);
 
 if ($resql) {
@@ -338,7 +367,8 @@ if ($resql) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	// if null contextpage is forced to 'accountingaccountlist' so never empty
+	if (/* !empty($contextpage) &&  */$contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -376,7 +406,7 @@ if ($resql) {
 			<script type="text/javascript">
 			$(document).ready(function () {
 		    	$("#change_chart").on("click", function (e) {
-					console.log("chartofaccounts seleted = "+$("#chartofaccounts").val());
+					console.log("chartofaccounts selected = "+$("#chartofaccounts").val());
 					// reload page
 					window.location.href = "'.$_SERVER["PHP_SELF"].'?valid_change_chart=1&chartofaccounts="+$("#chartofaccounts").val();
 			    });
@@ -385,9 +415,10 @@ if ($resql) {
 	}
 
 	// List of mass actions available
-	if ($user->hasRight('accounting', 'chartofaccount')) {
-		$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
-	}
+	$arrayofmassactions = array();
+	// if ($permissiontoadd) { // test is always true
+	$arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
+	// }
 	if (in_array($massaction, array('presend', 'predelete', 'closed'))) {
 		$arrayofmassactions = array();
 	}
@@ -409,6 +440,7 @@ if ($resql) {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
+	// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'accounting_account', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
@@ -420,7 +452,8 @@ if ($resql) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
-	dol_syslog('accountancy/admin/account.php $sql='.$sql);
+
+	dol_syslog("accountancy/admin/account.php sql=".$sql);
 
 	$resqlchart = $db->query($sql);
 	if ($resqlchart) {
@@ -445,6 +478,10 @@ if ($resql) {
 
 	print '<br>';
 
+	$parameters = array('chartofaccounts' => $chartofaccounts, 'permissiontoadd' => $permissiontoadd, 'permissiontodelete' => $permissiontodelete);
+	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $accounting, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
+
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
@@ -452,23 +489,25 @@ if ($resql) {
 	print '<br>';
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-	$selectedfields = ($mode != 'kanban' ? $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN', '')) : ''); // This also change content of $arrayfields
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN'));  // This also change content of $arrayfields with user setup
+	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 	$selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
-
-	$moreforfilter = '';
-	if ($moreforfilter) {
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		print '</div>';
-	}
 
 	$accountstatic = new AccountingAccount($db);
 	$accountparent = new AccountingAccount($db);
 	$totalarray = array();
 	$totalarray['nbfield'] = 0;
 
+	$moreforfilter = '';
+	// if ($moreforfilter) {
+	// 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	// 	print $moreforfilter;
+	// 	print '</div>';
+	// }
+
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	// print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste">'."\n";
 
 	// Fields title search
 	// --------------------------------------------------------------------
@@ -505,7 +544,7 @@ if ($resql) {
 	}
 
 	// Fields from hook
-	$parameters = array('arrayfields'=>$arrayfields);
+	$parameters = array('arrayfields' => $arrayfields);
 	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -513,13 +552,28 @@ if ($resql) {
 	if (!empty($arrayfields['aa.import_key']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_import_key" value="'.$search_import_key.'"></td>';
 	}
+
+	// Reconcilable
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print '<td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre center">';
+			print $form->selectyesno('search_reconcilable', $search_reconcilable, 1, false, 1, 1, 'search_status onrightofpage width75');
+			print '</td>';
 		}
 	}
+
+	// Centralized
+	if (!empty($arrayfields['aa.centralized']['checked'])) {
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_centralized', $search_centralized, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
+	}
+
+	// Active
 	if (!empty($arrayfields['aa.active']['checked'])) {
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_active', $search_active, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -567,7 +621,7 @@ if ($resql) {
 	}
 
 	// Hook fields
-	$parameters = array('arrayfields'=>$arrayfields, 'param'=>$param, 'sortfield'=>$sortfield, 'sortorder'=>$sortorder);
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
@@ -577,9 +631,13 @@ if ($resql) {
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder);
+			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 		}
+	}
+	if (!empty($arrayfields['aa.centralized']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.centralized']['label'], $_SERVER["PHP_SELF"], 'aa.centralized', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.active']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
@@ -607,23 +665,23 @@ if ($resql) {
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
-			if ($user->hasRight('accounting', 'chartofaccount')) {
-				print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_edit();
-				print '</a>';
-				print '&nbsp;';
-				print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_delete();
-				print '</a>';
-				print '&nbsp;';
-				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->rowid, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			// if ($permissiontoadd) { // test is always true
+			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_delete();
+			print '</a>';
+			print '&nbsp;';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			// }
 			print '</td>'."\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -669,7 +727,7 @@ if ($resql) {
 				print '<!-- obj->account_parent = '.$obj->account_parent.' obj->rowid2 = '.$obj->rowid2.' -->';
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
-				$accountparent->account_number = $obj->account_number2; // Sotre an account number for output
+				$accountparent->account_number = $obj->account_number2; // Store an account number for output
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
 				if (!$i) {
@@ -708,7 +766,7 @@ if ($resql) {
 		}
 
 		// Fields from hook
-		$parameters = array('arrayfields'=>$arrayfields, 'obj'=>$obj, 'i'=>$i, 'totalarray'=>&$totalarray);
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $obj, 'i' => $i, 'totalarray' => &$totalarray);
 		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
 
@@ -742,6 +800,24 @@ if ($resql) {
 			}
 		}
 
+		// Centralized or not
+		if (!empty($arrayfields['aa.centralized']['checked'])) {
+			print '<td class="center">';
+			if (empty($obj->centralized)) {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=2&token='.newToken().'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=2&token='.newToken().'">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
 		// Activated or not
 		if (!empty($arrayfields['aa.active']['checked'])) {
 			print '<td class="center">';
@@ -763,23 +839,23 @@ if ($resql) {
 		// Action column
 		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="center nowraponall">';
-			if ($user->hasRight('accounting', 'chartofaccount')) {
-				print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_edit();
-				print '</a>';
-				print '&nbsp;';
-				print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
-				print img_delete();
-				print '</a>';
-				print '&nbsp;';
-				if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					$selected = 0;
-					if (in_array($obj->rowid, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			// if ($permissiontoadd) { // test is always true
+			print '<a class="editfielda" href="./card.php?action=update&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_edit();
+			print '</a>';
+			print '&nbsp;';
+			print '<a class="marginleftonly" href="./card.php?action=delete&token='.newToken().'&id='.$obj->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?'.$param).'">';
+			print img_delete();
+			print '</a>';
+			print '&nbsp;';
+			if ($massactionbutton || $massaction) {   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+				$selected = 0;
+				if (in_array($obj->rowid, $arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->rowid.'" class="flat checkforselect marginleftonly" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			}
+			// }
 			print '</td>'."\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -802,7 +878,7 @@ if ($resql) {
 
 	$db->free($resql);
 
-	$parameters = array('arrayfields'=>$arrayfields, 'sql'=>$sql);
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
 	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 

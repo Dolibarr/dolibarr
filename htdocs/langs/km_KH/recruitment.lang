@@ -4,77 +4,63 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
-ModuleRecruitmentName = Recruitment
+ModuleRecruitmentName = ការជ្រើសរើសបុគ្គលិក
 # Module description 'ModuleRecruitmentDesc'
-ModuleRecruitmentDesc = Manage and follow recruitment campaigns for new job positions
-
-#
+ModuleRecruitmentDesc = គ្រប់គ្រង និងតាមដានយុទ្ធនាការជ្រើសរើសបុគ្គលិកសម្រាប់មុខតំណែងការងារថ្មី។
 # Admin page
-#
-RecruitmentSetup = Recruitment setup
-RecruitmentSetupPage = Enter here the setup of main options for the recruitment module
-RecruitmentArea=Recruitement area
-PublicInterfaceRecruitmentDesc=Public pages of jobs are public URLs to show and answer to open jobs. There is one different link for each open job, found on each job record.
-EnablePublicRecruitmentPages=Enable public pages of open jobs
+RecruitmentSetup = ការរៀបចំជ្រើសរើសបុគ្គលិក
+RecruitmentSetupPage = បញ្ចូលនៅទីនេះ ការដំឡើងជម្រើសចម្បងសម្រាប់ម៉ូឌុលជ្រើសរើសបុគ្គលិក
+RecruitmentArea=តំបន់ជ្រើសរើសបុគ្គលិក
+PublicInterfaceRecruitmentDesc=ទំព័រសាធារណៈនៃការងារគឺជា URLs សាធារណៈដើម្បីបង្ហាញ និងឆ្លើយតបចំពោះការងារដែលបើក។ មានតំណភ្ជាប់ផ្សេងគ្នាមួយសម្រាប់ការងារបើកនីមួយៗ ដែលបានរកឃើញនៅលើកំណត់ត្រាការងារនីមួយៗ។
+EnablePublicRecruitmentPages=បើកទំព័រសាធារណៈនៃការងារបើកចំហ
 
-#
-# About page
-#
-RecruitmentAbout = About Recruitment
-RecruitmentAboutPage = Recruitment about page
-NbOfEmployeesExpected=Expected nb of employees
-JobLabel=Label of job position
-WorkPlace=Work place
-DateExpected=Expected date
-FutureManager=Future manager
-ResponsibleOfRecruitement=Responsible of recruitment
-IfJobIsLocatedAtAPartner=If job is located at a partner place
-PositionToBeFilled=Job position
-PositionsToBeFilled=Job positions
-ListOfPositionsToBeFilled=List of job positions
-NewPositionToBeFilled=New job positions
-
-JobOfferToBeFilled=Job position to be filled
-ThisIsInformationOnJobPosition=Information of the job position to be filled
-ContactForRecruitment=Contact for recruitment
-EmailRecruiter=Email recruiter
-ToUseAGenericEmail=To use a generic email. If not defined, the email of the responsible of recruitment will be used
-NewCandidature=New application
-ListOfCandidatures=List of applications
-Remuneration=Salary
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
-ContractProposed=Contract proposed
-ContractSigned=Contract signed
-ContractRefused=Contract refused
-RecruitmentCandidature=Application
-JobPositions=Job positions
-RecruitmentCandidatures=Applications
-InterviewToDo=Contacts to follow
-AnswerCandidature=Application answer
-YourCandidature=Your application
-YourCandidatureAnswerMessage=Thanks you for your application.<br>...
-JobClosedTextCandidateFound=The job position is closed. The position has been filled.
-JobClosedTextCanceled=The job position is closed.
-ExtrafieldsJobPosition=Complementary attributes (job positions)
-ExtrafieldsApplication=Complementary attributes (job applications)
-MakeOffer=Make an offer
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
-ConfirmClose=Confirm cancellation
-ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
-Recruitment=Recruitment
+NbOfEmployeesExpected=និយោជិតដែលរំពឹងទុក
+JobLabel=ស្លាកសញ្ញានៃមុខតំណែង
+WorkPlace=កន្លែងធ្វើការ
+DateExpected=កាលបរិច្ឆេទរំពឹងទុក
+FutureManager=អ្នកគ្រប់គ្រងនាពេលអនាគត
+ResponsibleOfRecruitement=ទទួលខុសត្រូវលើការជ្រើសរើសបុគ្គលិក
+IfJobIsLocatedAtAPartner=ប្រសិនបើការងារមានទីតាំងនៅកន្លែងដៃគូ
+PositionToBeFilled=មុខតំណែងការងារ
+PositionsToBeFilled=មុខតំណែងការងារ
+ListOfPositionsToBeFilled=បញ្ជីមុខតំណែងការងារ
+NewPositionToBeFilled=មុខតំណែងការងារថ្មី។
+JobOfferToBeFilled=មុខតំណែងការងារដែលត្រូវបំពេញ
+ThisIsInformationOnJobPosition=ព័ត៌មាននៃមុខតំណែងការងារដែលត្រូវបំពេញ
+ContactForRecruitment=ទំនាក់ទំនងជ្រើសរើសបុគ្គលិក
+EmailRecruiter=អ្នកជ្រើសរើសអ៊ីមែល
+ToUseAGenericEmail=ដើម្បីប្រើអ៊ីមែលទូទៅ។ ប្រសិនបើមិនបានកំណត់ទេ អ៊ីមែលរបស់អ្នកទទួលខុសត្រូវជ្រើសរើសបុគ្គលិកនឹងត្រូវបានប្រើ
+NewCandidature=កម្មវិធីថ្មី។
+ListOfCandidatures=បញ្ជីនៃកម្មវិធី
+Remuneration=ប្រាក់ខែ
+RequestedRemuneration=បានស្នើសុំប្រាក់ខែ
+ProposedRemuneration=ប្រាក់ខែដែលបានស្នើឡើង
+ContractProposed=កិច្ចសន្យាដែលបានស្នើឡើង
+ContractSigned=បានចុះហត្ថលេខាលើកិច្ចសន្យា
+ContractRefused=កិច្ចសន្យាបានបដិសេធ
+RecruitmentCandidature=ការដាក់ពាក្យ
+JobPositions=មុខតំណែងការងារ
+RecruitmentCandidatures=កម្មវិធី
+InterviewToDo=ទំនាក់ទំនងដើម្បីតាមដាន
+AnswerCandidature=ចម្លើយកម្មវិធី
+YourCandidature=កម្មវិធីរបស់អ្នក។
+YourCandidatureAnswerMessage=សូមអរគុណចំពោះការដាក់ពាក្យរបស់អ្នក។<br>...
+JobClosedTextCandidateFound=ទីតាំងការងារត្រូវបានបិទ។ មុខតំណែងត្រូវបានបំពេញ។
+JobClosedTextCanceled=ទីតាំងការងារត្រូវបានបិទ។
+ExtrafieldsJobPosition=គុណលក្ខណៈបំពេញបន្ថែម (មុខតំណែង)
+ExtrafieldsApplication=គុណលក្ខណៈបំពេញបន្ថែម (កម្មវិធីការងារ)
+MakeOffer=ធ្វើការផ្តល់ជូន
+WeAreRecruiting=យើងកំពុងជ្រើសរើសបុគ្គលិក។ នេះជាបញ្ជីមុខតំណែងដែលត្រូវបំពេញ...
+NoPositionOpen=មិនមានមុខតំណែងបើកនៅពេលនេះទេ។
+ConfirmClose=បញ្ជាក់ការលុបចោល
+ConfirmCloseAsk=តើអ្នកប្រាកដទេថាអ្នកចង់លុបចោលបេក្ខភាពជ្រើសរើសបុគ្គលិកនេះ។
+Recruitment=ការជ្រើសរើសបុគ្គលិក

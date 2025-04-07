@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Perekrutan
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Kelola dan ikuti kampanye perekrutan untuk posisi pekerjaan baru
-
-#
 # Admin page
-#
 RecruitmentSetup = Pengaturan perekrutan
 RecruitmentSetupPage = Masuk di sini pengaturan opsi utama untuk modul rekrutmen
 RecruitmentArea=Area perekrutan
 PublicInterfaceRecruitmentDesc=Halaman pekerjaan publik adalah URL publik untuk menunjukkan dan menjawab pekerjaan terbuka. Ada satu tautan berbeda untuk setiap pekerjaan terbuka, ditemukan di setiap catatan pekerjaan.
 EnablePublicRecruitmentPages=Aktifkan halaman publik dari pekerjaan terbuka
 
-#
-# About page
-#
-RecruitmentAbout = Tentang Rekrutmen
-RecruitmentAboutPage = Rekrutmen tentang halaman
 NbOfEmployeesExpected=Nb karyawan yang diharapkan
 JobLabel=Label posisi pekerjaan
 WorkPlace=Tempat kerja
@@ -47,7 +34,6 @@ PositionToBeFilled=Posisi pekerjaan
 PositionsToBeFilled=Posisi pekerjaan
 ListOfPositionsToBeFilled=Daftar posisi pekerjaan
 NewPositionToBeFilled=Posisi pekerjaan baru
-
 JobOfferToBeFilled=Posisi pekerjaan yang harus diisi
 ThisIsInformationOnJobPosition=Informasi posisi pekerjaan yang akan diisi
 ContactForRecruitment=Kontak untuk perekrutan
@@ -56,15 +42,15 @@ ToUseAGenericEmail=Untuk menggunakan email umum. Jika tidak ditentukan, email da
 NewCandidature=Aplikasi baru
 ListOfCandidatures=Daftar aplikasi
 Remuneration=Gaji
-RequestedRemuneration=Requested salary
-ProposedRemuneration=Proposed salary
+RequestedRemuneration=Gaji yang diminta
+ProposedRemuneration=Gaji yang diusulkan
 ContractProposed=Kontrak diusulkan
 ContractSigned=Kontrak telah ditandatangani
 ContractRefused=Kontrak ditolak
 RecruitmentCandidature=Aplikasi
 JobPositions=Posisi kerja
 RecruitmentCandidatures=Lamaran
-InterviewToDo=Contacts to follow
+InterviewToDo=Kontak untuk diikuti
 AnswerCandidature=Jawaban lamaran
 YourCandidature=Lamaran Anda
 YourCandidatureAnswerMessage=Terima kasih atas lamaran Anda. <br> ...
@@ -73,8 +59,8 @@ JobClosedTextCanceled=Posisi pekerjaan ditutup.
 ExtrafieldsJobPosition=Atribut pelengkap (posisi pekerjaan)
 ExtrafieldsApplication=Atribut pelengkap (lamaran kerja)
 MakeOffer=Buat sebuah penawaran
-WeAreRecruiting=We are recruiting. This is a list of open positions to be filled...
-NoPositionOpen=No positions open at the moment
-ConfirmClose=Confirm cancellation
-ConfirmCloseAsk=Are you sure you want to cancel this recruitment candidature
+WeAreRecruiting=Kami sedang merekrut. Ini adalah daftar posisi terbuka yang harus diisi...
+NoPositionOpen=Tidak ada posisi yang terbuka saat ini
+ConfirmClose=Konfirmasikan pembatalan
+ConfirmCloseAsk=Apakah Anda yakin ingin membatalkan pencalonan rekrutmen ini?
 Recruitment=Perekrutan

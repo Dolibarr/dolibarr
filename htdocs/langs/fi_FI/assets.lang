@@ -4,73 +4,53 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-NewAsset=Lisää varanto
-AccountancyCodeAsset=Kirjanpitokoodi (varanto)
-AccountancyCodeDepreciationAsset=Kirjanpitokoodi (varannon poistot tili)
+NewAsset=Lisää omaisuus
+AccountancyCodeAsset=Kirjanpitokoodi (omaisuus)
+AccountancyCodeDepreciationAsset=Kirjanpitokoodi (omaisuuden poistot tili)
 AccountancyCodeDepreciationExpense=Kirjanpitokoodi (poistokustannuslaskelma)
-AssetsLines=Varannot
+AssetsLines=Omaisuudet
 DeleteType=Poista
-DeleteAnAssetType=Poista sisältömalli
-ConfirmDeleteAssetType=Haluatko varmasti poistaa tämän sisältömallin?
+DeleteAnAssetType=Poista omaisuusmalli
+ConfirmDeleteAssetType=Haluatko varmasti poistaa tämän omaisuusmallin?
 ShowTypeCard=Näytä malli '%s'
-
 # Module label 'ModuleAssetsName'
-ModuleAssetsName=Varannot
+ModuleAssetsName=Omaisuudet
 # Module description 'ModuleAssetsDesc'
-ModuleAssetsDesc=Varannon kuvaus
-
-#
+ModuleAssetsDesc=Omaisuuden kuvaus
 # Admin page
-#
-AssetSetup=Varantojen asetukset
-AssetSetupPage=Varantojen asetus sivu
-ExtraFieldsAssetModel=Täydentävät attribuutit (sisällön malli)
-
+AssetSetup=Omaisuuden asetukset
+AssetSetupPage=Omaisuuden asetus sivu
+ExtraFieldsAssetModel=Täydentävät attribuutit (omaisuuden malli)
 AssetsType=Omaisuuden malli
-AssetsTypeId=Kohdemallin tunnus
-AssetsTypeLabel=Kohdemallin etiketti
+AssetsTypeId=Omaisuus mallin tunnus
+AssetsTypeLabel=Omaisuus mallin etiketti
 AssetsTypes=Omaisuusmallit
-ASSET_ACCOUNTANCY_CATEGORY=Käyttöomaisuus Kirjanpito ryhmä
-
-#
+ASSET_ACCOUNTANCY_CATEGORY=Kiinteä omaisuus kirjanpito ryhmä
+ASSET_DEPRECIATION_DURATION_PER_YEAR=Proportional period in days for calculating amortization over one year
 # Menu
-#
-MenuAssets=Varannot
-MenuNewAsset=Lisää varanto
-MenuAssetModels=Mallin omaisuus
+MenuAssets=Omaisuudet
+MenuNewAsset=Lisää omaisuus
+MenuAssetModels=Omaisuusmallit
 MenuListAssets=Luettelo
 MenuNewAssetModel=Uuden omaisuuden malli
 MenuListAssetModels=Luettelo
-
-#
 # Module
-#
-ConfirmDeleteAsset=Haluatko todella poistaa tämän sisällön?
-
-#
+ConfirmDeleteAsset=Haluatko todella poistaa tämän omaisuuden?
 # Tab
-#
 AssetDepreciationOptions=Poistovaihtoehdot
 AssetAccountancyCodes=Accounting accounts
 AssetDepreciation=Poistot
-
-#
 # Asset
-#
 Asset=Omaisuus
-Assets=Varannot
+Assets=Omaisuudet
 AssetReversalAmountHT=Peruutussumma (ilman Verot)
 AssetAcquisitionValueHT=Hankintasumma (ilman Verot)
 AssetRecoveredVAT=Palautettu ALV
@@ -87,34 +67,22 @@ AssetTypeInProgress=Käsittelyssä
 AssetTypeFinancial=Taloudellinen
 AssetNotDepreciated=Ei poistoja
 AssetDisposal=Hävittäminen
-AssetConfirmDisposalAsk=Haluatko varmasti luopua sisällöstä <b> %s</b>?
-AssetConfirmReOpenAsk=Haluatko varmasti avata sisällön uudelleen <b> %s</b>?
-
-#
+AssetConfirmDisposalAsk=Haluatko varmasti luopua omaisuudesta<b> %s</b>?
+AssetConfirmReOpenAsk=Haluatko varmasti avata omaisuuden uudelleen <b> %s</b>?
 # Asset status
-#
 AssetInProgress=Käsittelyssä
 AssetDisposed=Hävitetty
 AssetRecorded=Kirjattu
-
-#
 # Asset disposal
-#
 AssetDisposalDate=päiväys hävittämisestä
 AssetDisposalAmount=Hävitysarvo
 AssetDisposalType=Hävityksen tyyppi
 AssetDisposalDepreciated=Tee poisto siirtovuodesta
 AssetDisposalSubjectToVat=Hävitys arvonlisäverollinen
-
-#
 # Asset model
-#
 AssetModel=Omaisuuden malli
-AssetModels=Assetin mallit
-
-#
+AssetModels=Omaisuuksien mallit
 # Asset depreciation options
-#
 AssetDepreciationOptionEconomic=Taloudellinen poisto
 AssetDepreciationOptionAcceleratedDepreciation=Nopeutettu poisto (vero)
 AssetDepreciationOptionDepreciationType=Poistotyyppi
@@ -122,7 +90,6 @@ AssetDepreciationOptionDepreciationTypeLinear=Lineaarinen
 AssetDepreciationOptionDepreciationTypeDegressive=Degressiivinen
 AssetDepreciationOptionDepreciationTypeExceptional=Poikkeuksellinen
 AssetDepreciationOptionDegressiveRate=Degressiivinen korko
-AssetDepreciationOptionAcceleratedDepreciation=Nopeutettu poisto (vero)
 AssetDepreciationOptionDuration=Kesto
 AssetDepreciationOptionDurationType=Tyypin kesto
 AssetDepreciationOptionDurationTypeAnnual=Vuosittain
@@ -132,10 +99,7 @@ AssetDepreciationOptionRate=Arvostele (%%)
 AssetDepreciationOptionAmountBaseDepreciationHT=Poistopohja (ilman ALV)
 AssetDepreciationOptionAmountBaseDeductibleHT=Vähennysoikeus (ilman ALV)
 AssetDepreciationOptionTotalAmountLastDepreciationHT=Viimeisimmän poiston kokonaissumma (ilman ALV)
-
-#
 # Asset accountancy codes
-#
 AssetAccountancyCodeDepreciationEconomic=Taloudellinen poisto
 AssetAccountancyCodeAsset=Omaisuus
 AssetAccountancyCodeDepreciationAsset=Poistot
@@ -144,15 +108,12 @@ AssetAccountancyCodeValueAssetSold=Luovutetun omaisuuden arvo
 AssetAccountancyCodeReceivableOnAssignment=Saatavissa poistettaessa
 AssetAccountancyCodeProceedsFromSales=Tuotot hävittämisestä
 AssetAccountancyCodeVatCollected=Kerätty ALV
-AssetAccountancyCodeVatDeductible=Omaisuuden arvonlisävero palautettu
+AssetAccountancyCodeVatDeductible=Omaisuudesta palautettu arvonlisävero
 AssetAccountancyCodeDepreciationAcceleratedDepreciation=Nopeutettu poisto (vero)
 AssetAccountancyCodeAcceleratedDepreciation=Account
 AssetAccountancyCodeEndowmentAcceleratedDepreciation=Poistokulut
 AssetAccountancyCodeProvisionAcceleratedDepreciation=Takaisin haltuunotto/hallinta
-
-#
 # Asset depreciation
-#
 AssetBaseDepreciationHT=Poistoperuste (ilman ALV)
 AssetDepreciationBeginDate=Poistot alkavat
 AssetDepreciationDuration=Kesto
@@ -164,10 +125,7 @@ AssetResidualHT=Jäännösarvo (ilman ALV)
 AssetDispatchedInBookkeeping=Poistot kirjattu
 AssetFutureDepreciationLine=Tulevaisuuden poistot
 AssetDepreciationReversal=Kääntäminen
-
-#
 # Errors
-#
 AssetErrorAssetOrAssetModelIDNotProvide=Löydetyn omaisuuden tai mallin tunnusta ei ole annettu
 AssetErrorFetchAccountancyCodesForMode=Virhe haettaessa kirjanpitotilit poistotilalle %s
 AssetErrorDeleteAccountancyCodesForMode=Virhe poistettaessa kirjanpitotilit poistotilasta %s

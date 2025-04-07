@@ -51,6 +51,6 @@ RepeatableSupplierInvoice=Tarnija arve mall
 RepeatableSupplierInvoices=Tarnija arvete mall
 RepeatableSupplierInvoicesList=Tarnija arvete mall
 RecurringSupplierInvoices=Recurring supplier invoices
-ToCreateAPredefinedSupplierInvoice=In order to create template supplier invoice, you must create a standard invoice, then, without validating it, click on the "%s" button.
+ToCreateAPredefinedSupplierInvoice=Selleks, et luua malli tarnija arvet, peate looma standardse arve, seejärel klõpsake "%s" nupul, ilma seda valideerimata.
 GeneratedFromSupplierTemplate=Generated from supplier invoice template %s
 SupplierInvoiceGeneratedFromTemplate=Supplier invoice %s Generated from supplier invoice template %s

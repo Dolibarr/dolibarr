@@ -21,7 +21,6 @@ MenuDoneMyActions=Ngjarjet e mia të përfunduara
 ListOfEvents=Lista e ngjarjeve (kalendari i parazgjedhur)
 ActionsAskedBy=Ngjarjet e raportuara nga
 ActionsToDoBy=Ngjarjet e caktuara për
-ActionsDoneBy=Ngjarjet e kryera nga
 ActionAssignedTo=Ngjarja e caktuar për
 ViewCal=Pamja e muajit
 ViewDay=Pamje e ditës
@@ -135,12 +134,14 @@ AgendaModelModule=Modelet e dokumenteve për ngjarjen
 DateActionStart=Data e fillimit
 DateActionEnd=Data e përfundimit
 AgendaUrlOptions1=Ju gjithashtu mund të shtoni parametrat e mëposhtëm për të filtruar daljen:
-AgendaUrlOptions3=<b>logina=%s</b> për të kufizuar një veprim të përdoruesit <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> për të kufizuar veprimet përdoruesi <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> për t'u caktuar veprimeve të kufizuara të përdoruesit span class='notranslate'><b></span>%s</b> (pronari dhe të tjerët).
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> për të kufizuar daljen në veprimet e lidhura me projektin <span class='058</0epanslate'38>b. __PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> për të përjashtuar ngjarjet automatike.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> për të përfshirë ngjarjet e festave.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Ditëlindjet e kontakteve
 AgendaHideBirthdayEvents=Fshih ditëlindjet e kontakteve
 Busy=I zënë
@@ -161,7 +162,7 @@ AddEvent=Krijo ngjarje
 MyAvailability=Disponueshmëria ime
 ActionType=Lloji i ngjarjes
 DateActionBegin=Data e fillimit të ngjarjes
-ConfirmCloneEvent=Jeni i sigurt që dëshironi të klononi ngjarjen <b>%s<span class='notranslate'>b09a4b739f17f8z></s0?
+ConfirmCloneEvent=Are you sure you want to clone the event <b>%s</b>?
 RepeatEvent=Përsëriteni ngjarjen
 OnceOnly=Vetëm njëherë
 EveryDay=Çdo ditë
@@ -201,4 +202,6 @@ AppointmentDuration = Kohëzgjatja e takimit: %s
 BookingSuccessfullyBooked=Rezervimi juaj është ruajtur
 BookingReservationHourAfter=Ne konfirmojmë rezervimin e takimit tonë në datën %s
 BookcalBookingTitle=Takimi online
-Transparency = Transparency
+Transparency = Transparenca
+ReadMore = Read more
+ReadLess = Read less

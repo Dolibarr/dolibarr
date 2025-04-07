@@ -4,18 +4,14 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModulePartnershipName=Gestió d'associacions
 PartnershipDescription=Mòdul Gestió d'associacions
 PartnershipDescriptionLong= Mòdul Gestió d'associacions
@@ -24,17 +20,11 @@ Partnerships=Col·laboracions
 AddPartnership=Afegiu associació
 CancelPartnershipForExpiredMembers=Associació: cancel·leu l'associació de membres amb subscripcions caducades
 PartnershipCheckBacklink=Associació: consulteu l'enllaç de retrocés de referència
-
-#
 # Menu
-#
 NewPartnership=Nova associació
 NewPartnershipbyWeb=La vostra sol·licitud d'associació s'ha afegit correctament. Ens posarem en contacte amb tu aviat...
 ListOfPartnerships=Llista d'associació
-
-#
 # Admin page
-#
 PartnershipSetup=Configuració de l'associació
 PartnershipAbout=Quant a Partnership
 PartnershipAboutPage=Associació sobre la pàgina
@@ -45,10 +35,7 @@ PARTNERSHIP_NBDAYS_AFTER_MEMBER_EXPIRATION_BEFORE_CANCEL=Nombre de dies abans de
 ReferingWebsiteCheck=Comprovació de referència del lloc web
 ReferingWebsiteCheckDesc=Podeu activar una funció per a comprovar que els vostres socis hagin afegit un retroenllaç als dominis del vostre lloc web al seu propi lloc web.
 PublicFormRegistrationPartnerDesc=Dolibarr us pot proporcionar un URL/lloc web públic per a permetre que els visitants externs sol·licitin formar part del programa d'associació.
-
-#
 # Object
-#
 DeletePartnership=Suprimiu una associació
 PartnershipDedicatedToThisThirdParty=Associació dedicada a aquest tercer
 PartnershipDedicatedToThisMember=Associació dedicada a aquest membre
@@ -68,31 +55,22 @@ PartnershipAccepted=Acceptat
 PartnershipRefused=Rebutjat
 PartnershipCanceled=Cancel·lat
 PartnershipManagedFor=Els socis ho són
-
-#
 # Template Mail
-#
 SendingEmailOnPartnershipWillSoonBeCanceled=Aviat es cancel·larà l'associació
 SendingEmailOnPartnershipRefused=L'associació es va negar
 SendingEmailOnPartnershipAccepted=S'ha acceptat l'associació
 SendingEmailOnPartnershipCanceled=S'ha cancel·lat l'associació
-
 YourPartnershipWillSoonBeCanceledTopic=Aviat es cancel·larà l'associació
 YourPartnershipRefusedTopic=L'associació es va negar
 YourPartnershipAcceptedTopic=S'ha acceptat l'associació
 YourPartnershipCanceledTopic=S'ha cancel·lat l'associació
-
 YourPartnershipWillSoonBeCanceledContent=Ens agradaria informar-vos que la nostra associació es cancel·larà aviat (no hem rebut la renovació o no s'ha complert un requisit previ per a la nostra associació). Si us plau, poseu-vos en contacte amb nosaltres si ho heu rebut a causa d'un error.
 YourPartnershipRefusedContent=Ens agradaria informar-vos que la vostra sol·licitud de col·laboració ha estat denegada. No s'han complert els requisits previs. Si us plau, poseu-vos en contacte amb nosaltres si necessiteu més informació.
 YourPartnershipAcceptedContent=Ens agradaria informar-vos que la vostra sol·licitud de col·laboració ha estat acceptada.
 YourPartnershipCanceledContent=Ens agradaria informar-vos que la nostra associació ha estat cancel·lada. Si us plau, poseu-vos en contacte amb nosaltres si necessiteu més informació.
-
 CountLastUrlCheckError=Nombre d'errors de l'última comprovació de l'URL
 LastCheckBacklink=Data de l'última comprovació de l'URL
-
 NewPartnershipRequest=Nova sol·licitud de col·laboració
 NewPartnershipRequestDesc=Aquest formulari us permet sol·licitar formar part d'un dels nostres programes d'associació. Si necessiteu ajuda per a omplir aquest formulari, poseu-vos en contacte amb el correu electrònic <b>%s</b>.
 ThisUrlMustContainsAtLeastOneLinkToWebsite=Aquesta pàgina ha de contenir almenys un enllaç a un dels dominis següents: %s
-
 IPOfApplicant=IP del sol·licitant
-

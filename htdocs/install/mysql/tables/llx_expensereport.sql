@@ -52,9 +52,9 @@ CREATE TABLE llx_expensereport (
   detail_cancel 	varchar(255) DEFAULT NULL,
   integration_compta integer DEFAULT NULL,			-- not used
   fk_bank_account 	integer DEFAULT NULL,
-  model_pdf 		varchar(50) DEFAULT NULL,
+  model_pdf 		varchar(255) DEFAULT NULL,
   last_main_doc		varchar(255),					-- relative filepath+filename of last main generated document
-  
+
   fk_multicurrency        integer,
   multicurrency_code      varchar(3),
   multicurrency_tx        double(24,8) DEFAULT 1,
@@ -65,4 +65,3 @@ CREATE TABLE llx_expensereport (
   import_key			varchar(14),
   extraparams			varchar(255)				-- for other parameters with json format
 ) ENGINE=innodb;
-

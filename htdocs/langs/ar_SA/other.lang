@@ -16,6 +16,9 @@ TextPreviousMonthOfInvoice=الشهر السابق (نص) من تاريخ الف
 NextMonthOfInvoice=الشهر التالي (رقم 1-12) من تاريخ الفاتورة
 TextNextMonthOfInvoice=الشهر التالي (نص) من تاريخ الفاتورة
 PreviousMonth=الشهر الماضى
+PreviousYear=Previous year
+NextMonth=Next month
+NextYear=Next year
 CurrentMonth=الشهر الحالي
 ZipFileGeneratedInto=تم إنشاء ملف مضغوط في <b> %s </b>.
 DocFileGeneratedInto=تم إنشاء ملف doc في <b> %s </b>.
@@ -42,7 +45,9 @@ notiftouserandtofixedemail=للمستخدم والبريد الثابت
 Notify_ORDER_VALIDATE=تم التحقق من صحة أمر المبيعات
 Notify_ORDER_SENTBYMAIL=تم إرسال أمر المبيعات بالبريد
 Notify_ORDER_CLOSE=تم تسليم المبيعات طلب
+Notify_ORDER_CANCEL=Sales order canceled
 Notify_ORDER_SUPPLIER_SENTBYMAIL=تم إرسال طلب الشراء عن طريق البريد الإلكتروني
+Notify_ORDER_SUPPLIER_CANCEL=Purchase order canceled
 Notify_ORDER_SUPPLIER_VALIDATE=تم تسجيل أمر الشراء
 Notify_ORDER_SUPPLIER_APPROVE=تمت الموافقة على أمر الشراء
 Notify_ORDER_SUPPLIER_SUBMIT=تم إرسال عملية الشراء طلب
@@ -93,20 +98,20 @@ MaxSize=الحجم الأقصى
 AttachANewFile=إرفاق ملف جديد / وثيقة
 LinkedObject=ربط وجوه
 NbOfActiveNotifications=عدد الإخطارات (عدد رسائل البريد الإلكتروني للمستلم)
-PredefinedMailTest=__(مرحبًا)__\nهذا بريد اختباري تم إرساله إلى __EMAIL__.\nيتم فصل السطور بواسطة حرف إرجاع.\n\n__USER_SIGNATURE__
-PredefinedMailTestHtml=__ (مرحبًا) __ <br> هذا اختبار <b> بريد </b> مرسل إلى __EMAIL__ (يجب أن يكون اختبار الكلمة بالخط العريض). <br> يتم فصل السطور بواسطة حرف إرجاع. <br> <br> __USER_SIGNATURE__
-PredefinedMailContentContract=__(مرحبًا)__\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendInvoice=__(مرحبًا)__\n\nمن فضلك تجد الفاتورة __REF__ مرفقة\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__(مرحبًا)__\n\nنود أن نذكرك أنه يبدو أن الفاتورة __REF__ لم يتم دفعها. تم إرفاق نسخة من الفاتورة كتذكير.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendProposal=__(مرحبًا)__\n\nالرجاء العثور على الاقتراح التجاري __REF__ مرفقًا\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendSupplierProposal=__(مرحبًا)__\n\nيرجى الاطلاع على طلب السعر __REF__ مرفقًا\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendOrder=__(مرحبًا)__\n\nيرجى العثور على الطلب __REF__ مرفقًا\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendSupplierOrder=__(مرحبًا)__\n\nيرجى العثور على طلبنا __REF__ مرفقًا\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__(مرحبًا)__\n\nمن فضلك تجد الفاتورة __REF__ مرفقة\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendShipping=__(مرحبًا)__\n\nيرجى العثور على الشحن __REF__ مرفقًا\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendFichInter=__(مرحبًا)__\n\nيرجى العثور على تدخل __REF__ مرفق\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
+PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe lines are separated by a carriage return.\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailTestHtml=__(Hello)__<br>This is a <b>test</b> mail sent to __EMAIL__ (the word test must be in bold).<br>The lines are separated by a carriage return.<br><br>__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentContract=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached \n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\nWe would like to remind you that the invoice  __REF__ seems to have not been paid. A copy of the invoice is attached as a reminder.\n\n__ONLINE_PAYMENT_TEXT_AND_URL__\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\nPlease find commercial proposal __REF__ attached \n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nPlease find price request __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendOrder=__(Hello)__\n\nPlease find order __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierOrder=__(Hello)__\n\nPlease find our order __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendSupplierInvoice=__(Hello)__\n\nPlease find invoice __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendShipping=__(Hello)__\n\nPlease find shipping __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
+PredefinedMailContentSendFichInter=__(Hello)__\n\nPlease find intervention __REF__ attached\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentLink=يمكنك النقر فوق الارتباط أدناه لإجراء الدفع الخاص بك إذا لم يكن قد تم بالفعل.\n\n%s\n\n
-PredefinedMailContentGeneric=__(مرحبًا)__\n\n\n__(بإخلاص)__\n\n__USER_SIGNATURE__
+PredefinedMailContentGeneric=__(Hello)__\n\n\n__(Sincerely)__\n\n__SENDEREMAIL_SIGNATURE__
 PredefinedMailContentSendActionComm=تذكير الحدث "__EVENT_LABEL__" في __EVENT_DATE__ في __EVENT_TIME__ <br> <br> هذه رسالة تلقائية ، من فضلك لا ترد.
 DemoDesc=Dolibarr هو ERP / CRM مدمج يدعم العديد من وحدات الأعمال. العرض التوضيحي الذي يعرض جميع الوحدات لا معنى له لأن هذا السيناريو لا يحدث أبدًا (تتوفر عدة مئات). لذلك ، تتوفر عدة ملفات تعريف تجريبية.
 ChooseYourDemoProfil=اختر الملف الشخصي التجريبي الذي يناسب احتياجاتك ...
@@ -207,6 +212,7 @@ EMailTextInterventionValidated=التدخل ٪ ق المصادق
 EMailTextInterventionClosed=تم إغلاق التدخل %s.
 EMailTextInvoiceValidated=تم التحقق من صحة الفاتورة %s.
 EMailTextInvoicePayed=تم دفع الفاتورة %s.
+EMailTextInvoiceCanceled=تم إلغاء فاتورة %s.
 EMailTextProposalValidated=تم التحقق من صحة الاقتراح %s.
 EMailTextProposalClosedSigned=تم إغلاق الاقتراح %s وتوقيعه.
 EMailTextProposalClosedSignedWeb=تم إغلاق الاقتراح %s وتوقيعه على صفحة البوابة.
@@ -214,7 +220,9 @@ EMailTextProposalClosedRefused=تم إغلاق الاقتراح %s.
 EMailTextProposalClosedRefusedWeb=تم إغلاق الاقتراح %s على صفحة البوابة.
 EMailTextOrderValidated=تم التحقق من صحة الطلب %s.
 EMailTextOrderClose=تم تسليم طلب %s.
+EMailTextOrderCanceled=تم إلغاء طلب %s.
 EMailTextSupplierOrderApprovedBy=تمت الموافقة على عملية الشراء طلب %s بواسطة %s.
+EMailTextSupplierOrderCanceledBy=Purchase order %s has been canceled by %s.
 EMailTextSupplierOrderValidatedBy=تم تسجيل عملية الشراء طلب %s بواسطة %s.
 EMailTextSupplierOrderSubmittedBy=تم إرسال عملية الشراء طلب %s بواسطة %s.
 EMailTextSupplierOrderRefusedBy=تم رفض عملية الشراء طلب %s بواسطة %s.
@@ -275,6 +283,8 @@ TicketCreatedByEmailCollector=تم إنشاء التذكرة بواسطة جام
 OpeningHoursFormatDesc=استخدم - للفصل بين ساعات الفتح والإغلاق. <br> استخدم مسافة لإدخال نطاقات مختلفة. <br> مثال: 8-12 14-18
 SuffixSessionName=لاحقة لاسم الجلسة
 LoginWith=تسجيل الدخول باستخدام %s
+ObjectId=معرف الكائن
+FullData=بيانات كاملة
 
 ##### Export #####
 ExportsArea=صادرات المنطقة
@@ -292,7 +302,6 @@ WEBSITE_IMAGE=صورة
 WEBSITE_IMAGEDesc=المسار النسبي لوسائط الصورة. يمكنك الاحتفاظ بهذا فارغًا لأنه نادرًا ما يتم استخدامه (يمكن استخدامه بواسطة المحتوى الديناميكي لإظهار صورة مصغرة في قائمة منشورات المدونة). استخدم __WEBSITE_KEY__ في المسار إذا كان المسار يعتمد على اسم موقع الويب (على سبيل المثال: image / __ WEBSITE_KEY __ / stories / myimage.png).
 WEBSITE_KEYWORDS=الكلمات الدالة
 LinesToImport=خطوط للاستيراد
-
 MemoryUsage=استخدام الذاكرة
 RequestDuration=مدة الطلب
 ProductsServicesPerPopularity=المنتجات|الخدمات حسب الشعبية
@@ -303,19 +312,16 @@ PopuCom=المنتجات|الخدمات حسب الشعبية في الطلبا�
 ProductStatistics=المنتجات|إحصاءات الخدمات
 NbOfQtyInOrders=الكمية بالطلبات
 SelectTheTypeOfObjectToAnalyze=حدد كائنًا لعرض الإحصائيات الخاصة به ...
-
 ConfirmBtnCommonContent = هل أنت متأكد أنك تريد "%s"؟
 ConfirmBtnCommonTitle = قم بتأكيد عملك
 CloseDialog = إغلاق
 Autofill = الملء التلقائي
 OrPasteAnURL=أو الصق عنوان URL
-
 # externalsite
 ExternalSiteSetup=إعداد رابط لموقع خارجي
 ExternalSiteURL=رابط موقع خارجي لمحتوى إطار داخلي في لغة توصيف النص التشعبي
 ExternalSiteModuleNotComplete=لم يتم تهيئة نموذج الموقع الخارجي بصورة صحيحة.
 ExampleMyMenuEntry=مُدخل قائمتي
-
 # ftp
 FTPClientSetup=إعداد وحدة FTP أو SFTP Client
 NewFTPClient=إعداد اتصال FTP/SFTP جديد
@@ -325,6 +331,7 @@ SetupOfFTPClientModuleNotComplete=يبدو أن إعداد وحدة عميل FTP
 FTPFeatureNotSupportedByYourPHP=PHP لا يدعم وظائف FTP أو SFTP
 FailedToConnectToFTPServer=فشل الاتصال بالخادم (الخادم %s ، المنفذ %s)
 FailedToConnectToFTPServerWithCredentials=فشل تسجيل الدخول إلى الخادم باستخدام تسجيل الدخول / كلمة المرور المحددة
+FailedToChdirOnFTPServer=فشل في تغيير الدليل على خادم FTP
 FTPFailedToRemoveFile=فشل لإزالة الملف <b>%s</b> .
 FTPFailedToRemoveDir=فشل إزالة الدليل <b> %s </b>: تحقق من الأذونات وأن الدليل فارغ.
 FTPPassiveMode=الوضع السلبي
@@ -336,3 +343,10 @@ FTPFailedToUploadFile=فشل تحميل الملف <b>%s</b>.
 AddFolder=أنشئ مجلد
 FileWasCreateFolder=تم إنشاء المجلد <b>%s</b>
 FTPFailedToCreateFolder=فشل إنشاء المجلد <b>%s</b>.
+SelectADay=حدد يومًا في التقويم
+SelectANewDate=حدد تاريخا جديدا
+EmailContent=Email content
+Pre-Prompt=Pre-prompt
+Post-Prompt=Post-prompt
+AIProcessingPleaseWait=AI (%s) is processing your request, please wait...
+PayOfBankTransferInvoice=You are going to make an online payment for this invoice. However, this invoice has been set up to be paid in "Credit Transfer" mode, so to avoid paying twice, please verify that no current bank transfer has already been initiated before continuing.

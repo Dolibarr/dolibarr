@@ -15,6 +15,10 @@ ListOfBOMs=Faturat materiale - BOM
 ListOfManufacturingOrders=Porositë e prodhimit
 NewBOM=Fatura e re e materialeve
 ProductBOMHelp=Produkt për t'u krijuar (ose çmontuar) me këtë BOM.<br>Shënim: Produktet me vetinë 'Natyra e produktit' = 'Lëndë e parë' nuk janë të dukshme në këtë listë.
+CloneDefBomProduct=Clone the default BOM to use to manufacture the product
+CloneOtherBomsProduct=Clone all BOMs that can be used to manufacture the product
+BOMofRef=BOM of %s
+ErrorProductCloneBom=Error: Failed to clone a BOM
 BOMsNumberingModules=Modelet e numrave BOM
 BOMsModelModule=Modelet e dokumenteve BOM
 MOsNumberingModules=Modelet e numërimit të MO
@@ -47,7 +51,7 @@ DateEndPlannedMo=Data e fundit e planifikuar
 KeepEmptyForAsap=Bosh do të thotë "Sa më shpejt të jetë e mundur"
 EstimatedDuration=Kohëzgjatja e parashikuar
 EstimatedDurationDesc=Kohëzgjatja e parashikuar për të prodhuar (ose çmontuar) këtë produkt duke përdorur këtë BOM
-ConfirmValidateBom=Jeni i sigurt që dëshironi të vërtetoni BOM me referencën <strong>%s<span class='notranslate'>b0a65d071f6f6 > (ju do të jeni në gjendje ta përdorni për të ndërtuar porosi të reja prodhuese)
+ConfirmValidateBom=Are you sure you want to validate the BOM with the reference <strong>%s</strong> (you will be able to use it to build new Manufacturing Orders)
 ConfirmCloseBom=Jeni i sigurt që dëshironi ta anuloni këtë BOM (nuk do të mund ta përdorni më për të ndërtuar porosi të reja prodhimi)?
 ConfirmReopenBom=Jeni i sigurt që dëshironi ta rihapni këtë BOM (do të jeni në gjendje ta përdorni për të krijuar porosi të reja prodhuese)
 StatusMOProduced=Prodhuar
@@ -65,6 +69,8 @@ ToProduce=Të prodhosh
 ToObtain=Për të marrë
 QtyAlreadyConsumed=Sasia e konsumuar tashmë
 QtyAlreadyProduced=Sasia e prodhuar tashmë
+QtyAlreadyConsumedShort=Sasia e konsumuar
+QtyAlreadyProducedShort=Sasia e prodhuar
 QtyRequiredIfNoLoss=Sasia e nevojshme për të prodhuar sasinë e përcaktuar në BOM nëse nuk ka humbje (nëse efikasiteti i prodhimit është 100%%)
 ConsumeOrProduce=Konsumoni ose prodhoni
 ConsumeAndProduceAll=Konsumoni dhe prodhoni të gjitha
@@ -98,9 +104,10 @@ WorkstationSetup = Vendosja e stacioneve të punës
 WorkstationSetupPage = Faqja e konfigurimit të stacioneve të punës
 WorkstationList=Lista e stacioneve të punës
 WorkstationCreate=Shto stacion të ri pune
-ConfirmEnableWorkstation=Jeni të sigurt që dëshironi të aktivizoni stacionin e punës <b>%s<span class='notranslate'></b>?
+NewWorkstation=Stacion i ri pune
+ConfirmEnableWorkstation=Are you sure you want to enable workstation <b>%s</b> ?
 EnableAWorkstation=Aktivizo një stacion pune
-ConfirmDisableWorkstation=Jeni i sigurt që dëshironi të çaktivizoni stacionin e punës <b>%s<span class='notranslate'></b>?
+ConfirmDisableWorkstation=Are you sure you want to disable workstation <b>%s</b> ?
 DisableAWorkstation=Çaktivizo një stacion pune
 DeleteWorkstation=Fshi
 NbOperatorsRequired=Numri i operatorëve të kërkuar
@@ -128,10 +135,8 @@ Manufacturing=Prodhimtaria
 Disassemble=çmontoni
 ProducedBy=Prodhuar nga
 QtyTot=Sasia Total
-
+MOIsClosed=Manufacturing Order is closed
 QtyCantBeSplit= Sasia nuk mund të ndahet
 NoRemainQtyToDispatch=Nuk ka mbetur asnjë sasi për t'u ndarë
-
 THMOperatorEstimatedHelp=Kostoja e vlerësuar e operatorit për orë. Do të përdoret për të vlerësuar koston e një BOM duke përdorur këtë stacion pune.
 THMMachineEstimatedHelp=Kostoja e vlerësuar e makinës për orë. Do të përdoret për të vlerësuar koston e një BOM duke përdorur këtë stacion pune.
-

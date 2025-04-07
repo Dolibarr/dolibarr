@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = Darbā pieņemšana
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = Pārvaldiet un sekojiet personāla atlases kampaņām jaunām darba vietām
-
-#
 # Admin page
-#
 RecruitmentSetup = Personāla atlases iestatīšana
 RecruitmentSetupPage = Šeit ievadiet personāla atlases moduļa galveno opciju iestatīšanu
 RecruitmentArea=Darbā pieņemšanas sadaļa
 PublicInterfaceRecruitmentDesc=Darba publiskās lapas ir publiski vietrāži URL, lai parādītu atvērtās darba vietas un atbildētu uz tām. Katram atklātajam darbam ir viena atšķirīga saite, kas atrodama katrā darba ierakstā.
 EnablePublicRecruitmentPages=Iespējojiet atvērto darbu publiskās lapas
 
-#
-# About page
-#
-RecruitmentAbout = Par darbā pieņemšanu
-RecruitmentAboutPage = Darbā pieņemšana par lapu
 NbOfEmployeesExpected=Paredzamais darbinieku skaits
 JobLabel=Amats
 WorkPlace=Darba vieta
@@ -47,7 +34,6 @@ PositionToBeFilled=Ieņemamais amats
 PositionsToBeFilled=Darba vietas
 ListOfPositionsToBeFilled=Darba vietu saraksts
 NewPositionToBeFilled=Jaunas darba vietas
-
 JobOfferToBeFilled=Aizpildāmā amata vieta
 ThisIsInformationOnJobPosition=Informācija par aizpildāmo darba vietu
 ContactForRecruitment=Kontaktpersona personāla atlasei

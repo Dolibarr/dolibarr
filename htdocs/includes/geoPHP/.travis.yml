@@ -1,0 +1,29 @@
+# docs available at http://docs.travis-ci.com/user/languages/php/
+# example available at https://github.com/travis-ci/travis-ci-php-example
+language: php
+
+before_script:
+  - composer self-update
+
+env: GEOPHP_RUN_TESTS=1
+
+install:
+  - composer install
+  # TODO Install geos library -- as a matrix test
+  # TODO optionally set up a postgis database for testing
+
+script:
+  - cd tests
+  - phpunit --verbose --colors --stderr tests
+  - php test.php
+
+# run tests on the following versions
+php:
+  - 5.6
+  - 5.5
+  - 5.4
+  - 5.3
+  - hhvm
+
+matrix:
+  fast_finish: false

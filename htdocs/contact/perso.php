@@ -1,8 +1,10 @@
 <?php
-/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2021  Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2011	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
 /**
  *       \file       htdocs/contact/perso.php
  *       \ingroup    societe
- *       \brief      Onglet informations personnelles d'un contact
+ *       \brief      Contact personal information tab
  */
 
 // Load Dolibarr environment
@@ -30,10 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'other'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $action = GETPOST('action', 'aZ09');
 
 // Security check
@@ -54,8 +64,8 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 	$ret = $object->fetch($id);
 
 	// Note: Correct date should be completed with location to have exact GM time of birth.
-	$object->birthday = dol_mktime(0, 0, 0, GETPOST("birthdaymonth"), GETPOST("birthdayday"), GETPOST("birthdayyear"));
-	$object->birthday_alert = GETPOST("birthday_alert");
+	$object->birthday = dol_mktime(0, 0, 0, GETPOSTINT("birthdaymonth"), GETPOSTINT("birthdayday"), GETPOSTINT("birthdayyear"));
+	$object->birthday_alert = GETPOSTINT("birthday_alert");
 
 	if (GETPOST('deletephoto')) {
 		$object->photo = '';
@@ -65,7 +75,7 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 	$result = $object->update_perso($id, $user);
 	if ($result > 0) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 		// Logo/Photo save
 		$dir = $conf->societe->dir_output.'/contact/'.get_exdir($object->id, 0, 0, 1, $object, 'contact').'/photos';
@@ -119,12 +129,13 @@ if ($action == 'update' && !GETPOST("cancel") && $user->hasRight('societe', 'con
 
 $now = dol_now();
 
-$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("Contacts") : $langs->trans("ContactsAddresses"));
-if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->lastname) {
+$title = $langs->trans("ContactPersonalData");
+if (getDolGlobalString('MAIN_HTML_TITLE') && preg_match('/contactnameonly/', getDolGlobalString('MAIN_HTML_TITLE')) && $object->lastname) {
 	$title = $object->lastname;
 }
 $help_url = 'EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('', $title, $help_url);
+
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact-card_perso');
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
@@ -135,7 +146,7 @@ $head = contact_prepare_head($object);
 
 if ($action == 'edit') {
 	/*
-	 * Fiche en mode edition
+	 * Card in edit mode
 	 */
 
 	print '<form name="perso" method="POST" enctype="multipart/form-data" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
@@ -213,9 +224,9 @@ if ($action == 'edit') {
 	print ' &nbsp; &nbsp; ';
 	print '<label for="birthday_alert">'.$langs->trans("BirthdayAlert").':</label> ';
 	if (!empty($object->birthday_alert)) {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" checked>';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1" checked>';
 	} else {
-		print '<input type="checkbox" id="birthday_alert" name="birthday_alert">';
+		print '<input type="checkbox" id="birthday_alert" name="birthday_alert" value="1">';
 	}
 	print '</td>';
 	print '</tr>';
@@ -294,8 +305,8 @@ if ($action == 'edit') {
 
 		print ' &nbsp; ';
 		//var_dump($birthdatearray);
-		$ageyear = convertSecondToTime($now - $object->birthday, 'year') - 1970;
-		$agemonth = convertSecondToTime($now - $object->birthday, 'month') - 1;
+		$ageyear = (int) convertSecondToTime($now - $object->birthday, 'year') - 1970;
+		$agemonth = (int) convertSecondToTime($now - $object->birthday, 'month') - 1;
 		if ($ageyear >= 2) {
 			print '('.$ageyear.' '.$langs->trans("DurationYears").')';
 		} elseif ($agemonth >= 2) {

@@ -21,7 +21,7 @@
 
 /**
  *	    \file       htdocs/core/lib/doleditor.lib.php
- *		\brief      Ensemble de fonctions de base pour la gestion des utilisaterus et groupes
+ *		\brief      Ensemble de functions de base pour la gestion des utilisaterus et groups
  */
 
 /**
@@ -53,7 +53,7 @@ function show_skin($fuser, $edit = 0)
 
 	$colspan = 2;
 
-	$thumbsbyrow = 6;
+
 	print '<table class="noborder centpercent">';
 
 	$var = false;

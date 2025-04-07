@@ -1,27 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Paybox modulio nustatymas
-PayBoxDesc=Šis modulis siūlo puslapius, leidžiančius mokėjimą <a href="http://www.paybox.com" target="_blank">Paybox</a> klientams. Tai gali būti naudojama nemokamam mokėjimui arba  tam tikram specifiniam Dolibarr mokėjimui (sąskaitos-faktūros, užskymas, ...)
-FollowingUrlAreAvailableToMakePayments=Sekantys URL siūlo puslapį klientui Dolibarr objektų mokėjimui
-PaymentForm=Mokėjimo forma
-WelcomeOnPaymentPage=Welcome to our online payment service
-ThisScreenAllowsYouToPay=Šis ekranas leidžia atlikti internetinį mokėjimą į %s
-ThisIsInformationOnPayment=Tai informacija apie reikalingą atlikti mokėjimą
-ToComplete=Užbaigti
-YourEMail=E-paštas mokėjimo patvirtinimo gavimui
-Creditor=Kreditorius
-PaymentCode=Mokėjimo kodas
+PayBoxDesc=This module offer pages to allow payment on <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
 PayBoxDoPayment=Pay with Paybox
 YouWillBeRedirectedOnPayBox=Būsite nukreipti į saugų Paybox puslapį kredito kortelės informacijos įvedimui
-Continue=Kitas
 SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Šis puslapis patvirtina, kad jūsų mokėjimas buvo užregistruotas. Ačiū.
 YourPaymentHasNotBeenRecorded=Your payment has NOT been recorded and the transaction has been canceled. Thank you.
-AccountParameter=Sąskaitos parametrai
-UsageParameter=Naudojimo parametrai
-InformationToFindParameters=Padėti rasti savo %s sąskaitos informaciją
 PAYBOX_CGI_URL_V2=Paybox CGI modulio mokėjimams URL
-VendorName=Paravėjo vardas
-CSSUrlForPaymentForm=CSS stiliaus lapo URL mokėjimo formai
 NewPayboxPaymentReceived=Naujas Paybox gautas mokėjimas
 NewPayboxPaymentFailed=Naujas Paybox mokėjimo bandymas, bet nepavykęs
 PAYBOX_PAYONLINE_SENDEMAIL=Email notification after payment attempt (success or fail)

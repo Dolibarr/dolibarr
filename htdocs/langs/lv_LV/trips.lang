@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=Ierakstījis
 AUTHORPAIEMENT=Apmaksājis
 AddTrip=Izveidot izdevumu pārskatu
@@ -13,6 +13,8 @@ byEX_EXP=pēc rindas (ierobežojums līdz %s)
 byEX_MON=pēc mēneša (ierobežojums līdz %s)
 byEX_YEA=pa gadiem (ierobežojums līdz %s)
 CANCEL_USER=Dzēsis
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Konts (no konta plāna), kas pēc noklusējuma tiek izmantots "lietotājiem" izdevumu pārskatos
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=Lietotāja kartē norādītais speciālais konts tiks izmantots tikai Apakšgrāmatas uzskaitei. Šis tiks izmantots Virsgrāmatai, kā arī kā apakšvirsgrāmatas uzskaites noklusējuma vērtība, ja lietotājam nav definēts īpašs grāmatvedības konts.
 CarCategory=Transportlīdzekļa kategorija
 ClassifyRefunded=Klasificēt "atmaksāts"
 CompanyVisited=Apmeklēts uzņēmums / organizācija
@@ -93,7 +95,7 @@ nolimitbyEX_YEA=pa gadiem (bez ierobežojumiem)
 NoTripsToExportCSV=No expense report to export for this period.
 NOT_AUTHOR=Jūs neesat šī izdevumu pārskata autors. Operācija atcelta.
 OnExpense=Izdevumu līnija
-PDFStandardExpenseReports=Standard template to generate a PDF document for expense report
+PDFStandardExpenseReports=Standarta veidne PDF dokumenta ģenerēšanai izdevumu pārskatam
 PaidTrip=Izmaksu pārskats
 REFUSEUR=Aizliedzis
 RangeIk=Nobraukums
@@ -106,7 +108,7 @@ TripId=Id expense report
 TripNDF=Informācijas izdevumu pārskats
 TripSociete=Uzņēmuma informācija
 Trips=Izdevumu atskaites
-TripsAndExpenses=Izdevumu pārskati
+TripsAndExpenses=Izdevumu atskaites
 TripsAndExpensesStatistics=Izdevumu pārskatu statistika
 TypeFees=Maksu veidi
 UploadANewFileNow=Augšupielādējiet jaunu dokumentu tagad
@@ -115,6 +117,10 @@ VALIDOR=Apstiprinājis
 ValidateAndSubmit=Validate and submit for approval
 ValidatedWaitingApproval=Apstiprināts (gaida apstiprinājumu)
 ValideTrip=Apstiprināt izdevumu pārskatu
+ExpenseReportPayments=Izdevumu atskaites maksājumi
+TaxUndefinedForThisCategory = Šai kategorijai nodoklis nav noteikts
+errorComputeTtcOnMileageExpense=Kļūda, aprēķinot nobraukuma izdevumus
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Masu darbībā var dzēst tikai elementus melnraksta statusā
 
 ## Dictionary
 EX_BRE=Brokastis

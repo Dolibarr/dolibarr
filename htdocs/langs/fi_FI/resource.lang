@@ -3,37 +3,36 @@ MenuResourceIndex=Resurssit
 MenuResourceAdd=Uusi resurssi
 DeleteResource=Poista resurssi
 ConfirmDeleteResourceElement=Vahvista tämän elementin resurssin poistaminen
-NoResourceInDatabase=Ei resursseja kielellä tietokanta.
+NoResourceInDatabase=Ei resursseja tietokannassa.
 NoResourceLinked=Ei linkitettyä resurssia
 ActionsOnResource=Tätä resurssia koskevat tapahtumat
 ResourcePageIndex=Resurssiluettelo
 ResourceSingular=Resurssi
-ResourceCard=Resurssikortti
-AddResource=luo resurssi
+ResourceCard=Resurssi
+NewResource=Uusi resurssi
+AddResource=Luo resurssi
 ResourceFormLabel_ref=Resurssin nimi
-ResourceType=Resurssin tyyppi
 ResourceFormLabel_description=Resurssin kuvaus
-
+ResourceType=Resurssin tyyppi
+ResourceTypeID=Resurssin tyyppi koodi
+ResourceTypeLabel=Resurssi tyyppi
 ResourcesLinkedToElement=Elementtiin linkitetyt resurssit
 
 ShowResource=Näytä resurssi
-
-ResourceElementPage=Elementtiresurssit
+ResourceElementPage=Elementin resurssit
 ResourceCreatedWithSuccess=Resurssi luotu onnistuneesti
-RessourceLineSuccessfullyDeleted=Resurssirivin poistaminen onnistui
+RessourceLineSuccessfullyDeleted=Resurssirivi poistettu
 RessourceLineSuccessfullyUpdated=Resurssirivin päivitys onnistui
-ResourceLinkedWithSuccess=Menestykseen liittyvä resurssi
-
-ConfirmDeleteResource=Vahvista tämän resurssin poistaminen
+ResourceLinkedWithSuccess=Resurssi linkitetty onnistuneesti
+ConfirmDeleteResource=Haluatko varmasti poistaa tämän resurssin
 RessourceSuccessfullyDeleted=Resurssi poistettu onnistuneesti
-DictionaryResourceType=Resurssien tyyppi
-
+DictionaryResourceType=Resurssien tyypit
 SelectResource=Valitse resurssi
-
 IdResource=Id-resurssi
 AssetNumber=Sarjanumero
 ResourceTypeCode=Resurssityypin koodi
 ImportDataset_resource_1=Resurssit
-
 ErrorResourcesAlreadyInUse=Jotkut resurssit ovat käytössä
 ErrorResourceUseInEvent=%s käytetty %s tapahtumassa
+MaxUsers=Henkilöiden enimmäismäärä (paikat, istuimet, jne.)
+MaxUsersLabel=Henkilöiden enimmäismäärä

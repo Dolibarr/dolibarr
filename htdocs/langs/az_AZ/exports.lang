@@ -46,10 +46,16 @@ LineLabel=Xəttin etiketi
 LineDescription=Xəttin təsviri
 LineUnitPrice=Xəttin vahid qiyməti
 LineVATRate=Xəttin ƏDV dərəcəsi
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=Xətt üçün kəmiyyət
 LineTotalHT=Məbləğ istisna olmaqla xətt üçün vergi
 LineTotalTTC=Xətt üçün vergi ilə məbləğ
 LineTotalVAT=Xətt üçün ƏDV məbləği
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Xəttin növü (0=məhsul, 1=xidmət)
 FileWithDataToImport=İdxal ediləcək data ilə fayl
 FileToImport=İdxal etmək üçün mənbə faylı
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=İdxal fayl formatı kimi istifadə ediləcək fayl f
 ChooseFileToImport=Faylı yükləyin, sonra faylı mənbə idxal faylı kimi seçmək üçün %s ikonasına klikləyin...
 SourceFileFormat=Mənbə fayl formatı
 FieldsInSourceFile=Mənbə faylındakı sahələr
-FieldsInTargetDatabase=Dolibarr verilənlər bazasında hədəf sahələri (qalın=məcburi)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=Sahə yoxdur
 MoveField=Sahənin sütun nömrəsini köçürün %s
 ExampleOfImportFile=İdxal_faylının_nümunəsi
@@ -76,8 +82,8 @@ NowClickToTestTheImport=Faylınızın fayl formatının (sahə və sətir ayır�
 RunSimulateImportFile=İdxal Simulyasiyasını işə salın
 FieldNeedSource=Bu sahə mənbə fayldan məlumat tələb edir
 SomeMandatoryFieldHaveNoSource=Bəzi məcburi sahələrin məlumat faylından mənbəyi yoxdur
-InformationOnSourceFile=Mənbə faylı haqqında məlumat
-InformationOnTargetTables=Hədəf sahələr haqqında məlumat
+InformationOnSourceFile=Source file
+InformationOnTargetTables=Target fields
 SelectAtLeastOneField=Eksport etmək üçün sahələr sütununda ən azı bir mənbə sahəsini dəyişin
 SelectFormat=Bu idxal fayl formatını seçin
 RunImportFile=Data Import
@@ -87,15 +93,15 @@ ErrorMissingMandatoryValue=<b>%s</b> sütunundakı mənbə faylında məcburi da
 TooMuchErrors=Hələ də <b>%s</b> başqa mənbə xətləri var, lakin çıxışda xəta var məhdudlaşdırılıb.
 TooMuchWarnings=Hələ də <b>%s</b> digər mənbə sətirlərində xəbərdarlıqlar var məhdudlaşdırılıb.
 EmptyLine=Boş sətir (lağ ediləcək)
-CorrectErrorBeforeRunningImport=Siz <b>bütün səhvləri düzəltməlisiniz</b> <b>class'e notranslate'></b></span> qəti idxalı icra edir.
+CorrectErrorBeforeRunningImport=You <b>must</b> correct all errors <b>before</b> running the definitive import.
 FileWasImported=Fayl <b>%s</b> nömrəsi ilə import edilib.
-YouCanUseImportIdToFindRecord=Siz <b>import_key='%s'<span class='notranslate sahəsində filtrasiya edərək verilənlər bazanızdakı bütün idxal edilmiş qeydləri tapa bilərsiniz. '></b></span>.
-NbOfLinesOK=Səhv və xəbərdarlıq olmayan sətirlərin sayı: <b>%s<span class='notranslate'></b></span.
+YouCanUseImportIdToFindRecord=You can find all the imported records in your database by filtering on field <b>import_key='%s'</b>.
+NbOfLinesOK=Number of lines with no errors and no warnings: <b>%s</b>.
 NbOfLinesImported=Uğurla idxal edilən sətirlərin sayı: <b>%s</b>.
 DataComeFromNoWhere=Daxil ediləcək dəyər mənbə faylında heç bir yerdən gəlir.
 DataComeFromFileFieldNb=Daxil ediləcək dəyər mənbə faylındakı <b>%s</b> sütunundan gəlir.
 DataComeFromIdFoundFromRef=Mənbə faylından gələn dəyər istifadə olunacaq əsas obyektin id-sini tapmaq üçün istifadə olunacaq (beləliklə obyekt <b>%s</b> mənbə faylından istinad verilənlər bazasında olmalıdır).
-DataComeFromIdFoundFromCodeId=Mənbə faylından gələn kodun dəyəri istifadə ediləcək əsas obyektin id-sini tapmaq üçün istifadə olunacaq (buna görə də mənbə fayldan olan kod lüğətdə <b><span sinif mövcud olmalıdır) ='notranslate'>%s</span></b>). Qeyd edək ki, id-i bilirsinizsə, kodun yerinə mənbə faylında da istifadə edə bilərsiniz. İdxal hər iki halda işləməlidir.
+DataComeFromIdFoundFromCodeId=The value of code that comes from source file will be used to find the id of the parent object to use (so the code from source file must exist in the dictionary <b>%s</b>). Note that if you know the id, you can also use it in the source file instead of the code. Import should work in both cases.
 DataIsInsertedInto=Mənbə faylından gələn məlumatlar aşağıdakı sahəyə daxil ediləcək:
 DataIDSourceIsInsertedInto=Mənbə faylındakı məlumatlardan istifadə etməklə tapılan əsas obyektin id-si aşağıdakı sahəyə daxil ediləcək:
 DataCodeIDSourceIsInsertedInto=Koddan tapılan ana xəttin id-si aşağıdakı sahəyə daxil ediləcək:
@@ -103,18 +109,18 @@ SourceRequired=Məlumat dəyəri məcburidir
 SourceExample=Mümkün məlumat dəyərinin nümunəsi
 ExampleAnyRefFoundIntoElement=<b>%s</b> elementi üçün hər hansı referans tapıldı
 ExampleAnyCodeOrIdFoundIntoDictionary=Lüğətdə hər hansı kod (və ya id) tapıldı <b>%s</b>
-CSVFormatDesc=<b>Vergüllə Ayrılmış Dəyər</b> fayl formatı (.csv).b0342fccfda19This sahələrin ayırıcı [ <span class='notranslate'>%s ] ilə ayrıldığı mətn faylı formatıdır. Ayırıcı sahə məzmununda tapılarsa, sahə dairəvi simvol ilə yuvarlaqlaşdırılır [ %s ]. Dəyirmi simvoldan qaçmaq üçün qaçış simvolu [ %s ]-dır.
+CSVFormatDesc=<b>Comma Separated Value</b> file format (.csv).<br>This is a text file format where fields are separated by a separator [ %s ]. If separator is found inside a field content, field is rounded by round character [ %s ]. Escape character to escape round character is [ %s ].
 Excel95FormatDesc=<b>Excel</b> fayl formatı (.xls)<br> yerlidir Excel 95 formatı (BIFF5).
 Excel2007FormatDesc=<b>Excel</b> fayl formatı (.xlsx)<br> yerlidir Excel 2007 formatı (SpreadsheetML).
-TsvFormatDesc=<b>Tabdan Ayrılmış Dəyər</b> fayl formatı (.tsv)<span class='notranslate'>b0342fccfdaspan>This is sahələrin tabulator [tab] ilə ayrıldığı mətn faylı formatı.
+TsvFormatDesc=<b>Tab Separated Value</b> file format (.tsv)<br>This is a text file format where fields are separated by a tabulator [tab].
 ExportFieldAutomaticallyAdded=<b>%s</b> sahəsi avtomatik əlavə edildi. Bu, oxşar sətirlərin dublikat qeyd kimi qəbul edilməsinin qarşısını alacaq (bu sahə əlavə edilməklə, bütün sətirlər öz id-lərinə sahib olacaq və fərqli olacaq).
 CsvOptions=CSV format seçimləri
 Separator=Sahə ayırıcı
 Enclosure=Sətir ayırıcı
 SpecialCode=Xüsusi kod
 ExportStringFilter=%% mətndə bir və ya bir neçə simvolu əvəz etməyə imkan verir
-ExportDateFilter=YYYY, YYYYMM, YYYAYA: bir il/ay/gün üzrə filtrlər<br>YYYY+YYYY, YYYYMM+YYYYYMM, YYYYMM+YYYYMMDG: il/ay aralığı üzrə filtrlər span class='notranslate'><br></span> > YYYY, > YYYYMM, > YYYYMMD: bütün sonrakı illər/aylar/günlər üzrə filtrlər<br> < YYYY, Y YYYYMMG: bütün əvvəlki illər/aylar/günlər üzrə filtrlər
-ExportNumericFilter=NNNNN bir dəyər üzrə filtrləyir<br>NNNNN+NNNNN bir sıra dəyərlər üzərində filtrlər<br><span class='notranslate'>b08912a07<ed /span>> NNNNN daha yüksək dəyərlərlə filtrləyir
+ExportDateFilter=YYYY, YYYYMM, YYYYMMDD: filters by one year/month/day<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD: filters over a range of years/months/days<br> > YYYY, > YYYYMM, > YYYYMMDD: filters on all following years/months/days<br> < YYYY, < YYYYMM, < YYYYMMDD: filters on all previous years/months/days
+ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Sətir nömrəsindən başlayaraq idxal edin
 EndAtLineNb=Sətir nömrəsində bitir
 ImportFromToLine=Limit diapazonu (From - To). Məs. başlıq sətirlərini buraxmaq.

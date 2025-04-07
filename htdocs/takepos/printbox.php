@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2018 Andreu Bisquerra	<jove@bisquerra.com>
  * Copyright (C) 2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,12 +43,16 @@ if (!defined('NOREQUIREAJAX')) {
 // Load Dolibarr environment
 require '../main.inc.php'; // Load $user and permissions
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 global $langs, $db;
 
 $langs->loadLangs(array("bills", "cashdesk"));
 
-$facid = GETPOST('facid', 'int');
+$facid = GETPOSTINT('facid');
 
 $action = GETPOST('action', 'aZ09');
 

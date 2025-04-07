@@ -1,26 +1,12 @@
 # Dolibarr language file - Source file is en_US - paybox
 PayBoxSetup=Konfigurimi i modulit PayBox
 PayBoxDesc=Ky modul ofron faqe për të lejuar pagesën në <a href="https://www.paybox.com" target="_blank" rel="noopener noreferrer external">Paybox</a> nga klientët. Kjo mund të përdoret për një pagesë falas ose për një pagesë në një objekt të caktuar Dolibarr (faturë, porosi, ...)
-FollowingUrlAreAvailableToMakePayments=URL-të e mëposhtme janë të disponueshme për t'i ofruar një faqe një klienti për të bërë një pagesë në objektet Dolibarr
-PaymentForm=Mёnyra e pagesёs
-WelcomeOnPaymentPage=Mirë se vini në shërbimin tonë të pagesave në internet
-ThisScreenAllowsYouToPay=Ky ekran ju lejon të bëni një pagesë në internet për %s.
-ThisIsInformationOnPayment=Ky është informacion mbi pagesën që duhet bërë
-ToComplete=Pёr tu plotёsuar
-YourEMail=Email për të marrë konfirmimin e pagesës
-Creditor=Kreditori
-PaymentCode=Kodi i pagesës
 PayBoxDoPayment=Paguani me Paybox
 YouWillBeRedirectedOnPayBox=Do të ridrejtoheni në faqen e sigurt të Paybox për të futur informacionin e kartës së kreditit
-Continue=Tjetri
-SetupPayBoxToHavePaymentCreatedAutomatically=Konfiguro Paybox-in tuaj me url <b>%s<span class='notranslate'></b> automatikisht, kur pagesa të krijohen në</span vërtetuar nga Paybox.
+SetupPayBoxToHavePaymentCreatedAutomatically=Setup your Paybox with url <b>%s</b> to have payment created automatically when validated by Paybox.
 YourPaymentHasBeenRecorded=Kjo faqe konfirmon që pagesa juaj është regjistruar. Faleminderit.
 YourPaymentHasNotBeenRecorded=Pagesa juaj NUK është regjistruar dhe transaksioni është anuluar. Faleminderit.
-AccountParameter=Parametrat e llogarisё
-UsageParameter=Parametrat e përdorimit
-InformationToFindParameters=Ndihmoni për të gjetur informacionin e llogarisë tuaj %s
 PAYBOX_CGI_URL_V2=Url i modulit Paybox CGI për pagesë
-CSSUrlForPaymentForm=URL-ja e fletës së stilit CSS për formularin e pagesës
 NewPayboxPaymentReceived=U mor pagesa e re e Paybox
 NewPayboxPaymentFailed=U përpoq pagesa e re e Paybox, por dështoi
 PAYBOX_PAYONLINE_SENDEMAIL=Njoftimi me email pas përpjekjes për pagesë (sukses ose dështim)

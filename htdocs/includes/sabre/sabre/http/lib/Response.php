@@ -25,7 +25,7 @@ class Response extends Message implements ResponseInterface
         200 => 'OK',
         201 => 'Created',
         202 => 'Accepted',
-        203 => 'Non-Authorative Information',
+        203 => 'Non-Authoritative Information',
         204 => 'No Content',
         205 => 'Reset Content',
         206 => 'Partial Content',
@@ -137,7 +137,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Sets the HTTP status code.
      *
-     * This can be either the full HTTP status code with human readable string,
+     * This can be either the full HTTP status code with human-readable string,
      * for example: "403 I can't let you do that, Dave".
      *
      * Or just the code, in which case the appropriate default message will be
@@ -149,7 +149,7 @@ class Response extends Message implements ResponseInterface
      */
     public function setStatus($status)
     {
-        if (ctype_digit($status) || is_int($status)) {
+        if (is_int($status) || ctype_digit($status)) {
             $statusCode = $status;
             $statusText = self::$statusCodes[$status] ?? 'Unknown';
         } else {

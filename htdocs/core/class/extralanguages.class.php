@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ class ExtraLanguages
 	public $db;
 
 	/**
-	 * @var array New array to store extralanguages definition
+	 * @var array<string,array<string,string>>	New array to store extralanguages definition
 	 */
 	public $attributes;
 
@@ -76,7 +77,7 @@ class ExtraLanguages
 	 *
 	 * 	@param	string		$elementtype		Type of element ('' = all, 'adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...).
 	 * 	@param	boolean		$forceload			Force load of extra fields whatever is status of cache.
-	 * 	@return	array							Array of attributes keys+label for all extra fields.
+	 * 	@return	array<string,array<string,string>>		Array of attributes keys+label for all extra fields.
 	 */
 	public function fetch_name_extralanguages($elementtype, $forceload = false)
 	{
@@ -129,7 +130,7 @@ class ExtraLanguages
 	 * @param  string  $key            			Key of attribute
 	 * @param  string  $value          			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
 	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
-	 * @param  string  $moreparam      			To add more parametes on html input tag
+	 * @param  string  $moreparam      			To add more parameters on html input tag
 	 * @param  string  $keysuffix      			Prefix string to add after name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keyprefix      			Suffix string to add before name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
@@ -149,7 +150,7 @@ class ExtraLanguages
 		$out = '';
 
 		if (!preg_match('/options_$/', $keyprefix)) {	// Because we work on extrafields, we add 'options_' to prefix if not already added
-			$keyprefix = $keyprefix.'options_';
+			$keyprefix .= 'options_';
 		}
 
 		return $out;
@@ -163,7 +164,7 @@ class ExtraLanguages
 	 * @param   string	$value          		Value to show
 	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), function uses the new method to get extrafields data
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @return	string							Formated value
+	 * @return	string							Formatted value
 	 */
 	public function showOutputField($key, $value, $extrafieldsobjectkey, $moreparam = '')
 	{

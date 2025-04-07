@@ -27,7 +27,7 @@ ModuleBuilderDeschooks=Ushbu yorliq kancalarga bag'ishlangan.
 ModuleBuilderDescwidgets=Ushbu yorliq vidjetlarni boshqarish / qurishga bag'ishlangan.
 ModuleBuilderDescbuildpackage=Siz bu erda modulingizning "tarqatishga tayyor" paketli faylini (normalizatsiya qilingan .zip fayli) va "tarqatishga tayyor" hujjat faylini yaratishingiz mumkin. Paket yoki hujjatlar faylini yaratish uchun tugmani bosing.
 EnterNameOfModuleToDeleteDesc=Siz modulingizni o'chirib tashlashingiz mumkin. OGOHLANTIRISH: Modulning barcha kodlash fayllari (qo'lda yaratilgan yoki yaratilgan) VA tuzilgan ma'lumotlar va hujjatlar o'chiriladi!
-EnterNameOfObjectToDeleteDesc=You can delete an object. WARNING: All coding files (generated or created manually) related to the object will be deleted!
+EnterNameOfObjectToDeleteDesc=Ob'ektni o'chirishingiz mumkin. OGOHLANTIRISH: Ob'ektga tegishli barcha kodlash fayllari (qo'lda yaratilgan yoki yaratilgan) o'chiriladi!
 DangerZone=Xavfli hudud
 BuildPackage=Paket yaratish
 BuildPackageDesc=Siz o'zingizning arizangizning zip paketini yaratishingiz mumkin, shunda siz uni har qanday Dolibarr-da tarqatishga tayyor bo'lasiz. Siz uni tarqatishingiz yoki <a href="https://www.dolistore.com"> kabi bozorda sotishingiz mumkin DoliStore.com </a>.
@@ -94,7 +94,7 @@ SeeExamples=Bu erda misollarni ko'ring
 EnabledDesc=Bu maydonni faollashtirish sharti.<br><br>Misollar:<br>1<br>isModEnabled('anothermodule')<br>getDolGlobalString('MYMODULE_OPTION')==2
 VisibleDesc=Maydon ko'rinadimi? (Misollar: 0=Hech qachon koʻrinmaydi, 1=Roʻyxatda koʻrinadi va shakllarni yaratish/yangilash/koʻrish, 2=Faqat roʻyxatda koʻrinadi, 3=Faqat shakl yaratish/yangilash/koʻrishda koʻrinadi (roʻyxatlarda emas), 4=Roʻyxatlarda koʻrinadi va faqat shaklni yangilash/ko‘rish (yaratmaydi), 5=Ro‘yxatda ko‘rinadi va forma faqat ko‘rinadi (yaratmaydi, yangilanmaydi).<br><br> Salbiy qiymatdan foydalanish, bu maydon sukut boʻyicha roʻyxatda koʻrsatilmaydi, lekin koʻrish uchun tanlanishi mumkin).
 ItCanBeAnExpression=Bu ifoda bo'lishi mumkin. Misol:<br>preg_match('/public/', $_SERVER['PHP_SELF'])?0:1<br>$user ->hasRight('holiday', 'define_holiday')?1:5
-DisplayOnPdfDesc=Bu maydonni mos keluvchi PDF hujjatlarida ko‘rsating, siz “Joylashuv” maydoni bilan joylashuvni boshqarishingiz mumkin.<br><strong>Hujjat uchun:</strong><br>0 = ko'rsatilmaydi <br>1 = displey<spante class='translate ><br></span>2 = faqat bo'sh bo'lmasa ko'rsatish<br><br>b09b784 span>Hujjat qatorlari uchun:<span class='notranslate'></strong><br>0 = koʻrsatilmagan <br> = ustunda ko'rsatiladi<br>3 = tavsifdan keyin satr tavsifi ustunida ko'rsatiladi<br>4 = tavsifdan keyin tavsif ustunida ko'rsatiladi faqat bo'sh bo'lmasa
+DisplayOnPdfDesc=Display this field on compatible PDF documents, you can manage position with "Position" field.<br><strong>For document :</strong><br>0 = not displayed <br>1 = display<br>2 = display only if not empty<br><br><strong>For document lines :</strong><br>0 = not displayed <br>1 = displayed in a column<br>3 = display in line description column after the description<br>4 = display in description column after the description only if not empty
 DisplayOnPdf=PDF formatida
 IsAMeasureDesc=Jami ro'yxatga kiritish uchun maydon qiymatini yig'ish mumkinmi? (Masalan: 1 yoki 0)
 SearchAllDesc=Ushbu maydon tezkor qidiruv vositasidan qidirish uchun foydalaniladimi? (Masalan: 1 yoki 0)
@@ -148,7 +148,7 @@ CSSListClass=Ro'yxat uchun CSS
 NotEditable=Tahrirlash mumkin emas
 ForeignKey=Chet el kaliti
 ForeignKeyDesc=Agar ushbu maydonning qiymati boshqa jadvalda mavjudligi kafolatlangan bo'lsa. Bu yerga mos qiymat sintaksisini kiriting: tablename.parentfieldtocheck
-TypeOfFieldsHelp=Misol:<br>varchar(99)<br>elektron pochta<br>telefon ='notranslate'><br></span>ip<br>url<br>parol<span class='notranslate4'b>b span>double(24,8)<br>real<br>matn<br> <span class='notranslate'><br>date<br>datetime<br>vaqt tamg'asi<span'trans'no'no <br></span>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]ccb01<br>'1' yozuv yaratish uchun kombinatsiyadan keyin + tugmasi qo'shilganligini bildiradi<br>'filtr Universal filtr sintaksisi sharti, misol: '((status:=:1) VA (fk_user:=:__USER_ID__) AND (obyekt:IN:(__SHARED_ENTITIES__))'
+TypeOfFieldsHelp=Example:<br>varchar(99)<br>email<br>phone<br>ip<br>url<br>password<br>double(24,8)<br>real<br>text<br>html<br>date<br>datetime<br>timestamp<br>integer<br>integer:ClassName:relativepath/to/classfile.class.php[:1[:filter]]<br><br>'1' means we add a + button after the combo to create the record<br>'filter' is an Universal Filter syntax condition, example: '((status:=:1) AND (fk_user:=:__USER_ID__) AND (entity:IN:(__SHARED_ENTITIES__))'
 TypeOfFieldsHelpIntro=Bu maydon/atributning turi.
 AsciiToHtmlConverter=Ascii-dan HTML-ga o'zgartiruvchi
 AsciiToPdfConverter=Ascii-dan PDF-ga o'tkazuvchi
@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=Ruxsat muvaffaqiyatli qo'shildi
 MenuDeletedSuccessfuly=Menyu muvaffaqiyatli o'chirildi
 MenuAddedSuccessfuly=Menyu muvaffaqiyatli qo'shildi
 MenuUpdatedSuccessfuly=Menyu muvaffaqiyatli yangilandi
+AddAPIsForThisObject=Add APIs for this object
 ApiObjectDeleted=%s obyekti uchun API muvaffaqiyatli o‘chirildi
 CRUDRead=O'qing
 CRUDCreateWrite=Yarating yoki yangilang
@@ -180,9 +181,9 @@ FailedToAddCodeIntoDescriptor=Deskriptorga kod qo‘shib bo‘lmadi. Faylda “%
 DictionariesCreated=<b>%s</b> lug'ati muvaffaqiyatli yaratildi.
 DictionaryDeleted=<b>%s</b> lug'ati olib tashlandi.
 PropertyModuleUpdated=<b>%s</b> mulki muvaffaqiyatli yangilandi
-InfoForApiFile=* Faylni birinchi marta yaratganingizda, har bir obyekt uchun barcha usullar <strong> yaratiladi.</strong><br>* <strong>oʻchirishni bosganingizda</strong> ni bosganingizda, <span sinfi uchun barcha usullarni olib tashlaysiz. ='notranslate'><strong></span>tanlangan obyekt</strong>.
+InfoForApiFile=* When you generate file for the first time then all methods will be created <strong>for each object.</strong><br>* When you click in <strong>remove</strong> you just remove all methods for the <strong>selected object</strong>.
 SetupFile=Modulni sozlash sahifasi
-EmailingSelectors=Emails selectors
+EmailingSelectors=Elektron pochta selektorlari
 EmailingSelectorDesc=Ommaviy elektron pochta moduli uchun yangi elektron maqsadli tanlovchilarni taqdim etish uchun sinf fayllarini bu yerda yaratishingiz va tahrirlashingiz mumkin
 EmailingSelectorFile=Elektron pochta selektor fayli
 NoEmailingSelector=Elektron pochtani tanlash fayli yo'q

@@ -295,8 +295,8 @@ CurrencyXPF=CFP Frants
 CurrencySingXPF=CFP franki
 CurrencyCentEUR=sent
 CurrencyCentSingEUR=sent
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=minginchi
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

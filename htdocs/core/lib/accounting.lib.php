@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013-2021 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2014      Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2019      Eric Seigne          <eric.seigne@cap-rel.fr>
- * Copyright (C) 2021      Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2014       Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2019       Eric Seigne             <eric.seigne@cap-rel.fr>
+ * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,14 +31,14 @@
  *	Check if a value is empty with some options
  *
  * @author	Michael - https://www.php.net/manual/fr/function.empty.php#90767
- * @param	mixed		$var			Value to test
- * @param	int|null	$allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
- * @param	int|null	$allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
+ * @param	?mixed		$var			Value to test
+ * @param	boolean     $allow_false 	Setting this to true will make the function consider a boolean value of false as NOT empty. This parameter is false by default.
+ * @param	boolean     $allow_ws 		Setting this to true will make the function consider a string with nothing but white space as NOT empty. This parameter is false by default.
  * @return	boolean				  		True of False
  */
 function is_empty($var, $allow_false = false, $allow_ws = false)
 {
-	if (!isset($var) || is_null($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && is_bool($var) && $var === false) || (is_array($var) && empty($var))) {
+	if (is_null($var) || !isset($var) || ($allow_ws == false && trim($var) == "" && !is_bool($var)) || ($allow_false === false && $var === false) || (is_array($var) && empty($var))) {
 		return true;
 	}
 	return false;
@@ -47,7 +48,7 @@ function is_empty($var, $allow_false = false, $allow_ws = false)
  *	Prepare array with list of tabs
  *
  *	@param	AccountingAccount	$object		Accounting account
- *	@return	array				Array of tabs to show
+ *	@return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function accounting_prepare_head(AccountingAccount $object)
 {
@@ -93,8 +94,6 @@ function clean_account($account)
  */
 function length_accountg($account)
 {
-	global $conf;
-
 	if ($account < 0 || is_empty($account)) {
 		return '';
 	}
@@ -169,18 +168,19 @@ function length_accounta($accounta)
  *	Show header of a page used to transfer/dispatch data in accounting
  *
  *	@param	string				$nom            Name of report
- *	@param 	string				$variante       Link for alternate report
+ *	@param 	string				$variant        Link for alternate report
  *	@param 	string				$period         Period of report
  *	@param 	string				$periodlink     Link to switch period
  *	@param 	string				$description    Description
  *	@param 	integer	            $builddate      Date of generation
  *	@param 	string				$exportlink     Link for export or ''
- *	@param	array				$moreparam		Array with list of params to add into form
+ *	@param	array<string,mixed>	$moreparam		Array with list of params to add into hidden fields of form
  *	@param	string				$calcmode		Calculation mode
  *  @param  string              $varlink        Add a variable into the address of the page
+ *	@param	array<string,mixed>	$moreoptions	Array with list of params to add to table
  *	@return	void
  */
-function journalHead($nom, $variante, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '')
+function journalHead($nom, $variant, $period, $periodlink, $description, $builddate, $exportlink = '', $moreparam = array(), $calcmode = '', $varlink = '', $moreoptions = array())
 {
 	global $langs;
 
@@ -218,14 +218,14 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	if ($calcmode) {
 		print '<tr>';
 		print '<td>'.$langs->trans("CalculationMode").'</td>';
-		if (!$variante) {
+		if (!$variant) {
 			print '<td colspan="3">';
 		} else {
 			print '<td>';
 		}
 		print $calcmode;
-		if ($variante) {
-			print '</td><td colspan="2">'.$variante;
+		if ($variant) {
+			print '</td><td colspan="2">'.$variant;
 		}
 		print '</td>';
 		print '</tr>';
@@ -254,6 +254,15 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 	print '<td colspan="3">'.$description.'</td>';
 	print '</tr>';
 
+
+	// more options
+	foreach ($moreoptions as $key => $value) {
+		print '<tr>';
+		print '<td>'.$langs->trans($key).'</td>';
+		print '<td colspan="3">'.$value.'</td>';
+		print '</tr>';
+	}
+
 	print '</table>';
 
 	print dol_get_fiche_end();
@@ -268,7 +277,7 @@ function journalHead($nom, $variante, $period, $periodlink, $description, $build
 /**
  * Return Default dates for transfer based on periodicity option in accountancy setup
  *
- * @return	array		Dates of periodicity by default
+ * @return array{date_start:int,date_end:int,pastmonthyear:int,pastmonth:int}	Dates of periodicity by default
  */
 function getDefaultDatesForTransfer()
 {
@@ -286,16 +295,16 @@ function getDefaultDatesForTransfer()
 		$sql .= " WHERE date_start < '".$db->idate(dol_now())."' AND date_end > '".$db->idate(dol_now())."'";
 		$sql .= $db->plimit(1);
 		$res = $db->query($sql);
-		if ($res->num_rows > 0) {
+		if ($db->num_rows($res) > 0) {
 			$obj = $db->fetch_object($res);
 
 			$date_start = $db->jdate($obj->date_start);
 			$date_end = $db->jdate($obj->date_end);
 		} else {
 			$month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1);
-			$year_start = dol_print_date(dol_now(), '%Y');
-			if ($month_start > dol_print_date(dol_now(), '%m')) {
-				$year_start = $year_start - 1;
+			$year_start = (int) dol_print_date(dol_now(), '%Y');
+			if ($month_start > (int) dol_print_date(dol_now(), '%m')) {
+				$year_start -= 1;
 			}
 			$year_end = $year_start + 1;
 			$month_end = $month_start - 1;
@@ -323,7 +332,6 @@ function getDefaultDatesForTransfer()
 			$pastmonthyear--;
 		}
 	}
-
 	return array(
 		'date_start' => $date_start,
 		'date_end' => $date_end,
@@ -333,41 +341,58 @@ function getDefaultDatesForTransfer()
 }
 
 /**
- * Get current period of fiscal year
+ * 	Get current period of fiscal year?
  *
- * @param 	DoliDB		$db				Database handler
- * @param 	stdClass	$conf			Config
- * @param 	int 		$from_time		[=null] Get current time or set time to find fiscal period
- * @return 	array		Period of fiscal year : [date_start, date_end]
+ * 	@param 	DoliDB		$db					Database handler
+ * 	@param 	Conf		$conf				Config
+ * 	@param 	?int 		$from_time			[=null] Get current time or set time to find fiscal period
+ *	@param	'tzserver'|'gmt'	$gm			'gmt' => we return GMT timestamp (recommended), 'tzserver' => we return in the PHP server timezone
+ * 	@param	int			$withenddateonly	Do not return period if end date is not defined
+ * 	@return array{date_start:int,date_end:int}	Period of fiscal year : [date_start, date_end]
  */
-function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
+function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null, $gm = 'tzserver', $withenddateonly = 1)
 {
 	$now = dol_now();
 	$now_arr = dol_getdate($now);
 	if ($from_time === null) {
 		$from_time = $now;
+	} else {
+		$now_arr = dol_getdate($from_time);
 	}
-	$from_db_time = $db->idate($from_time);
 
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+	// Take the first period found
 	$sql  = "SELECT date_start, date_end FROM ".$db->prefix()."accounting_fiscalyear";
-	$sql .= " WHERE date_start <= '".$db->escape($from_db_time)."' AND date_end >= '".$db->escape($from_db_time)."'";
+	$sql .= " WHERE date_start <= '".$db->idate($from_time, $gm)."'";
+	if ($withenddateonly) {
+		$sql .= " AND (date_end >= '".$db->idate($from_time, $gm)."')";
+	} else {
+		$sql .= " AND (date_end >= '".$db->idate($from_time, $gm)."' OR date_end IS NULL)";
+	}
+	//$sql .= " AND statut = 0"
+	$sql .= " AND entity IN (".getEntity('accounting_fiscalyear').")";
 	$sql .= $db->order('date_start', 'DESC');
 	$sql .= $db->plimit(1);
+
 	$res = $db->query($sql);
+
 	if ($db->num_rows($res) > 0) {
+		// If found
 		$obj = $db->fetch_object($res);
 
-		$date_start = $db->jdate($obj->date_start);
-		$date_end = $db->jdate($obj->date_end);
+		$date_start = $db->jdate($obj->date_start, $gm);
+		$date_end = dol_get_last_hour($db->jdate($obj->date_end, $gm), $gm);
 	} else {
+		// If not found, we generate a period
 		$month_start = 1;
-		$conf_fiscal_month_start = (int) $conf->global->SOCIETE_FISCAL_MONTH_START;
+		$conf_fiscal_month_start = getDolGlobalInt('SOCIETE_FISCAL_MONTH_START');
 		if ($conf_fiscal_month_start >= 1 && $conf_fiscal_month_start <= 12) {
 			$month_start = $conf_fiscal_month_start;
 		}
 		$year_start = $now_arr['year'];
 		if ($conf_fiscal_month_start > $now_arr['mon']) {
-			$year_start = $year_start - 1;
+			$year_start -= 1;
 		}
 		$year_end = $year_start + 1;
 		$month_end = $month_start - 1;
@@ -375,8 +400,8 @@ function getCurrentPeriodOfFiscalYear($db, $conf, $from_time = null)
 			$month_end = 12;
 			$year_end--;
 		}
-		$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
-		$date_end = dol_get_last_day($year_end, $month_end);
+		$date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start, $gm);
+		$date_end = dol_get_last_day($year_end, $month_end, $gm);
 	}
 
 	return array(

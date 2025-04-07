@@ -11,7 +11,8 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 
 /*
@@ -203,6 +204,10 @@ a.timeline-btn:hover
 .timeline-badge-date{
 	background-color: #0073b7 !important;
 	color: #fff !important;
+}
+
+.timeline-item .messaging-title {
+	word-break: break-all;
 }
 
 .timeline-documents-container{

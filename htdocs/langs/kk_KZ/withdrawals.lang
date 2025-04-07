@@ -39,7 +39,6 @@ WithdrawalsSetup=Тікелей дебеттік төлемді реттеу
 CreditTransferSetup=Несие аударымын реттеу
 WithdrawStatistics=Тікелей дебеттік төлем статистикасы
 CreditTransferStatistics=Несие аударымдарының статистикасы
-Rejects=Бас тартады
 LastWithdrawalReceipt=Соңғы %s тікелей дебеттік түсімдер
 MakeWithdrawRequest=Тікелей дебеттік төлем туралы өтініш жасаңыз
 MakeWithdrawRequestStripe=Stripe арқылы тікелей дебеттік төлем сұрауын жасаңыз
@@ -47,7 +46,7 @@ MakeBankTransferOrder=Несие аудару туралы өтініш жаса
 WithdrawRequestsDone=%s тікелей дебет бойынша төлем сұраулары жазылды
 BankTransferRequestsDone=%s несие аудару сұраныстары жазылды
 ThirdPartyBankCode=Үшінші тараптың банк коды
-NoInvoiceCouldBeWithdrawed=Ешбір шот-фактура сәтті өңделмеді. Шот-фактуралардың жарамды IBAN нөмірі бар компанияларда екенін және IBAN-да <strong>%s< режимі бар UMR (бірегей мандат анықтамасы) бар екенін тексеріңіз. span class='notranslate'></strong></span>.
+NoInvoiceCouldBeWithdrawed=No invoice processed successfully. Check that invoices are on companies with a valid IBAN and that IBAN has a UMR (Unique Mandate Reference) with mode <strong>%s</strong>.
 NoInvoiceCouldBeWithdrawedSupplier=Ешбір шот-фактура сәтті өңделмеді. Шот-фактуралардың жарамды IBAN нөмірі бар компанияларда екенін тексеріңіз.
 NoSalariesCouldBeWithdrawed=Ешбір жалақы сәтті өңделмеді. Жарамды IBAN бар пайдаланушылардың жалақысы екенін тексеріңіз.
 WithdrawalCantBeCreditedTwice=Бұл шығыс түбіртегі есептелген деп белгіленді; бұл екі рет жасалуы мүмкін емес, себебі бұл қайталанатын төлемдер мен банктік жазбаларды тудыруы мүмкін.
@@ -171,4 +170,3 @@ SalaryWaitingWithdraw=Несие аудару арқылы төлеуді күт
 RefSalary=Жалақы
 NoSalaryInvoiceToWithdraw='%s' күтетін жалақы жоқ. Сұрау жасау үшін жалақы картасындағы '%s' қойындысына өтіңіз.
 SalaryInvoiceWaitingWithdraw=Несие аудару арқылы төлеуді күткен жалақы
-

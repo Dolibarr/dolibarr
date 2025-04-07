@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 1
-        
+
     - name: Version PHP
       run: |
         php -i | head -
@@ -38,14 +38,14 @@ jobs:
         sudo composer self-update 2.2.18
         sudo chmod -R a+rwx /home/runner
         composer -n config -g vendor-dir htdocs/includes
-        
+
         sudo add-apt-repository -y ppa:ondrej/php
         sudo apt-get update
         sudo apt-get install -y pgloader memcached
         sudo apt install apache2 php8.1 php8.1-cli php8.1-curl php8.1-mysql php8.1-pgsql php8.1-gd php8.1-imap php8.1-intl php8.1-ldap php8.1-xml php8.1-mbstring php8.1-xml php8.1-zip libapache2-mod-php8.1
         sudo update-alternatives --set php /usr/bin/php8.1
         php -i | head -
-        
+
         cd $GITHUB_WORKSPACE
         ls $GITHUB_WORKSPACE
         composer -n require --ignore-platform-reqs phpunit/phpunit ^8 \
@@ -56,7 +56,7 @@ jobs:
         sudo rm -fr htdocs/includes/phpunit/php-code-coverage/src/Report/Html
 
     - name: Adding path of binaries tools installed by composer to the PATH
-      run: | 
+      run: |
         export PATH="$GITHUB_WORKSPACE/htdocs/includes/bin:$PATH"
         echo $PATH
         # We must have a directory bin created by the previous composer call
@@ -87,26 +87,26 @@ jobs:
         psql --version
         echo "Check pgloader version"
         pgloader --version
-        
+
     - name: Create database
       run: |
         pwd
-        echo GITHUB_WORKSPACE = $GITHUB_WORKSPACE 
+        echo GITHUB_WORKSPACE = $GITHUB_WORKSPACE
         sudo apt-get install -y mysql-client
         mysql --version | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SELECT VERSION();"  | head -
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "SHOW DATABASES"
-        
+
         echo "Drop and create database"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'DROP DATABASE IF EXISTS travis;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE DATABASE IF NOT EXISTS travis CHARACTER SET = 'utf8';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e "CREATE USER 'travis'@'127.0.0.1' IDENTIFIED BY 'password';"
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'GRANT ALL PRIVILEGES ON travis.* TO travis@127.0.0.1;'
         mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -e 'FLUSH PRIVILEGES;'
-        
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql  
 
-        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';" 
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
+
+        mysql --host 127.0.0.1 --port 32574 -uroot -ppassword -D travis -e "UPDATE llx_const set value = '0666' WHERE name = 'MAIN_UMASK';"
 
     - name: Generate Dolibarr conf file
       run: |
@@ -145,7 +145,7 @@ jobs:
         echo '$'force_install_mainforcehttps=false';' >> $INSTALL_FORCED_FILE
         echo '$'force_install_main_data_root=\'/var/www/html\'';' >> $INSTALL_FORCED_FILE
         cat $INSTALL_FORCED_FILE
-    
+
     - name: Create document directory
       run: |
         echo "Create documents directory and set permissions"
@@ -154,9 +154,9 @@ jobs:
         sudo chmod -R a+rwx /var/www/html/documents
         sudo echo "***** First line of dolibarr.log" > /var/www/html/documents/dolibarr.log
         sudo chmod a+rwx /var/www/html/documents/dolibarr.log
-  
+
     - name: Copy app into /var/www
-      run: | 
+      run: |
         sudo cp -r $GITHUB_WORKSPACE/htdocs/. /var/www/html
         sudo mv /var/www/html/index.html /var/www/html/index.disabled.html
         sudo ln -fs /var/www/html /var/www/htdocs
@@ -172,7 +172,7 @@ jobs:
         a2query -s
         a2query -m
         ls /etc/apache2/sites-available
-        #sudo cp -f $GITHUB_WORKSPACE/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
+        #sudo cp -f $GITHUB_WORKSPACE/dev/build/travis-ci/apache-githubaction.conf /etc/apache2/sites-available/000-default.conf
         #sudo sed -e "s?%GITHUB_WORKSPACE%?$(pwd)?g" --in-place /etc/apache2/sites-available/000-default.conf
         a2ensite 000-default
         a2enmod php8.1
@@ -200,7 +200,7 @@ jobs:
         # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
         wget -O - --debug http://127.0.0.1 > $GITHUB_WORKSPACE/test.html 2>&1
         head -n 200 $GITHUB_WORKSPACE/test.html
-        
+
         echo Logs are...
         #sudo cat /tmp/install.log
         sudo cat /var/log/apache2/access.log
@@ -274,17 +274,17 @@ jobs:
         php upgrade.php 17.0.0 18.0.0 ignoredbversion > $GITHUB_WORKSPACE/upgrade17001800.log
         php upgrade2.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-2.log
         php step5.php 17.0.0 18.0.0 > $GITHUB_WORKSPACE/upgrade17001800-3.log
-        
+
     - name: Result of migration scripts
       if: always()
       run: |
         ls -alrt $GITHUB_WORKSPACE/
-        
+
         echo Show content of last file
         cat "$(ls -rt $GITHUB_WORKSPACE/ | tail -n1)"
 
     - name: Enabling new modules
-      run: | 
+      run: |
         # Enable modules not enabled into original dump
         set -e
         cd /var/www/html/install
@@ -311,7 +311,7 @@ jobs:
         includes/bin/phpunit -d memory_limit=-1 -c /var/www/test/phpunit/phpunittest.xml /var/www/test/phpunit/AllTests.php
         phpunitresult=$?
         echo "Phpunit return code = $phpunitresult"
-        set +e     
+        set +e
 
     - name: Code quality check - Lint
       if: github.event_name == 'push'
@@ -325,10 +325,9 @@ jobs:
     - name: Code quality check - phpcs
       if: github.event_name == 'push'
       run: |
-         htdocs/includes/bin/phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;     
+         htdocs/includes/bin/phpcs -s -p -d memory_limit=-1 --extensions=php --colors --tab-width=4 --standard=dev/setup/codesniffer/ruleset.xml --encoding=utf-8 --runtime-set ignore_warnings_on_exit true .;
 
     - name: Code quality check - var-dump-check
       if: github.event_name == 'push'
       run: |
         htdocs/includes/bin/var-dump-check --extensions php --tracy --exclude htdocs/includes --exclude test/ --exclude htdocs/public/test/ --exclude htdocs/core/lib/functions.lib.php .
-

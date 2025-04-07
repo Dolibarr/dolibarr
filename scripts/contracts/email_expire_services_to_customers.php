@@ -1,9 +1,11 @@
 #!/usr/bin/env php
 <?php
 /*
- * Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005-2013 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2013 Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2005       Rodolphe Quiedeville  	<rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2013  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2013       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2024	    Frédéric France		    <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +39,7 @@ $path = __DIR__.'/';
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') {
 	echo "Error: You are using PHP for CGI. To execute ".$script_file." from command line, you must use PHP for CLI mode.\n";
-	exit(-1);
+	exit(1);
 }
 
 if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm')) || !in_array($argv[2], array('thirdparties', 'contacts'))) {
@@ -47,13 +49,21 @@ if (!isset($argv[1]) || !$argv[1] || !in_array($argv[1], array('test', 'confirm'
 	print "If you choose 'test' mode, no emails are sent.\n";
 	print "If you add param delay (nb of days), only services with expired date < today + delay are included.\n";
 	print "If you add param after (nb of days), only services with expired date >= today + delay are included.\n";
-	exit(-1);
+	exit(1);
 }
 $mode = $argv[1];
 $targettype = $argv[2];
 
 require $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array('main', 'contracts'));
 
@@ -61,13 +71,16 @@ $langs->loadLangs(array('main', 'contracts'));
 $version = DOL_VERSION;
 $error = 0;
 
+$hookmanager->initHooks(array('cli'));
+
+
 /*
  * Main
  */
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-dol_syslog($script_file." launched with arg ".join(',', $argv));
+dol_syslog($script_file." launched with arg ".implode(',', $argv));
 
 $now = dol_now('tzserver');
 $duration_value = isset($argv[3]) ? $argv[3] : 'none';
@@ -94,10 +107,10 @@ $sql .= ", ".MAIN_DB_PREFIX."contratdet AS cd";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product AS p ON p.rowid = cd.fk_product";
 $sql .= " WHERE s.rowid = c.fk_soc AND c.rowid = cd.fk_contrat AND c.statut > 0 AND cd.statut < 5";
 if (is_numeric($duration_value2)) {
-	$sql .= " AND cd.date_fin_validite >= '".$db->idate(dol_time_plus_duree($now, $duration_value2, "d"))."'";
+	$sql .= " AND cd.date_fin_validite >= '".$db->idate(dol_time_plus_duree($now, (int) $duration_value2, "d"))."'";
 }
 if (is_numeric($duration_value)) {
-	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, $duration_value, "d"))."'";
+	$sql .= " AND cd.date_fin_validite < '".$db->idate(dol_time_plus_duree($now, (int) $duration_value, "d"))."'";
 }
 if ($targettype == 'contacts') {
 	$sql .= " AND s.rowid = sp.fk_soc";
@@ -149,7 +162,7 @@ if ($resql) {
 			if ($startbreak) {
 				// Break onto sales representative (new email or cid)
 				if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) {
-					sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+					sendEmailToCustomer($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget, (int) $duration_value);
 					$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 				} else {
 					if ($oldemail != 'none') {
@@ -200,10 +213,10 @@ if ($resql) {
 			$i++;
 		}
 
-		// Si il reste des envois en buffer
+		// If there are remaining messages to send in the buffer
 		if ($foundtoprocess) {
 			if (dol_strlen($oldemail) && $oldemail != 'none' && empty($trackthirdpartiessent[$oldsid.'|'.$oldemail])) { // Break onto email (new email)
-				sendEmailTo($mode, $oldemail, $message, $total, $oldlang, $oldtarget, $duration_value);
+				sendEmailToCustomer($mode, $oldemail, $message, price2num($total), $oldlang, $oldtarget, (int) $duration_value);
 				$trackthirdpartiessent[$oldsid.'|'.$oldemail] = 'contact id '.$oldcid;
 			} else {
 				if ($oldemail != 'none') {
@@ -224,7 +237,7 @@ if ($resql) {
 	dol_print_error($db);
 	dol_syslog("email_expire_services_to_customers.php: Error");
 
-	exit(-1);
+	exit(1);
 }
 
 /**
@@ -239,7 +252,7 @@ if ($resql) {
  * @param int 		$duration_value		duration value
  * @return int 							Int <0 if KO, >0 if OK
  */
-function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
+function sendEmailToCustomer($mode, $oldemail, $message, $total, $userlang, $oldtarget, $duration_value)
 {
 	global $conf, $langs;
 
@@ -254,9 +267,9 @@ function sendEmailTo($mode, $oldemail, $message, $total, $userlang, $oldtarget, 
 
 	if ($duration_value) {
 		if ($duration_value > 0) {
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", $duration_value);
+			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDuration", (string) $duration_value);
 		} else {
-			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", $duration_value);
+			$title = $newlangs->transnoentities("ListOfServicesToExpireWithDurationNeg", (string) $duration_value);
 		}
 	} else {
 		$title = $newlangs->transnoentities("ListOfServicesToExpire");

@@ -1,4 +1,6 @@
-<?php declare (strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Sabre\Event;
 
@@ -9,11 +11,10 @@ namespace Sabre\Event;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Version {
-
+class Version
+{
     /**
-     * Full version number
+     * Full version number.
      */
-    const VERSION = '5.0.0';
-
+    const VERSION = '5.1.4';
 }

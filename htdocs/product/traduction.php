@@ -1,9 +1,10 @@
 <?php
-/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2010-2012 Destailleur Laurent 	<eldy@users.sourceforge.net>
- * Copyright (C) 2014 	   Henry Florian 		<florian.henry@open-concept.pro>
- * Copyright (C) 2023 	   Benjamin Falière		<benjamin.faliere@altairis.fr>
+/* Copyright (C) 2005-2018  Regis Houssin        	<regis.houssin@inodbox.com>
+ * Copyright (C) 2007       Rodolphe Quiedeville 	<rodolphe@quiedeville.org>
+ * Copyright (C) 2010-2012  Destailleur Laurent 	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014 	    Henry Florian 			<florian.henry@open-concept.pro>
+ * Copyright (C) 2023 	    Benjamin Falière		<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 /**
  *	\file       htdocs/product/traduction.php
  *	\ingroup    product
- *	\brief      Page de traduction des produits
+ *	\brief      Page for translation of product descriptions
  */
 
 // Load Dolibarr environment
@@ -33,10 +34,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'languages'));
 
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -48,10 +57,13 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+$object = new Product($db);
 if ($id > 0 || !empty($ref)) {
-	$object = new Product($db);
 	$object->fetch($id, $ref);
 }
+
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('producttranslationcard', 'globalcard'));
 
 if ($object->id > 0) {
 	if ($object->type == $object::TYPE_PRODUCT) {
@@ -64,8 +76,8 @@ if ($object->id > 0) {
 	restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 }
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('producttranslationcard', 'globalcard'));
+// Permissions
+$usercancreate = (($object->type == Product::TYPE_PRODUCT && $user->hasRight('produit', 'creer')) || ($object->type == Product::TYPE_SERVICE && $user->hasRight('service', 'creer')));
 
 
 /*
@@ -83,18 +95,14 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == 'delete' && GETPOST('langtodelete', 'alpha')) {
-		$object = new Product($db);
-		$object->fetch($id);
+	if ($action == 'delete' && GETPOST('langtodelete', 'alpha') && $usercancreate) {
 		$object->delMultiLangs(GETPOST('langtodelete', 'alpha'), $user);
 		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 		$action = '';
 	}
 
 	// Add translation
-	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		$object = new Product($db);
-		$object->fetch($id);
+	if ($action == 'vadd' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$current_lang = $langs->getDefaultLang();
 
 		// update de l'objet
@@ -127,9 +135,7 @@ if (empty($reshook)) {
 	}
 
 	// Edit translation
-	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		$object = new Product($db);
-		$object->fetch($id);
+	if ($action == 'vedit' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$current_lang = $langs->getDefaultLang();
 
 		foreach ($object->multilangs as $key => $value) { // enregistrement des nouvelles valeurs dans l'objet
@@ -156,9 +162,7 @@ if (empty($reshook)) {
 	}
 
 	// Delete translation
-	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && ($user->hasRight('produit', 'creer') || $user->hasRight('service', 'creer'))) {
-		$object = new Product($db);
-		$object->fetch($id);
+	if ($action == 'vdelete' && $cancel != $langs->trans("Cancel") && $usercancreate) {
 		$langtodelete = GETPOST('langdel', 'alpha');
 
 		$result = $object->delMultiLangs($langtodelete, $user);
@@ -170,9 +174,6 @@ if (empty($reshook)) {
 		}
 	}
 }
-
-$object = new Product($db);
-$result = $object->fetch($id, $ref);
 
 
 /*
@@ -191,7 +192,7 @@ if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE)) {
 	$helpurl = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
 }
 
-llxHeader('', $title, $helpurl);
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-product page-translation');
 
 $form = new Form($db);
 $formadmin = new FormAdmin($db);
@@ -261,7 +262,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$i++;
 
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block margintop marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
 
 			print '<div class="underbanner clearboth"></div>';
@@ -272,7 +273,7 @@ if ($action == 'edit') {
 			$doleditor->Create();
 			print '</td></tr>';
 			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
-				print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>';
+				print '<tr><td class="tdtop">'.$langs->trans("NotePrivate").'</td><td>';
 				$doleditor = new DolEditor("other-$key", $object->multilangs[$key]["other"], '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 				$doleditor->Create();
 			}
@@ -295,7 +296,7 @@ if ($action == 'edit') {
 		foreach ($object->multilangs as $key => $value) {
 			$i++;
 
-			$s = picto_from_langcode($key);
+			$s = picto_from_langcode((string) $key);
 			print($i > 1 ? "<br>" : "").($s ? $s.' ' : '').' <div class="inline-block marginbottomonly"><b>'.$langs->trans('Language_'.$key).'</b></div><div class="inline-block floatright"><a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete&token='.newToken().'&langtodelete='.$key.'">'.img_delete('', 'class="valigntextbottom marginrightonly"').'</a></div>';
 
 			print '<div class="fichecenter">';
@@ -304,7 +305,7 @@ if ($action == 'edit') {
 			print '<tr><td class="titlefieldcreate">'.$langs->trans('Label').'</td><td>'.$object->multilangs[$key]["label"].'</td></tr>';
 			print '<tr><td class="tdtop">'.$langs->trans('Description').'</td><td>'.$object->multilangs[$key]["description"].'</td></tr>';
 			if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
-				print '<tr><td>'.$langs->trans('Other').' ('.$langs->trans("NotUsed").')</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
+				print '<tr><td>'.$langs->trans("NotePrivate").'</td><td>'.$object->multilangs[$key]["other"].'</td></tr>';
 			}
 			print '</table>';
 			print '</div>';
@@ -329,7 +330,7 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="vadd">';
-	print '<input type="hidden" name="id" value="'.GETPOST("id", 'int').'">';
+	print '<input type="hidden" name="id" value="'.GETPOSTINT("id").'">';
 
 	print dol_get_fiche_head();
 
@@ -344,7 +345,7 @@ if ($action == 'add' && ($user->hasRight('produit', 'creer') || $user->hasRight(
 	print '</td></tr>';
 	// Other field (not used)
 	if (getDolGlobalString('PRODUCT_USE_OTHER_FIELD_IN_TRANSLATION')) {
-		print '<tr><td class="tdtop">'.$langs->trans('Other').' ('.$langs->trans("NotUsed").'</td><td>';
+		print '<tr><td class="tdtop">'.$langs->trans('NotePrivate').'</td><td>';
 		$doleditor = new DolEditor('other', '', '', 160, 'dolibarr_notes', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_DETAILS'), ROWS_3, '90%');
 		$doleditor->Create();
 		print '</td></tr>';

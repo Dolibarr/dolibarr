@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2010-2011 Regis Houssin <regis.houssin@inodbox.com>
+/* Copyright (C) 2010-2011  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
-
+/**
+ * @var Canvas $this
+ * @var Conf $conf
+ * @var CommonObject $this
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $canvas
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
-	exit;
+	exit(1);
 }
 
 
@@ -31,17 +41,16 @@ $head = societe_prepare_head($soc);
 
 print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company');
 
-?>
-
-<?php if ($this->control->tpl['error']) {
+if ($this->control->tpl['error']) {
 	echo $this->control->tpl['error'];
-} ?>
-<?php if ($this->control->tpl['action_delete']) {
+}
+if ($this->control->tpl['action_delete']) {
 	echo $this->control->tpl['action_delete'];
-} ?>
-<?php if ($this->control->tpl['js_checkVatPopup']) {
+}
+if ($this->control->tpl['js_checkVatPopup']) {
 	echo $this->control->tpl['js_checkVatPopup'];
-} ?>
+}
+?>
 
 <table class="border allwidth">
 
@@ -111,6 +120,8 @@ print dol_get_fiche_head($head, 'card', $langs->trans("ThirdParty"), 0, 'company
 <tr>
 	<td><?php echo $langs->trans('Phone'); ?></td>
 	<td><?php echo $this->control->tpl['phone']; ?></td>
+	<td><?php echo $langs->trans('PhoneMobile'); ?></td>
+	<td><?php echo $this->control->tpl['phone_mobile']; ?></td>
 	<td><?php echo $langs->trans('Fax'); ?></td>
 	<td><?php echo $this->control->tpl['fax']; ?></td>
 </tr>
@@ -247,7 +258,7 @@ for ($i = 1; $i <= 4; $i++) {
 	<td colspan="3"><?php echo $this->control->tpl['sales_representatives']; ?></td>
 </tr>
 
-<?php if (isModEnabled('adherent')) { ?>
+<?php if (isModEnabled('member')) { ?>
 <tr>
 	<td width="25%" valign="top"><?php echo $langs->trans("LinkedToDolibarrMember"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['linked_member']; ?></td>

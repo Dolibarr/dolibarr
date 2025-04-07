@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020      Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2020-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
@@ -55,7 +63,7 @@ if ($action == 'update' && !$cancel) {
 
 	dolibarr_set_const($db, "MAIN_SMS_SENDMODE", GETPOST("MAIN_SMS_SENDMODE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_MAIL_SMS_FROM", GETPOST("MAIN_MAIL_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
+	dolibarr_set_const($db, "MAIN_SMS_FROM", GETPOST("MAIN_SMS_FROM", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -75,10 +83,10 @@ if ($action == 'send' && !$cancel) {
 	}
 	$sendto     = GETPOST("sendto", 'alphanohtml');
 	$body       = GETPOST('message', 'alphanohtml');
-	$deliveryreceipt = GETPOST("deliveryreceipt", 'alphanohtml');
-	$deferred   = GETPOST('deferred', 'alphanohtml');
-	$priority   = GETPOST('priority', 'alphanohtml');
-	$class      = GETPOST('class', 'alphanohtml');
+	$deliveryreceipt = GETPOSTINT("deliveryreceipt");
+	$deferred   = GETPOSTINT('deferred');
+	$priority   = GETPOSTINT('priority');
+	$class      = GETPOSTINT('class');
 	$errors_to  = GETPOST("errorstosms", 'alphanohtml');
 
 	// Create form object
@@ -147,11 +155,12 @@ if (preg_match('/^mac/i', PHP_OS)) {
 }
 
 $wikihelp = 'EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
-llxHeader('', $langs->trans("Setup"), $wikihelp);
+llxHeader('', $langs->trans("Setup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-sms');
 
 print load_fiche_titre($langs->trans("SmsSetup"), '', 'title_setup');
 
 print '<span class="opacitymedium">'.$langs->trans("SmsDesc")."</span><br>\n";
+print "<br>\n";
 print "<br>\n";
 
 // List of sending methods
@@ -172,7 +181,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
@@ -192,19 +201,13 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
+	print '<td><input class="flat" name="MAIN_SMS_FROM" size="32" value="'.getDolGlobalString('MAIN_SMS_FROM');
 	print '"></td></tr>';
 
-	// Autocopy to
-	/*
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-	print '"></td></tr>';
-	*/
 	print '</table>';
 
-	print '<br><div class="center">';
+	print '<div class="center">';
 	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods) ? ' disabled' : '').'>';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -214,7 +217,7 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_SMS')).'</td></tr>';
@@ -232,20 +235,12 @@ if ($action == 'edit') {
 	print '</td></tr>';
 
 	// From
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
-	print '<td>'.getDolGlobalString('MAIN_MAIL_SMS_FROM');
-	if (getDolGlobalString('MAIN_MAIL_SMS_FROM') && !isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) {
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_FROM", $langs->transnoentities("Undefined")).'</td>';
+	print '<td>'.getDolGlobalString('MAIN_SMS_FROM');
+	if (getDolGlobalString('MAIN_SMS_FROM') && !isValidPhone(getDolGlobalString('MAIN_SMS_FROM'))) {
 		print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	}
 	print '</td></tr>';
-
-	// Autocopy to
-	/*
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
-	print '<td>'.$conf->global->MAIN_MAIL_AUTOCOPY_TO;
-	if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && ! isValidEmail($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print img_warning($langs->trans("ErrorBadEMail"));
-	print '</td></tr>';
-	*/
 
 	print '</table>';
 
@@ -254,14 +249,18 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	if ($action != 'test') {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 
-	if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init&token='.newToken().'">'.$langs->trans("DoTestSend").'</a>';
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		}
 	}
+
 	print '</div>';
+
 
 	// Affichage formulaire de TEST simple
 	if ($action == 'test') {
@@ -273,7 +272,7 @@ if ($action == 'edit') {
 		$formsms = new FormSms($db);
 		$formsms->fromtype = 'user';
 		$formsms->fromid = $user->id;
-		$formsms->fromsms = (GETPOSTISSET('fromsms') ? GETPOST('fromsms') : ($conf->global->MAIN_MAIL_SMS_FROM ? $conf->global->MAIN_MAIL_SMS_FROM : $user->user_mobile));
+		$formsms->fromsms = (GETPOSTISSET('fromsms') ? GETPOST('fromsms') : getDolGlobalString('MAIN_SMS_FROM', $user->user_mobile));
 		$formsms->withfromreadonly = 0;
 		$formsms->withsubstit = 0;
 		$formsms->withfrom = 1;
@@ -283,7 +282,7 @@ if ($action == 'edit') {
 		$formsms->withcancel = 1;
 		// Tableau des substitutions
 		$formsms->substit = $substitutionarrayfortest;
-		// Tableau des parametres complementaires du post
+		// Tableau des parameters complementaires du post
 		$formsms->param["action"] = "send";
 		$formsms->param["models"] = "body";
 		$formsms->param["smsid"] = 0;

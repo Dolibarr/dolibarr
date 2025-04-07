@@ -15,8 +15,8 @@ ValidateProp=የንግድ ፕሮፖዛል አረጋግጥ
 CancelPropal=ሰርዝ
 AddProp=ፕሮፖዛል ፍጠር
 ConfirmDeleteProp=እርግጠኛ ነዎት ይህን የንግድ ፕሮፖዛል መሰረዝ ይፈልጋሉ?
-ConfirmValidateProp=እርግጠኛ ነዎት ይህን የንግድ ፕሮፖዛል በስም <b>%s<span class='notranslate'>b09a4b739f17f17f >?
-ConfirmCancelPropal=እርግጠኛ ነህ የንግድ ፕሮፖዛል <b>%s<span class='notranslate'></b>?
+ConfirmValidateProp=Are you sure you want to validate this commercial proposal under name <b>%s</b>?
+ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
 LastPropals=የቅርብ ጊዜ %s ሀሳቦች
 LastModifiedProposals=የቅርብ ጊዜ %s የተሻሻሉ ሀሳቦች
 AllPropals=ሁሉም ሀሳቦች
@@ -61,8 +61,8 @@ DefaultProposalDurationValidity=ነባሪ የንግድ ፕሮፖዛል የሚቆ
 DefaultPuttingPricesUpToDate=በነባሪነት የፕሮፖዛልን ክሎኒንግ ላይ ከታወቁት ዋጋዎች ጋር ዋጋዎችን ያዘምኑ
 DefaultPuttingDescUpToDate=በነባሪነት ፕሮፖዛልን በመዝጋት ላይ ከሚታወቁት መግለጫዎች ጋር መግለጫዎችን ያዘምኑ
 UseCustomerContactAsPropalRecipientIfExist=ከሶስተኛ ወገን አድራሻ ይልቅ እንደ ሀሳብ ተቀባይ አድራሻ ከተገለጸ 'የእውቂያ ተከታይ ሀሳብ' አይነት ጋር እውቂያ/አድራሻ ይጠቀሙ
-ConfirmClonePropal=እርግጠኛ ነዎት የንግድ ፕሮፖዛሉን <b>%s<span class='notranslate'>b09a4b739f17f80?
-ConfirmReOpenProp=እርግጠኛ ነዎት የንግድ ፕሮፖዛሉን <b>%s<span class='notranslate'>b09a4b739f17f80 ?
+ConfirmClonePropal=Are you sure you want to clone the commercial proposal <b>%s</b>?
+ConfirmReOpenProp=Are you sure you want to open back the commercial proposal <b>%s</b>?
 ProposalsAndProposalsLines=የንግድ ፕሮፖዛል እና መስመሮች
 ProposalLine=የፕሮፖዛል መስመር
 ProposalLines=የፕሮፖዛል መስመሮች
