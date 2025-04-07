@@ -59,7 +59,8 @@ foreach ($dirmenus as $dirmenu) {
 
 $action = GETPOST('action', 'aZ09');
 
-$menu = null;
+$menu = new Menubase($db);
+
 $menu_handler_top = getDolGlobalString('MAIN_MENU_STANDARD');
 $menu_handler_smartphone = getDolGlobalString('MAIN_MENU_SMARTPHONE');
 $menu_handler_top = preg_replace('/_backoffice.php/i', '', $menu_handler_top);
@@ -137,7 +138,6 @@ if ($action == 'add') {
 	}
 
 	if (!$error) {
-		$menu = new Menubase($db);
 		$menu->menu_handler = preg_replace('/_menu$/', '', GETPOST('menu_handler', 'aZ09'));
 		$menu->type = (string) GETPOST('type', 'alphanohtml');
 		$menu->title = (string) GETPOST('titre', 'alphanohtml');
@@ -197,7 +197,6 @@ if ($action == 'update') {
 		}
 
 		if (!$error) {
-			$menu = new Menubase($db);
 			$result = $menu->fetch(GETPOSTINT('menuId'));
 			if ($result > 0) {
 				$menu->title = (string) GETPOST('titre', 'alphanohtml');
@@ -404,8 +403,8 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
-	print '<option value=""'.(isset($menu->target) && $menu instanceof Menubase && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu instanceof Menubase && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
 	print '</select>';
 	print ajax_combobox("target");
 	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
