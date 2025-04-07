@@ -68,7 +68,7 @@ class ObjectLinks extends DolibarrApi
 	 * @throws RestException 403
 	 * @throws RestException 404
 	 */
-	public function get($id)
+	public function getById($id)
 	{
 		return $this->_fetch($id);
 	}
@@ -145,15 +145,23 @@ class ObjectLinks extends DolibarrApi
 	 * @throws RestException 404
 	 * @throws RestException 500
 	 */
-	public function delete($id)
+	public function deleteById($id)
 	{
 		// Reverse permission check. First we find out which kind of objects are linked, and if the user has rights to that then we delete it.
 		$result = $this->objectlink->fetch($id);
 		if ($result) {
-			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->sourcetype), 'supprimer')) {
+			$srctype = $this->objectlink->sourcetype;
+			if ($this->objectlink->sourcetype == 'subscription') {
+				$srctype = 'adherent';
+			}
+			$tgttype = $this->objectlink->targettype;
+			if ($this->objectlink->targettype == 'subscription') {
+				$tgttype = 'adherent';
+			}
+			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->targettype), 'supprimer')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire')) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
@@ -173,6 +181,148 @@ class ObjectLinks extends DolibarrApi
 	}
 
 	/**
+	 *	GET object link(s) By Values, not id
+	 *
+	 *  @param		int		$fk_source		source id of object we link from
+	 *  @param		string	$sourcetype		type of the source object
+	 *  @param		int		$fk_target		target id of object we link to
+	 *  @param		string	$targettype 	type of the target object
+	 *  @param		string	$relationtype 	type of the relation, usually null
+	 *  @return		array
+	 *
+	 * @url GET
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function getByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null)
+	{
+		$request_data = array(
+			'fk_source' => (int) $fk_source,
+			'sourcetype' => (string) $sourcetype,
+			'fk_target' => (int) $fk_target,
+			'targettype' => (string) $targettype,
+			'relationtype' => $relationtype,
+		);
+
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
+		foreach ($request_data as $field => $value) {
+			$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+		}
+
+		// Permission check
+		$srctype = $this->objectlink->sourcetype;
+		if ($this->objectlink->sourcetype == 'subscription') {
+			$srctype = 'adherent';
+		}
+		$tgttype = $this->objectlink->targettype;
+		if ($this->objectlink->targettype == 'subscription') {
+			$tgttype = 'adherent';
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer')) {
+			throw new RestException(403, 'denied access to get the objectlinks sourcetype='.$this->objectlink->sourcetype);
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer')) {
+			throw new RestException(403, 'denied access to get the objectlinks targettype='.$this->objectlink->targettype);
+		}
+
+		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
+
+		if ($findresult < 0 ) {
+			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
+		}
+
+		if ($findresult == 0 ) {
+			throw new RestException(404, 'Object Link not found');
+		}
+
+		if ($findresult > 0 ) {
+			return $this->_cleanObjectDatas($this->objectlink);
+		}
+	}
+
+
+	/**
+	 *	Delete object link By Values, not id
+	 *
+	 *  @param		int		$fk_source		source id of object we link from
+	 *  @param		string	$sourcetype		type of the source object
+	 *  @param		int		$fk_target		target id of object we link to
+	 *  @param		string	$targettype 	type of the target object
+	 *  @param		string	$relationtype 	type of the relation, usually null
+	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *  @return		array
+	 *
+	 * @url DELETE
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null, $notrigger = 0)
+	{
+		$request_data = array(
+			'fk_source' => (int) $fk_source,
+			'sourcetype' => (string) $sourcetype,
+			'fk_target' => (int) $fk_target,
+			'targettype' => (string) $targettype,
+			'relationtype' => $relationtype,
+		);
+
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
+		foreach ($request_data as $field => $value) {
+			$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+		}
+
+		// Permission check
+		$srctype = $this->objectlink->sourcetype;
+		if ($this->objectlink->sourcetype == 'subscription') {
+			$srctype = 'adherent';
+		}
+		$tgttype = $this->objectlink->targettype;
+		if ($this->objectlink->targettype == 'subscription') {
+			$tgttype = 'adherent';
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer')) {
+			throw new RestException(403, 'denied access to delete the objectlinks sourcetype='.$this->objectlink->sourcetype);
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer')) {
+			throw new RestException(403, 'denied access to delete the objectlinks targettype='.$this->objectlink->targettype);
+		}
+
+		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
+
+		if ($findresult < 0 ) {
+			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
+		}
+
+		if ($findresult == 0 ) {
+			throw new RestException(404, 'Object Link not found');
+		}
+
+		if ($findresult > 0 ) {
+
+			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $this->objectlink->notrigger);
+
+			if ($result < 0 ) {
+				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
+			}
+
+			return array(
+				'success' => array(
+					'code' => 200,
+					'message' => 'object link deleted'
+				)
+			);
+		}
+	}
+
+	/**
 	 * Get properties of an object link
 	 *
 	 * Return an array with object links
@@ -187,10 +337,18 @@ class ObjectLinks extends DolibarrApi
 	{
 		$result = $this->objectlink->fetch($id);
 		if ($result) {
-			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->sourcetype), 'lire')) {
+			$srctype = $this->objectlink->sourcetype;
+			if ($this->objectlink->sourcetype == 'subscription') {
+				$srctype = 'adherent';
+			}
+			$tgttype = $this->objectlink->targettype;
+			if ($this->objectlink->targettype == 'subscription') {
+				$tgttype = 'adherent';
+			}
+			if (!DolibarrApiAccess::$user->hasRight(((string) $srctype), 'lire')) {
 				throw new RestException(403, 'denied access to the objectlinks sourcetype');
 			}
-			if (!DolibarrApiAccess::$user->hasRight(((string) $this->objectlink->targettype), 'lire')) {
+			if (!DolibarrApiAccess::$user->hasRight(((string) $tgttype), 'lire')) {
 				throw new RestException(403, 'denied access to the objectlinks targettype');
 			}
 		} else {
