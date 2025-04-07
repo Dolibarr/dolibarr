@@ -194,7 +194,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
-	print '<div class="ticketpublicarea ticketlargemargin">';
+	print '<div class="ticketpublicarealist ticketlargemargin">';
 
 	print '<br>';
 	if ($display_ticket_list) {
