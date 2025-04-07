@@ -34,10 +34,10 @@ class ObjectLinks extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
-		(int) 'fk_source',
-		(string) 'sourcetype',
-		(int) 'fk_target',
-		(string) 'targettype'
+		'fk_source',
+		'sourcetype',
+		'fk_target',
+		'targettype'
 	);
 
 	/**
@@ -100,14 +100,22 @@ class ObjectLinks extends DolibarrApi
 		}
 
 		// Permission check
-		if (!DolibarrApiAccess::$user->hasRight((string) $this->objectlink->sourcetype, 'creer')) {
+		$srctype = $this->objectlink->sourcetype;
+		if ($this->objectlink->sourcetype == 'subscription') {
+			$srctype = 'adherent';
+		}
+		$tgttype = $this->objectlink->targettype;
+		if ($this->objectlink->targettype == 'subscription') {
+			$tgttype = 'adherent';
+		}
+		if (!DolibarrApiAccess::$user->hasRight((string) $srctype, 'creer')) {
 			throw new RestException(403, 'denied access to create the objectlinks sourcetype='.$this->objectlink->sourcetype);
 		}
-		if (!DolibarrApiAccess::$user->hasRight((string) $this->objectlink->targettype, 'creer')) {
+		if (!DolibarrApiAccess::$user->hasRight((string) $tgttype, 'creer')) {
 			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
-		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $notrigger);
+		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $this->objectlink->notrigger);
 
 		if ($result < 0 ) {
 			throw new RestException(500, 'Error when create objectlink : '.$this->objectlink->error);
