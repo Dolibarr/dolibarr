@@ -2380,12 +2380,12 @@ if (empty($reshook)) {
 					}
 				}
 
+				$outputlangs = $langs;
+				$newlang = '';
 				$desc = '';
 
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-					$outputlangs = $langs;
-					$newlang = '';
 					if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
@@ -2416,19 +2416,6 @@ if (empty($reshook)) {
 					$tmptxt = '(';
 					// Define output language
 					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (/* empty($newlang) && */ GETPOST('lang_id', 'alpha')) {
-							$newlang = GETPOST('lang_id', 'alpha');
-						}
-						if (empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-							$outputlangs->load('products');
-						}
 						if (!empty($prod->customcode)) {
 							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 						}

@@ -231,12 +231,15 @@ class FormAI extends Form
 							case 'p':
 								unit = 'paragraphs';
 								break;
+							case 'pc':
+								unit = 'percent';
+								break;
 							default:
 								console.log('unit not found so we choose words');
 								unit = 'words';
 								break;
 						}
-						instructions = 'Summarize the following text in ' + width + ' ' + unit + ': ' + texttomodify;
+						instructions = 'Summarize the following text '+ (unit == 'percent' ? 'by ' : 'in') + width + ' ' + unit + ': ' + texttomodify;
 					}else {
 						instructions = userprompt;
 					}

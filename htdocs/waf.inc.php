@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2025  Laurent Destailleur     <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
  *	\file       htdocs/waf.inc.php
  *	\ingroup	core
  *	\brief      File with WAF controls
- *				WARNING: This file must have absolutely no dependency with Dolibarr code.
+ *				WARNING: This file must have absolutely no dependency with any other code.
  *				It should be usable in any project.
  */
 
 // To disable the WAF for GET and POST and PHP_SELF, uncomment this
 //define('NOSCANPHPSELFFORINJECTION', 1);
 //define('NOSCANGETFORINJECTION', 1);
-//define('NOSCANPOSTFORINJECTION', 1 or 2);
+//define('NOSCANPOSTFORINJECTION', 1 or array('param1', 'param2'...));
 
 
  /**
@@ -148,13 +148,14 @@ function testSqlAndScriptInject($val, $type)
 
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
-		// Note the \s+ is replaced into \s* because some spaces may have been modified in previous loop
-		$inj += preg_match('/delete\s*from/i', $val);
-		$inj += preg_match('/create\s*table/i', $val);
-		$inj += preg_match('/insert\s*into/i', $val);
-		$inj += preg_match('/select\s*from/i', $val);
-		$inj += preg_match('/into\s*(outfile|dumpfile)/i', $val);
-		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
+		// Note the \s+ is replaced into \s* because some spaces may have been modified or removed in previous loop
+		$inj += preg_match('/delete[\/\*\s]*from/i', $val);
+		$inj += preg_match('/create[\/\*\s]*table/i', $val);
+		$inj += preg_match('/insert[\/\*\s]*into/i', $val);
+		$inj += preg_match('/select[\/\*\s]*from/i', $val);
+		$inj += preg_match('/from[\/\*\s]*dual/i', $val);
+		$inj += preg_match('/into[\/\*\s]*(outfile|dumpfile)/i', $val);
+		$inj += preg_match('/user[\/\*\s]*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
 		$inj += preg_match('/update[^&=\w].*set.+=/i', $val);	// the [^&=\w] test is to avoid error when request is like action=update&...set... or &updatemodule=...set...
@@ -219,7 +220,9 @@ function testSqlAndScriptInject($val, $type)
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1 || $type == 3) {
 		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure=" for the export/import module
-		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
+		if (!defined("SECURITY_WAF_ALLOW_QUOTES_IN_GET") || !constant("SECURITY_WAF_ALLOW_QUOTES_IN_GET")) {
+			$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
+		}
 	}
 	if ($type == 2) {
 		$inj += preg_match('/[:;"\'<>\?\(\){}\$%]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
@@ -245,7 +248,8 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 				continue;
 			}
 
-			if (analyseVarsForSqlAndScriptsInjection($key, $type, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
+			// Test on both the key (we force type to the less tolerant = 3) and the value
+			if (analyseVarsForSqlAndScriptsInjection($key, 3, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
 				http_response_code(403);

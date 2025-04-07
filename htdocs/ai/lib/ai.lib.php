@@ -84,7 +84,10 @@ function getListForAISummarize()
 		'100_w' => 'SummarizeHundredWords',
 		'200_w' => 'SummarizeTwoHundredWords',
 		'1_p' => 'SummarizeOneParagraphs',
-		'2_p' => 'SummarizeTwoParagraphs'
+		'2_p' => 'SummarizeTwoParagraphs',
+		'25_pc' => 'SummarizeTwentyFivePercent',
+		'50_pc' => 'SummarizeFiftyPercent',
+		'75_pc' => 'SummarizeSeventyFivePercent'
 	);
 
 	return $arrayforaisummarize;
