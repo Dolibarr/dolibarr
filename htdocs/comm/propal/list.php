@@ -891,7 +891,7 @@ if (!$resql) {
 	exit;
 }
 
-$objectstatic = new Propal($db);
+$object = new Propal($db);
 $userstatic = new User($db);
 
 if ($socid > 0) {
@@ -1782,13 +1782,8 @@ while ($i < $imaxinloop) {
 		$param .= "&search_option=".urlencode($search_option);
 	}
 
-	$objectstatic->id = $obj->rowid;
-	$objectstatic->ref = $obj->ref;
-	$objectstatic->ref_customer = $obj->ref_client;
-	$objectstatic->note_public = $obj->note_public;
-	$objectstatic->note_private = $obj->note_private;
-	$objectstatic->statut = $obj->status;
-	$objectstatic->status = $obj->status;
+	$object->fetch($obj->rowid);
+	$object->fetch_optionals();
 
 	$companystatic->id = $obj->socid;
 	$companystatic->name = $obj->name;
@@ -1812,7 +1807,7 @@ while ($i < $imaxinloop) {
 	$multicurrency_totalInvoicedHT = 0;
 	$multicurrency_totalInvoicedTTC = 0;
 
-	$TInvoiceData = $objectstatic->InvoiceArrayList($obj->rowid);
+	$TInvoiceData = $object->InvoiceArrayList($object->id);
 
 	if (!empty($TInvoiceData)) {
 		foreach ($TInvoiceData as $invoiceData) {
@@ -1832,8 +1827,8 @@ while ($i < $imaxinloop) {
 
 	$marginInfo = array();
 	if ($with_margin_info) {
-		$objectstatic->fetch_lines();
-		$marginInfo = $formmargin->getMarginInfosArray($objectstatic);
+		$object->fetch_lines();
+		$marginInfo = $formmargin->getMarginInfosArray($object);
 		$total_ht += $obj->total_ht;
 		$total_margin += $marginInfo['total_margin'];
 	}
@@ -1844,16 +1839,16 @@ while ($i < $imaxinloop) {
 			print '<div class="box-flex-container kanban">';
 		}
 		// Output Kanban
-		$objectstatic->thirdparty = $companystatic;
+		$object->thirdparty = $companystatic;
 		$userstatic->fetch($obj->fk_user_author);
 		$arrayofparams = array('selected' => in_array($object->id, $arrayofselected), 'authorlink' => $userstatic->getNomUrl(-2), 'projectlink' => $projectstatic->getNomUrl(2));
-		print $objectstatic->getKanbanView('', $arrayofparams);
+		print $object->getKanbanView('', $arrayofparams);
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
 		}
 	} else {
-		print '<tr data-rowid="'.$objectstatic->id.'" class="oddeven status'.$objectstatic->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
+		print '<tr data-rowid="'.$object->id.'" class="oddeven status'.$object->status.((getDolGlobalInt('MAIN_FINISHED_LINES_OPACITY') == 1 && $obj->status > 1) ? ' opacitymedium' : '').'">';
 
 		// Action column
 		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -1877,7 +1872,7 @@ while ($i < $imaxinloop) {
 			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 			// Picto + Ref
 			print '<td class="nobordernopadding nowraponall">';
-			print $objectstatic->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
+			print $object->getNomUrl(1, '', '', 0, 1, (isset($conf->global->PROPAL_LIST_SHOW_NOTES) ? $conf->global->PROPAL_LIST_SHOW_NOTES : 1));
 			print '</td>';
 			// Warning
 			$warnornote = '';
@@ -1894,7 +1889,7 @@ while ($i < $imaxinloop) {
 			$filename = dol_sanitizeFileName($obj->ref);
 			$filedir = $conf->propal->multidir_output[$obj->propal_entity].'/'.dol_sanitizeFileName($obj->ref);
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
+			print $formfile->getDocumentsLink($object->element, $filename, $filedir);
 			print '</td></tr></table>';
 
 			print "</td>\n";
@@ -2410,7 +2405,7 @@ while ($i < $imaxinloop) {
 
 		// Status
 		if (!empty($arrayfields['p.fk_statut']['checked'])) {
-			print '<td class="nowrap center">'.$objectstatic->getLibStatut(5).'</td>';
+			print '<td class="nowrap center">'.$object->getLibStatut(5).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
