@@ -1910,8 +1910,7 @@ if ($resql) {
 			$multicurrency_totalcreditnotes = $facturestatic->getSumCreditNotesUsed(1);
 			$multicurrency_totaldeposits = $facturestatic->getSumDepositsUsed(1);
 
-			$totalallpayments = $paiement + $totalcreditnotes + $totaldeposits;
-			$remaintopay = $obj->total_ttc - $totalallpayments;
+			$remaintopay = -$discount->getAvailableDiscounts($companystatic, '', 'fk_facture_source=' . $facturestatic->id);
 
 			$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 			$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
