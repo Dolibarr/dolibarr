@@ -129,11 +129,11 @@ class ObjectLink extends CommonObject
 		$sql .= " targettype, relationtype FROM";
 		$sql .= " ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_source=".((int) $fk_source);
-		$sql .= " AND sourcetype=".((string) $sourcetype);
+		$sql .= " AND sourcetype='".((string) $sourcetype)."'";
 		$sql .= " AND fk_target=".((int) $fk_target);
-		$sql .= " AND targettype=".((string) $targettype);
+		$sql .= " AND targettype='".((string) $targettype)."'";
 		if ($relationtype) {
-			$sql .= " AND relationtype=".((string) $relationtype);
+			$sql .= " AND relationtype='".((string) $relationtype)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -182,7 +182,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger('OBJECTLINK_DELETE', $user);
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -238,21 +238,29 @@ class ObjectLink extends CommonObject
 
 		$this->db->begin();
 
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_CREATE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."$this->table_element";
 		if ($relationtype) {
 			$sql .= " (fk_source, sourcetype, fk_target, targettype, relationtype )";
 		} else {
 			$sql .= " (fk_source, sourcetype, fk_target, targettype )";
 		}
-		$sql .= " VALUES (".((int) $this->fk_source).", ".((string) $this->sourcetype).",";
-		$sql .= ((int) $this->fk_target).", ".((string) $this->targettype);
+		$sql .= " VALUES (".((int) $this->fk_source).", '".((string) $this->sourcetype)."', ";
+		$sql .= ((int) $this->fk_target).", '".((string) $this->targettype."'");
 		if ($relationtype) {
 			$sql .= ", ".((string) $this->relationtype);
 		}
 		$sql .= ")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-		dol_syslog("sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->db->commit();
