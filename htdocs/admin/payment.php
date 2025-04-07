@@ -170,6 +170,7 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
+						/** @var ModeleNumRefPayments $module */
 						'@phan-var-force ModeleNumRefPayments $module';
 
 						$arrayofmodules[] = $module;
