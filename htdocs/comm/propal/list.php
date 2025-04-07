@@ -1784,10 +1784,10 @@ while ($i < $imaxinloop) {
 
 	$object->id = $obj->rowid;
 	$object->ref = $obj->ref;
-	$object->ref_customer = $obj->ref_client;	
-	$object->note_public = $obj->note_public;	
+	$object->ref_customer = $obj->ref_client;
+	$object->note_public = $obj->note_public;
 	$object->note_private = $obj->note_private;
-	$object->statut = $obj->status;	
+	$object->statut = $obj->status;
 	$object->status = $obj->status;
 
 	$companystatic->id = $obj->socid;
