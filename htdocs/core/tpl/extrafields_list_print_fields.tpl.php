@@ -36,8 +36,6 @@ if (empty($extrafieldsobjectkey) && is_object($object)) {
 	$extrafieldsobjectkey = $object->table_element;
 }
 
-$object->fetch_optionals();
-
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
 if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafieldsobjectkey])) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 	if (array_key_exists('label', $extrafields->attributes[$extrafieldsobjectkey]) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
