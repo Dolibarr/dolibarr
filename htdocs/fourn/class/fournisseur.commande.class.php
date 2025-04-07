@@ -3745,7 +3745,8 @@ class CommandeFournisseur extends CommonOrder
 					}
 					foreach ($this->lines as $line) {
 						// Exclude lines not qualified for shipment, similar code is found into interface_20_modWrokflow for customers
-						if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) {
+						if ((!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $line->product_type > 0) ||
+							$line->product_type == 9) {
 							continue;
 						}
 						if (array_key_exists($line->fk_product, $qtywished)) {

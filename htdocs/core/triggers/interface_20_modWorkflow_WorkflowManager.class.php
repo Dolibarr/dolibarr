@@ -450,7 +450,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (is_array($order->lines) && count($order->lines) > 0) {
 						foreach ($order->lines as $orderline) {
 							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+							if ((!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) ||
+								$orderline->product_type == 9) {
 								continue;
 							}
 							if (isset($qtyordred[$orderline->fk_product])) {
@@ -529,7 +530,8 @@ class InterfaceWorkflowManager extends DolibarrTriggers
 					if (is_array($order->lines) && count($order->lines) > 0) {
 						foreach ($order->lines as $orderline) {
 							// Exclude lines not qualified for shipment, similar code is found into calcAndSetStatusDispatch() for vendors
-							if (!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) {
+							if ((!getDolGlobalString('STOCK_SUPPORTS_SERVICES') && $orderline->product_type > 0) ||
+								$orderline->product_type == 9) {
 								continue;
 							}
 							$qtyordred[$orderline->fk_product] += $orderline->qty;
