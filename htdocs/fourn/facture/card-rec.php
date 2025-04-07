@@ -65,13 +65,10 @@ $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'supplierinvoicetemplatelist'; // To manage different context of search
+$backtopage = GETPOST('backtopage', 'alpha');					// if not set, a default page will be used
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 
-$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 
-// Security check
 $id = (GETPOSTINT('facid') ? GETPOSTINT('facid') : GETPOSTINT('id'));
 $lineid = GETPOSTINT('lineid');
 $title = GETPOST('title', 'alpha');
@@ -90,6 +87,10 @@ if ($action == "create" || $action == "add") {
 	$objecttype = '';
 }
 
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
+$sortfield = GETPOST("sortfield", 'aZ09comma');
+$sortorder = GETPOST("sortorder", 'aZ09comma');
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -147,6 +148,7 @@ $now = dol_now();
 $error = 0;
 $predef = '';  // Legacy?  Used in several cards, always ''
 
+// Security check
 $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype);
 
 
@@ -155,8 +157,13 @@ $result = restrictedArea($user, 'supplier_invoicerec', $object->id, $objecttype)
  */
 
 if (GETPOST('cancel', 'alpha')) {
-	$action = 'list';
-	$massaction = '';
+	if ($action != 'updateline') {
+		$action = 'list';
+		$massaction = '';
+	} else {
+		$action = '';
+		$cancel = '';
+	}
 }
 if (! GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
@@ -213,7 +220,6 @@ if (empty($reshook)) {
 			$object->title                 = GETPOST('title', 'alphanohtml');
 			$object->libelle               = GETPOST('libelle', 'alpha');	// deprecated
 			$object->label                 = GETPOST('libelle', 'alpha');
-			$object->fk_project            = GETPOSTINT('projectid');
 			$object->ref_supplier          = GETPOST('ref_supplier', 'alphanohtml');
 
 			$object->note_private          = GETPOST('note_private', 'restricthtml');
@@ -226,12 +232,14 @@ if (empty($reshook)) {
 			$object->nb_gen_max            = $nb_gen_max;
 			$object->auto_validate         = GETPOSTINT('auto_validate');
 			$object->generate_pdf          = GETPOSTINT('generate_pdf');
+			$object->fk_project            = GETPOSTINT('projectid');
 
 			$date_next_execution = dol_mktime($rehour, $remin, 0, $remonth, $reday, $reyear);
 			$object->date_when = $date_next_execution;
 
 			$ret = $extrafields->setOptionalsFromPost(null, $object);
 			if ($ret < 0) {
+				setEventMessages($extrafields->error, $extrafields->errors, 'errors');
 				$error++;
 			}
 
@@ -241,8 +249,9 @@ if (empty($reshook)) {
 			$oldinvoice = new FactureFournisseur($db);
 			$oldinvoice->fetch(GETPOSTINT('facid'));
 
+			$onlylines = GETPOST('toselect', 'array');
 
-			$result = $object->create($user, $oldinvoice->id);
+			$result = $object->create($user, $oldinvoice->id, 0, $onlylines);
 
 			if ($result > 0) {
 				$result = $oldinvoice->delete($user, 1);
@@ -265,8 +274,6 @@ if (empty($reshook)) {
 			} else {
 				$db->rollback();
 
-				$error++;
-				setEventMessages($object->error, $object->errors, 'errors');
 				$action = "create";
 			}
 		}
@@ -364,6 +371,8 @@ if (empty($reshook)) {
 		// Set status enabled
 		$db->begin();
 
+		$object->context['actionmsg'] = $langs->trans("RecordEnabled");
+
 		$object->fetch($id);
 
 		$res = $object->setValueFrom('suspended', 0);
@@ -451,7 +460,7 @@ if (empty($reshook)) {
 		$error = 0;
 
 		// Set if we used free entry or predefined product
-
+		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
 		$price_ht = price2num(GETPOST('price_ht'), 'MU', 2);
 		$price_ht_devise = price2num(GETPOST('multicurrency_price_ht'), 'CU', 2);
@@ -603,13 +612,13 @@ if (empty($reshook)) {
 					}
 				}
 
+				$outputlangs = $langs;
+				$newlang = '';
 				$desc = '';
 
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-					$outputlangs = $langs;
-					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (empty($newlang)) {
@@ -618,6 +627,7 @@ if (empty($reshook)) {
 					if (!empty($newlang)) {
 						$outputlangs = new Translate("", $conf);
 						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
 					}
 
 					$desc = (!empty($prod->multilangs [$outputlangs->defaultlang] ["description"])) ? $prod->multilangs [$outputlangs->defaultlang] ["description"] : $prod->description;
@@ -632,19 +642,6 @@ if (empty($reshook)) {
 					$tmptxt = '(';
 					// Define output language
 					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (empty($newlang) && GETPOST('lang_id', 'alpha')) {
-							$newlang = GETPOST('lang_id', 'alpha');
-						}
-						if (empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-							$outputlangs->load('products');
-						}
 						if (!empty($prod->customcode)) {
 							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode") . ': ' . $prod->customcode;
 						}
@@ -681,11 +678,11 @@ if (empty($reshook)) {
 				}
 				$desc = $product_desc;
 				$type = GETPOST('type');
-				$fk_unit = GETPOST('units') ? GETPOSTINT('units') : null;
+				$fk_unit = GETPOSTINT('units');
 			}
 
-			$date_start_fill = !empty(GETPOSTINT('date_start_fill')) ? GETPOSTINT('date_start_fill') : null;
-			$date_end_fill = !empty(GETPOSTINT('date_end_fill')) ? GETPOSTINT('date_end_fill') : null;
+			$date_start_fill = GETPOSTINT('date_start_fill');
+			$date_end_fill = GETPOSTINT('date_end_fill');
 
 			// Margin
 			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
@@ -699,7 +696,7 @@ if (empty($reshook)) {
 				$info_bits |= 0x01;
 			}
 
-			//To set vars in float type to avoid non-numeric warnings
+			// To set vars in float type to avoid non-numeric warnings
 			$pu_ht = (float) price2num($pu_ht);
 			$remise_percent = (float) price2num($remise_percent);
 
@@ -769,8 +766,9 @@ if (empty($reshook)) {
 		$ref_fourn = GETPOST('fourn_ref', 'alpha');
 		$pu_ht = price2num(GETPOST('price_ht'), '', 2);
 		$vat_rate = (GETPOST('tva_tx') ? GETPOST('tva_tx') : 0);
-		$qty = GETPOST('qty');
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), '', 2);
+
+		$qty = (float) price2num(GETPOST('qty', 'alpha'), 'MS');
 
 		// Define info_bits
 		$info_bits = 0;
@@ -850,8 +848,8 @@ if (empty($reshook)) {
 			$error++;
 		}
 
-		$date_start_fill = !empty(GETPOSTINT('date_start_fill')) ? GETPOSTINT('date_start_fill') : 'NULL';
-		$date_end_fill = !empty(GETPOSTINT('date_end_fill')) ? GETPOSTINT('date_end_fill') : 'NULL';
+		$date_start_fill = GETPOSTINT('date_start_fill');
+		$date_end_fill = GETPOSTINT('date_end_fill');
 
 		// Update line
 		if (! $error) {
@@ -904,8 +902,9 @@ if (empty($reshook)) {
  * View
  */
 
+$title = $langs->trans("RepeatableSupplierInvoice");
 $help_url = '';
-llxHeader('', $langs->trans("RepeatableSupplierInvoice"), $help_url, '', 0, 0, '', '', '', 'mod-fourn-facture page-card-rec');
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-fourn-facture page-card-rec');
 
 $form = new Form($db);
 $formother = new FormOther($db);
@@ -921,14 +920,13 @@ $now = dol_now();
 $nowlasthour = dol_get_last_hour($now);
 
 // Create mode
-
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("CreateRepeatableInvoice"), '', 'bill');
 
 	$object = new FactureFournisseur($db); // Source invoice
 	$product_static = new Product($db);
 
-	if ($object->fetch($id) > 0) {
+	if ($object->fetch($id, $ref) > 0) {
 		$result = $object->fetch_lines();
 
 		print '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
@@ -1034,7 +1032,7 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 
-		//extrafields
+		// Extrafields
 		$draft = new FactureFournisseur($db);
 		$draft->fetch(GETPOSTINT('facid'));
 
@@ -1090,31 +1088,31 @@ if ($action == 'create') {
 
 		// Frequency + unit
 		print '<tr><td class="titlefieldcreate">' . $form->textwithpicto($langs->trans("Frequency"), $langs->transnoentitiesnoconv('toolTipFrequency')) . "</td><td>";
-		print "<input type='text' name='frequency' value='" . GETPOSTINT('frequency') . "' size='4' />&nbsp;" . $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
+		print "<input type='text' class='width50' name='frequency' value='" . GETPOSTINT('frequency') . "' size='4' />&nbsp;" . $form->selectarray('unit_frequency', array('d' => $langs->trans('Day'), 'm' => $langs->trans('Month'), 'y' => $langs->trans('Year')), (GETPOST('unit_frequency') ? GETPOST('unit_frequency') : 'm'));
 		print "</td></tr>";
 
 		// Date next run
 		print "<tr><td>" . $langs->trans('NextDateToExecution') . "</td><td>";
-		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
+		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOSTINT('remonth') ? dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear')) : -1);
 		print $form->selectDate($date_next_execution, '', 1, 1, 0, "add", 1, 1);
 		print "</td></tr>";
 
 		// Number max of generation
 		print "<tr><td>" . $langs->trans("MaxPeriodNumber") . "</td><td>";
-		print '<input type="text" name="nb_gen_max" value="' . GETPOST('nb_gen_max') . '" size="5" />';
+		print '<input type="text" class="width50" name="nb_gen_max" value="' . GETPOSTINT('nb_gen_max') . '">';
 		print "</td></tr>";
 
 		// Auto validate the invoice
 		print "<tr><td>" . $langs->trans("StatusOfAutoGeneratedInvoices") . "</td><td>";
 		$select = array('0' => $langs->trans('BillStatusDraft'), '1' => $langs->trans('BillStatusValidated'));
-		print $form->selectarray('auto_validate', $select, GETPOST('auto_validate'));
+		print $form->selectarray('auto_validate', $select, GETPOSTINT('auto_validate'));
 		print "</td></tr>";
 
 		// Auto generate document
 		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 			print "<tr><td>" . $langs->trans("StatusOfGeneratedDocuments") . "</td><td>";
 			$select = array('0' => $langs->trans('DoNotGenerateDoc'), '1' => $langs->trans('AutoGenerateDoc'));
-			print $form->selectarray('generate_pdf', $select, GETPOST('generate_pdf'));
+			print $form->selectarray('generate_pdf', $select, GETPOSTINT('generate_pdf'));
 			print "</td></tr>";
 		} else {
 			print '<input type="hidden" name="generate_pdf" value="1">';
@@ -1165,7 +1163,7 @@ if ($action == 'create') {
 
 		$formconfirm = '';
 
-		// Confirmation de la suppression d'une ligne produit
+		// Confirmation of deletion of product line
 		if ($action == 'ask_deleteline') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
 		}
@@ -1251,6 +1249,7 @@ if ($action == 'create') {
 			print "</td></tr>";
 		}
 
+		// Author
 		print '<tr><td class="titlefield">' . $langs->trans('Author') . '</td><td>';
 		print $author->getNomUrl(-1);
 		print "</td></tr>";
@@ -1259,26 +1258,6 @@ if ($action == 'create') {
 		print '<tr>';
 		print '<td>' . $form->editfieldkey("Label", 'libelle', $object->libelle, $object, (int) $usercancreate) . '</td>';
 		print '<td>' . $form->editfieldval("Label", 'libelle', $object->libelle, $object, $usercancreate) . '</td>';
-		print '</tr>';
-
-		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
-		print '<td>' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
-		print '</tr>';
-
-		print '<tr><td>' . $langs->trans("AmountVAT") . '</td><td>' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
-		print '</tr>';
-
-		// Amount Local Taxes
-		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) {    // Localtax1
-			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap">' . price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency) . '</td></tr>';
-		}
-		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) {    // Localtax2
-			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency) . '</td></tr>';
-		}
-
-		print '<tr><td>' . $langs->trans("AmountTTC") . '</td><td colspan="3">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
 		print '</tr>';
 
 		// Payment term
@@ -1339,7 +1318,7 @@ if ($action == 'create') {
 
 		// Model pdf
 		print '<tr><td class="nowrap">';
-		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('Model');
 		print '<td>';
 		if ($action != 'editmodelpdf' && $usercancreate && $object->statut == FactureFournisseurRec::STATUS_NOTSUSPENDED) {
@@ -1382,7 +1361,29 @@ if ($action == 'create') {
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
 
-		print '<tr><td colspan="2">' . img_picto('', 'recurring', 'class="pictofixedwidth"') . $title . '</td></tr>';
+		// Amount (excl. tax)
+		print '<tr><td>' . $langs->trans('AmountHT') . '</td>';
+		print '<td>' . price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '</tr>';
+
+		print '<tr><td>' . $langs->trans("AmountVAT") . '</td><td>' . price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '</tr>';
+
+		// Amount Local Taxes
+		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) {    // Localtax1
+			print '<tr><td>' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
+			print '<td class="nowrap">' . price($object->total_localtax1, 1, '', 1, -1, -1, $conf->currency) . '</td></tr>';
+		}
+		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) {    // Localtax2
+			print '<tr><td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
+			print '<td class=nowrap">' . price($object->total_localtax2, 1, '', 1, -1, -1, $conf->currency) . '</td></tr>';
+		}
+
+		print '<tr><td>' . $langs->trans("AmountTTC") . '</td><td colspan="3">' . price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency) . '</td>';
+		print '</tr>';
+
+
+		print '<tr class="liste_titre"><td colspan="2" class="liste_titre">' . img_picto('', 'recurring', 'class="pictofixedwidth"') . $title . '</td></tr>';
 
 		// if "frequency" is empty or = 0, the recurrence is disabled
 		print '<tr><td style="width: 50%">';
@@ -1408,81 +1409,83 @@ if ($action == 'create') {
 			if ($object->frequency > 0) {
 				print $langs->trans('FrequencyPer_' . $object->unit_frequency, $object->frequency);
 			} else {
-				print $langs->trans("NotARecurringInvoiceTemplate");
+				print '<span class="opacitymedium">'.$langs->trans("NotARecurringInvoiceTemplate").'</span>';
 			}
 		}
 		print '</td></tr>';
 
-		// Date when (next invoice generation)
-		print '<tr><td>';
-		if ($action == 'date_when' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', (string) $object->date_when, $object, (int) $usercancreate, 'day');
-		} else {
-			print $langs->trans("NextDateToExecution");
-		}
-		print '</td><td>';
-		if ($action == 'date_when' || $object->frequency > 0) {
-			print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $usercancreate, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
-		}
-		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
-		if (! $object->isMaxNbGenReached()) {
-			if (! $object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) {
-				print img_warning($langs->trans("Late"));
-			}
-		} else {
-			print img_info($langs->trans("MaxNumberOfGenerationReached"));
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Max period / Rest period
-		print '<tr><td>';
-		if ($action == 'nb_gen_max' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, (int) $usercancreate);
-		} else {
-			print $langs->trans("MaxPeriodNumber");
-		}
-		print '</td><td>';
-		if ($action == 'nb_gen_max' || $object->frequency > 0) {
-			print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $usercancreate);
-		} else {
-			print '';
-		}
-		print '</td>';
-		print '</tr>';
-
-		// Status of generated invoices
-		print '<tr><td>';
-		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldkey($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', (string) $object->auto_validate, $object, (int) $usercancreate);
-		} else {
-			print $langs->trans("StatusOfAutoGeneratedInvoices");
-		}
-		print '</td><td>';
-		$select = 'select;0:' . $langs->trans('BillStatusDraft') . ',1:' . $langs->trans('BillStatusValidated');
-		if ($action == 'auto_validate' || $object->frequency > 0) {
-			print $form->editfieldval($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $usercancreate, $select);
-		}
-		print '</td>';
-		// Auto generate documents
-		if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
-			print '<tr>';
-			print '<td>';
-			if ($action == 'generate_pdf' || $object->frequency > 0) {
-				print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', (string) $object->generate_pdf, $object, (int) $usercancreate);
+		if ($object->frequency > 0) {
+			// Date when (next invoice generation)
+			print '<tr><td>';
+			if ($action == 'date_when' || $object->frequency > 0) {
+				print $form->editfieldkey($langs->trans("NextDateToExecution"), 'date_when', (string) $object->date_when, $object, (int) $usercancreate, 'day');
 			} else {
-				print $langs->trans("StatusOfGeneratedDocuments");
+				print $langs->trans("NextDateToExecution");
 			}
-			print '</td>';
-			print '<td>';
-			$select = 'select;0:' . $langs->trans('DoNotGenerateDoc') . ',1:' . $langs->trans('AutogenerateDoc');
-			if ($action == 'generate_pdf' || $object->frequency > 0) {
-				print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $usercancreate, $select);
+			print '</td><td>';
+			if ($action == 'date_when' || $object->frequency > 0) {
+				print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $usercancreate, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
+			}
+			//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
+			if (! $object->isMaxNbGenReached()) {
+				if (! $object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) {
+					print img_warning($langs->trans("Late"));
+				}
+			} else {
+				print img_info($langs->trans("MaxNumberOfGenerationReached"));
 			}
 			print '</td>';
 			print '</tr>';
-		} else {
-			print '<input type="hidden" name="generate_pdf" value="1">';
+
+			// Max period / Rest period
+			print '<tr><td>';
+			if ($action == 'nb_gen_max' || $object->frequency > 0) {
+				print $form->editfieldkey($langs->trans("MaxPeriodNumber"), 'nb_gen_max', (string) $object->nb_gen_max, $object, (int) $usercancreate);
+			} else {
+				print $langs->trans("MaxPeriodNumber");
+			}
+			print '</td><td>';
+			if ($action == 'nb_gen_max' || $object->frequency > 0) {
+				print $form->editfieldval($langs->trans("MaxPeriodNumber"), 'nb_gen_max', $object->nb_gen_max ? $object->nb_gen_max : '', $object, $usercancreate);
+			} else {
+				print '';
+			}
+			print '</td>';
+			print '</tr>';
+
+			// Status of generated invoices
+			print '<tr><td>';
+			if ($action == 'auto_validate' || $object->frequency > 0) {
+				print $form->editfieldkey($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', (string) $object->auto_validate, $object, (int) $usercancreate);
+			} else {
+				print $langs->trans("StatusOfAutoGeneratedInvoices");
+			}
+			print '</td><td>';
+			$select = 'select;0:' . $langs->trans('BillStatusDraft') . ',1:' . $langs->trans('BillStatusValidated');
+			if ($action == 'auto_validate' || $object->frequency > 0) {
+				print $form->editfieldval($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $usercancreate, $select);
+			}
+			print '</td>';
+			// Auto generate documents
+			if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
+				print '<tr>';
+				print '<td>';
+				if ($action == 'generate_pdf' || $object->frequency > 0) {
+					print $form->editfieldkey($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', (string) $object->generate_pdf, $object, (int) $usercancreate);
+				} else {
+					print $langs->trans("StatusOfGeneratedDocuments");
+				}
+				print '</td>';
+				print '<td>';
+				$select = 'select;0:' . $langs->trans('DoNotGenerateDoc') . ',1:' . $langs->trans('AutogenerateDoc');
+				if ($action == 'generate_pdf' || $object->frequency > 0) {
+					print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $usercancreate, $select);
+				}
+				print '</td>';
+				print '</tr>';
+			} else {
+				print '<input type="hidden" name="generate_pdf" value="1">';
+			}
 		}
 
 		print '</table>';

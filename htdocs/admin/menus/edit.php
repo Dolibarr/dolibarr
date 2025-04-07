@@ -40,7 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("other", "admin"));
+$langs->loadLangs(array("other", "admin", "uxdocumentation"));
 
 $cancel = GETPOST('cancel', 'alphanohtml'); // We click on a Cancel button
 $confirm = GETPOST('confirm');
@@ -372,17 +372,23 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td>';
 	print '<td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag(GETPOST("titre", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
+	// Langs
+	print '<tr><td>'.$langs->trans('LangFile').'</td>';
+	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($parent_langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
 	print '<td><input type="text" class="minwidth500" name="url" value="'.dol_escape_htmltag(GETPOST("url", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
+	// Show URL into a frame
+	if (getDolGlobalString("MAIN_SHOW_TOP_MENU_URL_IN_FRAME")) {
+		print '<tr><td class="fieldrequired">'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
+		print '<td><input type="checkbox" name="showtopmenuinframe" value="'.dol_escape_htmltag(GETPOST("showtopmenuinframe", 'alphanohtml')).'"></td><td></td></tr>';
+	}
+
 	// Picto
 	print '<tr><td>'.$langs->trans('Image').'</td>';
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
-
-	// Langs
-	print '<tr><td>'.$langs->trans('LangFile').'</td>';
-	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($parent_langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans('Position').'</td>';
@@ -398,10 +404,8 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
-	if ($menu instanceof Menubase) {
-		print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-		print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
-	}
+	print '<option value=""'.(isset($menu->target) && $menu instanceof Menubase && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu instanceof Menubase && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
 	print '</select>';
 	print ajax_combobox("target");
 	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
@@ -499,17 +503,28 @@ if ($action == 'create') {
 	print '<tr><td class="fieldrequired">'.$langs->trans('Title').'</td>';
 	print '<td><input type="text" class="minwidth300" name="titre" value="'.dol_escape_htmltag($menu->title).'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
 
+	// Langs
+	print '<tr><td>'.$langs->trans('LangFile').'</td>';
+	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
 	print '<td><input type="text" class="quatrevingtpercent" name="url" value="'.dol_escape_htmltag($menu->url).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 
+	// Show URL into a frame
+	if (getDolGlobalString("MAIN_SHOW_TOP_MENU_URL_IN_FRAME")) {
+		print '<tr><td class="fieldrequired">'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
+		print '<td><input type="checkbox" name="showtopmenuinframe" value="'.dol_escape_htmltag($menu->showtopmenuinframe).'"></td><td></td></tr>';
+	}
+
 	// Picto
 	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
-
-	// Langs
-	print '<tr><td>'.$langs->trans('LangFile').'</td>';
-	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-global-america';
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print '</span>';
+	print '</td></tr>';
 
 	// Position
 	print '<tr><td>'.$langs->trans('Position').'</td>';

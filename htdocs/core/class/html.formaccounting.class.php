@@ -650,4 +650,40 @@ class FormAccounting extends Form
 			print $out;
 		}
 	}
+
+	/**
+	 *	Print line into the journal table
+	 *
+	 * 	@param 		Translate 	$langs					Language translation object
+	 * 	@param  	string  	$date					Date of line
+	 * 	@param  	string  	$ref					Reference of line
+	 * 	@param  	string  	$accountAccounting		Accounting account
+	 * 	@param  	string  	$labelOperation			Operation label
+	 * 	@param  	string  	$paymentMode			Payment mode
+	 * 	@param  	double  	$amount					Amount
+	 * 	@return		void
+	 */
+	public static function printJournalLine($langs, $date, $ref, $accountAccounting, $labelOperation, $paymentMode, $amount)
+	{
+		$out = '<tr class="oddeven">';
+		$out .= '<td></td>';
+		$out .= '<td>'.$date.'</td>';
+		$out .= '<td>'.$ref.'</td>';
+		// Ledger account
+		$out .= '<td>';
+		$accounttoshow = length_accountg($accountAccounting);
+		if (empty($accounttoshow) || $accounttoshow == 'NotDefined') {
+			$out .= '<span class="error">'.$langs->trans('BankAccountNotDefined').'</span>';
+		} else {
+			$out .= $accounttoshow;
+		}
+		$out .= '</td>';
+		$out .= '<td>'.$labelOperation.'</td>';
+		$out .= '<td>'.$paymentMode.'</td>';
+		$out .= '<td class="nowrap right">'.($amount >= 0 ? price($amount) : '').'</td>';
+		$out .= '<td class="nowrap right">'.($amount < 0 ? price(-$amount) : '').'</td>';
+		$out .= '</tr>';
+
+		print $out;
+	}
 }

@@ -300,6 +300,12 @@ class SecurityTest extends CommonClassTest
 		$test = '<img onerror<abc>=alert(document.domain)';
 		$result = testSqlAndScriptInject($test, 0);
 		$this->assertEquals($expectedresult, $result, 'Error on testSqlAndScriptInject with an obfuscated string that bypass the WAF');
+
+		// Can allow the " in GET parameter value
+		define("SECURITY_WAF_ALLOW_QUOTES_IN_GET", 1);
+		$test = 'aa"bb';
+		$result = testSqlAndScriptInject($test, 1);		// Should return 0 = allowed
+		$this->assertEquals(0, $result, 'Error on testSqlAndScriptInject with SECURITY_WAF_ALLOW_QUOTES_IN_GET, should return 0, result='.$result);
 	}
 
 	/**

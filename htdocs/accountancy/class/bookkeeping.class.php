@@ -205,6 +205,11 @@ class BookKeeping extends CommonObject
 	 */
 	public static $can_modify_bookkeeping_sql_cached;
 
+	/**
+	 * @var string[]	Array of warnings
+	 */
+	public $warnings = array();
+
 
 	/**
 	 * Constructor
@@ -500,6 +505,68 @@ class BookKeeping extends CommonObject
 			$this->db->commit();
 			return $result;
 		}
+	}
+
+	/**
+	 *	Create a line in database from values as parameters
+	 *
+	 * 	@param		int 			$doc_date				Date of source document, in db date NOT NULL
+	 * 	@param		string 			$doc_ref				Doc ref
+	 * 	@param 		string 			$doc_type				Doc type
+	 * 	@param 		int 			$fk_doc					Doc id
+	 * 	@param 		int 			$fk_docdet				Doc line id
+	 * 	@param 		string 			$numero_compte			Account number
+	 * 	@param 		string 			$label_compte			Account label
+	 * 	@param 		string 			$label_operation		Operation label
+	 * 	@param 		double 			$amount					Amount
+	 * 	@param 		string 			$code_journal			Journal code
+	 * 	@param 		string 			$journal_label			Journal label
+	 * 	@param 		string 			$subledger_account		Sub ledger account
+	 * 	@return		int				Return integer <0 if KO, O nothing done, created object id if OK
+	 */
+	public function createFromValues($doc_date, $doc_ref, $doc_type, $fk_doc, $fk_docdet, $numero_compte, $label_compte, $label_operation, $amount, $code_journal, $journal_label, $subledger_account)
+	{
+		global $conf, $langs, $user;
+
+		$result = 0;
+
+		if (!empty($amount)) {
+			$this->doc_date = $doc_date;
+			$this->doc_ref = $doc_ref;
+			$this->doc_type = $doc_type;
+			$this->fk_doc = $fk_doc;
+			$this->fk_docdet = $fk_docdet;
+
+			$this->numero_compte = $numero_compte;
+			$this->label_compte = $label_compte;
+
+			$this->label_operation = $label_operation;
+			$this->subledger_account = $subledger_account;
+
+			$this->montant = $amount;
+			$this->sens = ($amount >= 0) ? 'D' : 'C';
+			$this->debit = ($amount >= 0 ? $amount : 0);
+			$this->credit = ($amount < 0 ? -$amount : 0);
+
+			$this->code_journal = $code_journal;
+			$this->journal_label = $journal_label;
+
+			$this->fk_user_author = $user->id;
+			$this->entity = $conf->entity;
+
+			$result = $this->create($user);
+			if ($result < 0) {
+				if ($this->error == 'BookkeepingRecordAlreadyExists') {
+					$warning = $langs->trans('WarningBookkeepingRecordAlreadyExists', $this->doc_type, $this->fk_doc, $this->fk_docdet);
+					$this->warnings[] = $warning;
+					dol_syslog(__METHOD__.' '.$warning, LOG_WARNING);
+				} else {
+					dol_syslog(__METHOD__.' '.$this->errorsToString(), LOG_ERR);
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**

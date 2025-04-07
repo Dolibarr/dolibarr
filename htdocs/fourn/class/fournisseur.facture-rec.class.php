@@ -336,9 +336,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param 	User		$user 			User object
 	 * @param 	int			$facFournId		Id invoice
 	 * @param 	int<0,1> 	$notrigger 		No trigger
+	 *  @param	int[]		$onlylines		Only the lines of the array
 	 * @return	int			            	Return integer <0 if KO, id of invoice created if OK
 	 */
-	public function create($user, $facFournId, $notrigger = 0)
+	public function create($user, $facFournId, $notrigger = 0, $onlylines = array())
 	{
 		global $conf;
 
@@ -448,6 +449,9 @@ class FactureFournisseurRec extends CommonInvoice
 				for ($i = 0; $i < $num; $i++) {
 					$facfourn_line = $facfourn_src->lines[$i];
 					'@phan-var-force SupplierInvoiceLine $facfourn_line';
+					if (!empty($onlylines) && !in_array($facfourn_line->id, $onlylines)) {
+						continue; // Skip unselected lines
+					}
 
 					$tva_tx = $facfourn_line->tva_tx;
 					if (!empty($facfourn_line->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {

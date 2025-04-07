@@ -76,7 +76,7 @@ class Ai
 	 * @param   string  		$model          Model name ('gpt-3.5-turbo', 'gpt-4-turbo', 'dall-e-3', ...)
 	 * @param   string  		$function     	Code of the feature we want to use ('textgeneration', 'transcription', 'audiogeneration', 'imagegeneration', 'translation')
 	 * @param	string			$format			Format for output ('', 'html', ...)
-	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:''|int,format?:string,service?:string,function?:string}	$response		Text or array if error
+	 * @return  string|array{error:bool,message:string,code?:int,curl_error_no?:int,format?:string,service?:string,function?:string}	$response		Text or array if error
 	 */
 	public function generateContent($instructions, $model = 'auto', $function = 'textgeneration', $format = '')
 	{
