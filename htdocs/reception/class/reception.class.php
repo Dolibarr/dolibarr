@@ -872,16 +872,16 @@ class Reception extends CommonObject
 	 * If STOCK_WAREHOUSE_NOT_REQUIRED_FOR_RECEPTIONS is set, you can add a reception line, with no stock source defined
 	 * If STOCK_MUST_BE_ENOUGH_FOR_RECEPTION is not set, you can add a reception line, even if not enough into stock
 	 *
-	 * @param 	int			$entrepot_id		Id of warehouse
-	 * @param 	int			$id					Id of source line (supplier order line)
-	 * @param 	float		$qty				Quantity
+	 * @param 	int				$entrepot_id		Id of warehouse
+	 * @param 	int				$id					Id of source line (supplier order line)
+	 * @param 	float			$qty				Quantity
 	 * @param	array<string, mixed>	$array_options		extrafields array
-	 * @param	string		$comment			Comment for stock movement
-	 * @param	int			$eatby				eat-by date
-	 * @param	int			$sellby				sell-by date
-	 * @param	string		$batch				Lot number
-	 * @param	float		$cost_price			Line cost
-	 * @return	int							Return integer <0 if KO, index of line if OK
+	 * @param	string			$comment			Comment for stock movement
+	 * @param	int				$eatby				eat-by date
+	 * @param	int				$sellby				sell-by date
+	 * @param	string			$batch				Lot number
+	 * @param	float|string	$cost_price			Line cost (Can be '' to keep AWP unchanged or a float value)
+	 * @return	int									Return integer <0 if KO, index of line if OK
 	 */
 	public function addline($entrepot_id, $id, $qty, $array_options = [], $comment = '', $eatby = null, $sellby = null, $batch = '', $cost_price = 0)
 	{

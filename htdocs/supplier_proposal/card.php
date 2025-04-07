@@ -799,7 +799,7 @@ if (empty($reshook)) {
 						min($rank, count($object->lines) + 1),
 						0,
 						GETPOSTINT('fk_parent_line'),
-						$fournprice,
+						(int) $fournprice,
 						$buyingprice,
 						$label,
 						$array_options,
@@ -878,7 +878,7 @@ if (empty($reshook)) {
 					-1, // rang
 					0, // special_code
 					GETPOSTINT('fk_parent_line'),
-					$fournprice,
+					(int) $fournprice,
 					$buyingprice,
 					$label,
 					$array_options,
@@ -1004,8 +1004,8 @@ if (empty($reshook)) {
 		$pu_ht_devise = price2num(GETPOST('multicurrency_subprice'), 'CU', 2);
 
 		// Add buying price
-		$fournprice = (GETPOST('fournprice') ? GETPOSTINT('fournprice') : '');  // foreigh key
-		$buyingprice = (GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
+		$fournprice = (int) (GETPOST('fournprice') ? GETPOSTINT('fournprice') : '');  	// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
+		$buyingprice = price2num((GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''), '', 2);	// If buying_price is '0', we must keep this value
 
 		// Extrafields Lines
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -1076,7 +1076,7 @@ if (empty($reshook)) {
 				GETPOSTINT('fk_parent_line'),
 				0,
 				(int) $fournprice,
-				(float) $buyingprice,
+				$buyingprice,
 				$label,
 				$type,
 				$array_options,
