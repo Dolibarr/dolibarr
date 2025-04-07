@@ -7952,7 +7952,8 @@ border-top-right-radius: 6px;
 	width: 70%;
 }
 .ticketpublicarealist {
-	width: 100%;
+	width: 96%;
+	margin: 0 auto;
 }
 .publicnewticketform {
 	/* margin-top: 25px !important; */
