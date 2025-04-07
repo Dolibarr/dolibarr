@@ -5227,6 +5227,7 @@ function migrate_accountingbookkeeping(int $entity)
 
 	$error = 0;
 	$resultstring = '';
+	$bookKeepingAddon = '';
 
 	// For the moment we set the numbering rule to neon (the rule argon has a lot of critical bugs to fix first).
 	if (getDolGlobalString('BOOKKEEPING_ADDON') == '') {
@@ -5241,7 +5242,7 @@ function migrate_accountingbookkeeping(int $entity)
 	if ($bookKeepingAddon === 'mod_bookkeeping_argon') {
 		$db->begin();
 
-		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM {$db->prefix()}accounting_bookkeeping";
+		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM ".$db->prefix()."accounting_bookkeeping";
 		$sql .= " WHERE ref IS NULL AND entity = ".((int) $entity);
 		$sql .= " ORDER BY doc_year, doc_month, code_journal, piece_num";
 
