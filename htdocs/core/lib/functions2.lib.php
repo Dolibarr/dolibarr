@@ -1102,6 +1102,9 @@ function get_next_value($db, $mask, $table, $field, $where = '', $objsoc = '', $
 	}
 	//print "maskraz=".$maskraz;	// -1=no reset
 
+	$monthcomp = 0;
+	$yearcomp = '';
+
 	if ($maskraz > 0) {   // A reset is required
 		if ($maskraz == 99) {
 			$maskraz = (int) date('m', $date);
