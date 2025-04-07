@@ -235,7 +235,7 @@ function testSqlAndScriptInject($val, $type)
  * Return true if security check on parameters are OK, false otherwise.
  *
  * @param		string|array<int|string,string>	$var		Variable name
- * @param		int<0,2>		$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		int<0,3>		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @param		int<0,1>		$stopcode	0=No stop code, 1=Stop code (default) if injection found
  * @return		boolean						True if there is no injection.
  */
@@ -248,8 +248,8 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 				continue;
 			}
 
-			// Test on both the key (we force type to the less tolerant = 3) and the value
-			if (analyseVarsForSqlAndScriptsInjection($key, 3, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
+			// Test on both the key (we force type to 1 for test on key, we must accept key like "delete=1" blocked with type 3) and the value
+			if (analyseVarsForSqlAndScriptsInjection($key, 1, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
 				http_response_code(403);
