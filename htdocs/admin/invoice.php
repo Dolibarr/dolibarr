@@ -126,6 +126,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		/** @var ModelePDFFactures $module */
 		'@phan-var-force ModelePDFFactures $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
@@ -344,6 +345,7 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
+						/** @var ModeleNumRefFactures $module */
 						'@phan-var-force ModeleNumRefFactures $module';
 
 						$arrayofmodules[] = $module;
