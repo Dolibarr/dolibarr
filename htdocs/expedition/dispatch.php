@@ -814,10 +814,12 @@ if ($object->id > 0 || !empty($object->ref)) {
 							while ($obj_exp = $db->fetch_object($resultsql)) {
 								$suffix = "_" . $j . "_" . $i;
 
+								$productChildrenNb = 0;
 								$expedition_line_child_list = array();
 								if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
 									// virtual product : find all children
-									if ($tmpproduct->hasFatherOrChild(1) > 0) {
+									$productChildrenNb = $tmpproduct->hasFatherOrChild(1);
+									if ($productChildrenNb > 0) {
 										$line_id_list = array();
 
 										// load all child as object line
@@ -1079,9 +1081,9 @@ if ($object->id > 0 || !empty($object->ref)) {
 									print '<td class="right">';
 									if ($can_update_stock) {
 										if (count($listwarehouses) > 1) {
-											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 1, 0, $objd->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 										} elseif (count($listwarehouses) == 1) {
-											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objp->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
+											print $formproduct->selectWarehouses(GETPOST("entrepot".$suffix) ? GETPOST("entrepot".$suffix) : $objd->fk_warehouse, "entrepot".$suffix, '', 0, 0, $objd->fk_product, '', 1, 0, array(), 'csswarehouse'.$suffix);
 										} else {
 											$langs->load("errors");
 											print $langs->trans("ErrorNoWarehouseDefined");
@@ -1099,6 +1101,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 										'i' => $i,
 										'suffix' => $suffix,
 										'objp' => $objp,
+										'objd' => $objd,
 									);
 									$reshook = $hookmanager->executeHooks(
 										'printFieldListValue',
