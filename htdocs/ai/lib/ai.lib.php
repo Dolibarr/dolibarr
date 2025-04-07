@@ -76,10 +76,8 @@ function getListOfAIServices()
  */
 function getListForAISummarize()
 {
-	global $langs;
-
 	$arrayforaisummarize = array(
-		'20_w' => 'SummarizeTwentyWords',
+		//'20_w' => 'SummarizeTwentyWords',
 		'50_w' => 'SummarizeFiftyWords',
 		'100_w' => 'SummarizeHundredWords',
 		'200_w' => 'SummarizeTwoHundredWords',
