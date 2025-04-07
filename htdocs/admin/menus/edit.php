@@ -398,8 +398,8 @@ if ($action == 'create') {
 
 	// Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
-	print '<option value=""'.(isset($menu->target) && $menu instanceof Menubase && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu instanceof Menubase && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
 	print '</select>';
 	print ajax_combobox("target");
 	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
