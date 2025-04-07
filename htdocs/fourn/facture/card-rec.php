@@ -676,7 +676,7 @@ if (empty($reshook)) {
 			$date_end_fill = GETPOSTINT('date_end_fill');
 
 			// Margin
-			$fournprice = (in)(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
+			$fournprice = (int) (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes

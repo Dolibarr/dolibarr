@@ -618,7 +618,7 @@ class Propal extends CommonObject
 	 *      @param		int			$special_code		Special code (also used by externals modules!)
 	 *      @param		int			$fk_parent_line		Id of parent line
 	 *      @param		int			$fk_fournprice		Id supplier price
-	 *      @param		float[string	$pa_ht				Buying price without tax ('' to keep PMP unchanged or a float)
+	 *      @param		float|string	$pa_ht			Buying price without tax ('' to keep PMP unchanged or a float)
 	 *      @param		string		$label				???
 	 *		@param      int|string	$date_start       	Start date of the line
 	 *		@param      int|string	$date_end         	End date of the line
