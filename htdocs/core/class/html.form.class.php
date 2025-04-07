@@ -1828,6 +1828,13 @@ class Form
 		if (getDolGlobalString('CONTACT_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql .= " AND sp.statut <> 0";
 		}
+		// filter user access
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".(int) $user->id .")";
+		}
+		if ($user->socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $user->socid);
+		}
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
 			// if not, by testSqlAndScriptInject() only.

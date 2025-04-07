@@ -2202,7 +2202,7 @@ datalist {
 
 	div#login_left, div#login_right {
 		min-width: 150px !important;
-		max-width: 200px !important;
+		max-width: 240px !important;
 		padding-left: 5px !important;
 		padding-right: 5px !important;
 	}
@@ -2257,7 +2257,7 @@ datalist {
 		min-width: 20px;
 	}
 	.trinputlogin input[type=text], input[type=password] {
-		max-width: 140px;
+		max-width: 180px;
 	}
 	.vmenu .searchform input {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
@@ -3395,6 +3395,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
+	margin-right: 10px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
@@ -3452,6 +3453,7 @@ div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 245px;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-left: 16px;
 	padding-right: 16px;
 	text-align: center;
@@ -3477,7 +3479,7 @@ table.login_table_securitycode tr td {
 	border: 1px solid #DDDDDD;
 }
 #img_logo, .img_logo {
-	max-width: 170px;
+	max-width: 160px;
 	max-height: 90px;
 }
 

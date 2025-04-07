@@ -125,7 +125,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 		// Get entities
 		//$entity = getEntity('invoicenumber', 1, $object);
 		$entity = $conf->entity;	// In accountancy, we never share entities
-		$numFinal = get_next_value($db, $mask, 'facture', 'ref', $where, null, (empty($object) ? dol_now() : $object->date), $mode, false, null, $entity, $object);
+		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', $where, null, (empty($object) ? dol_now() : $object->doc_date), $mode, false, null, (string) $entity, $object);
 		if (!preg_match('/([0-9])+/', $numFinal)) {
 			$this->error = $numFinal;
 		}

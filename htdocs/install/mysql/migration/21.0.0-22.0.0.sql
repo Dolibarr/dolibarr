@@ -242,3 +242,7 @@ ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (f
 ALTER TABLE llx_website ADD COLUMN paymentframemode integer DEFAULT 0;
 ALTER TABLE llx_contratdet DROP COLUMN price_ht;
 ALTER TABLE llx_contratdet DROP COLUMN remise;
+
+ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
+
+ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
