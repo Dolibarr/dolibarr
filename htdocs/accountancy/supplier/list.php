@@ -838,11 +838,8 @@ if ($result) {
 		// Action column
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center actioncolumn">';
-			$selected = 0;
-			if (in_array($objp->rowid."_".$i, $toselect)) {
-				$selected = 1;
-			}
-			print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';            print '</td>';
+			$selected = in_array($objp->rowid."_".$i, $toselect);
+			print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($selected ? " checked" : "").'/>';            print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1002,11 +999,8 @@ if ($result) {
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center actioncolumn">';
-			$selected = 0;
-			if (in_array($objp->rowid."_".$i, $toselect)) {
-				$selected = 1;
-			}
-			print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($ischecked ? " checked" : "").'/>';
+			$selected = in_array($objp->rowid."_".$i, $toselect);
+			print '<input type="checkbox" class="flat checkforselect checkforselect'.$facturefourn_static_det->id.'" name="toselect[]" value="'.$facturefourn_static_det->id."_".$i.'"'.($selected ? " checked" : "").'/>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

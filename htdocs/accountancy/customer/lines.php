@@ -673,10 +673,7 @@ if ($result) {
 		// Action column
 		if ($conf->main_checkbox_left_column) {
 			print '<td class="nowrap center actioncolumn">';
-			$selected = 0;
-			if (in_array($objp->rowid, $changeaccount)) {
-				$selected = 1;
-			}
+			$selected = in_array($objp->rowid, $changeaccount);
 			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			print '</td>';
 			if (!$i) {
@@ -797,10 +794,7 @@ if ($result) {
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center actioncolumn">';
-			$selected = 0;
-			if (in_array($objp->rowid, $changeaccount)) {
-				$selected = 1;
-			}
+			$selected = in_array($objp->rowid, $changeaccount);
 			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			print '</td>';
 			if (!$i) {
