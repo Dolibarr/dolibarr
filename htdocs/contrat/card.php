@@ -1680,7 +1680,7 @@ if ($action == 'create') {
 						$line = $objp;
 						$line->id = $objp->rowid;
 
-					$coldisplay = 0;
+						$coldisplay = 0;
 
 						print '<tr class="tdtop oddeven" '.$moreparam.'>';
 
