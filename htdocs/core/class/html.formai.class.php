@@ -93,12 +93,13 @@ class FormAI extends Form
 	/**
 	 * Return Html code for AI instructions of message and autofill result
 	 *
-	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
-	 * @param	string		$format			Format for output ('', 'html', ...)
-	 * @param   string      $htmlContent    HTML name of WYSIWYG field
-	 * @return 	string      				HTML code to ask AI instructions and autofill result
+	 * @param	string		$function			Function ('textgenerationemail', 'textgenerationwebpage', ...)
+	 * @param	string		$format				Format for output ('', 'html', ...)
+	 * @param   string      $htmlContent    	HTML name of WYSIWYG field
+	 * @param	string		$onlyenhancements	Show only this enhancement features (show all if '')
+	 * @return 	string      					HTML code to ask AI instructions and autofill result
 	 */
-	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message')
+	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message', $onlyenhancements = '')
 	{
 		global $langs, $form;
 		require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
@@ -111,31 +112,41 @@ class FormAI extends Form
 
 		$langs->load("other");
 
+		$messageaiwait = '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
+
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<!-- getSectionForAIEnhancement -->';
-		$out .= '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">';
-		$out .= '<div id="ai_textgeneration'.$htmlContent.'" class="ai_textgeneration'.$htmlContent.' paddingtop paddingbottom ai_feature">';
-		//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
-		$out .= '<textarea class="centpercent textarea-ai_feature" data-functionai="textgeneration" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
-		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="textgeneration" value="'.$langs->trans('Generate').'"/>';
-		$out .= '</div>';
-		$out .= '<br>';
+		$out = '';
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textgenerationemail', 'textgenerationwebpage'))) {
+			$out .= '<div id="ai_textgeneration'.$htmlContent.'" class="ai_textgeneration'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
+			$out .= '<textarea class="centpercent textarea-ai_feature" data-functionai="textgeneration" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
+			$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="textgeneration" value="'.$langs->trans('Generate').'"/>';
+			$out .= '</div>';
+		}
 
-		$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
-		$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
-		$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
-		$out .= '</div>';
-		$out .= '<br>';
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('texttranslation'))) {
+			$out .= ($out ? '<br>' : '');
+			$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
+			$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
+			$out .= '</div>';
+		}
 
-		$summarizearray = getListForAISummarize();
-		$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
-		$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-		$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
-		$out .= '</div>';
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textsummarize'))) {
+			$summarizearray = getListForAISummarize();
+			$out .= ($out ? '<br>' : '');
+			$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
+			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
+			$out .= '</div>';
+		}
+
+		$out = '<!-- getSectionForAIEnhancement -->'.$out;
+		$out = '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">'.$out;
 
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
-		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
+		$out .= $messageaiwait;
 		$out .= '</div>';
 
 		if ($function == 'imagegeneration') {
@@ -191,10 +202,12 @@ class FormAI extends Form
 					var userprompt = $('#ai_instructions".$htmlContent."').val();
 					var timeoutfinished = 0;
 					var apicallfinished = 0;
+
 					instructions = '';
-					htmlname = '".$htmlContent."';
+					htmlname = '".dol_escape_js($htmlContent)."';
 					format = '".dol_escape_js($format)."';
 					functionai = $(element).data('functionai');
+					texttomodify = '';
 
 					console.log('htmlname='+htmlname);
 					if ($('#'+htmlname).is('div')) {
@@ -211,9 +224,12 @@ class FormAI extends Form
 							}
 						}
 						*/
-
-						lang = $('#ai_translation'+htmlname+'_select').val();
-						instructions = 'Translate the following text to ' + lang + ': ' + texttomodify;
+						if (!texttomodify) {
+							instructions = '';
+						} else {
+							lang = $('#ai_translation'+htmlname+'_select').val();
+							instructions = 'Translate only the following text to ' + lang + ': ' + texttomodify;
+						}
 					} else if (functionai == 'textsummarize') {
 						width = $('#ai_summarize'+htmlname+'_select').val();
 						arr = width.split('_');
@@ -221,7 +237,7 @@ class FormAI extends Form
 						unit = arr[1];
 						if (width == undefined || unit == undefined){
 							console.log('Bad value so we choose 20 words')
-							width = '20';
+							width = '50';
 							unit = 'w';
 						}
 						switch(unit){
@@ -244,7 +260,9 @@ class FormAI extends Form
 						instructions = userprompt;
 					}
 
+					/* Show message API running */
 					$('#ai_status_message".$htmlContent."').show();
+					$('#ai_status_message".$htmlContent."').html('".dol_escape_js($messageaiwait)."');
 					$('.icon-container .loader').show();
 
 					setTimeout(function() {
@@ -252,7 +270,7 @@ class FormAI extends Form
 						$('#ai_status_message".$htmlContent."').hide();
 					}, 30000);
 
-					console.log(instructions);
+					console.log('Instruction forged by javascript = '+instructions);
 
 					callAIGenerator(functionai, instructions, format, htmlname);
 				}
@@ -324,9 +342,11 @@ class FormAI extends Form
 						}
 					},
 					error: function(xhr, status, error) {
-						alert(error);
-						console.error('error ajax', status, error);
-						$('#ai_status_message').hide();
+						/* alert(error); */
+						console.log('error ajax', status, error);
+						/*$('#ai_status_message'+htmlname).hide();*/
+						$('#ai_status_message'+htmlname).val(error);
+						$('#ai_status_message'+htmlname).html(error);
 					}
 				});
 			} else {
@@ -374,9 +394,16 @@ class FormAI extends Form
 						$('#ai_dropdown'+htmlname).hide();
 					},
 					error: function(xhr, status, error) {
-						alert(error);
-						console.error('error ajax', status, error);
-						$('#ai_status_message'+htmlname).hide();
+						/* alert(error); */
+						console.log('error ajax ', status, error);
+						/* $('#ai_status_message'+htmlname).hide(); */
+						if (xhr.responseText) {
+							$('#ai_status_message'+htmlname).val(xhr.responseText);
+							$('#ai_status_message'+htmlname).html(xhr.responseText);
+						} else {
+							$('#ai_status_message'+htmlname).val(error);
+							$('#ai_status_message'+htmlname).html(error);
+						}
 					}
 
 				});

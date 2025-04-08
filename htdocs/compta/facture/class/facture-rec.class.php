@@ -956,7 +956,7 @@ class FactureRec extends CommonInvoice
 	 * 	@param		float		$pu_ht_devise		Unit price in currency
 	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
 	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
-	 * 	@param		?int|string	$fk_fournprice		Supplier price id (to calculate margin) or string
+	 * 	@param		int|string|null	$fk_fournprice		Supplier price id (to calculate margin) or string
 	 * 	@param		float		$pa_ht				Buying price of line (to calculate margin) (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		int			$fk_parent_line		Id of parent line
 	 *	@return    	int             				Return integer <0 if KO, Id of line if OK
