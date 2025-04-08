@@ -401,9 +401,11 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<br><br>';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
+			$formmail->withaiprompt = 'html';		// set format
+
+			$showlinktoai = $key;		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+			$showlinktoailabel = $langs->trans("ToTest");
 			$htmlname = $key;
 			$onlyenhancements = $key;
 

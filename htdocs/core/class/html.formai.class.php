@@ -91,9 +91,9 @@ class FormAI extends Form
 	}
 
 	/**
-	 * Return Html code for AI instructions of message and autofill result
+	 * Return Html code for AI instructions of message and autofill result.
 	 *
-	 * @param	string		$function			Function ('textgenerationemail', 'textgenerationwebpage', ...)
+	 * @param	string		$function			Function/variant for text generation ('textgenerationemail', 'textgenerationwebpage', ...)
 	 * @param	string		$format				Format for output ('', 'html', ...)
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field
 	 * @param	string		$onlyenhancements	Show only this enhancement features (show all if '')
@@ -121,7 +121,7 @@ class FormAI extends Form
 			$out .= '<div id="ai_textgeneration'.$htmlContent.'" class="ai_textgeneration'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
 			$out .= '<textarea class="centpercent textarea-ai_feature" data-functionai="textgeneration" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
-			$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="textgeneration" value="'.$langs->trans('Generate').'"/>';
+			$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="'.$function.'" value="'.$langs->trans('Generate').'"/>';
 			$out .= '</div>';
 		}
 
@@ -206,10 +206,10 @@ class FormAI extends Form
 					instructions = '';
 					htmlname = '".dol_escape_js($htmlContent)."';
 					format = '".dol_escape_js($format)."';
-					functionai = $(element).data('functionai');
+					functionai = $(element).data('functionai');		/* element is the html element we have manipulated in the ai tool */
 					texttomodify = '';
 
-					console.log('htmlname='+htmlname);
+					console.log('htmlname='+htmlname+' functionai='+functionai);
 					if ($('#'+htmlname).is('div')) {
 						texttomodify = $('#'+htmlname).html();	/* for div */
 					} else {
@@ -278,11 +278,15 @@ class FormAI extends Form
 				CKEDITOR.on( 'instanceReady', function(e) {
 					if (CKEDITOR.instances) {
 						var htmlname = '".$htmlContent."';
-						CKEDITOR.instances[htmlname].on('change', function() {
-							data = CKEDITOR.instances[htmlname].getData();
-							$('#'+htmlname).val(data);	/* for input or textarea */
-							$('#'+htmlname).html(data);	/* for div */
-						})
+						/* if a ckeditor handler exist for this div, we add a handler to have the main html component updated */
+						console.log('Add handler on CKEDITOR.instances[".$htmlContent."]');
+						if (CKEDITOR.instances[htmlname] != undefined) {
+							CKEDITOR.instances[htmlname].on('change', function() {
+								data = CKEDITOR.instances[htmlname].getData();
+								$('#'+htmlname).val(data);	/* for input or textarea */
+								$('#'+htmlname).html(data);	/* for div */
+							})
+						}
 					}
 				})
 			});

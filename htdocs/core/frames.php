@@ -41,6 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @var int	$heightforframes
  */
 
+/** @phan-file-suppress PhanUndeclaredGlobalVariable */
+
 // Load translation files required by the page
 $langs->load("other");
 
@@ -105,7 +107,6 @@ if ($keyforcontent) {
 } else {
 	if (preg_match('/^\//', $menu->url) || preg_match('/^http/i', $menu->url)) {
 		// menu->url is an URL starting with http or /
-		// @phan-suppress PhanUndeclaredMethod
 		print "
 			<html>
 			<head>

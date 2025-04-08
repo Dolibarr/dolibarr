@@ -199,6 +199,8 @@ print '};
 print dol_get_fiche_end();
 
 
+// The section for test
+
 if (getDolGlobalString("AI_API_SERVICE")) {
 	// Section to test
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
@@ -206,57 +208,49 @@ if (getDolGlobalString("AI_API_SERVICE")) {
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	$functioncode = GETPOST('functioncode');
+
+	$key = 'textgenerationother';	// The HTML ID of field to fill
+
+	//if (GETPOST('functioncode') == 'textgenerationemail') {
+
+	print '<br>';
+	//print '<hr>';
+
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+	include_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
+	$formai = new FormAI($db);
+	$formmail = new FormMail($db);
+
+	$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
+	$showlinktoailabel = $langs->trans("AITestText");
+	$showlinktolayout = 0;
+	$htmlname = $key;
+	$formmail->withaiprompt = '';
+
+	// Fill $out
+
 	$out = '';
-
-	//if ($functioncode) {
-		$key = 'textgenerationother';	// The HTML ID of field to fill
-
-		$labeloffeature = empty($arrayofaifeatures[$key]['label']) ? 'Undefined' : $arrayofaifeatures[$key]['label'];
-
-		//$out .= $langs->trans("Test").' '.$labeloffeature.'...<br><br>';
-
-		//if (GETPOST('functioncode') == 'textgenerationemail') {
-
-		print '<br>';
-		//print '<hr>';
-
-		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-		include_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
-		$formai = new FormAI($db);
-		$formmail = new FormMail($db);
-
-		$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-		$showlinktoailabel = $langs->trans("AITestText");
-		$showlinktolayout = 0;
-		$htmlname = $key;
-
-		// Fill $out
-		include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
-
-		$out .= '<br><textarea id="'.$key.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="5"></textarea>';	// The div
-	//}
-
-	/*
-	if (!$functioncode) {
-		// Combo list of AI features
-		$out .= '<select name="functioncode" id="functioncode" class="flat minwidth300" placeholder="Test feature">';
-		$out .= '<option value="-1">'.$langs->trans("SelectFeatureToTest").'</option>';
-		foreach ($arrayofaifeatures as $key => $val) {
-			$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-			$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-			$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'"';
-			$out .= (GETPOST('functioncode') == $key ? ' selected="selected"' : '');
-			$out .= '>'.dol_escape_htmltag($labeltext).'</option>';
-		}
-		$out .= '</select>';
-		$out .= ajax_combobox("functioncode");
-
-		$out .= '<input class="button small" type="submit" name="testmode" value="'.$langs->trans("Test").'">';
-	}
-	*/
-
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 	print $out;
+
+	print '<br><textarea id="'.$htmlname.'" placeholder="Lore ipsum..." class="quatrevingtpercent" rows="4"></textarea>';	// The div
+
+	print '<br><br>';
+
+
+	$showlinktoai .= 'html';
+	$htmlname .= 'html';
+	$formmail->withaiprompt = 'html';
+
+	// Fill $out
+	$out = '';
+	include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+	print $out;
+
+	print '<br>';
+	$doleditor = new DolEditor($htmlname, '', '', 100, 'dolibarr_details');
+	print $doleditor->Create(1);
+
 
 	print '</form>';
 }

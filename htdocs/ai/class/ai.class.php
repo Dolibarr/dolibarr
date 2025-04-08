@@ -54,6 +54,10 @@ class Ai
 	 */
 	private $apiEndpoint;
 
+	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return all HTML content inside a section tag. Do not add explanation.';
+	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation';
+
 
 	/**
 	 * Constructor
@@ -153,8 +157,14 @@ class Ai
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
+			if (empty($prePrompt) && $function == 'textgenerationemail') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_EMAIL;
+			}
+			if (empty($prePrompt) && $function == 'textgenerationwebpage') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_WEBPAGE;
+			}
 			if (empty($prePrompt) && $function == 'texttranslation') {
-				$prePrompt = 'You are a translator, give only the translation with no comment and explanation';
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION;
 			}
 
 			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
