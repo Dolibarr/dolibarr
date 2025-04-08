@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 
 /**
- * Core function to output top menu eldy
+ * Core function to output the top menu eldy
  *
  * @param 	DoliDB	$db				Database handler
  * @param 	string	$atarget		Target (Example: '' or '_top')
@@ -495,7 +495,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	$menuArbo = new Menubase($db, 'eldy');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'eldy', $tabMenu); // Set tabMenu with only top entries of non hardcoded core menu enties and external modules
 
-	// Add menu with top entries of non hardcoded core menu enties and external modules
+	// Add menu with top entries of non hardcoded core menu entries and of external modules
 	$num = count($newTabMenu);
 	for ($i = 0; $i < $num; $i++) {
 		//var_dump($type_user.' '.$newTabMenu[$i]['url'].' '.$showmode.' '.$newTabMenu[$i]['perms']);
@@ -521,6 +521,13 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 			$shorturl = $url;
 			if (DOL_URL_ROOT) {
 				$shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT, '/').'/', '', $shorturl);
+			}
+		}
+
+		// Modify URL for the case we are using the option showtopmenuinframe
+		if ($newTabMenu[$i]['showtopmenuinframe']) {
+			if (preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {
+				$url = $shorturl = '/core/frames.php?idmenu='.$newTabMenu[$i]['rowid'];
 			}
 		}
 

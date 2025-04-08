@@ -148,6 +148,7 @@ if ($action == 'add') {
 		$menu->enabled = (string) GETPOST('enabled', 'alphanohtml');
 		$menu->perms = (string) GETPOST('perms', 'alphanohtml');
 		$menu->target = (string) GETPOST('target', 'alphanohtml');
+		$menu->showtopmenuinframe = GETPOSTINT('showtopmenuinframe');
 		$menu->user = GETPOSTINT('user');
 		$menu->mainmenu = (string) GETPOST('propertymainmenu', 'alphanohtml');
 		if (is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
@@ -210,6 +211,8 @@ if ($action == 'update') {
 				$menu->target = (string) GETPOST('target', 'alphanohtml');
 				$menu->user = GETPOSTINT('user');
 				$menu->mainmenu = (string) GETPOST('propertymainmenu', 'alphanohtml');
+				$menu->showtopmenuinframe = GETPOSTINT('showtopmenuinframe');
+
 				if (is_numeric(GETPOST('menuIdParent', 'alphanohtml'))) {
 					$menu->fk_menu = (int) GETPOST('menuIdParent', 'alphanohtml');
 				} else {
@@ -317,22 +320,22 @@ if ($action == 'create') {
 	}
 
 	// Handler
-	print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans('MenuHandler'), $langs->trans('DetailMenuHandler')).'</td>';
 	print '<td>';
 	$formadmin->select_menu_families($menu_handler.(preg_match('/_menu/', $menu_handler) ? '' : '_menu'), 'menu_handler', array_merge($dirstandard, $dirsmartphone));
 	print '</td>';
-	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
+	print '<td></td></tr>';
 
 	// User
-	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td>';
-	print '<td><select class="flat" name="user" id="menuuser">';
+	print '<tr><td class="nowrap fieldrequired">'.$form->textwithpicto($langs->trans('MenuForUsers'), $langs->trans('DetailUser')).'</td>';
+	print '<td><select class="flat width150" name="user" id="menuuser">';
 	print '<option value="2" selected>'.$langs->trans("AllMenus").'</option>';
 	print '<option value="0">'.$langs->trans('Internal').'</option>';
 	print '<option value="1">'.$langs->trans('External').'</option>';
 	print '</select>';
 	print ajax_combobox('menuuser');
 	print '</td>';
-	print '<td>'.$langs->trans('DetailUser').'</td></tr>';
+	print '<td></td></tr>';
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans('Position').'</td><td>';
@@ -340,7 +343,7 @@ if ($action == 'create') {
 		print $langs->trans('Left');
 		print '<input type="hidden" name="type" value="left">';
 	} else {
-		print '<select name="type" class="flat" id="topleft">';
+		print '<select name="type" class="flat width150" id="topleft">';
 		print '<option value="">&nbsp;</option>';
 		print '<option value="top"'.(GETPOST("type") == 'top' ? ' selected' : '').'>'.$langs->trans('Top').'</option>';
 		print '<option value="left"'.(GETPOST("type") == 'left' ? ' selected' : '').'>'.$langs->trans('Left').'</option>';
@@ -375,23 +378,31 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('LangFile').'</td>';
 	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($parent_langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
-	// URL
-	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
-	print '<td><input type="text" class="minwidth500" name="url" value="'.dol_escape_htmltag(GETPOST("url", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
-
-	// Show URL into a frame
-	if (getDolGlobalString("MAIN_SHOW_TOP_MENU_URL_IN_FRAME")) {
-		print '<tr><td class="fieldrequired">'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
-		print '<td><input type="checkbox" value="1" name="showtopmenuinframe"'.(GETPOSTINT("showtopmenuinframe") ? ' checked="checked"' : '').'"></td><td></td></tr>';
-	}
-
 	// Picto
 	print '<tr><td>'.$langs->trans('Image').'</td>';
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
 
+	// URL
+	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
+	print '<td><input type="text" class="minwidth500" name="url" value="'.dol_escape_htmltag(GETPOST("url", 'alphanohtml')).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+
+	// Target
+	print '<tr><td>'.$langs->trans('OpenLinkInto').'</td><td><select class="flat" name="target" id="target">';
+	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>'.$langs->trans('SameWindow').'</option>';
+	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('NewWindow').'</option>';
+	print '</select>';
+	print ajax_combobox("target");
+	print '</td><td></td></tr>';
+
+	// Show URL into a frame
+	if (getDolGlobalString("MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME")) {
+		print '<tr class="hideforleftmenu"><td>'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
+		print '<td><input type="checkbox" value="1" name="showtopmenuinframe"'.(GETPOSTINT("showtopmenuinframe") ? ' checked="checked"' : '').'"></td><td></td></tr>';
+	}
+
 	// Position
 	print '<tr><td>'.$langs->trans('Position').'</td>';
-	print '<td><input type="text" class="width100" name="position" value="'.((int) (GETPOSTISSET("position") ? GETPOSTINT("position") : 100)).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+	print '<td><input type="number" class="minwidth50 maxwidth75" name="position" value="'.(GETPOSTISSET("position") ? GETPOSTINT("position") : 100).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	// Enabled
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
@@ -400,14 +411,6 @@ if ($action == 'create') {
 	// Perms
 	print '<tr><td>'.$langs->trans('Rights').'</td>';
 	print '<td><input type="text" class="minwidth500" name="perms" value="'.(GETPOSTISSET('perms') ? GETPOST('perms', 'alphanohtml') : '1').'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
-
-	// Target
-	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target" id="target">';
-	print '<option value=""'.(isset($menu->target) && $menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.(isset($menu->target) && $menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
-	print '</select>';
-	print ajax_combobox("target");
-	print '</td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
 	print '</div>';
@@ -437,10 +440,10 @@ if ($action == 'create') {
 	//var_dump($menu);
 
 	// Id
-	print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->id.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans('MenuID'), $langs->trans('DetailId')).'</td><td>'.$menu->id.'</td><td></td></tr>';
 
 	// Module
-	print '<tr><td>'.$langs->trans('MenuModule').'</td><td>'.(empty($menu->module) ? 'Core' : $menu->module).'</td><td><span class="opacitymedium">'.$langs->trans('DetailMenuModule').'</span></td></tr>';
+	print '<tr><td>'.$form->textwithpicto($langs->trans('MenuModule'), $langs->trans('DetailMenuModule')).'</td><td>'.(empty($menu->module) ? 'Core' : $menu->module).'</td><td></td></tr>';
 
 	// Handler
 	if ($menu->menu_handler == 'all') {
@@ -448,7 +451,8 @@ if ($action == 'create') {
 	} else {
 		$handler = $menu->menu_handler;
 	}
-	print '<tr><td class="fieldrequired">'.$langs->trans('MenuHandler').'</td><td>'.$handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans('MenuHandler'), $langs->transnoentitiesnoconv("DetailMenuHandler")).'</td><td>'.$handler.'</td>';
+	print '<td></td></tr>';
 
 	// User
 	print '<tr><td class="nowrap fieldrequired">'.$langs->trans('MenuForUsers').'</td><td>';
@@ -462,26 +466,23 @@ if ($action == 'create') {
 
 	// Type
 	print '<tr><td class="fieldrequired">'.$langs->trans('Position').'</td>';
-	print '<td>'.$langs->trans(ucfirst($menu->type)).'</td><td>'.$langs->trans('DetailType').'</td></tr>';
+	print '<td>'.$langs->trans(ucfirst($menu->type));
+	print '<input type="hidden" name="type" value="'.$menu->type.'">';
+	print '</td><td>';
+	print $langs->transnoentitiesnoconv("DetailType");
+	print '</td></tr>';
 
 	// Mainmenu code
 	if ($menu->type == 'top') {
 		print '<tr><td class="fieldrequired">'.$langs->trans('MainMenuCode').'</td>';
-		/*if ($parent_rowid)
-		 {
-		 print '<td>'.$parent_rowid.'<input type="hidden" name="propertyleftmenu" value="'.$parent_rowid.'"></td>';
-		 }
-		 else
-		 {*/
 		print '<td><input type="text" class="minwidth300" id="propertymainmenu" name="propertymainmenu" value="'.(GETPOST("propertymainmenu", 'alphanohtml') ? GETPOST("propertymainmenu", 'alphanohtml') : $menu->mainmenu).'"></td>';
-		//}
 		print '<td>';
 		print $langs->trans("Example").': mytopmenukey';
 		print '</td></tr>';
 	}
 
 	// MenuId Parent
-	print '<tr><td class="fieldrequired">'.$langs->trans('MenuIdParent');
+	print '<tr class="hideforleftmenu"><td class="fieldrequired">'.$langs->trans('MenuIdParent');
 	print '</td>';
 	$valtouse = $menu->fk_menu;
 	if ($menu->fk_mainmenu) {
@@ -506,18 +507,8 @@ if ($action == 'create') {
 	print '<tr><td>'.$langs->trans('LangFile').'</td>';
 	print '<td><input type="text" class="minwidth300" name="langs" value="'.dol_escape_htmltag($menu->langs).'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
 
-	// URL
-	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
-	print '<td><input type="text" class="quatrevingtpercent" name="url" value="'.dol_escape_htmltag($menu->url).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
-
-	// Show URL into a frame
-	if (getDolGlobalString("MAIN_SHOW_TOP_MENU_URL_IN_FRAME")) {
-		print '<tr><td class="fieldrequired">'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
-		print '<td><input type="checkbox" name="showtopmenuinframe" '.($menu->showtopmenuinframe ? ' checked="checked"' : '').'"></td><td></td></tr>';
-	}
-
 	// Picto
-	print '<tr><td class="fieldrequired">'.$langs->trans('Image').'</td>';
+	print '<tr><td>'.$langs->trans('Image').'</td>';
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-global-america';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
@@ -525,9 +516,28 @@ if ($action == 'create') {
 	print '</span>';
 	print '</td></tr>';
 
+	// URL
+	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
+	print '<td><input type="text" class="quatrevingtpercent" name="url" value="'.dol_escape_htmltag($menu->url).'"></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
+
+	// Target
+	print '<tr><td>'.$langs->trans('OpenLinkInto').'</td><td>';
+	print '<select class="flat" id="target" name="target">';
+	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>'.$langs->trans('SameWindow').'</option>';
+	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('NewWindow').'</option>';
+	print '</select>';
+	print ajax_combobox("target");
+	print '</td><td></td></tr>';
+
+	// Show URL into a frame
+	if (getDolGlobalString("MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME") && $menu->type == 'top') {
+		print '<tr class="hideforleftmenu"><td>'.$langs->trans('ShowTopMenuURLIntoAFrame').'</td>';
+		print '<td><input type="checkbox" value="1" name="showtopmenuinframe" '.($menu->showtopmenuinframe ? ' checked="checked"' : '').'"></td><td></td></tr>';
+	}
+
 	// Position
 	print '<tr><td>'.$langs->trans('Position').'</td>';
-	print '<td><input type="text" class="minwidth100" name="position" value="'.((int) $menu->position).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
+	print '<td><input type="number" class="minwidth50 maxwidth75" name="position" value="'.((int) $menu->position).'"></td><td>'.$langs->trans('DetailPosition').'</td></tr>';
 
 	// Enabled
 	print '<tr><td>'.$langs->trans('Enabled').'</td>';
@@ -544,15 +554,6 @@ if ($action == 'create') {
 		print ' <span class="opacitymedium">('.$langs->trans("ConditionIsCurrently").':</span> '.yn((int) dol_eval($menu->perms, 1, 1, '1') <= 0 ? 0 : 1).')';
 	}
 	print '</td></tr>';
-
-	// Target
-	print '<tr><td>'.$langs->trans('Target').'</td><td>';
-	print '<select class="flat" id="target" name="target">';
-	print '<option value=""'.($menu->target == "" ? ' selected' : '').'>&nbsp;</option>';
-	print '<option value="_blank"'.($menu->target == "_blank" ? ' selected' : '').'>'.$langs->trans('_blank').'</option>';
-	print '</select>';
-	print ajax_combobox("target");
-	print '</td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 
 	print '</table>';
 	print '</div>';

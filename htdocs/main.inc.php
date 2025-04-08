@@ -1280,7 +1280,7 @@ if (empty($conf->browser->firefox)) {
 	define('ROWS_9', 8);
 }
 
-$heightforframes = 50;
+$heightforframes = 52;	// Used by frames.php page
 
 // Init menu manager
 if (!defined('NOREQUIREMENU')) {
