@@ -470,7 +470,10 @@ function pdf_build_address($outputlangs, $sourcecompany, $targetcompany = '', $t
 				$withCountry = 1;
 			}
 
-			$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset(dol_format_address($sourcecompany, $withCountry, "\n", $outputlangs))."\n";
+			$fulladdress = dol_format_address($sourcecompany, $withCountry, "\n", $outputlangs);
+			if ($fulladdress) {
+				$stringaddress .= ($stringaddress ? "\n" : '').$outputlangs->convToOutputCharset($fulladdress)."\n";
+			}
 
 			if (!getDolGlobalString('MAIN_PDF_DISABLESOURCEDETAILS')) {
 				// Phone

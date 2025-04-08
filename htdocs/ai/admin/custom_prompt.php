@@ -250,8 +250,9 @@ if ($action == 'deleteproperty') {
 }
 
 if ($action == 'create') {
-	$out .= '<div class="addcustomprompt hidden">';
-	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+	$out = '<div class="addcustomprompt hidden">';
+
+	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
 

@@ -2755,7 +2755,6 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 	// Set logo of company by default
 	$logosmall = $mysoc->logo_small;
 	$logo = $mysoc->logo;
-	$publicpage = 1;	// For the moment, we always use the public link
 
 	if ($altlogo1 && getDolGlobalString($altlogo1)) {
 		$logosmall = getDolGlobalString($altlogo1);
@@ -2763,33 +2762,33 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 		$logosmall = getDolGlobalString($altlogo2);
 	}
 
-	// Define $urllogo and $urllogofull
-	$urllogo = '';
-	$urllogofull = '';
+	// Define $urllogo and $urllogopublic
+	//$urllogo = '';
+	$urllogopublic = '';
 	if ($showlogo) {
 		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
-			$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
 		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
-			$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
-			$urllogofull = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
+			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
 		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-			$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-			$urllogofull = $dolibarr_main_url_root.'/theme/dolibarr_logo.svg';
+			//$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+			$urllogopublic = $dolibarr_main_url_root.'/theme/dolibarr_logo.svg';
 		}
 	}
 
 	print '<header class="center">';
 
 	// Output html code for logo
-	if ($urllogo || $alttext) {
+	if ($urllogopublic || $alttext) {
 		print '<div class="backgreypublicpayment">';
 		print '<div class="logopublicpayment">';
-		if ($urllogo) {
+		if ($urllogopublic) {
 			if (!is_numeric($showlogo)) {
 				print '<a href="'.$showlogo.'">';
 			}
-			print '<img id="dolpaymentlogo" src="'.($publicpage ? $urllogofull : $urllogo).'">';
+			print '<img id="dolpaymentlogo" src="'.$urllogopublic.'">';
 			if (!is_numeric($showlogo)) {
 				print '</a>';
 			}
@@ -2804,8 +2803,7 @@ function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $su
 		print '</div>';
 	}
 
-	// MEMBER_IMAGE_PUBLIC_REGISTRATION
-	// OPENSURVEY_IMAGE_PUBLIC_INTERFACE
+	// Add an optional image under the ban with logo/title
 	if (getDolGlobalString($subimageconst)) {
 		print '<div class="backimagepublicsubimage">';
 		print '<img id="id'.$subimageconst.'" src="' . getDolGlobalString($subimageconst).'">';
