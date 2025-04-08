@@ -356,6 +356,7 @@ class FormAI extends Form
 					CKEDITOR.instances[htmlname].setReadOnly(1);
 				}
 
+				console.log('Call generate_content.php');
 				$.ajax({
 					url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
 					type: 'POST',

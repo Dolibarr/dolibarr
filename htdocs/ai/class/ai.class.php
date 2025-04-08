@@ -277,7 +277,7 @@ class Ai
 			} else {
 				$generatedContent = $decodedResponse['choices'][0]['message']['content'];
 			}
-			dol_syslog("generatedContent=".dol_trunc($generatedContent, 50));
+			dol_syslog("ai->generatedContent returned: ".dol_trunc($generatedContent, 50));
 
 			// If content is not HTML, we convert it into HTML
 			if ($format == 'html') {
