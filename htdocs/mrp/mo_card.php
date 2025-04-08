@@ -455,6 +455,7 @@ if ($action == 'create') {
 			$moLine->qty = $objectbom->lines[$key]->qty;
 			$moLine->qty_frozen = $objectbom->lines[$key]->qty_frozen;
 			$moLine->disable_stock_change = $objectbom->lines[$key]->disable_stock_change;
+			$moLine->fk_bom_child = $objectbom->lines[$key]->fk_bom_child;
 
 			$arrayOfMoLines[] = $moLine;
 		}

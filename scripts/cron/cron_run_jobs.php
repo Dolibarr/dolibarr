@@ -297,6 +297,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			} else {
 				$nbofjobslaunchedok++;
 				$resultstring = 'OK';
+				echo " - ";
 			}
 
 			echo "Result of run_jobs ".$resultstring." result = ".$result;

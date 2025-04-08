@@ -2,8 +2,6 @@
 MenuNewVariousPayment=Nieuw Diversen Betaling
 BalanceMinimalAllowed=Minimaal toegestaan saldo
 ShowAllTimeBalance=Toon saldo sinds begin
-IBAN=IBAN-nummer
-BIC=BIC/SWIFT-code
 SwiftValid=BIC/SWIFT geldig
 SwiftNotValid=BIC/SWIFT niet geldig
 IbanValid=BAN geldig
@@ -26,5 +24,4 @@ NewVariousPayment=Nieuwe diverse betaling
 VariousPayment=Diversen betaling
 ShowVariousPayment=Toon diverse betaling
 AddVariousPayment=Voeg diverse betaling toe
-NoBankAccountDefined=Geen bankrekening gevonden
 AlreadyOneBankAccount=Al één bankrekening gedefinieerd

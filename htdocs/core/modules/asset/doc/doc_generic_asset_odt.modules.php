@@ -398,6 +398,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 					}
 				}
 				// Replace tags of lines
+				/*
 				$foundtagforlines = 1;
 				try {
 					$listlines = $odfHandler->setSegment('lines');
@@ -431,7 +432,7 @@ class doc_generic_asset_odt extends ModelePDFAsset
 						dol_syslog($this->error, LOG_WARNING);
 						return -1;
 					}
-				}
+				}*/
 
 				// Replace labels translated
 				$tmparray = $outputlangs->get_translations_for_substitutions();

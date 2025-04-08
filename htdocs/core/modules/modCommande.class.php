@@ -95,7 +95,7 @@ class modCommande extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "COMMANDE_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/orders";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/orders";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
@@ -460,7 +460,7 @@ class modCommande extends DolibarrModules
 
 		//ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/orders';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/orders';
 		$dest = $dirodt.'/template_order.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

@@ -226,7 +226,7 @@ if ($resql) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="5">'.$langs->trans("LastModifiedDonations", $max).' ';
-	print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.datem&sortorder=DESC">';
+	print '<a href="'.DOL_URL_ROOT.'/don/list.php?sortfield=d.datedon&sortorder=DESC">';
 	print '<span class="badge">...</span>';
 	print '</a>';
 	print '</th></tr>';

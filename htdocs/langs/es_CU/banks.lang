@@ -17,7 +17,6 @@ FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde el inicio
 Reconciliation=Reconciliación
 RIB=Número de cuenta bancaria
-IBAN=Número IBAN
 IbanValid=PROHIBICIÓN válida
 IbanNotValid=PROHIBICIÓN no válida
 StandingOrders=Pedidos domiciliados

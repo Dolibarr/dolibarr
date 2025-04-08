@@ -294,6 +294,7 @@ clearstatcache();
 if (getDolGlobalString('PDF_SECURITY_ENCRYPTION')) {
 	print '<div class="warning">';
 	print 'The not supported and hidden option PDF_SECURITY_ENCRYPTION has been enabled. This means a lof of feature related to PDF will be broken, like mass PDF generation or online signature of PDF.'."\n";
+	print "Also note that if an 'encrypted PDF' provides a protection against manual change done by mistake, it does NOT provide any protection against modification of your PDF in a security point of view: A protected PDF can still be modified by any advanced PDF editors. Don't forget this: If a software can read the PDF, this software can also rebuild it differently !\n";
 	print 'You should disable this option.';
 	print '</div>';
 }

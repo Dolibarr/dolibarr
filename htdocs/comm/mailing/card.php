@@ -792,7 +792,7 @@ if ($action == 'create') {	// aaa
 	$htmltext .= '</span></i>';
 
 
-	$availablelink = $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
+	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
 	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
 
@@ -872,7 +872,7 @@ if ($action == 'create') {	// aaa
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop"></td></tr>';
 
-	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
+	print '<tr class="fieldsforemail"><td class="tdtop" colspan="2">';
 
 	$out = '';
 	$showlinktolayout = ($formmail->withfckeditor ? $formmail->withlayout : '');

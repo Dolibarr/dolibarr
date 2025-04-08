@@ -328,7 +328,7 @@ function productlot_prepare_head($object)
  */
 function product_admin_prepare_head()
 {
-	global $langs, $conf, $user, $db;
+	global $langs, $conf, $db;
 
 	$extrafields = new ExtraFields($db);
 	$extrafields->fetch_name_optionals_label('product');
@@ -368,24 +368,31 @@ function product_admin_prepare_head()
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
-	$head[$h][1] = $langs->trans("ProductLevelExtraFields");
-	$nbExtrafields = $extrafields->attributes['product_price']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	// Extrafields for price levels
+	if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_price_extrafields.php';
+		$head[$h][1] = $langs->trans("ProductLevelExtraFields");
+		$nbExtrafields = $extrafields->attributes['product_price']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'levelAttributes';
+		$h++;
 	}
-	$head[$h][2] = 'levelAttributes';
-	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
-	$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
-	$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
-	if ($nbExtrafields > 0) {
-		$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+	//Extrafields for price per customer
+	if (getDolGlobalString('PRODUIT_CUSTOMER_PRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
+		$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_customer_extrafields.php';
+		$head[$h][1] = $langs->trans("ProductCustomerExtraFields");
+		$nbExtrafields = $extrafields->attributes['product_customer_price']['count'];
+		if ($nbExtrafields > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbExtrafields.'</span>';
+		}
+		$head[$h][2] = 'customerAttributes';
+		$h++;
 	}
-	$head[$h][2] = 'customerAttributes';
-	$h++;
 
+	// Supplier prices
 	$head[$h][0] = DOL_URL_ROOT.'/product/admin/product_supplier_extrafields.php';
 	$head[$h][1] = $langs->trans("ProductSupplierExtraFields");
 	$nbExtrafields = $extrafields->attributes['product_fournisseur_price']['count'];

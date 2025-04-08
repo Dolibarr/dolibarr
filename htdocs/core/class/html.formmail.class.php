@@ -1579,49 +1579,50 @@ class FormMail extends Form
 							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
 						}
 
-					$.ajax({
-						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
-						type: 'POST',
-						contentType: 'application/json',
-						data: JSON.stringify({
-							'format': '".dol_escape_js($format)."',			/* the format for output */
-							'function': '".dol_escape_js($function)."',		/* the AI feature to call */
-							'instructions': instructions,					/* the prompt string */
-						}),
-						success: function(response) {
-							console.log('Add response into field \'#".$htmlContent."\': '+response);
+						$.ajax({
+							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
+							type: 'POST',
+							contentType: 'application/json',
+							data: JSON.stringify({
+								'format': '".dol_escape_js($format)."',			/* the format for output */
+								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
+								'instructions': instructions,					/* the prompt string */
+							}),
+							success: function(response) {
+								console.log('Add response into field \'#".$htmlContent."\': '+response);
 
-							jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
-							jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
-							//jQuery('#".$htmlContent."preview').val(response);
+								jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
+								jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
+								//jQuery('#".$htmlContent."preview').val(response);
 
-							if (CKEDITOR.instances) {
-								var editorInstance = CKEDITOR.instances.".$htmlContent.";
-								if (editorInstance) {
-									editorInstance.setReadOnly(0);
-									editorInstance.setData(response);
+								if (CKEDITOR.instances) {
+									var editorInstance = CKEDITOR.instances.".$htmlContent.";
+									if (editorInstance) {
+										editorInstance.setReadOnly(0);
+										editorInstance.setData(response);
+									}
+									//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
+									//if (editorInstancepreview) {
+									//	editorInstancepreview.setData(response);
+									//}
 								}
-								//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
-								//if (editorInstancepreview) {
-								//	editorInstancepreview.setData(response);
-								//}
-							}
 
-							// remove readonly
-							$('#ai_instructions".$htmlContent."').val('');
+								// remove readonly
+								$('#ai_instructions".$htmlContent."').val('');
 
-							apicallfinished = 1;
-							if (timeoutfinished) {
+								apicallfinished = 1;
+								if (timeoutfinished) {
+									$('#ai_status_message".$htmlContent."').hide();
+								}
+							},
+							error: function(xhr, status, error) {
+								alert(error);
+								console.error('error ajax', status, error);
 								$('#ai_status_message".$htmlContent."').hide();
 							}
-						},
-						error: function(xhr, status, error) {
-							alert(error);
-							console.error('error ajax', status, error);
-							$('#ai_status_message".$htmlContent."').hide();
-						}
 
-					});
+						});
+					}
 				});
 			});
 			</script>

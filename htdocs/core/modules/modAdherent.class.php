@@ -182,7 +182,7 @@ class modAdherent extends DolibarrModules
 
 		$this->const[$r][0] = "MEMBER_ADDON_PDF_ODT_PATH";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/members";
+		$this->const[$r][2] = "DOL_DATA_ROOT".($conf->entity > 1 ? '/'.$conf->entity : '')."/doctemplates/members";
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
@@ -438,8 +438,8 @@ class modAdherent extends DolibarrModules
 
 		// ODT template
 		/*
-		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/orders/template_order.odt';
-		$dirodt=DOL_DATA_ROOT.'/doctemplates/orders';
+		$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/members/template_member.odt';
+		$dirodt=DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/members';
 		$dest=$dirodt.'/template_order.odt';
 
 		if (file_exists($src) && ! file_exists($dest)) {

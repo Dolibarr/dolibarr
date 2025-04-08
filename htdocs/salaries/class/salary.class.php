@@ -997,7 +997,7 @@ class Salary extends CommonObject
 
 					if (!$error) {
 						// Force payment mode of invoice to withdraw
-						$payment_mode_id = dol_getIdFromCode($this->db, ($type == 'bank-transfer' ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
+						$payment_mode_id = dol_getIdFromCode($this->db, (($type == 'bank-transfer' || $type == 'salaire') ? 'VIR' : 'PRE'), 'c_paiement', 'code', 'id', 1);
 						if ($payment_mode_id > 0) {
 							$result = $this->setPaymentMethods($payment_mode_id);
 						}

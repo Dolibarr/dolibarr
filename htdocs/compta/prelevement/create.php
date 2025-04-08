@@ -249,7 +249,7 @@ if ($type) {
 	print dol_get_fiche_head($head, (!GETPOSTISSET('sourcetype') ? 'invoice' : 'salary'), $langs->trans("Invoices"), -1, $bprev->picto);
 } else {
 	print load_fiche_titre($title);
-	print dol_get_fiche_head();
+	print dol_get_fiche_head(array(), '', '', -1);
 }
 
 
@@ -263,6 +263,9 @@ if ($sourcetype != 'salary') {
 if ($nb < 0) {
 	dol_print_error($db, $bprev->error);
 }
+
+print '<div class="fichecenter">';
+
 print '<table class="border centpercent tableforfield">';
 
 $labeltoshow = $langs->trans("NbOfInvoiceToWithdraw");
@@ -285,7 +288,11 @@ print '</td>';
 print '</tr>';
 
 print '</table>';
+
 print '</div>';
+print '<div class="clearboth"></div>';
+
+print dol_get_fiche_end();
 
 print '<div class="tabsAction">'."\n";
 

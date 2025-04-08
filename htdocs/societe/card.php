@@ -154,10 +154,6 @@ if ($socid > 0) {
 	$object->fetch($socid);
 }
 
-if (!($object->id > 0) && $action == 'view') {
-	recordNotFound();
-}
-
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
 $canvas = $object->canvas ? $object->canvas : GETPOST("canvas");
 $objcanvas = null;
@@ -176,8 +172,11 @@ $permissiondellink 	= $user->hasRight('societe', 'creer'); // Used by the includ
 $upload_dir 		= $conf->societe->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Security check
-$result = restrictedArea($user, 'societe', $socid, '&societe', '', 'fk_soc', 'rowid', 0);
+$result = restrictedArea($user, 'societe', $object->id, '&societe', '', 'fk_soc', 'rowid', 0);
 
+if (!($object->id > 0) && $action == 'view') {
+	recordNotFound();
+}
 
 
 /*

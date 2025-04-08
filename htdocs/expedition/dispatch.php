@@ -527,7 +527,7 @@ if ($object->id > 0 || !empty($object->ref)) {
 	print '</td>';
 	print '</tr></table>';
 
-	print '<br><center>';
+	print '<br><br><center>';
 	if (isModEnabled('barcode') || isModEnabled('productbatch')) {
 		print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=updatebyscaning&token='.currentToken().'" class="marginrightonly paddingright marginleftonly paddingleft">'.img_picto('', 'barcode', 'class="paddingrightonly"').$langs->trans("UpdateByScaning").'</a>';
 	}
@@ -781,13 +781,16 @@ if ($object->id > 0 || !empty($object->ref)) {
 						print '</td>'; // Dispatch column
 						print '<td></td>'; // Warehouse column
 
-						$sql = "SELECT ed.rowid, ed.qty, ed.fk_entrepot,";
-						$sql .= " eb.batch, eb.eatby, eb.sellby, cd.fk_product";
-						$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed";
-						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
-						$sql .= " JOIN ".MAIN_DB_PREFIX."commandedet as cd on ed.fk_elementdet = cd.rowid";
-						$sql .= " WHERE ed.fk_elementdet =".(int) $objp->rowid;
-						$sql .= " AND ed.fk_expedition =".(int) $object->id;
+						$sql  = "SELECT ed.rowid";
+						$sql .= ", cd.fk_product";
+						$sql .= ", ".$db->ifsql('eb.rowid IS NULL', 'ed.qty', 'eb.qty')." as qty";
+						$sql .= ", ed.fk_entrepot";
+						$sql .= ", eb.batch, eb.eatby, eb.sellby";
+						$sql .= " FROM ".$db->prefix()."expeditiondet as ed";
+						$sql .= " LEFT JOIN ".$db->prefix()."expeditiondet_batch as eb on ed.rowid = eb.fk_expeditiondet";
+						$sql .= " INNER JOIN ".$db->prefix()."commandedet as cd on ed.fk_elementdet = cd.rowid";
+						$sql .= " WHERE ed.fk_elementdet = ".(int) $objp->rowid;
+						$sql .= " AND ed.fk_expedition = ".(int) $object->id;
 						$sql .= " ORDER BY ed.rowid, ed.fk_elementdet";
 
 						$resultsql = $db->query($sql);
@@ -943,6 +946,10 @@ if ($object->id > 0 || !empty($object->ref)) {
 								$numline++;
 							}
 							$suffix = "_".$j."_".$i;
+						} else {
+							$errorMsg = 'Shipment dispatch SQL error : '.$db->lasterror();
+							setEventMessage($errorMsg, 'errors');
+							dol_syslog($errorMsg, LOG_ERR);
 						}
 
 						if ($j == 0) {

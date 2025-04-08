@@ -655,7 +655,7 @@ if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'read')) {
 		$db->free($resql);
 
 		if (empty($num)) {
-			$colspan = 4;
+			$colspan = 5;
 			if (isModEnabled('productbatch')) {
 				$colspan++;
 			}

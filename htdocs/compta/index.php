@@ -484,6 +484,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->statut = $obj->status;
 				$donationstatic->status = $obj->status;
 
+				$label = '';
 				if (!empty($obj->socid)) {
 					$companystatic = new Societe($db);
 					$ret = $companystatic->fetch($obj->socid);

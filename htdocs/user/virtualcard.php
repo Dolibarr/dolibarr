@@ -52,7 +52,7 @@ if (empty($id) && empty($ref)) {
 	$id = $user->id;
 }
 
-$expand = $_COOKIE['virtualcard_expand'];
+$expand = empty($_COOKIE['virtualcard_expand']) ? '' : $_COOKIE['virtualcard_expand'];
 
 $object = new User($db);
 if ($id > 0 || !empty($ref)) {

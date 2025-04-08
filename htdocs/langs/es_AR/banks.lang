@@ -16,7 +16,6 @@ FutureBalance=Saldo futuro
 ShowAllTimeBalance=Mostrar saldo desde el inicio
 Reconciliation=Reconciliación
 RIB=Número de cuenta bancaria
-IBAN=Número de IBAN
 SwiftValid=BIC/swift válido
 StandingOrders=Ordenes por débito automático
 StandingOrder=Orden de Débito Automático

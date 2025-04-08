@@ -324,7 +324,7 @@ if ($action == "view_ticketlist") {
 		}
 		if (isset($search_fk_status) && $search_fk_status == 'non_closed') {
 			$filter['t.fk_statut'] = array(0, 1, 3, 4, 5, 6);
-			$param .= '&search_fk_status=non_closed';
+			$param .= '&search_fk_statut=openall';
 		}
 
 		require DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';

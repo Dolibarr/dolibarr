@@ -128,7 +128,7 @@ class modBom extends DolibarrModules
 		$this->const = array(
 			1 => array('BOM_ADDON_PDF', 'chaine', 'generic_bom_odt', 'Name of PDF model of BOM', 0),
 			2 => array('BOM_ADDON', 'chaine', 'mod_bom_standard', 'Name of numbering rules of BOM', 0),
-			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT/doctemplates/boms', '', 0)
+			3 => array('BOM_ADDON_PDF_ODT_PATH', 'chaine', 'DOL_DATA_ROOT'.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms', '', 0)
 		);
 
 		// Some keys to add into the overwriting translation tables
@@ -480,7 +480,7 @@ class modBom extends DolibarrModules
 
 		// ODT template
 		$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/boms/template_bom.odt';
-		$dirodt = DOL_DATA_ROOT.'/doctemplates/boms';
+		$dirodt = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/doctemplates/boms';
 		$dest = $dirodt.'/template_bom.odt';
 
 		if (file_exists($src) && !file_exists($dest)) {

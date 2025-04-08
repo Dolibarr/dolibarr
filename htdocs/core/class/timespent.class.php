@@ -184,7 +184,7 @@ class TimeSpent extends CommonObject
 	 */
 	public $intervention_line_id;
 	/**
-	 * @var string
+	 * @var int
 	 */
 	public $datec;
 	/**

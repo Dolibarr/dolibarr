@@ -133,7 +133,7 @@ class WebsitePage extends CommonObject
 	public $grabbed_from;
 
 	/**
-	 * @var int Status
+	 * @var int<0,1>	Status online or offline
 	 */
 	public $status;
 
@@ -148,17 +148,17 @@ class WebsitePage extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @var string author_alias
+	 * @var string 		Author alias
 	 */
 	public $author_alias;
 
 	/**
-	 * @var string path of external object
+	 * @var string 		Path of external object
 	 */
 	public $object_type;
 
 	/**
-	 * @var string id of external object
+	 * @var string 		Id of external object
 	 */
 	public $fk_object;
 
@@ -226,7 +226,8 @@ class WebsitePage extends CommonObject
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'index' => 1, 'position' => 1000, 'notnull' => -1),
 		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'searchall' => 0, 'help' => ''),
-		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled' => 1, 'visible' => 0, 'position' => 47, 'searchall' => 0, 'help' => '')
+		'fk_object' => array('type' => 'varchar(255)', 'label' => 'ObjectId', 'enabled' => 1, 'visible' => 0, 'position' => 47, 'searchall' => 0, 'help' => ''),
+		'status'      => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
 	);
 	// END MODULEBUILDER PROPERTIES
 

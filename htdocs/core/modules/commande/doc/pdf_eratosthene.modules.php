@@ -778,7 +778,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 
 				// Add last page for document footer if there are not enough size left
 				$afterPosData = $this->getMaxAfterColsLinePositionsData();
-				if ($afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot) ) {
+				if (isset($afterPosData['y']) && $afterPosData['y'] > $this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot) ) {
 					$pdf->AddPage();
 					if (!empty($tplidx)) {
 						$pdf->useTemplate($tplidx);
@@ -1895,7 +1895,7 @@ class pdf_eratosthene extends ModelePDFCommandes
 		$this->cols['position'] = array(
 			'rank' => $rank,
 			'width' => 10,
-			'status' => getDolGlobalInt('PDF_ERATOSHTENE_ADD_POSITION') ? true : ((bool) getDolGlobalInt('PDF_ADD_POSITION')),
+			'status' => (getDolGlobalInt('PDF_ERATOSTHENE_ADD_POSITION') || getDolGlobalInt('PDF_ERATOSHTENE_ADD_POSITION')) ? true : (getDolGlobalInt('PDF_ADD_POSITION') ? true : false),
 			'title' => array(
 				'textkey' => '#', // use lang key is useful in somme case with module
 				'align' => 'C',
