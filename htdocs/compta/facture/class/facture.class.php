@@ -2436,7 +2436,7 @@ class Facture extends CommonInvoice
 	 */
 	public function fetch_lines($only_product = 0, $loadalsotranslation = 0)
 	{
-		global $extrafields;
+		global $conf, $extrafields;
 
 		// phpcs:enable
 		$this->lines = array();
