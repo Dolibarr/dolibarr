@@ -999,7 +999,7 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
-		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload) {
+		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload && isset($this->attributes[$elementtype]['label'])) {
 			return $this->attributes[$elementtype]['label'];
 		}
 
@@ -2726,7 +2726,7 @@ class ExtraFields
 					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'gmt');
 				} elseif (in_array($key_type, array('duration'))) {
 					$value_hours = GETPOSTINT("options_" . $key . "hour");
-					$value_minutes = GETPOSTINT("options_" . $key . "minute");
+					$value_minutes = GETPOSTINT("options_" . $key . "min");
 					$value_key = $value_hours * 3600 + $value_minutes * 60;
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array
