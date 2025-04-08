@@ -4,6 +4,7 @@
 -- Copyright (C) 2012		Juanjo Menent			<jmenent@2byte.es>
 -- Copyright (C) 2013		Peter Fontaine			<contact@peterfontaine.fr>
 -- Copyright (C) 2023		Alexandre Spangaro		<aspangaro@easya.solutions>
+-- Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ create table llx_societe_rib
   code_banque						varchar(128),  -- bank code
   code_guichet						varchar(6),    -- desk code
   number							varchar(255),  -- account number
+  cci								varchar(32),   -- Interbank code to make a transfer between accounts at different banks
   cle_rib							varchar(5),    -- key of bank account
 
   bic								varchar(20),    -- 11 according to ISO 9362 (we keep 20 for backward compatibility)
