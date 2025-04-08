@@ -1185,10 +1185,11 @@ class FormFile
 	 *  @param	 int			$addfilterfields	Add the line with filters
 	 *  @param	 int			$disablecrop		Disable crop feature on images (-1 = auto, prefer to set it explicitely to 0 or 1)
 	 *  @param	 string			$moreattrondiv		More attributes on the div for responsive. Example 'style="height:280px; overflow: auto;"'
+	 * 	@param	 int			$noCreateEcmFile	Manages ECM file creation
 	 * 	@return	 int								Return integer <0 if KO, nb of files shown if OK
 	 *  @see list_of_autoecmfiles()
 	 */
-	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1, $moreattrondiv = '')
+	public function list_of_documents($filearray, $object, $modulepart, $param = '', $forcedownload = 0, $relativepath = '', $permonobject = 1, $useinecm = 0, $textifempty = '', $maxlength = 0, $title = '', $url = '', $showrelpart = 0, $permtoeditline = -1, $upload_dir = '', $sortfield = '', $sortorder = 'ASC', $disablemove = 1, $addfilterfields = 0, $disablecrop = -1, $moreattrondiv = '', $noCreateEcmFile = 0)
 	{
 		// phpcs:enable
 		global $user, $conf, $langs, $hookmanager, $form;
@@ -1314,7 +1315,7 @@ class FormFile
 
 			// Get list of files stored into database for same relative directory
 			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $noCreateEcmFile);
 
 				//var_dump($sortfield.' - '.$sortorder);
 				if ($sortfield && $sortorder) {	// If $sortfield is for example 'position_name', we will sort on the property 'position_name' (that is concat of position+name)

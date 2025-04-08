@@ -250,7 +250,6 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 	} else {
 		$sql .= " AND filepath = '".$db->escape($path)."'";
 	}
-
 	$resql = $db->query($sql);
 	if ($resql) {
 		$file_list = array();
@@ -310,9 +309,10 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
  *
  * @param	array	$filearray			Array of files obtained using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
+ * @param	int		$noCreateEcmFile	Manages ECM file creation
  * @return	void
  */
-function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
+function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $noCreateEcmFile = 0)
 {
 	global $conf, $db, $user;
 
@@ -359,7 +359,6 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 				break;
 			}
 		}
-
 		if (!$found) {    // This happen in transition toward version 6, or if files were added manually into os dir.
 			$filearray[$key]['position'] = '999999'; // File not indexed are at end. So if we add a file, it will not replace an existing position
 			$filearray[$key]['cover'] = 0;
@@ -368,7 +367,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 
 			$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['fullname']);
 
-			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename)) {     // If not a tmp file
+			if (!preg_match('/([\\/]temp[\\/]|[\\/]thumbs|\.meta$)/', $rel_filename) && $noCreateEcmFile == 0) {     // If not a tmp file
 				dol_syslog("list_of_documents We found a file called '".$filearray[$key]['name']."' not indexed into database. We add it");
 				include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
 				$ecmfile = new EcmFiles($db);
