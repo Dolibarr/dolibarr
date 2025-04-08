@@ -26,7 +26,6 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
 
 
-
 /**
  * Core function to output top menu auguria
  *
@@ -53,6 +52,8 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	// Show personalized menus
 	$menuArbo = new Menubase($db, 'auguria');
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
+
+	/* @phan-suppress PhanTypeInvalidDimOffset */
 
 	// Phan issue #4881 requires that we reforce the type
 	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';

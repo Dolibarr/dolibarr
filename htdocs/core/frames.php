@@ -105,7 +105,7 @@ if ($keyforcontent) {
 } else {
 	if (preg_match('/^\//', $menu->url) || preg_match('/^http/i', $menu->url)) {
 		// menu->url is an URL starting with http or /
-		// @phan-ignore-next-line PhanUndeclaredGlobalVariable
+		// @phan-suppress PhanUndeclaredMethod
 		print "
 			<html>
 			<head>
