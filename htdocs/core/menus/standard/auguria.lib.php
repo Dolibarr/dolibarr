@@ -55,7 +55,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 	$newTabMenu = $menuArbo->menuTopCharger('', '', $type_user, 'auguria', $tabMenu);
 
 	// Phan issue #4881 requires that we reforce the type
-	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,prefix:string}> $newTabMenu';
+	'@phan-var-force array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}> $newTabMenu';
 
 	$substitarray = getCommonSubstitutionArray($langs, 0, null, null);
 
@@ -108,6 +108,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 			}
 
 			// Modify URL for the case we are using the option showtopmenuinframe
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			if ($newTabMenu[$i]['showtopmenuinframe']) {
 				if (preg_match("/^(http:\/\/|https:\/\/)/i", $newTabMenu[$i]['url'])) {
 					$url = $shorturl = '/core/frames.php?idmenu='.$newTabMenu[$i]['rowid'];
