@@ -378,7 +378,7 @@ if ($result) {
 
 	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
-	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+	$selectedfields = $htmlofselectarray;
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';
