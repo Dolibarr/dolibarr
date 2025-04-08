@@ -118,7 +118,7 @@ if (empty($reshook)) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.($object_rec ? '&object_rec=1': '') );
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.($object_rec ? '&object_rec=1': ''));
 			exit;
 		} else {
 			dol_print_error($db);
