@@ -204,7 +204,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public function fetch($rowid)
 	{
-		global $extrafields;
+		global $conf, $extrafields;
 
 		$extraFieldsCheck = false;
 		$doFetchInOneSqlRequest = getDolGlobalInt('MAIN_DO_FETCH_IN_ONE_SQL_REQUEST');
