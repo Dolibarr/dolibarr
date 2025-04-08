@@ -49,7 +49,7 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy", "trips", "pro
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $account_parent = GETPOST('account_parent');
-$changeaccount = GETPOST('changeaccount');
+$changeaccount = GETPOST('changeaccount', 'array');
 // Search Getpost
 $search_lineid = GETPOST('search_lineid', 'alpha');	// Can be '> 100'
 $search_login = GETPOST('search_login', 'alpha');
@@ -102,9 +102,27 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 }
 
 // Initialize technical objects
-$hookmanager->initHooks(['accountancyexpensereportlines']);
+$contextpage = 'accountancyexpensereportlines';
+$hookmanager->initHooks([$contextpage]);
 $formaccounting = new FormAccounting($db);
 
+
+$arrayfields = array(
+    'erd.rowid'             => array('label' => "LineId",                   'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'u.login'               => array('label' => "Employees",                'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'er.ref'               	=> array('label' => "ExpenseReport",            'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'erd.date'              => array('label' => "DateOfLine",               'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'f.label'               => array('label' => "TypeFees",                 'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'erd.comments'        	=> array('label' => "Description",       		'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'erd.total_ht'          => array('label' => "Amount",                   'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'erd.tva_tx'            => array('label' => "VATRate",                  'position' => 1, 'checked' => '1', 'enabled' => '1'),
+    'aa.account_number'     => array('label' => "AccountAccounting",        'position' => 1, 'checked' => '1', 'enabled' => '1'),
+);
+if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
+	$arrayfields['er.date_valid'] = array('label' => "DateValidation",           'position' => 1, 'checked' => '1', 'enabled' => '1');
+}
+// @phpstan-ignore-next-line
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 /*
  * Actions
@@ -117,6 +135,9 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
 		$search_lineid = '';
@@ -231,7 +252,7 @@ $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't sha
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 // Add search filter like
 if (strlen($search_lineid)) {
-	$sql .= natural_search("fd.rowid", $search_lineid, 1);
+	$sql .= natural_search("erd.rowid", $search_lineid, 1);
 }
 if (strlen(trim($search_login))) {
 	$sql .= natural_search("u.login", $search_login);
@@ -355,6 +376,11 @@ if ($result) {
 
 	$moreforfilter = '';
 
+	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+    $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+    $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+    $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
@@ -366,25 +392,54 @@ if ($result) {
 		print $searchpicto;
 		print '</td>';
 	}
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
-	print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
-	print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
-	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
+    // Line ID
+    if (!empty($arrayfields['erd.rowid']['checked'])) {
+            print '<td class="liste_titre" data-key="lineid">';
+            print '<input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'">';
+            print '</td>';
+    }
+	// User
+	if (!empty($arrayfields['u.login']['checked'])) {
+		print '<td class="liste_titre"><input type="text" name="search_login" class="maxwidth50" value="'.$search_login.'"></td>';
+	}
+	// Expensereport
+	if (!empty($arrayfields['er.ref']['checked'])) {
+		print '<td><input type="text" class="flat maxwidth50" name="search_expensereport" value="'.dol_escape_htmltag($search_expensereport).'"></td>';
+	}
+	// date_valid (no search field)
+	if (!empty($arrayfields['er.date_valid']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
-	print '<td class="liste_titre center">';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-	print '</div>';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-	print '</div>';
-	print '</td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
-	print '<td class="liste_titre right"><input type="text" class="flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
-	print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
+	// date
+	if (!empty($arrayfields['erd.date']['checked'])) {
+		print '<td class="liste_titre center">';
+		print '<div class="nowrapfordate">';
+		print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+		print '</div>';
+		print '<div class="nowrapfordate">';
+		print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+		print '</div>';
+		print '</td>';
+	}
+	if (!empty($arrayfields['f.label']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
+	}
+	if (!empty($arrayfields['erd.comments']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
+	}
+	if (!empty($arrayfields['erd.total_ht']['checked'])) {
+		print '<td class="liste_titre right"><input type="text" class="flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
+	}
+	if (!empty($arrayfields['erd.tva_tx']['checked'])) {
+		print '<td class="liste_titre center"><input type="text" class="flat maxwidth50" name="search_vat" size="1" placeholder="%" value="'.dol_escape_htmltag($search_vat).'"></td>';
+	}
+	if (!empty($arrayfields['aa.account_number']['checked'])) {
+		print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
+	}
+    // Fields from hook
+    $parameters = array('arrayfields' => $arrayfields);
+    $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
@@ -394,21 +449,66 @@ if ($result) {
 	}
 	print "</tr>\n";
 
+    // Fields title label
+    // --------------------------------------------------------------------
+    $totalarray = array();
+    $totalarray['nbfield'] = 0;
+
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Employees", $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
-	print_liste_field_titre("ExpenseReport", $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
-	if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
-		print_liste_field_titre("DateValidation", $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+    // Action column
+    if ($conf->main_checkbox_left_column) {
+            print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+            $totalarray['nbfield']++;
+    }
+    // Line ID
+    if (!empty($arrayfields['erd.rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['erd.rowid']['label'], $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
-	print_liste_field_titre("DateOfLine", $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("TypeFees", $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
-	$checkpicto = $form->showCheckAddButtons();
-	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
+	// User
+	if (!empty($arrayfields['u.login']['checked'])) {
+		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+	}
+	// Expensereport
+	if (!empty($arrayfields['er.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['er.ref']['label'], $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
+	}
+	// date_valid
+	if (!empty($arrayfields['er.date_valid']['checked'])) {
+		print_liste_field_titre($arrayfields['er.date_valid']['label'], $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	// date
+	if (!empty($arrayfields['erd.date']['checked'])) {
+		print_liste_field_titre($arrayfields['erd.date']['label'], $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	// invoice label
+	if (!empty($arrayfields['f.label']['checked'])) {
+		print_liste_field_titre($arrayfields['f.label']['label'], $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
+	}
+	// expensereport description
+	if (!empty($arrayfields['erd.comments']['checked'])) {
+		print_liste_field_titre($arrayfields['erd.comments']['label'], $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
+	}
+	// expensereport total
+	if (!empty($arrayfields['erd.total_ht']['checked'])) {
+		print_liste_field_titre($arrayfields['erd.total_ht']['label'], $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+	}
+	// VAT
+	if (!empty($arrayfields['erd.tva_tx']['checked'])) {
+		print_liste_field_titre($arrayfields['erd.tva_tx']['label'], $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center ');
+	}
+	if (!empty($arrayfields['aa.account_number']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+	}
+    // Hook fields
+    $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+        print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+        $totalarray['nbfield']++;
+    }
 	print "</tr>\n";
 
 	$expensereportstatic = new ExpenseReport($db);
@@ -440,49 +540,87 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
+        // Action column
+        if ($conf->main_checkbox_left_column) {
+            print '<td class="nowrap center actioncolumn">';
+            $selected = 0;
+            if (in_array($objp->rowid, $changeaccount)) {
+                $selected = 1;
+            }
+            print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+            print '</td>';
+            if (!$i) {
+                $totalarray['nbfield']++;
+            }
+        }
 		// Line id
-		print '<td>'.$objp->rowid.'</td>';
-
+		if (!empty($arrayfields['erd.rowid']['checked'])) {
+			print '<td>'.$objp->rowid.'</td>';
+		}
 		// Login
-		print '<td class="nowraponall">';
-		print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
-		print '</td>';
-
+		if (!empty($arrayfields['u.login']['checked'])) {
+			print '<td class="nowraponall">';
+			print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
+			print '</td>';
+		}
 		// Ref Expense report
-		print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
-
+		if (!empty($arrayfields['er.ref']['checked'])) {
+			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
+		}
 		// Date validation
-		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
+		if (!empty($arrayfields['er.date_valid']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
 		}
-
-		print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
-
+		// Date
+		if (!empty($arrayfields['erd.date']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
+		}
 		// Fees label
-		print '<td class="tdoverflow">'.($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))).'</td>';
-
+		if (!empty($arrayfields['f.label']['checked'])) {
+			print '<td class="tdoverflow">'.($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))).'</td>';
+		}
 		// Fees description -- Can be null
-		print '<td>';
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments, 1));
-		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
-		print '</td>';
-
+		if (!empty($arrayfields['erd.comments']['checked'])) {
+			print '<td>';
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->comments, 1));
+			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
+			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
+			print '</td>';
+		}
 		// Amount without taxes
-		print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
-
+		if (!empty($arrayfields['erd.total_ht']['checked'])) {
+			print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
+		}
 		// Vat rate
-		print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
-
+		if (!empty($arrayfields['erd.tva_tx']['checked'])) {
+			print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
+		}
 		// Accounting account affected
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
-		print '<a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
-		print img_edit();
-		print '</a> ';
-		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
-		print '</td>';
-
-		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
+		if (!empty($arrayfields['aa.account_number']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
+			print '<a class="editfielda reposition marginleftonly marginrightonly" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+			print img_edit();
+			print '</a> ';
+			print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+			print '</td>';
+		}
+        // Fields from hook
+        $parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+        $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print '<td class="nowrap center actioncolumn">';
+			$selected = 0;
+			if (in_array($objp->rowid, $changeaccount)) {
+				$selected = 1;
+			}
+			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 
 		print "</tr>";
 		$i++;
@@ -494,6 +632,10 @@ if ($result) {
 		}
 		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
+
+    $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
 	print "</table>";
 	print "</div>";
