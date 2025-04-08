@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -55,16 +56,25 @@ $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOSTINT('lineid');
 $socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
+$object_rec   = GETPOSTINT('object_rec');
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
-$object = new Facture($db);
+if ($object_rec) {
+	$object = new FactureRec($db);
+} else {
+	$object = new Facture($db);
+}
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', 0, getDolGlobalBool('INVOICE_USE_SITUATION'));
+	if ($object_rec) {
+		$ret = $object->fetch($id, $ref);
+	} else {
+		$ret = $object->fetch($id, $ref, '', 0, getDolGlobalBool('INVOICE_USE_SITUATION'));
+	}
 }
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));
@@ -94,7 +104,7 @@ if (empty($reshook)) {
 		}
 
 		if ($result >= 0) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.($object_rec ? '&object_rec=1': '') );
 			exit;
 		} else {
 			if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
@@ -112,7 +122,7 @@ if (empty($reshook)) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.($object_rec ? '&object_rec=1': '') );
 			exit;
 		} else {
 			dol_print_error($db);
@@ -144,7 +154,11 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
-		$head = facture_prepare_head($object);
+		if ($object_rec) {
+			$head = invoice_rec_prepare_head($object);
+		} else {
+			$head = facture_prepare_head($object);
+		}
 
 		$totalpaid = $object->getSommePaiement();
 

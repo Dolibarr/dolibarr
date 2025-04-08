@@ -262,6 +262,17 @@ function invoice_rec_prepare_head($object)
 	$head[$h][2] = 'card';
 	$h++;
 
+	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
+		$nbContact = count($object->liste_contact(-1, 'internal')) + count($object->liste_contact(-1, 'external'));
+		$head[$h][0] = DOL_URL_ROOT.'/compta/facture/contact.php?id='.urlencode((string) ($object->id)).'&object_rec=1';
+		$head[$h][1] = $langs->trans('ContactsAddresses');
+		if ($nbContact > 0) {
+			$head[$h][1] .= '<span class="badge marginleftonlyshort">'.$nbContact.'</span>';
+		}
+		$head[$h][2] = 'contact';
+		$h++;
+	}
+
 	$head[$h][0] = DOL_URL_ROOT . '/compta/facture/list.php?search_fk_fac_rec_source=' . $object->id;
 	$head[$h][1] = $langs->trans('InvoicesGeneratedFromRec');
 	//count facture rec

@@ -246,3 +246,9 @@ ALTER TABLE llx_contratdet DROP COLUMN remise;
 ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
 
 ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
+
+-- Add contacts to reccurent / templates invoices / factures
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active, module, position)
+SELECT 'facturerec', source, code, libelle, active, module, position
+FROM llx_c_type_contact
+WHERE element = 'facture';

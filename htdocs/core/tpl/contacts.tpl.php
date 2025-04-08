@@ -34,11 +34,13 @@
  * @var Translate $langs
  * @var User $user
  * @var ?string $permission
+ * @var ?int $object_rec
  */
 '
 @phan-var-force ?CommonObject $object
 @phan-var-force ?CommonObject $objectsrc
 @phan-var-force ?string $permission
+@phan-var-force ?int $object_rec
 ';
 
 // Protection to avoid direct call of template
@@ -121,6 +123,9 @@ if ($permission) {
 	if (empty($hideaddcontactforuser)) {
 		?>
 	<form class="tagtr impair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+		<?php if ($object_rec) { ?>
+			<input type="hidden" name='object_rec' value='1' />
+		<?php } ?>
 		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
@@ -170,6 +175,9 @@ if ($permission) {
 		?>
 
 	<form class="tagtr pair nohover" action="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id; ?>" method="POST">
+		<?php if ($object_rec) { ?>
+			<input type="hidden" name='object_rec' value='1' />
+		<?php } ?>
 		<input type="hidden" name="token" value="<?php echo newToken(); ?>" />
 		<input type="hidden" name="id" value="<?php echo $object->id; ?>" />
 		<input type="hidden" name="action" value="addcontact" />
@@ -321,11 +329,14 @@ $arrayfields = array(
 );
 
 $param = 'id='.$object->id.'&mainmenu=home';
-
+$param .= ($object_rec ? '&object_rec=1': '');
 
 // Show list of contact links
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+if ($object_rec) {
+print '<input type="hidden" name="object_rec" value="1" />';
+}
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 print '<input type="hidden" name="action" value="list">';
@@ -366,6 +377,7 @@ foreach ($list as $entry) {
 		$href .= '?id='.((int) $object->id);
 		$href .= '&action=deletecontact&token='.newToken();
 		$href .= '&lineid='.((int) $entry->id);
+		$href .= ($object_rec ? '&object_rec=1': '');
 
 		print '<td class="center">';
 		print '<a href="'.$href.'">';
