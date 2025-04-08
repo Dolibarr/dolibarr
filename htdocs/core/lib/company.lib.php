@@ -2741,14 +2741,14 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
  *
  * @param   Societe		$mysoc			Third party
  * @param   Translate	$langs			Output language
- * @param	string		$showlogo		'1'=Show logo or 'url' for click on logo
+ * @param	int|string	$showlogo		'1'=Show logo or 'url' for click on logo
  * @param	string		$alttext		Text to show in header
  * @param	string		$subimageconst	Constant to check if we must add image under the main header
  * @param	string		$altlogo1		To use an alternative logo defined into setup (instead of company logo)
  * @param	string		$altlogo2		To use an alternative logo defined into setup (instead of company logo)
  * @return	void
  */
-function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = '1', $alttext = '', $subimageconst = '', $altlogo1 = '', $altlogo2 = '')
+function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $subimageconst = '', $altlogo1 = '', $altlogo2 = '')
 {
 	global $conf, $dolibarr_main_url_root;
 

@@ -157,6 +157,12 @@ class Opensurveysondage extends CommonObject
 
 	/**
 	 * @var string title of survey
+	 * @deprecated Rename the field titre into title into the table to allow to change this in fields and remove this declaration.
+	 */
+	public $titre;
+
+	/**
+	 * @var string title of survey
 	 */
 	public $title;
 
