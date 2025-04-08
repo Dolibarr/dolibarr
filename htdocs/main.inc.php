@@ -3158,7 +3158,7 @@ function top_menu_search()
  *                                                  Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
  *                                                  For other external page: http://server/url
  *  @param  string		$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
- *  @param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int			$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string		$title                      Title of web page
  *  @param  int<0,1>	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
