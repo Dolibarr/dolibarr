@@ -274,7 +274,8 @@ class Menubase
 				$sql .= "langs,";
 				$sql .= "perms,";
 				$sql .= "enabled,";
-				$sql .= "usertype";
+				$sql .= "usertype,";
+				$sql .= "showtopmenuinframe";
 				$sql .= ") VALUES (";
 				$sql .= " '".$this->db->escape($this->menu_handler)."',";
 				$sql .= " '".$this->db->escape((string) $this->entity)."',";
@@ -293,7 +294,8 @@ class Menubase
 				$sql .= " '".$this->db->escape($this->langs)."',";
 				$sql .= " '".$this->db->escape($this->perms)."',";
 				$sql .= " '".$this->db->escape($this->enabled)."',";
-				$sql .= " '".$this->db->escape((string) $this->user)."'";
+				$sql .= " '".$this->db->escape((string) $this->user)."',";
+				$sql .= " ".((int) $this->showtopmenuinframe);
 				$sql .= ")";
 
 				dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -352,24 +354,25 @@ class Menubase
 
 		// Update request
 		$sql = "UPDATE ".$this->db->prefix()."menu SET";
-		$sql .= " menu_handler='".$this->db->escape($this->menu_handler)."',";
-		$sql .= " module='".$this->db->escape($this->module)."',";
-		$sql .= " type='".$this->db->escape($this->type)."',";
-		$sql .= " mainmenu='".$this->db->escape($this->mainmenu)."',";
-		$sql .= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-		$sql .= " fk_menu=".((int) $this->fk_menu).",";
-		$sql .= " fk_mainmenu=".($this->fk_mainmenu ? "'".$this->db->escape($this->fk_mainmenu)."'" : "null").",";
-		$sql .= " fk_leftmenu=".($this->fk_leftmenu ? "'".$this->db->escape($this->fk_leftmenu)."'" : "null").",";
-		$sql .= " position=".($this->position > 0 ? ((int) $this->position) : 0).",";
-		$sql .= " url='".$this->db->escape($this->url)."',";
-		$sql .= " target='".$this->db->escape($this->target)."',";
-		$sql .= " titre='".$this->db->escape($this->title)."',";
-		$sql .= " prefix='".$this->db->escape($this->prefix)."',";
-		$sql .= " langs='".$this->db->escape($this->langs)."',";
-		$sql .= " perms='".$this->db->escape($this->perms)."',";
-		$sql .= " enabled='".$this->db->escape($this->enabled)."',";
-		$sql .= " usertype='".$this->db->escape((string) $this->user)."'";
-		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " menu_handler = '".$this->db->escape($this->menu_handler)."',";
+		$sql .= " module = '".$this->db->escape($this->module)."',";
+		$sql .= " type = '".$this->db->escape($this->type)."',";
+		$sql .= " mainmenu = '".$this->db->escape($this->mainmenu)."',";
+		$sql .= " leftmenu = '".$this->db->escape($this->leftmenu)."',";
+		$sql .= " fk_menu = ".((int) $this->fk_menu).",";
+		$sql .= " fk_mainmenu = ".($this->fk_mainmenu ? "'".$this->db->escape($this->fk_mainmenu)."'" : "null").",";
+		$sql .= " fk_leftmenu = ".($this->fk_leftmenu ? "'".$this->db->escape($this->fk_leftmenu)."'" : "null").",";
+		$sql .= " position = ".($this->position > 0 ? ((int) $this->position) : 0).",";
+		$sql .= " url = '".$this->db->escape($this->url)."',";
+		$sql .= " target = '".$this->db->escape($this->target)."',";
+		$sql .= " titre = '".$this->db->escape($this->title)."',";
+		$sql .= " prefix = '".$this->db->escape($this->prefix)."',";
+		$sql .= " langs = '".$this->db->escape($this->langs)."',";
+		$sql .= " perms = '".$this->db->escape($this->perms)."',";
+		$sql .= " enabled = '".$this->db->escape($this->enabled)."',";
+		$sql .= " usertype = '".$this->db->escape((string) $this->user)."',";
+		$sql .= " showtopmenuinframe = ".((int) $this->showtopmenuinframe);
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -413,7 +416,8 @@ class Menubase
 		$sql .= " t.perms,";
 		$sql .= " t.enabled,";
 		$sql .= " t.usertype as user,";
-		$sql .= " t.tms";
+		$sql .= " t.tms,";
+		$sql .= " t.showtopmenuinframe";
 		$sql .= " FROM ".$this->db->prefix()."menu as t";
 		$sql .= " WHERE t.rowid = ".((int) $id);
 
@@ -444,6 +448,7 @@ class Menubase
 				$this->enabled = str_replace("\"", "'", $obj->enabled);
 				$this->user = $obj->user;
 				$this->tms = $this->db->jdate($obj->tms);
+				$this->showtopmenuinframe = $obj->showtopmenuinframe;
 			}
 			$this->db->free($resql);
 
@@ -517,8 +522,8 @@ class Menubase
 	 * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
 	 * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
 	 * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$tabMenu	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
-	 * 	@return  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	Return array with menu entries for top menu
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$tabMenu	If array with menu entries already loaded, we put this array here (in most cases, it's empty)
+	 * 	@return  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	Return array with menu entries for top menu
 	 */
 	public function menuTopCharger($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
 	{
@@ -538,6 +543,7 @@ class Menubase
 		return $newTabMenu;
 	}
 
+
 	/**
 	 * 	Load entries found from database (and stored into $tabMenu) in $this->newmenu array.
 	 *  Warning: Entries in $tabMenu must have child after parent
@@ -547,7 +553,7 @@ class Menubase
 	 * 	@param	string	$myleftmenu		Value for leftmenu to filter menu to load (always '')
 	 * 	@param	int		$type_user		0=Menu for backoffice, 1=Menu for front office
 	 * 	@param	string	$menu_handler	Filter on name of menu_handler used (auguria, eldy...)
-	 * 	@param  array<array{rowid:string,fk_menu:string,module:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$tabMenu	Array with menu entries already loaded
+	 * 	@param  array<array{rowid:string,fk_menu:string,module:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$tabMenu	Array with menu entries already loaded
 	 * 	@return Menu    		       	Menu array for particular mainmenu value or full tabArray
 	 */
 	public function menuLeftCharger($newmenu, $mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -629,7 +635,7 @@ class Menubase
 	 *  @param	string	$myleftmenu     Value for left that defined leftmenu
 	 *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
 	 *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$tabMenu	Array to store new entries found (in most cases, it's empty, but may be already filled)
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$tabMenu	Array to store new entries found (in most cases, it's empty, but may be already filled)
 	 *  @return int     		        >0 if OK, <0 if KO
 	 */
 	public function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -641,7 +647,7 @@ class Menubase
 		$leftmenu = $myleftmenu; // To export to dol_eval function
 
 		$sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre,";
-		$sql .= " m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
+		$sql .= " m.prefix, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position, m.showtopmenuinframe";
 		$sql .= " FROM ".$this->db->prefix()."menu as m";
 		$sql .= " WHERE m.entity IN (0,".$conf->entity.")";
 		$sql .= " AND m.menu_handler IN ('".$this->db->escape($menu_handler)."','all')";
@@ -737,7 +743,8 @@ class Menubase
 					$tabMenu[$b]['type']        = $menu['type'];
 					$tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
 					$tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
-					$tabMenu[$b]['position']    = (int) $menu['position'];
+					$tabMenu[$b]['position']    		= (int) $menu['position'];
+					$tabMenu[$b]['showtopmenuinframe']	= (int) $menu['showtopmenuinframe'];
 
 					$b++;
 				}
@@ -760,7 +767,7 @@ class Menubase
 	/**
 	 *  Complete this->newmenu with menu entry found in $tab
 	 *
-	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$tab	Tab array with all menu entries
+	 * 	@param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$tab	Tab array with all menu entries
 	 *  @param  int		$pere			Id of parent
 	 *  @param  int		$level			Level
 	 *  @return	void

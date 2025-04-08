@@ -123,9 +123,11 @@ if (empty($instructions)) {
 	} else {
 		// Default case 'textgeneration', 'texttranslation', 'textsummarize'
 		if ($format == "html") {
-			print dolPrintHTML($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+			print dolPrintHTML($generatedContent);
 		} else {
-			print dolPrintText($generatedContent);	// Note that common HTML tags are NOT escaped (but a sanitization is done)
+			// We must not use dolPrintText because dolPrintText format data including accent in htmlentities for a HTML output. We need a non formatted output.
+			//print dol_string_onlythesehtmltags('"Ça va" est une expression française et ceci une balise <a> html', 1, 1, 1);
+			print dol_string_onlythesehtmltags($generatedContent, 1, 1, 1);
 		}
 	}
 }
