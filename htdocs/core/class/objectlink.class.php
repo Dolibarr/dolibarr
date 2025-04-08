@@ -46,6 +46,7 @@ class ObjectLink extends CommonObject
 	 * @var int source id is a foreign key
 	 */
 	public $fk_source;
+
 	/**
 	 * @var string source type
 	 */
@@ -233,7 +234,27 @@ class ObjectLink extends CommonObject
 			return 0;
 		}
 
-		// Clean parameters
+		// create sourceobject and targetobject, make sure they exist with the respective numbers
+		$sourceobject = $this->_makeobject($fk_source, $sourcetype);
+		if ($sourceobject < 0 ) {
+			$this->error = "Error when looking for Object id=".$fk_source." of type=".$sourcetype;
+			return -2;
+		}
+		if ($sourceobject == 0 ) {
+			$this->error = "Object id ".$fk_source." of type ".$sourcetype." does not exist";
+			return -1;
+		}
+
+		$targetobject = $this->_makeobject($fk_target, $targettype);
+		if ($targetobject < 0 ) {
+			$this->error = "Error when looking for Object id=".$fk_target." of type=".$targettype;
+			return -2;
+		}
+		if ($targetobject == 0 ) {
+			$this->error = "Object id ".$fk_target." of type ".$targettype." does not exist";
+			return -1;
+		}
+
 		dol_syslog(get_class($this)."::create user=".$user->id);
 
 		$this->db->begin();
@@ -269,6 +290,44 @@ class ObjectLink extends CommonObject
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -1;
+		}
+	}
+	/**
+	 * Creates an object of the right kind and try to fetch it to make sure the id exists
+	 *
+	 * Return 1 if created, -1 if it does not exist
+	 *
+	 * @param   int         $objectid       ID of the object
+	 * @param   string      $objecttype     ID of the object
+	 * @return  int							1 if created, -1 if it does not exist
+	 *
+	 */
+	private function _makeobject($objectid, $objecttype)
+	{
+		if ($objecttype == 'adherent') {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+			$newobject = new Adherent($this->db);
+			return $newobject->fetch($objectid);
+		}
+		if ($objecttype == 'commande') {
+			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+			$newobject = new Commande($this->db);
+			return $newobject->fetch($objectid);
+		}
+		if ($objecttype == 'facture') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$newobject = new Facture($this->db);
+			return $newobject->fetch($objectid);
+		}
+		if ($objecttype == 'propal') {
+			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
+			$newobject = new Propal($this->db);
+			return $newobject->fetch($objectid);
+		}
+		if ($objecttype == 'subscription') {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+			$newobject = new Subscription($this->db);
+			return $newobject->fetch($objectid);
 		}
 	}
 }
