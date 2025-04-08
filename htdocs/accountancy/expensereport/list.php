@@ -354,7 +354,7 @@ if ($result) {
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -433,7 +433,7 @@ if ($result) {
 
 	$moreforfilter = '';
 
-	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+	$varpage = $contextpage;
 	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
 	$selectedfields = $htmlofselectarray;
 	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
