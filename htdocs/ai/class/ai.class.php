@@ -153,6 +153,10 @@ class Ai
 					$postPrompt = $configurations[$function]['postPrompt'];
 				}
 			}
+			if (empty($prePrompt) && $function == 'texttranslation') {
+				$prePrompt = 'You are a translator, give only the translation with no comment and explanation';
+			}
+
 			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');
 
 			// Set payload string

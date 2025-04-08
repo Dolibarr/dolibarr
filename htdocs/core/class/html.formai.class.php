@@ -93,12 +93,13 @@ class FormAI extends Form
 	/**
 	 * Return Html code for AI instructions of message and autofill result
 	 *
-	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
-	 * @param	string		$format			Format for output ('', 'html', ...)
-	 * @param   string      $htmlContent    HTML name of WYSIWYG field
-	 * @return 	string      				HTML code to ask AI instructions and autofill result
+	 * @param	string		$function			Function ('textgenerationemail', 'textgenerationwebpage', ...)
+	 * @param	string		$format				Format for output ('', 'html', ...)
+	 * @param   string      $htmlContent    	HTML name of WYSIWYG field
+	 * @param	string		$onlyenhancements	Show only this enhancement features (show all if '')
+	 * @return 	string      					HTML code to ask AI instructions and autofill result
 	 */
-	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message')
+	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message', $onlyenhancements = '')
 	{
 		global $langs, $form;
 		require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
@@ -115,26 +116,34 @@ class FormAI extends Form
 
 		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
 
-		$out = '<!-- getSectionForAIEnhancement -->';
-		$out .= '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">';
-		$out .= '<div id="ai_textgeneration'.$htmlContent.'" class="ai_textgeneration'.$htmlContent.' paddingtop paddingbottom ai_feature">';
-		//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
-		$out .= '<textarea class="centpercent textarea-ai_feature" data-functionai="textgeneration" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
-		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="textgeneration" value="'.$langs->trans('Generate').'"/>';
-		$out .= '</div>';
-		$out .= '<br>';
+		$out = '';
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textgenerationemail', 'textgenerationwebpage'))) {
+			$out .= '<div id="ai_textgeneration'.$htmlContent.'" class="ai_textgeneration'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
+			$out .= '<textarea class="centpercent textarea-ai_feature" data-functionai="textgeneration" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
+			$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="textgeneration" value="'.$langs->trans('Generate').'"/>';
+			$out .= '</div>';
+		}
 
-		$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
-		$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
-		$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
-		$out .= '</div>';
-		$out .= '<br>';
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('texttranslation'))) {
+			$out .= ($out ? '<br>' : '');
+			$out .= '<div id="ai_translation'.$htmlContent.'" class="ai_translation'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= img_picto('', 'language', 'class="pictofixedwidth paddingrightonly"');
+			$out .= $formadmin->select_language("", "ai_translation".$htmlContent."_select", 0, array(), $langs->trans("TranslateByAI").'...', 0, 0, 'minwidth250 ai_translation'.$htmlContent.'_select');
+			$out .= '</div>';
+		}
 
-		$summarizearray = getListForAISummarize();
-		$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
-		$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
-		$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
-		$out .= '</div>';
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textsummarize'))) {
+			$summarizearray = getListForAISummarize();
+			$out .= ($out ? '<br>' : '');
+			$out .= '<div id="ai_summarize'.$htmlContent.'" class="ai_summarize'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
+			$out .= $form->selectarray("ai_summarize".$htmlContent."_select", $summarizearray, 0, $langs->trans("SummarizeByAI").'...', 0, 0, 'minwidth250 ai_summarize'.$htmlContent.'_select', 1);
+			$out .= '</div>';
+		}
+
+		$out = '<!-- getSectionForAIEnhancement -->'.$out;
+		$out = '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">'.$out;
 
 		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
 		$out .= $messageaiwait;

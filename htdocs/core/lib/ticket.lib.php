@@ -228,59 +228,12 @@ function generate_random_id($car = 16)
  */
 function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
 {
-	global $user, $conf, $langs, $mysoc;
+	global $conf, $langs, $mysoc;
 
-	$urllogo = "";
 	top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss, 0, 1); // Show html headers
 
 	print '<body id="mainbody" class="publicnewticketform">';
 	print '<div class="publicnewticketform2 centpercent" style="min-height: 100%;">';
 
-	print '<header class="center centpercent">';
-
-	// Define urllogo
-	if (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') || getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC')) {
-		// Print logo
-		if (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO')) {
-			$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
-
-			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
-			} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-				$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-			}
-		}
-	}
-
-	// Output html code for logo
-	if ($urllogo || getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC')) {
-		print '<div class="backgreypublicpayment">';
-		print '<div class="logopublicpayment">';
-		if ($urllogo) {
-			print '<a href="'.(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
-			print '<img id="dolpaymentlogo" src="'.$urllogo.'"';
-			print '>';
-			print '</a>';
-		}
-		if (getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC')) {
-			print '<div class="clearboth"></div><strong>'.(getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC') ? getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC') : $langs->trans("TicketSystem")).'</strong>';
-		}
-		print '</div>';
-		if (!getDolGlobalInt('MAIN_HIDE_POWERED_BY')) {
-			print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-		}
-		print '</div>';
-	}
-
-	if (getDolGlobalInt('TICKET_IMAGE_PUBLIC_INTERFACE')) {
-		print '<div class="backimagepublicticket">';
-		print '<img id="idTICKET_IMAGE_PUBLIC_INTERFACE" src="'.getDolGlobalString('TICKET_IMAGE_PUBLIC_INTERFACE').'">';
-		print '</div>';
-	}
-
-	print '</header>';
-
-	//print '<div class="ticketlargemargin">';
+	htmlPrintOnlineHeader($mysoc, $langs, (getDolGlobalInt('TICKET_SHOW_COMPANY_LOGO') ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE', dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)) : '0'), getDolGlobalString('TICKET_PUBLIC_INTERFACE_TOPIC', $langs->trans("TicketSystem")), 'TICKET_IMAGE_PUBLIC_INTERFACE');
 }

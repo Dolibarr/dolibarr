@@ -126,7 +126,7 @@ class Opensurveysondage extends CommonObject
 		'allow_comments' => array('type' => 'integer', 'label' => 'Allowcomments', 'enabled' => '1', 'position' => 70, 'notnull' => 1, 'visible' => -1,),
 		'allow_spy' => array('type' => 'integer', 'label' => 'Allowspy', 'enabled' => '1', 'position' => 75, 'notnull' => 1, 'visible' => -1,),
 		'sujet' => array('type' => 'mediumtext', 'label' => 'Sujet', 'enabled' => '1', 'position' => 80, 'notnull' => 0, 'visible' => -1,),
-		'id_sondage_admin' => array('type' => 'char(24)', 'label' => 'Idsondageadmin', 'enabled' => '1', 'position' => 85, 'notnull' => 0, 'visible' => -1,),
+		//'id_sondage_admin' => array('type' => 'char(24)', 'label' => 'Idsondageadmin', 'enabled' => '1', 'position' => 85, 'notnull' => 0, 'visible' => -1,),
 	);
 
 	/**
