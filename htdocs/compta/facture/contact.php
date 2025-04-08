@@ -70,7 +70,11 @@ if ($object_rec) {
 }
 // Load object
 if ($id > 0 || !empty($ref)) {
-	$ret = $object->fetch($id, $ref, '', 0, getDolGlobalBool('INVOICE_USE_SITUATION'));
+	if ($object_rec) {
+		$ret = $object->fetch($id, $ref);
+	} else {
+		$ret = $object->fetch($id, $ref, '', 0, getDolGlobalBool('INVOICE_USE_SITUATION'));
+	}
 }
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('invoicecontactcard', 'globalcard'));

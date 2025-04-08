@@ -34,6 +34,7 @@
  * @var Translate $langs
  * @var User $user
  * @var ?string $permission
+ * @var ?int $object_rec
  */
 '
 @phan-var-force ?CommonObject $object
