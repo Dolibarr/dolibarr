@@ -631,6 +631,8 @@ if ($result) {
 	$facturestatic = new Facture($db);
 	$productstatic = new Product($db);
 	$accountingaccountstatic = new AccountingAccount($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	$i = 0;
 	while ($i < min($num_lines, $limit)) {
@@ -684,14 +686,17 @@ if ($result) {
 		// Line id
 		if (!empty($arrayfields['fd.rowid']['checked'])) {
 			print '<td>'.$objp->rowid.'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Ref Invoice
 		if (!empty($arrayfields['f.ref']['checked'])) {
 			print '<td class="nowraponall tdoverflowmax125">'.$facturestatic->getNomUrl(1).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Date invoice
 		if (!empty($arrayfields['f.datef']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
@@ -710,6 +715,7 @@ if ($result) {
 				print '&nbsp;';
 			}
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Description
 		if (!empty($arrayfields['fd.description']['checked'])) {
@@ -718,8 +724,8 @@ if ($result) {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
-
 		// Amount
 		if (!empty($arrayfields['fd.total_ht']['checked'])) {
 			print '<td class="right nowraponall amount">';
@@ -746,14 +752,17 @@ if ($result) {
 				print price($objp->total_ht);
 			}
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Vat rate
 		if (!empty($arrayfields['fd.tva_tx']['checked'])) {
 			print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'customer').'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
@@ -762,10 +771,12 @@ if ($result) {
 				print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
 			}
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// TVA Intracom
 		if (!empty($arrayfields['s.tva_intra']['checked'])) {
 			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Account
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
@@ -775,6 +786,7 @@ if ($result) {
 			print '</a> ';
 			print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 
 		// Fields from hook
@@ -800,7 +812,7 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="12"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);

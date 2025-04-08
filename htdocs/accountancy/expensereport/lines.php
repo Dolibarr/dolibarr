@@ -457,8 +457,8 @@ if ($result) {
 	print '<tr class="liste_titre">';
     // Action column
     if ($conf->main_checkbox_left_column) {
-            print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-            $totalarray['nbfield']++;
+        print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+        $totalarray['nbfield']++;
     }
     // Line ID
     if (!empty($arrayfields['erd.rowid']['checked'])) {
@@ -468,37 +468,46 @@ if ($result) {
 	// User
 	if (!empty($arrayfields['u.login']['checked'])) {
 		print_liste_field_titre($arrayfields['u.login']['label'], $_SERVER['PHP_SELF'], "u.login", $param, "", "", $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// Expensereport
 	if (!empty($arrayfields['er.ref']['checked'])) {
 		print_liste_field_titre($arrayfields['er.ref']['label'], $_SERVER["PHP_SELF"], "er.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// date_valid
 	if (!empty($arrayfields['er.date_valid']['checked'])) {
 		print_liste_field_titre($arrayfields['er.date_valid']['label'], $_SERVER["PHP_SELF"], "er.date_valid", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	// date
 	if (!empty($arrayfields['erd.date']['checked'])) {
 		print_liste_field_titre($arrayfields['erd.date']['label'], $_SERVER["PHP_SELF"], "erd.date, erd.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	// invoice label
 	if (!empty($arrayfields['f.label']['checked'])) {
 		print_liste_field_titre($arrayfields['f.label']['label'], $_SERVER["PHP_SELF"], "f.label", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// expensereport description
 	if (!empty($arrayfields['erd.comments']['checked'])) {
 		print_liste_field_titre($arrayfields['erd.comments']['label'], $_SERVER["PHP_SELF"], "erd.comments", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	// expensereport total
 	if (!empty($arrayfields['erd.total_ht']['checked'])) {
 		print_liste_field_titre($arrayfields['erd.total_ht']['label'], $_SERVER["PHP_SELF"], "erd.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
 	}
 	// VAT
 	if (!empty($arrayfields['erd.tva_tx']['checked'])) {
 		print_liste_field_titre($arrayfields['erd.tva_tx']['label'], $_SERVER["PHP_SELF"], "erd.tva_tx", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.account_number']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
     // Hook fields
     $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
@@ -514,6 +523,8 @@ if ($result) {
 	$expensereportstatic = new ExpenseReport($db);
 	$accountingaccountstatic = new AccountingAccount($db);
 	$userstatic = new User($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	$i = 0;
 	while ($i < min($num_lines, $limit)) {
@@ -556,28 +567,34 @@ if ($result) {
 		// Line id
 		if (!empty($arrayfields['erd.rowid']['checked'])) {
 			print '<td>'.$objp->rowid.'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Login
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall">';
 			print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Ref Expense report
 		if (!empty($arrayfields['er.ref']['checked'])) {
 			print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Date validation
 		if (!empty($arrayfields['er.date_valid']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Date
 		if (!empty($arrayfields['erd.date']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date), 'day').'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Fees label
 		if (!empty($arrayfields['f.label']['checked'])) {
 			print '<td class="tdoverflow">'.($langs->trans($objp->type_fees_code) == $objp->type_fees_code ? $objp->type_fees_label : $langs->trans(($objp->type_fees_code))).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Fees description -- Can be null
 		if (!empty($arrayfields['erd.comments']['checked'])) {
@@ -586,14 +603,17 @@ if ($result) {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->comments);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Amount without taxes
 		if (!empty($arrayfields['erd.total_ht']['checked'])) {
 			print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Vat rate
 		if (!empty($arrayfields['erd.tva_tx']['checked'])) {
 			print '<td class="center">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Accounting account affected
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
@@ -603,6 +623,7 @@ if ($result) {
 			print '</a> ';
 			print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
         // Fields from hook
         $parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
@@ -626,11 +647,7 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		$colspan = 10;
-		if (getDolGlobalString('ACCOUNTANCY_USE_EXPENSE_REPORT_VALIDATION_DATE')) {
-			$colspan++;
-		}
-		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
     $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);

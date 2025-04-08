@@ -564,23 +564,20 @@ if ($result) {
     $totalarray['nbfield'] = 0;
 
 	print '<tr class="liste_titre">';
-	// print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
-
-
     // Action column
     if ($conf->main_checkbox_left_column) {
-            print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-            $totalarray['nbfield']++;
+        print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+        $totalarray['nbfield']++;
     }
     // Line ID
     if (!empty($arrayfields['l.rowid']['checked'])) {
-            print_liste_field_titre($arrayfields['l.rowid']['label'], $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['l.rowid']['label'], $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
+        $totalarray['nbfield']++;
     }
     // Ref invoice
     if (!empty($arrayfields['f.ref']['checked'])) {
-            print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+        $totalarray['nbfield']++;
     }
 	// invoice label
 	if (!empty($arrayfields['f.libelle']['checked'])) {
@@ -589,48 +586,48 @@ if ($result) {
     }
     // date
     if (!empty($arrayfields['f.datef']['checked'])) {
-            print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+        $totalarray['nbfield']++;
     }
     // Product ref
     if (!empty($arrayfields['p.ref']['checked'])) {
-            print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+        $totalarray['nbfield']++;
     }
     // description
     if (!empty($arrayfields['l.description']['checked'])) {
-            print_liste_field_titre($arrayfields['l.description']['label'], $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['l.description']['label'], $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
+        $totalarray['nbfield']++;
     }
     // Amount
     if (!empty($arrayfields['l.total_ht']['checked'])) {
-            print_liste_field_titre($arrayfields['l.total_ht']['label'], $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['l.total_ht']['label'], $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+        $totalarray['nbfield']++;
     }
     // VAT
     if (!empty($arrayfields['l.tva_tx']['checked'])) {
-            print_liste_field_titre($arrayfields['l.tva_tx']['label'], $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
-            $totalarray['nbfield']++;
+        print_liste_field_titre($arrayfields['l.tva_tx']['label'], $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+        $totalarray['nbfield']++;
     }
     // Thirdparty
     if (!empty($arrayfields['s.nom']['checked'])) {
-            print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
     }
     // Country
     if (!empty($arrayfields['co.label']['checked'])) {
-            print_liste_field_titre($arrayfields['co.label']['label'], $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+		print_liste_field_titre($arrayfields['co.label']['label'], $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
     }
     // TVA Intracom
     if (!empty($arrayfields['s.tva_intra']['checked'])) {
-            print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+		print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
     }
     // Account
     if (!empty($arrayfields['aa.account_number']['checked'])) {
-            print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
-            $totalarray['nbfield']++;
+		print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
     }
     // Hook fields
     $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
@@ -638,8 +635,8 @@ if ($result) {
     print $hookmanager->resPrint;
     // Action column
     if (!$conf->main_checkbox_left_column) {
-            print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-            $totalarray['nbfield']++;
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+		$totalarray['nbfield']++;
     }
 	print "</tr>\n";
 
@@ -647,6 +644,8 @@ if ($result) {
 	$facturefournisseur_static = new FactureFournisseur($db);
 	$productstatic = new ProductFournisseur($db);
 	$accountingaccountstatic = new AccountingAccount($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	$i = 0;
 	while ($i < min($num_lines, $limit)) {
@@ -696,13 +695,14 @@ if ($result) {
             print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
             print '</td>';
             if (!$i) {
-                    $totalarray['nbfield']++;
+                $totalarray['nbfield']++;
             }
         }
 
 		// Line id
         if (!empty($arrayfields['l.rowid']['checked'])) {
-                print '<td>'.$objp->rowid.'</td>';
+            print '<td>'.$objp->rowid.'</td>';
+			$totalarray['nbfield']++;
         }
 		// Ref Invoice
 		if (!empty($arrayfields['f.ref']['checked'])) {
@@ -712,6 +712,7 @@ if ($result) {
 				print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
 			}
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Ref supplier invoice
 		/*
@@ -724,10 +725,12 @@ if ($result) {
 			print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 			print dol_escape_htmltag($objp->invoice_label);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Date invoice
 		if (!empty($arrayfields['f.datef']['checked'])) {
             print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
+			$totalarray['nbfield']++;
         }
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
@@ -742,6 +745,7 @@ if ($result) {
 				print '<span class="opacitymedium">'.$objp->product_label.'</span>';
 			}
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Description
 		if (!empty($arrayfields['l.description']['checked'])) {
@@ -750,18 +754,22 @@ if ($result) {
 			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
 			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// Amount
 		if (!empty($arrayfields['l.total_ht']['checked'])) {
 			print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// VAT Rate
 		if (!empty($arrayfields['l.tva_tx']['checked'])) {
 			print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Thirdparty
 		if (!empty($arrayfields['s.nom']['checked'])) {
 			print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Country
 		if (!empty($arrayfields['co.label']['checked'])) {
@@ -770,10 +778,12 @@ if ($result) {
 				print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
 			}
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
 		// TVA Intracom
         if (!empty($arrayfields['s.tva_intra']['checked'])) {
 			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+			$totalarray['nbfield']++;
 		}
 		// Account
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
@@ -783,6 +793,7 @@ if ($result) {
 			print '</a> ';
 			print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
 			print '</td>';
+			$totalarray['nbfield']++;
 		}
         // Fields from hook
         $parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
@@ -793,12 +804,12 @@ if ($result) {
 			print '<td class="nowrap center actioncolumn">';
 			$selected = 0;
 			if (in_array($objp->rowid, $changeaccount)) {
-					$selected = 1;
+				$selected = 1;
 			}
 			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 			print '</td>';
 			if (!$i) {
-					$totalarray['nbfield']++;
+				$totalarray['nbfield']++;
 			}
 		}
 
@@ -806,7 +817,7 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
     $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
