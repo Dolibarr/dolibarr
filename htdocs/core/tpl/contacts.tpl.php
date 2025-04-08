@@ -335,7 +335,7 @@ $param .= ($object_rec ? '&object_rec=1': '');
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($object_rec) {
-print '<input type="hidden" name="object_rec" value="1" />';
+	print '<input type="hidden" name="object_rec" value="1" />';
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
