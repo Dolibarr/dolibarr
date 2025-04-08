@@ -4,8 +4,9 @@
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2013   	Peter Fontaine          <contact@peterfontaine.fr>
  * Copyright (C) 2016       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +100,7 @@ class CompanyBankAccount extends Account
 		'code_banque' => array('type' => 'varchar(128)', 'label' => 'Codebanque', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'code_guichet' => array('type' => 'varchar(6)', 'label' => 'Codeguichet', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'number' => array('type' => 'varchar(255)', 'label' => 'Number', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'cci' => array('type' => 'varchar(32)', 'label' => 'CCI', 'enabled' => 1, 'position' => 57, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'cle_rib' => array('type' => 'varchar(5)', 'label' => 'Clerib', 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'bic' => array('type' => 'varchar(20)', 'label' => 'Bic', 'enabled' => 1, 'position' => 65, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'iban_prefix' => array('type' => 'varchar(34)', 'label' => 'Ibanprefix', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
@@ -178,6 +180,10 @@ class CompanyBankAccount extends Account
 	 * @var string
 	 */
 	public $number;
+	/**
+	 * @var string
+	 */
+	public $cci;
 	/**
 	 * @var string
 	 */
@@ -463,6 +469,7 @@ class CompanyBankAccount extends Account
 		$sql .= ",code_banque='".$this->db->escape($this->code_banque)."'";
 		$sql .= ",code_guichet='".$this->db->escape($this->code_guichet)."'";
 		$sql .= ",number='".$this->db->escape($this->number)."'";
+		$sql .= ",cci='".$this->db->escape($this->cci)."'";
 		$sql .= ",cle_rib='".$this->db->escape($this->cle_rib)."'";
 		$sql .= ",bic='".$this->db->escape($this->bic)."'";
 		$sql .= ",iban_prefix = '".$this->db->escape(dolEncrypt($this->iban))."'";
@@ -530,7 +537,7 @@ class CompanyBankAccount extends Account
 			return -1;
 		}
 
-		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
+		$sql = "SELECT rowid, label, type, fk_soc as socid, bank, number, cci, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
 		$sql .= " domiciliation as address,";
 		$sql .= " proprio as owner_name, owner_address, default_rib, datec, tms as datem, rum, frstrecur, date_rum,";
 		$sql .= " stripe_card_ref, stripe_account, ext_payment_site,";
@@ -565,6 +572,7 @@ class CompanyBankAccount extends Account
 				$this->code_banque     = $obj->code_banque;
 				$this->code_guichet    = $obj->code_guichet;
 				$this->number          = $obj->number;
+				$this->cci             = $obj->cci;
 				$this->cle_rib         = $obj->cle_rib;
 				$this->bic             = $obj->bic;
 				$this->iban            = dolDecrypt($obj->iban);
