@@ -125,14 +125,14 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 
 
 $arrayfields = array(
-    'erd.rowid'             => array('label' => "LineId",                   	'position' => 1, 'checked' => '1', 'enabled' => '1'),
-    'u.login'               => array('label' => "Employees",                	'position' => 1, 'checked' => '1', 'enabled' => '1'),
-    'er.ref'               	=> array('label' => "ExpenseReport",            	'position' => 1, 'checked' => '1', 'enabled' => '1'),
-    'erd.date'              => array('label' => "DateOfLine",               	'position' => 1, 'checked' => '1', 'enabled' => '1'),
-    'f.label'               => array('label' => "TypeFees",                 	'position' => 1, 'checked' => '1', 'enabled' => '1'),
-    'erd.comments'        	=> array('label' => "Description",       			'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'erd.rowid'             => array('label' => "LineId",                   	'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'u.login'               => array('label' => "Employees",                	'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'er.ref'               	=> array('label' => "ExpenseReport",            	'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'erd.date'              => array('label' => "DateOfLine",               	'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'f.label'               => array('label' => "TypeFees",                 	'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'erd.comments'        	=> array('label' => "Description",       			'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	'erd.total_ht'          => array('label' => "Amount",                   	'position' => 1, 'checked' => '1', 'enabled' => '1'),
-    'erd.tva_tx'            => array('label' => "VATRate",                  	'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	'erd.tva_tx'            => array('label' => "VATRate",                  	'position' => 1, 'checked' => '1', 'enabled' => '1'),
 	'aa.data_suggest'       => array('label' => "DataUsedToSuggestAccount",     'position' => 1, 'checked' => '1', 'enabled' => '1'), // Seems not used in search.
 	'aa.account_number'     => array('label' => "AccountAccountingSuggest",     'position' => 1, 'checked' => '1', 'enabled' => '1'),
 );
@@ -161,8 +161,8 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-    // Selection of new fields
-    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 	// Purge search criteria
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All test are required to be compatible with all browsers
@@ -399,10 +399,10 @@ if ($result) {
 	if ($search_vat) {
 		$param .= '&search_vat='.urlencode($search_vat);
 	}
-    // Add $param from hooks
-    $parameters = array('param' => &$param);
-    $reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    $param .= $hookmanager->resPrint;
+	// Add $param from hooks
+	$parameters = array('param' => &$param);
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 
 	$arrayofmassactions = array(
@@ -433,10 +433,10 @@ if ($result) {
 
 	$moreforfilter = '';
 
-    $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-    $htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
-    $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
-    $selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+	$varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+	$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
+	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
@@ -497,10 +497,10 @@ if ($result) {
 	if (!empty($arrayfields['aa.account_number']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
-    // Fields from hook
-    $parameters = array('arrayfields' => $arrayfields);
-    $reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
@@ -510,19 +510,19 @@ if ($result) {
 	}
 	print '</tr>';
 
-    // Fields title label
-    // --------------------------------------------------------------------
-    $totalarray = array();
-    $totalarray['nbfield'] = 0;
+	// Fields title label
+	// --------------------------------------------------------------------
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	print '<tr class="liste_titre">';
-    // Action column
-    if ($conf->main_checkbox_left_column) {
-        print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-        $totalarray['nbfield']++;
-    }
-    // Line ID
-    if (!empty($arrayfields['erd.rowid']['checked'])) {
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+		$totalarray['nbfield']++;
+	}
+	// Line ID
+	if (!empty($arrayfields['erd.rowid']['checked'])) {
 		print_liste_field_titre($arrayfields['erd.rowid']['label'], $_SERVER["PHP_SELF"], "erd.rowid", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
@@ -574,15 +574,15 @@ if ($result) {
 		print_liste_field_titre($arrayfields['aa.account_number']['label'], '', '', '', '', '', '', '', '');
 		$totalarray['nbfield']++;
 	}
-    // Hook fields
-    $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
-    $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	// Hook fields
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
-        print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
-        $totalarray['nbfield']++;
-    }
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+		$totalarray['nbfield']++;
+	}
 	print "</tr>\n";
 
 
@@ -611,36 +611,36 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
-        // Action column
-        if ($conf->main_checkbox_left_column) {
-            print '<td class="nowrap center actioncolumn">';
-            $selected = 0;
-            if (in_array($objp->rowid."_".$i, $toselect)) {
-                $selected = 1;
-            }
+		// Action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="nowrap center actioncolumn">';
+			$selected = 0;
+			if (in_array($objp->rowid."_".$i, $toselect)) {
+				$selected = 1;
+			}
 			print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="'.$objp->rowid."_".$i.'"'.($objp->aarowid ? "checked" : "").'/>';
-            print '</td>';
-            if (!$i) {
-                $totalarray['nbfield']++;
-            }
-        }
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 		// Line id
 		if (!empty($arrayfields['erd.rowid']['checked'])) {
 			print '<td>'.$objp->rowid.'</td>';
 			$totalarray['nbfield']++;
-        }
+		}
 		// Login
 		if (!empty($arrayfields['u.login']['checked'])) {
 			print '<td class="nowraponall">';
 			print $userstatic->getNomUrl(-1, '', 0, 0, 24, 1, 'login', '', 1);
 			print '</td>';
 			$totalarray['nbfield']++;
-        }
+		}
 		// Ref Expense report
 		if (!empty($arrayfields['er.ref']['checked'])) {
 			print '<td class="tdoverflowmax150">'.$expensereport_static->getNomUrl(1).'</td>';
 			$totalarray['nbfield']++;
-        }
+		}
 		// Date validation
 		if (!empty($arrayfields['er.date_valid']['checked'])) {
 			print '<td class="center">'.dol_print_date($db->jdate($objp->date_valid), 'day').'</td>';
@@ -695,24 +695,24 @@ if ($result) {
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
-        // Fields from hook
-        $parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
-        $reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        print $hookmanager->resPrint;
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 
-        // Action column
-        if (!$conf->main_checkbox_left_column) {
-            print '<td class="nowrap center actioncolumn">';
-            $selected = 0;
-            if (in_array($objp->rowid."_".$i, $toselect)) {
-                $selected = 1;
-            }
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print '<td class="nowrap center actioncolumn">';
+			$selected = 0;
+			if (in_array($objp->rowid."_".$i, $toselect)) {
+				$selected = 1;
+			}
 			print '<input type="checkbox" class="flat checkforselect checkforselect'.$objp->rowid.'" name="toselect[]" value="'.$objp->rowid."_".$i.'"'.($objp->aarowid ? "checked" : "").'/>';
-            print '</td>';
-            if (!$i) {
-                $totalarray['nbfield']++;
-            }
-        }
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 
 		print "</tr>";
 		$i++;
@@ -721,9 +721,9 @@ if ($result) {
 		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
-    $parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
-    $reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-    print $hookmanager->resPrint;
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 	print "</div>";
