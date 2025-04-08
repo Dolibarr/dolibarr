@@ -38,7 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/menubase.class.php';
  * @var Translate $langs
  * @var User $user
  *
- * @var int		$heightforframes	Defined into main.inc.php
+ * @var int	$heightforframes
  */
 
 // Load translation files required by the page
@@ -105,6 +105,7 @@ if ($keyforcontent) {
 } else {
 	if (preg_match('/^\//', $menu->url) || preg_match('/^http/i', $menu->url)) {
 		// menu->url is an URL starting with http or /
+		// @phan-ignore-next-line PhanUndeclaredGlobalVariable
 		print "
 			<html>
 			<head>
