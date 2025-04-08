@@ -40,6 +40,7 @@
 @phan-var-force ?CommonObject $object
 @phan-var-force ?CommonObject $objectsrc
 @phan-var-force ?string $permission
+@phan-var-force ?int $object_rec
 ';
 
 // Protection to avoid direct call of template
