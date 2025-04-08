@@ -249,8 +249,10 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
+print '<br>';
+
 if ($action == 'create') {
-	$out = '<div class="addcustomprompt hidden">';
+	$out = '<div class="addcustomprompt">';
 
 	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
@@ -325,7 +327,7 @@ if ($action == 'create') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';
+	$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists">';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '</tbody>';
@@ -386,24 +388,22 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</tr>';
 
 			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven">';
-			$out .= '<td>'.$langs->trans("BlackListWords").'</td>';
+			$out .= '<td>'.$form->textwithpicto($langs->trans("BlackListWords"), $langs->trans("BlackListWordsHelp")).'</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" rows="3">'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
+			$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" value="'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'">';
 			$out .= '</td>';
 			$out .= '</tr>';
 
 			$out .= '<tr>';
-			$out .= '<td></td>';
+			$out .= '<td>'.$langs->trans("Test").'</td>';
 			$out .= '<td>';
-			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/>';
-			$out .= ' &nbsp; ';
-
-			$out .= '<br><br>';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
+			$formmail->withaiprompt = 'html';		// set format
+
+			$showlinktoai = $key;		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+			$showlinktoailabel = $langs->trans("ToTest");
 			$htmlname = $key;
 			$onlyenhancements = $key;
 
@@ -418,7 +418,11 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</tbody>';
 			$out .= '</table>';
 
+			$out .= '<center><input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></center>';
+
 			$out .= '</form>';
+
+			$out .= '<br><br>';
 		}
 	}
 

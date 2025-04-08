@@ -84,6 +84,7 @@ if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 }
 // Add link to add AI content
 if ($showlinktoai) {
+	// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
 	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
 	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
