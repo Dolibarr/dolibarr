@@ -543,6 +543,7 @@ class Menubase
 		return $newTabMenu;
 	}
 
+
 	/**
 	 * 	Load entries found from database (and stored into $tabMenu) in $this->newmenu array.
 	 *  Warning: Entries in $tabMenu must have child after parent
