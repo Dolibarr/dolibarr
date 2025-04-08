@@ -633,8 +633,9 @@ class Facture extends CommonInvoice
 			$this->statut = self::STATUS_DRAFT;	// deprecated
 
 			$this->linked_objects = $_facrec->linkedObjectsIds;
-			// We do not add link to template invoice or next invoice will be linked to all generated invoices
-			//$this->linked_objects['facturerec'][0] = $this->fac_rec;
+			// If we do not remove factures, all generated invoices will be linked together
+			unset($this->linked_objects['facture']);
+			$this->linked_objects['facturerec'][0] = $this->fac_rec;
 
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0) {

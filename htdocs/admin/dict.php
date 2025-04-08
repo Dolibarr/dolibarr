@@ -718,6 +718,7 @@ if ($id == DICT_TYPE_CONTACT) {
 		'commande' => img_picto('', 'order', 'class="pictofixedwidth"').$langs->trans('Order'),
 		'shipping' => img_picto('', 'dolly', 'class="pictofixedwidth"') . $langs->trans('Shipment'),
 		'facture' => img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans('Bill'),
+		'facturerec' => img_picto('', 'bill', 'class="pictofixedwidth"').$langs->trans('RecurringInvoiceTemplate'),
 		'fichinter' => img_picto('', 'intervention', 'class="pictofixedwidth"').$langs->trans('InterventionCard'),
 		'contrat' => img_picto('', 'contract', 'class="pictofixedwidth"').$langs->trans('Contract'),
 		'ticket' => img_picto('', 'ticket', 'class="pictofixedwidth"').$langs->trans('Ticket'),

@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
@@ -55,13 +56,18 @@ $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOSTINT('lineid');
 $socid  = GETPOSTINT('socid');
 $action = GETPOST('action', 'aZ09');
+$object_rec   = GETPOSTINT('object_rec');
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
 
-$object = new Facture($db);
+if ($object_rec) {
+	$object = new FactureRec($db);
+} else {
+	$object = new Facture($db);
+}
 // Load object
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref, '', 0, getDolGlobalBool('INVOICE_USE_SITUATION'));
@@ -112,7 +118,7 @@ if (empty($reshook)) {
 		$result = $object->delete_contact($lineid);
 
 		if ($result >= 0) {
-			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
+			header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id.($object_rec ? '&object_rec=1': '') );
 			exit;
 		} else {
 			dol_print_error($db);
@@ -144,7 +150,11 @@ if ($id > 0 || !empty($ref)) {
 	if ($object->fetch($id, $ref) > 0) {
 		$object->fetch_thirdparty();
 
-		$head = facture_prepare_head($object);
+		if ($object_rec) {
+			$head = invoice_rec_prepare_head($object);
+		} else {
+			$head = facture_prepare_head($object);
+		}
 
 		$totalpaid = $object->getSommePaiement();
 
@@ -164,20 +174,12 @@ if ($id > 0 || !empty($ref)) {
 		if (isModEnabled('project')) {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
-			if (0) {
-				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-				if ($action != 'classify') {
-					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
-				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-			} else {
-				if (!empty($object->fk_project)) {
-					$proj = new Project($db);
-					$proj->fetch($object->fk_project);
-					$morehtmlref .= $proj->getNomUrl(1);
-					if ($proj->title) {
-						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
-					}
+			if (!empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref .= $proj->getNomUrl(1);
+				if ($proj->title) {
+					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
 				}
 			}
 		}

@@ -526,6 +526,24 @@ class FactureRec extends CommonInvoice
 					}
 				}
 
+				// Propagate contacts
+				if (!$error && $this->id && getDolGlobalString('MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN') && !empty($this->origin) && !empty($this->origin_id)) {   // Get contact from origin object
+					$originforcontact = $this->origin;
+					$originidforcontact = $this->origin_id;
+					$sqlcontact = "SELECT ctc.code, ctc.source, ec.fk_socpeople FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as ctc";
+					$sqlcontact .= " WHERE element_id = ".((int) $originidforcontact)." AND ec.fk_c_type_contact = ctc.rowid AND ctc.element = '".$this->db->escape($originforcontact)."'";
+
+					$resqlcontact = $this->db->query($sqlcontact);
+					if ($resqlcontact) {
+						while ($objcontact = $this->db->fetch_object($resqlcontact)) {
+							//print $objcontact->code.'-'.$objcontact->source.'-'.$objcontact->fk_socpeople."\n";
+							$this->add_contact($objcontact->fk_socpeople, $objcontact->code, $objcontact->source); // May failed because of duplicate key or because code of contact type does not exists for new object
+						}
+					} else {
+						dol_print_error($resqlcontact);
+					}
+				}
+
 				if (!$error) {
 					$result = $this->insertExtraFields();
 					if ($result < 0) {
@@ -893,7 +911,7 @@ class FactureRec extends CommonInvoice
 		$sqlef = "DELETE FROM $ef WHERE fk_object IN (SELECT rowid FROM ".$main." WHERE fk_facture = ".((int) $rowid).")";
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".((int) $rowid);
 
-		if ($this->db->query($sqlef) && $this->db->query($sql)) {
+		if ($this->db->query($sqlef) && $this->db->query($sql) && $this->delete_linked_contact() >= 0) {
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = ".((int) $rowid);
 			dol_syslog($sql);
 			if ($this->db->query($sql)) {
