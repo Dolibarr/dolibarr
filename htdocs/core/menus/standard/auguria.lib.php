@@ -190,6 +190,7 @@ function print_auguria_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout
 
 	foreach ($menu->liste as $menuval) {
 		print_start_menu_entry_auguria($menuval['idsel'], $menuval['classname'], $menuval['enabled']);
+		// @phan-ignore-next-line
 		print_text_menu_entry_auguria($menuval['titre'], $menuval['enabled'], ($menuval['url'] != '#' ? DOL_URL_ROOT : '').$menuval['url'], $menuval['id'], $menuval['idsel'], $menuval['classname'], ($menuval['target'] ? $menuval['target'] : $atarget), $menuval);
 		print_end_menu_entry_auguria($menuval['enabled']);
 	}
