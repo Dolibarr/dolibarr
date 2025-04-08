@@ -999,7 +999,7 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
-		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload) {
+		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload && isset($this->attributes[$elementtype]['label'])) {
 			return $this->attributes[$elementtype]['label'];
 		}
 
