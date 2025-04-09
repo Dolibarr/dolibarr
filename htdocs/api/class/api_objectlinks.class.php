@@ -46,7 +46,7 @@ class ObjectLinks extends DolibarrApi
 	public $objectlink;
 
 	/**
-	 * @var int 	notrigger is default 0, which means to trigger, else set notrigger: 1
+	 * @var int		notrigger is default 0, which means to trigger, else set notrigger: 1
 	 */
 	private $notrigger;
 
