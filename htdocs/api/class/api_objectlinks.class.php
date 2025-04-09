@@ -369,12 +369,12 @@ class ObjectLinks extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     	Object to clean
-	 * @phan-param		<ObjectLink>	$object
-	 * @phpstan-param	<ObjectLink>	$object
+	 * @phan-param		ObjectLink	$object
+	 * @phpstan-param	ObjectLink	$object
 	 *
 	 * @return  Object	Object with cleaned properties
-	 * @phan-return		<ObjectLink>
-	 * @phpstan-return	<ObjectLink>
+	 * @phan-return		ObjectLink
+	 * @phpstan-return	ObjectLink
 	 *
 	 */
 	protected function _cleanObjectDatas($object)
@@ -467,13 +467,9 @@ class ObjectLinks extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @phan-param ?array<string,string>	$data
-	 * @phpstan-param ?array<string,string>	$data
-	 *
-	 * @return  array
-	 * @phan-return array<array<string,int|string|null>>
-	 * @phpstan-return array<array<string,int|string|null>>
+	 * @param ?array<string,null|int|string>	$data   Data to validate
+	 * @return array<string,null|int|string>			Return array with validated mandatory fields and their value
+	 * @phan-return array<string,?int|?string>			Return array with validated mandatory fields and their value
 	 *
 	 * @throws  RestException 400
 	 */
