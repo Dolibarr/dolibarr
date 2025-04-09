@@ -1363,7 +1363,7 @@ class FactureRec extends CommonInvoice
 	 */
 	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
 	{
-		global $conf, $langs, $db, $user, $hookmanager;
+		global $conf, $langs, $db, $user, $hookmanager, $action;
 
 		$error = 0;
 		$nb_create = 0;
@@ -1449,6 +1449,9 @@ class FactureRec extends CommonInvoice
 							}
 						}
 					}
+
+					$parameters['facture'] = &$facture;
+					$reshook = $hookmanager->executeHooks('beforeCreationOfEachRecurringInvoice', $parameters, $facturerec, $action); // note that $facturerec or $facture might be modified by hooks
 
 					$invoiceidgenerated = $facture->create($user);
 					if ($invoiceidgenerated <= 0) {

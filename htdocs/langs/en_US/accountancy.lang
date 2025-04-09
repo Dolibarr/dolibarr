@@ -100,6 +100,7 @@ AccountAccounting=Accounting account
 AccountAccountingShort=Account
 SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
+LedgerAccount=Ledger account
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 ShowAccountingAccountInLedger=Show accounting account in ledger
