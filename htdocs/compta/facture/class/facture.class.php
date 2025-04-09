@@ -300,6 +300,7 @@ class Facture extends CommonInvoice
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
 	 *  'label' the translation key.
+	 *  'langfile' the key of the language file for translation.
 	 *  'enabled' is a condition when the field must be managed.
 	 *  'position' is the sort order of field.
 	 *  'notnull' is set to 1 if not null in database. Set to -1 if we must set data to null if empty ('' or 0).
@@ -378,8 +379,8 @@ class Facture extends CommonInvoice
 		'multicurrency_total_ttc' => array('type' => 'double(24,8)', 'label' => 'MulticurrencyAmountTTC', 'enabled' => 'isModEnabled("multicurrency")', 'visible' => -1, 'position' => 292, 'isameasure' => 1),
 		'fk_fac_rec_source' => array('type' => 'integer', 'label' => 'RecurringInvoiceSource', 'enabled' => 1, 'visible' => -1, 'position' => 305),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'visible' => -1, 'position' => 310),
-		'module_source' => array('type' => 'varchar(32)', 'label' => 'POSModule', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 315),
-		'pos_source' => array('type' => 'varchar(32)', 'label' => 'POSTerminal', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 320),
+		'module_source' => array('type' => 'varchar(32)', 'label' => 'POSModule', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 315),
+		'pos_source' => array('type' => 'varchar(32)', 'label' => 'POSTerminal', 'langfile' => 'cashdesk', 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'visible' => -1, 'position' => 320),
 		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 500),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 502),
 		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'position' => 506),
@@ -448,14 +449,6 @@ class Facture extends CommonInvoice
 	 * - CLOSECODE_REPLACED
 	 */
 	const STATUS_ABANDONED = 3;
-
-	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned remain - escompte
-	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned remain - bad customer
-	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned remain - bank charge
-	const CLOSECODE_OTHER = 'other'; // Abandoned remain - other
-
-	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned - other
-	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
 
 
 	/**
@@ -1490,6 +1483,7 @@ class Facture extends CommonInvoice
 		$this->pos_source = $object->pos_source;
 
 		$this->origin = $object->element;
+		$this->origin_type = $object->element;
 		$this->origin_id = $object->id;
 
 		$this->fk_user_author = $user->id;
@@ -3215,7 +3209,7 @@ class Facture extends CommonInvoice
 	{
 		$error = 0;
 
-		if ($this->paye != 1) {
+		if ($this->paye != 1 || $this->status != self::STATUS_CLOSED) {
 			$this->db->begin();
 
 			$now = dol_now();
@@ -3223,15 +3217,15 @@ class Facture extends CommonInvoice
 			dol_syslog(get_class($this)."::setPaid rowid=".((int) $this->id), LOG_DEBUG);
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-			$sql .= ' fk_statut='.self::STATUS_CLOSED;
+			$sql .= ' fk_statut = '.self::STATUS_CLOSED;
 			if (!$close_code) {
-				$sql .= ', paye=1';
+				$sql .= ', paye = 1';
 			}
 			if ($close_code) {
-				$sql .= ", close_code='".$this->db->escape($close_code)."'";
+				$sql .= ", close_code = '".$this->db->escape($close_code)."'";
 			}
 			if ($close_note) {
-				$sql .= ", close_note='".$this->db->escape($close_note)."'";
+				$sql .= ", close_note = '".$this->db->escape($close_note)."'";
 			}
 			$sql .= ', fk_user_closing = '.((int) $user->id);
 			$sql .= ", date_closing = '".$this->db->idate($now)."'";
@@ -3251,6 +3245,8 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
+				$this->paye = 1;
+				$this->status = self::STATUS_CLOSED;
 				$this->db->commit();
 				return 1;
 			} else {

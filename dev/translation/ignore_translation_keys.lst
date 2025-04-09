@@ -1000,16 +1000,12 @@ INVOICE_USE_SITUATION
 INVOICE_USE_SITUATION_CREDIT_NOTE
 ImpossibleToContactAuthority
 InterDate
-Inventory Code
-InvoiceReplace
 ItemID
 JobApplications
 JobPosition
 Journal
-Label Movement
 Labels
 Last
-LedgerAccount
 LocalTax1IsNotUsedExample
 LocalTax1IsUsedExample
 LocalTax2IsNotUsedExample

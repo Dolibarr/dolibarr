@@ -39,6 +39,7 @@ function getListOfAIFeatures()
 		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused', 'function' => 'TEXT'),
 		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
 		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
+		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
 		'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'IMAGE'),
 		'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'VIDEO'),
 		'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'AUDIO'),
@@ -131,6 +132,21 @@ function getListForAISummarize()
 	);
 
 	return $arrayforaisummarize;
+}
+
+/**
+ * Get list for AI style of writing
+ *
+ * @return array<int|string,mixed>
+ */
+function getListForAIRephraseStyle()
+{
+	$arrayforaierephrasestyle = array(
+		'professional' => 'RephraseStyleProfessional',
+		'humouristic' => 'RephraseStyleHumouristic'
+	);
+
+	return $arrayforaierephrasestyle;
 }
 
 /**
