@@ -62,8 +62,8 @@ class ObjectLinks extends DolibarrApi
 	 *
 	 * @param   int         $id				ID of objectlink
 	 * @return  Object						Object with cleaned properties
-	 * @phan-return array<array<string,null|int|string>>
-	 * @phpstan-return array<array<string,null|int|string>>
+	 * @phan-return		<ObjectLink>
+	 * @phpstan-return	<ObjectLink>
 	 *
 	 *
 	 * @url	GET {id}
@@ -198,8 +198,8 @@ class ObjectLinks extends DolibarrApi
 	 *  @param		string	$targettype 	type of the target object
 	 *  @param		string	$relationtype 	type of the relation, usually null
 	 *  @return		array
-	 * @phan-return array<array<string,int|string>>
-	 * @phpstan-return array<array<string,int|string>>
+	 * @phan-return		<ObjectLink>
+	 * @phpstan-return	<ObjectLink>
 	 *
 	 * @url GET
 	 *
@@ -341,8 +341,8 @@ class ObjectLinks extends DolibarrApi
 	 *
 	 * @param   int         $id             ID of objectlink
 	 * @return  Object						Object with cleaned properties
-	 * @phan-return array<array<string,int|string|null>>
-	 * @phpstan-return array<array<string,int|string|null>>
+	 * @phan-return		<ObjectLink>
+	 * @phpstan-return	<ObjectLink>
 	 *
 	 * @throws	RestException 403
 	 * @throws	RestException 404
