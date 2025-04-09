@@ -163,7 +163,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -1438,12 +1437,6 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/menus/edit.php
-
-		-
-			message: '#^Property Menubase\:\:\$target \(string\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
 			count: 2
 			path: ../../../htdocs/admin/menus/edit.php
 
@@ -4643,12 +4636,6 @@ parameters:
 			message: '#^Result of \|\| is always true\.$#'
 			identifier: booleanOr.alwaysTrue
 			count: 1
-			path: ../../../htdocs/compta/facture/card-rec.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 2
 			path: ../../../htdocs/compta/facture/card-rec.php
 
 		-
@@ -10154,12 +10141,6 @@ parameters:
 			path: ../../../htdocs/core/lib/pdf.lib.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 12
-			path: ../../../htdocs/core/lib/pdf.lib.php
-
-		-
 			message: '#^Variable \$refListsTxt in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -10212,12 +10193,6 @@ parameters:
 			identifier: booleanNot.alwaysFalse
 			count: 6
 			path: ../../../htdocs/core/lib/tax.lib.php
-
-		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/core/lib/ticket.lib.php
 
 		-
 			message: '#^Variable \$butactionbg in empty\(\) always exists and is always falsy\.$#'
@@ -10376,12 +10351,6 @@ parameters:
 			path: ../../../htdocs/core/menus/standard/auguria.lib.php
 
 		-
-			message: '#^Parameter \#8 \$menuval of function print_text_menu_entry_auguria expects array\{\}\|array\{rowid\: string, fk_menu\: string, langs\: string, enabled\: int\<0, 2\>, type\: string, fk_mainmenu\: string, fk_leftmenu\: string, url\: string, \.\.\.\}, array\{url\: string, titre\: string, enabled\: int\<0, 2\>, target\: string, mainmenu\: string, leftmenu\: string, position\: int, level\?\: int, \.\.\.\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/menus/standard/auguria.lib.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -10409,12 +10378,6 @@ parameters:
 			message: '#^Loose comparison using \=\= between ''accountancy'' and ''accountancy'' will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 4
-			path: ../../../htdocs/core/menus/standard/eldy.lib.php
-
-		-
-			message: '#^Parameter \#8 \$menuval of function print_text_menu_entry expects array\{\}\|array\{rowid\: string, fk_menu\: string, langs\: string, enabled\: int\<0, 2\>, type\: string, fk_mainmenu\: string, fk_leftmenu\: string, url\: string, \.\.\.\}, array\{url\: string, titre\: string, enabled\: int\<0, 2\>, target\: string, mainmenu\: string, leftmenu\: string, position\: int, level\?\: int, \.\.\.\} given\.$#'
-			identifier: argument.type
-			count: 1
 			path: ../../../htdocs/core/menus/standard/eldy.lib.php
 
 		-
@@ -15056,21 +15019,9 @@ parameters:
 			path: ../../../htdocs/fourn/facture/agenda.php
 
 		-
-			message: '#^Variable \$label might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
 			message: '#^Variable \$maxlength might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/fourn/facture/card-rec.php
-
-		-
-			message: '#^Variable \$newlang in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.variable
-			count: 2
 			path: ../../../htdocs/fourn/facture/card-rec.php
 
 		-
@@ -20570,12 +20521,6 @@ parameters:
 			path: ../../../htdocs/public/bookcal/bookcalAjax.php
 
 		-
-			message: '#^Ternary operator condition is always true\.$#'
-			identifier: ternary.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/bookcal/index.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -20738,12 +20683,6 @@ parameters:
 			path: ../../../htdocs/public/members/new.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/public/members/new.php
-
-		-
 			message: '#^Variable \$php_self might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -20812,12 +20751,6 @@ parameters:
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/public/partnership/new.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/public/partnership/new.php
 
@@ -20974,12 +20907,6 @@ parameters:
 		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/public/project/new.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
 			count: 1
 			path: ../../../htdocs/public/project/new.php
 
