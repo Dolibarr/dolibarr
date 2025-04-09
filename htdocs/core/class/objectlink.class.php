@@ -307,27 +307,32 @@ class ObjectLink extends CommonObject
 		if ($objecttype == 'adherent') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 			$newobject = new Adherent($this->db);
-			return $newobject->fetch($objectid);
+			$result = $newobject->fetch($objectid);
+			return $result;
 		}
 		if ($objecttype == 'commande') {
 			require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 			$newobject = new Commande($this->db);
-			return $newobject->fetch($objectid);
+			$result = $newobject->fetch($objectid);
+			return $result;
 		}
 		if ($objecttype == 'facture') {
 			require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 			$newobject = new Facture($this->db);
-			return $newobject->fetch($objectid);
+			$result = $newobject->fetch($objectid);
+			return $result;
 		}
 		if ($objecttype == 'propal') {
 			require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 			$newobject = new Propal($this->db);
-			return $newobject->fetch($objectid);
+			$result = $newobject->fetch($objectid);
+			return $result;
 		}
 		if ($objecttype == 'subscription') {
 			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 			$newobject = new Subscription($this->db);
-			return $newobject->fetch($objectid);
+			$result = $newobject->fetch($objectid);
+			return $result;
 		}
 	}
 }
