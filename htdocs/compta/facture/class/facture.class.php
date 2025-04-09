@@ -578,7 +578,7 @@ class Facture extends CommonInvoice
 					$_facrec->date_when = $now;
 				}
 				// Calculate and set new dates for recurring invoice model.
-				$nextGenDateWhen = $_facrec->getNextDate(); 
+				$nextGenDateWhen = $_facrec->getNextDate();
 				$_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
 				//$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
 				$_facrec->setNextDate($nextGenDateWhen, 1);
@@ -669,7 +669,7 @@ class Facture extends CommonInvoice
 			$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
 			$substitutionarray['__INVOICE_YEAR__'] = dol_print_date($this->date, '%Y');
 			$substitutionarray['__INVOICE_NEXT_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
-			// Only for template invoice 
+			// Only for template invoice
 			// $substitutionarray['__INVOICE_BILLING_DATE__'] == $substitutionarray["__DATE_YMD__"]
 			$substitutionarray['__INVOICE_START_DATE_OF_SERVICES__'] = (isset($startOfServices) ? dol_print_date($startOfServices) : '');
 			$substitutionarray['__INVOICE_END_DATE_OF_SERVICES__'] = (isset($endOfServices) ? dol_print_date($endOfServices) : '');
