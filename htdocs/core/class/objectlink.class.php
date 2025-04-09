@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
  */
 class ObjectLink extends CommonObject
 {
+	const TRIGGER_PREFIX = 'OBJECTLINK';
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -39,8 +40,6 @@ class ObjectLink extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'element_element';
-
-	const TRIGGER_PREFIX = 'OBJECTLINK'; // to be overridden in child class implementations, i.e. 'BILL', 'TASK', 'PROPAL', etc.
 
 	/**
 	 * @var int source id is a foreign key
@@ -184,7 +183,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_DELETE', $user);
+			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_DELETE', $user);
 			if ($result < 0) {
 				$error++;
 			}
@@ -262,7 +261,7 @@ class ObjectLink extends CommonObject
 
 		if (!$notrigger) {
 			// Call trigger
-			$result = $this->call_trigger($this->TRIGGER_PREFIX.'_CREATE', $user);
+			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_CREATE', $user);
 			if ($result < 0) {
 				$error++;
 			}
