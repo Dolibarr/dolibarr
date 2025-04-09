@@ -1211,6 +1211,7 @@ class Conf extends stdClass
 				$this->propal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
 				$this->propal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_BILL') * 86400;
 			}
+			// @phpstan-ignore-next-line
 			if (isset($this->supplier_proposal)) {
 				$this->supplier_proposal->cloture = new stdClass();
 				$this->supplier_proposal->facturation = new stdClass();
