@@ -547,9 +547,11 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$originaldatewhen = null;
-		$nextdatewhen = null;
-		$previousdaynextdatewhen = null;
+		$originalGenDateWhen = null;
+		$nextGenDateWhen = null;
+		$previousDayNextGenDateWhen = null;
+		$startOfServices = null;
+		$endOfServices = null;
 
 		$_facrec = null;
 
@@ -561,6 +563,7 @@ class Facture extends CommonInvoice
 			$_facrec = new FactureRec($this->db);
 			$result = $_facrec->fetch($this->fac_rec);
 			$result = $_facrec->fetchObjectLinked(null, '', null, '', 'OR', 1, 'sourcetype', 0); // This load $_facrec->linkedObjectsIds
+			$originalGenDateWhen = $_facrec->date_when;
 
 			if (getDolGlobalString('MODEL_FAC_REC_AUTHOR')) {
 				// If option MODEL_FAC_REC_AUTHOR is set, we want the same author than the author of recurring invoice instead of current user
@@ -568,24 +571,27 @@ class Facture extends CommonInvoice
 			}
 
 			// Define some dates
-			$originaldatewhen = $_facrec->date_when;
-			$nextdatewhen = null;
-			$previousdaynextdatewhen = null;
+			// Update date and number of this generation of recurring invoice
+			if ($_facrec->frequency > 0) {
+				dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
+				if (empty($_facrec->date_when)) {
+					$_facrec->date_when = $now;
+				}
+				// Calculate and set new dates for recurring invoice model.
+				$nextGenDateWhen = $_facrec->getNextDate(); 
+				$_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
+				//$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
+				$_facrec->setNextDate($nextGenDateWhen, 1);
+				$previousDayNextGenDateWhen = dol_time_plus_duree($nextGenDateWhen, -1, 'd');  // Only used for substitution
 
-			if ($originaldatewhen) {
 				if ($_facrec->rule_for_lines_dates == 'prepaid') {
-					$nextdatewhen = dol_time_plus_duree($originaldatewhen, (int) $_facrec->frequency, $_facrec->unit_frequency);
+					$startOfServices = $this->date;
+					$endOfServices = dol_time_plus_duree($startOfServices, (int) $_facrec->frequency, $_facrec->unit_frequency);
+					$endOfServices = dol_time_plus_duree($endOfServices, -1, 'd');
+				} elseif ($_facrec->rule_for_lines_dates == 'postpaid') {
+					$startOfServices = dol_time_plus_duree($this->date, -$_facrec->frequency, $_facrec->unit_frequency);
+					$endOfServices = dol_time_plus_duree($this->date, -1, 'd');
 				}
-
-				if ($_facrec->rule_for_lines_dates == 'postpaid') {
-					$previousdaynextdatewhen = dol_time_plus_duree($originaldatewhen, -1, 'd');
-				} elseif ($nextdatewhen) {
-					$previousdaynextdatewhen = dol_time_plus_duree($nextdatewhen, -1, 'd');
-				}
-
-				$originaldatewhen = $_facrec->rule_for_lines_dates == 'postpaid'
-					? dol_time_plus_duree($originaldatewhen, -$_facrec->frequency, $_facrec->unit_frequency)
-					: $originaldatewhen;
 			}
 
 			if (!empty($_facrec->frequency)) {  // Invoice are created on same thirdparty than template when there is a recurrence, but not necessarily when there is no recurrence.
@@ -636,18 +642,6 @@ class Facture extends CommonInvoice
 			// We do not add link to template invoice or next invoice will be linked to all generated invoices
 			//$this->linked_objects['facturerec'][0] = $this->fac_rec;
 
-			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
-			if ($_facrec->frequency > 0) {
-				dol_syslog("This is a recurring invoice so we set date_last_gen and next date_when");
-				if (empty($_facrec->date_when)) {
-					$_facrec->date_when = $now;
-				}
-				$next_date = $_facrec->getNextDate(); // Calculate next date
-				$result = $_facrec->setValueFrom('date_last_gen', $now, '', null, 'date', '', $user, '');
-				//$_facrec->setValueFrom('nb_gen_done', $_facrec->nb_gen_done + 1);		// Not required, +1 already included into setNextDate when second param is 1.
-				$result = $_facrec->setNextDate($next_date, 1);
-			}
-
 			// Define lang of customer
 			$outputlangs = $langs;
 			$newlang = '';
@@ -675,10 +669,13 @@ class Facture extends CommonInvoice
 			$substitutionarray['__INVOICE_PREVIOUS_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, -1, 'y'), '%Y');
 			$substitutionarray['__INVOICE_YEAR__'] = dol_print_date($this->date, '%Y');
 			$substitutionarray['__INVOICE_NEXT_YEAR__'] = dol_print_date(dol_time_plus_duree($this->date, 1, 'y'), '%Y');
-			// Only for template invoice
-			$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = (isset($originaldatewhen) ? dol_print_date($originaldatewhen, 'dayhour') : '');
-			$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = (isset($nextdatewhen) ? dol_print_date($nextdatewhen, 'dayhour') : '');
-			$substitutionarray['__INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__'] = (isset($previousdaynextdatewhen) ? dol_print_date($previousdaynextdatewhen, 'dayhour') : '');
+			// Only for template invoice 
+			// $substitutionarray['__INVOICE_BILLING_DATE__'] == $substitutionarray["__DATE_YMD__"]
+			$substitutionarray['__INVOICE_START_DATE_OF_SERVICES__'] = (isset($startOfServices) ? dol_print_date($startOfServices) : '');
+			$substitutionarray['__INVOICE_END_DATE_OF_SERVICES__'] = (isset($endOfServices) ? dol_print_date($endOfServices) : '');
+			$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__'] = (isset($originalGenDateWhen) ? dol_print_date($originalGenDateWhen, 'dayhour') : '');
+			$substitutionarray['__INVOICE_DATE_NEXT_INVOICE_AFTER_GEN__'] = (isset($nextGenDateWhen) ? dol_print_date($nextGenDateWhen, 'dayhour') : '');
+			$substitutionarray['__INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__'] = (isset($previousDayNextGenDateWhen) ? dol_print_date($previousDayNextGenDateWhen, 'dayhour') : '');
 			$substitutionarray['__INVOICE_COUNTER_CURRENT__'] = $_facrec->nb_gen_done;
 			$substitutionarray['__INVOICE_COUNTER_MAX__'] = $_facrec->nb_gen_max;
 
@@ -861,14 +858,6 @@ class Facture extends CommonInvoice
 
 					$newinvoiceline->origin = $this->lines[$i]->element;
 					$newinvoiceline->origin_id = $this->lines[$i]->id;
-
-					// Auto set date of service ?
-					if ($this->lines[$i]->date_start_fill == 1 && $originaldatewhen) {		// $originaldatewhen is defined when generating from recurring invoice only
-						$newinvoiceline->date_start = $originaldatewhen;
-					}
-					if ($this->lines[$i]->date_end_fill == 1 && $previousdaynextdatewhen) {	// $previousdaynextdatewhen is defined when generating from recurring invoice only
-						$newinvoiceline->date_end = $previousdaynextdatewhen;
-					}
 
 					if ($result >= 0) {
 						// Reset fk_parent_line for no child products and special product
@@ -1082,8 +1071,8 @@ class Facture extends CommonInvoice
 						$localtax2_tx,
 						$_facrec->lines[$i]->fk_product,
 						$_facrec->lines[$i]->remise_percent,
-						($_facrec->lines[$i]->date_start_fill == 1 && $originaldatewhen) ? $originaldatewhen : '',
-						($_facrec->lines[$i]->date_end_fill == 1 && $previousdaynextdatewhen) ? $previousdaynextdatewhen : '',
+						($_facrec->lines[$i]->date_start_fill == 1 && $startOfServices) ? $startOfServices : '',
+						($_facrec->lines[$i]->date_end_fill == 1 && $endOfServices) ? $endOfServices : '',
 						0,
 						$tva_npr,
 						0,  // fk_remise_except
