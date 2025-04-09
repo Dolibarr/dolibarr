@@ -376,13 +376,13 @@ class ObjectLinks extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @phan-param ?array<string,string>	$object
-	 * @phpstan-param ?array<string,string>	$object
+	 * @param   Object  $object     	Object to clean
+	 * @phan-param		<ObjectLink>	$object
+	 * @phpstan-param	<ObjectLink>	$object
 	 *
-	 * @return  Object              Object with cleaned properties
-	 * @phan-return array<array<string,int|string|null>>
-	 * @phpstan-return array<array<string,int|string|null>>
+	 * @return  Object	Object with cleaned properties
+	 * @phan-return		<ObjectLink>
+	 * @phpstan-return	<ObjectLink>
 	 *
 	 */
 	protected function _cleanObjectDatas($object)
