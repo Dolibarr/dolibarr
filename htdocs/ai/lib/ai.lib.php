@@ -60,15 +60,57 @@ function getListOfAIServices()
 	global $langs;
 
 	$arrayofai = array(
-		'-1' => $langs->trans('SelectAService'),
-		'chatgpt' => 'ChatGPT',
-		'groq' => 'Groq',
-		'custom' => 'Custom'
-		//'gemini' => 'Gemini'
+		'-1' => array('label' => $langs->trans('SelectAService')),
+		'chatgpt' => array(
+			'label' => 'ChatGPT',
+			'url' => 'https://api.openai.com/v1/',
+			'textgeneration' => 'gpt-3.5-turbo',		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
+			'imagegeneration' => 'dall-e-3',
+			'audiogeneration' => 'tts-1',
+			'videogeneration' => 'na',
+			'transcription' => 'whisper-1',				// audio to text
+			'translation' => 'whisper-1',				// audio to text into another language
+		),
+		'groq' => array(
+			'label' => 'Groq',
+			'url' => 'https://api.groq.com/openai/',
+			'textgeneration' => 'mixtral-8x7b-32768',	// 'llama3-8b-8192', 'gemma-7b-it'
+			'imagegeneration' => 'na',
+			'audiogeneration' => 'na',
+			'videogeneration' => 'na',
+			'transcription' => 'na',
+			'translation' => 'na',
+		),
+		'mistral' => array(
+			'label' => 'Mistral',
+			'url' => 'https://api.mistral.ai/v1/',
+			'textgeneration' => 'open-mistral-7b',
+			'imagegeneration' => 'na',
+			'audiogeneration' => 'na',
+			'videogeneration' => 'na',
+			'transcription' => 'na',
+			'translation' => 'na',
+		),
+		'custom' => array(
+			'label' => 'Custom',
+			'url' => 'https://mydomainofapi.com/v1/',
+			'textgeneration' => 'tinyllama-1.1b',
+			'imagegeneration' => 'mixtral-8x7b-32768',
+			'audiogeneration' => 'mixtral-8x7b-32768',
+			'videogeneration' => 'na',
+			'transcription' => 'mixtral-8x7b-32768',
+			'translation' => 'mixtral-8x7b-32768',
+		)
+		//'gemini' => array(
+		//	'label' => 'Gemini',
+		//)
 	);
 
 	return $arrayofai;
 }
+
+
+
 
 /**
  * Get list for AI summarize

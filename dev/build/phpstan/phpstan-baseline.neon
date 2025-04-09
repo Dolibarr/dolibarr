@@ -163,6 +163,7 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/balance.php
 
 		-
+
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -181,12 +182,6 @@ parameters:
 			path: ../../../htdocs/accountancy/bookkeeping/export.php
 
 		-
-			message: '#^Variable \$filter might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: ../../../htdocs/accountancy/bookkeeping/export.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -196,12 +191,6 @@ parameters:
 			message: '#^Variable \$documentlink might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
-			path: ../../../htdocs/accountancy/bookkeeping/list.php
-
-		-
-			message: '#^Variable \$filter might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
 			path: ../../../htdocs/accountancy/bookkeeping/list.php
 
 		-

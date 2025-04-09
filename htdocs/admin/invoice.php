@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,6 +126,7 @@ if ($action == 'updateMask') {
 		require_once $file;
 
 		$module = new $classname($db);
+		/** @var ModelePDFFactures $module */
 		'@phan-var-force ModelePDFFactures $module';
 
 		if ($module->write_file($facture, $langs) > 0) {
@@ -344,6 +345,7 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.$filebis;
 
 						$module = new $classname($db);
+						/** @var ModeleNumRefFactures $module */
 						'@phan-var-force ModeleNumRefFactures $module';
 
 						$arrayofmodules[] = $module;

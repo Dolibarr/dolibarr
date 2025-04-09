@@ -356,7 +356,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Show combo list of menu handlers
-		print '<select class="flat maxwidth150" id="'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat width150" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			print '<option value="'.$key.'"';

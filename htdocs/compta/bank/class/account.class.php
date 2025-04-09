@@ -587,20 +587,20 @@ class Account extends CommonObject
 	/**
 	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
 	 *
-	 *  @param	int	        $date			Date operation
-	 *  @param	string		$oper			'VIR','PRE','LIQ','VAD','CB','CHQ'...
-	 *  @param	string		$label			Description
-	 *  @param	float		$amount			Amount
-	 *  @param	string		$num_chq		Numero cheque or transfer
-	 *  @param	int  		$categorie		Category id (optional)
-	 *  @param	User		$user			User that create
-	 *  @param	string		$emetteur		Name of cheque writer
-	 *  @param	string		$banque			Bank of cheque writer
-	 *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
-	 *  @param	int			$datev			Date value
-	 *  @param  string      $num_releve     Label of bank receipt for reconciliation
+	 *  @param	int	        $date					Date operation
+	 *  @param	string		$oper					'VIR','PRE','LIQ','VAD','CB','CHQ'...
+	 *  @param	string		$label					Description
+	 *  @param	float		$amount					Amount
+	 *  @param	string		$num_chq				Numero cheque or transfer
+	 *  @param	int  		$categorie				Category id (optional)
+	 *  @param	User		$user					User that create
+	 *  @param	string		$emetteur				Name of cheque writer
+	 *  @param	string		$banque					Bank of cheque writer
+	 *  @param	string		$accountancycode		When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *  @param	int			$datev					Date value
+	 *  @param  string      $num_releve     		Label of bank receipt for reconciliation
 	 *  @param	float		$amount_main_currency	Amount
-	 *  @return	int							Rowid of added entry, <0 if KO
+	 *  @return	int									Rowid of added entry, <0 if KO
 	 */
 	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{

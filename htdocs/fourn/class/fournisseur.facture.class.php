@@ -2103,7 +2103,7 @@ class FactureFournisseur extends CommonInvoice
 	 *	@param      array<string,mixed>	$array_options	extrafields array
 	 *	@param      int|null    $fk_unit                Code of the unit to use. Null to use the default one
 	 *	@param      int         $origin_id              id origin document
-	 *	@param      float      $pu_devise              Amount in currency
+	 *	@param      float      	$pu_devise              Amount in currency
 	 *	@param      string      $ref_supplier           Supplier ref
 	 *	@param      int         $special_code           Special code
 	 *	@param      int         $fk_parent_line         Parent line id

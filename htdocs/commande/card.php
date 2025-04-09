@@ -1192,7 +1192,7 @@ if (empty($reshook)) {
 			$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
 			// Margin
-			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOSTINT('fournprice'.$predef) : 0);
+			$fournprice = (int) (GETPOST('fournprice'.$predef) ? GETPOSTINT('fournprice'.$predef) : 0);	// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Prepare a price equivalent for minimum price check
@@ -1238,7 +1238,7 @@ if (empty($reshook)) {
 
 			if (!$error) {
 				// Insert line
-				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), $fournprice, (float) $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
+				$result = $object->addline($desc, $pu_ht, (float) $qty, $tva_tx, $localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $info_bits, 0, $price_base_type, $pu_ttc, $date_start, $date_end, $type, min($rank, count($object->lines) + 1), 0, GETPOSTINT('fk_parent_line'), (int) $fournprice, $buyingprice, $label, $array_options, $fk_unit, '', 0, (float) $pu_ht_devise);
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
@@ -1352,7 +1352,7 @@ if (empty($reshook)) {
 		 */
 
 		// Add buying price
-		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$fournprice = (int) (GETPOST('fournprice') ? GETPOST('fournprice') : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		// Extrafields Lines
@@ -1451,7 +1451,7 @@ if (empty($reshook)) {
 				$price_base_type = 'TTC';
 			}
 
-			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, $remise_percent, (float) $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
+			$result = $object->updateline(GETPOSTINT('lineid'), $description, (float) $pu, (float) $qty, $remise_percent, (float) $vat_rate, $localtax1_rate, $localtax2_rate, $price_base_type, $info_bits, $date_start, $date_end, $type, GETPOSTINT('fk_parent_line'), 0, (int) $fournprice, $buyingprice, $label, $special_code, $array_options, GETPOSTINT('units'), (float) $pu_ht_devise);
 
 			if ($result >= 0) {
 				if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {

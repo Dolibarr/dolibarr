@@ -324,9 +324,6 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'setlabel' && $permissiontoadd) {
-		// Set bank account
-		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);
 	} elseif ($action == 'setbankaccount' && $permissiontoadd) {
 		// Set bank account
 		$result = $object->setBankAccount(GETPOSTINT('fk_account'));
@@ -394,15 +391,8 @@ if (empty($reshook)) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate((float) price2num(GETPOST('multicurrency_tx')), GETPOSTINT('calculation_mode'));
 	} elseif ($action == 'setlabel' && $permissiontoadd) {
-		// Set label
-		$object->fetch($id);
-		$object->label = GETPOST('label');
-		$object->label = $object->label;
-		$result = $object->update($user);
-
-		if ($result < 0) {
-			dol_print_error($db);
-		}
+		// Set bank account
+		$result = $object->setValueFrom('libelle', $label, '', null, 'text', '', $user);
 	}
 
 	// Delete line
@@ -686,7 +676,7 @@ if (empty($reshook)) {
 			$date_end_fill = GETPOSTINT('date_end_fill');
 
 			// Margin
-			$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
+			$fournprice = (int) (GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : ''); // If buying_price is '0', we must keep this value
 
 			// Local Taxes
