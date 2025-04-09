@@ -194,7 +194,7 @@ llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 
 if ($action == "view_ticketlist") {
-	print '<div class="ticketpublicarealist ticketlargemargin">';
+	print '<div class="ticketpublicarealist ticketlargemargin centpercent">';
 
 	print '<br>';
 	if ($display_ticket_list) {
@@ -738,7 +738,7 @@ if ($action == "view_ticketlist") {
 
 	print '</div>';
 } else {
-	print '<div class="ticketpublicarea ticketlargemargin">';
+	print '<div class="ticketpublicarea ticketlargemargin centpercent">';
 
 	print '<p class="center opacitymedium">'.$langs->trans("TicketPublicMsgViewLogIn").'</p>';
 	print '<br>';
