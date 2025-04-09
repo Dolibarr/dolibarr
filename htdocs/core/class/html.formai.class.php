@@ -150,7 +150,7 @@ class FormAI extends Form
 			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
 			$out .= '</div>';
 		}
-    
+
 		$out = '<!-- getSectionForAIEnhancement -->'.$out;
 		$out = '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">'.$out;
 
