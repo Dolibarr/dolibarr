@@ -46,6 +46,11 @@ class ObjectLinks extends DolibarrApi
 	public $objectlink;
 
 	/**
+	 * @var int 	notrigger is default 0, which means to trigger, else set notrigger: 1
+	 */
+	private $notrigger;
+
+	/**
 	 * Constructor of the class
 	 */
 	public function __construct()
@@ -103,7 +108,11 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+			if ($field == 'notrigger') {
+				$this->notrigger = (int) $value;
+			} else {
+				$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+			}
 		}
 
 		// Permission check
@@ -122,7 +131,7 @@ class ObjectLinks extends DolibarrApi
 			throw new RestException(403, 'denied access to create the objectlinks targettype='.$this->objectlink->targettype);
 		}
 
-		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $this->objectlink->notrigger);
+		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $this->notrigger);
 
 		if ($result < 0 ) {
 			throw new RestException(500, 'when create objectlink : '.$this->objectlink->error);
@@ -309,7 +318,7 @@ class ObjectLinks extends DolibarrApi
 		if ($findresult < 0 ) {
 			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
 		} elseif ($findresult > 0 ) {
-			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $this->objectlink->notrigger);
+			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $notrigger);
 
 			if ($result < 0 ) {
 				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
