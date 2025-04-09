@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2015	   Charlene Benke        <charlene@patas-monkey.com>
+ * Copyright (C) 2015-2025 Charlene Benke        <charlene@patas-monkey.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
@@ -124,7 +124,7 @@ if ($resql) {
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED, Fichinter::STATUS_CLOSED);
 	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 		$listofstatus[] = Fichinter::STATUS_BILLED;
 	}
@@ -137,6 +137,9 @@ if ($resql) {
 		}
 		if ($status == Fichinter::STATUS_VALIDATED) {
 			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == Fichinter::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus2;
 		}
 		if ($status == Fichinter::STATUS_BILLED) {
 			$colorseries[$status] = $badgeStatus4;
