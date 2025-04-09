@@ -204,6 +204,7 @@ class FactureLigne extends CommonInvoiceLine
 		$sql .= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
 		$sql .= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
 		$sql .= ' fd.fk_code_ventilation,';
+		$sql .= ' fd.batch, fd.fk_warehouse,';
 		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
 		$sql .= ' fd.situation_percent, fd.fk_prev_id,';
 		$sql .= ' fd.multicurrency_subprice,';
@@ -244,7 +245,7 @@ class FactureLigne extends CommonInvoiceLine
 			$this->date_start			= $this->db->jdate($objp->date_start);
 			$this->date_end				= $this->db->jdate($objp->date_end);
 			$this->info_bits			= $objp->info_bits;
-			$this->tva_npr = (($objp->info_bits & 1) == 1) ? 1 : 0;
+			$this->tva_npr = ((($objp->info_bits & 1) == 1) ? 1 : 0);
 			$this->special_code = $objp->special_code;
 			$this->total_ht				= $objp->total_ht;
 			$this->total_tva			= $objp->total_tva;
@@ -252,12 +253,14 @@ class FactureLigne extends CommonInvoiceLine
 			$this->total_localtax2		= $objp->total_localtax2;
 			$this->total_ttc			= $objp->total_ttc;
 			$this->fk_code_ventilation  = $objp->fk_code_ventilation;
+			$this->batch                = $objp->batch;
+			$this->fk_warehouse         = $objp->fk_warehouse;
 			$this->rang					= $objp->rang;
 			$this->fk_fournprice = $objp->fk_fournprice;
 			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
 			$this->pa_ht				= $marginInfos[0];
-			$this->marge_tx				= $marginInfos[1];
-			$this->marque_tx			= $marginInfos[2];
+			$this->marge_tx				= (string) $marginInfos[1];
+			$this->marque_tx			= (string) $marginInfos[2];
 
 			$this->ref = $objp->product_ref; // deprecated
 
@@ -291,9 +294,9 @@ class FactureLigne extends CommonInvoiceLine
 	/**
 	 *	Insert line into database
 	 *
-	 *	@param      int		$notrigger		                 1 no triggers
-	 *  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
-	 *	@return		int						                 Return integer <0 if KO, >0 if OK
+	 *	@param	int<0,1>	$notrigger						1 no triggers
+	 *  @param	int<0,1>	$noerrorifdiscountalreadylinked	1=Do not make error if lines is linked to a discount and discount already linked to another
+	 *	@return	int											Return integer <0 if KO, >0 if OK
 	 */
 	public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
 	{
@@ -302,6 +305,7 @@ class FactureLigne extends CommonInvoiceLine
 		$error = 0;
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float but after checking if value is empty
 
 		dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
 
@@ -356,9 +360,6 @@ class FactureLigne extends CommonInvoiceLine
 			$this->situation_percent = 100;
 		}
 
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
-		}
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;
 		}

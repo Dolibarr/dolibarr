@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2010	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
- * Copyright (C) 2020-2021	Frédéric France				<frederic.france@netlogic.fr>
+ * Copyright (C) 2020-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/vcard.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alphanohtml');

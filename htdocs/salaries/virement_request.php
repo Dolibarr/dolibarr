@@ -57,6 +57,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "users", "salaries", "hrm", "withdrawals"));
 
@@ -152,6 +161,23 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+// payment mode
+if ($action == 'setmode' && $permissiontoadd) {
+	$object->fetch($id);
+	$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
+
+// bank account
+if ($action == 'setbankaccount' && $permissiontoadd) {
+	$object->fetch($id);
+	$result = $object->setBankAccount(GETPOSTINT('fk_account'));
+	if ($result < 0) {
+		setEventMessages($object->error, $object->errors, 'errors');
+	}
+}
 
 if ($action == "add" && $permissiontoadd) {
 	//var_dump($object);exit;
@@ -160,7 +186,8 @@ if ($action == "add" && $permissiontoadd) {
 
 		$sourcetype = 'salaire';
 		$newtype = 'salaire';
-		$paymentservice = GETPOST('paymentservice');
+		$paymentservice = GETPOST('paymentservice');	// value can be 'stripesepa'. not used yet.
+
 		$result = $object->demande_prelevement($user, price2num(GETPOST('request_transfer', 'alpha')), $newtype, $sourcetype);
 
 		if ($result > 0) {
@@ -267,12 +294,12 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent tableforfield">';
 
 if ($action == 'edit') {
-	print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
+	print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateStartPeriod")."</td><td>";
 	print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 	print "</td></tr>";
 } else {
 	print "<tr>";
-	print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+	print '<td class="titlefieldmiddle">' . $langs->trans("DateStartPeriod") . '</td><td>';
 	print dol_print_date($object->datesp, 'day');
 	print '</td></tr>';
 }

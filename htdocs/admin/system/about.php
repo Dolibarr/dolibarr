@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2013 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("help", "members", "other", "admin"));
@@ -62,7 +71,7 @@ print load_fiche_titre($langs->trans("ExternalResources"), '', 'title_setup');
 print '<div class="fichecenter"><div class="fichehalfleft">';
 
 print '<div class="divsection wordwrap">';
-print '<div class="float paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
+print '<div class="floatright paddingright">'.img_picto_common('', 'dolibarr_box.png', 'height="100"').'</div>';
 print $langs->trans("DolibarrLicense").' : ';
 print '<ul><li>';
 print '<a href="https://www.gnu.org/copyleft/gpl.html" target="_blank">GNU-GPL v3+</a></li>';
@@ -147,16 +156,6 @@ print '</div>';
 print '</div><div class="fichehalfright">';
 
 print '<div class="divsection wordwrap">';
-print $langs->trans("HelpCenter").':';
-print '<ul>';
-print '<li>';
-//print $langs->trans("SeeWikiPage",'http://wiki.dolibarr.org/index.php/List_of_OpenSource_Software_companies_and_freelancers');
-print '<a target="_blank" rel="noopener noreferrer external" href="'.DOL_URL_ROOT.'/support/index.php" data-ajax="false">'.$langs->trans("HelpCenter").'</a>';
-print '</li>';
-print '</ul>';
-print '</div>';
-
-print '<div class="divsection wordwrap">';
 print $langs->trans("Foundation").':';
 
 print '<ul>';
@@ -176,7 +175,7 @@ print $langs->trans("SocialNetworks").':';
 
 print '<ul>';
 
-print '<li><a href="https://wiki.dolibarr.org/index.php?title=Social_Networksr" target="_blank" rel="noopener noreferrer external">See wiki</a></li>';
+print '<li><a href="https://wiki.dolibarr.org/index.php?title=Social_Networks" target="_blank" rel="noopener noreferrer external">See wiki</a></li>';
 
 print '</ul>';
 print '</div>';

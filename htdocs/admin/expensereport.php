@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
 
@@ -56,6 +64,7 @@ $type = 'expensereport';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -426,7 +435,7 @@ foreach ($dirmodels as $reldir) {
 							if ($module->type == 'pdf') {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
-								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 							}
 							print '</td>';
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2018    	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2021-2023  Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlène Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -45,6 +45,14 @@ if (isModEnabled('contract')) {
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'interventions'));
 if (isModEnabled('project')) {
@@ -62,6 +70,12 @@ $toselect = GETPOST('toselect', 'array');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'interventionlist';
 $mode = GETPOST('mode', 'alpha');
 
+if (getDolGlobalInt('MAIN_SEE_SUBORDINATES')) {
+	$userschilds = $user->getAllChildIds();
+} else {
+	$userschilds = array();
+}
+
 $search_ref = GETPOST('search_ref') ? GETPOST('search_ref', 'alpha') : GETPOST('search_inter', 'alpha');
 $search_ref_client = GETPOST('search_ref_client', 'alpha');
 $search_company = GETPOST('search_company', 'alpha');
@@ -70,7 +84,7 @@ $search_projet_ref = GETPOST('search_projet_ref', 'alpha');
 $search_contrat_ref = GETPOST('search_contrat_ref', 'alpha');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -162,6 +176,7 @@ if ($user->socid) {
 }
 $result = restrictedArea($user, 'ficheinter', $id, 'fichinter');
 
+$permissiontoreadallthirdparty = $user->hasRight('societe', 'client', 'voir');
 $permissiontoread = $user->hasRight('ficheinter', 'lire');
 $permissiontoadd = $user->hasRight('ficheinter', 'creer');
 $permissiontodelete = $user->hasRight('ficheinter', 'supprimer');
@@ -299,7 +314,7 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 }
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -341,12 +356,18 @@ if (!getDolGlobalString('FICHINTER_DISABLE_DETAILS') && $atleastonefieldinlines)
 		$sql .= " AND fd.date <= '".$db->idate($search_date_end)."'";
 	}
 }
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-}
-if ($socid) {
+if ($socid > 0) {
 	$sql .= " AND s.rowid = ".((int) $socid);
 }
+// Restriction on sale representative
+if (empty($user->socid) && !$permissiontoreadallthirdparty) {
+	$sql .= " AND (EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user = ".((int) $user->id).")";
+	if (getDolGlobalInt('MAIN_SEE_SUBORDINATES') && $userschilds) {
+		$sql .= " OR EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = c.fk_soc AND sc.fk_user IN (".$db->sanitize(implode(',', $userschilds))."))";
+	}
+	$sql .= ")";
+}
+
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
@@ -1018,7 +1039,7 @@ while ($i < $imaxinloop) {
 		}
 		// Date line
 		if (!empty($arrayfields['fd.date']['checked'])) {
-			print '<td class="center">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
+			print '<td class="center nowraponall" title="'.dol_print_date($db->jdate($obj->dp), 'dayhour').'">'.dol_print_date($db->jdate($obj->dp), 'dayhour')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1055,7 +1076,7 @@ while ($i < $imaxinloop) {
 
 		print '</tr>'."\n";
 
-		$total += $obj->duree;
+		$total += (isset($obj->duree) ? $obj->duree : 0);
 	}
 	$i++;
 }

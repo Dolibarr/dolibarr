@@ -33,6 +33,9 @@ class box_graph_new_vs_close_ticket extends ModeleBoxes
 {
 	public $boxcode = "box_nb_tickets_type";
 	public $boximg = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 

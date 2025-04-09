@@ -8,6 +8,7 @@
  * Copyright (C) 2021-2023  Anthony Berton          <anthony.berton@bb2a.fr>
  * Copyright (C) 2023       Eric Seigne      		<eric.seigne@cap-rel.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
@@ -315,7 +325,12 @@ if ($action == 'update') {
 	if ($mode == 'css') {
 		//file_put_contents(DOL_DATA_ROOT.'/admin/customcss.css', $data);
 		//dol_chmod(DOL_DATA_ROOT.'/admin/customcss.css');
-		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml'), 'chaine', 0, '', $conf->entity);
+		$csscontent = GETPOST('MAIN_IHM_CUSTOM_CSS', 'restricthtml');
+		$csscontent = dol_string_nohtmltag($csscontent, 2);
+
+		dolibarr_set_const($db, "MAIN_IHM_CUSTOM_CSS", $csscontent, 'chaine', 0, '', $conf->entity);
+
+		setEventMessages($langs->trans("RecordSaved"), null);
 	}
 
 	$_SESSION["mainmenu"] = ""; // The menu manager may have changed
@@ -385,7 +400,7 @@ if ($mode == 'other') {
 
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 	print $langs->trans("Language");
-	print '</td><td class="titlefieldmiddle">';
+	print '</td><td>';
 	print '</td></tr>';
 
 	// Default language
@@ -420,7 +435,7 @@ if ($mode == 'other') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">';
 	print $langs->trans("Miscellaneous");
 	print '</td>';
-	print '<td class="titlefieldmiddle"></td>';
+	print '<td></td>';
 	print '</tr>';
 
 	if (!empty($conf->use_javascript_ajax)) {
@@ -666,10 +681,12 @@ if ($mode == 'login') {
 	print '</td></tr>';
 
 	// Hide helpcenter link on login page
+	/*
 	print '<tr class="oddeven"><td>' . $langs->trans("DisableLinkToHelpCenter") . '</td><td>';
 	print ajax_constantonoff("MAIN_HELPCENTER_DISABLELINK", array(), $conf->entity, 0, 0, 0, 0, 0, 0, '', 'login');
 	print '</td>';
 	print '</tr>';
+	*/
 
 	// Message on login page
 	$substitutionarray = getCommonSubstitutionArray($langs, 0, array('object', 'objectamount', 'user'));

@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories'));
 
@@ -86,6 +94,13 @@ if (GETPOST("ref")) {
 
 $title = $object->ref.' - '.$langs->trans("Graph");
 $helpurl = "";
+$show1 = '';
+$show2 = '';
+$show3 = '';
+$show4 = '';
+$show5 = '';
+$morehtml = '';
+
 llxHeader('', $title, $helpurl);
 
 $result = dol_mkdir($conf->bank->dir_temp);

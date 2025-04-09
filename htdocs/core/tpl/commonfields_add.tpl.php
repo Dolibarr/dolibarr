@@ -23,8 +23,16 @@
  * $langs
  * $form
  */
-
-'@phan-var-force FormAdmin $formAdmin';
+/**
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var Form $form
+ * @var FormAdmin $formadmin
+ * @var Translate $langs
+ *
+ * @var string $action
+ */
+'@phan-var-force FormAdmin $formadmin';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -42,7 +50,7 @@ foreach ($object->fields as $key => $val) {
 	// Discard if field is a hidden field on form
 	// Ensure $val['visible'] is treated as an integer
 	$visible = (int) $val['visible'];
-	if (abs($visible) != 1 && abs($visible) != 3) {
+	if (abs($visible) != 1 && abs($visible) != 3 && abs($visible) != 6) {
 		continue;
 	}
 
@@ -72,7 +80,7 @@ foreach ($object->fields as $key => $val) {
 		print img_picto('', $val['picto'], '', 0, 0, 0, '', 'pictofixedwidth');
 	}
 	if (in_array($val['type'], array('int', 'integer'))) {
-		$value = GETPOSTINT($key);
+		$value = GETPOST($key);	// We must not use GETPOSTINT in creation form because value can still be ""
 	} elseif ($val['type'] == 'double') {
 		$value = price2num(GETPOST($key, 'alphanohtml'));
 	} elseif (preg_match('/^text/', $val['type'])) {

@@ -54,3 +54,7 @@ SucessConvertImgWebp=Afbeeldingen succesvol gedupliceerd
 SucessConvertChosenImgWebp=Gekozen afbeelding succesvol gedupliceerd
 ECMDirName=Directory
 ECMParentDirectory=Bovenliggende map
+ShowFile=Bestand weergeven
+FullPathOrig=Volledige padoorsprong
+GenOrUpload=Bestandsoorsprong
+FileHasAnIndexedTextContent=Bestand heeft een geïndexeerde tekstinhoud

@@ -72,7 +72,7 @@ class CompanyPaymentMode extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'Rowid', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 10),
@@ -158,7 +158,7 @@ class CompanyPaymentMode extends CommonObject
 
 	/**
 	 * @var string iban
-	 * @deprecated Use $iban_prefix
+	 * @deprecated Use $iban_prefix, or wait the field in database is renamed into iban.
 	 * @see $iban_prefix
 	 */
 	public $iban;
@@ -167,18 +167,34 @@ class CompanyPaymentMode extends CommonObject
 	 * @var string IBAN prefix
 	 */
 	public $iban_prefix;
+
 	/**
 	 * @var string
+	 * @deprecated Use address
 	 */
 	public $domiciliation;
+
 	/**
 	 * @var string
 	 */
+	public $address;
+
+	/**
+	 * @var string
+	 * @deprecated Use owner_name
+	 */
 	public $proprio;
+
+	/**
+	 * @var string
+	 */
+	public $owner_name;
+
 	/**
 	 * @var string
 	 */
 	public $owner_address;
+
 	/**
 	 * @var int
 	 */
@@ -391,6 +407,8 @@ class CompanyPaymentMode extends CommonObject
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
 
+		$this->iban_prefix = dolDecrypt($this->iban_prefix);
+
 		// For backward compatibility
 		$this->iban = $this->iban_prefix;
 		$this->date_modification = $this->tms;
@@ -481,9 +499,9 @@ class CompanyPaymentMode extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCompanyPaymentMode");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -516,7 +534,7 @@ class CompanyPaymentMode extends CommonObject
 	public function setAsDefault($id = 0, $alltypes = 0)
 	{
 		$sql1 = "SELECT rowid as id, fk_soc, type FROM ".MAIN_DB_PREFIX."societe_rib";
-		$sql1 .= " WHERE rowid = ".($id ? $id : $this->id);
+		$sql1 .= " WHERE rowid = ".((int) ($id ? $id : $this->id));
 
 		dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 		$result1 = $this->db->query($sql1);

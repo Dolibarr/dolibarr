@@ -87,7 +87,7 @@ function CreateXmlFooter()
  *
  * @param 	integer $number		Number
  * @param 	string 	$text		Text
- * @return	void
+ * @return	never
  */
 function SendError($number, $text)
 {
@@ -293,18 +293,19 @@ function CreateFolder($resourceType, $currentFolder)
  * @param 	string 	$currentFolder	Current folder
  * @param	string	$sCommand		Command
  * @param	string	$CKEcallback	Callback
- * @return	null
+ * @return	never
  */
 function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 {
 	global $user;
 
 	if (!isset($_FILES)) {
-		global $_FILES;
+		global $_FILES;	// @phan-suppress-current-line PhanPluginConstantVariableNull
 	}
 	$sErrorNumber = '0';
 	$sFileName = '';
 
+	// (_FILES indexes:) @phan-suppress-next-line PhanTypeInvalidDimOffset
 	if (isset($_FILES['NewFile']) && !is_null($_FILES['NewFile']['tmp_name']) && !is_null($_FILES['NewFile']['name']) || (isset($_FILES['upload']) && !is_null($_FILES['upload']['tmp_name']) && !is_null($_FILES['upload']['name']))) {
 		global $Config;
 
@@ -638,7 +639,7 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 function GetRootPath()
 {
 	if (!isset($_SERVER)) {
-		global $_SERVER;
+		global $_SERVER;  // @phan-suppress-current-line PhanPluginConstantVariableNull
 	}
 	$sRealPath = realpath('./');
 	// #2124 ensure that no slash is at the end
@@ -816,7 +817,7 @@ function SanitizeFileName($sNewFileName)
  * @param	string		$fileUrl		fileUrl
  * @param	string		$fileName		fileName
  * @param	string		$customMsg		customMsg
- * @return	void
+ * @return	never
  */
 function SendUploadResults($errorNumber, $fileUrl = '', $fileName = '', $customMsg = '')
 {
@@ -936,8 +937,8 @@ function ConvertToXmlAttribute($value)
 /**
  * Check whether given extension is in html extensions list
  *
- * @param 	string 		$ext				Extension
- * @param 	array 		$formExtensions		Array of extensions
+ * @param 	string 		$ext				Extension (Will only match if lowercase)
+ * @param 	string[] 	$formExtensions		Array of extensions (Internally lowercased)
  * @return 	boolean
  */
 function IsHtmlExtension($ext, $formExtensions)

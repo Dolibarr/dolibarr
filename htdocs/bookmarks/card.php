@@ -29,6 +29,13 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('bookmarks', 'other'));

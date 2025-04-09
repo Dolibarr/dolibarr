@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2017	Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017	    Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!$user->admin) {
 	accessforbidden();
 }
@@ -39,6 +48,7 @@ $langs->loadLangs(array("admin", "other", "agenda"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
+$label = GETPOST('label', 'alpha');
 $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions.inc.php
 
 $param = GETPOST('param', 'alpha');
@@ -109,6 +119,7 @@ if ($action == 'set') {
 
 		$module = new $classname($db, $commande);
 		'@phan-var-force pdf_standard_actions $module';
+		/** @var pdf_standard_actions $module */
 
 		if ($module->write_file($commande, $langs) > 0) {
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=action&file=SPECIMEN.pdf");
@@ -172,7 +183,7 @@ print '<table class="noborder allwidth">'."\n";
 print '<tr class="liste_titre">'."\n";
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td class="center">&nbsp;</td>'."\n";
-print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right"></td>'."\n";
 print '</tr>'."\n";
 
 // AGENDA REMINDER BROWSER

@@ -33,7 +33,13 @@ require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstationusergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/workstation/lib/workstation_workstation.lib.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
@@ -227,9 +233,9 @@ if ($action == 'create') {
 	// Common attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_add.tpl.php';
 
-	print '<tr id="usergroups"';
-	print ' ><td>';
-	print $langs->trans('Groups');
+	print '<tr id="usergroups">';
+	print '<td>';
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');
@@ -282,7 +288,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print '<tr id="usergroups"';
 	print '><td>';
-	print $langs->trans('Groups');
+	print $langs->trans('UserGroups');
 	print '</td>';
 	print '<td>';
 	print img_picto('', 'group');

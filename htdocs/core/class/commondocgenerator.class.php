@@ -224,6 +224,11 @@ abstract class CommonDocGenerator
 	public $cols;
 
 	/**
+	 * @var array<string,array{page:int,y:float|int}>	Array of position data
+	 */
+	public $afterColsLinePositions;
+
+	/**
 	 * @var array{fullpath:string}	Array with result of doc generation. content is array('fullpath'=>$file)
 	 */
 	public $result;
@@ -760,7 +765,7 @@ abstract class CommonDocGenerator
 			$resarray[$array_key.'_bank_bic'] = (empty($bank_account) ? '' : $bank_account->bic);
 			$resarray[$array_key.'_bank_label'] = (empty($bank_account) ? '' : $bank_account->label);
 			$resarray[$array_key.'_bank_number'] = (empty($bank_account) ? '' : $bank_account->number);
-			$resarray[$array_key.'_bank_proprio'] = (empty($bank_account) ? '' : $bank_account->proprio);
+			$resarray[$array_key.'_bank_proprio'] = (empty($bank_account) ? '' : $bank_account->owner_name);
 			$resarray[$array_key.'_bank_address'] = (empty($bank_account) ? '' : $bank_account->address);
 			$resarray[$array_key.'_bank_state'] = (empty($bank_account) ? '' : $bank_account->state);
 			$resarray[$array_key.'_bank_country'] = (empty($bank_account) ? '' : $bank_account->country);
@@ -777,7 +782,7 @@ abstract class CommonDocGenerator
 		// Fetch project information if there is a project assigned to this object
 		if ($object->element != "project" && !empty($object->fk_project) && $object->fk_project > 0) {
 			if (!is_object($object->project)) {
-				$object->fetch_projet();
+				$object->fetchProject();
 			}
 
 			$resarray[$array_key.'_project_ref'] = $object->project->ref;
@@ -912,13 +917,18 @@ abstract class CommonDocGenerator
 			array('line_date_start', 'date_start', 'day', 'auto', null),
 			array('line_date_start_locale', 'date_start', 'day', 'tzserver', $outputlangs),
 			array('line_date_start_rfc', 'date_start', 'dayrfc', 'auto', null),
+			array('line_date_start_real', 'date_start_real', 'day', 'auto', null),
+			array('line_date_start_real_locale', 'date_start_real', 'day', 'tzserver', $outputlangs),
+			array('line_date_start_real_rfc', 'date_start_real', 'dayrfc', 'auto', null),
 			array('line_date_end', 'date_end', 'day', 'auto', null),
 			array('line_date_end_locale', 'date_end', 'day', 'tzserver', $outputlangs),
 			array('line_date_end_rfc', 'date_end', 'dayrfc', 'auto', null)
 		);
 		foreach ($date_specs as $date_spec) {
-			if (property_exists($line, $date_spec[1])) {
-				$resarray[$date_spec[0]] = dol_print_date($line->${$date_spec[1]}, $date_spec[2], $date_spec[3], $date_spec[4]);
+			$propertyname = $date_spec[1];
+			if (property_exists($line, $propertyname)) {
+				// @phan-suppress-next-line PhanUndeclaredProperty
+				$resarray[$date_spec[0]] = dol_print_date($line->$propertyname, $date_spec[2], $date_spec[3], $date_spec[4]);
 			}
 		}
 
@@ -964,6 +974,16 @@ abstract class CommonDocGenerator
 					}
 				}
 			}
+		}
+
+		// Check if the current line belongs to a shipment
+		if (get_class($line) == 'ExpeditionLigne') {
+			$resarray['line_qty_shipped'] = $line->qty_shipped;
+			$resarray['line_qty_asked'] = $line->qty_asked;
+			$resarray['line_weight'] = empty($line->weight) ? '' : $line->weight * $line->qty_shipped.' '.measuringUnitString(0, 'weight', $line->weight_units);
+			$resarray['line_length'] = empty($line->length) ? '' : $line->length * $line->qty_shipped.' '.measuringUnitString(0, 'size', $line->length_units);
+			$resarray['line_surface'] = empty($line->surface) ? '' : $line->surface * $line->qty_shipped.' '.measuringUnitString(0, 'surface', $line->surface_units);
+			$resarray['line_volume'] = empty($line->volume) ? '' : $line->volume * $line->qty_shipped.' '.measuringUnitString(0, 'volume', $line->volume_units);
 		}
 
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
@@ -1063,16 +1083,18 @@ abstract class CommonDocGenerator
 	/**
 	 * Define array with couple substitution key => substitution value
 	 *
-	 * @param   array<string,CommonObject|float|int|string>	$object	Dolibarr Object
-	 * @param   Translate	$outputlangs	Language object for output
-	 * @param   boolean|int	$recursive		Want to fetch child array or child object.
-	 * @return	array<string,mixed>			Array of substitution key->code
+	 * @param   array<string,CommonObject|float|int|string>|CommonObject	$object		Dolibarr Object
+	 * @param   Translate			$outputlangs	Language object for output
+	 * @param   boolean|int			$recursive		Want to fetch child array or child object.
+	 * @return	array<string,mixed>					Array of substitution key->code
 	 */
 	public function get_substitutionarray_each_var_object(&$object, $outputlangs, $recursive = 1)
 	{
 		// phpcs:enable
 		$array_other = array();
-		if (is_array($object) && count($object)) {
+
+		if ((is_array($object) && count($object)) || is_object($object)) {
+			// Loop on each entry of array or on each property of object
 			foreach ($object as $key => $value) {
 				if (in_array($key, array('db', 'fields', 'lines', 'modelpdf', 'model_pdf'))) {		// discard some properties
 					continue;
@@ -1249,6 +1271,64 @@ abstract class CommonDocGenerator
 			$pdf->RoundedRect($x, $y, $w, $h, $r, '1101', $style);
 		}
 	}
+
+	/**
+	 * Get position in PDF after col display
+	 * @return false|array{page:int,y:float|int,col:string}
+	 */
+	public function getMaxAfterColsLinePositionsData()
+	{
+		if (empty($this->afterColsLinePositions) || !is_array($this->afterColsLinePositions)) {
+			return false;
+		}
+
+		$colId = '';
+		$maxPage = $maxY = 0;
+		foreach ($this->afterColsLinePositions as $colKey => $value) {
+			if ($value['page'] > $maxPage) {
+				$colId = $colKey;
+				$maxPage = $value['page'];
+				$maxY = $value['y']; // if page is higher we need to reset y to new max page y
+			} elseif ($value['page'] == $maxPage) {
+				$maxY = max($value['y'], $maxY);
+				$colId = $colKey;
+			}
+		}
+
+		return [
+			'col' => $colId,
+			'y' => $maxY,
+			'page' => $maxPage
+		];
+	}
+
+	/**
+	 * Used for reset afterColsLinePositions var in start of a new pdf draw line loop
+	 * @param float $y the new $y position usually get by TCPDF::GetY()
+	 * @param int $pageNumb the page number to reset at
+	 * @return void
+	 */
+	public function resetAfterColsLinePositionsData(float $y, int $pageNumb)
+	{
+		$this->afterColsLinePositions = [];
+		$this->setAfterColsLinePositionsData('startLine', $y, $pageNumb);
+	}
+
+	/**
+	 * Used for to set afterColsLinePositions var in a pdf draw line loop
+	 * @param string $colId the column id used as key in $this->cols or an unique id code like startLine or separateLine ....
+	 * @param float $y the $y position usually get by TCPDF::GetY() where print data ended
+	 * @param int $pageNumb the page number where print data ended
+	 * @return void
+	 */
+	public function setAfterColsLinePositionsData(string $colId, float $y, int $pageNumb)
+	{
+		$this->afterColsLinePositions[$colId] = [
+			'page' 	=> $pageNumb,
+			'y' 	=> $y
+		];
+	}
+
 
 	/**
 	 *  uasort callback function to Sort columns fields
@@ -1463,6 +1543,7 @@ abstract class CommonDocGenerator
 			// set cell padding with column content definition
 			$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
 			$pdf->writeHTMLCell($colDef['width'], 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, 0, true, $colDef['content']['align']);
+			$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
 
 			// restore cell padding
 			$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
@@ -1562,6 +1643,14 @@ abstract class CommonDocGenerator
 			$extrafieldOutputContent = dol_string_nohtmltag($extrafieldOutputContent);
 		}
 
+		// Display stars extrafield as simple string
+		if ($extrafields->attributes[$object->table_element]['type'][$extrafieldKey] == 'stars') {
+			$extrafieldOutputContent = '';
+			for ($i = 0; $i < $object->array_options[$extrafieldOptionsKey]; $i++) {
+				$extrafieldOutputContent .= ' *';
+			}
+		}
+
 		$parameters = array(
 			'object' => $object,
 			'extrafields' => $extrafields,
@@ -1583,10 +1672,10 @@ abstract class CommonDocGenerator
 	/**
 	 *  display extrafields columns content
 	 *
-	 *  @param	CommonObjectLine	$object    		line of common object
-	 *  @param 	Translate 			$outputlangs    Output language
-	 *  @param 	array<string,mixed> $params    		array of additional parameters
-	 *  @return	string  							Html string
+	 *  @param	CommonObject|CommonObjectLine	$object    		line of common object
+	 *  @param 	Translate 						$outputlangs    Output language
+	 *  @param 	array<string,mixed> 			$params    		array of additional parameters
+	 *  @return	string  										Html string
 	 */
 	public function getExtrafieldsInHtml($object, $outputlangs, $params = array())
 	{

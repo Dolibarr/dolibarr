@@ -37,22 +37,55 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 class pdf_paiement extends CommonDocGenerator
 {
+	/**
+	 * @var int
+	 */
 	public $tab_top;
 
+	/**
+	 * @var int
+	 */
 	public $line_height;
 
+	/**
+	 * @var int
+	 */
 	public $line_per_page;
 
+	/**
+	 * @var int
+	 */
 	public $tab_height;
 
+	/**
+	 * @var int
+	 */
 	public $posxdate;
 
+	/**
+	 * @var int
+	 */
 	public $posxpaymenttype;
+	/**
+	 * @var int
+	 */
 	public $posxinvoice;
+	/**
+	 * @var int
+	 */
 	public $posxbankaccount;
+	/**
+	 * @var int
+	 */
 	public $posxinvoiceamount;
+	/**
+	 * @var int
+	 */
 	public $posxpaymentamount;
 
+	/**
+	 * @var string
+	 */
 	public $doc_type;
 
 	/**
@@ -98,11 +131,11 @@ class pdf_paiement extends CommonDocGenerator
 		$this->tab_height = $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5; // must be > $this->line_height * $this->line_per_page and < $this->page_hauteur - $this->marge_haute - $this->marge_basse - $this->tab_top - 5;
 
 		$this->posxdate = $this->marge_gauche + 2;
-		$this->posxpaymenttype = 42;
-		$this->posxinvoice = 82;
-		$this->posxbankaccount = 110;
-		$this->posxinvoiceamount = 132;
-		$this->posxpaymentamount = 162;
+		$this->posxpaymenttype = 32;
+		$this->posxinvoice = 72;
+		$this->posxbankaccount = 115;
+		$this->posxinvoiceamount = 135;
+		$this->posxpaymentamount = 167;
 		if ($this->page_largeur < 210) { // To work with US executive format
 			$this->line_per_page = 35;
 			$this->posxpaymenttype -= 10;
@@ -110,6 +143,7 @@ class pdf_paiement extends CommonDocGenerator
 			$this->posxinvoiceamount -= 10;
 			$this->posxpaymentamount -= 20;
 		}
+
 		// which type of document will be generated: clients (client) or providers (fourn) invoices
 		$this->doc_type = "client";
 	}
@@ -208,6 +242,8 @@ class pdf_paiement extends CommonDocGenerator
 		$result = $this->db->query($sql);
 		if ($result) {
 			$numpaiement = $this->db->num_rows($result);
+		} else {
+			$numpaiement = 0;
 		}
 
 		// number of bill
@@ -464,7 +500,7 @@ class pdf_paiement extends CommonDocGenerator
 	 *
 	 *	@param	TCPDF		$pdf			PDF object
 	 *	@param	int 		$page			Page
-	 *	@param	array		$lines			Array of lines
+	 *	@param	array<int,array<int,string>>	$lines			Array of lines
 	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return	void
 	 */
@@ -477,13 +513,14 @@ class pdf_paiement extends CommonDocGenerator
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$oldprowid = 0;
 		$total_page = 0;
+		$total_mod = 0;
+		$mod = 0;
 		$total = 0;
 		$pdf->SetFillColor(220, 220, 220);
 		$yp = 0;
 		$numlines = count($lines);
 		if (($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) {
 			$mod = $lines[0][2];
-			$total_mod = 0;
 		}
 		for ($j = 0; $j < $numlines; $j++) {
 			$i = $j;
@@ -528,9 +565,9 @@ class pdf_paiement extends CommonDocGenerator
 				$pdf->SetXY($this->posxpaymentamount, $this->tab_top + 10 + $yp);
 				$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $lines[$j][4], 0, 'R', 1);
 				$yp += 5;
-				$total_page += $lines[$j][9];
+				$total_page += (float) $lines[$j][9];
 				if (($this->doc_type == 'client' && getDolGlobalString('PAYMENTS_REPORT_GROUP_BY_MOD')) || ($this->doc_type == 'fourn' && getDolGlobalString('PAYMENTS_FOURN_REPORT_GROUP_BY_MOD'))) {
-					$total_mod += $lines[$j][9];
+					$total_mod += (float) $lines[$j][9];
 				}
 			}
 

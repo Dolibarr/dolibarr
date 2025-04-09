@@ -32,6 +32,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
 
@@ -186,8 +195,11 @@ if ($action == 'set') {
 	dolibarr_set_const($db, "SUPPLIER_PROPOSAL_ADDON", $value, 'chaine', 0, '', $conf->entity);
 } elseif (preg_match('/set_(.*)/', $action, $reg)) {
 	$code = $reg[1];
-	$value = (GETPOST($code) ? GETPOST($code) : 1);
-
+	if ($code == "SUPPLIER_PROPOSAL_FREE_TEXT") {
+		$value = (GETPOST($code, 'restricthtml') ? GETPOST($code, 'restricthtml') : 1);
+	} else {
+		$value = (GETPOST($code) ? GETPOST($code) : 1);
+	}
 	$res = dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity);
 	if (!($res > 0)) {
 		$error++;
@@ -471,7 +483,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 

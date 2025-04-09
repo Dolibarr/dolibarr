@@ -206,4 +206,7 @@ StatusSupplierOrderReceivedPartially=Partially received
 StatusSupplierOrderReceivedAll=All products received
 NeedAtLeastOneInvoice = There has to be at least one Invoice
 LineAlreadyDispatched = The order line is already received.
+ExistingDipatchLines = There are already lines that has generated stock movement for this order.
+ConfirmDeleteDispatchedLines = Revert also all stock movements already done ?
+SupplierOrderDeletion = Supplier order %s Deletion
 OrderStatusMakeOperationForbidden = Order status forbidden for this operation.

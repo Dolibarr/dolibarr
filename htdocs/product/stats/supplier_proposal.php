@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'companies', 'supplier_proposal'));
 
@@ -100,7 +108,7 @@ if ($id > 0 || !empty($ref)) {
 		setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 	}
 
-	llxHeader("", "", $langs->trans("CardProduct".$product->type), '', 0, 0, '', '', '', '', 'mod-product page-stats_supplier_proposal');
+	llxHeader("", $langs->trans("CardProduct".$product->type), '', '', 0, 0, '', '', '', 'mod-product page-stats_supplier_proposal');
 
 	if ($result > 0) {
 		$head = product_prepare_head($product);

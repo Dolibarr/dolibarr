@@ -177,7 +177,7 @@ function get_server_name()
  * Fonction vérifiant l'existance et la valeur non vide d'une clé d'un tableau
  *
  * @param   string  $name       Key to test
- * @param   array   $tableau    Array in which searching key ($_POST by default)
+ * @param   ?array<string,null|mixed|mixed[]>   $tableau    Array in which searching key ($_POST by default)
  * @return  bool                True if key exists and return a non empty value
  */
 function issetAndNoEmpty($name, $tableau = null)

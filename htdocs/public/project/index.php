@@ -55,6 +55,16 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 global $dolibarr_main_url_root;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files
 $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox", "paypal", "stripe")); // File with generic data
 
@@ -62,6 +72,7 @@ $langs->loadLangs(array("other", "dict", "bills", "companies", "errors", "paybox
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $errmsg = '';
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOSTINT('id');
 $securekeyreceived = GETPOST("securekey", 'alpha');

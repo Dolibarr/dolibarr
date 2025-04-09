@@ -1451,7 +1451,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 			$object->sendtoid = array();
 		} else {
 			// TODO Merge all previous cases into this generic one
-			// $action = PASSWORD, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
+			// $action = PASSWORD, ORDER_DELETE, BILL_DELETE, TICKET_CREATE, TICKET_MODIFY, TICKET_DELETE, CONTACT_SENTBYMAIL, RECRUITMENTCANDIDATURE_MODIFY, ...
 			// Can also be a value defined by an external module like SENTBYSMS, COMPANY_SENTBYSMS, MEMBER_SENTBYSMS, ...
 			// Note: We are here only if getDolGlobalString('MAIN_AGENDA_ACTIONAUTO_action') is on (tested at beginning of this function).
 			// Note that these activation key can be set in agenda setup (but only if defined into llx_c_action_trigger).
@@ -1634,6 +1634,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		// for such objects because there is already a dedicated field into table llx_actioncomm or llx_actioncomm_resources.
 		if (!in_array($elementtype, array('societe', 'contact', 'project'))) {
 			$actioncomm->fk_element  = $elementid;
+			$actioncomm->elementid   = $elementid;
 			$actioncomm->elementtype = $elementtype.($elementmodule ? '@'.$elementmodule : '');
 		}
 

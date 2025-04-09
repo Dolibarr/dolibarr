@@ -34,6 +34,9 @@ class box_project_opportunities extends ModeleBoxes
 {
 	public $boxcode = "project_opportunities";
 	public $boximg  = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	// var $depends = array("projet");
 
@@ -74,6 +77,7 @@ class box_project_opportunities extends ModeleBoxes
 		$textHead = $langs->trans("OpenedProjectsOpportunities");
 		$this->info_box_head = array('text' => $textHead, 'limit' => dol_strlen($textHead));
 
+		$num = 0;
 		$i = 0;
 		// list the summary of the orders
 		if ($user->hasRight('projet', 'lire')) {

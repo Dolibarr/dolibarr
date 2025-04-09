@@ -32,9 +32,24 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancyreport.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'donation', 'salaries', 'accountancy'));
+
+$id_report = GETPOSTINT('id_report');
+if ($id_report <= 0) {
+	$id_report = 1;
+}
 
 $error = 0;
 
@@ -188,11 +203,15 @@ $months = array(
 
 llxHeader('', $langs->trans('ReportInOut'));
 
+$builddate = 0;
+$name = '';
+$period = '';
+$calcmode = 0;
+
 $form = new Form($db);
 
 $textprevyear = '<a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year - 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_previous().'</a>';
 $textnextyear = ' &nbsp; <a href="'.$_SERVER["PHP_SELF"].'?year='.($start_year + 1).'&showaccountdetail='.urlencode($showaccountdetail).'">'.img_next().'</a>';
-
 
 
 // Affiche en-tete de rapport
@@ -229,7 +248,12 @@ if ($modecompta == "CREANCES-DETTES") {
 	$builddate = dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 } elseif ($modecompta == "BOOKKEEPING") {
-	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPersonalizedAccountGroups");
+	$accountingreportstatic = new AccountancyReport($db);
+	$accountingreportstatic->fetch($id_report);
+	$reportLabel = '';
+	$reportLabel = $accountingreportstatic->label;
+
+	$name = $langs->trans("ReportInOut").', '.$langs->trans("ByPersonalizedAccountGroups").' '.$reportLabel;
 	$calcmode = $langs->trans("CalcModeBookkeeping");
 	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
@@ -283,8 +307,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	//	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
 } elseif ($modecompta == "BOOKKEEPING") {
 	// Get array of all report groups that are active
-	$cats = $AccCat->getCats(); // WARNING: Computed groups must be after group they include
-	$unactive_cats = $AccCat->getCats(-1, 0);
+	$cats = $AccCat->getCats(-1, 1, $id_report); // WARNING: Computed groups must be after group they include
+	$unactive_cats = $AccCat->getCats(-1, 0, $id_report);
 
 	/*
 	$sql = 'SELECT DISTINCT t.numero_compte as nb FROM '.MAIN_DB_PREFIX.'accounting_bookkeeping as t, '.MAIN_DB_PREFIX.'accounting_account as aa';
@@ -316,6 +340,14 @@ if ($modecompta == 'CREANCES-DETTES') {
 	$totPerAccount = array();
 	if (!is_array($cats) && $cats < 0) {
 		setEventMessages(null, $AccCat->errors, 'errors');
+	} elseif (is_array($cats) && count($cats) == 0) {
+		print '<tr class="liste_total">';
+		print '<td colspan="15">';
+		print '<span class="opacitymedium">';
+		print $langs->trans("ErrorNoAccountingCategoryForThisCountry", $mysoc->country_code, $langs->transnoentitiesnoconv("Accountancy"), $langs->transnoentitiesnoconv("Setup"), $langs->transnoentitiesnoconv("AccountingCategory"));
+		print '</span>';
+		print '</td>';
+		print '</tr>';
 	} elseif (is_array($cats) && count($cats) > 0) {
 		// Loop on each custom group of accounts
 		foreach ($cats as $cat) {

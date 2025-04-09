@@ -1,15 +1,15 @@
 <?php
-/* Copyright (C) 2002-2004  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003       Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2022  Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013       Peter Fontaine       <contact@peterfontaine.fr>
- * Copyright (C) 2015-2016  Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2017       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2023  Thibault FOUCART     <support@ptibogxiv.net>
- * Copyright (C) 2021       Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2002-2004  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2003       Jean-Louis Bergamo      <jlb@j1b.org>
+ * Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013       Peter Fontaine          <contact@peterfontaine.fr>
+ * Copyright (C) 2015-2016  Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2017       Ferran Marcet           <fmarcet@2byte.es>
+ * Copyright (C) 2018-2023  Thibault FOUCART        <support@ptibogxiv.net>
+ * Copyright (C) 2021       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,13 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "banks", "bills", 'paypal', 'stripe', 'withdrawals'));
@@ -170,8 +177,7 @@ if (empty($reshook)) {
 		}
 
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companybankaccount->oldcopy = dol_clone($companybankaccount, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companybankaccount->socid           = $object->id;
 
@@ -187,14 +193,13 @@ if (empty($reshook)) {
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
 			$companybankaccount->address         = GETPOST('address', 'alpha');
-			$companybankaccount->domiciliation   = $companybankaccount->address;
 
 			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
 			$companybankaccount->proprio         = $companybankaccount->owner_name;
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+			$companybankaccount->date_rum = GETPOSTDATE('date_rum', '00:00:00');
 			if (empty($companybankaccount->rum)) {
 				$companybankaccount->rum = $prelevement->buildRumNumber($object->code_client, $companybankaccount->datec, $companybankaccount->id);
 			}
@@ -249,8 +254,7 @@ if (empty($reshook)) {
 
 		$companypaymentmode->fetch($id);
 		if (!$error) {
-			$cbClassName = get_class($companybankaccount);
-			$cbClassName::$oldcopy = dol_clone($companybankaccount, 2);
+			$companypaymentmode->oldcopy = dol_clone($companypaymentmode, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 			$companypaymentmode->fk_soc          = $object->id;
 
@@ -258,7 +262,8 @@ if (empty($reshook)) {
 			$companypaymentmode->label           = GETPOST('label', 'alpha');
 			$companypaymentmode->number          = GETPOST('cardnumber', 'alpha');
 			$companypaymentmode->last_four       = substr(GETPOST('cardnumber', 'alpha'), -4);
-			$companypaymentmode->proprio         = GETPOST('proprio', 'alpha');
+			$companypaymentmode->owner_name      = GETPOST('proprio', 'alpha');
+			$companypaymentmode->proprio         = $companypaymentmode->owner_name;
 			$companypaymentmode->exp_date_month  = GETPOSTINT('exp_date_month');
 			$companypaymentmode->exp_date_year   = GETPOSTINT('exp_date_year');
 			$companypaymentmode->cvn             = GETPOST('cvn', 'alpha');
@@ -306,7 +311,7 @@ if (empty($reshook)) {
 			// Ajout
 			$companybankaccount = new CompanyBankAccount($db);
 
-			$companybankaccount->socid           = $object->id;
+			$companybankaccount->socid = $object->id;
 
 			$companybankaccount->fetch_thirdparty();
 
@@ -319,14 +324,14 @@ if (empty($reshook)) {
 			$companybankaccount->bic             = GETPOST('bic', 'alpha');
 			$companybankaccount->iban            = GETPOST('iban', 'alpha');
 
-			$companybankaccount->domiciliation   = GETPOST('address', 'alpha');
 			$companybankaccount->address         = GETPOST('address', 'alpha');
 
-			$companybankaccount->proprio         = GETPOST('proprio', 'alpha');
+			$companybankaccount->owner_name      = GETPOST('proprio', 'alpha');
+			$companybankaccount->proprio         = $companybankaccount->owner_name;
 			$companybankaccount->owner_address   = GETPOST('owner_address', 'alpha');
 			$companybankaccount->frstrecur       = GETPOST('frstrecur', 'alpha');
 			$companybankaccount->rum             = GETPOST('rum', 'alpha');
-			$companybankaccount->date_rum        = dol_mktime(0, 0, 0, GETPOSTINT('date_rummonth'), GETPOSTINT('date_rumday'), GETPOSTINT('date_rumyear'));
+			$companybankaccount->date_rum        = GETPOSTDATE('date_rum', '00:00:00');
 			$companybankaccount->datec           = dol_now();
 
 			//$companybankaccount->clos          = GETPOSTINT('clos');
@@ -659,16 +664,18 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($newcu)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".$object->id." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account";
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity;
 			} else {
 				$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX."societe_account";
-				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep = here for entity. Only 1 record must be modified !
+				$sql .= " WHERE site = 'stripe' AND (site_account IS NULL or site_account = '' or site_account = '".$db->escape($tmpsite_account)."') AND fk_soc = ".((int) $object->id)." AND status = ".((int) $tmpservicestatus)." AND entity = ".$conf->entity; // Keep the = here for entity. Only 1 record must be modified !
 			}
 
 			$resql = $db->query($sql);
 			$num = $db->num_rows($resql); // Note: $num is always 0 on an update and delete, it is defined for select only.
-			if (!empty($newcu)) {
-				if (empty($num)) {
+
+			if (!empty($newcu)) {	// If we did a select
+				if (empty($num)) {	// and found nothing
 					$societeaccount = new SocieteAccount($db);
 					$societeaccount->fk_soc = $object->id;
 					$societeaccount->login = '';
@@ -726,7 +733,7 @@ if (empty($reshook)) {
 			$db->begin();
 
 			if (empty($newsup)) {
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".$object->id." AND service = '".$db->escape($tmpservice)."' AND entity = ".$conf->entity;
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE fk_soc = ".((int) $object->id)." AND service = '".$db->escape($tmpservice)."' AND entity = ".((int) $conf->entity);
 				// TODO Add site and site_account on oauth_token table
 				//$sql = "DELETE FROM ".MAIN_DB_PREFIX."oauth_token WHERE site = 'stripe' AND (site_account IS NULL or site_account = '".$db->escape($site_account)."') AND fk_soc = ".((int) $object->id)." AND service = '".$db->escape($service)."' AND entity = ".$conf->entity;
 			} else {
@@ -820,6 +827,7 @@ if (empty($reshook)) {
 							$sql = "UPDATE ".MAIN_DB_PREFIX."societe_rib as sr ";
 							$sql .= " SET stripe_card_ref = null";
 							$sql .= " WHERE sr.stripe_card_ref = '".$db->escape($source)."'";
+
 							$resql = $db->query($sql);
 						} else {
 							$card->delete($user);
@@ -1198,7 +1206,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	if ($showcardpaymentmode && $object->client) {
 		$morehtmlright = '';
 		if (getDolGlobalString('STRIPE_ALLOW_LOCAL_CARD')) {
-			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard');
+			$morehtmlright .= dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?socid='.$object->id.'&action=createcard');
 		}
 		print load_fiche_titre($langs->trans('CreditCard'), $morehtmlright, 'fa-credit-card');
 		//($stripeacc ? ' (Stripe connection with StripeConnect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)')
@@ -1281,8 +1289,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 							print '</td>';
 							// Information (Owner, ...)
 							print '<td class="minwidth100">';
-							if ($companypaymentmodetemp->proprio) {
-								print '<span class="opacitymedium">'.$companypaymentmodetemp->proprio.'</span><br>';
+							if ($companypaymentmodetemp->owner_name) {
+								print '<span class="opacitymedium">'.$companypaymentmodetemp->owner_name.'</span><br>';
 							}
 							if ($companypaymentmodetemp->last_four) {
 								print '....'.$companypaymentmodetemp->last_four;
@@ -1549,7 +1557,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 
 	// List of bank accounts
 	if ($permissiontoaddupdatepaymentinformation) {
-		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&amp;action=create');
+		$morehtmlright = dolGetButtonTitle($langs->trans('Add'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"] . '?socid=' . $object->id . '&action=create');
 	}
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, 'bank');
@@ -1824,28 +1832,28 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			print '<td>';
 			print'</td>';
 			// Account number
-			print '<td valign="middle">';
+			print '<td>';
 			print '</td>';
 			// IBAN
-			print '<td valign="middle">';
+			print '<td>';
 			//var_dump($src);
 			print '</td>';
 			// BIC
-			print '<td valign="middle">';
+			print '<td>';
 			//var_dump($src);
 			print '</td>';
 
 			if (isModEnabled('prelevement')) {
 				// RUM
-				print '<td valign="middle">';
+				print '<td>';
 				//var_dump($src);
 				print '</td>';
 				// Date
-				print '<td valign="middle">';
+				print '<td>';
 				//var_dump($src);
 				print '</td>';
 				// Mode mandate
-				print '<td valign="middle">';
+				print '<td>';
 				//var_dump($src);
 				print '</td>';
 			}
@@ -1893,6 +1901,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$colspan = 10;
 			if (isModEnabled('prelevement')) {
 				$colspan += 3;
+			}
+			if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT') && getDolGlobalInt("SOCIETE_RIB_ALLOW_ONLINESIGN")) {
+				$colspan++;
 			}
 			print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoBANRecord").'</span></td></tr>';
 		}
@@ -2077,7 +2088,7 @@ if ($socid && $action == 'edit' && $permissiontoaddupdatepaymentinformation) {
 		print '<tr><td class="titlefield">'.$langs->trans("RUM").'</td>';
 		print '<td><input class="minwidth300" type="text" name="rum" value="'.dol_escape_htmltag($companybankaccount->rum).'"></td></tr>';
 
-		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
 		print '<tr><td class="titlefield">'.$langs->trans("DateRUM").'</td>';
 		print '<td>'.$form->selectDate($date_rum ? $date_rum : $companybankaccount->date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';
@@ -2120,7 +2131,7 @@ if ($socid && $action == 'editcard' && $permissiontoaddupdatepaymentinformation)
 	print '<td><input class="minwidth300" type="text" id="label" name="label" value="'.$companypaymentmode->label.'"></td></tr>';
 
 	print '<tr><td class="fieldrequired">'.$langs->trans("NameOnCard").'</td>';
-	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->proprio.'"></td></tr>';
+	print '<td><input class="minwidth200" type="text" name="proprio" value="'.$companypaymentmode->owner_name.'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("CardNumber").'</td>';
 	print '<td><input class="minwidth200" type="text" name="cardnumber" value="'.$companypaymentmode->number.'"></td></tr>';
@@ -2163,10 +2174,10 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 	print '<table class="border centpercent">';
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td>';
-	print '<td><input class="minwidth200" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $object->name).'"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="label" name="label" value="'.(GETPOSTISSET('label') ? GETPOST('label') : $langs->trans("Bank").' '.$object->name).'"></td></tr>';
 
 	print '<tr><td>'.$langs->trans("Bank").'</td>';
-	print '<td><input class="minwidth200" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
+	print '<td><input class="minwidth250" type="text" id="bank" name="bank" value="'.GETPOST('bank').'"></td></tr>';
 
 	// Show fields of bank account
 	foreach ($companybankaccount->getFieldsToShow(1) as $val) {
@@ -2246,7 +2257,7 @@ if ($socid && $action == 'create' && $permissiontoaddupdatepaymentinformation) {
 		print '<tr><td class="titlefieldcreate">'.$form->textwithpicto($langs->trans("RUM"), $langs->trans("RUMLong").'<br>'.$langs->trans("RUMWillBeGenerated")).'</td>';
 		print '<td colspan="4"><input type="text" class="minwidth300" name="rum" value="'.GETPOST('rum', 'alpha').'"></td></tr>';
 
-		$date_rum = dol_mktime(0, 0, 0, GETPOST('date_rummonth'), GETPOST('date_rumday'), GETPOST('date_rumyear'));
+		$date_rum = GETPOSTDATE('date_rum', '00:00:00');
 
 		print '<tr><td class="titlefieldcreate">'.$langs->trans("DateRUM").'</td>';
 		print '<td colspan="4">'.$form->selectDate($date_rum, 'date_rum', 0, 0, 1, 'date_rum', 1, 1).'</td></tr>';

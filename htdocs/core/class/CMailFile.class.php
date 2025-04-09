@@ -626,8 +626,26 @@ class CMailFile
 			$smtps->setBCC($this->addr_bcc);
 			$smtps->setErrorsTo($this->errors_to);
 			$smtps->setDeliveryReceipt($this->deliveryreceipt);
+
+			$options = array();
 			if (getDolGlobalString($keyforsslseflsigned)) {
-				$smtps->setOptions(array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true)));
+				$options = array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true));
+			}
+			if (getDolGlobalString('SMTPS_CAPTURE_PEER_CERT')) {
+				$options = array_merge($options, array('ssl' => array('capture_peer_cert' => true, 'capture_peer_cert_chain' => true)));
+				// Adding this will allow the code to retrieve information about the TLS certificate by doing
+				// $cert = stream_context_get_params($this->socket)['options']['ssl']['peer_certificate'];
+				// echo "Server Certificate Information:\n";
+				// echo "Subject: " . openssl_x509_parse($cert)['subject']['CN'] . "\n";
+				// echo "Issuer: " . openssl_x509_parse($cert)['issuer']['CN'] . "\n";
+				// echo "Valid From: " . date('Y-m-d H:i:s', openssl_x509_parse($cert)['validFrom_time_t']) . "\n";
+				// echo "Valid To: " . date('Y-m-d H:i:s', openssl_x509_parse($cert)['validTo_time_t']) . "\n";
+			}
+			if (getDolGlobalString('SMTPS_FORCE_IP_V4')) {
+				$options = array_merge($options, array('socket' => ['bindto' => '0.0.0.0:0'])); // Forces IPv4 (IPv6 would be '::0')
+			}
+			if (!empty($options)) {
+				$smtps->setOptions($options);
 			}
 
 			$this->msgid = time().'.SMTPs-dolibarr-'.$this->trackid.'@'.$host;
@@ -803,7 +821,6 @@ class CMailFile
 					$this->errors[] = $e->getMessage();
 				}
 			}
-			//if (!empty($this->errors_to)) $this->message->setErrorsTo($this->getArrayAddress($this->errors_to));
 			if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) {
 				try {
 					$this->message->setReadReceiptTo($this->getArrayAddress($this->addr_from));
@@ -1213,7 +1230,7 @@ class CMailFile
 
 							$result = $this->smtps->sendMsg();
 
-							if (!empty($conf->global->MAIN_MAIL_DEBUG)) {
+							if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
 								$this->dump_mail();
 							}
 							*/
@@ -1621,8 +1638,12 @@ class CMailFile
 		if (getDolGlobalString('MAIN_MAIL_SENDMAIL_FORCE_BA')) {
 			$out .= "To: ".$this->getValidAddress($this->addr_to, 0, 1).$this->eol2;
 		}
-		// Return-Path is important because it is used by SPF. Some MTA does not read Return-Path from header but from command line. See option MAIN_MAIL_ALLOW_SENDMAIL_F for that.
-		$out .= "Return-Path: ".$this->getValidAddress($this->addr_from, 0, 1).$this->eol2;
+		if (!getDolGlobalString('MAIN_MAIL_NO_RETURN_PATH_FOR_MODE_MAIL')) {
+			// Return-Path is important because it is used by SPF. Some command line MTA overwrites the Return-Path, even if already in the
+			// SMTP header, with a value guessed by command line tool. See option MAIN_MAIL_ALLOW_SENDMAIL_F to provide email to the command line tool.
+			// Return-Path is used for bounced emails. If not set (most cases), the From is used.
+			$out .= "Return-Path: ".$this->getValidAddress($this->addr_from, 1, 1).$this->eol2;
+		}
 		if (isset($this->reply_to) && $this->reply_to) {
 			$out .= "Reply-To: ".$this->getValidAddress($this->reply_to, 2).$this->eol2;
 		}
@@ -1644,7 +1665,6 @@ class CMailFile
 		}
 
 		//$out.= "X-Priority: 3".$this->eol2;
-
 		$out .= 'Date: '.date("r").$this->eol2;
 
 		$trackid = $this->trackid;
@@ -1935,7 +1955,7 @@ class CMailFile
 				$host = 'ssl://'.$host;
 			}
 			// tls smtp start with no encryption
-			//if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS) && function_exists('openssl_open')) $host='tls://'.$host;
+			//if (getDolGlobalString('MAIN_MAIL_EMAIL_STARTTLS') && function_exists('openssl_open')) $host='tls://'.$host;
 
 			dol_syslog("Try socket connection to host=".$host." port=".$port." timeout=".$timeout);
 			//See if we can connect to the SMTP server
@@ -1958,11 +1978,14 @@ class CMailFile
 				// Check response from Server
 				if ($_retVal = $this->server_parse($socket, "220")) {
 					$_retVal = $socket;
+				} else {
+					$this->error = ($this->error ? $this->error." - " : "")."Succeed in opening socket but answer 220 not received";
 				}
 			} else {
 				$this->error = utf8_check('Error '.$errno.' - '.$errstr) ? 'Error '.$errno.' - '.$errstr : mb_convert_encoding('Error '.$errno.' - '.$errstr, 'UTF-8', 'ISO-8859-1');
 			}
 		}
+
 		return $_retVal;
 	}
 
@@ -2191,8 +2214,6 @@ class CMailFile
 	 */
 	public static function getValidAddress($address, $format, $encode = 0, $maxnumberofemail = 0)
 	{
-		global $conf;
-
 		$ret = '';
 
 		$arrayaddress = (!empty($address) ? explode(',', $address) : array());
@@ -2233,6 +2254,7 @@ class CMailFile
 						$newemail = '<'.$email.'>';
 					} else {
 						$newemail = ($format == 3 ? '"' : '').($encode ? self::encodetorfc2822($name) : $name).($format == 3 ? '"' : '').' <'.$email.'>';
+						//$newemail = (($format == 3 && !$encode) ? '"' : '').($encode ? self::encodetorfc2822($name) : $name).(($format == 3 && !$encode) ? '"' : '').' <'.$email.'>';
 					}
 				}
 

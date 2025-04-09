@@ -8,13 +8,12 @@ Shipments=Sevkiyatlar
 ShowSending=Sevkiyatları göster
 Receivings=Teslimat Makbuzları
 SendingsArea=Sevkiyat alanı
-ListOfSendings=Sevkiyat listesi
 SendingMethod=Sevkiyat yöntemi
 LastSendings=Son %s sevkiyat
 StatisticsOfSendings=Sevkiyat istatistikleri
 NbOfSendings=Sevkiyat sayısı
 NumberOfShipmentsByMonth=Aylık sevkiyat sayısı
-SendingCard=Sevkiyat kartı
+SendingCard=Sevkiyat
 NewSending=Yeni sevkiyat
 CreateShipment=Sevkiyat oluştur
 QtyShipped=Sevkedilen mikt.
@@ -44,6 +43,7 @@ ConfirmCancelSending=Bu gönderiyi iptal etmek istediğinizden emin misiniz?
 DocumentModelMerou=Merou A5 modeli
 WarningNoQtyLeftToSend=Uyarı, sevkiyat için bekleyen herhangi bir ürün yok.
 StatsOnShipmentsOnlyValidated=İstatistikler yalnızca doğrulanmış gönderiler içindir. Kullanılan tarih, sevkıyatın doğrulanma tarihidir (planlanan teslimat tarihi her zaman bilinmez)
+DateShipping=Sending date
 DateDeliveryPlanned=Teslimat için planlanan tarih
 RefDeliveryReceipt=Teslimat makbuzu referansı
 StatusReceipt=Durum teslim makbuzu
@@ -63,9 +63,10 @@ NoProductToShipFoundIntoStock=Depoda gönderilecek ürün bulunamadı <b>%s</b>.
 WeightVolShort=Ağırlık/Hac.
 ValidateOrderFirstBeforeShipment=Sevkiyatları yapabilmek için önce siparişi doğrulamlısınız.
 NoLineGoOnTabToAddSome=Satır yok, eklemek için "%s" sekmesine gidin
-CreateInvoiceForThisCustomerFromSendings=Create Bills
+CreateInvoiceForThisCustomerFromSendings=Fatura Oluştur
 IfValidateInvoiceIsNoSendingStayUnbilled=Fatura doğrulaması 'Hayır' ise, fatura doğrulanıncaya kadar gönderim 'Faturalanmamış' durumunda kalacaktır.
 OptionToSetSendingBilledNotEnabled=Fatura doğrulandığında gönderimi otomatik olarak 'Faturalandı' olarak ayarlamaya yönelik İş Akışı modülündeki seçenek etkin olmaz, dolayısıyla fatura oluşturulduktan sonra gönderimlerin durumunu manuel olarak 'Faturalandı' olarak ayarlamanız gerekecektir.
+ShipmentUpdated=Shipment successfully updated
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Gönderi dağıtımı
 ErrorTooManyCombinationBatchcode=Çok fazla depo, ürün ve parti kodu kombinasyonu (%s) bulunduğundan %s satırı için gönderim yok.
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
 ErrorTooMuchShipped=Gönderilen miktar, %s satırı için sipariş edilen miktardan fazla olmamalıdır.
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Sevkiyat izleme temsilcisi
+TypeContact_shipping_external_BILLING=Müşteri faturası ilgilisi
+TypeContact_shipping_external_CUSTOMER=Customer contact following-up shipping
+TypeContact_shipping_external_SHIPPING=Customer contact for shipping
+TypeContact_shipping_external_DELIVERY=Teslimat için müşteri iletişim kişisi
+CloseShipment=Close shipment
+ConfirmCloseShipment=Confirm close shipment

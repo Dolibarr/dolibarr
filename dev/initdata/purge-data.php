@@ -231,7 +231,7 @@ if (! $ret > 0) {
 	print 'An admin user with login "admin" must exists to use this script.'."\n";
 	exit;
 }
-//$user->getrights();
+//$user->loadRights();
 
 
 print "Purge all data for this database:\n";

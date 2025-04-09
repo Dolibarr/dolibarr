@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2015 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,22 +53,22 @@ class Translate
 
 
 	/**
-	 * @var array       Array of all translations key=>value
+	 * @var array<string,string>       Array of all translations key=>value
 	 */
 	public $tab_translate = array();
 
 	/**
-	 * @var array       Array to store result after loading each language file
+	 * @var array<string,int<1,2>>       Array to store result after loading each language file
 	 */
 	private $_tab_loaded = array();
 
 	/**
-	 * @var array       Cache for labels returned by getLabelFromKey method
+	 * @var array<string,array<string,string>>		Cache for labels returned by getLabelFromKey method
 	 */
 	public $cache_labels = array();
 
 	/**
-	 * @var array       Cache to store currency symbols
+	 * @var array<string,array{label:string,unicode:string}>	Cache to store currency symbols
 	 */
 	public $cache_currencies = array();
 
@@ -281,8 +282,8 @@ class Translate
 		// Search if a module directory name is provided into lang file name
 		$regs = array();
 		if (preg_match('/^([^@]+)@([^@]+)$/i', $domain, $regs)) {
-			$newdomain = $regs[1];
-			$modulename = $regs[2];
+			$newdomain = (string) $regs[1];
+			$modulename = (string) $regs[2];
 		}
 
 		// Check cache
@@ -353,9 +354,7 @@ class Translate
 
 				if (!$found) {
 					if ($fp = @fopen($file_lang, "rt")) {
-						if ($usecachekey) {
-							// $tabtranslatedomain = array(); // To save lang content in cache
-						}
+						// $tabtranslatedomain = array(); // To save lang content in cache when enabled (commented because initial = argument to function)
 
 						/**
 						 * Read each lines until a '=' (with any combination of spaces around it)
@@ -502,7 +501,7 @@ class Translate
 			return 0;
 		}
 
-		$this->_tab_loaded[$newdomain] = 1; // We want to be sure this function is called once only for domain 'database'
+		$this->_tab_loaded[$newdomain] = 2; // Preset the load as loaded and make sure this function is called once only for $newdomain='database'
 
 		$fileread = 0;
 		$langofdir = $this->defaultlang;
@@ -551,9 +550,7 @@ class Translate
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				if ($num) {
-					if ($usecachekey) {
-						$tabtranslatedomain = array(); // To save lang content in cache
-					}
+					$tabtranslatedomain = array(); // To save lang content in cache (when enabled)
 
 					$i = 0;
 					while ($i < $num) {	// Ex: Need 225ms for all fgets on all lang file for Third party page. Same speed than file_get_contents
@@ -596,10 +593,6 @@ class Translate
 			$this->_tab_loaded[$newdomain] = 1; // Set domain file as loaded
 		}
 
-		if (empty($this->_tab_loaded[$newdomain])) {
-			$this->_tab_loaded[$newdomain] = 2; // Mark this case as not found (no lines found for language)
-		}
-
 		return 1;
 	}
 
@@ -636,17 +629,17 @@ class Translate
 
 		$newstr = $key;
 		$reg = array();
-		if (preg_match('/^Civility([0-9A-Z]+)$/i', $key, $reg)) {
+		if (preg_match('/^Civility([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_civility', 'code', 'label');
 		} elseif (preg_match('/^Currency([A-Z][A-Z][A-Z])$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_currencies', 'code_iso', 'label');
-		} elseif (preg_match('/^SendingMethod([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^SendingMethod([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_shipment_mode', 'code', 'libelle');
-		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^PaymentType(?:Short)?([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_paiement', 'code', 'libelle', '', 1);
-		} elseif (preg_match('/^OppStatus([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^OppStatus([0-9A-Z_]+)$/i', $key, $reg)) {
 			$newstr = $this->getLabelFromKey($db, $reg[1], 'c_lead_status', 'code', 'label');
-		} elseif (preg_match('/^OrderSource([0-9A-Z]+)$/i', $key, $reg)) {
+		} elseif (preg_match('/^OrderSource([0-9A-Z_]+)$/i', $key, $reg)) {
 			// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
 			//$newstr=$this->getLabelFromKey($db,$reg[1],'llx_c_input_reason','code','label');
 		}
@@ -689,22 +682,29 @@ class Translate
 				}
 			}
 
-			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
-			// we want to keep '"' '<b>' '</b>' '<strong' '</strong>' '<a ' '</a>' '<br>' '< ' '<span' '</span>' that are reliable HTML tags inside translation strings.
-			$str = str_replace(
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
-				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				$str
-			);
+
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
 
 			if (strpos($key, 'Format') !== 0) {
 				try {
 					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
 					$str = sprintf($str, $param1, $param2, $param3, $param4); // Replace %s and %d except for FormatXXX strings.
+					// Note: the catch ValueError is possible only when php min will be 8.1
 				} catch (Exception $e) {
 					// No exception managed
 				}
 			}
+
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
+
+
+			// We replace some HTML tags by __xx__ to avoid having them encoded by htmlentities because
+			// we want to keep '"' '<b>' '</b>' '<u>' '</u>' '<i>' '</i>' '<center> '</center>' '<strong' '</strong>' '<a ' '</a>' '<br>' '<span' '</span>' '< ' that are reliable HTML tags inside translation strings.
+			$str = str_replace(
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<strong>', '</strong>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'), // We accept '< ' but not '<'. We can accept however '>'
+				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__tagb__', '__tagbend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
+				$str
+			);
 
 			// Encode string into HTML
 			$str = htmlentities($str, ENT_COMPAT, $this->charset_output); // Do not convert simple quotes in translation (strings in html are embraced by "). Use dol_escape_htmltag around text in HTML content
@@ -712,7 +712,7 @@ class Translate
 			// Restore reliable HTML tags into original translation string
 			$str = str_replace(
 				array('__quot__', '__tagb__', '__tagbend__', '__tagu__', '__taguend__', '__tagi__', '__tagiend__', '__tagcenter__', '__tagcenterend__', '__taga__', '__tagaend__', '__tagbr__', '__tagspan__', '__tagspanend__', '__ltspace__', '__gt__'),
-				array('"', '<b>', '</b>', '<u>', '</u>', '<i', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
+				array('"', '<b>', '</b>', '<u>', '</u>', '<i>', '</i>', '<center>', '</center>', '<a ', '</a>', '<br>', '<span', '</span>', '< ', '>'),
 				$str
 			);
 
@@ -766,10 +766,28 @@ class Translate
 	 *  @param  string	$param5     chaine de param5
 	 *  @return string      		Translated string
 	 */
+	public function tr($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
+	{
+		return $this->transnoentitiesnoconv($key, $param1, $param2, $param3, $param4, $param5);
+	}
+
+	/**
+	 *  Return translated value of a text string. Alias of tr() for backward compatibility.
+	 * 				 If there is no match for this text, we look in alternative file and if still not found,
+	 * 				 it is returned as is.
+	 *               No conversion to encoding charset of lang object is done.
+	 *               Parameters of this method must not contains any HTML tags.
+	 *
+	 *  @param	string	$key        Key to translate
+	 *  @param  string	$param1     chaine de param1
+	 *  @param  string	$param2     chaine de param2
+	 *  @param  string	$param3     chaine de param3
+	 *  @param  string	$param4     chaine de param4
+	 *  @param  string	$param5     chaine de param5
+	 *  @return string      		Translated string
+	 */
 	public function transnoentitiesnoconv($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $param5 = '')
 	{
-		global $conf;
-
 		if (!empty($this->tab_translate[$key])) {	// Translation is available
 			$str = $this->tab_translate[$key];
 
@@ -783,11 +801,19 @@ class Translate
 				}
 			}
 
+			$str = preg_replace('/([^%])%([^%0sdmYIMpHSBb])/', '\1__percent_with_bad_specifier__\2', $str);
+
 			if (!preg_match('/^Format/', $key)) {
-				//print $str;
-				// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
-				$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
+				try {
+					// @phan-suppress-next-line PhanPluginPrintfVariableFormatString
+					$str = sprintf($str, $param1, $param2, $param3, $param4, $param5); // Replace %s and %d except for FormatXXX strings.
+					// Note: the catch ValueError is possible only when php min will be 8.1
+				} catch (Exception $e) {
+					// No exception managed.
+				}
 			}
+
+			$str = str_replace('__percent_with_bad_specifier__', '%', $str);
 
 			// Remove dangerous sequence we should never have. Not needed into a translated response.
 			// %27 is entity code for ' and is replaced by browser automatically when translation is inside a javascript code called by a click like on a href link.
@@ -947,8 +973,8 @@ class Translate
 	 *  Return if a filename $filename exists for current language (or alternate language)
 	 *
 	 *  @param	string	$filename       Language filename to search
-	 *  @param  integer	$searchalt      Search also alternate language file
-	 *  @return boolean         		true if exists and readable
+	 *  @param  int		$searchalt      Search also alternate language file
+	 *  @return bool	         		true if exists and readable
 	 */
 	public function file_exists($filename, $searchalt = 0)
 	{
@@ -960,12 +986,13 @@ class Translate
 			}
 
 			if ($searchalt) {
+				$filenamealt = null;
 				// Test si fichier dans repertoire de la langue alternative
 				if ($this->defaultlang != "en_US") {
 					$filenamealt = $searchdir . "/langs/en_US/" . $filename;
 				}
 				//else $filenamealt = $searchdir."/langs/fr_FR/".$filename;
-				if (is_readable(dol_osencode($filenamealt))) {
+				if ($filenamealt !== null && is_readable(dol_osencode($filenamealt))) {
 					return true;
 				}
 			}
@@ -1068,7 +1095,7 @@ class Translate
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
 			if ($obj) {
-				$this->cache_labels[$tablename][$key] = $obj->label;
+				$this->cache_labels[$tablename][$key] = (string) $obj->label;
 			} else {
 				$this->cache_labels[$tablename][$key] = $key;
 			}
@@ -1117,7 +1144,7 @@ class Translate
 		if (function_exists("mb_convert_encoding")) {
 			$this->loadCacheCurrencies($forceloadall ? '' : $currency_code);
 
-			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {
+			if (isset($this->cache_currencies[$currency_code]) && !empty($this->cache_currencies[$currency_code]['unicode']) && is_array($this->cache_currencies[$currency_code]['unicode'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				foreach ($this->cache_currencies[$currency_code]['unicode'] as $unicode) {
 					$currency_sign .= mb_convert_encoding("&#" . $unicode . ";", "UTF-8", 'HTML-ENTITIES');
 				}
@@ -1170,7 +1197,7 @@ class Translate
 				if ($obj) {
 					// If a translation exists, we use it lese we use the default label
 					$this->cache_currencies[$obj->code_iso]['label'] = ($obj->code_iso && $this->trans("Currency" . $obj->code_iso) != "Currency" . $obj->code_iso ? $this->trans("Currency" . $obj->code_iso) : ($obj->label != '-' ? $obj->label : ''));
-					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);
+					$this->cache_currencies[$obj->code_iso]['unicode'] = (array) json_decode((empty($obj->unicode) ? '' : $obj->unicode), true);  // @phan-suppress-current-line PhanTypeMismatchProperty
 					$label[$obj->code_iso] = $this->cache_currencies[$obj->code_iso]['label'];
 				}
 				$i++;

@@ -35,6 +35,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langsLoad = array('projects', 'companies');
 if (isModEnabled('eventorganization')) {
@@ -73,7 +81,7 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
@@ -372,7 +380,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -415,17 +423,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 	}
-
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) {
-		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-		print $langs->trans('SharedProject');
-	} else {
-		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-		print $langs->trans('PrivateProject');
-	}
-	print '</td></tr>';
 
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 		// Opportunity status
@@ -472,6 +469,17 @@ if ($id > 0 || !empty($ref)) {
 	}
 	print '</td></tr>';
 
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+		print $langs->trans('SharedProject');
+	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+		print $langs->trans('PrivateProject');
+	}
+	print '</td></tr>';
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -484,16 +492,21 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border tableforfield centpercent">';
 
-	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-	print dol_htmlentitiesbr($object->description);
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
+	}
+
+	// Description
+	print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+	if ($object->description) {
+		print '<tr><td class="nottitleforfield" colspan="2">';
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($object->description);
+		print '</div>';
+		print '</td></tr>';
 	}
 
 	print '</table>';

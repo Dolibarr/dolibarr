@@ -41,7 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonsignedobject.class.php';
 
 /**
- *	Class to manage contracts
+ * Class to manage contracts
+ *
  * @property	int				$signed_status
  * @static		array<int>		$SIGNED_STATUSES
  */
@@ -262,12 +263,12 @@ class Contrat extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
 		'ref' => array('type' => 'varchar(50)', 'label' => 'Ref', 'enabled' => 1, 'visible' => -1, 'showoncombobox' => 1, 'position' => 15, 'searchall' => 1),
-		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'Ref ext', 'enabled' => 1, 'visible' => 0, 'position' => 20),
+		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'visible' => 0, 'position' => 20),
 		'ref_customer' => array('type' => 'varchar(50)', 'label' => 'RefCustomer', 'enabled' => 1, 'visible' => -1, 'position' => 25, 'searchall' => 1),
 		'ref_supplier' => array('type' => 'varchar(50)', 'label' => 'RefSupplier', 'enabled' => 1, 'visible' => -1, 'position' => 26, 'searchall' => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 30, 'index' => 1),
@@ -485,10 +486,12 @@ class Contrat extends CommonObject
 				$contratline->date_cloture = $now;	// For backward compatibility
 				$contratline->user_closing_id = $user->id;
 				$contratline->statut = ContratLigne::STATUS_CLOSED;
+
 				$result = $contratline->close_line($user, $now, $comment, $notrigger);
+
 				if ($result < 0) {
 					$error++;
-					$this->error = $contratline->error;
+					$this->error = $contratline->error.($contratline->error ? ' ('.$this->ref.')' : '');
 					$this->errors = $contratline->errors;
 					break;
 				}
@@ -551,7 +554,6 @@ class Contrat extends CommonObject
 
 		if ($num) {
 			$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$this->db->escape($num)."', statut = 1";
-			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = 0";
 
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -1004,12 +1006,13 @@ class Contrat extends CommonObject
 	/**
 	 *  Create a contract into database
 	 *
-	 *  @param	User	$user       User that create
-	 *  @return int  				Return integer <0 if KO, id of contract if OK
+	 *  @param	User		$user       User that create
+	 *  @param	int<0,1> 	$notrigger	0=launch triggers after, 1=disable triggers
+	 *  @return int  					Return integer <0 if KO, id of contract if OK
 	 */
-	public function create($user)
+	public function create($user, $notrigger = 0)
 	{
-		global $conf, $langs, $mysoc;
+		global $conf, $langs;
 
 		// Check parameters
 		$paramsok = 1;
@@ -1024,6 +1027,7 @@ class Contrat extends CommonObject
 			$this->error .= $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("SalesRepresentativeFollowUp"));
 			$paramsok = 0;
 		}
+		$this->entity = setEntity($this);
 		if (!$paramsok) {
 			return -1;
 		}
@@ -1043,7 +1047,7 @@ class Contrat extends CommonObject
 		$sql .= ",".($this->commercial_suivi_id > 0 ? ((int) $this->commercial_suivi_id) : "NULL");
 		$sql .= ",".($this->fk_project > 0 ? ((int) $this->fk_project) : "NULL");
 		$sql .= ", ".(dol_strlen($this->ref) <= 0 ? "null" : "'".$this->db->escape($this->ref)."'");
-		$sql .= ", ".((int) $conf->entity);
+		$sql .= ", ".((int) $this->entity);
 		$sql .= ", ".((int) $this->signed_status);
 		$sql .= ", ".(!empty($this->note_private) ? ("'".$this->db->escape($this->note_private)."'") : "NULL");
 		$sql .= ", ".(!empty($this->note_public) ? ("'".$this->db->escape($this->note_public)."'") : "NULL");
@@ -1164,22 +1168,18 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (!$error) {
+			if (!$error && !$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger('CONTRACT_CREATE', $user);
 				if ($result < 0) {
 					$error++;
 				}
 				// End call triggers
+			}
 
-				if (!$error) {
-					$this->db->commit();
-					return $this->id;
-				} else {
-					dol_syslog(get_class($this)."::create - 30 - ".$this->error, LOG_ERR);
-					$this->db->rollback();
-					return -3;
-				}
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
 			} else {
 				$this->error = "Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
@@ -1397,7 +1397,7 @@ class Contrat extends CommonObject
 		$sql .= " ref_customer=".(isset($this->ref_customer) ? "'".$this->db->escape($this->ref_customer)."'" : "null").",";
 		$sql .= " ref_supplier=".(isset($this->ref_supplier) ? "'".$this->db->escape($this->ref_supplier)."'" : "null").",";
 		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " entity=".$conf->entity.",";
+		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " date_contrat=".(dol_strlen($this->date_contrat) != 0 ? "'".$this->db->idate($this->date_contrat)."'" : 'null').",";
 		$sql .= " statut=".(isset($this->statut) ? $this->statut : (isset($this->status) ? $this->status : "null")).",";
 		$sql .= " fk_soc=".($this->socid > 0 ? $this->socid : "null").",";
@@ -2066,7 +2066,7 @@ class Contrat extends CommonObject
 			if (!$nofetch) {
 				$langs->load('project');
 				if (is_null($this->project) || (is_object($this->project) && $this->project->isEmpty())) {
-					$res = $this->fetch_project();
+					$res = $this->fetchProject();
 					if ($res > 0 && $this->project instanceof Project) {
 						$datas['project'] = '<br><b>'.$langs->trans('Project').':</b> '.$this->project->getNomUrl(1, '', 0, 1);
 					}
@@ -2133,9 +2133,9 @@ class Contrat extends CommonObject
 		if (empty($notooltip) && $user->hasRight('contrat', 'lire')) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowContract");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 		$linkstart = '<a href="'.$url.'"';
@@ -2294,7 +2294,7 @@ class Contrat extends CommonObject
 		$this->from = " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$this->from .= ", ".MAIN_DB_PREFIX."contratdet as cd";
 		$this->from .= ", ".MAIN_DB_PREFIX."societe as s";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$this->from .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
 
@@ -2325,7 +2325,7 @@ class Contrat extends CommonObject
 		if ($user->socid) {
 			$sql .= " AND c.fk_soc = ".((int) $user->socid);
 		}
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 		}
 
@@ -2393,7 +2393,7 @@ class Contrat extends CommonObject
 		$sql = "SELECT count(c.rowid) as nb";
 		$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
+		if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
 			$sql .= " WHERE sc.fk_user = ".((int) $user->id);
 			$clause = "AND";
@@ -2486,7 +2486,7 @@ class Contrat extends CommonObject
 		$this->note_public = 'This is a comment (public)';
 		$this->fk_project = 0;
 		// Lines
-		$nbp = 5;
+		$nbp = min(1000, GETPOSTINT('nblines') ? GETPOSTINT('nblines') : 5);	// We can force the nb of lines to test from command line (but not more than 1000)
 		$xnbp = 0;
 		while ($xnbp < $nbp) {
 			$line = new ContratLigne($this->db);

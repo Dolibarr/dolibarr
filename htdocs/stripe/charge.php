@@ -32,6 +32,14 @@ if (isModEnabled('accounting')) {
 	require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
@@ -220,7 +228,7 @@ if (!$rowid) {
 			if ($servicestatus) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payments/'.$charge->id;
 			}
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			print "<a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$charge->id."</a>";
 			if ($charge->payment_intent) {
 				print '<br><span class="opacitymedium">'.$charge->payment_intent.'</span>';
@@ -228,7 +236,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Stripe customer
-			print "<td>";
+			print '<td class="tdoverflowmax150">';
 			if (isModEnabled('stripe') && !empty($stripeacc)) {
 				$connect = $stripeacc.'/';
 			}
@@ -251,7 +259,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Origin
-			print "<td>";
+			print '<td class="nowraponall">';
 			if ($charge->metadata->dol_type == "order" || $charge->metadata->dol_type == "commande") {
 				$object = new Commande($db);
 				$object->fetch($charge->metadata->dol_id);
@@ -274,7 +282,7 @@ if (!$rowid) {
 			print "</td>\n";
 
 			// Date payment
-			print '<td class="center">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
+			print '<td class="center nowraponall">'.dol_print_date($charge->created, 'dayhour')."</td>\n";
 			// Type
 			print '<td>';
 			print $type;
@@ -282,7 +290,7 @@ if (!$rowid) {
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</span></td>";
 			// Status
-			print '<td class="right">';
+			print '<td class="nowraponall">';
 			print $status;
 			print "</td>\n";
 

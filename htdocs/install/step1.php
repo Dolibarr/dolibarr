@@ -34,6 +34,10 @@ include 'inc.php';
 
 global $langs;
 
+/**
+ * @var Translate $langs
+ */
+
 $action = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : (empty($argv[1]) ? '' : $argv[1]);
 $setuplang = GETPOST('selectlang', 'aZ09', 3) ? GETPOST('selectlang', 'aZ09', 3) : (empty($argv[2]) ? 'auto' : $argv[2]);
 $langs->setDefaultLang($setuplang);

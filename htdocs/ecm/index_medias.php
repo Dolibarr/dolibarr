@@ -33,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts'));
 
@@ -304,7 +312,7 @@ $moreheadjs .= '</script>'."\n";
 
 llxHeader($moreheadcss.$moreheadjs, $langs->trans("ECMArea"), '', '', 0, 0, $morejs, '', '', 'mod-ecm page-index_medias');
 
-$head = ecm_prepare_dasboard_head(null);
+$head = ecm_prepare_dasboard_head();
 print dol_get_fiche_head($head, 'index_medias', '', -1, '');
 
 

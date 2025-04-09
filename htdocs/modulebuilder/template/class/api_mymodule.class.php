@@ -288,6 +288,13 @@ class MyModuleApi extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->myobject->array_options[$index] = $this->_checkValForAPI($field, $val, $this->myobject);
+				}
+				continue;
+			}
+
 			$this->myobject->$field = $this->_checkValForAPI($field, $value, $this->myobject);
 		}
 

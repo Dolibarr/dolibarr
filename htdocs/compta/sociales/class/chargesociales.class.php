@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2017      Alexandre Spangaro	<aspangaro@open-dsi.fr>
- * Copyright (C) 2021      Gauthier VERDOL		<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2002       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017       Alexandre Spangaro	    <aspangaro@open-dsi.fr>
+ * Copyright (C) 2021       Gauthier VERDOL		    <gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,11 @@ class ChargeSociales extends CommonObject
 	 */
 	public $element = 'chargesociales';
 
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 * @deprecated Use $table_element
+	 * @see $table_element
+	 */
 	public $table = 'chargesociales';
 
 	/**
@@ -65,18 +70,22 @@ class ChargeSociales extends CommonObject
 	 * @var string label
 	 */
 	public $label;
+
 	/**
 	 * @var int
 	 */
 	public $type;
+
 	/**
 	 * @var string
 	 */
 	public $type_label;
+
 	/**
 	 * @var string
 	 */
 	public $type_code;
+
 	/**
 	 * @var string
 	 */
@@ -86,15 +95,18 @@ class ChargeSociales extends CommonObject
 	 * @var int|string
 	 */
 	public $amount;
+
 	/**
 	 * @var int<0,1>
 	 */
 	public $paye;
+
 	/**
 	 * @deprecated Use $period
 	 * @var int|string
 	 */
 	public $periode;
+
 	/**
 	 * @var int|string
 	 */
@@ -102,7 +114,7 @@ class ChargeSociales extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated Use label instead
+	 * @deprecated Use $label instead
 	 */
 	public $lib;
 
@@ -125,10 +137,12 @@ class ChargeSociales extends CommonObject
 	 * @var int ID
 	 */
 	public $mode_reglement_id;
+
 	/**
 	 * @var string
 	 */
 	public $mode_reglement_code;
+
 	/**
 	 * @var string
 	 */
@@ -154,8 +168,14 @@ class ChargeSociales extends CommonObject
 	 */
 	public $totalpaid;
 
-
+	/**
+	 * @var int
+	 */
 	const STATUS_UNPAID = 0;
+
+	/**
+	 * @var int
+	 */
 	const STATUS_PAID = 1;
 
 
@@ -280,7 +300,7 @@ class ChargeSociales extends CommonObject
 		$sql .= ", ".($this->mode_reglement_id > 0 ? ((int) $this->mode_reglement_id) : "NULL");
 		$sql .= ", '".$this->db->escape($this->label ? $this->label : $this->lib)."'";
 		$sql .= ", '".$this->db->idate($this->date_ech)."'";
-		$sql .= ", '".$this->db->idate($this->periode)."'";
+		$sql .= ", '".$this->db->idate($this->period)."'";
 		$sql .= ", '".price2num($newamount)."'";
 		$sql .= ", ".($this->fk_project > 0 ? ((int) $this->fk_project) : 'NULL');
 		$sql .= ", ".((int) $conf->entity);
@@ -659,8 +679,9 @@ class ChargeSociales extends CommonObject
 		}
 		if (!empty($this->type_label)) {
 			$label .= '<br><b>'.$langs->trans('Type').':</b> '.$this->type_label;
-			if (!empty($this->type_accountancy_code)) {
-				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.$this->type_accountancy_code.')</span>';
+			if (isModEnabled('accounting') || !empty($this->type_accountancy_code)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+				$label .= ' <span class="opacitymedium">('.$langs->trans('AccountancyCode').': '.(empty($this->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($this->type_accountancy_code)).')</span>';
 			}
 		}
 
@@ -668,9 +689,9 @@ class ChargeSociales extends CommonObject
 		if (empty($notooltip) && $user->hasRight("facture", "read")) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SocialContribution");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip"';
 		}
 
@@ -825,7 +846,7 @@ class ChargeSociales extends CommonObject
 			$return .= '<br><span class="info-box-label">'.$arraydata['project']->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'date_ech')) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("DateEnd").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->date_ech, 'day').'</span>';
 		}
 		if (property_exists($this, 'amount')) {
 			$return .= '<br>';

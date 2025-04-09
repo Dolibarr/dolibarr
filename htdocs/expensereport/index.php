@@ -33,13 +33,19 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-$hookmanager = new HookManager($db);
-
-// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
-$hookmanager->initHooks(array('expensereportindex'));
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'users', 'trips'));
+
+// Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('expensereportindex'));
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');

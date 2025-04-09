@@ -29,7 +29,7 @@
 
 /**
  *    \file       htdocs/fourn/commande/list.php
- *    \ingroup    fournisseur
+ *    \ingroup    supplier order
  *    \brief      List of purchase orders
  */
 
@@ -49,6 +49,15 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("orders", "sendings", 'deliveries', 'companies', 'compta', 'bills', 'projects', 'suppliers', 'products'));
@@ -99,7 +108,7 @@ $search_date_approve_endyear = GETPOSTINT('search_date_approve_endyear');
 $search_date_approve_start = dol_mktime(0, 0, 0, $search_date_approve_startmonth, $search_date_approve_startday, $search_date_approve_startyear);	// Use tzserver
 $search_date_approve_end = dol_mktime(23, 59, 59, $search_date_approve_endmonth, $search_date_approve_endday, $search_date_approve_endyear);
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 $search_product_category = GETPOSTINT('search_product_category');
 $search_ref = GETPOST('search_ref', 'alpha');
@@ -146,10 +155,11 @@ $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgener
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -224,7 +234,8 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 $error = 0;
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+// Check only if it's an internal user
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -409,6 +420,7 @@ if (empty($reshook)) {
 					$societe = new Societe($db);
 					$societe->fetch($cmd->socid);
 					$objecttmp->vat_reverse_charge = $societe->vat_reverse_charge;
+					$objecttmp->thirdparty = $societe;
 				}
 				$objecttmp->socid = $cmd->socid;
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
@@ -521,10 +533,17 @@ if (empty($reshook)) {
 							if (($lines[$i]->product_type != 9 && empty($lines[$i]->fk_parent_line)) || $lines[$i]->product_type == 9) {
 								$fk_parent_line = 0;
 							}
+
+							$tva_tx = $lines[$i]->tva_tx;
+							// @phan-suppress-next-line PhanTypeMismatchArgumentInternal
+							if (!empty($lines[$i]->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {
+								$tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
+							}
+
 							$result = $objecttmp->addline(
 								$desc,
 								$lines[$i]->subprice,
-								$lines[$i]->tva_tx,
+								$tva_tx,
 								$lines[$i]->localtax1_tx,
 								$lines[$i]->localtax2_tx,
 								$lines[$i]->qty,
@@ -1786,6 +1805,9 @@ if ($resql) {
 					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 			// Ref
 			if (!empty($arrayfields['cf.ref']['checked'])) {
@@ -2041,7 +2063,11 @@ if ($resql) {
 			}
 			// Billed
 			if (!empty($arrayfields['cf.billed']['checked'])) {
-				print '<td class="center">'.yn($obj->billed).'</td>';
+				print '<td class="center">';
+				if ($obj->billed) {
+					print yn($obj->billed, $langs->trans("Billed"));
+				}
+				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
@@ -2103,9 +2129,9 @@ if ($resql) {
 					print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
 				}
 				print '</td>';
-			}
-			if (!$i) {
-				$totalarray['nbfield']++;
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
 			}
 
 			print "</tr>\n";

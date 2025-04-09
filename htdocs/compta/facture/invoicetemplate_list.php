@@ -10,6 +10,7 @@
  * Copyright (C) 2016      Meziane Sof          <virtualsof@yahoo.fr>
  * Copyright (C) 2023	   William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'compta', 'admin', 'other'));
@@ -918,7 +927,7 @@ while ($i < $imaxinloop) {
 	// Payment term
 	if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 		print '<td class="tdoverflowmax150">';
-		$form->form_conditions_reglement('', $objp->fk_cond_reglement, 'none');
+		$form->form_conditions_reglement(0, $objp->fk_cond_reglement, 'none');
 		print '</td>'."\n";
 		if (!$i) {
 			$totalarray['nbfield']++;

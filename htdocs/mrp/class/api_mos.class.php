@@ -235,6 +235,13 @@ class Mos extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->mo->array_options[$index] = $this->_checkValForAPI($field, $val, $this->mo);
+				}
+				continue;
+			}
+
 			$this->mo->$field = $this->_checkValForAPI($field, $value, $this->mo);
 		}
 

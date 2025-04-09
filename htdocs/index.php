@@ -33,6 +33,14 @@ define('CSRFCHECK_WITH_TOKEN', 1); // We force need to use a token to login when
 require 'main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // If not defined, we select menu "home"
 $_GET['mainmenu'] = GETPOST('mainmenu', 'aZ09') ? GETPOST('mainmenu', 'aZ09') : 'home';	// Keep this ?
 $action = GETPOST('action', 'aZ09');
@@ -562,7 +570,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				$openedDashBoard .= '</span>'."\n";
 				$openedDashBoard .= '<div class="info-box-content">'."\n";
 
-				$openedDashBoard .= '<div class="info-box-title" title="'.strip_tags($groupName).'">'.$groupName.'</div>'."\n";
+				$openedDashBoard .= '<div class="info-box-title" title="'.dolPrintHTMLForAttribute($groupName).'">'.$groupName.'</div>'."\n";
 				$openedDashBoard .= '<div class="info-box-lines">'."\n";
 
 				foreach ($boards as $board) {
@@ -584,7 +592,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					$textLate = '';
 					if ($board->nbtodolate > 0) {
 						$textLate .= '<span title="'.dol_escape_htmltag($textLateTitle).'" class="classfortooltip badge badge-warning">';
-						$textLate .= '<i class="fa fa-exclamation-triangle"></i> '.$board->nbtodolate;
+						$textLate .= '<i class="fa fa-exclamation-triangle hideonsmartphone"></i> '.$board->nbtodolate;
 						$textLate .= '</span>';
 					}
 

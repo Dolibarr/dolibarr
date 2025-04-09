@@ -52,6 +52,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'supplier_proposal', 'compta', 'bills', 'propal', 'orders', 'products', 'deliveries', 'sendings'));
 if (isModEnabled('margin')) {
@@ -109,8 +118,8 @@ if ($id > 0 || !empty($ref)) {
 
 // Common permissions
 $usercanread = $user->hasRight('supplier_proposal', 'lire');
-$usercancreate		= $user->hasRight('supplier_proposal', 'creer');
-$usercandelete		= $user->hasRight('supplier_proposal', 'supprimer');
+$usercancreate = $user->hasRight('supplier_proposal', 'creer');
+$usercandelete = $user->hasRight('supplier_proposal', 'supprimer');
 
 // Advanced permissions
 $usercanvalidate = ((!getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && !empty($usercancreate)) || (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('supplier_proposal', 'validate_advance')));
@@ -270,7 +279,7 @@ if (empty($reshook)) {
 		$object->socid = $socid;
 		$object->fetch_thirdparty();
 
-		$date_delivery = dol_mktime(12, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+		$date_delivery = dol_mktime(12, 0, 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 
 		if ($socid < 1) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Supplier")), null, 'errors');
@@ -294,9 +303,11 @@ if (empty($reshook)) {
 					$object->fk_project = GETPOSTINT('projectid');
 					$object->model_pdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
+					$object->user_creation_id = $user->id;
 					$object->note = GETPOST('note', 'restricthtml');
 					$object->note_private = GETPOST('note', 'restricthtml');
 					$object->statut = SupplierProposal::STATUS_DRAFT;
+					$object->status = SupplierProposal::STATUS_DRAFT;
 				} else {
 					setEventMessages($langs->trans("ErrorFailedToCopyProposal", GETPOST('copie_supplier_proposal')), null, 'errors');
 				}
@@ -311,6 +322,7 @@ if (empty($reshook)) {
 				$object->fk_project = GETPOSTINT('projectid');
 				$object->model_pdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
+				$object->user_creation_id = $user->id;
 				$object->note = GETPOST('note', 'restricthtml');
 				$object->note_private = GETPOST('note', 'restricthtml');
 
@@ -590,8 +602,8 @@ if (empty($reshook)) {
 		// Set if we used free entry or predefined product
 		$predef = '';
 		$product_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+		$date_start = dol_mktime(GETPOSTINT('date_start'.$predef.'hour'), GETPOSTINT('date_start'.$predef.'min'), GETPOSTINT('date_start'.$predef.'sec'), GETPOSTINT('date_start'.$predef.'month'), GETPOSTINT('date_start'.$predef.'day'), GETPOSTINT('date_start'.$predef.'year'));
+		$date_end = dol_mktime(GETPOSTINT('date_end'.$predef.'hour'), GETPOSTINT('date_end'.$predef.'min'), GETPOSTINT('date_end'.$predef.'sec'), GETPOSTINT('date_end'.$predef.'month'), GETPOSTINT('date_end'.$predef.'day'), GETPOSTINT('date_end'.$predef.'year'));
 
 		$ref_supplier = GETPOST('fourn_ref', 'alpha');
 
@@ -1014,7 +1026,7 @@ if (empty($reshook)) {
 		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
 			$productsupplier = new ProductFournisseur($db);
-			if (getDolGlobalString('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
+			if (getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY') == 1) {	// Not the common case
 				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num(GETPOST('qty')), $productid, 'none', GETPOSTINT('socid')) < 0) {
 					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
 				}
@@ -1206,6 +1218,7 @@ if ($action == 'create') {
 	// Load objectsrc
 	if (!empty($origin) && !empty($originid)) {
 		$element = $subelement = GETPOST('origin');
+		$regs = array();
 		if (preg_match('/^([^_]+)_([^_]+)/i', GETPOST('origin'), $regs)) {
 			$element = $regs[1];
 			$subelement = $regs[2];
@@ -1356,7 +1369,7 @@ if ($action == 'create') {
 		print '<tr><td>'.$langs->trans("DeliveryDate").'</td>';
 		print '<td colspan="2">';
 		print img_picto('', 'action', 'class="pictofixedwidth"');
-		$datedelivery = dol_mktime(0, 0, 0, GETPOST('liv_month'), GETPOST('liv_day'), GETPOST('liv_year'));
+		$datedelivery = dol_mktime(0, 0, 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 		if (is_numeric(getDolGlobalString('DATE_LIVRAISON_WEEK_DELAY'))) {	// If value set to 0 or a num, not empty
 			$tmpdte = time() + (7 * getDolGlobalInt('DATE_LIVRAISON_WEEK_DELAY') * 24 * 60 * 60);
 			$syear = date("Y", $tmpdte);
@@ -1709,7 +1722,7 @@ if ($action == 'create') {
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print $langs->trans('DeliveryDate');
 		print '</td>';
-		if ($action != 'editdate_livraison' && $object->statut == SupplierProposal::STATUS_VALIDATED) {
+		if ($action != 'editdate_livraison' && $object->statut != SupplierProposal::STATUS_NOTSIGNED) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetDeliveryDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
@@ -1895,8 +1908,8 @@ if ($action == 'create') {
 		$dateSelector = 0;
 		$inputalsopricewithtax = 1;
 		$senderissupplier = 2; // $senderissupplier=2 is same than 1 but disable test on minimum qty.
-		if (getDolGlobalString('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
-			$senderissupplier = 1;
+		if (getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY')) {
+			$senderissupplier = getDolGlobalInt('SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY');
 		}
 
 		if (!empty($object->lines)) {
@@ -2043,8 +2056,13 @@ if ($action == 'create') {
 
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, array(), array('supplier_proposal'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('supplier_proposal'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+
 		$MAXEVENT = 10;
 
 		print '</div><div class="fichehalfright">';

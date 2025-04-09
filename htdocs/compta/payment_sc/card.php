@@ -38,6 +38,14 @@ if (isModEnabled("bank")) {
 	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('bills', 'banks', 'companies'));
 
@@ -245,8 +253,7 @@ if ($resql) {
 print '<div class="tabsAction">';
 
 /*
-if (!empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
-{
+if (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION')) {
 	if ($user->socid == 0 && $object->statut == 0 && $action == '')
 	{
 		if ($user->hasRight('facture', 'paiement')){

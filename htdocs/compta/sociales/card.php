@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2004-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2016-2018  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2017-2022  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2021       Gauthier VERDOL     	<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -37,13 +37,20 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 if (isModEnabled('project')) {
 	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
-if (isModEnabled('accounting')) {
-	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
-}
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'bills', 'banks', 'hrm'));
@@ -61,8 +68,8 @@ $lineid = GETPOSTINT('lineid');
 
 $fk_project = (GETPOST('fk_project') ? GETPOSTINT('fk_project') : 0);
 
-$dateech = dol_mktime(GETPOST('echhour'), GETPOST('echmin'), GETPOST('echsec'), GETPOST('echmonth'), GETPOST('echday'), GETPOST('echyear'));
-$dateperiod = dol_mktime(GETPOST('periodhour'), GETPOST('periodmin'), GETPOST('periodsec'), GETPOST('periodmonth'), GETPOST('periodday'), GETPOST('periodyear'));
+$dateech = dol_mktime(GETPOSTINT('echhour'), GETPOSTINT('echmin'), GETPOSTINT('echsec'), GETPOSTINT('echmonth'), GETPOSTINT('echday'), GETPOSTINT('echyear'));
+$dateperiod = dol_mktime(GETPOSTINT('periodhour'), GETPOSTINT('periodmin'), GETPOSTINT('periodsec'), GETPOSTINT('periodmonth'), GETPOSTINT('periodday'), GETPOSTINT('periodyear'));
 $label = GETPOST('label', 'alpha');
 $actioncode = GETPOSTINT('actioncode');
 $fk_user = GETPOSTINT('userid') > 0 ? GETPOSTINT('userid') : 0;
@@ -204,10 +211,11 @@ if (empty($reshook)) {
 			$object->periode = $dateperiod;
 			$object->period = $dateperiod;
 			$object->amount = $amount;
-			$object->fk_user			= $fk_user;
+			$object->fk_user = $fk_user;
 			$object->mode_reglement_id = GETPOSTINT('mode_reglement_id');
 			$object->fk_account = GETPOSTINT('fk_account');
 			$object->fk_project = GETPOSTINT('fk_project');
+			$object->paye = ChargeSociales::STATUS_UNPAID;
 
 			$id = $object->create($user);
 			if ($id <= 0) {
@@ -242,7 +250,7 @@ if (empty($reshook)) {
 			$object->period = $dateperiod;
 			$object->periode = $dateperiod;
 			$object->amount = $amount;
-			$object->fk_user = $fk_user;
+			// $object->fk_user = $fk_user;
 
 			$result = $object->update($user);
 			if ($result <= 0) {
@@ -285,12 +293,13 @@ if (empty($reshook)) {
 				$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
 			} else {
 				// Note date_ech is often a little bit higher than dateperiod
+				$newdateech = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_echmonth'), GETPOSTINT('clone_date_echday'), GETPOSTINT('clone_date_echyear'));	// = date of creation or due date
 				$newdateperiod = dol_mktime(0, 0, 0, GETPOSTINT('clone_periodmonth'), GETPOSTINT('clone_periodday'), GETPOSTINT('clone_periodyear'));
-				$newdateech = dol_mktime(0, 0, 0, GETPOSTINT('clone_date_echmonth'), GETPOSTINT('clone_date_echday'), GETPOSTINT('clone_date_echyear'));
+
 				if ($newdateperiod) {
 					$object->period = $newdateperiod;
 					if (empty($newdateech)) {
-						$object->date_ech = $object->periode;
+						$object->date_ech = $object->period;
 					}
 				}
 				if ($newdateech) {
@@ -342,11 +351,11 @@ if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
 }
 
-$now = dol_now();
-
 $title = $langs->trans("SocialContribution").' - '.$langs->trans("Card");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module_Taxes_et_charges_spéciales|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("", $title, $help_url);
+
+$resteapayer = 0;
 
 
 // Form to create a social contribution
@@ -592,6 +601,9 @@ if ($id > 0) {
 			$formsocialcontrib->select_type_socialcontrib($actionPostValue ? $actionPostValue : $object->type, 'actioncode', 1);
 		} else {
 			print $object->type_label;
+			if (isModEnabled("accounting")) {
+				print ' &nbsp; <pan class="opacitymedium">('.$langs->trans("AccountancyCode").': '.(empty($object->type_accountancy_code) ? $langs->trans("Unknown") : length_accountg($object->type_accountancy_code)).')</span>';
+			}
 		}
 		print "</td>";
 
@@ -861,7 +873,7 @@ if ($id > 0) {
 			}
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

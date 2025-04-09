@@ -123,7 +123,7 @@ function show_ldap_test_button($butlabel, $testlabel, $key, $dn, $objectclass)
 /**
  * Show a LDAP array into an HTML output array.
  *
- * @param	array<'count'|int|string,int|string|array>	$result	Array to show. This array is already encoded into charset_output
+ * @param	array<'count'|int|string,int|string|mixed[]>	$result	Array to show. This array is already encoded into charset_output
  * @param   int			$level		Level
  * @param   int			$count		Count
  * @param   bool		$var		Var deprecated (replaced by css oddeven)

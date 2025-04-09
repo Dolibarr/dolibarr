@@ -418,7 +418,7 @@ class doc_generic_ticket_odt extends ModelePDFTicket
 	 * @param CommonObject  $object         user
 	 * @param Translate     $outputlangs    translation object
 	 * @param string        $array_key      key for array
-	 * @return array                        array of substitutions
+	 * @return array<string,int|string>     array of substitutions
 	 */
 	public function get_substitutionarray_object($object, $outputlangs, $array_key = 'object')
 	{

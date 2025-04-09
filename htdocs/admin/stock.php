@@ -32,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "stocks"));
 
@@ -51,6 +59,8 @@ $type = 'stock';
 /*
  * Action
  */
+$error = 0;
+
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $reg = array();
@@ -361,7 +371,7 @@ print "</td>\n</tr>\n";
 $found++;
 
 if (isModEnabled("reception")) {
-	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReception").'</td>';
 	print '<td class="right">';
@@ -376,7 +386,7 @@ if (isModEnabled("reception")) {
 	print "</td>\n</tr>\n";
 	$found++;
 
-
+	print '<!-- STOCK_CALCULATE_ON_RECEPTION_CLOSE -->';
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockOnReceptionOnClosing").'</td>';
 	print '<td class="right">';
@@ -654,7 +664,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -687,7 +697,7 @@ print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print '<td class="right">'.$langs->trans("Value").'</td>'."\n";
+print '<td class="right"></td>'."\n";
 print '</tr>'."\n";
 
 print '<tr class="oddeven">';

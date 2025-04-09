@@ -54,6 +54,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $picto = 'contact';
 
+	/**
+	 * @var int<0,1>
+	 */
 	public $paid = 0;
 
 	const STATUS_DRAFT = 0;
@@ -89,7 +92,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
@@ -116,25 +119,85 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
 		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Canceled'),),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $fk_actioncomm;
+	/**
+	 * @var int
+	 */
 	public $fk_project;
+	/**
+	 * @var string
+	 */
 	public $email;
+	/**
+	 * @var string
+	 */
 	public $firstname;
+	/**
+	 * @var string
+	 */
 	public $lastname;
+	/**
+	 * @var int
+	 */
 	public $fk_soc;
+	/**
+	 * @var string
+	 */
 	public $email_company;
+	/**
+	 * @var int|string
+	 */
 	public $date_subscription;
+	/**
+	 * @var int
+	 */
 	public $fk_invoice;
+	/**
+	 * @var string|float (Price)
+	 */
 	public $amount;
+	/**
+	 * @var string
+	 */
 	public $note_public;
+	/**
+	 * @var string
+	 */
 	public $note_private;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
+	/**
+	 * @var int
+	 */
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
@@ -202,7 +265,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (isset($conf->global->EVENTORGANIZATION_FILTERATTENDEES_TYPE)
 			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== ''
 			&& getDolGlobalString('EVENTORGANIZATION_FILTERATTENDEES_TYPE') !== '-1') {
-			$this->fields['fk_soc']['type'] .= ' AND client = '.((int) getDolGlobalInt('EVENTORGANIZATION_FILTERATTENDEES_TYPE', 0));
+			$this->fields['fk_soc']['type'] .= ' AND (client:=:'.((int) getDolGlobalInt('EVENTORGANIZATION_FILTERATTENDEES_TYPE', 0) . ')');
 		}
 
 		// Example to show how to set values of fields definition dynamically
@@ -426,9 +489,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 			if (count($filter) > 0) {
 				foreach ($filter as $key => $value) {
 					if ($key == 't.rowid' || $key == 't.fk_soc' || $key == 't.fk_project' || $key == 't.fk_actioncomm') {
-						$sqlwhere[] = $key.'='.((int) $value);
-					} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key).' = '.((int) $value);
+					} elseif (!empty($this->fields[$key]) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
 					} elseif ($key == 'customsql') {
 						$sqlwhere[] = $value;
 					} elseif (strpos($value, '%') === false) {
@@ -556,12 +619,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 		$this->db->begin();
 
 		// Define new ref
-		if (!$error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) { // empty should not happened, but when it occurs, the test save life
+		$num = (string) $this->ref;
+		if (!$error && (preg_match('/^[\(]?PROV/i', $num) || empty($num))) { // empty should not happened, but when it occurs, the test saves life
 			$num = $this->getNextNumRef();
-		} else {
-			$num = $this->ref;
 		}
-		$this->newref = $num;
+
+		$this->newref = (string) $num;
 
 		if (!empty($num)) {
 			// Validate
@@ -572,7 +635,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
 			if (!empty($this->fields['fk_user_valid'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
-				$sql .= ", fk_user_valid = ".$user->id;
+				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -789,9 +852,9 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowConferenceOrBoothAttendee");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1108,7 +1171,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
 	 *	@param	int			$option			0=No option
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 * 	@param	int<-1,5>	$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */

@@ -376,6 +376,7 @@ class FormAccounting extends Form
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
 		$out = '';
+		$selected = '';
 
 		$options = array();
 
@@ -510,8 +511,6 @@ class FormAccounting extends Form
 				return -1;
 			}
 
-			ksort($aux_account);
-
 			$this->db->free($resql);
 
 			// Auxiliary user account
@@ -533,6 +532,8 @@ class FormAccounting extends Form
 				return -1;
 			}
 			$this->db->free($resql);
+
+			ksort($aux_account);
 
 			if ($usecache) {
 				$this->options_cache[$usecache] = $aux_account;

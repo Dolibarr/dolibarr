@@ -36,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
@@ -747,6 +756,51 @@ if (count($tasksarray) > 0) {
 		print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
 	}
+
+	$THolidays = array();
+	$totaldayholiday = 0;
+	foreach ($TWeek as $weekNb) {
+		$weekstart = dol_stringtotime($year.$month.($TFirstDays[$weekNb]));
+		$weekend = dol_stringtotime($year.$month.$TLastDays[$weekNb]);
+		$filter = " AND cp.statut = ".((int) Holiday::STATUS_APPROVED);
+		$filter .= " AND ('".$db->idate($weekstart)."' BETWEEN cp.date_debut AND cp.date_fin";
+		$filter .= " OR '".$db->idate($weekend)."' BETWEEN cp.date_debut AND cp.date_fin)";
+		$holiday->fetchByUser($usertoprocess->id, '', $filter);
+		$THolidays[$weekNb] = array();
+		$THolidays[$weekNb]["ids"] = array();
+		$THolidays[$weekNb]["days"] = 0;
+		foreach ($holiday->holiday as $key => $h) {
+			if (!empty($THolidays[$weekNb]["ids"]) && in_array($h->rowid, $THolidays[$weekNb]["ids"])) {
+				continue;
+			}
+			$startweekholiday =(int) (($h["date_debut"] <= $weekstart) ? $weekstart : $h["date_debut"] );
+			$endweekholiday =(int) (($h["date_fin"] >= $weekend) ? $weekend : $h["date_fin"]);
+			$halfdays = (int) $h["halfday"];
+			$nbdays = num_open_day($startweekholiday, $endweekholiday, 0, 1, $halfdays);
+
+			$THolidays[$weekNb]["ids"][] = $h->rowid;
+			$THolidays[$weekNb]["days"] += $nbdays;
+			$totaldayholiday += $nbdays;
+		}
+	}
+
+	//Calculate nb holiday
+	print '<tr class="liste_total">';
+	print '<td class="liste_total" colspan="'.($colspan + $addcolspan).'">';
+	print $langs->trans("Total");
+	print '<span class="opacitymediumbycolor">  - '.$langs->trans("NbUseDaysCP").': <strong>'.price($totaldayholiday, 1, $langs, 0, 0).'</strong></span>';
+	print '</td>';
+	if (!empty($arrayfields['timeconsumed']['checked'])) {
+		print '<td class="liste_total"></td>';
+		print '<td class="liste_total"></td>';
+	}
+	$j = 0;
+	foreach ($TWeek as $weekNb) {
+		$j++;
+		print '<td class="liste_total_holidays '.($THolidays[$weekNb]["days"] > 0 ? "onholidayallday" : "").' hide'.$weekNb.' center'.($j <= 1 ? ' borderleft' : '').'"><div class="totalDay'.$weekNb.'holidays">'.$THolidays[$weekNb]["days"].'</div></td>';
+	}
+	print '<td class="liste_total_holidays center"><div class="totalDayAllHolidays">&nbsp;</div></td>
+	</tr>';
 } else {
 	print '<tr><td colspan="15"><span class="opacitymedium">'.$langs->trans("NoAssignedTasks").'</span></td></tr>';
 }

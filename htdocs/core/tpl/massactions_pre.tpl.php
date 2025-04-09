@@ -33,6 +33,27 @@
 // $object = Object fetched;
 // $sendto
 // $withmaindocfilemail
+/**
+ * @var CommonObject $objecttmp
+ * @var CommonObject $object
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var FormCompany $formcompany
+ * @var HookManager $hookmanager
+ * @var ?Task $taskstatic
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $action
+ * @var string $massaction
+ * @var string $modelmail
+ * @var string $sendto
+ * @var string $topicmail
+ * @var string $trackid
+ * @var int[] $toselect
+ * @var int[] $arrayofselected
+ */
 '
 @phan-var-force CommonObject $objecttmp
 @phan-var-force int[] $toselect
@@ -107,11 +128,15 @@ if ($massaction == 'preaffecttag' && isModEnabled('category')) {
 	}
 }
 
-if ($massaction == 'preupdateprice') {
+if ($massaction == 'preupdateprice'
+ && (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+		|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')
+		|| getDolGlobalString('PRODUIT_MULTIPRICES')
+	)) {
 	$formquestion = array();
 
 	$valuefield = '<div style="display: flex; align-items: center; justify-content: flex-end; padding-right: 150px">';
-	$valuefield .= '<input type="number" name="pricerate" id="pricerate" min="-100" value="0" style="width: 100px; text-align: right; margin-right: 10px" />%';
+	$valuefield .= '<input class="width50 right" type="text" name="pricerate" id="pricerate" min="-100" placeholder="0" value="" /> %';
 	$valuefield .= '</div>';
 
 	$formquestion[] = array(
@@ -121,7 +146,12 @@ if ($massaction == 'preupdateprice') {
 				'value' => $valuefield
 			);
 
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $langs->trans("ConfirmUpdatePriceQuestion", count($toselect)), "updateprice", $formquestion, 1, 0, 200, 500, 1);
+	$descConfirmPreUpdatePrice=$langs->trans("ConfirmUpdatePriceQuestion", count($toselect));
+	if (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		$descConfirmPreUpdatePrice=$langs->trans("ConfirmUpdatePriceQuestion", count($toselect)*getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT') .' ('.$langs->transnoentities('PricingRule').', '.$langs->transnoentities('MultiPricesNumPrices').')');
+	}
+
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUpdatePrice"), $descConfirmPreUpdatePrice, "updateprice", $formquestion, 1, 0, 200, 500, 1);
 }
 
 if ($massaction == 'presetsupervisor') {
@@ -356,7 +386,7 @@ if ($massaction == 'edit_extrafields') {
 		foreach ($extrafields_list as $extraKey => $extraLabel) {
 			$outputShowOutputFields .= '<div class="mass-action-extrafield" data-extrafield="'.$extraKey.'" style="display:none;" >';
 			$outputShowOutputFields .= '<br><span>'. $langs->trans('NewValue').'</span>';
-			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp->id, $objecttmp->table_element);
+			$outputShowOutputFields .= $extrafields->showInputField($extraKey, '', '', $keysuffix, '', 0, $objecttmp, $objecttmp->table_element);
 			$outputShowOutputFields .= '</div>';
 		}
 		$outputShowOutputFields .= '<script>

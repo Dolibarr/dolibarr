@@ -84,7 +84,7 @@ $resql = $db->query($sql);
 if ($resql) {
 	$num = $db->num_rows($resql);
 	if ($num) {
-		print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+		print '<table class="centpercent" cellspacing="0" cellpadding="4">';
 
 		print '<tr>';
 		print "<td>".$langs->trans("Name")." / ".$langs->trans("Company")."</td>";
@@ -102,7 +102,7 @@ if ($resql) {
 				print "<td>".$langs->trans("Anonymous")."</td>\n";
 			}
 			print "<td>".dol_print_date($db->jdate($objp->datedon))."</td>\n";
-			print '<td class="right">'.number_format($objp->amount, 2, '.', ' ').' '.$langs->trans("Currency".$conf->currency).'</td>';
+			print '<td class="right">'.price($objp->amount).' '.$langs->trans("Currency".$conf->currency).'</td>';
 			print "</tr>";
 			$i++;
 		}

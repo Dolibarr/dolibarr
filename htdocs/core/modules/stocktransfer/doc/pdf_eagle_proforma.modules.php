@@ -291,7 +291,11 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (!getDolGlobalString('MAIN_DISABLE_FPDI') && getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
+					$logodir = $conf->mycompany->dir_output;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					}
+					$pagecount = $pdf->setSourceFile($logodir .'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -1019,8 +1023,8 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 	/**
 	 *	Show total to pay
 	 *
-	 *	@param	TCPDF		$pdf           Object PDF
-	 *	@param  Facture		$object         Object invoice
+	 *	@param	TCPDF		$pdf            Object PDF
+	 *	@param  StockTransfer	$object     Object StockTransfer
 	 *	@param  int			$deja_regle     Montant deja regle
 	 *	@param	int			$posy			Position depart
 	 *	@param	Translate	$outputlangs	Object langs
@@ -1300,7 +1304,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -1310,7 +1314,7 @@ class pdf_eagle_proforma extends ModelePDFStockTransfer
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);

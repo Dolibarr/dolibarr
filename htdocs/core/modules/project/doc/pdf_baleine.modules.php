@@ -524,8 +524,6 @@ class pdf_baleine extends ModelePDFProjects
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
-		global $conf, $mysoc;
-
 		$heightoftitleline = 10;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -547,6 +545,8 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetXY($this->posxlabel, $tab_top + 1);
 		$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
 
+		$pdf->SetFont('', '', $default_font_size - 1);
+
 		$pdf->SetXY($this->posxworkload, $tab_top + 1);
 		$pdf->MultiCell($this->posxprogress - $this->posxworkload, 3, $outputlangs->transnoentities("PlannedWorkloadShort"), 0, 'R');
 
@@ -555,11 +555,11 @@ class pdf_baleine extends ModelePDFProjects
 
 		// Date start
 		$pdf->SetXY($this->posxdatestart, $tab_top + 1);
-		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->trans("Start"), 0, 'C');
+		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->transnoentities("DateStart"), 0, 'C');
 
 		// Date end
 		$pdf->SetXY($this->posxdateend, $tab_top + 1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $outputlangs->trans("End"), 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $outputlangs->transnoentities("DateEnd"), 0, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -8,7 +8,7 @@
  * Copyright (C) 2016-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017-2019  Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
  * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -117,12 +117,12 @@ class AccountancyImport
 
 
 	/**
-	 *  Compute direction
+	 * Compute direction
 	 *
 	 * @param   array<array{val:null|int|float|string,type:int<-1,1>}>       $arrayrecord        Array of read values: [fieldpos] => (['val']=>val, ['type']=>-1=null,0=blank,1=string), [fieldpos+1]...
 	 * @param   array<string,string>       $listfields         Fields list to add
 	 * @param 	int			$record_key         Record key
-	 * @return  string							Value
+	 * @return  string							Value D or C or ""
 	 */
 	public function computeDirection(&$arrayrecord, $listfields, $record_key)
 	{
@@ -136,10 +136,10 @@ class AccountancyImport
 				$sens = 'C';
 			}
 
-			return "'" . $this->db->escape($sens) . "'";
+			return $sens;
 		}
 
-		return "''";
+		return "";
 	}
 
 	/**

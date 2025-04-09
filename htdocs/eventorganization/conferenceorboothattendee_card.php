@@ -2,6 +2,7 @@
 /* Copyright (C) 2017		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,16 @@ require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/lib/eventorganization_conferenceorbooth.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
@@ -245,7 +256,7 @@ if (!empty($withproject)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $projectstatic->getProjectsAuthorizedForUser($user, 0, 0);
-		$projectstatic->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$projectstatic->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -646,7 +657,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('conferenceorboothattendee'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('conferenceorboothattendee'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

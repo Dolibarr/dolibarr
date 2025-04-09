@@ -123,7 +123,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$this->posxdiscount = 162;
 		$this->postotalht = 174;
 
-		/* if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) {
+		/* if (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT') || getDolGlobalString('MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN')) {
 			$this->posxtva = $this->posxup;
 		} */
 		$this->posxpicture = $this->posxtva - (getDolGlobalInt('MAIN_DOCUMENTS_WITH_PICTURE_WIDTH', 20)); // width of images
@@ -252,7 +252,11 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->SetFont(pdf_getPDFFont($outputlangs));
 				// Set path to the background PDF File
 				if (getDolGlobalString('MAIN_ADD_PDF_BACKGROUND')) {
-					$pagecount = $pdf->setSourceFile($conf->mycompany->multidir_output[$object->entity].'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
+					$logodir = $conf->mycompany->dir_output;
+					if (!empty($conf->mycompany->multidir_output[$object->entity])) {
+						$logodir = $conf->mycompany->multidir_output[$object->entity];
+					}
+					$pagecount = $pdf->setSourceFile($logodir .'/' . getDolGlobalString('MAIN_ADD_PDF_BACKGROUND'));
 					$tplidx = $pdf->importPage(1);
 				}
 
@@ -705,7 +709,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 				$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_localtax2, 0, $outputlangs), 0, 'R', 1);
 			}
 		} else {
-			//if (!empty($conf->global->FACTURE_LOCAL_TAX1_OPTION) && $conf->global->FACTURE_LOCAL_TAX1_OPTION=='localtax1on')
+			//if (getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') && getDolGlobalString('FACTURE_LOCAL_TAX1_OPTION') == 'localtax1on')
 			//{
 			//Local tax 1
 			foreach ($this->localtax1 as $tvakey => $tvaval) {
@@ -730,7 +734,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 			}
 			//}
 
-			//if (!empty($conf->global->FACTURE_LOCAL_TAX2_OPTION) && $conf->global->FACTURE_LOCAL_TAX2_OPTION=='localtax2on')
+			//if (getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') && getDolGlobalString('FACTURE_LOCAL_TAX2_OPTION') == 'localtax2on')
 			//{
 			//Local tax 2
 			foreach ($this->localtax2 as $tvakey => $tvaval) {
@@ -1112,7 +1116,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		$pdf->SetFont('', '', $default_font_size - 1);
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT_TITLE')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$posy += 3;
 				$pdf->SetXY($posx, $posy);
@@ -1122,7 +1126,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		}
 
 		if (getDolGlobalString('PDF_SHOW_PROJECT')) {
-			$object->fetch_projet();
+			$object->fetchProject();
 			if (!empty($object->project->ref)) {
 				$outputlangs->load("projects");
 				$posy += 4;

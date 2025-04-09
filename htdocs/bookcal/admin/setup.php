@@ -27,12 +27,17 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 
-global $langs, $user;
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/bookcal.lib.php';
-//require_once "../class/myclass.class.php";
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Translations
 $langs->loadLangs(array("admin", "agenda"));

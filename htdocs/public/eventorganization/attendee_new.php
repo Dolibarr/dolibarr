@@ -64,6 +64,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Init vars
 $errmsg = '';
 $errors = array();
@@ -351,7 +362,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 
 		// If the registration has already been paid for this attendee
 		if (!empty($confattendee->date_subscription) && !empty($confattendee->amount)) {
-			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'master');
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			$mesg = $langs->trans("RegistrationAndPaymentWereAlreadyRecorded", $email);
@@ -687,7 +698,7 @@ if (empty($reshook) && $action == 'add' && (!empty($conference->id) && $conferen
 				dol_syslog("Failed to send EMail to ".$sendto, LOG_ERR, 0, '_payment');
 			}
 
-			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
+			$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 			$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 
 			header("Location: ".$redirection);

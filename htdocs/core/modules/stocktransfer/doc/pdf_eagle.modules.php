@@ -128,7 +128,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 		$this->posxwarehousedestination = $this->page_largeur - $this->marge_droite - 35;
 		$this->posxpuht = $this->page_largeur - $this->marge_droite;
 
-		/*if (!empty($conf->global->STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT)) {	// Show also the prices
+		/*if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {	// Show also the prices
 			$this->posxqty = $this->page_largeur - $this->marge_droite - 118;
 			$this->posxwarehousesource = $this->page_largeur - $this->marge_droite - 96;
 			$this->posxwarehousedestination = $this->page_largeur - $this->marge_droite - 68;
@@ -151,7 +151,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$this->posxwarehousedestination -= 20;
 		}
 
-		/*if (!empty($conf->global->STOCKTRANSFER_PDF_HIDE_ORDERED)) {
+		/*if (getDolGlobalString('STOCKTRANSFER_PDF_HIDE_ORDERED')) {
 			$this->posxqty += ($this->posxwarehousedestination - $this->posxwarehousesource);
 			$this->posxpicture += ($this->posxwarehousedestination - $this->posxwarehousesource);
 			$this->posxwarehousesource = $this->posxwarehousedestination;
@@ -169,17 +169,18 @@ class pdf_eagle extends ModelePDFStockTransfer
 		}
 	}
 
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Function to build pdf onto disk
 	 *
 	 *	@param		StockTransfer	$object				Object StockTransfer to generate (or id if old method)
-	 *	@param		Translate		$outputlangs		Lang output object
+	 *  @param		Translate		$outputlangs		Lang output object
 	 *  @param		string			$srctemplatepath	Full path of source filename for generator using a template file
 	 *  @param		int<0,1>		$hidedetails		Do not show line details
 	 *  @param		int<0,1>		$hidedesc			Do not show desc
 	 *  @param		int<0,1>		$hideref			Do not show ref
-	 *  @return     int<-1,1>      	    				1=OK, 0=KO
+	 *  @return		int<-1,1>							1 if OK, <=0 if KO
 	 */
 	public function write_file($object, $outputlangs, $srctemplatepath = '', $hidedetails = 0, $hidedesc = 0, $hideref = 0)
 	{
@@ -959,7 +960,7 @@ class pdf_eagle extends ModelePDFStockTransfer
 			$pdf->MultiCell(($this->posxpuht - $this->posxwarehousedestination + 4), 2, $outputlangs->transnoentities("WarehouseTarget"), '', 'C');
 		}
 
-		/*if (!empty($conf->global->STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT)) {
+		/*if (getDolGlobalString('STOCKTRANSFER_PDF_DISPLAY_AMOUNT_HT')) {
 			$pdf->line($this->posxpuht - 1, $tab_top, $this->posxpuht - 1, $tab_top + $tab_height);
 			if (empty($hidetop))
 			{

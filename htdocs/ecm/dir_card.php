@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2008-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2008-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/htmlecm.form.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('ecm', 'companies', 'other'));
@@ -476,12 +485,12 @@ if ($action == 'deletefile') {
 // Confirm remove dir
 if ($action == 'delete' || $action == 'delete_dir') {
 	$relativepathwithoutslash = preg_replace('/[\/]$/', '', $relativepath);
-
-	//Form to close proposal (signed or not)
+	$formquestion = [];
+	// Form to delete files
 	if (count($filearrayall) > 0) {
 		$langs->load("other");
 		$formquestion = array(
-			array('type' => 'checkbox', 'name' => 'deletedirrecursive', 'label' => $langs->trans("ContentOfDirectoryIsNotEmpty").'<br>'.$langs->trans("DeleteAlsoContentRecursively"), 'value' => '0')				// Field to complete private note (not replace)
+			array('type' => 'checkbox', 'name' => 'deletedirrecursive', 'label' => $langs->trans("ContentOfDirectoryIsNotEmpty").'<br>'.$langs->trans("DeleteAlsoContentRecursively"), 'value' => '0')	// Field to complete private note (not replace)
 		);
 	}
 
@@ -490,19 +499,17 @@ if ($action == 'delete' || $action == 'delete_dir') {
 
 
 /*
-$formfile=new FormFile($db);
+$formfile = new FormFile($db);
 
 // Display upload form
-if ($user->rights->ecm->upload)
-{
-	$formfile->form_attach_new_file(DOL_URL_ROOT.'/ecm/dir_card.php','',0,$section);
+if ($user->hasRight('ecm', 'upload')) {
+	$formfile->form_attach_new_file(DOL_URL_ROOT . '/ecm/dir_card.php', '', 0, $section);
 }
 
 // List of document
-if ($user->rights->ecm->read)
-{
-	$param='&amp;section='.$section;
-	$formfile->list_of_documents($filearray,'','ecm',$param,1,$relativepath,$user->rights->ecm->upload);
+if ($user->hasRight('ecm', 'read')) {
+	$param = '&amp;section=' . $section;
+	$formfile->list_of_documents($filearray, '', 'ecm', $param, 1, $relativepath, $user->rights->ecm->upload);
 }
 */
 

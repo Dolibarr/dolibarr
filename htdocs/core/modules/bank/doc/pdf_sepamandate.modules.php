@@ -575,7 +575,8 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$pdf->MultiCell($largcol, $tab_hl, $outputlangs->transnoentitiesnoconv("Signature"), 0, 'L', 1);
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
-		$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
+		//$pdf->MultiCell($largcol, $tab_hl * 3, '', 1, 'R');
+		$pdf->RoundedRect($posx, $tab_top + $tab_hl + 3, $largcol, $tab_hl * 3, $this->corner_radius, '1234', 'D');
 
 		return ($tab_hl * 7);
 	}

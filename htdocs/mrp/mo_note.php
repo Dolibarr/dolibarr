@@ -31,6 +31,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("mrp", "companies"));
 

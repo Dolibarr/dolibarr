@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT . '/comm/action/class/actioncomm.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Hook to be used by external payment modules (ie Payzen, ...)
 $hookmanager = new HookManager($db);
 
@@ -68,10 +77,11 @@ $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "errors",
 // No check on module enabled. Done later according to $validpaymentmethod
 
 $errmsg = '';
+$error = 0;
 $action = GETPOST('action', 'aZ09');
 $id = GETPOST('id');
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -112,8 +122,8 @@ $listOfConferences .= '<td>'.$langs->trans('Note').'</td></tr>';
 
 $sql = "SELECT a.id, a.fk_action, a.datep, a.datep2, a.label, a.fk_soc, a.note, ca.libelle as label
 		FROM ".MAIN_DB_PREFIX."actioncomm as a
-		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action=ca.id)
-		WHERE a.status<2";
+		INNER JOIN ".MAIN_DB_PREFIX."c_actioncomm as ca ON (a.fk_action = ca.id)
+		WHERE a.status < 2";
 
 $sqlforconf = $sql." AND ca.module='conference@eventorganization'";
 //$sqlforbooth = $sql." AND ca.module='booth@eventorganization'";
@@ -163,10 +173,10 @@ while ($i < $db->num_rows($result)) {
 */
 
 // Get vote result
-$idvote = GETPOST("vote");
-$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'vote'.$idvote);
+$idvote = GETPOSTINT("vote");
+$hashedvote = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY').'vote'.$idvote);
 
-if (strlen($idvote)) {
+if ($idvote > 0) {
 	if (in_array($hashedvote, $listofvotes)) {
 		// Has already voted
 		$votestatus = 'ko';

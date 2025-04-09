@@ -25,7 +25,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by stylesheet');
 }
 ?>
-/* <style type="text/css" > */
+/* IDE Hack <style type="text/css"> */
 
 .mainmenu::before{
 	/* font part */

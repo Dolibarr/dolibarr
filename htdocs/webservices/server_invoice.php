@@ -2,6 +2,7 @@
 /* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2016       Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,6 +54,10 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call Dolibarr webservices interfaces");
 
@@ -157,7 +162,7 @@ $server->wsdl->addComplexType(
 			'maxOccurs' => 'unbounded'
 		)
 	),
-	null,
+	array(),
 	'tns:line'
 );
 
@@ -221,7 +226,7 @@ $server->wsdl->addComplexType(
 			'maxOccurs' => 'unbounded'
 		)
 	),
-	null,
+	array(),
 	'tns:invoice'
 );
 
@@ -300,11 +305,11 @@ $server->register(
 /**
  * Get invoice from id, ref or ref_ext.
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$id					Id
  * @param	string		$ref				Ref
  * @param	string		$ref_ext			Ref_ext
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 {
@@ -411,9 +416,9 @@ function getInvoice($authentication, $id = 0, $ref = '', $ref_ext = '')
 /**
  * Get list of invoices for third party
  *
- * @param	array		$authentication		Array of authentication information
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
  * @param	int			$idthirdparty		Id thirdparty
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getInvoicesForThirdParty($authentication, $idthirdparty)
 {
@@ -430,6 +435,7 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 	$errorcode = '';
 	$errorlabel = '';
 	$error = 0;
+	$socid = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 
 	if ($fuser->socid) {
@@ -546,9 +552,9 @@ function getInvoicesForThirdParty($authentication, $idthirdparty)
 /**
  * Create an invoice
  *
- * @param	array		$authentication		Array of authentication information
- * @param	array		$invoice			Invoice
- * @return	array							Array result
+ * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}		$authentication		Array of authentication information
+ * @param	array{id:string,ref:string,ref_ext:string,thirdparty_id:int,fk_user_author:string,fk_user_valid:string,date:string,date_due:string,date_creation:string,date_validation:string,date_modification:string,payment_mode_id:string,type:int,total_net:float,total_vat:float,total:float,note_private:string,note_public:string,status:int,close_code:string,close_note:string,project_id:string,lines?:array{id:string,type:int,desc:string,vat_rate:float,qty:float,unitprice:float,total_net:float,total_vat:float,total:float,date_start:string,date_end:string,product_id:int,product_ref:string,product_label:string,product_desc:string}}		$invoice			Invoice
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function createInvoice($authentication, $invoice)
 {
@@ -557,7 +563,6 @@ function createInvoice($authentication, $invoice)
 	$now = dol_now();
 
 	dol_syslog("Function: createInvoice login=".$authentication['login']." id=".$invoice['id'].", ref=".$invoice['ref'].", ref_ext=".$invoice['ref_ext']);
-
 	if ($authentication['entity']) {
 		$conf->entity = $authentication['entity'];
 	}
@@ -585,7 +590,7 @@ function createInvoice($authentication, $invoice)
 		$new_invoice->note_private = $invoice['note_private'];
 		$new_invoice->note_public = $invoice['note_public'];
 		$new_invoice->statut = Facture::STATUS_DRAFT; // We start with status draft
-		$new_invoice->fk_project = $invoice['project_id'];
+		$new_invoice->fk_project = (int) $invoice['project_id'];
 		$new_invoice->date_creation = $now;
 
 		//take mode_reglement and cond_reglement from thirdparty
@@ -595,15 +600,18 @@ function createInvoice($authentication, $invoice)
 			$new_invoice->mode_reglement_id = !empty($invoice['payment_mode_id']) ? $invoice['payment_mode_id'] : $soc->mode_reglement_id;
 			$new_invoice->cond_reglement_id = $soc->cond_reglement_id;
 		} else {
-			$new_invoice->mode_reglement_id = $invoice['payment_mode_id'];
+			$new_invoice->mode_reglement_id = (int) $invoice['payment_mode_id'];
 		}
 
 		// Trick because nusoap does not store data with same structure if there is one or several lines
 		$arrayoflines = array();
 		if (isset($invoice['lines']['line'][0])) {
-			$arrayoflines = $invoice['lines']['line'];
+			$arrayoflines = $invoice['lines']['line']; // @phan-suppress-current-line PhanTypeInvalidDimOffset
 		} else {
 			$arrayoflines = $invoice['lines'];
+		}
+		if (!is_array($arrayoflines)) {
+			$arrayoflines = array();
 		}
 
 		foreach ($arrayoflines as $line) {
@@ -684,6 +692,8 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 	$errorcode = '';
 	$errorlabel = '';
 	$error = 0;
+	$newobject = null;
+	$socid = 0;
 	$fuser = check_authentication($authentication, $error, $errorcode, $errorlabel);
 	if ($fuser->socid) {
 		$socid = $fuser->socid;
@@ -732,7 +742,7 @@ function createInvoiceFromOrder($authentication, $id_order = '', $ref_order = ''
 		}
 	}
 
-	if ($error) {
+	if ($error || $newobject === null) {
 		$objectresp = array('result' => array('result_code' => $errorcode, 'result_label' => $errorlabel));
 	} else {
 		$objectresp = array('result' => array('result_code' => 'OK', 'result_label' => ''), 'id' => $newobject->id, 'ref' => $newobject->ref, 'ref_ext' => $newobject->ref_ext);
@@ -777,7 +787,7 @@ function updateInvoice($authentication, $invoice)
 		$objectfound = false;
 
 		$object = new Facture($db);
-		$result = $object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], '');
+		$result = $object->fetch($invoice['id'], $invoice['ref'], $invoice['ref_ext'], 0);
 
 		if (!empty($object->id)) {
 			$objectfound = true;

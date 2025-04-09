@@ -557,6 +557,7 @@ class PaymentExpenseReport extends CommonObject
 
 			//Fix me field
 			$total = $this->amount;
+			$amount = 0;
 
 			if ($mode == 'payment_expensereport') {
 				$amount = $total;
@@ -569,7 +570,7 @@ class PaymentExpenseReport extends CommonObject
 				$label,
 				-$amount,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

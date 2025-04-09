@@ -33,6 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("ecm", "companies", "other", "users", "orders", "propal", "bills", "contracts"));
 
@@ -409,7 +417,7 @@ if (!getDolGlobalString('ECM_AUTO_TREE_HIDEN')) {
 	}
 }
 
-$head = ecm_prepare_dasboard_head(null);
+$head = ecm_prepare_dasboard_head();
 print dol_get_fiche_head($head, 'index_auto', '', -1, '');
 
 
@@ -453,7 +461,7 @@ if ($action == 'delete_section') {
 
 
 if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'deletefile') {
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	print '<!-- Title for auto directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

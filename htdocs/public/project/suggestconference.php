@@ -60,6 +60,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 global $dolibarr_main_url_root;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Init vars
 $errmsg = '';
 $num = 0;
@@ -86,7 +94,7 @@ if ($resultproject < 0) {
 
 // Security check
 $securekeyreceived = GETPOST('securekey', 'alpha');
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, 'md5');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeytocompare != $securekeyreceived) {
 	print $langs->trans('MissingOrBadSecureKey');
@@ -105,6 +113,9 @@ $user->loadDefaultValues();
 
 $cactioncomm = new CActionComm($db);
 $arrayofconfboothtype = $cactioncomm->liste_array('', 'id', '', 0, "module='conference@eventorganization'");
+if ($arrayofconfboothtype == -1) {
+	$arrayofconfboothtype = [];
+}
 
 // Security check
 if (empty($conf->eventorganization->enabled)) {
@@ -475,7 +486,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 
 	if (!$error) {
 		$db->commit();
-		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
+		$securekeyurl = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 		$redirection = $dolibarr_main_url_root.'/public/eventorganization/subscriptionok.php?id='.((int) $id).'&securekey='.urlencode($securekeyurl);
 		header("Location: ".$redirection);
 		exit;

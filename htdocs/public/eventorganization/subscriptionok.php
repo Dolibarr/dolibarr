@@ -61,6 +61,17 @@ if (isModEnabled('paypal')) {
 
 global $dolibarr_main_url_root, $mysoc;
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 $langs->loadLangs(array("main", "companies", "install", "other", "eventorganization"));
 
 $object = new stdClass(); // For triggers
@@ -70,7 +81,7 @@ $error = 0;
 // Security check
 $id = GETPOSTINT("id");
 $securekeyreceived = GETPOST("securekey");
-$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.$id, '2');
+$securekeytocompare = dol_hash(getDolGlobalString('EVENTORGANIZATION_SECUREKEY') . 'conferenceorbooth'.((int) $id), 'md5');
 
 if ($securekeyreceived != $securekeytocompare) {
 	print $langs->trans('MissingOrBadSecureKey');

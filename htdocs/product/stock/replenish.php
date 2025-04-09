@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 
@@ -56,7 +64,7 @@ $result = restrictedArea($user, 'produit|service');
 $action = GETPOST('action', 'aZ09');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_label = GETPOST('search_label', 'alpha');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $type = GETPOSTINT('type');
 $tobuy = GETPOSTINT('tobuy');
 $salert = GETPOST('salert', 'alpha');
@@ -85,6 +93,10 @@ while ($tmpobj = $db->fetch_object($resWar)) {
 //MultiCompany : If only 1 Warehouse is visible, filter will automatically be set to it.
 if ($count == 1 && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MULTICOMPANY_PRODUCT_SHARING_ENABLED')) {
 	$fk_entrepot = $lastWarehouseID;
+}
+//If the warehouse is set to the default selected user
+if (!GETPOSTISSET('fk_warehouse') && (empty($fk_entrepot) || $fk_entrepot <= 0) && getDolGlobalString('MAIN_DEFAULT_WAREHOUSE_USER')) {
+	$fk_entrepot = $user->fk_warehouse;
 }
 
 $texte = '';
@@ -733,7 +745,7 @@ if ($usevirtualstock == 0) {
 	$stocklabel = $langs->trans('PhysicalStock');
 }
 if (getDolGlobalString('STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE') && $fk_entrepot > 0) {
-	$stocklabelbis = $stocklabel.' (Selected warehouse)';
+	$stocklabelbis = $stocklabel.' ('.$langs->trans('SelectedWarehouse').')';
 	$stocklabel .= ' ('.$langs->trans("AllWarehouses").')';
 }
 $texte = $langs->trans('Replenishment');

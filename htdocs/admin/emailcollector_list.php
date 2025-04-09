@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/emailcollector/class/emailcollector.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array("admin", "other"));
 

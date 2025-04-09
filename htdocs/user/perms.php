@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
@@ -66,7 +74,7 @@ if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 
 // Security check
 $socid = 0;
-if (isset($user->socid) && $user->socid > 0) {
+if (!empty($user->socid) && $user->socid > 0) {
 	$socid = $user->socid;
 }
 $feature2 = (($socid && $user->hasRight("user", "self", "write")) ? '' : 'user');
@@ -331,6 +339,7 @@ if ($user->admin) {
 if (!empty($object->socid)) {
 	print info_admin(showModulesExludedForExternal($modules))."\n";
 }
+print '<br>';
 
 $parameters = array('permsgroupbyentity' => $permsgroupbyentity);
 $reshook = $hookmanager->executeHooks('insertExtraHeader', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -338,7 +347,7 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-$listofexpandedmodules = array();
+//$listofexpandedmodules = array();
 
 
 print "\n";

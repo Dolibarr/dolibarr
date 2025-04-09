@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is an example to follow to add your own email selector inside
  * the Dolibarr email tool.
@@ -25,13 +26,29 @@ include_once DOL_DOCUMENT_ROOT.'/core/modules/mailings/modules_mailings.php';
  */
 class mailing_thirdparties extends MailingTargets
 {
+	/**
+	 * @var string name of mailing module
+	 */
 	public $name = 'ThirdPartiesByCategories';
-	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+
+	/**
+	 * @var string This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
+	 */
 	public $desc = "Third parties (by categories)";
+
+	/**
+	 * @var int
+	 */
 	public $require_admin = 0;
 
-	public $require_module = array("societe"); // This module allows to select by categories must be also enabled if category module is not activated
+	/**
+	 * @var string[] This module allows to select by categories must be also enabled if category module is not activated
+	 */
+	public $require_module = array("societe");
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("societe")';
 
 	/**
@@ -47,7 +64,7 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	public function __construct($db)
 	{
-		global $conf, $langs;
+		global $langs;
 		$langs->load("companies");
 
 		$this->db = $db;
@@ -197,12 +214,12 @@ class mailing_thirdparties extends MailingTargets
 					$otherTxt .= $addDescription;
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->name, // For a thirdparty, we must use name
 								'firstname' => '', // For a thirdparty, lastname is ''
 								'other' => $otherTxt,
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'thirdparty'
 					);
 					$old = $obj->email;

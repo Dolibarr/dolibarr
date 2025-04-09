@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2005       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2018-2023  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,9 @@ class mailing_fraise extends MailingTargets
 
 	public $require_module = array('adherent');
 
+	/**
+	 * @var string condition to enable module
+	 */
 	public $enabled = 'isModEnabled("member")';
 
 	/**
@@ -301,7 +304,7 @@ class mailing_fraise extends MailingTargets
 				if ($old != $obj->email) {
 					$cibles[$j] = array(
 								'email' => $obj->email,
-								'fk_contact' => $obj->fk_contact,
+								'fk_contact' => (int) $obj->fk_contact,
 								'lastname' => $obj->lastname,
 								'firstname' => $obj->firstname,
 								'other' =>
@@ -310,7 +313,7 @@ class mailing_fraise extends MailingTargets
 								($langs->transnoentities("DateEnd").'='.dol_print_date($this->db->jdate($obj->datefin), 'day')).';'.
 								($langs->transnoentities("Company").'='.$obj->societe),
 								'source_url' => $this->url($obj->id),
-								'source_id' => $obj->id,
+								'source_id' => (int) $obj->id,
 								'source_type' => 'member'
 					);
 					$old = $obj->email;

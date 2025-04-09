@@ -313,7 +313,7 @@ drop table tmp_societe_double;
 -- Sequence to removed duplicated values of llx_accounting_account. Run several times if you still have duplicate.
 drop table tmp_accounting_account_double;
 --select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2;
-create table tmp_accounting_account_double as (select account_number, fk_pcg_version, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version having count(rowid) >= 2);
+create table tmp_accounting_account_double as (select account_number, fk_pcg_version, entity, max(rowid) as max_rowid, count(rowid) as count_rowid from llx_accounting_account where label is not null group by account_number, fk_pcg_version, entity having count(rowid) >= 2);
 --select * from tmp_accounting_account_double;
 delete from llx_accounting_account where (rowid) in (select max_rowid from tmp_accounting_account_double);	--update to avoid duplicate, delete to delete
 drop table tmp_accounting_account_double;
@@ -422,7 +422,7 @@ drop table tmp_c_shipment_mode;
 
 -- Restore id of user on link for payment of expense report
 drop table tmp_bank_url_expense_user;
-create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
+create table tmp_bank_url_expense_user as (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
 update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
@@ -680,3 +680,6 @@ alter table llx_product_attribute_combination_price_level drop index fk_product_
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_62;
 alter table llx_product_attribute_combination_price_level drop index fk_product_attribute_combinati_63;
 ALTER TABLE llx_product_attribute_combination_price_level ADD UNIQUE INDEX uk_prod_att_comb_price_level(fk_product_attribute_combination, fk_price_level);
+
+-- delete a constant that should not be set
+DELETE FROM llx_const WHERE name = 'INVOICE_USE_RETAINED_WARRANTY' AND value = -1;

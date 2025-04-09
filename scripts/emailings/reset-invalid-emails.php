@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
-/* Copyright (C) 2020 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,12 @@ require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
 require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
-
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ *
+ * @var int $dolibarr_main_db_readonly
+ */
 // Global variables
 $version = DOL_VERSION;
 $error = 0;

@@ -98,7 +98,7 @@ function loan_prepare_head($object)
  * @param   float   $rate				Loan rate
  * @param   int     $numactualloadterm	Actual loan term
  * @param   int   	$nbterm  			Total number of term for this loan
- * @return  array						Array with remaining capital, interest, and mensuality for each remaining terms
+ * @return array<array{cap_rest:float,cap_rest_str:string,interet:float,interet_str:string,mens:float}>		Array with remaining capital, interest, and mensuality for each remaining terms
  */
 function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbterm)
 {
@@ -141,7 +141,6 @@ function loanCalcMonthlyPayment($mens, $capital, $rate, $numactualloadterm, $nbt
 			'interet_str' => price($int, 0, '', 1, -1, -1, $conf->currency),
 			'mens' => $mens,
 		);
-
 		$capital = $cap_rest;
 		$numactualloadterm++;
 	}

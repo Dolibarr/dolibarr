@@ -131,7 +131,7 @@ class ActionsCardProduct
 		$this->name = "product";
 		$this->definition = "Product canvas (default)";
 		$this->fieldListName    = "product_default";
-		$this->next_prev_filter = "canvas='product'";
+		$this->next_prev_filter = "canvas:=:'product'";
 	}
 
 

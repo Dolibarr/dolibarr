@@ -86,7 +86,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplierpayment" value="'.getDolGlobalString("SUPPLIER_PAYMENT_BRODATOR_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="masksupplierpayment" value="'.getDolGlobalString("SUPPLIER_PAYMENT_BRODATOR_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
 
@@ -139,7 +139,7 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
 			return 0;
 		}
 
-		$numFinal = get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, $object->datepaye);
+		$numFinal = get_next_value($db, $mask, 'paiementfourn', 'ref', '', $objsoc, is_object($object) ?$object->datepaye :'');
 
 		return  $numFinal;
 	}

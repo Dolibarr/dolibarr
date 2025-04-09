@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Get parameters
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');
@@ -59,6 +67,7 @@ $socid = GETPOSTINT('socid');
 $langs->loadLangs(array("other", "holiday", "mails", "trips"));
 
 $error = 0;
+$errors = [];
 
 $now = dol_now();
 
@@ -76,11 +85,11 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$canread = 0;
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
 
 	// Check current user can read this leave request
-	$canread = 0;
 	if ($user->hasRight('holiday', 'readall')) {
 		$canread = 1;
 	}
@@ -160,10 +169,10 @@ if (empty($reshook)) {
 
 		$db->begin();
 
-		$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+		$date_debut = GETPOSTDATE('date_debut_', '00:00:00');
+		$date_fin = GETPOSTDATE('date_fin_', '00:00:00');
+		$date_debut_gmt = GETPOSTDATE('date_debut_', '00:00:00', 1);
+		$date_fin_gmt = GETPOSTDATE('date_fin_', '00:00:00', 1);
 		$starthalfday = GETPOST('starthalfday');
 		$endhalfday = GETPOST('endhalfday');
 		$type = GETPOST('type');
@@ -316,10 +325,10 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'update' && !GETPOSTISSET('savevalidator')) {	// Test on permission done later
-		$date_debut = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'));
-		$date_fin = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'));
-		$date_debut_gmt = dol_mktime(0, 0, 0, GETPOST('date_debut_month'), GETPOST('date_debut_day'), GETPOST('date_debut_year'), 1);
-		$date_fin_gmt = dol_mktime(0, 0, 0, GETPOST('date_fin_month'), GETPOST('date_fin_day'), GETPOST('date_fin_year'), 1);
+		$date_debut = GETPOSTDATE('date_debut_', '00:00:00');
+		$date_fin = GETPOSTDATE('date_fin_', '00:00:00');
+		$date_debut_gmt = GETPOSTDATE('date_debut_', '00:00:00', 1);
+		$date_fin_gmt = GETPOSTDATE('date_fin_', '00:00:00', 1);
 		$starthalfday = GETPOST('starthalfday');
 		$endhalfday = GETPOST('endhalfday');
 		$halfday = 0;
@@ -533,6 +542,9 @@ if (empty($reshook)) {
 				} elseif ($object->halfday == 0 || $object->halfday == 2) {
 					$starthalfdaykey = "Morning";
 					$endhalfdaykey = "Afternoon";
+				} else {
+					$starthalfdaykey = "";
+					$endhalfdaykey = "";
 				}
 
 				$link = dol_buildpath("/holiday/card.php", 3) . '?id='.$object->id;
@@ -965,6 +977,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 $object = new Holiday($db);
 
 $listhalfday = array('morning'=>$langs->trans("Morning"), "afternoon"=>$langs->trans("Afternoon"));
@@ -1013,7 +1026,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
+			setEventMessages(null, $errors, 'errors');
 		}
 
 
@@ -1021,9 +1034,9 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		$( document ).ready(function() {
 			$("input.button-save").click("submit", function(e) {
 				console.log("Call valider()");
-	    	    if (document.demandeCP.date_debut_.value != "")
-	    	    {
-		           	if(document.demandeCP.date_fin_.value != "")
+				if (document.demandeCP.date_debut_.value != "")
+				{
+					if(document.demandeCP.date_fin_.value != "")
 		           	{
 		               if(document.demandeCP.valideur.value != "-1") {
 		                 return true;
@@ -1044,7 +1057,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		           alert("'.dol_escape_js($langs->transnoentities('NoDateDebut')).'");
 		           return false;
 		        }
-	       	});
+			});
 		});
        </script>'."\n";
 
@@ -1144,7 +1157,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (!GETPOST('date_debut_')) {	// If visitor does not come from agenda
 			print $form->selectDate(-1, 'date_debut_', 0, 0, 0, '', 1, 1);
 		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
+			$tmpdate = GETPOSTDATE('date_debut_', '00:00:00');
 			print $form->selectDate($tmpdate, 'date_debut_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
@@ -1161,7 +1174,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		if (!GETPOST('date_fin_')) {
 			print $form->selectDate(-1, 'date_fin_', 0, 0, 0, '', 1, 1);
 		} else {
-			$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_fin_month'), GETPOSTINT('date_fin_day'), GETPOSTINT('date_fin_year'));
+			$tmpdate = GETPOSTDATE('date_fin_', '00:00:00');
 			print $form->selectDate($tmpdate, 'date_fin_', 0, 0, 0, '', 1, 1);
 		}
 		print ' &nbsp; &nbsp; ';
@@ -1200,7 +1213,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 
@@ -1267,7 +1280,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 						break;
 				}
 
-				setEventMessages($errors, null, 'errors');
+				setEventMessages(null, $errors, 'errors');
 			}
 
 			// check if the user has the right to read this request
@@ -1339,7 +1352,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print $form->textwithpicto($langs->trans('DateDebCP'), $langs->trans("FirstDayOfHoliday"));
 					print '</td>';
 					print '<td>';
-					$tmpdate = dol_mktime(0, 0, 0, GETPOSTINT('date_debut_month'), GETPOSTINT('date_debut_day'), GETPOSTINT('date_debut_year'));
+					$tmpdate = GETPOSTDATE('date_debut_', '00:00:00');
 					print $form->selectDate($tmpdate ? $tmpdate : $object->date_debut, 'date_debut_');
 					print ' &nbsp; &nbsp; ';
 					print $form->selectarray('starthalfday', $listhalfday, (GETPOST('starthalfday') ? GETPOST('starthalfday') : $starthalfday));
@@ -1406,7 +1419,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					print '<tr>';
 					print '<td>'.$langs->trans('DescCP').'</td>';
 					print '<td class="tdtop">';
-					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+					$doleditor = new DolEditor('description', $object->description, '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 					print $doleditor->Create(1);
 					print '</td></tr>';
 				}
@@ -1640,9 +1653,8 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			print '<a name="builddoc"></a>'; // ancre
 
-			$includedocgeneration = 0;
-
 			// Documents
+			/* $includedocgeneration = 0;
 			if ($includedocgeneration) {
 				$objref = dol_sanitizeFileName($object->ref);
 				$relativepath = $objref.'/'.$objref.'.pdf';
@@ -1651,10 +1663,10 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 				$genallowed = ($user->hasRight('holiday', 'read') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'readall'); // If you can read, you can build the PDF to read content
 				$delallowed = ($user->hasRight('holiday', 'write') && $object->fk_user == $user->id) || $user->hasRight('holiday', 'writeall_advance'); // If you can create/edit, you can remove a file on card
 				print $formfile->showdocuments('holiday:Holiday', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-			}
+			} */
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

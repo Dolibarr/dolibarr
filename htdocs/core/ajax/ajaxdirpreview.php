@@ -6,6 +6,7 @@
  * Copyright (C) 2010	   Pierre Morin         <pierre.morin@auguria.net>
  * Copyright (C) 2013      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2024      MDW                  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,14 @@ if (!defined('NOREQUIREAJAX')) {
 	define('NOREQUIREAJAX', '1');
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	require_once '../../main.inc.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -58,6 +67,8 @@ if (!isset($mode) || $mode != 'noajax') {    // For ajax call
 	$sortfield = GETPOST("sortfield", 'aZ09comma');
 	$sortorder = GETPOST("sortorder", 'aZ09comma');
 	$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
+	$showonrightsize = '';
+
 	if (empty($page) || $page == -1) {
 		$page = 0;
 	}     // If $page is not defined, or '' or -1
@@ -289,7 +300,7 @@ if ($type == 'directory') {
 
 	// Automatic list
 	if (in_array($module, $automodules)) {
-		$param .= '&module='.$module;
+		$param .= '&module='.urlencode($module);
 		if (isset($search_doc_ref) && $search_doc_ref != '') {
 			$param .= '&search_doc_ref='.urlencode($search_doc_ref);
 		}
@@ -411,7 +422,7 @@ if ($type == 'directory') {
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
 		// var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, '', $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
 	}
 }
 

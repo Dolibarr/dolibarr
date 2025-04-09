@@ -35,6 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "trips", "loan"));
 
@@ -123,8 +132,9 @@ if (isModEnabled('societe')) {
  * Actions
  */
 
+$error = 0;
+
 if ($action == 'update') {
-	$error = 0;
 	// Process $list_account_main
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');

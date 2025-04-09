@@ -45,6 +45,14 @@ if (isModEnabled("category")) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
@@ -69,7 +77,7 @@ $search_type_thirdparty = GETPOST("search_type_thirdparty", 'intcomma');
 $search_contract = GETPOST('search_contract', 'alpha');
 $search_ref_customer = GETPOST('search_ref_customer', 'alpha');
 $search_ref_supplier = GETPOST('search_ref_supplier', 'alpha');
-$search_all = (GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search_status = GETPOST('search_status', 'alpha');
 $search_signed_status = GETPOST('search_signed_status', 'alpha');
 $search_user = GETPOST('search_user', 'intcomma');
@@ -204,7 +212,7 @@ $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
 '@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
-if (!$user->hasRight('societe', 'client', 'voir')) {
+if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 	$search_sale = $user->id;
 }
 
@@ -895,7 +903,7 @@ if (!empty($arrayfields['c.ref_supplier']['checked'])) {
 }
 if (!empty($arrayfields['s.nom']['checked'])) {
 	print '<td class="liste_titre">';
-	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'"'.($user->socid > 0 ? " disabled" : "").'>';
 	print '</td>';
 }
 if (!empty($arrayfields['s.email']['checked'])) {

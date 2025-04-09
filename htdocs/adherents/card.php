@@ -49,6 +49,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "bills", "members", "users", "other", "paypal"));
 
@@ -65,6 +74,7 @@ $typeid = GETPOSTINT('typeid');
 $userid = GETPOSTINT('userid');
 $socid = GETPOSTINT('socid');
 $ref = GETPOST('ref', 'alpha');
+$error = 0;
 
 if (isModEnabled('mailmanspip')) {
 	include_once DOL_DOCUMENT_ROOT.'/mailmanspip/class/mailmanspip.class.php';
@@ -851,6 +861,27 @@ if (empty($reshook)) {
 		}
 	}
 
+	if ($action == 'update_extras' && $user->hasRight('adherent', 'creer')) {
+		$object->oldcopy = dol_clone($object, 2);
+		$attribute_name = GETPOST('attribute', 'restricthtml');
+
+		// Fill array 'array_options' with data from update form
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
+		if ($ret < 0) {
+			$error++;
+		}
+		if (!$error) {
+			$result = $object->updateExtraField($attribute_name, 'MEMBER_MODIFY');
+			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
+		}
+		if ($error) {
+			$action = 'edit_extras';
+		}
+	}
+
 	// SPIP Management
 	if (is_object($mailmanspip)) {
 		if ($user->hasRight('adherent', 'supprimer') && $action == 'confirm_del_spip' && $confirm == 'yes') {
@@ -1116,9 +1147,9 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// State
 		if (!getDolGlobalString('MEMBER_DISABLE_STATE')) {
 			print '<tr><td>'.$langs->trans('State').'</td><td>';
-			if ($soc->country_id) {
+			if ($soc->country_id || GETPOSTISSET('country_id')) {
 				print img_picto('', 'state', 'class="pictofixedwidth"');
-				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $soc->state_id, $soc->country_code);
+				print $formcompany->select_state(GETPOSTISSET('state_id') ? GETPOSTINT('state_id') : $soc->state_id, GETPOSTISSET('country_id') ? GETPOSTINT('country_id') : $soc->country_code);
 			} else {
 				print $countrynotdefined;
 			}
@@ -1341,7 +1372,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 		// EMail
 		print '<tr><td>'.(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? '<span class="fieldrequired">' : '').$langs->trans("EMail").(getDolGlobalString("ADHERENT_MAIL_REQUIRED") ? '</span>' : '').'</td>';
-		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').'<input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", '', 2) : $object->email).'"></td></tr>';
+		print '<td>'.img_picto('', 'object_email', 'class="pictofixedwidth"').'<input type="text" name="member_email" class="minwidth300" maxlength="255" value="'.(GETPOSTISSET("member_email") ? GETPOST("member_email", 'alphanohtml', 2) : $object->email).'"></td></tr>';
 
 		// Website
 		print '<tr><td>'.$form->editfieldkey('Web', 'member_url', GETPOST('member_url', 'alpha'), $object, 0).'</td>';
@@ -1613,7 +1644,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			if (isModEnabled('mailman') && getDolGlobalString('ADHERENT_USE_SPIP')) {
 				$formquestion[] = array('type' => 'other', 'label' => $langs->transnoentitiesnoconv("SynchroSpipEnabled"), 'value' => '');
 			}
-			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 220);
+			print $form->formconfirm("card.php?rowid=".$id, $langs->trans("ValidateMember"), $langs->trans("ConfirmValidateMember"), "confirm_valid", $formquestion, 'yes', 1, 250);
 		}
 
 		// Confirm resiliate
@@ -2096,15 +2127,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
+			//$tmparray = $form->showLinkToObjectBlock($object, null, array('subscription'), 1);
 			//$somethingshown = $form->showLinkedObjectBlock($object, '');
-
-			// Show links to link elements
-			/*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
-			 if ($linktoelem) {
-				print ($somethingshown?'':'<br>').$linktoelem;
-			}
-			 */
 
 			// Show online payment link
 			// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()

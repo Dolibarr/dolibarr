@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2022 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
 
 /**
  *       \file       htdocs/mymodule/ajax/myobject.php
- *       \brief      File to return Ajax response on product list request
+ *       \brief      File to return Ajax response on myobject list request
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -54,6 +56,14 @@ if (!$res) {
 	die("Include of main fails");
 }
 dol_include_once('/mymodule/class/myobject.class.php');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $mode = GETPOST('mode', 'aZ09');
 $objectId = GETPOST('objectId', 'aZ09');

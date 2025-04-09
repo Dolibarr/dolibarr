@@ -6,6 +6,7 @@
  * Copyright (C) 2023-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $langs->loadLangs(array("sendings", "receptions", "deliveries", 'companies', 'bills', 'orders'));
 
@@ -78,7 +87,7 @@ $search_date_create_start = dol_mktime(0, 0, 0, $search_date_create_startmonth, 
 $search_date_create_end = dol_mktime(23, 59, 59, $search_date_create_endmonth, $search_date_create_endday, $search_date_create_endyear);
 $search_billed = GETPOST("search_billed", 'intcomma');
 $search_status = GETPOST('search_status', 'intcomma');
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
@@ -599,9 +608,9 @@ $reception = new Reception($db);
 $formcompany = new FormCompany($db);
 $formfile = new FormFile($db);
 
-
+$title = $langs->trans('Receptions');
 $helpurl = 'EN:Module_Receptions|FR:Module_Receptions|ES:M&oacute;dulo_Receptiones';
-llxHeader('', $langs->trans('ListOfReceptions'), $helpurl, '', 0, 0, '', '', '', 'bodyforlist mod-reception page-list');
+llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'bodyforlist mod-reception page-list');
 
 $sql = "SELECT e.rowid, e.ref, e.ref_supplier, e.date_reception as date_reception, e.date_delivery as delivery_date, l.date_delivery as date_reception2, e.fk_statut as status, e.billed,";
 $sql .= " s.rowid as socid, s.nom as name, s.town, s.zip, s.fk_pays, s.client, s.code_client,";
@@ -897,13 +906,13 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 // @phan-suppress-next-line PhanPluginSuspiciousParamOrder
-print_barre_liste($langs->trans('ListOfReceptions'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, $newcardbutton, '', $limit, 0, 0, 1);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'dollyrevert', 0, $newcardbutton, '', $limit, 0, 0, 1);
 
 if ($massaction == 'createbills') {
 	//var_dump($_REQUEST);
 	print '<input type="hidden" name="massaction" value="confirm_createbills">';
 
-	print '<table class="noborder" width="100%" >';
+	print '<table class="noborder centpercent">';
 	print '<tr>';
 	print '<td class="titlefieldmiddle">';
 	print $langs->trans('DateInvoice');

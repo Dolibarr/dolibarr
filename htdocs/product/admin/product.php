@@ -10,6 +10,7 @@
  * Copyright (C) 2016      Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2016	   Ferran Marcet		<fmarcet@2byte.es>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "products"));
@@ -112,9 +122,11 @@ if ($action == 'other') {
 		if ($tmprule == $princingrules) { // We are on selected rule, we enable it
 			if ($princingrules == 'PRODUCT_PRICE_UNIQ') { // For this case, we disable entries manually
 				$res = dolibarr_set_const($db, 'PRODUIT_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
-				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES', 0, 'chaine', 0, '', $conf->entity);
 				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY', 0, 'chaine', 0, '', $conf->entity);
+				$res = dolibarr_set_const($db, 'PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES', 0, 'chaine', 0, '', $conf->entity);
+
 				dolibarr_set_const($db, 'PRODUCT_PRICE_UNIQ', 1, 'chaine', 0, '', $conf->entity);
 			} else {
 				$multirule = explode('&', $princingrules);
@@ -497,7 +509,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'contract').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -598,7 +610,7 @@ print '</tr>';
 
 
 // multiprix nombre de prix a proposer
-if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES')) {
+if (getDolGlobalString('PRODUIT_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES') || getDolGlobalString('PRODUIT_CUSTOMER_PRICES_AND_MULTIPRICES')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td class="right"><input size="3" type="text" class="flat right" name="value_PRODUIT_MULTIPRICES_LIMIT" value="' . getDolGlobalString('PRODUIT_MULTIPRICES_LIMIT').'"></td>';
@@ -640,6 +652,9 @@ print '<input type="submit" class="button reposition" value="'.$langs->trans("Mo
 print '</div>';
 
 
+print '<br>';
+
+
 print load_fiche_titre($langs->trans("UserInterface"), '', '');
 
 
@@ -662,11 +677,11 @@ if (empty($conf->use_javascript_ajax)) {
 	print '<td class="right">';
 	$arrval = array(
 		'0' => $langs->trans("No"),
-		'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-		'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-		'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+		'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+		'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+		'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
 	);
-	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, $conf->global->PRODUIT_USE_SEARCH_TO_SELECT);
+	print $form->selectarray("activate_usesearchtoselectproduct", $arrval, getDolGlobalInt('PRODUIT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth125imp maxwidth400');
 	print '</td>';
 }
 print '</tr>';
@@ -695,7 +710,7 @@ print $form->selectarray(
 	0,
 	0,
 	'',
-	'minwidth100imp maxwidth400',
+	'minwidth125imp maxwidth400',
 	1
 );
 print '</td>';

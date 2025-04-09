@@ -31,6 +31,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
 
@@ -45,7 +54,7 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scandir', 'alpha');
 $type = 'supplier_payment';
-
+$error = 0;
 
 /*
  * Actions
@@ -445,7 +454,7 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 

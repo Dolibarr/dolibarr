@@ -51,7 +51,7 @@ function dol_getwebuser($mode)
  *
  *	@param	string		$usertotest		Login value to test
  *	@param	string		$passwordtotest	Password value to test
- *	@param	string		$entitytotest	Instance of data we must check
+ *	@param	int|string	$entitytotest	Instance of data we must check
  *	@param	string[]	$authmode		Array list of selected authentication mode array('http', 'dolibarr', 'xxx'...)
  *	@param	'api'|'dav'|'ws'|''	$context	Context checkLoginPassEntity was created for ('api', 'dav', 'ws', '')
  *  @return	string						Login or '' or '--bad-login-validity--'
@@ -271,22 +271,20 @@ if (!function_exists('dol_loginfunction')) {
 		}
 
 		// Security graphical code
-		$captcha = 0;
-		$captcha_refresh = '';
-		if (function_exists("imagecreatefrompng") && getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
-			$captcha = 1;
-			$captcha_refresh = img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"');
+		$captcha = '';
+		if (getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA')) {
+			$captcha = getDolGlobalString('MAIN_SECURITY_ENABLECAPTCHA_HANDLER', 'standard');
 		}
 
 		// Extra link
 		$forgetpasslink = 0;
 		$helpcenterlink = 0;
-		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || !getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+		if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK') || getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 			if (!getDolGlobalString('MAIN_SECURITY_DISABLEFORGETPASSLINK')) {
 				$forgetpasslink = 1;
 			}
 
-			if (!getDolGlobalString('MAIN_HELPCENTER_DISABLELINK')) {
+			if (getDolGlobalString('MAIN_HELPCENTER_LINKTOUSE')) {
 				$helpcenterlink = 1;
 			}
 		}

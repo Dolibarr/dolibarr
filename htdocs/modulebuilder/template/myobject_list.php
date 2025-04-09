@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		   Frédéric France			<frederic.france@free.fr>
+/* Copyright (C) 2007-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -88,6 +88,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once __DIR__.'/class/myobject.class.php';
 // for other modules
 //dol_include_once('/othermodule/class/otherobject.class.php');
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule", "other"));
@@ -195,7 +203,7 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
 
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
+$enablepermissioncheck = getDolGlobalInt('MYMODULE_ENABLE_PERMISSION_CHECK');
 if ($enablepermissioncheck) {
 	$permissiontoread = $user->hasRight('mymodule', 'myobject', 'read');
 	$permissiontoadd = $user->hasRight('mymodule', 'myobject', 'write');
@@ -266,6 +274,8 @@ if (empty($reshook)) {
 	$objectclass = 'MyObject';
 	$objectlabel = 'MyObject';
 	$uploaddir = $conf->mymodule->dir_output;
+
+	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// You can add more action here
@@ -333,8 +343,14 @@ foreach ($search as $key => $val) {
 			}
 			$mode_search = 2;
 		}
-		if ($search[$key] != '') {
-			$sql .= natural_search("t.".$db->sanitize($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+		if (empty($object->fields[$key]['searchmulti'])) {
+			if (!is_array($search[$key]) && $search[$key] != '') {
+				$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
+			}
+		} else {
+			if (is_array($search[$key]) && !empty($search[$key])) {
+				$sql .= natural_search("t.".$db->escape($key), implode(',', $search[$key]), (($key == 'status') ? 2 : $mode_search));
+			}
 		}
 	} else {
 		if (preg_match('/(_dtstart|_dtend)$/', $key) && $search[$key] != '') {
@@ -454,7 +470,7 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // Output page
 // --------------------------------------------------------------------
 
-llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-mymodule page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for no horizontal scroll
+llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-mymodule page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 // Example : Adding jquery code
 // print '<script type="text/javascript">
@@ -595,7 +611,7 @@ $selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal noborder liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
@@ -622,7 +638,11 @@ foreach ($object->fields as $key => $val) {
 	if (!empty($arrayfields['t.'.$key]['checked'])) {
 		print '<td class="liste_titre'.($cssforfield ? ' '.$cssforfield : '').($key == 'status' ? ' parentonrightofpage' : '').'">';
 		if (!empty($val['arrayofkeyval']) && is_array($val['arrayofkeyval'])) {
-			print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			if (empty($val['searchmulti'])) {
+				print $form->selectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 1, 0, 0, '', 1, 0, 0, '', 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			} else {
+				print $form->multiselectarray('search_'.$key, $val['arrayofkeyval'], (isset($search[$key]) ? $search[$key] : ''), 0, 0, 'maxwidth100'.($key == 'status' ? ' search_status width100 onrightofpage' : ''), 1);
+			}
 		} elseif ((strpos($val['type'], 'integer:') === 0) || (strpos($val['type'], 'sellist:') === 0)) {
 			print $object->showInputField($val, $key, (isset($search[$key]) ? $search[$key] : ''), '', '', 'search_', $cssforfield.' maxwidth250', 1);
 		} elseif (preg_match('/^(date|timestamp|datetime)/', $val['type'])) {
@@ -637,7 +657,7 @@ foreach ($object->fields as $key => $val) {
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
 		} else {
-			print '<input type="text" class="flat maxwidth'.($val['type'] == 'integer' ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
+			print '<input type="text" class="flat maxwidth'.(in_array($val['type'], array('integer', 'price')) ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}
 		print '</td>';
 	}

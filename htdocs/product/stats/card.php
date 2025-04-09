@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width', '380');
 $HEIGHT = DolGraph::getDefaultGraphSizeForStats('height', '160');
 
@@ -151,6 +159,7 @@ if ($result && ($id > 0 || !empty($ref)) && empty($notab)) {
 	print dol_get_fiche_head($head, 'stats', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1&type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
+	$object->next_prev_filter = "(te.fk_product_type:=:".((int) $object->type).")";
 
 	dol_banner_tab($object, 'ref', $linkback, ($user->socid ? 0 : 1), 'ref', '', '', '', 0, '', '', 1);
 
@@ -209,7 +218,7 @@ if ($result || !($id > 0)) {
 		// Product
 		print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("ProductOrService").'</td><td>';
 		print img_picto('', 'product', 'class="pictofixedwidth"');
-		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', ($conf->dol_optimize_smallscreen ? 1 : 0), array(), 0, '1', 0, 'widthcentpercentminusx maxwidth400');
+		print $form->select_produits($id, 'id', '', 0, 0, 1, 2, '', 0, array(), 0, $langs->trans("RefOrLabel"), 0, 'widthcentpercentminusx maxwidth400');
 		print '</td></tr>';
 
 		// Tag
@@ -266,9 +275,9 @@ if ($result || !($id > 0)) {
 	}
 
 	if ($mode != 'byunit') {
-		print '<a class="a-mesure-disabled marginleftonly marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
+		print '<a class="a-mesure-disabled marginrightonly reposition" href="'.$_SERVER["PHP_SELF"].'?mode=byunit'.$param.'">';
 	} else {
-		print '<span class="a-mesure marginleftonly marginrightonly">';
+		print '<span class="a-mesure marginrightonly">';
 	}
 	if ($type == '0') {
 		print $langs->trans("StatsByNumberOfUnitsProducts");

@@ -37,6 +37,14 @@ if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langsLoad = array('projects', 'users', 'companies');
 if (isModEnabled('eventorganization')) {
@@ -196,6 +204,7 @@ $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
 /*
  * Actions
  */
+$error = 0;
 
 if ($cancel) {
 	if (!empty($backtopageforcancel)) {
@@ -320,7 +329,7 @@ if (!empty($search_progresscalc)) {
 if ($search_task_budget_amount) {
 	$morewherefilterarray[] = natural_search('t.budget_amount', $search_task_budget_amount, 1, 1);
 }
-if ($search_task_billable) {
+if ($search_task_billable && $search_task_billable != '-1') {
 	$morewherefilterarray[] = " t.billable = ".($search_task_billable == "yes" ? 1 : 0);
 }
 //var_dump($morewherefilterarray);
@@ -331,8 +340,6 @@ if (count($morewherefilterarray) > 0) {
 }
 
 if ($action == 'createtask' && $user->hasRight('projet', 'creer')) {
-	$error = 0;
-
 	// If we use user timezone, we must change also view/list to use user timezone everywhere
 	$date_start = dol_mktime(GETPOSTINT('date_starthour'), GETPOSTINT('date_startmin'), 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 	$date_end = dol_mktime(GETPOSTINT('date_endhour'), GETPOSTINT('date_endmin'), 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
@@ -441,6 +448,7 @@ $help_url = "EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader("", $title, $help_url, '', 0, 0, '', '', '', 'mod-project page-card_tasks');
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
+$param = '';
 
 if ($id > 0 || !empty($ref)) {
 	$result = $object->fetch($id, $ref);
@@ -609,7 +617,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -652,17 +660,6 @@ if ($id > 0 || !empty($ref)) {
 		print '</td></tr>';
 	}
 
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) {
-		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-		print $langs->trans('SharedProject');
-	} else {
-		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-		print $langs->trans('PrivateProject');
-	}
-	print '</td></tr>';
-
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (!is_null($object->budget_amount) && strcmp($object->budget_amount, '')) {
@@ -682,6 +679,17 @@ if ($id > 0 || !empty($ref)) {
 	}
 	print '</td></tr>';
 
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+		print $langs->trans('SharedProject');
+	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+		print $langs->trans('PrivateProject');
+	}
+	print '</td></tr>';
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -694,16 +702,21 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border tableforfield centpercent">';
 
-	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-	print dol_htmlentitiesbr($object->description);
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
+	}
+
+	// Description
+	print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+	if ($object->description) {
+		print '<tr><td class="nottitleforfield" colspan="2">';
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($object->description);
+		print '</div>';
+		print '</td></tr>';
 	}
 
 	print '</table>';
@@ -876,7 +889,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 
 	print '</form>';
 } elseif ($id > 0 || !empty($ref)) {
-	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage); // This also change content of $arrayfields
+	$selectedfields = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')); // This also change content of $arrayfields
 
 	// Projet card in view mode
 
@@ -1052,12 +1065,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print '</td>';
 		}
 	}
-	// Contacts of task, disabled because available by default just after
-	/*
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-		print '<td class="liste_titre"></td>';
-	}
-	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
 		print '<td class="liste_titre center">';
@@ -1077,6 +1084,11 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '<td class="liste_titre maxwidthsearch">&nbsp;</td>';
 
@@ -1135,12 +1147,6 @@ if ($action == 'create' && $user->hasRight('projet', 'creer') && (empty($object-
 			print_liste_field_titre($arrayfields['t.billed']['label'], $_SERVER["PHP_SELF"], "t.billed", '', $param, '', $sortfield, $sortorder, 'right ');
 		}
 	}
-	// Contacts of task, disabled because available by default just after
-	/*
-	if (!empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST)) {
-		print_liste_field_titre("TaskRessourceLinks", $_SERVER["PHP_SELF"], '', '', $param, $sortfield, $sortorder);
-	}
-	*/
 
 	if (!empty($arrayfields['t.budget_amount']['checked'])) {
 		print_liste_field_titre($arrayfields['t.budget_amount']['label'], $_SERVER["PHP_SELF"], "t.budget_amount", "", $param, '', $sortfield, $sortorder, 'center ');

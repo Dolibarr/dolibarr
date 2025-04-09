@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2020  Alexandre Spangaro  <aspangaro@open-dsi.fr>
+/* Copyright (C) 2014-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2020       OScss-Shop          <support@oscss-shop.fr>
  * Copyright (C) 2023-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
@@ -355,9 +355,9 @@ class Fiscalyear extends CommonObject
 		if (empty($notooltip) && $user->hasRight('accounting', 'fiscalyear', 'write')) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("FiscalPeriod");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= $dataparams.' class="'.$classfortooltip.'"';
 		}
 
@@ -406,11 +406,11 @@ class Fiscalyear extends CommonObject
 		// phpcs:enable
 		if (empty($this->labelStatus) || empty($this->labelStatusShort)) {
 			global $langs;
-			//$langs->load("mymodule@mymodule");
-			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Draft');
-			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('Enabled');
-			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('Disabled');
+
+			$this->labelStatus[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('FiscalYearOpened');
+			$this->labelStatus[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('FiscalYearClosed');
+			$this->labelStatusShort[self::STATUS_OPEN] = $langs->transnoentitiesnoconv('FiscalYearOpenedShort');
+			$this->labelStatusShort[self::STATUS_CLOSED] = $langs->transnoentitiesnoconv('FiscalYearClosedShort');
 		}
 
 		$statusType = 'status4';
@@ -460,7 +460,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 *	@param	int|string		$datestart	Date start to scan
 	 *	@param	int|string		$dateend	Date end to scan
-	 *	@return	string			Number of entries
+	 *	@return	int				Number of entries
 	 */
 	public function getAccountancyEntriesByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -478,10 +478,11 @@ class Fiscalyear extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
+		$nb = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}
@@ -494,7 +495,7 @@ class Fiscalyear extends CommonObject
 	 *
 	 *  @param	int|string		$datestart	Date start to scan
 	 *  @param	int|string		$dateend	Date end to scan
-	 *  @return	string				Number of movements
+	 *  @return	int							Number of movements
 	 */
 	public function getAccountancyMovementsByFiscalYear($datestart = '', $dateend = '')
 	{
@@ -512,10 +513,11 @@ class Fiscalyear extends CommonObject
 		$sql .= " WHERE entity IN (".getEntity('bookkeeping', 0).")";
 		$sql .= " AND doc_date >= '".$this->db->idate($datestart)."' and doc_date <= '".$this->db->idate($dateend)."'";
 
+		$nb = 0;
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
-			$nb = $obj->nb;
+			$nb = (int) $obj->nb;
 		} else {
 			dol_print_error($this->db);
 		}

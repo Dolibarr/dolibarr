@@ -44,6 +44,7 @@ PropalClosedRefusedInDolibarr=%s referans no'lu teklif reddedildi
 PropalValidatedInDolibarr=%s referans no'lu teklif doğrulandı
 PropalBackToDraftInDolibarr=Teklif %s taslak durumuna geri döner
 PropalClassifiedBilledInDolibarr=%s referans no'lu teklif faturalandı olarak sınıflandırıldı
+InvoiceCreatedInDolibarr=Fatura %s oluşturuldu
 InvoiceValidatedInDolibarr=%s referans no'lu fatura doğrulandı
 InvoiceValidatedInDolibarrFromPos=%s referans no'lu fatura POS'dan doğrulandı
 InvoiceBackToDraftInDolibarr=%s referans no'lu fatura taslak durumuna geri döndürüldü

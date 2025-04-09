@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2016-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("banks", "bills", "compta"));
@@ -186,13 +195,14 @@ if ($action == 'create') {
 	print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td><td><a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$charge->label."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Type")."</td><td>".$charge->type_label."</td></tr>\n";
-	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->periode, 'day')."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Period")."</td><td>".dol_print_date($charge->period, 'day')."</td></tr>\n";
 	/*print '<tr><td>'.$langs->trans("DateDue")."</td><td>".dol_print_date($charge->date_ech,'day')."</td></tr>\n";
 	print '<tr><td>'.$langs->trans("Amount")."</td><td>".price($charge->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';*/
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
 	$sql .= " WHERE p.fk_charge = ".((int) $chid);
+	$sumpaid = 0;
 	$resql = $db->query($sql);
 	if ($resql) {
 		$obj = $db->fetch_object($resql);

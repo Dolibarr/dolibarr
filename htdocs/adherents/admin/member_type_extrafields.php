@@ -6,6 +6,7 @@
  * Copyright (C) 2013		Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,14 @@
  *      \file       htdocs/adherents/admin/member_type_extrafields.php
  *		\ingroup    member
  *		\brief      Page to setup extra fields of members
+ */
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
  */
 
 // Load Dolibarr environment

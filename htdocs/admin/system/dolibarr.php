@@ -35,6 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 '
 @phan-var-force string $dolibarr_main_document_root_alt
 ';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_document_root_alt
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("install", "other", "admin"));
 

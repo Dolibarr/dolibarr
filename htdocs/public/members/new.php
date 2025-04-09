@@ -55,9 +55,9 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+// if (is_numeric($entity)) { // $entity is casted to int
+define("DOLENTITY", $entity);
+// }
 
 
 // Load Dolibarr environment
@@ -78,6 +78,15 @@ $action = GETPOST('action', 'aZ09');
 $errmsg = '';
 $num = 0;
 $error = 0;
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
@@ -969,7 +978,7 @@ if (getDolGlobalString('MEMBER_SKIP_TABLE') || getDolGlobalString('MEMBER_NEWFOR
 	}
 }
 
-
+//htmlPrintOnlineFooter($mysoc, $langs);
 llxFooterVierge();
 
 $db->close();

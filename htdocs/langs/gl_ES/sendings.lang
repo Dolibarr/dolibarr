@@ -8,13 +8,12 @@ Shipments=Envíos
 ShowSending=Amosar envíos
 Receivings=Recepcións
 SendingsArea=Área envíos
-ListOfSendings=Listaxe de envíos
 SendingMethod=Método de envío
 LastSendings=Últimos %s envíos
 StatisticsOfSendings=Estatísticas de envíos
 NbOfSendings=Número de envíos
 NumberOfShipmentsByMonth=Número de envíos por mes
-SendingCard=Ficha envío
+SendingCard=Envío
 NewSending=Novo envío
 CreateShipment=Crear envío
 QtyShipped=Cant. enviada
@@ -44,6 +43,7 @@ ConfirmCancelSending=¿Está certo de querer anular esta expedición?
 DocumentModelMerou=Modelo Merou A5
 WarningNoQtyLeftToSend=Alerta, ningún produto agardando para ser enviado.
 StatsOnShipmentsOnlyValidated=As estatísticas son só para envíos validados. A data utilizada é a data de validación do envío (non sempre é coñecida a data de entrega prevista)
+DateShipping=Data de envío
 DateDeliveryPlanned=Data prevista de entrega
 RefDeliveryReceipt=Ref. nota de entrega
 StatusReceipt=Estado nota de entrega
@@ -66,6 +66,7 @@ NoLineGoOnTabToAddSome=Sen liña, vai á lapela "%s" para engadir
 CreateInvoiceForThisCustomerFromSendings=Crear facturas
 IfValidateInvoiceIsNoSendingStayUnbilled=Se a validación da factura é "Non", o envío permanecerá no estado "Non facturado" ata que se valide a factura.
 OptionToSetSendingBilledNotEnabled=A opción do módulo Fluxo de traballo, para establecer o envío como 'Facturado' automaticamente cando se valida a factura, non está habilitada, polo que terá que configurar o estado dos envíos en 'Facturado' manualmente despois de xerar a factura.
+ShipmentUpdated=O envío actualizouse correctamente
 
 # Sending methods
 # ModelDocument
@@ -83,3 +84,11 @@ ShipmentDistribution=Distribución do envío
 ErrorTooManyCombinationBatchcode=Non hai envío para a liña %s xa que se atoparon demasiadas combinacións de código de almacén, produto e lote (%s).
 ErrorNoCombinationBatchcode=Non se puido gardar a liña %s como a combinación de almacén-produto-lote/serie (%s, %s, %s) non se atopou en stock.
 ErrorTooMuchShipped=A cantidade enviada non debe ser superior á cantidade solicitada para a liña %s
+##### Types of contacts #####
+TypeContact_shipping_internal_SALESREPFOLL=Responsable envío pedimento cliente
+TypeContact_shipping_external_BILLING=Contacto cliente de facturación orzamento
+TypeContact_shipping_external_CUSTOMER=Contacto do cliente despois do envío
+TypeContact_shipping_external_SHIPPING=Contacto do cliente para envío
+TypeContact_shipping_external_DELIVERY=Contacto cliente para envíos
+CloseShipment=Pechar o envío
+ConfirmCloseShipment=Confirmar o peche do envío

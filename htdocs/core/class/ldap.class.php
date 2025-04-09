@@ -5,6 +5,7 @@
  * Copyright (C) 2006-2021	Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		William Mead		<william.mead@manchenumerique.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +48,7 @@ class Ldap
 	public $errors = array();
 
 	/**
-	 * @var array Servers (IP addresses or hostnames)
+	 * @var string[] Servers (IP addresses or hostnames)
 	 */
 	public $server = array();
 
@@ -224,7 +225,7 @@ class Ldap
 	public $mobile;
 
 	/**
-	 * @var array UserAccountControl Flags
+	 * @var	array<int,string> UserAccountControl Flags
 	 */
 	public $uacf;
 
@@ -505,7 +506,7 @@ class Ldap
 	 *
 	 * @param	string	$bindDn			DN
 	 * @param	string	$pass			Password
-	 * @return	boolean					true or false
+	 * @return	bool					true or false
 	 */
 	public function bindauth($bindDn, $pass)
 	{
@@ -522,7 +523,7 @@ class Ldap
 	/**
 	 * Unbind of LDAP server (close connection).
 	 *
-	 * @return		boolean		true or false
+	 * @return		bool		true or false
 	 * @see	close()
 	 */
 	public function unbind()
@@ -567,7 +568,7 @@ class Ldap
 	 * Set LDAP protocol version.
 	 * LDAP_OPT_PROTOCOL_VERSION is a constant equal to 3
 	 *
-	 * @return	boolean		if set LDAP option OK: true, if KO: false
+	 * @return	bool		if set LDAP option OK: true, if KO: false
 	 */
 	public function setVersion()
 	{
@@ -577,7 +578,7 @@ class Ldap
 	/**
 	 * Set LDAP size limit.
 	 *
-	 * @return	boolean		if set LDAP option OK: true, if KO: false
+	 * @return	bool		if set LDAP option OK: true, if KO: false
 	 */
 	public function setSizeLimit()
 	{
@@ -588,7 +589,7 @@ class Ldap
 	 * Set LDAP referrals.
 	 * LDAP_OPT_REFERRALS is a constant equal to ?
 	 *
-	 * @return	boolean		if set LDAP option OK: true, if KO: false
+	 * @return	bool		if set LDAP option OK: true, if KO: false
 	 */
 	public function setReferrals()
 	{
@@ -601,9 +602,9 @@ class Ldap
 	 *	LDAP object connect and bind must have been done
 	 *
 	 *	@param	string	$dn			DN entry key
-	 *	@param	array	$info		Attributes array
+	 *  @param	array<string,string[]>	$info		Attributes array
 	 *	@param	User	$user		Object user that create
-	 *	@return	int					if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function add($dn, $info, $user)
 	{
@@ -649,9 +650,9 @@ class Ldap
 	 *	LDAP object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
+	 *  @param	array<string,string[]>	$info		Attributes array
 	 *	@param	User		$user		Object user that modify
-	 *	@return	int						if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function modify($dn, $info, $user)
 	{
@@ -709,7 +710,7 @@ class Ldap
 	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
 	 *	@param	User		$user			Object user that modify
 	 *	@param	bool		$deleteoldrdn	If true the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
-	 *	@return	int							if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
 	{
@@ -748,12 +749,12 @@ class Ldap
 	 *  LDAP object connect and bind must have been done
 	 *
 	 *  @param	string	$dn			DN entry key
-	 *  @param	array	$info		Attributes array
+	 *  @param	array<string,string[]>	$info		Attributes array
 	 *  @param	User	$user		Object user that update
 	 * 	@param	string	$olddn		Old DN entry key (before update)
 	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
 	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
-	 *	@return	int					if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function update($dn, $info, $user, $olddn, $newrdn = '', $newparent = '')
 	{
@@ -803,7 +804,7 @@ class Ldap
 	 *	LDAP object connect and bind must have been done
 	 *
 	 *	@param	string	$dn			DN entry key
-	 *	@return	int					if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function delete($dn)
 	{
@@ -835,7 +836,7 @@ class Ldap
 	 *
 	 * @see dump_content renamed
 	 * @param	string		$dn			DN entry key
-	 * @param	array		$info		Attributes array
+	 * @param	array<string,string[]>	$info	Attributes array
 	 * @return	string					Content of file
 	 */
 	public function dumpContent($dn, $info)
@@ -871,8 +872,8 @@ class Ldap
 	 * 	Dump an LDAP message to ldapinput.in file
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
-	 *	@return	int						if KO: <0 || if OK: >0
+	 *	@param	array<string,string[]>	$info	Attributes array
+	 *	@return	int<-1,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function dump($dn, $info)
 	{
@@ -905,7 +906,7 @@ class Ldap
 	 * @param	string	$host		Server host or address
 	 * @param	int		$port		Server port (default 389)
 	 * @param	int		$timeout	Timeout in second (default 1s)
-	 * @return	boolean				true or false
+	 * @return	bool				true or false
 	 */
 	public function serverPing($host, $port = 389, $timeout = 1)
 	{
@@ -950,9 +951,9 @@ class Ldap
 	 *	LDAP object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
+	 *	@param	array<string,string|string[]>	$info	Attributes array
 	 *	@param	User		$user		Object user that create
-	 *	@return	int						if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function addAttribute($dn, $info, $user)
 	{
@@ -996,9 +997,9 @@ class Ldap
 	 *	LDAP object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
+	 *	@param	array<string,string|string[]>	$info	Attributes array
 	 *	@param	User		$user		Object user that create
-	 *	@return	int						if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function updateAttribute($dn, $info, $user)
 	{
@@ -1042,9 +1043,9 @@ class Ldap
 	 *	LDAP object connect and bind must have been done
 	 *
 	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
+	 *	@param	array<string,string|string[]>	$info	Attributes array
 	 *	@param	User		$user		Object user that create
-	 *	@return	int						if KO: <0 || if OK: >0
+	 *	@return	int<-3,-1>|int<1,1>		if KO: <0 || if OK: >0
 	 */
 	public function deleteAttribute($dn, $info, $user)
 	{
@@ -1086,11 +1087,11 @@ class Ldap
 	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
-	 *  array{count:int,0..max:string,string:array}
+	 *  array{count:int,0..max:string|mixed[],string:array}
 	 *
 	 *	@param	string	$dn			DN entry key
 	 *	@param	string	$filter		Filter
-	 *	@return	int|array<'count'|int|string,int|string|array>	if KO: <=0 || if OK: array
+	 *	@return	int<-3,0>|array<'count'|int,int|mixed[]>	if KO: <=0 || if OK: array
 	 */
 	public function getAttribute($dn, $filter)
 	{
@@ -1131,7 +1132,7 @@ class Ldap
 	 *
 	 * 	@param	string			$filterrecord		Record
 	 * 	@param	string			$attribute			Attributes
-	 * 	@return	array|boolean
+	 * 	@return	array<string|int,int|string>|false
 	 */
 	public function getAttributeValues($filterrecord, $attribute)
 	{
@@ -1296,6 +1297,7 @@ class Ldap
 		}
 
 		$i = 0;
+		$entry = null;
 		$searchDN = $this->people;
 
 		while ($i <= 2) {
@@ -1360,7 +1362,7 @@ class Ldap
 	 *
 	 * 	@param	string		$checkDn		Search DN (Ex: ou=users,cn=my-domain,cn=com)
 	 * 	@param 	string		$filter			Search filter (ex: (sn=name_person) )
-	 *	@return	array|int					Array with answers (lowercase key - value)
+	 *	@return	array<int|string,int|string|mixed[]>|int<-1,-1>	Array with answers (lowercase key - value)
 	 */
 	public function search($checkDn, $filter)
 	{
@@ -1492,7 +1494,7 @@ class Ldap
 	 * 	UserAccountControl Flags to more human understandable form...
 	 *
 	 *	@param	string		$uacf		UACF
-	 *	@return	array
+	 *	@return	array<int,string>
 	 */
 	public function parseUACF($uacf)
 	{

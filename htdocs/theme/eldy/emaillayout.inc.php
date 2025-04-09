@@ -3,6 +3,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 ?>
+/* IDE Hack <style type="text/css"> */
+
 .template-container {
 	display: flex;
 	justify-content: space-between;
