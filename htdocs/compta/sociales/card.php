@@ -32,6 +32,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+// For some reason, the $actioncode parameter of show_actions_messaging() in /htdocs/core/lib/functions.lib.php messes with the $actioncode declaration below, but keeping this call to isModEnabled makes it disappear...
+if (isModEnabled('project')) {
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 
 /**
