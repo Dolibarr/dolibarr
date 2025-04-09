@@ -219,9 +219,9 @@ class ObjectLinks extends DolibarrApi
 	public function getByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null)
 	{
 		$request_data = array(
-			'fk_source' => (int) $fk_source,
+			'fk_source' => (string) $fk_source,
 			'sourcetype' => (string) $sourcetype,
-			'fk_target' => (int) $fk_target,
+			'fk_target' => (string) $fk_target,
 			'targettype' => (string) $targettype,
 			'relationtype' => $relationtype,
 		);
@@ -283,9 +283,9 @@ class ObjectLinks extends DolibarrApi
 	public function deleteByValues($fk_source, $sourcetype, $fk_target, $targettype, $relationtype = null, $notrigger = 0)
 	{
 		$request_data = array(
-			'fk_source' => (int) $fk_source,
+			'fk_source' => (string) $fk_source,
 			'sourcetype' => (string) $sourcetype,
-			'fk_target' => (int) $fk_target,
+			'fk_target' => (string) $fk_target,
 			'targettype' => (string) $targettype,
 			'relationtype' => $relationtype,
 		);
