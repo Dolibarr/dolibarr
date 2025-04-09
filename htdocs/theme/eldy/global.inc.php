@@ -8646,14 +8646,14 @@ table.jPicker {
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
-	border-radius: 5px !important;
+	border-radius: <?php echo $borderradius; ?>px !important;
 }
 .ai_feature {
 	background-color: var(--colorbackgrey);
 	padding: 10px;
 	padding-bottom: 6px;
 	padding-top: 6px;
-	border-radius: 5px;
+	border-radius: <?php echo $borderradius; ?>px;
 }
 
 
