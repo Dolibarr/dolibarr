@@ -45,8 +45,7 @@ Prerequisites to build autoexe DoliWamp package from Windows:
 
 ***** Actions to do a BETA *****
 
-This files describe steps made by Dolibarr packaging team to make a
-beta version of Dolibarr, step by step.
+This files describe steps made by Dolibarr packaging team to make a beta version of Dolibarr, step by step.
 
 - Check all files are committed.
 - Update version/info in ChangeLog, for this you can:
@@ -58,20 +57,17 @@ Recopy the content of the output file into the file ChangeLog.
 - Update version number with x.y.z-w in file htdocs/filefunc.inc.php
 - Commit all changes.
 
-- Run makepack-dolibarr.pl to generate all packages.
+- Run makepack-dolibarr.pl to check the generation of all packages. No need to publish them.
 
-- Create a branch (x.y), if version seems stable enough.
+- Post a news on dolibarr.org/dolibarr.fr + social networks about the freeze
 
-- Move build files into www.dolibarr.org web site
-  (/home/dolibarr/wwwroot/files/lastbuild).
-
-- Post a news on dolibarr.org/dolibarr.fr + social networks
+- Create a branch x.y (but only when version seems stable enough).
 
 
 ***** Actions to do a RELEASE *****
 
-This files describe steps made by Dolibarr packaging team to make a
-complete release of Dolibarr, step by step.
+This files describe steps made by Dolibarr packaging team to make a complete release of Dolibarr, step by step.
+We suppose the branch x.y has already been created during the beta (see previous step).
 
 - Check all files are committed.
 - Update version/info in ChangeLog, for this you can:
@@ -87,11 +83,7 @@ Recopy the content of the output file into the file ChangeLog.
 
 - Check content of built packages.
 
-- Run makepack-dolibarr.pl again with option to publish files on
-  dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
-- Run makepack-dolibarr.pl again with option to publish files on
-  sourceforge. This will also add official tag.
-- Edit symbolic links in directory "/home/dolibarr/wwwroot/files/stable/xxx"
-  on server to point to new files (used by some web sites).
+- Run makepack-dolibarr.pl again with option to publish files on dolibarr foundation server (Dir /home/dolibarr/wwwroot/files/stable on www.dolibarr.org).
+- Run makepack-dolibarr.pl again with option to publish files on sourceforge. This will also add official tag.
 
 - Post a news on dolibarr.org/dolibarr.fr + social networks

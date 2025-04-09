@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2017-2020	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/defaultvalues.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
@@ -141,13 +151,13 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 
 	if (!$error) {
 		if ($action == 'add' || (GETPOST('add') && $action != 'update')) {
-			$object->type=$mode;
-			$object->user_id=0;
-			$object->page=$defaulturl;
-			$object->param=$defaultkey;
-			$object->value=$defaultvalue;
-			$object->entity=$conf->entity;
-			$result=$object->create($user);
+			$object->type = $mode;
+			$object->user_id = 0;
+			$object->page = $defaulturl;
+			$object->param = $defaultkey;
+			$object->value = $defaultvalue;
+			$object->entity = $conf->entity;
+			$result = $object->create($user);
 			if ($result < 0) {
 				$action = '';
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -160,14 +170,14 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 			}
 		}
 		if (GETPOST('actionmodify')) {
-			$object->id=$id;
-			$object->type=$mode;
-			$object->page=$urlpage;
-			$object->param=$key;
-			$object->value=$value;
-			$object->entity=$conf->entity;
-			$result=$object->update($user);
-			if ($result<0) {
+			$object->id = $id;
+			$object->type = $mode;
+			$object->page = $urlpage;
+			$object->param = $key;
+			$object->value = $value;
+			$object->entity = $conf->entity;
+			$result = $object->update($user);
+			if ($result < 0) {
 				$action = '';
 				setEventMessages($object->error, $object->errors, 'errors');
 			} else {
@@ -183,9 +193,9 @@ if (($action == 'add' || (GETPOST('add') && $action != 'update')) || GETPOST('ac
 
 // Delete line from delete picto
 if ($action == 'delete') {
-	$object->id=$id;
-	$result=$object->delete($user);
-	if ($result<0) {
+	$object->id = $id;
+	$result = $object->delete($user);
+	if ($result < 0) {
 		$action = '';
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
@@ -356,7 +366,7 @@ print '<input type="submit" class="button"'.$disabled.' value="'.$langs->trans("
 print '</td>'."\n";
 print '</tr>'."\n";
 
-$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type'=>$mode, 't.entity'=>array($user->entity,$conf->entity)));
+$result = $object->fetchAll($sortorder, $sortfield, 0, 0, array('t.type' => $mode, 't.entity' => array($user->entity,$conf->entity)));
 
 if (!is_array($result) && $result < 0) {
 	setEventMessages($object->error, $object->errors, 'errors');
@@ -396,7 +406,7 @@ if (!is_array($result) && $result < 0) {
 		// Multicompany
 		print '<td>';
 		if (isModEnabled('multicompany')) {
-			print dol_escape_htmltag($defaultvalue->entity);
+			print dol_escape_htmltag((string) $defaultvalue->entity);
 		}
 		print '</td>';
 

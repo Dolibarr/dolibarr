@@ -2,13 +2,13 @@
 name: Win CI
 # yamllint disable-line rule:truthy
 on:
-  # push:
-  # pull_request:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:
@@ -57,7 +57,7 @@ jobs:
         id: cache
         uses: actions/cache/restore@v4
         env:
-          HASH: ${{ hashFiles('htdocs/install/**') }}
+          HASH: ${{ hashFiles('htdocs/install/**', 'htdocs/filefunc.inc.php') }}
           KEY_ROOT: ${{ matrix.os }}-${{ env.ckey }}-${{ matrix.php_version }}
         with:
           # See https://github.com/actions/cache/issues/1275#issuecomment-1925217178
@@ -72,7 +72,7 @@ jobs:
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.head_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-${{ github.base_ref }}-
             ${{ env.KEY_ROOT }}-${{ env.HASH }}-
-            ${{ env.KEY_ROOT }}-
+            # ${{ env.KEY_ROOT }}-
 
       - name: Setup MariaDB
         uses: frederic34/setup-mariadb@v1

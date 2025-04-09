@@ -418,6 +418,6 @@ class DolibarrApi
 	 */
 	protected static function _forge_criteria_callback($matches)
 	{
-		return dolForgeCriteriaCallback($matches);
+		return dolForgeSQLCriteriaCallback($matches);
 	}
 }

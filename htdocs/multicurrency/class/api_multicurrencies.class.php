@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2022   J-F Bouculat     <jfbouculat@gmail.com>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +145,7 @@ class MultiCurrencies extends DolibarrApi
 	public function getByCode($code)
 	{
 		$multicurrency = new MultiCurrency($this->db);
-		if (!$multicurrency->fetch('', $code)) {
+		if (!$multicurrency->fetch(0, $code)) {
 			throw new RestException(404, 'Currency not found');
 		}
 

@@ -46,6 +46,15 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'companies', 'categories'));
 
@@ -105,7 +114,7 @@ $usercandelete = $user->hasRight('stock', 'supprimer');
 
 $error = 0;
 
-$parameters = array('id' => $id, 'ref' => $ref);
+$parameters = array('context' => 'warehousecard', 'id' => $id, 'ref' => $ref);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -430,7 +439,7 @@ if ($action == 'create') {
 			}
 
 			// Call Hook formConfirm
-			$parameters = array('formConfirm' => $formconfirm);
+			$parameters = array('context' => 'warehousecard', 'formConfirm' => $formconfirm);
 			$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				$formconfirm .= $hookmanager->resPrint;
@@ -590,7 +599,7 @@ if ($action == 'create') {
 			 */
 			print "<div class=\"tabsAction\">\n";
 
-			$parameters = array();
+			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('addMoreActionsButtons', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			if (empty($reshook)) {
 				if (empty($action) || $action == 'classin') {
@@ -610,9 +619,7 @@ if ($action == 'create') {
 
 			print "</div>";
 
-
 			// Show list of products into warehouse
-
 
 			$totalarray = array();
 			$totalarray['val'] = array();
@@ -627,7 +634,7 @@ if ($action == 'create') {
 			print '<div class="div-table-responsive">';
 			print '<table class="noborder centpercent liste">';
 			print '<tr class="liste_titre">';
-			$parameters = array('totalarray' => &$totalarray);
+			$parameters = array('context' => 'warehousecard', 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 
@@ -673,7 +680,7 @@ if ($action == 'create') {
 				$totalarray['nbfield']++;
 			}
 			// Hook fields
-			$parameters = array('sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
+			$parameters = array('context' => 'warehousecard', 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 			$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			print "</tr>\n";
@@ -707,7 +714,7 @@ if ($action == 'create') {
 			}
 			$sql .= ", (ps.reel * p.pmp) as svalue";
 			// Add fields from hooks
-			$parameters = array();
+			$parameters = array('context' => 'warehousecard');
 			$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters); // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) {			//Note that $sql is replaced if reshook > 0
 				$sql = "";
@@ -734,6 +741,7 @@ if ($action == 'create') {
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
+				$units = 0;
 				$sameunits = true;
 
 				while ($i < $num) {
@@ -839,13 +847,11 @@ if ($action == 'create') {
 						print "</a></td>";
 					}
 
-					$parameters = array('obj' => $objp, 'totalarray' => &$totalarray);
+					$parameters = array('context' => 'warehousecard', 'obj' => $objp, 'totalarray' => &$totalarray);
 					$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters); // Note that $action and $object may have been modified by hook
 					print $hookmanager->resPrint;
 
 					print "</tr>";
-
-					$i++;
 
 					// Define $unit and $sameunits
 					if (getDolGlobalString('PRODUCT_USE_UNITS')) {
@@ -855,6 +861,8 @@ if ($action == 'create') {
 							$sameunits = false;
 						}
 					}
+
+					$i++;
 				}
 				$db->free($resql);
 
@@ -863,7 +871,7 @@ if ($action == 'create') {
 				$totalarray['val']['totalvaluesell'] = price2num($totalvaluesell, 'MT');
 				$totalarray['val']['units'] = $langs->trans($productstatic->getLabelOfUnit());
 
-				$parameters = array('totalarray' => &$totalarray);
+				$parameters = array('context' => 'warehousecard', 'totalarray' => &$totalarray);
 				// Note that $action and $object may have been modified by hook
 				$reshook = $hookmanager->executeHooks('printFieldListTotal', $parameters, $object);
 				if ($reshook < 0) {
@@ -968,7 +976,7 @@ if ($action == 'create') {
 			print '</td></tr>';
 
 			// Other attributes
-			$parameters = array('colspan' => ' colspan="3"', 'cols' => '3');
+			$parameters = array('context' => 'warehousecard', 'colspan' => ' colspan="3"', 'cols' => '3');
 			$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (empty($reshook)) {

@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('other', 'holiday', 'companies'));
 
@@ -96,7 +104,7 @@ if (($id > 0) || $ref) {
 }
 
 
-$upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
+$upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
 
 // Protection if external user
@@ -295,7 +303,7 @@ if ($object->id) {
 	$permissiontoadd = $user->hasRight('holiday', 'write');
 	$permtoedit = $user->hasRight('holiday', 'write');
 	$param = '&id='.$object->id;
-	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = get_exdir(0, 0, 0, 1, $object, '').'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

@@ -46,6 +46,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
 
@@ -131,7 +139,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 	if (!$error) {
 		$sql = "SELECT rrc.rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rrc";
 		$sql .= " WHERE rrc.email = '". $db->escape($email)."'";
-		$sql .= " AND rrc.entity = ". getEntity($object->element, 0);
+		$sql .= " AND rrc.entity IN (". getEntity($object->element, 0).")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);

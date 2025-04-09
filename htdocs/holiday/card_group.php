@@ -43,6 +43,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Get parameters
 $action 		= GETPOST('action', 'aZ09');
 $cancel 		= GETPOST('cancel', 'alpha');
@@ -406,7 +414,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 					break;
 			}
 
-			setEventMessages($errors, null, 'errors');
+			setEventMessages($errors, array(), 'errors');
 		}
 
 
@@ -513,7 +521,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 
 		$sql = 'SELECT u.rowid, u.lastname, u.firstname, u.login, u.photo FROM '.MAIN_DB_PREFIX.'user as u';
 		$sql .= ' WHERE 1 = 1';
-		$sql .= !empty($morefilter) ? $morefilter : '';
+		$sql .= empty($morefilter) ? '' : $morefilter;
 
 		$userlist = array();
 		$userstatic = new User($db);
@@ -633,7 +641,7 @@ if ((empty($id) && empty($ref)) || $action == 'create' || $action == 'add') {
 		print '<tr>';
 		print '<td>'.$langs->trans("DescCP").'</td>';
 		print '<td class="tdtop">';
-		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', 0, false, isModEnabled('fckeditor'), ROWS_3, '90%');
+		$doleditor = new DolEditor('description', GETPOST('description', 'restricthtml'), '', 80, 'dolibarr_notes', 'In', false, false, isModEnabled('fckeditor'), ROWS_3, '90%');
 		print $doleditor->Create(1);
 		print '</td></tr>';
 

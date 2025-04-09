@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=ใช้รายชื่อ/นามแฝงอื่�
 WEBSITE_CSS_URL=URL ของไฟล์ CSS ภายนอก
 WEBSITE_CSS_INLINE=เนื้อหาไฟล์ CSS (ทั่วไปสำหรับทุกหน้า)
 WEBSITE_JS_INLINE=เนื้อหาไฟล์ JavaScript (ทั่วไปสำหรับทุกหน้า)
-WEBSITE_HTML_HEADER=นอกจากนี้ที่ด้านล่างของส่วนหัว HTML (ทั่วไปสำหรับทุกหน้า)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=ไฟล์โรบ็อต (robots.txt)
 WEBSITE_HTACCESS=ไฟล์เว็บไซต์ .htaccess
 WEBSITE_MANIFEST_JSON=ไฟล์ manifest.json ของเว็บไซต์
@@ -56,16 +56,17 @@ ReadPerm=อ่าน
 WritePerm=เขียน
 TestDeployOnWeb=ทดสอบ/ปรับใช้บนเว็บ
 PreviewSiteServedByWebServer=<u>ดูตัวอย่าง %s ในแท็บใหม่</u><br><br>%s จะถูกให้บริการโดยเว็บเซิร์ฟเวอร์ภายนอก (เช่น Apache, Nginx, IIS ). คุณต้องติดตั้งและตั้งค่าเซิร์ฟเวอร์นี้ก่อนที่จะชี้ไปที่ไดเรกทอรี:<br><strong>%s%s</strong><br>URL ที่ให้บริการโดยเซิร์ฟเวอร์ภายนอก:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>ดูตัวอย่าง %s ในแท็บใหม่</u><br><br>%s จะถูกให้บริการโดยเซิร์ฟเวอร์ Dolibarr ดังนั้นจึงไม่จำเป็นต้องมีเว็บเซิร์ฟเวอร์เพิ่มเติมใดๆ (เช่น Apache, Nginx, IIS) ที่จะติดตั้ง<br>ข้อเสียคือ URL ของหน้าเว็บไม่เป็นมิตรกับผู้ใช้และเริ่มต้นด้วยเส้นทางของ Dolibarr ของคุณ<br>URL ที่ให้บริการโดย Dolibarr:<br><strong>%s</strong><br><br>หากต้องการใช้เว็บเซิร์ฟเวอร์ภายนอกของคุณเองเพื่อ ให้บริการเว็บไซต์นี้ สร้างโฮสต์เสมือนบนเว็บเซิร์ฟเวอร์ของคุณที่ชี้ไปที่ไดเรกทอรี<br><strong>%s</strong><br>จากนั้นป้อนชื่อของเซิร์ฟเวอร์เสมือนนี้ในคุณสมบัติของเว็บไซต์นี้ และคลิกที่ ลิงค์ "ทดสอบ/ปรับใช้บนเว็บ"
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=URL ของโฮสต์เสมือนที่ให้บริการโดยเว็บเซิร์ฟเวอร์ภายนอกไม่ได้กำหนดไว้
 NoPageYet=ยังไม่มีหน้า
 YouCanCreatePageOrImportTemplate=คุณสามารถสร้างหน้าใหม่หรือนำเข้าเทมเพลตเว็บไซต์แบบเต็มได้
 SyntaxHelp=ความช่วยเหลือเกี่ยวกับเคล็ดลับไวยากรณ์เฉพาะ
 YouCanEditHtmlSourceckeditor=คุณสามารถแก้ไขซอร์สโค้ด HTML ได้โดยใช้ปุ่ม "แหล่งที่มา" ในตัวแก้ไข
-YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=สำหรับรูปภาพที่แชร์ด้วยลิงก์แชร์ (เปิดการเข้าถึงโดยใช้คีย์แฮชการแชร์ของไฟล์) ไวยากรณ์คือ:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong> <br>
+YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=โคลนเพจ/คอนเทนเนอร์
 CloneSite=ไซต์โคลน
@@ -87,15 +88,15 @@ WebsiteAccount=บัญชีเว็บไซต์
 WebsiteAccounts=บัญชีเว็บไซต์
 AddWebsiteAccount=สร้างบัญชีเว็บไซต์
 BackToListForThirdParty=กลับไปที่รายการสำหรับบุคคลที่สาม
-DisableSiteFirst=ปิดการใช้งานเว็บไซต์ก่อน
+DisableSiteFirst=Put website offline first
 MyContainerTitle=ชื่อเว็บไซต์ของฉัน
 AnotherContainer=นี่คือวิธีการรวมเนื้อหาของเพจ/คอนเทนเนอร์อื่น (คุณอาจมีข้อผิดพลาดที่นี่หากคุณเปิดใช้งานโค้ดไดนามิกเนื่องจากคอนเทนเนอร์ย่อยที่ฝังอยู่อาจไม่มีอยู่)
 SorryWebsiteIsCurrentlyOffLine=ขออภัย เว็บไซต์นี้อยู่ในสถานะออฟไลน์ กรุณากลับมาทีหลัง...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the web site account table
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=เปิดใช้งานตารางเพื่อจัดเก็บบัญชีเว็บไซต์ (เข้าสู่ระบบ/ผ่าน) สำหรับแต่ละเว็บไซต์/บุคคลที่สาม
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=คุณต้องกำหนดโฮมเพจเริ่มต้นก่อน
-OnlyEditionOfSourceForGrabbedContentFuture=คำเตือน: การสร้างเว็บเพจโดยการนำเข้าเว็บเพจภายนอกนั้นสงวนไว้สำหรับผู้ใช้ที่มีประสบการณ์ ผลลัพธ์ของการนำเข้าอาจแตกต่างไปจากต้นฉบับ ขึ้นอยู่กับความซับซ้อนของเพจต้นฉบับ นอกจากนี้ หากหน้าต้นฉบับใช้สไตล์ CSS ทั่วไปหรือ JavaScript ที่ขัดแย้งกัน อาจทำให้รูปลักษณ์หรือคุณสมบัติของตัวแก้ไขเว็บไซต์เสียหายเมื่อทำงานในหน้านี้ วิธีนี้เป็นวิธีที่รวดเร็วกว่าในการสร้างเพจ แต่ขอแนะนำให้สร้างเพจใหม่ตั้งแต่ต้นหรือจากเทมเพลตเพจที่แนะนำ<br>โปรดทราบด้วยว่าโปรแกรมแก้ไขแบบอินไลน์อาจไม่ทำงาน ความถูกต้องเมื่อใช้กับหน้าภายนอกที่คว้ามา
-OnlyEditionOfSourceForGrabbedContent=แหล่งที่มา HTML รุ่นเดียวเท่านั้นที่สามารถทำได้เมื่อมีการดึงเนื้อหาจากไซต์ภายนอก
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=คว้ารูปภาพที่พบใน css และหน้าด้วย
 ImagesShouldBeSavedInto=รูปภาพควรถูกบันทึกลงในไดเร็กทอรี
 WebsiteRootOfImages=ไดเร็กทอรีรากสำหรับรูปภาพของเว็บไซต์
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Log out from your customer account
 filteredByVersion=Filtered by version
 removeFilter=ลบฟิลเตอร์
 viewMyCart=View my shopping cart
+Shipping=Shipping
 freeShipping=Free shipping!
 noProducts=No products
 nbrItemsInCart=There are <span class="ajax_cart_quantity">0</span> items in your cart.
@@ -271,7 +273,8 @@ totalTaxIncl=Total (tax incl.)
 clickToClose=Click to close
 sidebarCategories=Categories
 noSubCat=NoSubCat
-specialPromo=Specials promotions
+specialPromo=Promotions
+allSpecials=All promotions
 newProducts=New products
 allNewProducts= All new products
 view=View:
@@ -283,12 +286,13 @@ productNameAToZ=Product Name: A to Z
 productNameZToA=Product Name: Z to A
 referenceLowestFirst=Reference: Lowest first
 referenceHighestFirst=Reference: Highest first
+productPerPage=products per page
 perPage=per page
 showAll=Show all
 showing= Showing
 nbrOfProducts= There are %s products.
 noResultsHaveBeenFound=0 results have been found.
-noResultsWereFound= No results were found.
+noResultsWereFound=No results were found.
 addToCart=Add to cart
 backHome=Return to Home
 priceDrop=Price drop
@@ -301,10 +305,11 @@ lastUpdate=Last update
 contactSupport=How to contact support
 noProductToDisplay=Error, No product to display
 yourCompanyInformation=Your company information
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=This email is already registered.
 firstnameContainsLettersOnly=<b>Firstname</b> must contain letters and spaces only
 lastnameContainsLettersOnly=<b>Lastname</b> must contain letters and spaces only
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=An error has occurred.
 accountCreation=Create an account
 errorsOccurred=There are %s error%s
@@ -356,3 +361,7 @@ subtract=Subtract
 LoginCheckout=Login & Proceed to checkout
 paymentSuccessProcessed=Your payment has been successfully processed.
 youWillBeRedirectedToOrderPage=You will be redirected to the order details page shortly.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

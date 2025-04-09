@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2012       Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2012       Cédric Salvador     <csalvador@gpcsolutions.fr>
- * Copyright (C) 2012-2014  Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2012		Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Cédric Salvador				<csalvador@gpcsolutions.fr>
+ * Copyright (C) 2012-2014	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2023		Nick Fragoulis
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -153,9 +154,13 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public $sumcreditnote_multicurrency;
 	/**
-	 * @var string
+	 * @var int|float|string	May be used for status
 	 */
 	public $remaintopay;
+	/**
+	 * @var int					May be used for status
+	 */
+	public $nbofopendirectdebitorcredittransfer;
 
 	/**
 	 * @var int
@@ -281,7 +286,12 @@ abstract class CommonInvoice extends CommonObject
 		$alreadypaid += $this->getSumDepositsUsed($multicurrency);
 		$alreadypaid += $this->getSumCreditNotesUsed($multicurrency);
 
-		$remaintopay = price2num($this->total_ttc - $alreadypaid, 'MT');
+		if ((int) $multicurrency > 0) {
+			$totalamount = $this->multicurrency_total_ttc;
+		} else {
+			$totalamount = $this->total_ttc;
+		}
+		$remaintopay = price2num($totalamount - $alreadypaid, 'MT');
 		if ($this->status == self::STATUS_CLOSED && $this->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
 			$remaintopay = 0.0;
 		}
@@ -486,6 +496,56 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
+	 *  Return list of open direct debit or credit transfer
+	 *
+	 *  @param		'bank-transfer'|'direct-debit'		$type		'bank-transfer' or 'direct-debit'
+	 *  @return     array<array{id:int,invoiceid:int,date:''|int,amount:float}>		 Array with list of payments
+	 */
+	public function getListOfOpenDirectDebitOrCreditTransfer($type)
+	{
+		$listofopendirectdebitorcredittransfer = array();
+
+		// TODO Add a cache to store array of open requests for each invoice ID
+
+		$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande, pfd.date_traite as date_traite, pfd.amount";
+		$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+		if ($type == 'bank-transfer') {
+			$sql .= " WHERE fk_facture_fourn = ".((int) $this->id);
+		} else {
+			$sql .= " WHERE fk_facture = ".((int) $this->id);
+		}
+		$sql .= " AND pfd.traite = 0";
+		$sql .= " AND pfd.type = 'ban'";
+		$sql .= " ORDER BY pfd.date_demande DESC";
+
+		$resql = $this->db->query($sql);
+		$num = 0;
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				if ($obj) {
+					$listofopendirectdebitorcredittransfer[] = array(
+						'id' => (int) $obj->rowid,
+						'invoiceid' => (int) $this->id,
+						'date' => $this->db->jdate($obj->date_demande),
+						'amount' => (float) $obj->amount
+					);
+				}
+
+				$i++;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+		}
+
+		$this->nbofopendirectdebitorcredittransfer = $num;
+
+		return $listofopendirectdebitorcredittransfer;
+	}
+
+	/**
 	 *  Return list of payments
 	 *
 	 *  @see $error Empty string '' if no error.
@@ -609,11 +669,11 @@ abstract class CommonInvoice extends CommonObject
 	 *  Return if an invoice can be deleted
 	 *	Rule is:
 	 *  If invoice is draft and has a temporary ref -> yes (1)
-	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is on -> no (0)
-	 *  If invoice is dispatched in bookkeeping -> no (-1)
-	 *  If invoice has a definitive ref, is not last and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
-	 *  If invoice not last in a cycle -> no (-3)
-	 *  If there is payment -> no (-4)
+	 *  If hidden option INVOICE_CAN_NEVER_BE_REMOVED is 1 -> no (0)
+	 *  If invoice is transferred in bookkeeping -> no (-1)
+	 *  If invoice has a definitive ref, is not last in ref and INVOICE_CAN_ALWAYS_BE_REMOVED off -> no (-2)
+	 *  If invoice has a definitive ref, is not last in a situation cycle and INVOICE_CAN_ALWAYS_BE_REMOVED off  -> no (-3)
+	 *  If there is one payment and INVOICE_CAN_ALWAYS_BE_REMOVED off  -> no (-4)
 	 *  Otherwise -> yes (2)
 	 *
 	 *  @return    int         Return integer <=0 if no, >0 if yes
@@ -629,7 +689,7 @@ abstract class CommonInvoice extends CommonObject
 			return 1;
 		}
 
-		if (getDolGlobalString('INVOICE_CAN_NEVER_BE_REMOVED')) {
+		if (getDolGlobalInt('INVOICE_CAN_NEVER_BE_REMOVED')) {
 			return 0;
 		}
 
@@ -647,16 +707,16 @@ abstract class CommonInvoice extends CommonObject
 				}
 				$maxref = $this->getNextNumRef($this->thirdparty, 'last');
 
-				// If there is no invoice into the reset range and not already dispatched, we can delete
-				// If invoice to delete is last one and not already dispatched, we can delete
+				// If there is no invoice into the reset range and not already transferred in accounting, we can delete
+				// If invoice to delete is last one and not already transferred, we can delete
 				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $maxref != '' && $maxref != $this->ref) {
 					return -2;
 				}
 
-				// TODO If there is payment in bookkeeping, check payment is not dispatched in accounting
+				// TODO If there is payment in bookkeeping, check the payment is not dispatched in accounting and return -2.
 				// ...
 
-				if ($this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
+				if (!getDolGlobalString('INVOICE_CAN_ALWAYS_BE_REMOVED') && $this->situation_cycle_ref && method_exists($this, 'is_last_in_cycle')) {
 					$last = $this->is_last_in_cycle();
 					if (!$last) {
 						return -3;
@@ -848,21 +908,22 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type);
+		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $this->nbofopendirectdebitorcredittransfer);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param    	int  	$paye          	Status field paye
-	 *	@param      int		$status        	Id status
-	 *	@param      int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
-	 *	@param		integer	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
-	 *	@param		int		$type			Type invoice. If -1, we use $this->type
-	 *	@return     string        			Label of status
+	 *	@param    	int			$paye          	Status field paye (or $recur)
+	 *	@param      int			$status        	Id status
+	 *	@param      int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
+	 *	@param		int			$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here amount paid if you have it, -1 otherwise)
+	 *	@param		int			$type			Type invoice. If -1, we use $this->type
+	 *  @param		int			$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
+	 *	@return     string						Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $nbofopendirectdebitorcredittransfer = 0)
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
@@ -891,7 +952,7 @@ abstract class CommonInvoice extends CommonObject
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusClosedPaidPartially');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusClosedPaidPartially');
 				$statusType = 'status9';
-			} elseif ($alreadypaid == 0) {
+			} elseif ($alreadypaid == 0 && $nbofopendirectdebitorcredittransfer == 0) {
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusNotPaid');
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusNotPaid');
 				$statusType = 'status1';
@@ -928,8 +989,6 @@ abstract class CommonInvoice extends CommonObject
 		if ($reshook > 0) {
 			return $hookmanager->resPrint;
 		}
-
-
 
 		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
 	}
@@ -1035,14 +1094,15 @@ abstract class CommonInvoice extends CommonObject
 	 *	Create a withdrawal request for a direct debit order or a credit transfer order.
 	 *  Use the remain to pay excluding all existing open direct debit requests.
 	 *
-	 *	@param      User	$fuser      				User asking the direct debit transfer
-	 *  @param		float	$amount						Amount we request direct debit for
-	 *  @param		string	$type						'direct-debit' or 'bank-transfer'
-	 *  @param		string	$sourcetype					Source ('facture' or 'supplier_invoice')
-	 *  @param		int		$checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
-	 *	@return     int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
+	 *	@param	User	$fuser      				User asking the direct debit transfer
+	 *  @param	float	$amount						Amount we request direct debit for
+	 *  @param	string	$type						'direct-debit' or 'bank-transfer'
+	 *  @param	string	$sourcetype					Source ('facture' or 'supplier_invoice')
+	 *  @param	int	    $checkduplicateamongall		0=Default (check among open requests only to find if request already exists). 1=Check also among requests completely processed and cancel if at least 1 request exists whatever is its status.
+	 *  @param  int     $ribId						If defined, will use this ID to get the RIB. Otherwise, the default RIB will be taken.
+	 *  @return int         						Return integer <0 if KO, 0 if a request already exists, >0 if OK
 	 */
-	public function demande_prelevement($fuser, $amount = 0, $type = 'direct-debit', $sourcetype = 'facture', $checkduplicateamongall = 0)
+	public function demande_prelevement(User $fuser, float $amount = 0, string $type = 'direct-debit', string $sourcetype = 'facture', int $checkduplicateamongall = 0, int $ribId = 0)
 	{
 		// phpcs:enable
 		global $conf;
@@ -1054,7 +1114,7 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->status > self::STATUS_DRAFT && $this->paye == 0) {
 			require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 			$bac = new CompanyBankAccount($this->db);
-			$bac->fetch(0, '', $this->socid);
+			$bac->fetch($ribId, '', $this->socid);
 
 			$sql = "SELECT count(rowid) as nb";
 			$sql .= " FROM ".$this->db->prefix()."prelevement_demande";
@@ -1096,7 +1156,12 @@ abstract class CommonInvoice extends CommonObject
 						} else {
 							$sql .= 'fk_facture, ';
 						}
-						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity)';
+						$sql .= ' amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib, sourcetype, type, entity';
+						if (empty($bac->id)) {
+							$sql .= ')';
+						} else {
+							$sql .= ', fk_societe_rib)';
+						}
 						$sql .= " VALUES (".((int) $this->id);
 						$sql .= ", ".((float) price2num($amount));
 						$sql .= ", '".$this->db->idate($now)."'";
@@ -1108,6 +1173,9 @@ abstract class CommonInvoice extends CommonObject
 						$sql .= ", '".$this->db->escape($sourcetype)."'";
 						$sql .= ", 'ban'";
 						$sql .= ", ".((int) $conf->entity);
+						if (!empty($bac->id)) {
+							$sql .= ", '".$this->db->escape($bac->id)."'";
+						}
 						$sql .= ")";
 
 						dol_syslog(get_class($this)."::demande_prelevement", LOG_DEBUG);
@@ -1280,7 +1348,8 @@ abstract class CommonInvoice extends CommonObject
 						$error++;
 						$errorforinvoice++;
 						dol_syslog("makeStripeSepaRequest Error no bank account defined for Stripe payments", LOG_ERR);
-						$this->errors[] = "Error bank account for Stripe payments not defined into Stripe module";
+						$this->error = "Error bank account for Stripe payments not defined into Stripe module";
+						$this->errors[] = $this->error;
 					}
 
 					$this->db->begin();
@@ -1291,12 +1360,13 @@ abstract class CommonInvoice extends CommonObject
 					if (!$error) {
 						if (empty($obj->fk_prelevement_bons)) {
 							// This creates a record into llx_prelevement_bons and updates link with llx_prelevement_demande
-							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', '', 0, $type, $did, $fk_bank_account);
+							$nbinvoices = $bon->create(0, 0, 'real', 'ALL', 0, 0, $type, $did, $fk_bank_account);
 							if ($nbinvoices <= 0) {
 								$error++;
 								$errorforinvoice++;
 								dol_syslog("makeStripeSepaRequest Error on BonPrelevement creation", LOG_ERR);
-								$this->errors[] = "Error on BonPrelevement creation";
+								$this->error = "Error on BonPrelevement creation";
+								$this->errors[] = $this->error;
 							}
 							/*
 							if (!$error) {
@@ -1308,7 +1378,8 @@ abstract class CommonInvoice extends CommonObject
 								$result = $this->db->query($sql);
 								if ($result < 0) {
 									$error++;
-									$this->errors[] = "Error on updating fk_prelevement_bons to ".$bon->id;
+									$this->error = "Error on updating fk_prelevement_bons to ".$bon->id;
+									$this->errors[] = $this->error;
 								}
 							}
 							*/
@@ -1316,7 +1387,8 @@ abstract class CommonInvoice extends CommonObject
 							$error++;
 							$errorforinvoice++;
 							dol_syslog("makeStripeSepaRequest Error Line already part of a bank payment order", LOG_ERR);
-							$this->errors[] = "The line is already included into a bank payment order. Delete the bank payment order first.";
+							$this->error = "The line is already included into a bank payment order. Delete the bank payment order first.";
+							$this->errors[] = $this->error;
 						}
 					}
 
@@ -1395,11 +1467,13 @@ abstract class CommonInvoice extends CommonObject
 								} else {
 									$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
 									if (empty($customer) && ! empty($stripe->error)) {
-										$this->errors[] = $stripe->error;
+										$this->error = $stripe->error;
+										$this->errors[] = $this->error;
 									}
 									/*if (!empty($customer) && empty($customer->sources)) {
 									 $customer = null;
-									 $this->errors[] = '\Stripe\Customer::retrieve did not returned the sources';
+									 $this->error = '\Stripe\Customer::retrieve did not returned the sources';
+									 $this->errors[] = $this->error;
 									 }*/
 								}
 
@@ -1478,7 +1552,7 @@ abstract class CommonInvoice extends CommonObject
 
 												$error++;
 												$errorforinvoice++;
-												$errmsg = $langs->trans("FailedToChargeCard");
+												$errmsg = $langs->trans("FailedToChargeSEPA");
 												if (!empty($charge)) {
 													if ($stripefailuredeclinecode == 'authentication_required') {
 														$errauthenticationmessage = $langs->trans("ErrSCAAuthentication");
@@ -1509,7 +1583,9 @@ abstract class CommonInvoice extends CommonObject
 
 												$description = 'Stripe payment ERROR from makeStripeSepaRequest: ' . $FULLTAG;
 												$postactionmessages[] = $errmsg . ' (' . $stripearrayofkeys['publishable_key'] . ')';
-												$this->errors[] = $errmsg;
+
+												$this->error = $errmsg;
+												$this->errors[] = $this->error;
 											} else {
 												dol_syslog('Successfuly request '.$type.' '.$stripecard->id);
 
@@ -1539,7 +1615,9 @@ abstract class CommonInvoice extends CommonObject
 											$error++;
 											$errorforinvoice++;
 											dol_syslog("No ban payment method found for this stripe customer " . $customer->id, LOG_WARNING);
-											$this->errors[] = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
+
+											$this->error = 'Failed to get direct debit payment method for stripe customer = ' . $customer->id;
+											$this->errors[] = $this->error;
 
 											$description = 'Failed to find or use the payment mode - no ban defined for the thirdparty account';
 											$stripefailurecode = 'BADPAYMENTMODE';
@@ -1565,10 +1643,12 @@ abstract class CommonInvoice extends CommonObject
 								} else {	// Else of the   if ($resultthirdparty > 0 && ! empty($customer)) {
 									if ($resultthirdparty <= 0) {
 										dol_syslog('SellYourSaasUtils Failed to load customer for thirdparty_id = ' . $thirdparty->id, LOG_WARNING);
-										$this->errors[] = 'Failed to load Stripe account for thirdparty_id = ' . $thirdparty->id;
+										$this->error = 'Failed to load Stripe account for thirdparty_id = ' . $thirdparty->id;
+										$this->errors[] = $this->error;
 									} else { // $customer stripe not found
 										dol_syslog('SellYourSaasUtils Failed to get Stripe customer id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'], LOG_WARNING);
-										$this->errors[] = 'Failed to get Stripe account id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+										$this->error = 'Failed to get Stripe account id for thirdparty_id = ' . $thirdparty->id . " in mode " . $servicestatus . " in Stripe env " . $stripearrayofkeysbyenv[$servicestatus]['publishable_key'];
+										$this->errors[] = $this->error;
 									}
 									$error++;
 									$errorforinvoice++;
@@ -1625,13 +1705,15 @@ abstract class CommonInvoice extends CommonObject
 								$error++;
 								$errorforinvoice++;
 								dol_syslog('Error ' . $e->getMessage(), LOG_ERR);
-								$this->errors[] = 'Error ' . $e->getMessage();
+								$this->error = 'Error ' . $e->getMessage();
+								$this->errors[] = $this->error;
 							}
 						} else {	// If remain to pay is null
 							$error++;
 							$errorforinvoice++;
 							dol_syslog("Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?", LOG_WARNING);
-							$this->errors[] = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+							$this->error = "Remain to pay is null for the invoice " . $this->id . " " . $this->ref . ". Why is the invoice not classified 'Paid' ?";
+							$this->errors[] = $this->error;
 						}
 					}
 
@@ -1642,7 +1724,8 @@ abstract class CommonInvoice extends CommonObject
 							$error++;
 							$errorforinvoice++;
 							dol_syslog("Error on BonPrelevement creation", LOG_ERR);
-							$this->errors[] = "Error on BonPrelevement creation";
+							$this->error = "Error on BonPrelevement creation";
+							$this->errors[] = $this->error;
 						}
 					}
 
@@ -1750,7 +1833,11 @@ abstract class CommonInvoice extends CommonObject
 		if ($this->fk_account > 0) {
 			$bankAccount->fetch($this->fk_account);
 			$lines[] = $bankAccount->bic; //BIC (required)
-			$lines[] = $mysoc->name; //Name (required)
+			if (!empty($bankAccount->owner_name)) {
+				$lines[] = $bankAccount->owner_name; //Owner of the bank account, if present (required)
+			} else {
+				$lines[] = $mysoc->name; //Name (required)
+			}
 			$lines[] = $bankAccount->iban; //IBAN (required)
 		} else {
 			$lines[] = ""; //BIC (required)
@@ -1760,6 +1847,7 @@ abstract class CommonInvoice extends CommonObject
 
 		// Add the amount and reference
 		$lines[] = 'EUR' . $totalTTCString; // Amount (optional)
+		$lines[] = ''; // Purpose (optional)
 		$lines[] = ''; // Payment reference (optional)
 		$lines[] = $this->ref; // Remittance Information (optional)
 
@@ -1808,9 +1896,9 @@ abstract class CommonInvoice extends CommonObject
 		$s .= '';					// ecda public key
 		$s .= '';					// ecda signature of public key stamp
 		*/
-
+		$mysocname = $mysoc->name ?? '';
 		// Using TLV format
-		$s = pack('C1', 1).pack('C1', strlen($mysoc->name)).$mysoc->name;
+		$s = pack('C1', 1).pack('C1', strlen($mysocname)).$mysocname;
 		$s .= pack('C1', 2).pack('C1', strlen($mysoc->tva_intra)).$mysoc->tva_intra;
 		$s .= pack('C1', 3).pack('C1', strlen($datestring)).$datestring;
 		$s .= pack('C1', 4).pack('C1', strlen($pricewithtaxstring)).$pricewithtaxstring;
@@ -1884,7 +1972,7 @@ abstract class CommonInvoice extends CommonObject
 			// If a bank account is provided and we ask to use it as creditor, we use the bank address
 			// TODO In a future, we may always use this address, and if name/address/zip/town/country differs from $mysoc, we can use the address of $mysoc into the final seller field ?
 			$s .= "S\n";
-			$s .= dol_trunc($bankaccount->proprio, 70, 'right', 'UTF-8', 1)."\n";
+			$s .= dol_trunc($bankaccount->owner_name, 70, 'right', 'UTF-8', 1)."\n";
 			$addresslinearray = explode("\n", $bankaccount->owner_address);
 			$s .= dol_trunc(empty($addresslinearray[1]) ? '' : $addresslinearray[1], 70, 'right', 'UTF-8', 1)."\n";		// address line 1
 			$s .= dol_trunc(empty($addresslinearray[2]) ? '' : $addresslinearray[2], 70, 'right', 'UTF-8', 1)."\n";		// address line 2

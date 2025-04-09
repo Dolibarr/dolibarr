@@ -7,7 +7,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 $atoploginusername = empty($user->photo) ? 52 : 0;
 
 ?>
-/* <style type="text/css" > don't remove this line it's an ide hack */
+
+/* IDE Hack <style type="text/css"> */
+
 /*
  * Dropdown of user popup
  */
@@ -41,7 +43,7 @@ div.login_block_tools > div {
 
 div#topmenu-login-dropdown {
 	position: fixed;
-	<?php echo $right; ?>: 20px;
+	<?php echo $right; ?>: 10px;
 	top: 0px;
 }
 

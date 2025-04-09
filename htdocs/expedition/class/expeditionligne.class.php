@@ -511,8 +511,8 @@ class ExpeditionLigne extends CommonObjectLine
 		$qty = price2num($this->qty);
 		$remainingQty = 0;
 		$batch = null;
-		$batch_id = null;
-		$expedition_batch_id = null;
+		$batch_id = 0;
+		$expedition_batch_id = 0;
 		if (is_array($this->detail_batch)) { 	// array of ExpeditionLineBatch
 			if (count($this->detail_batch) > 1) {
 				dol_syslog(get_class($this).'::update only possible for one batch', LOG_ERR);
@@ -605,7 +605,7 @@ class ExpeditionLigne extends CommonObjectLine
 						$shipmentLot->sellby = $lot->sellby;
 						$shipmentLot->entrepot_id = $this->detail_batch->entrepot_id;
 						$shipmentLot->qty = $this->detail_batch->qty;
-						$shipmentLot->fk_origin_stock = $batch_id;
+						$shipmentLot->fk_origin_stock = (int) $batch_id;
 						if ($shipmentLot->create($this->id) < 0) {
 							$this->errors = $shipmentLot->errors;
 							$error++;

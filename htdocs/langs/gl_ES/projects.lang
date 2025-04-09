@@ -312,3 +312,7 @@ TaskMergeSuccess=As tarefas fusionáronse
 ErrorTaskIdIsMandatory=Erro: o ID da tarefa é obrigatorio
 ErrorsTaskMerge=Produciuse un erro ao combinar tarefas
 Billable = Facturable
+ConfirmCloseTask=Esta certo de querer pechar esta tarefa?
+ConfirmClosed=Confirmar o peche da tarefa
+TaskStatus=Estado da tarefa
+TaskReopened=Reabriuse a tarefa

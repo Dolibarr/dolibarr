@@ -2,6 +2,7 @@
 /* Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,7 +68,7 @@ if (! defined("NOLOGIN")) {
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
+	$user->loadRights();
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
@@ -194,6 +195,7 @@ class CodingPhpTest extends CommonClassTest
 					'core/class/html.formticket.class.php',
 					'core/class/utils.class.php',
 					'core/class/openid.class.php',
+					'core/modules/security/captcha/modCaptchaStandard.class.php',
 					'fourn/class/fournisseur.facture.class.php',
 					'societe/canvas/actions_card_common.class.php',
 					'societe/canvas/individual/actions_card_individual.class.php',
@@ -329,6 +331,25 @@ class CodingPhpTest extends CommonClassTest
 		}
 		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
 		$this->assertTrue($ok, 'Found a forged SQL string that contains the function NOW() in file '.$file['relativename'].' Using this SQL function is forbidden. See https://wiki.dolibarr.org/index.php?title=Language_and_development_rules#SQL_Coding_rules');
+		//exit;
+
+		// Check bad casting on forge sql
+		$ok = true;
+		$matches = array();
+		preg_match_all('/\$sql\s*\.?=\s*[\"\'][a-z\s=_]+[\'\"]\s*\.\$([a-z->_]+)/', $filecontent, $matches, PREG_SET_ORDER);
+		foreach ($matches as $key => $val) {
+			if (in_array($val[1], array('object->get', 'user', 'this->sanitize', 'this->db->sanitize', 'this->db->escape', 'this->db->encrypt', 'this->db->plimit', 'db->decrypt', 'db->sanitize', 'db->ifsql', 'this->db->prefix', 'clause', 'sqlwhere', 'sqlorder'))) {		// exclude $db->escape( and $this->
+				continue;
+			}
+			//if ($val[1] != '\'"' && $val[1] != '\'\'') {
+			var_dump($matches);
+			$ok = false;
+			break;
+			//}
+			//if ($reg[0] != 'db') $ok=false;
+		}
+		//print __METHOD__." Result for checking we don't have non escaped string in sql requests for file ".$file."\n";
+		$this->assertTrue($ok, 'Found a forged SQL string that does not use escape or int cast for file '.$file['relativename']);
 		//exit;
 
 		// Check that forged sql string is using ' instead of " as string PHP quotes

@@ -93,3 +93,6 @@ phpstan_custom.neon
 htdocs/adherents/admin/error_log
 htdocs/adherents/error_log
 htdocs/custom/lezioni/error_log
+
+# ignore .htaccess files
+.htaccess

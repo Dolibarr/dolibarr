@@ -101,7 +101,7 @@ class IntracommReport extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array of properties of field to show
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array of properties of field to show
 	 */
 	public $fields = array(
 		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => 1, 'position' => 10, 'notnull' => 1, "visible" => "0",),
@@ -142,7 +142,13 @@ class IntracommReport extends CommonObject
 	 * @var string
 	 */
 	public $type_export;
+	/**
+	 * @var int|string
+	 */
 	public $datec;
+	/**
+	 * @var int
+	 */
 	public $tms;
 	// END MODULEBUILDER PROPERTIES
 
@@ -152,8 +158,14 @@ class IntracommReport extends CommonObject
 	 */
 	public $label;
 
+	/**
+	 * @var string
+	 */
 	public $period;
 
+	/**
+	 * @var string
+	 */
 	public $declaration;
 
 	/**
@@ -391,6 +403,7 @@ class IntracommReport extends CommonObject
 				return 0;
 			}
 
+			$categ_fraisdeport = null;
 			if ($exporttype == 'deb' && getDolGlobalInt('INTRACOMMREPORT_CATEG_FRAISDEPORT') > 0) {
 				$categ_fraisdeport = new Categorie($this->db);
 				$categ_fraisdeport->fetch(getDolGlobalString('INTRACOMMREPORT_CATEG_FRAISDEPORT'));
@@ -530,7 +543,7 @@ class IntracommReport extends CommonObject
 	 *	This function adds an item by retrieving the customs code of the product with the highest amount in the invoice
 	 *
 	 * 	@param	SimpleXMLElement	$declaration		Reference declaration
-	 * 	@param	array				$TLinesFraisDePort	Data of shipping costs line
+	 * 	@param	Object[]			$TLinesFraisDePort	Data of shipping costs line
 	 *  @param	string	    		$type				Declaration type by default - introduction or expedition (always 'expedition' for Des)
 	 *  @param	Categorie			$categ_fraisdeport	category of shipping costs
 	 *  @param	int		    		$i					Line Id
@@ -595,11 +608,12 @@ class IntracommReport extends CommonObject
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE exporttype = '".$this->db->escape($this->type_export)."'";
 		$resql = $this->db->query($sql);
+		$res = null;
 		if ($resql) {
 			$res = $this->db->fetch_object($resql);
 		}
 
-		return (string) ($res->max_declaration_number + 1);
+		return (string) ($res !== null ? ($res->max_declaration_number + 1) : '');
 	}
 
 	/**
@@ -694,9 +708,9 @@ class IntracommReport extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

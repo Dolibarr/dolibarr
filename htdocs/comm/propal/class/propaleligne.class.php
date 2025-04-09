@@ -457,6 +457,7 @@ class PropaleLigne extends CommonObjectLine
 		dol_syslog(get_class($this)."::insert rang=".$this->rang);
 
 		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+		$this->pa_ht = (float) $this->pa_ht; // convert to float after check if empty value
 
 		// Clean parameters
 		if (empty($this->tva_tx)) {
@@ -500,9 +501,6 @@ class PropaleLigne extends CommonObjectLine
 		}
 		if (!is_numeric($this->qty)) {
 			$this->qty = 0;
-		}
-		if (empty($this->pa_ht)) {
-			$this->pa_ht = 0;
 		}
 		if (empty($this->multicurrency_subprice)) {
 			$this->multicurrency_subprice = 0;

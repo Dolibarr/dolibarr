@@ -25,15 +25,39 @@ include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ProjectStats extends Stats
 {
+	/**
+	 * @var Project
+	 */
 	private $project;
+	/**
+	 * @var int
+	 */
 	public $userid;
+	/**
+	 * @var int
+	 */
 	public $socid;
+	/**
+	 * @var int
+	 */
 	public $status;
+	/**
+	 * @var string
+	 */
 	public $opp_status;
 
 	//SQL stat
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $where;
 
 
@@ -70,7 +94,7 @@ class ProjectStats extends Stats
 	 * Warning: There is no filter on WON/LOST because we want this for statistics.
 	 *
 	 * @param  int             $limit Limit results
-	 * @return array|int       Array with value or -1 if error
+	 * @return array<array{0:string,1:float}>|int<-1,-1>	Array with value or -1 if error
 	 * @throws Exception
 	 */
 	public function getAllProjectByStatus($limit = 5)
@@ -290,7 +314,7 @@ class ProjectStats extends Stats
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
 	 * @param   int     $wonlostfilter  Add a filter on status won/lost
-	 * @return 	array|int<-1,-1>		Array of values or <0 if error
+	 * @return int<-1,-1>|array<array<int<0,11>,array{0:int<1,12>,1:int|float}>>	Array of values or <0 if error
 	 */
 	public function getWeightedAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0, $wonlostfilter = 1)
 	{
@@ -313,6 +337,7 @@ class ProjectStats extends Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = 0;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {
@@ -399,8 +424,8 @@ class ProjectStats extends Stats
 	 *
 	 * @param 	int 		$endyear		End year
 	 * @param 	int 		$startyear		Start year
-	 * @param 	int 		$cachedelay 	accept for cache file (0=No read, no save of cache, -1=No read but save)
-	 * @return 	array|int					Array of values or <0 if error
+	 * @param 	int			$cachedelay 	accept for cache file (0=No read, no save of cache, -1=No read but save)
+	 * @return  array<int<0,11>,array<string|float>>|int<-1,-1>	Array of values or <0 if error
 	 */
 	public function getTransformRateByMonthWithPrevYear($endyear, $startyear, $cachedelay = 0)
 	{
@@ -423,6 +448,7 @@ class ProjectStats extends Stats
 		$nowgmt = dol_now();
 
 		$foundintocache = 0;
+		$filedate = 0;
 		if ($cachedelay > 0) {
 			$filedate = dol_filemtime($newpathofdestfile);
 			if ($filedate >= ($nowgmt - $cachedelay)) {

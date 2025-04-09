@@ -1,0 +1,64 @@
+name: Set reviewer for v18
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "18.0"
+  push:
+    branches:
+      - "18.0"
+
+jobs:
+  pr18:
+    runs-on: ubuntu-latest
+
+    #env:
+    #  GH_TOKEN: ${{ github.token }}
+    #  GH_TOKENS: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    #- name: Install GitHub CLI
+    #  run: |
+    #    sudo apt update
+    #    sudo apt install gh -y
+
+    - name: Assign reviewer method 1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        url: ${{ github.event.pull_request.html_url }}
+      run: |
+        gh pr edit "$url" --add-assignee rycks --add-reviewer rycks
+        gh pr merge "$url" --merge --auto
+      continue-on-error: true
+
+    - name: Assign reviewer method 2
+      env:
+        #REVIEWER: "eldy,lvessiller-opendsi,rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
+        REVIEWER: "rycks" # Remplacez par le nom d'utilisateur GitHub du reviewer
+      run: |
+        # shellcheck disable=2086
+        echo "Run action by ${{ github.actor }}"
+        # shellcheck disable=2086
+        echo "github.token=${{ github.token }}"
+        # shellcheck disable=2086
+        echo "secrets.GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}"
+        # shellcheck disable=2086
+        echo "GITHUB_EVENT_PATH=$GITHUB_EVENT_PATH"
+        # shellcheck disable=2086
+        echo Get the pr_number
+        # shellcheck disable=2086
+        pr_number=$(jq --raw-output .number < $GITHUB_EVENT_PATH)
+        # shellcheck disable=2086
+        echo "pr_number=$pr_number"
+        # shellcheck disable=2086
+        echo Authenticate login gh
+        # shellcheck disable=2086
+        gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+        # shellcheck disable=2086
+        gh auth setup-git
+        # shellcheck disable=2086
+        gh pr edit $pr_number --add-reviewer "$REVIEWER"
+      continue-on-error: true

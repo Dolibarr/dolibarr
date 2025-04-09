@@ -36,6 +36,9 @@ class box_validated_projects extends ModeleBoxes
 {
 	public $boxcode = "validated_project";
 	public $boximg = "object_projectpub";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	//var $depends = array("projet");
 

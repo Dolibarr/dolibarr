@@ -56,7 +56,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // You can find your endpoint's secret in your webhook settings
 if (GETPOSTISSET('connect')) {
@@ -174,14 +178,14 @@ top_httphead();
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 
 
-if ($event->type == 'payout.created') {
-	// When a payout is create by Stripe to transfer money to your account
+if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	// When a payout is created by Stripe to transfer money to your account
 	$error = 0;
 
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0) {
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
+		$subject = '['.$societeName.'] Notification - Stripe payout scheduled';
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 		} else {
@@ -217,7 +221,7 @@ if ($event->type == 'payout.created') {
 		http_response_code(500);
 		return -1;
 	}
-} elseif ($event->type == 'payout.paid') {
+} elseif ($event->type == 'payout.paid' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout to transfer money to your account is completely done
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
@@ -245,6 +249,8 @@ if ($event->type == 'payout.created') {
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
+			$db->begin();
+
 			if (!$error) {
 				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', '', $user);
 			}
@@ -270,37 +276,46 @@ if ($event->type == 'payout.created') {
 			if (!($result > 0)) {
 				$error++;
 			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+
+			// Send email
+			if (!$error) {
+				$subject = '['.$societeName.'] - NotificationOTIFICATION] Stripe payout done';
+				if (!empty($user->email)) {
+					$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
+				} else {
+					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+				}
+				$replyto = $sendto;
+				$sendtocc = '';
+				if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
+				}
+
+				$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+				$mailfile = new CMailFile(
+					$subject,
+					$sendto,
+					$replyto,
+					$message,
+					array(),
+					array(),
+					array(),
+					$sendtocc,
+					'',
+					0,
+					-1
+				);
+
+				$ret = $mailfile->sendfile();
+			}
 		}
-
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
-		if (!empty($user->email)) {
-			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
-		} else {
-			$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
-		}
-		$replyto = $sendto;
-		$sendtocc = '';
-		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
-		}
-
-		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
-
-		$mailfile = new CMailFile(
-			$subject,
-			$sendto,
-			$replyto,
-			$message,
-			array(),
-			array(),
-			array(),
-			$sendtocc,
-			'',
-			0,
-			-1
-		);
-
-		$ret = $mailfile->sendfile();
 
 		return 1;
 	} else {
@@ -317,7 +332,7 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'customer.deleted') {
 	// When a customer account is delete on Stripe side
 	$db->begin();
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' AND site = 'stripe'";
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {
@@ -708,21 +723,24 @@ if ($event->type == 'payout.created') {
 	if ($idthirdparty > 0) {
 		// If the payment mode attached is to a stripe account owned by an external customer in societe_account (so a thirdparty that has a Stripe account),
 		// we can create the payment mode
-		$companypaymentmode->stripe_card_ref = $db->escape($event->data->object->id);
+		$companypaymentmode->stripe_card_ref = $event->data->object->id;
 		$companypaymentmode->fk_soc          = $idthirdparty;
 		$companypaymentmode->bank            = null;
 		$companypaymentmode->label           = '';
-		$companypaymentmode->number          = $db->escape($event->data->object->id);
-		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->card_type       = $db->escape($event->data->object->card->branding);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+		$companypaymentmode->number          = $event->data->object->id;
+		$companypaymentmode->last_four       = $event->data->object->card->last4;
+		$companypaymentmode->card_type       = $event->data->object->card->branding;
+
+		$companypaymentmode->owner_name      = $event->data->object->billing_details->name;
+		$companypaymentmode->proprio         = $companypaymentmode->owner_name;			// We may still need this formodulebuilder because name of field is "proprio"
+
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
-		$companypaymentmode->type            = $db->escape($event->data->object->type);
-		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
+		$companypaymentmode->type            = $event->data->object->type;
+		$companypaymentmode->country_code    = $event->data->object->card->country;
 		$companypaymentmode->status          = $servicestatus;
 
 		// TODO Check that a payment mode $companypaymentmode->stripe_card_ref does not exists yet to avoid to create duplicates
@@ -757,7 +775,7 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = (int) $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
 		$companypaymentmode->type            = $db->escape($event->data->object->type);
 		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);

@@ -3,6 +3,7 @@
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  * Copyright (C) 2024      Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,9 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public $dao;
 
+	/**
+	 * @var string
+	 */
 	public $mesg;
 
 	/**
@@ -63,10 +67,18 @@ class ActionsTicket extends CommonHookActions
 	 */
 	public $errors = array();
 
-	//! Numero de l'erreur
+	/**
+	 * @var int Error number
+	 */
 	public $errno = 0;
 
+	/**
+	 * @var string
+	 */
 	public $template_dir;
+	/**
+	 * @var string
+	 */
 	public $template;
 
 	/**
@@ -500,32 +512,5 @@ class ActionsTicket extends CommonHookActions
 		print '</div>';
 		print '</div>';
 		print '<br>';
-	}
-
-	/**
-	 * Hook to add email element template
-	 *
-	 * @param array 		$parameters   Parameters
-	 * @param Ticket		$object       Object for action
-	 * @param string 		$action       Action string
-	 * @param HookManager 	$hookmanager  Hookmanager object
-	 * @return int
-	 */
-	public function emailElementlist($parameters, &$object, &$action, $hookmanager)
-	{
-		global $langs;
-
-		$error = 0;
-
-		if (in_array('admin', explode(':', $parameters['context']))) {
-			$this->results = array('ticket_send' => $langs->trans('MailToSendTicketMessage'));
-		}
-
-		if (!$error) {
-			return 0; // or return 1 to replace standard code
-		} else {
-			$this->errors[] = 'Error message';
-			return -1;
-		}
 	}
 }

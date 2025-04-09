@@ -198,8 +198,8 @@ function societe_prepare_head(Societe $object)
 
 		$title = $langs->trans("PaymentModes");
 
+		$servicestatus = 0;
 		if (isModEnabled('stripe')) {
-			$servicestatus = 0;
 			if (getDolGlobalString('STRIPE_LIVE') && !GETPOST('forcesandbox', 'alpha')) {
 				$servicestatus = 1;
 			}
@@ -805,7 +805,7 @@ function getFormeJuridiqueLabel($code)
  *  Return list of countries that are inside the EEC (European Economic Community)
  *  Note: Try to keep this function as a "memory only" function for performance reasons.
  *
- *  @return     array					Array of countries code in EEC
+ *  @return     string[]				Array of countries code in EEC
  */
 function getCountriesInEEC()
 {
@@ -880,7 +880,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage = '', $nocreatel
 
 		$newcardbutton = '';
 		if (isModEnabled('project') && $user->hasRight('projet', 'creer') && empty($nocreatelink)) {
-			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+			$newcardbutton .= dolGetButtonTitle($langs->trans('AddProject'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
 		}
 
 		print "\n";
@@ -1277,13 +1277,13 @@ function show_contacts($conf, $langs, $db, $object, $backtopage = '', $showuserl
 	$newcardbutton = '';
 	if ($user->hasRight('societe', 'contact', 'creer')) {
 		$addcontact = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage));
+		$newcardbutton .= dolGetButtonTitle($addcontact, '', 'fa fa-plus-circle', DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&action=create&backtopage='.urlencode($backtopage));
 	}
 
 	print "\n";
 
 	$title = (getDolGlobalString('SOCIETE_ADDRESSES_MANAGEMENT') ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
-	print load_fiche_titre($title, $newcardbutton, '');
+	print load_fiche_titre($title, $newcardbutton, 'contact');
 
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -1745,7 +1745,7 @@ function show_actions_todo($conf, $langs, $db, $filterobj, $objcon = null, $nopr
  *      @param  int<0,1>			$noprint		Return string but does not output it
  *      @param  string|string[]		$actioncode		Filter on actioncode
  *      @param  'done'|'todo'|''	$donetodo		Filter on event 'done' or 'todo' or ''=nofilter (all).
- *      @param  array				$filters		Filter on other fields
+ *      @param  array<string,string|string[]>		$filters		Filter on other fields
  *      @param  string				$sortfield		Sort field
  *      @param  string				$sortorder		Sort order
  *      @param	string				$module			You can add module name here if elementtype in table llx_actioncomm is objectkey@module
@@ -1809,6 +1809,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		$sql .= " a.percent as percent, 'action' as type,";
 		$sql .= " a.fk_element, a.elementtype,";
 		$sql .= " a.fk_contact,";
+		$sql .= " a.code,";
 		$sql .= " c.code as acode, c.libelle as alabel, c.picto as apicto,";
 		$sql .= " u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname";
 		if (is_object($filterobj) && in_array(get_class($filterobj), array('Societe', 'Client', 'Fournisseur'))) {
@@ -1889,7 +1890,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		} elseif (is_object($filterobj) && get_class($filterobj) == 'Contrat') {
 			$sql .= ", ".MAIN_DB_PREFIX."contrat as o";
 		} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+		&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // @phan-suppress-curren-line PhanTypeInvalidDimOffset
 		&& $filterobj->table_element && $filterobj->element) {
 			$sql .= ", ".MAIN_DB_PREFIX.$filterobj->table_element." as o";
 		}
@@ -1948,7 +1949,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$sql .= " AND a.fk_element = ".((int) $filterobj->id);
 				}
 			} elseif (is_object($filterobj) && is_array($filterobj->fields) && is_array($filterobj->fields['rowid'])
-				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))
+				&& ((!empty($filterobj->fields['ref']) && is_array($filterobj->fields['ref'])) || (!empty($filterobj->fields['label']) && is_array($filterobj->fields['label'])) || (!empty($filterobj->fields['titre']) && is_array($filterobj->fields['titre'])))  // ref, titre, label do not exist on $fields - @phan-suppress-current-line PhanTypeInvalidDimOffset
 				&& $filterobj->table_element && $filterobj->element) {
 				// Generic case (if there is a $filterobj and a field rowid and (ref or label) exists.
 				$sql .= " AND a.fk_element = o.rowid AND a.elementtype = '".$db->escape($filterobj->element).($module ? "@".$module : "")."'";
@@ -2006,6 +2007,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			$sql .= $hookmanager->resPrint;
 		}
 
+		// Now add events of emailing module
 		if (is_array($actioncode)) {
 			foreach ($actioncode as $code) {
 				$sql2 = addMailingEventTypeSQL($code, $objcon, $filterobj);
@@ -2035,7 +2037,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 		// Complete request and execute it with limit
 		$sql .= $db->order($sortfield_new, $sortorder);
-		if ($limit) {
+		if ($limit) {	// @phpstan-ignore-line
 			$sql .= $db->plimit($limit + 1, $offset);
 		}
 
@@ -2069,24 +2071,27 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$histo[$numaction] = array(
 						'type' => $obj->type,
 						'tododone' => $tododone,
-						'id' => $obj->id,
+						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'percent' => $obj->percent,
+						'percent' => (int) $obj->percent,
 
-						'userid' => $obj->user_id,
+						'userid' => (int) $obj->user_id,
 						'login' => $obj->user_login,
 						'userfirstname' => $obj->user_firstname,
 						'userlastname' => $obj->user_lastname,
 						'userphoto' => $obj->user_photo,
 
-						'contact_id' => $obj->fk_contact,
+						'contact_id' => (int) $obj->fk_contact,
 						'socpeopleassigned' => $contactaction->socpeopleassigned,
 						'lastname' => empty($obj->lastname) ? '' : $obj->lastname,
 						'firstname' => empty($obj->firstname) ? '' : $obj->firstname,
-						'fk_element' => $obj->fk_element,
+						'fk_element' => (int) $obj->fk_element,
 						'elementtype' => $obj->elementtype,
+
+						'code' => $obj->code,
+
 						// Type of event
 						'acode' => $obj->acode,
 						'alabel' => $obj->alabel,
@@ -2097,14 +2102,18 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 					$histo[$numaction] = array(
 						'type' => $obj->type,
 						'tododone' => 'done',
-						'id' => $obj->id,
+						'id' => (int) $obj->id,
 						'datestart' => $db->jdate($obj->dp),
 						'dateend' => $db->jdate($obj->dp2),
 						'note' => $obj->label,
-						'percent' => $obj->percent,
+						'percent' => (int) $obj->percent,
+
+						'code' => $obj->code,
+
+						// Type of event
 						'acode' => $obj->acode,
 
-						'userid' => $obj->user_id,
+						'userid' => (int) $obj->user_id,
 						'login' => $obj->user_login,
 						'userfirstname' => $obj->user_firstname,
 						'userlastname' => $obj->user_lastname,
@@ -2120,7 +2129,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 		}
 	}
 
-	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:string,lastname:string,firstname:string,contact_photo:string,socpeaopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
+	'@phan-var-force array<int,array{userid:int,type:string,tododone:string,apicto:string,acode:string,alabel:string,note:string,id:int,percent:int<0,100>,datestart:int,dateend:int,fk_element:string,elementtype:string,contact_id:int,lastname:string,firstname:string,contact_photo:string,socpeopleassigned:int[],login:string,userfirstname:string,userlastname:string,userphoto:string}> $histo';
 
 	if (isModEnabled('agenda') || (isModEnabled('mailing') && !empty($objcon->email))) {
 		$delay_warning = getDolGlobalInt('MAIN_DELAY_ACTIONS_TODO') * 24 * 60 * 60;
@@ -2238,11 +2247,14 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
 		$caction = new CActionComm($db);
-		$arraylist = $caction->liste_array(1, 'code', '', (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 1 : 0), '', 1);
+		$arraylist = $caction->liste_array(1, 'code', '', (getDolGlobalString('AGENDA_USE_EVENT_TYPE') ? 0 : 1), '', 1);
 
 		foreach ($histo as $key => $value) {
 			$actionstatic->fetch($histo[$key]['id']); // TODO Do we need this, we already have a lot of data of line into $histo
 
+			if (empty($actionstatic->code)) {
+				$actionstatic->code = $histo[$key]['acode'];
+			}
 			$actionstatic->type_picto = $histo[$key]['apicto'] ?? '';
 			$actionstatic->type_code = $histo[$key]['acode'];
 
@@ -2314,25 +2326,39 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			}
 			$out .= '</td>';
 
+			// type_code 	// column "acode" in the sql = code in type of actioncomm, example: AC_OTH_AUTO, AC_EMAILING
+			// code 	 	// columne code in the sql (not yet added), can be  AC_CONTACT_SENTBYMAIL, ...
+
 			// Type
-			$labeltype = $actionstatic->type_code;
-			if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labeltype])) {
-				$labeltype = 'AC_OTH';
+			$labelOfTypeToShow = $actionstatic->type_code;
+			//$typelabel = $actionstatic->type_label;
+			$code = $actionstatic->code;
+			if (!getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($arraylist[$labelOfTypeToShow])) {
+				$labelOfTypeToShow = 'AC_OTH';
 			}
 			if (!empty($actionstatic->code) && preg_match('/^TICKET_MSG/', $actionstatic->code)) {
-				$labeltype = $langs->trans("Message");
+				$labelOfTypeToShow = $langs->trans("Message");
 			} else {
-				if (!empty($arraylist[$labeltype])) {
-					$labeltype = $arraylist[$labeltype];
+				if (!empty($arraylist[$labelOfTypeToShow])) {
+					$labelOfTypeToShow = $arraylist[$labelOfTypeToShow];
+				} elseif ($actionstatic->type_code == 'AC_EMAILING') {
+					$langs->load("mails");
+					$labelOfTypeToShow = $langs->trans("Emailing");
 				}
-				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labeltype && !empty($arraylist[$actionstatic->code])) {
-					$labeltype .= ' - '.$arraylist[$actionstatic->code]; // Use code in priority on type_code
+				if ($actionstatic->type_code == 'AC_OTH_AUTO' && ($actionstatic->type_code != $actionstatic->code) && $labelOfTypeToShow && !empty($arraylist[$actionstatic->code])) {
+					$labelOfTypeToShow .= ' - '.$arraylist[$actionstatic->code]; // Show also detailed code
 				}
 			}
-			$out .= '<td class="tdoverflowmax125" title="'.$labeltype.'">';
+
+			$labelOfTypeToShowLong = $labelOfTypeToShow;
+			if ($actionstatic->type_code == 'AC_OTH_AUTO') {
+				$labelOfTypeToShowLong .= ' (auto)';
+			}
+
+			$out .= '<td class="tdoverflowmax125" title="'.$labelOfTypeToShowLong.'">';
 			$out .= $actionstatic->getTypePicto();
 			//if (empty($conf->dol_optimize_smallscreen)) {
-			$out .= $labeltype;
+			$out .= $labelOfTypeToShow;
 			//}
 			$out .= '</td>';
 
@@ -2341,17 +2367,20 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon = null, $nopr
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'action') {
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
 				//$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
-				$libelle = $histo[$key]['note'];
+				$label = $histo[$key]['note'];
 				$actionstatic->id = $histo[$key]['id'];
-				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
-				$out .= dol_trunc($libelle, 120);
+				$out .= ' title="'.dol_escape_htmltag($label).'">';
+				$out .= dol_trunc($label, 120);
 			}
 			if (isset($histo[$key]['type']) && $histo[$key]['type'] == 'mailing') {
-				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 				$transcode = $langs->trans("Action".$histo[$key]['acode']);
-				$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
-				$out .= ' title="'.dol_escape_htmltag($libelle).'">';
-				$out .= dol_trunc($libelle, 120);
+				$label = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : 'Send mass mailing');
+				$label .= ' - '.$histo[$key]['note'];
+				$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'"';
+				$out .= ' title="'.dol_escape_htmltag($label).'">';
+				//$out .= img_object($langs->trans("EMailing").'<br>'.$histo[$key]['note'], "email").' ';
+				$out .= dol_trunc($label, 120);
+				$out .= '</a>';
 			}
 			$out .= '</td>';
 
@@ -2447,7 +2476,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 
 	$i = -1;
 
-	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas, s.status";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE s.parent = ".((int) $object->id);
 	$sql .= " AND s.entity IN (".getEntity('societe').")";
@@ -2488,6 +2517,7 @@ function show_subsidiaries($conf, $langs, $db, $object)
 			$socstatic->canvas = $obj->canvas;
 			$socstatic->client = $obj->client;
 			$socstatic->fournisseur = $obj->fournisseur;
+			$socstatic->status = $obj->status;
 
 			print '<tr class="oddeven">';
 
@@ -2565,7 +2595,7 @@ function addEventTypeSQL(&$sql, $actioncode, $sqlANDOR = "AND")
  *		@param	string		$sql		    $sql modified
  * 		@param	string		$donetodo		donetodo
  * 		@param	int 		$now		    now
- * 		@param	array		$filters		array
+ * 		@param	array<string,string|string[]>	$filters	array
  * 		@return	string      sql request
  */
 function addOtherFilterSQL(&$sql, $donetodo, $now, $filters)
@@ -2603,7 +2633,7 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 	if (isModEnabled('mailing') && !empty($objcon->email) && (empty($actioncode) || $actioncode == 'AC_OTH_AUTO' || $actioncode == 'AC_EMAILING')) {
 		$sql2 = "SELECT m.rowid as id, m.titre as label, mc.date_envoi as dp, mc.date_envoi as dp2, '100' as percent, 'mailing' as type";
 		$sql2 .= ", null as fk_element, '' as elementtype, null as contact_id";
-		$sql2 .= ", 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
+		$sql2 .= ", 'AC_EMAILING' as code, 'AC_EMAILING' as acode, '' as alabel, '' as apicto";
 		$sql2 .= ", u.rowid as user_id, u.login as user_login, u.photo as user_photo, u.firstname as user_firstname, u.lastname as user_lastname"; // User that valid action
 		if (is_object($filterobj) && get_class($filterobj) == 'Societe') {
 			$sql2 .= ", '' as lastname, '' as firstname";
@@ -2629,15 +2659,58 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 }
 
 
+/**
+ * Show header of company in HTML public pages
+ *
+ * @param   Societe		$mysoc			Third party
+ * @param   Translate	$langs			Output language
+ * @return	void
+ */
+function htmlPrintOnlineHeader($mysoc, $langs)
+{
+	global $conf;
+
+	// Define urllogo
+	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+
+	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
+	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
+		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
+	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+	}
+
+	print '<header class="center">';
+
+	// Output html code for logo
+	print '<div class="backgreypublicpayment">';
+	print '<div class="logopublicpayment">';
+	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
+	print '</div>';
+	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
+		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+	}
+	print '</div>';
+
+	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
+		print '<div class="backimagepublicregistration">';
+		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
+		print '</div>';
+	}
+
+	print '</header>';
+}
+
 
 /**
- * Show footer of company in HTML pages
+ * Show footer of company in HTML public pages
  *
  * @param   Societe		$fromcompany	Third party
  * @param   Translate	$langs			Output language
  * @param	int			$addformmessage	Add the payment form message
  * @param	string		$suffix			Suffix to use on constants
- * @param	Object		$object			Object related to payment
+ * @param	null|CommonObject|CommonHookActions	$object		Object related to payment
  * @return	void
  */
 function htmlPrintOnlineFooter($fromcompany, $langs, $addformmessage = 0, $suffix = '', $object = null)

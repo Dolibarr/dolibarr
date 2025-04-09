@@ -38,7 +38,7 @@ create table llx_societe
 
   code_client              varchar(24),                         		-- code client
   code_fournisseur         varchar(24),                         		-- code fournisseur
-
+  tp_payment_reference     varchar(25),                                 -- SEPA and any other national or custom payment id
   accountancy_code_customer_general	varchar(32) DEFAULT NULL,			-- customer accountancy general account
   code_compta              			varchar(32),                        -- customer accountancy auxiliary account
   accountancy_code_supplier_general varchar(32) DEFAULT NULL,			-- supplier accountancy general account

@@ -41,6 +41,14 @@ if (isModEnabled('accounting')) {
 	include_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills'));
 
@@ -97,6 +105,8 @@ if (!empty($user->socid)) {
 }
 $result = restrictedArea($user, 'tax', $object->id, 'tva', 'charges');
 
+
+$resteapayer = 0;
 
 /*
  * Actions
@@ -271,6 +281,7 @@ if (empty($reshook)) {
 
 			$ret = $object->delete($user);
 			if ($ret > 0) {
+				$accountline = null;
 				if ($object->fk_bank) {
 					$accountline = new AccountLine($db);
 					$result = $accountline->fetch($object->fk_bank);
@@ -284,7 +295,7 @@ if (empty($reshook)) {
 					header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 					exit;
 				} else {
-					$object->error = $accountline->error;
+					$object->error = $accountline !== null ? $accountline->error : 'No account line (no bank)';
 					$db->rollback();
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -845,11 +856,12 @@ if ($id > 0) {
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = 0;
 			$delallowed = $user->hasRight('tax', 'charges', 'creer'); // If you can create/edit, you can remove a file on card
+
 			print $formfile->showdocuments('tax-vat', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
 		// Show links to link elements
-		//$linktoelem = $form->showLinkToObjectBlock($object, null, array('myobject'));
+		//$tmparray = $form->showLinkToObjectBlock($object, null, array('myobject'), 1);
 		//$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

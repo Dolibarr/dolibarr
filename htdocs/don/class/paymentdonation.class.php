@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Alexandre Spangaro	  	<aspangaro@open-dsi.fr>
+/* Copyright (C) 2015       Alexandre Spangaro	  		<aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -56,16 +56,37 @@ class PaymentDonation extends CommonObject
 	 */
 	public $fk_donation;
 
+	/**
+	 * @var int|'' creation date
+	 */
 	public $datec = '';
 
+	/**
+	 * @var int|'' paid date
+	 */
 	public $datep = '';
 
+	/**
+	 * @var float amount
+	 */
 	public $amount; // Total amount of payment
 
+	/**
+	 * @var float[] array of amounts
+	 */
 	public $amounts = array(); // Array of amounts
 
-	public $fk_typepayment;	// Payment mode ID
-	public $paymenttype;	// Payment mode ID or Code. TODO Use only the code in this field.
+	/**
+	 * @var int  Payment mode ID
+	 * @deprecated Use $paymenttype
+	 * @see $paymenttype
+	 */
+	public $fk_typepayment;
+
+	/**
+	 * @var int Payment mode ID or Code. TODO Use only the code in this field.
+	 */
+	public $paymenttype;
 
 	/**
 	 * @var string      Payment reference
@@ -89,16 +110,35 @@ class PaymentDonation extends CommonObject
 	public $fk_user_modif;
 
 	/**
-	 * @deprecated
+	 * @deprecated Use $amount, $amounts
 	 * @see $amount, $amounts
+	 * @var float
 	 */
 	public $total;
 
+	/**
+	 * @var string
+	 */
 	public $type_code;
+	/**
+	 * @var string
+	 */
 	public $type_label;
+	/**
+	 * @var ?int
+	 */
 	public $chid;
+	/**
+	 * @var int|''
+	 */
 	public $datepaid;
+	/**
+	 * @var int
+	 */
 	public $bank_account;
+	/**
+	 * @var int
+	 */
 	public $bank_line;
 
 	/**
@@ -126,7 +166,7 @@ class PaymentDonation extends CommonObject
 	 *  Use this->amounts to have list of lines for the payment
 	 *
 	 *  @param      User		$user			User making payment
-	 *  @param      int 		$notrigger 		0=launch triggers after, 1=disable triggers
+	 *  @param      int<0,1>	$notrigger 		0=launch triggers after, 1=disable triggers
 	 *  @return     int     					Return integer <0 if KO, id of payment if OK
 	 */
 	public function create($user, $notrigger = 0)
@@ -153,13 +193,13 @@ class PaymentDonation extends CommonObject
 			$this->fk_donation = (int) $this->fk_donation;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) price2num($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) price2num($this->fk_typepayment);
 		}
 		if (isset($this->num_payment)) {
-			$this->num_payment    = trim($this->num_payment);
+			$this->num_payment = trim($this->num_payment);
 		}
 		if (isset($this->note_public)) {
 			$this->note_public = trim($this->note_public);
@@ -168,19 +208,19 @@ class PaymentDonation extends CommonObject
 			$this->fk_bank = (int) $this->fk_bank;
 		}
 		if (isset($this->fk_user_creat)) {
-			$this->fk_user_creat  = (int) $this->fk_user_creat;
+			$this->fk_user_creat = (int) $this->fk_user_creat;
 		}
 		if (isset($this->fk_user_modif)) {
-			$this->fk_user_modif  = (int) $this->fk_user_modif;
+			$this->fk_user_modif = (int) $this->fk_user_modif;
 		}
 
 		$totalamount = 0;
 		foreach ($this->amounts as $key => $value) {  // How payment is dispatch
-			$newvalue = price2num($value, 'MT');
+			$newvalue = (float) price2num($value, 'MT');
 			$this->amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 		}
-		$totalamount = price2num($totalamount);
+		$totalamount = (float) price2num($totalamount);
 
 		// Check parameters
 		if ($totalamount == 0) {
@@ -267,7 +307,7 @@ class PaymentDonation extends CommonObject
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id  = $obj->rowid;
+				$this->id = $obj->rowid;
 				$this->ref = $obj->rowid;
 
 				$this->fk_donation    = $obj->fk_donation;
@@ -283,11 +323,11 @@ class PaymentDonation extends CommonObject
 				$this->fk_user_creat  = $obj->fk_user_creat;
 				$this->fk_user_modif  = $obj->fk_user_modif;
 
-				$this->type_code  = $obj->type_code;
+				$this->type_code = $obj->type_code;
 				$this->type_label = $obj->type_label;
 
 				$this->bank_account = $obj->fk_account;
-				$this->bank_line    = $obj->fk_bank;
+				$this->bank_line = $obj->fk_bank;
 			}
 			$this->db->free($resql);
 
@@ -317,10 +357,10 @@ class PaymentDonation extends CommonObject
 			$this->fk_donation = (int) $this->fk_donation;
 		}
 		if (isset($this->amount)) {
-			$this->amount = trim($this->amount);
+			$this->amount = (float) price2num($this->amount);
 		}
 		if (isset($this->fk_typepayment)) {
-			$this->fk_typepayment = trim($this->fk_typepayment);
+			$this->fk_typepayment = (int) price2num($this->fk_typepayment);
 		}
 		if (isset($this->num_payment)) {
 			$this->num_payment = trim($this->num_payment);
@@ -549,17 +589,17 @@ class PaymentDonation extends CommonObject
 		$this->id = 0;
 
 		$this->fk_donation = 0;
-		$this->datec = '';
+		$this->datec = dol_now();
 		$this->tms = dol_now();
 		$this->datep = '';
-		$this->amount = '';
-		$this->fk_typepayment = '';
-		$this->paymenttype = '';
+		$this->amount = 1000.80;
+		$this->fk_typepayment = 0;
+		$this->paymenttype = 0;
 		$this->num_payment = '';
-		$this->note_public = '';
+		$this->note_public = 'Public note';
 		$this->fk_bank = 0;
-		$this->fk_user_creat = dol_now();
-		$this->fk_user_modif = dol_now();
+		$this->fk_user_creat = 1;
+		$this->fk_user_modif = 1;
 
 		return 1;
 	}
@@ -582,6 +622,7 @@ class PaymentDonation extends CommonObject
 		global $conf;
 
 		$error = 0;
+		$amount = 0;
 
 		if (isModEnabled("bank")) {
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -600,7 +641,7 @@ class PaymentDonation extends CommonObject
 				$label,
 				$amount,
 				$this->num_payment,
-				'',
+				0,
 				$user,
 				$emetteur_nom,
 				$emetteur_banque

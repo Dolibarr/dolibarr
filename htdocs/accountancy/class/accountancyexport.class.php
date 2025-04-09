@@ -1,19 +1,19 @@
 <?php
 /*
- * Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
- * Copyright (C) 2016-2024  Alexandre Spangaro  <aspangaro@open-dsi.fr>
- * Copyright (C) 2022  		Lionel Vessiller    <lvessiller@open-dsi.fr>
- * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
- * Copyright (C) 2017-2024  Frédéric France     <frederic.france@free.fr>
- * Copyright (C) 2017       André Schild        <a.schild@aarboard.ch>
- * Copyright (C) 2020       Guillaume Alexandre <guillaume@tag-info.fr>
- * Copyright (C) 2022		Joachim Kueter		<jkueter@gmx.de>
- * Copyright (C) 2022  		Progiseize         	<a.bisotti@progiseize.fr>
+ * Copyright (C) 2007-2012	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2015		Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016		Pierre-Henry Favre			<phf@atm-consulting.fr>
+ * Copyright (C) 2016-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2022		Lionel Vessiller			<lvessiller@open-dsi.fr>
+ * Copyright (C) 2013-2017	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2017		Elarifr. Ari Elbaz			<github@accedinfo.com>
+ * Copyright (C) 2017-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2017		André Schild				<a.schild@aarboard.ch>
+ * Copyright (C) 2020		Guillaume Alexandre			<guillaume@tag-info.fr>
+ * Copyright (C) 2022		Joachim Kueter				<jkueter@gmx.de>
+ * Copyright (C) 2022		Progiseize					<a.bisotti@progiseize.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -358,19 +358,19 @@ class AccountancyExport
 	/**
 	 * Function who chose which export to use with the default config, and make the export into a file
 	 *
-	 * @param 	BookKeepingLine[]	$TData 			Array with data
+	 * @param 	BookKeepingLine[]	$TData 				Array with data
 	 * @param	int			$formatexportset			Id of export format
 	 * @param	int<0,1>	$withAttachment				[=0] Not add files
 	 *                                                  or 1 to have attached in an archive (ex : Quadratus) - Force output mode to write in a file (output mode = 1)
-	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use value 1.
+	 * @param	int<1,1>	$downloadMode				[=0] Direct download. Deprecated. Always use another value.
 	 *                                                  or 1 to download after writing files - Forced by default when use withAttachment = 1
 	 *                                                  or -1 not to download files
-	 * @param	int<1,1>	$outputMode					[=0] Print on screen. Deprecated. Always use value 1.
+	 * @param	int<1,2>	$outputMode					[=0] Print on screen. Deprecated. Always use another value.
 	 *                                                  or 1 to write in file and uses the temp directory - Forced by default when use withAttachment = 1
 	 *                                                  or 2 to write in file a default export directory (accounting/export/)
 	 * @param	int<1,1>	$noouput					0=old mode. Deprecated. Always use value 1.
 	 *                                                  or 1=Do not output the file on stdout with this method. This must always be done by the main page, never by a method.
-	 * @return 	int									Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
+	 * @return 	int										Return integer <0 if KO, >0 OK. The property ->generatedfile is also filled.
 	 */
 	public function export(&$TData, $formatexportset, $withAttachment = 0, $downloadMode = 1, $outputMode = 1, $noouput = 1)
 	{
@@ -1020,7 +1020,7 @@ class AccountancyExport
 
 			// We need to keep the 10 latest number of invoices doc_ref not the beginning part that is the useless almost same part
 			// $tab['num_piece3'] = str_pad(self::trunc($line->piece_num, 10), 10);
-			$tab['num_piece3'] = substr(self::trunc($line->doc_ref, 20), -10);
+			$tab['num_piece3'] = str_pad(substr(self::trunc($line->doc_ref, 20), -10), 10);
 			$tab['reserved'] = str_repeat(' ', 10); // position 159
 			$tab['currency_amount'] = str_repeat(' ', 13); // position 169
 			// get document file
@@ -1501,13 +1501,20 @@ class AccountancyExport
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
-							$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+								$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+							}
 						} elseif ($line->doc_type == 'expense_report') {
-							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+							}
 						} elseif ($line->doc_type == 'supplier_invoice') {
-							'@phan-var-force FactureFournisseur $invoice';
-							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+								'@phan-var-force FactureFournisseur $invoice';
+								/** @var FactureFournisseur $invoice */
+								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+								$objectDirPath .= '/' . rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							}
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file
@@ -1714,13 +1721,20 @@ class AccountancyExport
 						$objectDirPath = '';
 						$objectFileName = dol_sanitizeFileName($line->doc_ref);
 						if ($line->doc_type == 'customer_invoice') {
-							$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_INVOICE_SOURCE_FILE')) {
+								$objectDirPath = !empty($conf->invoice->multidir_output[$conf->entity]) ? $conf->invoice->multidir_output[$conf->entity] : $conf->invoice->dir_output;
+							}
 						} elseif ($line->doc_type == 'expense_report') {
-							$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_EXPENSEREPORT_SOURCE_FILE')) {
+								$objectDirPath = !empty($conf->expensereport->multidir_output[$conf->entity]) ? $conf->expensereport->multidir_output[$conf->entity] : $conf->expensereport->dir_output;
+							}
 						} elseif ($line->doc_type == 'supplier_invoice') {
-							'@phan-var-force FactureFournisseur $invoice';
-							$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
-							$objectDirPath .= '/'.rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							if (getDolGlobalInt('ACCOUNTING_EXPORT_REMOVE_SUPPLIERINVOICE_SOURCE_FILE')) {
+								'@phan-var-force FactureFournisseur $invoice';
+								/** @var FactureFournisseur $invoice */
+								$objectDirPath = !empty($conf->fournisseur->facture->multidir_output[$conf->entity]) ? $conf->fournisseur->facture->multidir_output[$conf->entity] : $conf->fournisseur->facture->dir_output;
+								$objectDirPath .= '/' . rtrim(get_exdir($invoice->id, 2, 0, 0, $invoice, 'invoice_supplier'), '/');
+							}
 						}
 						$arrayofinclusion = array();
 						// If it is a supplier invoice, we want to use last uploaded file

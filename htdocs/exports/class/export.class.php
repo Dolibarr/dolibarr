@@ -504,7 +504,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -525,7 +525,7 @@ class Export
 				$szFilterField = '<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Boolean':
-				$szFilterField = '<select name="'.$NameField.'" class="flat">';
+				$szFilterField = '<select name="'.$NameField.'" id="'.dol_escape_all($NameField).'" class="flat width75 maxwidth75">';
 				$szFilterField .= '<option ';
 				if ($ValueField == '') {
 					$szFilterField .= ' selected ';
@@ -544,6 +544,7 @@ class Export
 				}
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
+				$szFilterField .= ajax_combobox(dol_escape_all($NameField));
 				break;
 			case 'FormSelect':
 				//var_dump($NameField);
@@ -582,7 +583,7 @@ class Export
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$szFilterField = '<select class="flat" name="'.$NameField.'">';
+					$szFilterField = '<select class="minwidth300 maxwidth500" name="'.$NameField.'" id="'.dol_escape_all($NameField).'">';
 					$szFilterField .= '<option value="0">&nbsp;</option>';
 					$num = $this->db->num_rows($resql);
 
@@ -596,7 +597,7 @@ class Export
 								continue;
 							}
 							//var_dump($InfoFieldList[1]);
-							$labeltoshow = dol_trunc($obj->label, 18);
+							$labeltoshow = $obj->label;
 							if ($InfoFieldList[1] == 'c_stcomm') {
 								$langs->load("companies");
 								$labeltoshow = (($langs->trans("StatusProspect".$obj->id) != "StatusProspect".$obj->id) ? $langs->trans("StatusProspect".$obj->id) : $obj->label);
@@ -607,14 +608,15 @@ class Export
 								$labeltoshow = (($langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label);
 							}
 							if (!empty($ValueField) && $ValueField == $obj->rowid) {
-								$szFilterField .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.dolPrintHTML($labeltoshow).'</option>';
 							} else {
-								$szFilterField .= '<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
 							}
 							$i++;
 						}
 					}
 					$szFilterField .= "</select>";
+					$szFilterField .= ajax_combobox(dol_escape_all($NameField));
 
 					$this->db->free($resql);
 				} else {
@@ -831,13 +833,19 @@ class Export
 										return -1;
 									}
 
-									$methodName = $item['method'];
+									$methodName = dol_escape_all($item['method']);
 									$params = [];
 									if (!empty($item['method_params'])) {
+										// Example used for export of "Stocks and location (warehouse) with batch" in field "Date of last movement"
 										foreach ($item['method_params'] as $paramName) {
-											$params[] = $obj->$paramName ?? null;
+											if (property_exists($obj, $paramName)) {
+												$params[] = $obj->$paramName;
+											} else {
+												$params[] = $paramName;
+											}
 										}
 									}
+									//var_dump($tmpObject);var_dump($methodName);var_dump($params);exit;
 									$value = $tmpObject->$methodName(...$params);
 								}
 								$obj->$alias = $value;

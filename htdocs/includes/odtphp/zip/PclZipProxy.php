@@ -1,5 +1,7 @@
 <?php
-if (! defined('ODTPHP_PATHTOPCLZIP')) define('ODTPHP_PATHTOPCLZIP','pclzip/');
+if (! defined('ODTPHP_PATHTOPCLZIP')) {
+	define('ODTPHP_PATHTOPCLZIP', DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/');
+}
 require_once ODTPHP_PATHTOPCLZIP.'pclzip.lib.php';
 require_once 'ZipInterface.php';
 class PclZipProxyException extends Exception

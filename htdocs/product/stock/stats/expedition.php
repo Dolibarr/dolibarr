@@ -35,18 +35,26 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'supplier_proposal', 'productbatch'));
 
 $id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
-$batch  	= GETPOST('batch', 'alpha');
+$batch = GETPOST('batch', 'alpha');
 $objectid  = GETPOSTINT('productid');
 
 // Security check
 $fieldvalue = (!empty($id) ? $id : (!empty($ref) ? $ref : ''));
 $fieldtype = (!empty($ref) ? 'ref' : 'rowid');
-$socid = '';
+$socid = 0;
 if (!empty($user->socid)) {
 	$socid = $user->socid;
 }
@@ -67,10 +75,10 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
+if (empty($sortorder)) {
 	$sortorder = "DESC";
 }
-if (!$sortfield) {
+if (empty($sortfield)) {
 	$sortfield = "exp.date_creation";
 }
 
@@ -123,6 +131,7 @@ if ($id > 0 || !empty($ref)) {
 		$head = productlot_prepare_head($object);
 		$titre = $langs->trans("CardProduct".$object->type);
 		$picto = 'lot';
+		$morehtmlref = '';
 		print dol_get_fiche_head($head, 'referers', $langs->trans("Batch"), -1, $object->picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -176,7 +185,7 @@ if ($id > 0 || !empty($ref)) {
 		//          print '</tr>';
 		//      }
 		//
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_TRACEABILITY)) {
+		//      if (getDolGlobalString('PRODUCT_LOT_ENABLE_TRACEABILITY()) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('ManufacturingDate'), 'manufacturing_date', $object->manufacturing_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
@@ -189,7 +198,7 @@ if ($id > 0 || !empty($ref)) {
 		//      }
 		//
 		//      // Quality control
-		//      if (!empty($conf->global->PRODUCT_LOT_ENABLE_QUALITY_CONTROL)) {
+		//      if (getDolGlobalString('PRODUCT_LOT_ENABLE_QUALITY_CONTROL')) {
 		//          print '<tr><td>'.$form->editfieldkey($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer).'</td>';
 		//          print '<td>'.$form->editfieldval($langs->trans('EndOfLife'), 'eol_date', $object->eol_date, $object, $user->rights->stock->creer, 'datepicker').'</td>';
 		//          print '</tr>';
@@ -262,7 +271,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($result) {
 				$num = $db->num_rows($result);
 
-				$option .= '&id='.$object->id;
+				$option = '&id='.$object->id;
 
 				if ($limit > 0 && $limit != $conf->liste_limit) {
 					$option .= '&limit='.((int) $limit);
@@ -276,12 +285,8 @@ if ($id > 0 || !empty($ref)) {
 
 				print '<form method="post" action="'.$_SERVER ['PHP_SELF'].'?id='.$object->id.'" name="search_form">'."\n";
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				if (!empty($sortfield)) {
-					print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
-				}
-				if (!empty($sortorder)) {
-					print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
-				}
+				print '<input type="hidden" name="sortfield" value="'.$sortfield.'"/>';
+				print '<input type="hidden" name="sortorder" value="'.$sortorder.'"/>';
 
 				// @phan-suppress-next-line PhanPluginSuspiciousParamOrder
 				print_barre_liste($langs->trans("Shipments"), $page, $_SERVER["PHP_SELF"], $option, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit, 0, 0, 1);

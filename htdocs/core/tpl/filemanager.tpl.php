@@ -20,7 +20,15 @@
  * $module must be defined ('ecm', 'medias', ...)
  * $formalreadyopen can be set to 1 to avoid to open the <form> to submit files a second time
  */
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ * @var Website $website
+ */
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page filemanager.tpl.php can't be called as URL";
@@ -42,11 +50,13 @@ if (empty($module)) {
 	$module = 'ecm';
 }
 
-'@phan-var-force WebSite $website';
+'@phan-var-force Website $website';
 
 $permtoadd = 0;
 $permtoupload = 0;
 $showroot = 0;
+$error = 0;
+
 if ($module == 'ecm') {
 	$permtoadd = $user->hasRight("ecm", "setup");
 	$permtoupload = $user->hasRight("ecm", "upload");
@@ -278,7 +288,7 @@ if ($action == 'convertimgwebp' && $permtoadd) {
 if (empty($action) || $action == 'editfile' || $action == 'file_manager' || preg_match('/refresh/i', $action) || $action == 'delete') {
 	$langs->load("ecm");
 
-	print '<table class="liste centpercent">'."\n";
+	print '<table class="liste centpercent noborder">'."\n";
 
 	print '<!-- Title for manual directories -->'."\n";
 	print '<tr class="liste_titre">'."\n";

@@ -330,4 +330,36 @@ abstract class CommonObjectLine extends CommonObject
 	{
 		return -1;  // NOK because nothing done.
 	}
+
+	/**
+	 * Return clicable link of object line (with eventually picto)
+	 * May (should) also return information about the associated "parent" object.
+	 * To overload
+	 *
+	 * @param      int			$withpicto                Add picto into link
+	 * @return     string          			          String with URL
+	 */
+	public function getNomUrl($withpicto = 0)
+	{
+		$parentattribute = $this->fk_parent_attribute;
+
+		/*
+		if ($parentattribute) {
+			return 'Parent #'.$this->$parentattribute.' - Line #'.$this->id;
+		} else {
+			return 'Line #'.$this->id;
+		}
+		*/
+
+		$parent_element_properties = getElementProperties($this->parent_element);
+		$parent_classname = $parent_element_properties['classname'];
+		$parent_element = new $parent_classname($this->db);
+		/** @var CommonObject $parent_element */
+		$parentattribute = $this->fk_parent_attribute;
+		if ($parentattribute && method_exists($parent_element, 'fetch')) {
+			$parent_element->fetch($this->$parentattribute); // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+		}
+
+		return $parent_element->getNomUrl($withpicto).' - Line #'.$this->id; // @phan-suppress-current-line PhanPluginUnknownObjectMethodCall
+	}
 }

@@ -511,7 +511,7 @@ class FormAdmin
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
 	{
-		global $type2label;	// TODO Remove this
+		global $type2label;	// TODO Remove this global
 
 		$out = '';
 
@@ -525,7 +525,6 @@ class FormAdmin
 			// Set $valhtml with the picto for the type
 			$valhtml = ($key ? getPictoForType($key) : '').$val;
 
-			// @phpstan-ignore-next-line
 			if (empty($typewecanchangeinto) || in_array($key, $typewecanchangeinto[$type])) {
 				$out .= '<option value="'.$key.'"'.$selected.' data-html="'.dol_escape_htmltag($valhtml).'">'.($val ? $val : '&nbsp;').'</option>';
 			} else {

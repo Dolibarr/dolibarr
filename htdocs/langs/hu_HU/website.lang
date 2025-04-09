@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Használja itt a többi név/álnevek listáját, hogy az o
 WEBSITE_CSS_URL=A külső CSS-fájl URL-je
 WEBSITE_CSS_INLINE=CSS-fájltartalom (minden oldalon közös)
 WEBSITE_JS_INLINE=JavaScript fájl tartalma (minden oldalon közös)
-WEBSITE_HTML_HEADER=Kiegészítés a HTML-fejléc alján (minden oldalon közös)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Robot fájl (robots.txt)
 WEBSITE_HTACCESS=Webhely .htaccess fájl
 WEBSITE_MANIFEST_JSON=Webhely manifest.json fájl
@@ -56,16 +56,17 @@ ReadPerm=Olvasás
 WritePerm=Írás
 TestDeployOnWeb=Tesztelés/telepítés a weben
 PreviewSiteServedByWebServer=<u>A %s előnézete egy új lapon.</u><br><br>A %s egy külső webszerver (például Apache, Nginx, IIS) fogja kiszolgálni. Telepítenie és be kell állítania ezt a szervert, mielőtt a következő könyvtárra mutatna:<br><strong>%s</strong><br>A külső szerver által kiszolgált URL:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>A %s előnézete egy új lapon.</u><br><br>A %s-t a Dolibarr szerver fogja kiszolgálni, így nincs szüksége további webszerverre (például Apache, Nginx, IIS) telepíteni kell.<br>Az a kellemetlen, hogy az oldalak URL-címei nem felhasználóbarátok, és a Dolibarr elérési útjával kezdődnek.<br>A Dolibarr által kiszolgált URL:<br><strong>%s</strong><br> <br>Ha saját külső webszerverét szeretné használni a webhely kiszolgálására, hozzon létre egy virtuális gazdagépet a webszerverén, amely a<br><strong>%s</strong><br> könyvtárra mutat, majd adja meg a virtuális nevét, szervert a webhely tulajdonságaiban, és kattintson a „Tesztelés/telepítés a weben” hivatkozásra.
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=A külső webszerver által kiszolgált virtuális gazdagép URL-je nincs megadva
 NoPageYet=Még nincsenek oldalak
 YouCanCreatePageOrImportTemplate=Létrehozhat egy új oldalt vagy importálhat egy teljes webhelysablont
 SyntaxHelp=Súgó adott szintaktikai tippekhez
 YouCanEditHtmlSourceckeditor=A HTML forráskódot a szerkesztő "Forrás" gombjával szerkesztheti.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=Megosztási hivatkozással megosztott kép esetén (nyílt hozzáférés a fájl megosztási hash kulcsával) a szintaxis:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt ;</strong><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Oldal/tároló klónozása
 CloneSite=Webhely klónozása
@@ -87,15 +88,15 @@ WebsiteAccount=Webhelyfiók
 WebsiteAccounts=Webhelyfiókok
 AddWebsiteAccount=Webhelyfiók létrehozása
 BackToListForThirdParty=Vissza a listához a harmadik felek számára
-DisableSiteFirst=Először tiltsa le a webhelyet
+DisableSiteFirst=Put website offline first
 MyContainerTitle=A webhelyem címe
 AnotherContainer=Így lehet belefoglalni egy másik oldal/tároló tartalmát (itt hiba léphet fel, ha engedélyezi a dinamikus kódot, mert előfordulhat, hogy a beágyazott altároló nem létezik)
 SorryWebsiteIsCurrentlyOffLine=Sajnos ez a webhely jelenleg nem elérhető. Kérjük, gyere vissza később...
-WEBSITE_USE_WEBSITE_ACCOUNTS=A webhely fióktáblázatának engedélyezése
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Engedélyezze a táblázatban a webhelyfiókok (bejelentkezési/belépési) tárolását minden egyes webhelyhez/harmadik félhez
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Először meg kell határoznia az alapértelmezett kezdőlapot
-OnlyEditionOfSourceForGrabbedContentFuture=Figyelmeztetés: Weboldal létrehozása külső weboldal importálásával csak tapasztalt felhasználók számára van fenntartva. A forrásoldal összetettségétől függően az importálás eredménye eltérhet az eredetitől. Ha a forrásoldal gyakori CSS-stílusokat vagy ütköző JavaScript-kódot használ, az megzavarhatja a Webhely-szerkesztő megjelenését vagy szolgáltatásait, amikor ezen az oldalon dolgozik. Ezzel a módszerrel gyorsabban hozhat létre oldalt, de ajánlatos az új oldalt a semmiből vagy egy javasolt oldalsablonból létrehozni.<br>Ne feledje, hogy előfordulhat, hogy a szövegközi szerkesztő nem működik helyes, ha egy megragadott külső oldalon használják.
-OnlyEditionOfSourceForGrabbedContent=Csak a HTML-forrás kiadása lehetséges, ha a tartalmat egy külső webhelyről szerezték be
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=A css-ben és az oldalon talált képeket is megragadja.
 ImagesShouldBeSavedInto=A képeket a könyvtárba kell menteni
 WebsiteRootOfImages=A webhely képeinek gyökérkönyvtára
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Jelentkezzen ki vevő fiókjából
 filteredByVersion=Verzió szerint szűrve
 removeFilter=Szűrő eltávolítása
 viewMyCart=Tekintse meg bevásárlókosaram
+Shipping=Shipping
 freeShipping=Ingyenes szállítás!
 noProducts=Nincsenek termékek
 nbrItemsInCart=<span class="ajax_cart_quantity">0</span> termék található a kosarában.
@@ -284,12 +286,13 @@ productNameAToZ=Termék neve: A-tól Z-ig
 productNameZToA=Termék neve: Z-től A-ig
 referenceLowestFirst=Hivatkozás: A legalacsonyabb először
 referenceHighestFirst=Hivatkozás: A legmagasabb először
+productPerPage=products per page
 perPage=oldalanként
 showAll=Mutasd az összeset
 showing= Megjelenítés
 nbrOfProducts= Vannak %s termékek.
 noResultsHaveBeenFound=0 eredményt találtunk.
-noResultsWereFound= Nincs találat.
+noResultsWereFound=Nincs találat.
 addToCart=Kosárba
 backHome=Hazatérni
 priceDrop=Árcsökkenés
@@ -302,10 +305,11 @@ lastUpdate=Utolsó frissítés
 contactSupport=Hogyan lehet kapcsolatba lépni az ügyfélszolgálattal
 noProductToDisplay=Hiba, nincs megjeleníthető termék
 yourCompanyInformation=A céged adatai
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Ez az e-mail cím már regisztrálva van.
 firstnameContainsLettersOnly=<b>Keresztnév</b> csak betűket és szóközöket tartalmazhat
 lastnameContainsLettersOnly=<b>Vezetéknév</b> csak betűket és szóközöket tartalmazhat
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=Hiba történt.
 accountCreation=Hozzon létre egy fiókot
 errorsOccurred=%s hiba%s
@@ -357,3 +361,7 @@ subtract=Kivonás
 LoginCheckout=Bejelentkezés és továbblépés a fizetéshez
 paymentSuccessProcessed=Befizetését sikeresen feldolgoztuk.
 youWillBeRedirectedToOrderPage=Hamarosan átirányítjuk a megrendelés részletes oldalra.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

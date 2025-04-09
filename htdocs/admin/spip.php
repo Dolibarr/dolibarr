@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
@@ -49,6 +57,7 @@ $action = GETPOST('action', 'aZ09');
 /*
  * Actions
  */
+$error = 0;
 
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add') {

@@ -50,18 +50,47 @@ class RemiseCheque extends CommonObject
 	 */
 	public $picto = 'payment';
 
+	/**
+	 * @var string
+	 */
 	public $num;
+	/**
+	 * @var string
+	 */
 	public $intitule;
-	//! Numero d'erreur Plage 1024-1279
+	/**
+	 * @var int<-1033,-1024>|int<-18,-18>|int<-2,0> Error number from 1024 to 1279
+	 */
 	public $errno;
 
+	/**
+	 * @var string
+	 */
 	public $type = 'CHQ';		// 'CHQ', 'TRA', ...
 
+	/**
+	 * @var float
+	 */
 	public $amount;
+	/**
+	 * @var int|string
+	 */
 	public $date_bordereau;
+	/**
+	 * @var int
+	 */
 	public $account_id;
+	/**
+	 * @var string
+	 */
 	public $account_label;
+	/**
+	 * @var int
+	 */
 	public $author_id;
+	/**
+	 * @var int
+	 */
 	public $nbcheque;
 
 	/**
@@ -94,7 +123,7 @@ class RemiseCheque extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut, bc.nbcheque, bc.ref_ext,";
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author, bc.fk_bank_account, bc.amount, bc.ref, bc.statut as status, bc.nbcheque, bc.ref_ext,";
 		$sql .= " bc.date_bordereau as date_bordereau, bc.type,";
 		$sql .= " ba.label as account_label";
 		$sql .= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -118,11 +147,12 @@ class RemiseCheque extends CommonObject
 				$this->account_label  = $obj->account_label;
 				$this->author_id      = $obj->fk_user_author;
 				$this->nbcheque       = $obj->nbcheque;
-				$this->statut         = $obj->statut;
+				$this->statut         = $obj->status;
+				$this->status         = $obj->status;
 				$this->ref_ext        = $obj->ref_ext;
 				$this->type           = $obj->type;
 
-				if ($this->statut == 0) {
+				if ($this->status == 0) {
 					$this->ref = "(PROV".$this->id.")";
 				} else {
 					$this->ref = $obj->ref;
@@ -143,7 +173,7 @@ class RemiseCheque extends CommonObject
 	 *	@param	User	$user 			User making creation
 	 *	@param  int		$account_id 	Bank account for cheque receipt
 	 *  @param  int		$limit          Limit ref of cheque to this
-	 *  @param	array	$toRemise		array with cheques to remise
+	 *  @param	int[]	$toRemise		array with cheques to remise
 	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function create($user, $account_id, $limit, $toRemise)
@@ -268,7 +298,7 @@ class RemiseCheque extends CommonObject
 		} else {
 			$this->errno = -1;
 			$this->error = $this->db->lasterror();
-			$this->errno = $this->db->lasterrno();
+			// $this->errno = $this->db->lasterrno();
 		}
 
 		if (!$this->errno && (getDolGlobalString('MAIN_DISABLEDRAFTSTATUS') || getDolGlobalString('MAIN_DISABLEDRAFTSTATUS_CHEQUE'))) {
@@ -935,9 +965,9 @@ class RemiseCheque extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowCheckReceipt");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

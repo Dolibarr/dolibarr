@@ -35,7 +35,7 @@ class SupplierInvoices extends DolibarrApi
 {
 	/**
 	 *
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -289,6 +289,7 @@ class SupplierInvoices extends DolibarrApi
 				}
 				continue;
 			}
+
 			$this->invoice->$field = $this->_checkValForAPI($field, $value, $this->invoice);
 		}
 

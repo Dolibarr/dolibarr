@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2022       Frédéric France         <frederic.france@netlogic.fr>
+/* Copyright (C) 2008-2014  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2022-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,11 @@
 /**
  * Prepare array with list of different ecm main dashboard
  *
- * @param   object	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
-function ecm_prepare_dasboard_head($object)
+function ecm_prepare_dasboard_head()
 {
-	global $langs, $conf, $user, $form;
+	global $langs, $conf, $form;
 
 	$h = 0;
 	$head = array();
@@ -62,7 +61,7 @@ function ecm_prepare_dasboard_head($object)
 		$h++;
 	}
 
-	if ($showmediasection && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	if ($showmediasection) {
 		$head[$h][0] = DOL_URL_ROOT.'/ecm/index_medias.php?file_manager=1';
 		$head[$h][1] = $langs->trans("ECMSectionsMedias").$form->textwithpicto('', $helptext, 1, 'info', '', 0, 3);
 		$head[$h][2] = 'index_medias';
@@ -73,9 +72,9 @@ function ecm_prepare_dasboard_head($object)
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
 	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm');
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'ecm', 'remove');
+	complete_head_from_modules($conf, $langs, null, $head, $h, 'ecm', 'remove');
 
 	return $head;
 }
@@ -84,9 +83,9 @@ function ecm_prepare_dasboard_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
- * @param	string	$module		Module
- * @param	string	$section	Section
+ * @param   EcmDirectory	$object		Object related to tabs
+ * @param	string			$module		Module
+ * @param	string			$section	Section
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head($object, $module = 'ecm', $section = '')
@@ -113,12 +112,12 @@ function ecm_prepare_head($object, $module = 'ecm', $section = '')
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   EcmFiles	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_file_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $langs;
 	$h = 0;
 	$head = array();
 
@@ -149,7 +148,7 @@ function ecm_file_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   object	$object		Object related to tabs
+ * @param   EcmDirectory	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function ecm_prepare_head_fm($object)

@@ -299,7 +299,7 @@ class ContratLigne extends CommonObjectLine
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
@@ -450,7 +450,7 @@ class ContratLigne extends CommonObjectLine
 		}
 
 		$link = '<a href="'.DOL_URL_ROOT.'/contrat/card.php?id='.$this->fk_contrat.'"';
-		$link .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+		$link .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 		$link .= $dataparams.' class="'.$classfortooltip.'">';
 		$linkend = '</a>';
 
@@ -494,7 +494,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " t.label,"; // This field is not used. Only label of product
 		$sql .= " p.ref as product_ref,";
 		$sql .= " p.label as product_label,";
-		$sql .= " p.description as product_desc,";
+		$sql .= " p.description as product_description,";
 		$sql .= " p.fk_product_type as product_type,";
 		$sql .= " t.description,";
 		$sql .= " t.date_commande,";
@@ -672,11 +672,11 @@ class ContratLigne extends CommonObjectLine
 		$localtaxes_type = getLocalTaxesFromRate($this->tva_tx, 0, $this->thirdparty, $mysoc);
 
 		$tabprice = calcul_price_total($this->qty, $this->price_ht, $this->remise_percent, $this->tva_tx, $this->localtax1_tx, $this->localtax2_tx, 0, 'HT', 0, 1, $mysoc, $localtaxes_type);
-		$this->total_ht  = $tabprice[0];
-		$this->total_tva = $tabprice[1];
-		$this->total_ttc = $tabprice[2];
-		$this->total_localtax1 = $tabprice[9];
-		$this->total_localtax2 = $tabprice[10];
+		$this->total_ht  = (float) $tabprice[0];
+		$this->total_tva = (float) $tabprice[1];
+		$this->total_ttc = (float) $tabprice[2];
+		$this->total_localtax1 = (float) $tabprice[9];
+		$this->total_localtax2 = (float) $tabprice[10];
 
 		if (empty($this->pa_ht)) {
 			$this->pa_ht = 0;
@@ -722,11 +722,11 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " fk_remise_except = ".($this->fk_remise_except > 0 ? $this->fk_remise_except : "null").",";
 		$sql .= " subprice = ".($this->subprice != '' ? $this->subprice : "null").",";
 		$sql .= " price_ht = ".($this->price_ht != '' ? $this->price_ht : "null").",";
-		$sql .= " total_ht = ".$this->total_ht.",";
-		$sql .= " total_tva = ".$this->total_tva.",";
-		$sql .= " total_localtax1 = ".$this->total_localtax1.",";
-		$sql .= " total_localtax2 = ".$this->total_localtax2.",";
-		$sql .= " total_ttc = ".$this->total_ttc.",";
+		$sql .= " total_ht = ".((float) $this->total_ht).",";
+		$sql .= " total_tva = ".((float) $this->total_tva).",";
+		$sql .= " total_localtax1 = ".((float) $this->total_localtax1).",";
+		$sql .= " total_localtax2 = ".((float) $this->total_localtax2).",";
+		$sql .= " total_ttc = ".((float) $this->total_ttc).",";
 		$sql .= " fk_product_fournisseur_price = ".(!empty($this->fk_fournprice) ? $this->fk_fournprice : "NULL").",";
 		$sql .= " buy_price_ht = '".price2num($this->pa_ht)."',";
 		$sql .= " info_bits = '".$this->db->escape($this->info_bits)."',";
@@ -1014,7 +1014,7 @@ class ContratLigne extends CommonObjectLine
 		$sql .= " date_cloture = '".$this->db->idate($date_end_real)."',";
 		$sql .= " fk_user_cloture = ".((int) $user->id).",";
 		$sql .= " commentaire = '".$this->db->escape($comment)."'";
-		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut = ".((int) ContratLigne::STATUS_OPEN);
+		$sql .= " WHERE rowid = ".((int) $this->id)." AND statut <> ".((int) ContratLigne::STATUS_CLOSED);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {

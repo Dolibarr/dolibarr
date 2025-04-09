@@ -284,7 +284,12 @@ if (!defined('WEBPORTAL_NOLOGIN') && !empty($context->controllerInstance->access
 						$context->logged_user = $logged_user;
 						$context->logged_thirdparty = $logged_thirdparty;
 						$context->logged_member = $logged_member;
-						$context->logged_partnership = $logged_partnership;
+						if (!empty($logged_partnership)) {
+							$context->logged_partnership = $logged_partnership;
+						}
+
+						global $user; // set global user as logged user (used for hooks in external modules)
+						$user = $context->logged_user;
 					}
 				}
 			}

@@ -250,14 +250,28 @@ class Website extends CommonObject
 				}
 			}
 
-			// Create subdirectory for images and js
+			// Create subdirectory for images and js into documents/medias directory
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/image/'.$this->ref, DOL_DATA_ROOT);
 			dol_mkdir($conf->medias->multidir_output[$conf->entity].'/js/'.$this->ref, DOL_DATA_ROOT);
 
-			// Uncomment this and change WEBSITE to your own tag if you
-			// want this action to call a trigger.
-			// if (!$notrigger) {
+			$pathofwebsite = $conf->website->dir_output.'/'.$this->ref;
 
+			// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+			// Recreate also dir of website if not found.
+			$pathtomedias = DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite = $pathofwebsite.'/medias';
+			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+				if (!$result) {
+					$langs->load("errors");
+					//setEventMessages($langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias), null, 'errors');
+					$error++;
+				}
+			}
+
+			// if (!$notrigger) {
 			//     // Call triggers
 			//     $result = $this->call_trigger('WEBSITE_CREATE',$user);
 			//     if ($result < 0) $error++;
@@ -370,9 +384,9 @@ class Website extends CommonObject
 	 * @param 	string 			$sortfield 		Sort field
 	 * @param 	int    			$limit     		limit
 	 * @param 	int    			$offset    		offset limit
-	 * @param 	string|array	$filter    		filter array
+	 * @param 	string|array<string,string>	$filter  filter array
 	 * @param 	string 			$filtermode 	filter mode (AND or OR)
-	 * @return 	array|int       	          	int <0 if KO, array of pages if OK
+	 * @return 	Website[]|int<-1,-1> 	       	int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -648,7 +662,7 @@ class Website extends CommonObject
 	 */
 	public function purge(User $user)
 	{
-		global $conf;
+		global $conf, $langs;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -670,8 +684,22 @@ class Website extends CommonObject
 
 		if (!$error && !empty($this->ref)) {
 			$pathofwebsite = DOL_DATA_ROOT.($conf->entity > 1 ? '/'.$conf->entity : '').'/website/'.$this->ref;
+			// Delete content of website directory without deleting the website directory
+			dol_delete_dir_recursive($pathofwebsite, 0, 0, 1);
 
-			dol_delete_dir_recursive($pathofwebsite);
+			// Check symlink documents/website/mywebsite/medias to point to documents/medias and restore it if ko.
+			// Recreate also dir of website if not found.
+			$pathtomedias = DOL_DATA_ROOT.'/medias';
+			$pathtomediasinwebsite = $pathofwebsite.'/medias';
+			if (!is_link(dol_osencode($pathtomediasinwebsite))) {
+				dol_syslog("Create symlink for ".$pathtomedias." into name ".$pathtomediasinwebsite);
+				dol_mkdir(dirname($pathtomediasinwebsite)); // To be sure that the directory for website exists
+				$result = symlink($pathtomedias, $pathtomediasinwebsite);
+				if (!$result) {
+					$this->errors[] = $langs->trans("ErrorFailedToCreateSymLinkToMedias", $pathtomediasinwebsite, $pathtomedias);
+					$error++;
+				}
+			}
 		}
 
 		// Commit or rollback
@@ -873,25 +901,31 @@ class Website extends CommonObject
 
 		$result = '';
 
-		$label = '<u>'.$langs->trans("WebSite").'</u>';
+		$label = '<u>'.img_picto('', 'website', 'class="pictofixedwidth"').$langs->trans("WebSite").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref.'<br>';
 		$label .= '<b>'.$langs->trans('MainLanguage').':</b> '.$this->lang;
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/website/card.php?id='.$this->id.'"';
+		// Links for internal access
+		/*
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/website/index.php?website='.urlencode($this->ref).'"';
 		$linkstart .= ($notooltip ? '' : ' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss ? ' '.$morecss : '').'"');
 		$linkstart .= '>';
-		$linkend = '</a>';
-
-		$linkstart = $linkend = '';
-
-		if ($withpicto) {
-			$result .= ($linkstart.img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? '' : 'class="classfortooltip"')).$linkend);
-			if ($withpicto != 2) {
-				$result .= ' ';
-			}
+		*/
+		if (!empty($this->virtualhost)) {
+			$linkstart = '<a target="_blank" rel="noopener" href="'.$this->virtualhost.'">';
+			$linkend = '</a>';
+		} else {
+			$linkstart = $linkend = '';
 		}
-		$result .= $linkstart.$this->ref.$linkend;
+
+		$result .= $linkstart;
+		if ($withpicto) {
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), 'class="pictofixedwidth'.($notooltip ? '' : ' classfortooltip').'"');
+		}
+		$result .= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -1245,15 +1279,17 @@ class Website extends CommonObject
 		dol_mkdir($conf->website->dir_temp.'/'.$object->ref);
 
 		$filename = basename($pathtofile);
+		$reg = array();
 		if (!preg_match('/^website_(.*)-(.*)$/', $filename, $reg)) {
 			$this->errors[] = 'Bad format for filename '.$filename.'. Must be website_XXX-VERSION.';
 			return -3;
 		}
 
+		// Uncompress the zip
 		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
 
 		if (!empty($result['error'])) {
-			$this->errors[] = 'Failed to unzip file '.$pathtofile.'.';
+			$this->errors[] = 'Failed to unzip file '.$pathtofile;
 			return -4;
 		}
 
@@ -1496,6 +1532,10 @@ class Website extends CommonObject
 			dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl, $filewrapper, $object);	// This includes also a version of index.php into sublanguage directories
 		}
 
+		// Erase cache files
+		$filecacheglob = $conf->website->dir_output.'/temp/'.$object->ref.'-*.php.cache';
+		dol_delete_file($filecacheglob, 0, 1, 1, null, false, 0, 1);
+
 		if ($error) {
 			return -1;
 		} else {
@@ -1516,7 +1556,7 @@ class Website extends CommonObject
 	/**
 	 * Component to select language inside a container (Full CSS Only)
 	 *
-	 * @param	array|string	$languagecodes			'auto' to show all languages available for page, or language codes array like array('en','fr','de','es')
+	 * @param	string[]|'auto'	$languagecodes			'auto' to show all languages available for page, or language codes array like array('en','fr','de','es')
 	 * @param	Translate		$weblangs				Language Object
 	 * @param	string			$morecss				More CSS class on component
 	 * @param	string			$htmlname				Suffix for HTML name
@@ -1525,7 +1565,7 @@ class Website extends CommonObject
 	public function componentSelectLang($languagecodes, $weblangs, $morecss = '', $htmlname = '')
 	{
 		global $websitepagefile, $website;
-		'@phan-var-force WebSite $website';
+		'@phan-var-force Website $website';
 
 		if (!is_object($weblangs)) {
 			return 'ERROR componentSelectLang called with parameter $weblangs not defined';
@@ -1820,6 +1860,8 @@ class Website extends CommonObject
 	 */
 	public function setTemplateName($name_template)
 	{
+		$this->db->begin();
+
 		$sql = "UPDATE ".$this->db->prefix()."website SET";
 		$sql .= " name_template = '".$this->db->escape($name_template)."'";
 		$sql .= " WHERE rowid = ".(int) $this->id;
@@ -1854,7 +1896,7 @@ class Website extends CommonObject
 	/**
 	 * Save state for File
 	 * @param mixed $etat   state
-	 * @param mixed $pathname  path of file
+	 * @param string $pathname  path of file
 	 * @return int|false
 	 */
 	public function saveState($etat, $pathname)
@@ -1866,8 +1908,8 @@ class Website extends CommonObject
 	 * Compare two files has not same name but same content
 	 * @param  string   $dossierSource        filepath of folder source
 	 * @param  string   $dossierDestination   filepath of folder dest
-	 * @param  mixed   $fichierModifie       files modified
-	 * @return array    empty if KO, array if OK
+	 * @param  array{fullname:string}   $fichierModifie       files modified
+	 * @return array<mixed,mixed|mixed>    empty if KO, array if OK
 	 */
 	public function compareFichierModifie($dossierSource, $dossierDestination, $fichierModifie)
 	{
@@ -1966,8 +2008,8 @@ class Website extends CommonObject
 	 * show difference between to string
 	 * @param string  $str1   first string
 	 * @param string  $str2   second string
-	 * @param array  $exceptNumPge    num of page files we don't want to change
-	 * @return array|int<-1,-1>      -1 if KO, array if OK
+	 * @param int[]  $exceptNumPge    num of page files we don't want to change
+	 * @return array<mixed,mixed|mixed>      Array
 	 */
 	protected function showDifferences($str1, $str2, $exceptNumPge = array())
 	{
@@ -1985,8 +2027,8 @@ class Website extends CommonObject
 
 		for ($i = 0;$i < $countNumPage; $i++) {
 			$linefound[$i] = array();
-			$linefound[$i]['meta'] = '/content="' . preg_quote($exceptNumPge[$i], '/') . '" \/>/';
-			$linefound[$i]['output'] = '/dolWebsiteOutput\(\$tmp, "html", ' . preg_quote($exceptNumPge[$i], '/') . '\);/';
+			$linefound[$i]['meta'] = '/content="' . preg_quote((string) $exceptNumPge[$i], '/') . '" \/>/';
+			$linefound[$i]['output'] = '/dolWebsiteOutput\(\$tmp, "html", ' . preg_quote((string) $exceptNumPge[$i], '/') . '\);/';
 		}
 
 		if (isset($linefound[1])) {
@@ -2059,8 +2101,8 @@ class Website extends CommonObject
 	 * Replace line by line in file using numbers of the lines
 	 *
 	 * @param 	string 		$inplaceFile	path of file to modify in place
-	 * @param 	array 		$differences 	array of differences between files
-	 * @return 	int  						Return 0 if we can replace, <0 if not (-2=not writable)
+	 * @param 	array<int|string,string|array<string,string>> 	$differences 	array of differences between files
+	 * @return 	int<-2,0>					Return 0 if we can replace, <0 if not (-2=not writable)
 	 */
 	protected function replaceLineUsingNum($inplaceFile, $differences)
 	{

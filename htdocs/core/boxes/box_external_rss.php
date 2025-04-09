@@ -40,6 +40,9 @@ class box_external_rss extends ModeleBoxes
 	public $boxlabel = "BoxLastRssInfos";
 	public $depends = array("externalrss");
 
+	/**
+	 * @var string
+	 */
 	public $paramdef; // Params of box definition (not user params)
 
 	/**

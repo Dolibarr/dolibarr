@@ -53,7 +53,7 @@ class FormAdvTargetEmailing extends Form
 	/**
 	 * Affiche un champs select contenant une liste
 	 *
-	 * @param array $selected_array à preselectionner
+	 * @param string[] $selected_array à preselectionner
 	 * @param string $htmlname select field
 	 * @return string select field
 	 */
@@ -92,7 +92,7 @@ class FormAdvTargetEmailing extends Form
 	 * Return combo list of activated countries, into language of user
 	 *
 	 * @param string    $htmlname of html select object
-	 * @param array     $selected_array or Code or Label of preselected country
+	 * @param string[]  $selected_array or Code or Label of preselected country
 	 * @return string   HTML string with select
 	 */
 	public function multiselectState($htmlname = 'state_id', $selected_array = array())
@@ -153,7 +153,7 @@ class FormAdvTargetEmailing extends Form
 	 * Return combo list of activated countries, into language of user
 	 *
 	 * @param string    $htmlname of html select object
-	 * @param array     $selected_array or Code or Label of preselected country
+	 * @param string[]  $selected_array or Code or Label of preselected country
 	 * @return string   HTML string with select
 	 */
 	public function multiselectCountry($htmlname = 'country_id', $selected_array = array())
@@ -213,7 +213,7 @@ class FormAdvTargetEmailing extends Form
 	 * Return select list for categories (to use in form search selectors)
 	 *
 	 * @param string $htmlname control name
-	 * @param array $selected_array array of data
+	 * @param string[] $selected_array array of data
 	 * @param User $user User action
 	 * @return string combo list code
 	 */
@@ -259,7 +259,7 @@ class FormAdvTargetEmailing extends Form
 	 * Return select list for categories (to use in form search selectors)
 	 *
 	 * @param string $htmlname of combo list (example: 'search_sale')
-	 * @param array $selected_array selected array
+	 * @param string[] $selected_array selected array
 	 * @return string combo list code
 	 */
 	public function multiselectselectLanguage($htmlname = '', $selected_array = array())
@@ -323,7 +323,7 @@ class FormAdvTargetEmailing extends Form
 				}
 			}
 			if (!empty($InfoFieldList[1])) {
-				$sql .= " ORDER BY nom";
+				$sql .= $this->db->order($InfoFieldList[1]);
 			}
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
@@ -334,8 +334,10 @@ class FormAdvTargetEmailing extends Form
 				if ($num) {
 					while ($i < $num) {
 						$obj = $this->db->fetch_object($resql);
+
 						$fieldtoread = $InfoFieldList[1];
 						$labeltoshow = dol_trunc($obj->$fieldtoread, 90);
+
 						$options_array[$obj->rowid] = $labeltoshow;
 						$i++;
 					}
@@ -351,7 +353,7 @@ class FormAdvTargetEmailing extends Form
 	 *  Return combo list with people title
 	 *
 	 * 	@param	string $htmlname	       Name of HTML select combo field
-	 *  @param  array  $selected_array     Array
+	 *  @param  string[]	$selected_array     Array
 	 *  @return	string                     HTML combo
 	 */
 	public function multiselectCivility($htmlname = 'civilite_id', $selected_array = array())
@@ -391,8 +393,8 @@ class FormAdvTargetEmailing extends Form
 	 * Return multiselect list of entities.
 	 *
 	 * @param string $htmlname select
-	 * @param array $options_array to manage
-	 * @param array $selected_array to manage
+	 * @param array<string,mixed> $options_array to manage
+	 * @param string[] $selected_array to manage
 	 * @param int $showempty show empty
 	 * @return string HTML combo
 	 */
@@ -401,6 +403,20 @@ class FormAdvTargetEmailing extends Form
 		global $conf, $langs;
 
 		$form = new Form($this->db);
+		foreach ($options_array as $okey => $val) {
+			if ((string) $okey == '') {
+				continue;
+			}
+
+			$valarray = explode('|', $val);
+			$val = $valarray[0];
+
+			if ($val) {
+				$options_array[$okey] = $langs->trans($val);
+			} else {
+				$options_array[$okey] = $val;
+			}
+		}
 		$return = $form->multiselectarray($htmlname, $options_array, $selected_array, 0, 0, '', 0, 295);
 		return $return;
 	}

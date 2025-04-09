@@ -45,6 +45,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('products', 'stocks', 'orders'));
 if (isModEnabled('productbatch')) {
@@ -69,7 +77,7 @@ $idproduct = GETPOST('idproduct', 'intcomma');
 $product_id = GETPOST("product_id", 'intcomma');
 $show_files = GETPOSTINT('show_files');
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 $search_date_startday = GETPOSTINT('search_date_startday');
 $search_date_startmonth = GETPOSTINT('search_date_startmonth');
 $search_date_startyear = GETPOSTINT('search_date_startyear');
@@ -325,7 +333,7 @@ if (empty($reshook)) {
 }
 
 if ($action == 'update_extras' && $permissiontoadd) {
-	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);
+	$tmpwarehouse->oldcopy = dol_clone($tmpwarehouse, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 
 	// Fill array 'array_options' with data from update form
 	$ret = $extrafields->setOptionalsFromPost(null, $tmpwarehouse, GETPOST('attribute', 'restricthtml'));
@@ -343,6 +351,13 @@ if ($action == 'update_extras' && $permissiontoadd) {
 		$action = 'edit_extras';
 	}
 }
+
+$batch = '';
+$eatby = null;
+$sellby = 0;
+$qty = 0;
+$price = '0';
+$entrepot = 0;
 
 // Correct stock
 if ($action == "correct_stock" && $permissiontoadd) {
@@ -487,6 +502,9 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 			if ($product->hasbatch()) {
 				$pdluo = new Productbatch($db);
 
+				$srcwarehouseid = 0;
+				$eatby = -1;
+				$sellby = -1;
 				if ($pdluoid > 0) {
 					$result = $pdluo->fetch($pdluoid);
 					if ($result) {
@@ -505,6 +523,8 @@ if ($action == "transfert_stock" && $permissiontoadd && !$cancel) {
 					$sellby = $d_sellby;
 				}
 
+				$result1 = -1;
+				$result2 = -1;
 				if (!$error) {
 					// Remove stock
 					$result1 = $product->correct_stock_batch(
@@ -608,6 +628,8 @@ if ($action == 'confirm_reverse' && $confirm == "yes" && $permissiontoadd) {
 	if ($resql) {
 		$num = $db->num_rows($resql);
 		$i = 0;
+		$hasSuccess = false;
+		$hasError = false;
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			$object->fetch($obj->rowid);
@@ -638,6 +660,8 @@ $form = new Form($db);
 $formproduct = new FormProduct($db);
 if (isModEnabled('project')) {
 	$formproject = new FormProjets($db);
+} else {
+	$formproject = null;
 }
 $productlot = new Productlot($db);
 $productstatic = new Product($db);
@@ -807,7 +831,7 @@ $help_url = 'EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 if ($msid) {
 	$title = $langs->trans('StockMovementForId', $msid);
 } else {
-	$title = $langs->trans("ListOfStockMovements");
+	$title = $langs->trans("StockMovements");
 	if ($id) {
 		if (!empty($warehouse->ref)) {
 			$title .= ' ('.$warehouse->ref.')';
@@ -838,7 +862,7 @@ if ($warehouse->id > 0) {
 	$morehtmlref .= $langs->trans("LocationSummary").' : '.$warehouse->lieu;
 
 	// Project
-	if (isModEnabled('project')) {
+	if (isModEnabled('project') && $formproject !== null) {
 		$langs->load("projects");
 		$morehtmlref .= '<br>'.img_picto('', 'project').' '.$langs->trans('Project').' ';
 		if ($usercancreate && 1 == 2) {
@@ -922,6 +946,8 @@ if ($warehouse->id > 0) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
 	$sql .= " WHERE m.fk_entrepot = ".((int) $warehouse->id);
 	$resqlbis = $db->query($sql);
+
+	$lastmovementdate = 0;
 	if ($resqlbis) {
 		$objbis = $db->fetch_object($resqlbis);
 		$lastmovementdate = $db->jdate($objbis->datem);
@@ -1209,7 +1235,7 @@ if (!empty($arrayfields['pl.sellby']['checked'])) {
 if (!empty($arrayfields['e.ref']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone left">';
 	//print '<input class="flat" type="text" size="8" name="search_warehouse" value="'.($search_warehouse).'">';
-	print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, null, 'maxwidth200');
+	print $formproduct->selectWarehouses($search_warehouse, 'search_warehouse', 'warehouseopen,warehouseinternal', 1, 0, 0, '', 0, 0, array(), 'maxwidth150');
 	print '</td>';
 }
 if (!empty($arrayfields['m.fk_user_author']['checked'])) {
@@ -1537,7 +1563,7 @@ while ($i < $imaxinloop) {
 		}
 		// Warehouse
 		if (!empty($arrayfields['e.ref']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax150">';
 			print $warehousestatic->getNomUrl(1);
 			print "</td>\n";
 		}
@@ -1564,7 +1590,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['origin']['checked'])) {
 			print '<td class="nowraponall">'.$origin.'</td>';
 		}
-		// fk_project
+		// Project
 		if (!empty($arrayfields['m.fk_projet']['checked'])) {
 			print '<td>';
 			if ($obj->fk_project != 0) {

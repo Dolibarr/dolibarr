@@ -3,18 +3,17 @@
 name: PHPStan
 # Controls when the workflow will run
 on:
-  # push:
-  # pull_request:
+  # workflow called by the parent workflow ci.yml
   workflow_call:
     inputs:
       gh_event:
         required: true
         type: string
+  # can run job manually
   workflow_dispatch:
 
 concurrency:
-  group: stan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref
-    }}
+  group: stan-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 env:
   gh_event: ${{ inputs.gh_event || github.event_name }}
@@ -37,14 +36,14 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
-
       # Get PHP and addons
       - name: Setup PHP
         id: setup-php
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          tools: phpstan, cs2pr
+          coverage: none # disable xdebug, pcov
+          tools: phpstan:2.0, cs2pr
           extensions: calendar, json, imagick, gd, zip, mbstring, intl, opcache, imap,
             mysql, pgsql, sqlite3, ldap, xml, mcrypt
 
@@ -86,3 +85,9 @@ jobs:
           name: phpstan-srcrt
           path: ${{ github.workspace }}/_stan.xml
           retention-days: 2
+      # Run PHPStan generate baseline
+      # - name: Run PHPStan generate baseline
+      #   id: phpstan-baseline
+      #   if: ${{ success() }}
+      #   run: |
+      #     phpstan -vv analyse --memory-limit 7G -a build/phpstan/bootstrap_action.php --generate-baseline build/phpstan/phpstan-baseline.neon
