@@ -325,7 +325,6 @@ class ObjectLinks extends DolibarrApi
 					'message' => 'object link deleted'
 				)
 			);
-
 		} else {
 			throw new RestException(404, 'Object Link not found');
 		}
