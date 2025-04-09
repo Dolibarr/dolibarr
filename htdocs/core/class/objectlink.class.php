@@ -334,5 +334,7 @@ class ObjectLink extends CommonObject
 			$result = $newobject->fetch($objectid);
 			return $result;
 		}
+		dol_syslog("objectlink->_makeobject called with unknown objecttype=".$objecttype, LOG_ERR);
+		return -2;
 	}
 }
