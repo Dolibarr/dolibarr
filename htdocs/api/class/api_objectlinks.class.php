@@ -60,8 +60,8 @@ class ObjectLinks extends DolibarrApi
 	 *
 	 * Return an array with object link information
 	 *
-	 * @param   int         $id				ID of objectlink
-	 * @return  Object						Object with cleaned properties
+	 * @param   int         $id		ID of objectlink
+	 * @return  ObjectLink			Object with cleaned properties
 	 * @phan-return		ObjectLink
 	 * @phpstan-return	ObjectLink
 	 *
@@ -197,7 +197,7 @@ class ObjectLinks extends DolibarrApi
 	 *  @param		int		$fk_target		target id of object we link to
 	 *  @param		string	$targettype 	type of the target object
 	 *  @param		string	$relationtype 	type of the relation, usually null
-	 *  @return		array
+	 *  @return		ObjectLink
 	 * @phan-return		ObjectLink
 	 * @phpstan-return	ObjectLink
 	 *

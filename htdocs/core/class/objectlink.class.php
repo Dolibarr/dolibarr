@@ -97,10 +97,10 @@ class ObjectLink extends CommonObject
 				$this->id = $obj->rowid;
 				//$this->entity = $obj->entity;
 
-				$this->fk_source = $obj->fk_source;
-				$this->sourcetype = $obj->sourcetype;
-				$this->fk_target = $obj->fk_target;
-				$this->targettype = $obj->targettype;
+				$this->fk_source = (int) $obj->fk_source;
+				$this->sourcetype = (string) $obj->sourcetype;
+				$this->fk_target = (int) $obj->fk_target;
+				$this->targettype = (string) $obj->targettype;
 				$this->relationtype = $obj->relationtype;
 
 				return 1;
@@ -145,10 +145,10 @@ class ObjectLink extends CommonObject
 				$this->id = $obj->rowid;
 				//$this->entity = $obj->entity;
 
-				$this->fk_source = $obj->fk_source;
-				$this->sourcetype = $obj->sourcetype;
-				$this->fk_target = $obj->fk_target;
-				$this->targettype = $obj->targettype;
+				$this->fk_source = (int) $obj->fk_source;
+				$this->sourcetype = (string) $obj->sourcetype;
+				$this->fk_target = (int) $obj->fk_target;
+				$this->targettype = (string) $obj->targettype;
 				$this->relationtype = $obj->relationtype;
 
 				return 1;
