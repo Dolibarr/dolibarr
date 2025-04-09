@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Vincent de Grandpré	    <vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,11 @@ if (file_exists($conffile)) {
  * @var string $dolibarr_main_db_user
  * @var string $dolibarr_main_db_pass
  */
+
+'
+@phan-var-force ?string $dolibarr_main_db_encryption
+@phan-var-force ?string $dolibarr_main_db_cryptkey
+';
 
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 include_once $dolibarr_main_document_root.'/core/lib/images.lib.php';
@@ -858,6 +863,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 
 		$filearray = dol_dir_list($upload_dir, "files", 1, '', array('^SPECIMEN\.pdf$', '^\.', '(\.meta|_preview.*\.png)$', '^temp$', '^payments$', '^CVS$', '^thumbs$'), '', SORT_DESC, 1, 1);
 
+		$object_instance = null;
 		// To show ref or specific information according to view to show (defined by $module)
 		if ($modulepart == 'company') {
 			include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -954,6 +960,7 @@ if ($ok && GETPOST('clean_orphelin_dir', 'alpha')) {
 	}
 }
 
+$methodtofix = '';
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('clean_product_stock_batch', 'alpha')) {
 	$methodtofix = GETPOST('methodtofix', 'alpha') ? GETPOST('methodtofix', 'alpha') : 'updatestock';
@@ -1149,7 +1156,7 @@ if ($ok && GETPOST('force_disable_of_modules_not_found', 'alpha')) {
 	foreach ($arraylistofkey as $key) {
 		$sql = "SELECT DISTINCT name, value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const as c";
-		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+		$sql .= " WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($db->escape($key))."'";
 		$sql .= " ORDER BY name";
 
 		$resql = $db->query($sql);

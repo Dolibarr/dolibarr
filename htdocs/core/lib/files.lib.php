@@ -6,7 +6,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ function dol_basename($pathfile)
  */
 function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", $excludefilter = null, $sortcriteria = "name", $sortorder = SORT_ASC, $mode = 0, $nohook = 0, $relativename = "", $donotfollowsymlinks = 0, $nbsecondsold = 0)
 {
-	global $db, $hookmanager;
+	global $hookmanager;
 	global $object;
 
 	if ($recursive <= 1) {	// Avoid too verbose log
@@ -97,43 +97,52 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 	$loadsize = ($mode == 1 || $mode == 3 || $sortcriteria == 'size');
 	$loadperm = ($mode == 1 || $mode == 4 || $sortcriteria == 'perm');
 
-	// Clean parameters
-	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
-	$os_path = dol_osencode($utf8_path);
 	$now = dol_now();
-
 	$reshook = 0;
 	$file_list = array();
 
-	if (!$nohook && $hookmanager instanceof HookManager) {
-		$hookmanager->resArray = array();
+	// Clean parameters
+	$utf8_path = preg_replace('/([\\/]+)$/', '', $utf8_path);
 
-		$hookmanager->initHooks(array('fileslib'));
-
-		$parameters = array(
-			'path' => $os_path,
-			'types' => $types,
-			'recursive' => $recursive,
-			'filter' => $filter,
-			'excludefilter' => $exclude_array,  // Already converted to array.
-			'sortcriteria' => $sortcriteria,
-			'sortorder' => $sortorder,
-			'loaddate' => $loaddate,
-			'loadsize' => $loadsize,
-			'mode' => $mode
-		);
-		$reshook = $hookmanager->executeHooks('getDirList', $parameters, $object);
+	if (preg_match('/\*/', $utf8_path)) {
+		$utf8_path_array = glob($utf8_path, GLOB_ONLYDIR);	// This scan dir for files. If file does not exists, return empty.
+		//$os_path_array = dol_dir_list($utf8_path);
+	} else {
+		$utf8_path_array = array($utf8_path);
 	}
 
-	// $hookmanager->resArray may contain array stacked by other modules
-	if (empty($reshook)) {
-		if (!is_dir($os_path)) {
-			return array();
+	foreach ($utf8_path_array as $utf8_path_cursor) {
+		$os_path = dol_osencode($utf8_path_cursor);
+		if (!$nohook && $hookmanager instanceof HookManager) {
+			$hookmanager->resArray = array();
+
+			$hookmanager->initHooks(array('fileslib'));
+
+			$parameters = array(
+				'path' => $os_path,
+				'types' => $types,
+				'recursive' => $recursive,
+				'filter' => $filter,
+				'excludefilter' => $exclude_array,  // Already converted to array.
+				'sortcriteria' => $sortcriteria,
+				'sortorder' => $sortorder,
+				'loaddate' => $loaddate,
+				'loadsize' => $loadsize,
+				'mode' => $mode
+			);
+			$reshook = $hookmanager->executeHooks('getDirList', $parameters, $object);
 		}
 
-		if (($dir = opendir($os_path)) === false) {
-			return array();
-		} else {
+		// $hookmanager->resArray may contain array stacked by other modules
+		if (empty($reshook)) {
+			if (!is_dir($os_path)) {
+				continue;
+			}
+
+			if (($dir = opendir($os_path)) === false) {
+				continue;
+			}
+
 			$filedate = '';
 			$filesize = '';
 			$fileperm = '';
@@ -149,7 +158,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 
 				$qualified = 1;
 
-				$utf8_fullpathfile = "$utf8_path/$utf8_file";  // Temp variable for speed
+				$utf8_fullpathfile = $utf8_path_cursor."/".$utf8_file;  // Temp variable for speed
 
 				// Check if file is qualified
 				foreach ($excludefilterarray as $filt) {
@@ -230,12 +239,12 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
 				}
 			}
 			closedir($dir);
-
-			// Obtain a list of columns
-			if (!empty($sortcriteria) && $sortorder) {
-				$file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
-			}
 		}
+	}
+
+	// Obtain a list of columns
+	if (!empty($sortcriteria) && $sortorder) {
+		$file_list = dol_sort_array($file_list, $sortcriteria, ($sortorder == SORT_ASC ? 'asc' : 'desc'));
 	}
 
 	if ($hookmanager instanceof HookManager && is_array($hookmanager->resArray)) {
@@ -689,7 +698,7 @@ function dol_fileperm($pathoffile)
  * Make replacement of strings into a file.
  *
  * @param	string					$srcfile			       Source file (can't be a directory)
- * @param	array<string,string>	$arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
+ * @param	array<string,string|int> $arrayreplacement	       Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string					$destfile			       Destination file (can't be a directory). If empty, will be same than source file.
  * @param	string					$newmask			       Mask for new file. '0' by default means getDolGlobalString('MAIN_UMASK'). Example: '0666'.
  * @param	int						$indexdatabase		       1=index new file into database.
@@ -1976,6 +1985,20 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 				$info = pathinfo($destfile);
 				$destfile = dol_sanitizeFileName($info['filename'].($info['extension'] != '' ? ('.'.strtolower($info['extension'])) : ''));
 
+				// Check extension is allowed for upload
+				$fileextensionrestriction = getDolGlobalString("MAIN_FILE_EXTENSION_UPLOAD_RESTRICTION", implode(',', getExecutableContent()));
+				if (!empty($fileextensionrestriction)) {
+					$arrayofregexextension = explode(",", $fileextensionrestriction);
+
+					foreach ($arrayofregexextension as $fileextension) {
+						if (preg_match('/\.'.preg_quote(trim($fileextension), '/').'$/i', $destfull)) {
+							$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+							setEventMessages($langs->trans("ErrorFilenameExtensionNotAllowed", $filenameto), null, 'errors');
+							return -1;
+						}
+					}
+				}
+
 				// We apply dol_string_nohtmltag also to clean file names (this remove duplicate spaces) because
 				// this function is also applied when we rename and when we make try to download file (by the GETPOST(filename, 'alphanohtml') call).
 				$destfile = dol_string_nohtmltag($destfile);
@@ -2164,7 +2187,7 @@ function dol_remove_file_process($filenb, $donotupdatesession = 0, $donotdeletef
  *  @param		string	$fullpathorig	Full path of origin for file (can be '')
  *  @param		string	$mode			How file was created ('uploaded', 'generated', ...)
  *  @param		int		$setsharekey	Set also the share key
- *  @param      Object  $object         Object used to set 'src_object_*' fields
+ *  @param      ?Object $object         Object used to set 'src_object_*' fields
  *  @param		string	$forceFullTextIndexation		'1'=Force full text indexation even if global option not set
  *	@return		int						Return integer <0 if KO, 0 if nothing done, >0 if OK
  */
@@ -2960,9 +2983,9 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		$accessok = false;
 		$reg = array();
 		if (preg_match('/^(\d+)\/photos\//', $original_file, $reg)) {
-			if ($reg[1]) {
+			if ((int) $reg[1]) {
 				$tmpobject = new User($db);
-				$tmpobject->fetch($reg[1], '', '', 1);
+				$tmpobject->fetch((int) $reg[1], '', '', 1);
 				if (getDolUserInt('USER_ENABLE_PUBLIC', 0, $tmpobject)) {
 					$securekey = GETPOST('securekey', 'alpha', 1);
 					// Security check
@@ -3566,7 +3589,16 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 				dol_print_error(null, 'Error call dol_check_secure_access_document with not supported value for modulepart parameter ('.$modulepart.')');
 				exit;
 			}
-			if ($fuser->hasRight($tmpmodule, $lire) || preg_match('/^specimen/i', $original_file)) {
+
+			// Check fuser->rights->modulepart->myobject->read and fuser->rights->modulepart->read
+			$partsofdirinoriginalfile = explode('/', $original_file);
+			if (!empty($partsofdirinoriginalfile[1])) {    // If original_file is xxx/filename (xxx is a part we will use)
+				$partofdirinoriginalfile = $partsofdirinoriginalfile[0];
+				if (($partofdirinoriginalfile && $fuser->hasRight($tmpmodule, $partofdirinoriginalfile, 'read')) || preg_match('/^specimen/i', $original_file)) {
+					$accessallowed = 1;
+				}
+			}
+			if ($fuser->hasRight($tmpmodule, $read) || preg_match('/^specimen/i', $original_file)) {
 				$accessallowed = 1;
 			}
 			$original_file = $conf->$tmpmodule->dir_output.'/temp/massgeneration/'.$user->id.'/'.$original_file;
@@ -3695,7 +3727,7 @@ function dirbasename($pathfile)
  * Function to get list of updated or modified files.
  * $file_list is used as global variable
  *
- * @param array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
+ * @param array{}|array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>}	$file_list	Array for response
  * @param   SimpleXMLElement	$dir    	        SimpleXMLElement of files to test
  * @param   string				$path   	        Path of files relative to $pathref. We start with ''. Used by recursive calls.
  * @param   string				$pathref            Path ref (DOL_DOCUMENT_ROOT)
@@ -3793,10 +3825,10 @@ function dragAndDropFileUpload($htmlname)
 			});
 
 			$(".cssDragDropArea").on("drop", function(e) {
-				console.log("Trigger event file dropped. fk_element='.dol_escape_js($object->id).' element='.dol_escape_js($object->element).'");
+				console.log("Trigger event file dropped. fk_element='.dol_escape_js((string) $object->id).' element='.dol_escape_js($object->element).'");
 				e.preventDefault();
 				fd = new FormData();
-				fd.append("fk_element", "'.dol_escape_js($object->id).'");
+				fd.append("fk_element", "'.dol_escape_js((string) $object->id).'");
 				fd.append("element", "'.dol_escape_js($object->element).'");
 				fd.append("token", "'.currentToken().'");
 				fd.append("action", "linkit");
@@ -3832,17 +3864,17 @@ function dragAndDropFileUpload($htmlname)
 						}
 						console.log(nboferror);
 						if (nboferror > 0) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings";
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorOnAtLeastOneFileUpload:warnings";
 						} else {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=UploadFileDragDropSuccess:mesgs";
 						}
 					},
 					error:function() {
 						console.log("Error Uploading.", arguments)
 						if (arguments[0].status == 403) {
-							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
+							window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadPermissionDenied:errors";
 						}
-						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js($object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
+						window.location.href = "'.$_SERVER["PHP_SELF"].'?id='.dol_escape_js((string) $object->id).'&seteventmessages=ErrorUploadFileDragDropPermissionDenied:errors";
 					},
 				})
 			});

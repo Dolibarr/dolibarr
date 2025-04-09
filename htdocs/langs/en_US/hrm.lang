@@ -81,6 +81,7 @@ TypeHowToBe=How to be
 TypeKnowledge=Knowledge
 AbandonmentComment=Abandonment comment
 DateLastEval=Date last evaluation
+Seniority=Seniority
 NoEval=No evaluation done for this employee
 HowManyUserWithThisMaxNote=Number of users with this rank
 HighestRank=Highest rank

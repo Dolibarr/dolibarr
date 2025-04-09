@@ -6,6 +6,7 @@
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +45,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -396,7 +397,7 @@ if (empty($ipaddress)) {
 	$ipaddress = $_SESSION['ipaddress'];
 }
 if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' :$_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
 	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
 		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
 		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
@@ -426,6 +427,7 @@ $appli = $mysoc->name;
 
 // Make complementary actions (post payment actions if payment is ok)
 $ispostactionok = 0;
+$paymentTypeId = 0;
 $postactionmessages = array();
 if ($ispaymentok) {
 	// Set permission for the anonymous user
@@ -467,7 +469,6 @@ if ($ispaymentok) {
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
 
 		if ($result1 > 0 && $result2 > 0) {
-			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
 				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
@@ -577,7 +578,7 @@ if ($ispaymentok) {
 					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"));
 				}
 
-				$datesubend = null;
+				$datesubend = 0;
 				if ($datesubscription && $defaultdelay && $defaultdelayunit) {
 					$datesubend = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
 					// the new end date of subscription must be in futur
@@ -590,7 +591,7 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
@@ -644,6 +645,7 @@ if ($ispaymentok) {
 					$option = 'none';
 				}
 				$sendalsoemail = 1;
+				$crowid = 0;
 
 				// Record the subscription then complementary actions
 				$db->begin();
@@ -664,10 +666,12 @@ if ($ispaymentok) {
 					}
 				}
 
+				$autocreatethirdparty = 0;
+
 				if (!$error) {
 					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
 
-					$autocreatethirdparty = 1; // will create thirdparty if member not yet linked to a thirdparty
+					$autocreatethirdparty = 1; // will create third party if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty, $TRANSACTIONID, $service);
 					if ($result < 0) {
@@ -709,7 +713,7 @@ if ($ispaymentok) {
 							$service = 'StripeLive';
 							$servicestatus = 1;
 						}
-						$stripeacc = null; // No Oauth/connect use for public pages
+						$stripeacc = ''; // No Oauth/connect use for public pages
 
 						$thirdparty = new Societe($db);
 						$thirdparty->fetch($thirdparty_id);
@@ -1068,9 +1072,19 @@ if ($ispaymentok) {
 					$invoice = new Facture($db);
 					$result = $invoice->createFromOrder($object, $user);
 					if ($result > 0) {
-						$object->classifyBilled($user);
-						$invoice->validate($user);
-						// Creation of payment line
+						if ($FinalPaymentAmt != $object->total_ttc) {
+							// The amount paid can be lower than the order only if the user tried to modified the amount from the payment page. A payment has been received but it is a hack attempt
+							// We can add a line to reduce the amount of the invoice but with which vat ?
+							// TODO Test if vat on line is the same everywhere, if yes we can add
+							// $invoice->addline('Fix amount of invoice', $FinalPaymentAmt - $object->total_ttc, 1, $txtva);
+							// TODO Send a warning email.
+						}
+
+						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+
+						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
+
+						// Creation of payment line (warning: if amount has been modified on page, the payment may be partial)
 						include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 						$paiement = new Paiement($db);
 						$paiement->datepaye = $now;
@@ -1299,7 +1313,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($ref);
+		$result = $object->fetch((int) $ref);  // @phan-suppress-curren-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
@@ -1440,20 +1454,20 @@ if ($ispaymentok) {
 						$thirdparty = new Societe($db);
 						$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
 						if ($resultthirdparty < 0) {
-							setEventMessages($resultthirdparty->error, $resultthirdparty->errors, "errors");
+							setEventMessages($thirdparty->error, $thirdparty->errors, "errors");
 						} else {
 							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 							$formmail = new FormMail($db);
 							// Set output language
 							$outputlangs = new Translate('', $conf);
-							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $thirdparty->default_lang);
 							// Load traductions files required by page
 							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
 							$arraydefaultmessage = null;
 
-							$idoftemplatetouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');	// Email to send for Event organization registration
+							$idoftemplatetouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');	// Email to send for Event organization registration
 
 							if (!empty($idoftemplatetouse)) {
 								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
@@ -1476,7 +1490,7 @@ if ($ispaymentok) {
 							$sendto = $attendeetovalidate->email;
 							$cc = '';
 							if ($thirdparty->email) {
-								$cc = $thirdparty->email;
+								$cc = $thirdparty->email ?? '';
 							}
 							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
@@ -1530,7 +1544,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($ref);
+		$result = $object->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -1655,18 +1669,18 @@ if ($ispaymentok) {
 						} else {
 							$booth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
-							if ($resultboothupdate<0) {
-								// Finding the thirdparty by getting the invoice
+							if ($resultboothupdate < 0) {
+								// Finding the third party by getting the invoice
 								$invoice = new Facture($db);
-								$resultinvoice = $invoice->fetch($ref);
-								if ($resultinvoice<0) {
+								$resultinvoice = $invoice->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+								if ($resultinvoice < 0) {
 									$postactionmessages[] = 'Could not find the associated invoice.';
 									$ispostactionok = -1;
 									$error++;
 								} else {
 									$thirdparty = new Societe($db);
 									$resultthirdparty = $thirdparty->fetch($invoice->socid);
-									if ($resultthirdparty<0) {
+									if ($resultthirdparty < 0) {
 										$error++;
 										setEventMessages(null, $thirdparty->errors, "errors");
 									} else {
@@ -1682,7 +1696,7 @@ if ($ispaymentok) {
 										// Get email content from template
 										$arraydefaultmessage = null;
 
-										$idoftemplatetouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH');	// Email sent after registration for a Booth
+										$idoftemplatetouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH');	// Email sent after registration for a Booth
 
 										if (!empty($idoftemplatetouse)) {
 											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
@@ -1897,10 +1911,11 @@ if ($ispaymentok) {
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
 	$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '': $_SESSION["FinalPaymentAmt"];
+	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
 	$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
+		'@phan-var-force CommonObject $object';
 		// Call trigger
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
 		if ($result < 0) {
@@ -1908,7 +1923,7 @@ if ($ispaymentok) {
 		}
 		// End call triggers
 	} elseif (get_class($object) == 'stdClass') {
-		//In some case $object is not instantiate (for paiement on custom object) We need to deal with payment
+		//In some cases $object is not instantiated (for payment on custom object) We need to deal with payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 		$paiement = new Paiement($db);
 		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
@@ -1962,11 +1977,11 @@ if ($ispaymentok) {
 	// Send an email to the admins
 	if ($sendemail) {
 		// Get default language to use for the company for supervision emails
-		$myCompanyDefaultLang = $mysoc->default_lang;
+		$myCompanyDefaultLang = (string) $mysoc->default_lang;
 		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
 			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
 			// so it must always be into the same language.
-			$myCompanyDefaultLang = getLanguageCodeFromCountryCode($mysoc->country_code);
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
 		}
 
 		$companylangs = new Translate('', $conf);
@@ -2127,7 +2142,7 @@ unset($_SESSION["TRANSACTIONID"]);
 if (empty($doactionsthenredirect)) {
 	print "\n</div>\n";
 
-	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
+	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag((string) $paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
 }
 
 

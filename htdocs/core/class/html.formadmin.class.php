@@ -356,7 +356,7 @@ class FormAdmin
 		ksort($menuarray);
 
 		// Show combo list of menu handlers
-		print '<select class="flat maxwidth150" id="'.$htmlname.'" name="'.$htmlname.'">';
+		print '<select class="flat width150" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($menuarray as $key => $val) {
 			$tab = explode('_', $key);
 			print '<option value="'.$key.'"';
@@ -511,10 +511,11 @@ class FormAdmin
 	 */
 	public function selectTypeOfFields($htmlname, $type, $typewecanchangeinto = array())
 	{
-		global $type2label;	// TODO Remove this global
+		$type2label = ExtraFields::getListOfTypesLabels();
 
 		$out = '';
 
+		$out .= '<!-- combo with type of extrafields -->'."\n";
 		$out .= '<select class="flat type" id="'.$htmlname.'" name="'.$htmlname.'">';
 		foreach ($type2label as $key => $val) {
 			$selected = '';

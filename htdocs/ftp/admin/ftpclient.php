@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2022 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2011       Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +48,14 @@ $entry = GETPOST('numero_entry', 'alpha');
 if (!$user->admin) {
 	accessforbidden();
 }
+
+// Initialise variables
+$result1 = 0;
+$result2 = 0;
+$result3 = 0;
+$result4 = 0;
+$result5 = 0;
+$result6 = 0;
 
 
 /*

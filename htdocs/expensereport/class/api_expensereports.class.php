@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 class ExpenseReports extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'fk_user_author'
 	);
 
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDSPAYMENT = array(
 		"fk_typepayment",
@@ -48,7 +49,7 @@ class ExpenseReports extends DolibarrApi
 	);
 
 	/**
-	 * @var ExpenseReport $expensereport {@type ExpenseReport}
+	 * @var ExpenseReport {@type ExpenseReport}
 	 */
 	public $expensereport;
 
@@ -107,6 +108,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                       Array of order objects
+	 * @phan-return ExpenseReport[]
+	 * @phpstan-return ExpenseReport[]
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -190,6 +193,8 @@ class ExpenseReports extends DolibarrApi
 	 * Create Expense Report object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int                     ID of Expense Report
 	 */
 	public function post($request_data = null)
@@ -262,6 +267,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param int   $id             Id of Expense Report to update
 	 * @param array $request_data   Expense Report data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -330,6 +337,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param int   $id             Id of Expense Report to update
 	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   Expense Report data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
@@ -430,6 +439,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of Expense Report to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
@@ -483,6 +494,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param   int     $id         Expense Report ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -564,6 +577,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @return array                List of paymentExpenseReport objects
+	 * @phan-return PaymentExpenseReport[]
+	 * @phpstan-return PaymentExpenseReport[]
 	 *
 	 * @url     GET /payments
 	 *
@@ -641,6 +656,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param 	int 	$id   							ID of expense report
 	 * @param 	array 	$request_data   {@from body}  	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	int 									ID of paymentExpenseReport
 	 *
 	 * @url     POST {id}/payments
@@ -681,6 +698,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param   int     $id              ID of paymentExpenseReport
 	 * @param   array   $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  object
 	 *
 	 * @url     PUT {id}/payments
@@ -801,12 +820,15 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$expensereport = array();
 		foreach (ExpenseReports::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -820,12 +842,15 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validatepayment($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$expensereport = array();
 		foreach (ExpenseReports::$FIELDSPAYMENT as $field) {
 			if (!isset($data[$field])) {

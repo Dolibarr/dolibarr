@@ -352,6 +352,7 @@ ErrorQtyOrderedLessQtyShipped = The quantity ordered cannot be less than the qua
 ErrorVariousPaymentOnBankAccountWithADifferentCurrencyNotYetSupported=Error, creating a various payment on a bank account with a currency different than the currency of the company is not yet supported.
 ErrorStreamMustBeEnabled=The PHP stream %s is not available. Check your PHP modules and Dolibarr parameter $dolibarr_main_stream_to_disable.
 ErrorYouTryToPayInvoicesWithDifferentCurrenciesInSamePayment=Error, you try to pay different invoices with different currencies in the same payment
+ErrorLinkNotFoundWithSharedLink=Error, link not found with this shared key
 ErrorBadNumberOfLinesMustHaveAtLeastOneLinePlusTitle=Bad number of lines. The files must have at least 2 lines (1 line for title and 1 line for data)
 # Warnings
 WarningParamUploadMaxFileSizeHigherThanPostMaxSize=Your PHP parameter upload_max_filesize (%s) is higher than PHP parameter post_max_size (%s). This is not a consistent setup.
@@ -440,4 +441,5 @@ ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
 EmptyMessageNotAllowedError=Empty message is not allowed
 ErrorIsNotInError=%s is not in error
+ErrorFilenameExtensionNotAllowed=File %s has a forbidden file extension
 ErrorNoValueForSelectListType=Error, a value for this type of field is mandatory

@@ -190,3 +190,6 @@ EmailingSelectorFile=Emails selector file
 NoEmailingSelector=No emails selector file
 ModuleTranslatedIntoLangForKeyInto=Translated into a .lang file for key %s into "%s"
 PageLinkedByAMenuEntry=Page linked by at least one menu entry
+FieldsEdit=Fields edit
+FieldsInsert=Fields insert
+FieldsView=Fields view

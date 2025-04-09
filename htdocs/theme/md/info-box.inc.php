@@ -120,6 +120,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114  !important;
 }
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e  !important;
+}
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
@@ -497,6 +500,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .bg-infobox-holiday i.fa{
 	color: #755114  !important;
+}
+.bg-infobox-cubes i.fa{
+	color: #b0a53e  !important;
 }
 
 

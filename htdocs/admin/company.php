@@ -1,14 +1,14 @@
 <?php
-/* Copyright (C) 2001-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@inodbox.com>
- * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro@open-dsi.fr>
- * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
- * Copyright (C) 2023       Nick Fragoulis
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2019	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2014	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2011-2017	Philippe Grand				<philippe.grand@atoo-net.com>
+ * Copyright (C) 2015-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Rui Strecht					<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2023		Nick Fragoulis
+ * Copyright (C) 2024-2025	Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ if (($action == 'update' && !GETPOST("cancel", 'alpha'))
 	$arrayofimages = array('logo', 'logo_squarred');
 	//var_dump($_FILES); exit;
 	foreach ($arrayofimages as $varforimage) {
-		if ($_FILES[$varforimage]["name"] && !preg_match('/(\.jpeg|\.jpg|\.png)$/i', $_FILES[$varforimage]["name"])) {	// Logo can be used on a lot of different places. Only jpg and png can be supported.
+		if ($_FILES[$varforimage]["name"] && !image_format_supported($_FILES[$varforimage]["name"], 0)) {	// Logo can be used on a lot of different places. Recommend using jpg and png for better compatibility.
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorBadImageFormat"), null, 'errors');
 			break;
@@ -466,10 +466,8 @@ print '</td></tr>'."\n";
 // Country
 print '<tr class="oddeven"><td class="fieldrequired"><label for="selectcountry_id">'.$langs->trans("Country").'</label></td><td>';
 print img_picto('', 'globe-americas', 'class="pictofixedwidth"');
-print $form->select_country($mysoc->country_id, 'country_id', '', 0);
-if ($user->admin) {
-	print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-}
+print $form->select_country((string) $mysoc->country_id, 'country_id', '', 0);
+print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
 print '</td></tr>'."\n";
 
 // Address
@@ -599,7 +597,7 @@ print '<input name="capital" id="capital" class="maxwidth100" value="'.dol_escap
 // Juridical Status
 print '<tr class="oddeven"><td><label for="forme_juridique_code">'.$langs->trans("JuridicalStatus").'</label></td><td>';
 if ($mysoc->country_code) {
-	print $formcompany->select_juridicalstatus(getDolGlobalString('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
+	print $formcompany->select_juridicalstatus(getDolGlobalInt('MAIN_INFO_SOCIETE_FORME_JURIDIQUE'), $mysoc->country_code, '', 'forme_juridique_code');
 } else {
 	print $countrynotdefined;
 }
@@ -839,7 +837,7 @@ if ($mysoc->useLocalTax(2)) {
 	$tooltiphelp = ($tooltiphelp != "LocalTax2IsUsedExample" ? "<i>".$langs->trans("Example").': '.$langs->transcountry("LocalTax2IsUsedExample", $mysoc->country_code)."</i>\n" : "");
 	if (!isOnlyOneLocalTax(2)) {
 		print '<br><label for="lt2">'.$langs->trans("LTRate").'</label>: ';
-		$formcompany->select_localtax(2, getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
+		$formcompany->select_localtax(2, (float) getDolGlobalString('MAIN_INFO_VALUE_LOCALTAX2'), "lt2");
 	}
 
 	$options = array($langs->trans("CalcLocaltax1").' '.$langs->trans("CalcLocaltax1Desc"), $langs->trans("CalcLocaltax2").' - '.$langs->trans("CalcLocaltax2Desc"), $langs->trans("CalcLocaltax3").' - '.$langs->trans("CalcLocaltax3Desc"));
@@ -910,7 +908,7 @@ if ($mysoc->country_code == 'GR') {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("MYDATA_AADE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="MYDATA_AADE_KEY" value="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
+	print '<input class="minwidth300" type="password" name="MYDATA_AADE_KEY" value="'.getDolGlobalString('MYDATA_AADE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<tr class="oddeven"><td>';
@@ -920,7 +918,7 @@ if ($mysoc->country_code == 'GR') {
 
 	print '<tr class="oddeven"><td>';
 	print '<span class="titlefield fieldrequired">'.$langs->trans("AADE_WEBSERVICE_KEY").'</span></td><td>';
-	print '<input class="minwidth300" type="text" name="AADE_WEBSERVICE_KEY" value="'.getDolGlobalString('AADE_WEBSERVICE_KEY').'"';
+	print '<input class="minwidth300" type="password" name="AADE_WEBSERVICE_KEY" value="'.getDolGlobalString('AADE_WEBSERVICE_KEY').'"';
 	print '</td><td></td></tr>';
 
 	print '<br>';

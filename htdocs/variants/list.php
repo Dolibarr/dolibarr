@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2016		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2022   	Open-Dsi				<support@open-dsi.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
@@ -125,8 +125,8 @@ foreach ($object->fields as $key => $val) {
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields['t.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
 			'position' => $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
@@ -134,15 +134,15 @@ foreach ($object->fields as $key => $val) {
 }
 $arrayfields['nb_of_values'] = array(
 	'label' => $langs->trans('NbOfDifferentValues'),
-	'checked' => 1,
-	'enabled' => 1,
+	'checked' => '1',
+	'enabled' => '1',
 	'position' => 40,
 	'help' => ''
 );
 $arrayfields['nb_products'] = array(
 	'label' => $langs->trans('NbProducts'),
-	'checked' => 1,
-	'enabled' => 1,
+	'checked' => '1',
+	'enabled' => '1',
 	'position' => 50,
 	'help' => ''
 );
@@ -151,7 +151,6 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $permissiontoread = $user->hasRight('variants', 'read');
 $permissiontoadd = $user->hasRight('variants', 'write');
@@ -754,13 +753,13 @@ while ($i < $imaxinloop) {
 			if (!empty($arrayfields['t.' . $key]['checked'])) {
 				print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
 				if (preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) {
-					print ' title="'.dol_escape_htmltag($object->$key).'"';
+					print ' title="'.dol_escape_htmltag((string) $object->$key).'"';
 				}
 				print '>';
 				if ($key == 'status') {
 					print $object->getLibStatut(5);
 				} elseif ($key == 'rowid') {
-					print $object->showOutputField($val, $key, $object->id, '');
+					print $object->showOutputField($val, $key, (string) $object->id, '');
 				} else {
 					print $object->showOutputField($val, $key, $object->$key, '');
 				}

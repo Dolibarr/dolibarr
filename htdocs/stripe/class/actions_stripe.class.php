@@ -2,7 +2,7 @@
 /* Copyright (C) 2009-2016  Regis Houssin  			<regis.houssin@inodbox.com>
  * Copyright (C) 2011       Herve Prot     			<herve.prot@symeos.com>
  * Copyright (C) 2014       Philippe Grand 			<philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,7 +126,7 @@ class ActionsStripeconnect extends CommonHookActions
 			$this->resprints .= '</td>';
 			$this->resprints .= '<td colspan="3">';
 			$stripe = new Stripe($this->db);
-			if (7 == 4) {
+			if (7 == 4) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 				$object->fetch_thirdparty();
 				$customer = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints .= $customer->id;
@@ -145,7 +145,7 @@ class ActionsStripeconnect extends CommonHookActions
 			$this->resprints .= '</td>';
 			$this->resprints .= '<td colspan="3">';
 			$stripe = new Stripe($this->db);
-			if (7 == 4) {
+			if (7 == 4) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 				$object->fetch_thirdparty();
 				$customer = $stripe->customerStripe($object, $stripe->getStripeAccount($service));
 				$this->resprints .= $customer->id;
@@ -196,7 +196,14 @@ class ActionsStripeconnect extends CommonHookActions
 			if ($object->statut > Facture::STATUS_DRAFT && $object->statut < Facture::STATUS_ABANDONED && $object->paye == 0) {
 				$stripe = new Stripe($this->db);
 				if ($resteapayer > 0) {
-					if ($stripe->getStripeAccount($conf->entity)) {  // a modifier avec droit stripe
+					if (isModEnabled('stripe') && (!getDolGlobalString('STRIPE_LIVE') || GETPOST('forcesandbox', 'alpha'))) {
+						$service = 'StripeTest';
+						dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode', 'Stripe'), [], 'warning');
+					} else {
+						$service = 'StripeLive';
+					}
+
+					if ($stripe->getStripeAccount($service, 0, $conf->entity)) {  // To modify with stripe authorizations
 						$langs->load("withdrawals");
 						print '<a class="butActionDelete" href="'.dol_buildpath('/stripeconnect/payment.php?facid='.$object->id.'&action=create', 1).'" title="'.dol_escape_htmltag($langs->trans("StripeConnectPay")).'">'.$langs->trans("StripeConnectPay").'</a>';
 					} else {

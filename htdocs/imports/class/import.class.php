@@ -3,7 +3,7 @@
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020		Ahmad Jamaly Rabib	<rabib@metroworks.co.jp>
  * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,11 +303,11 @@ class Import
 	 *  Build an import example file.
 	 *  Arrays this->array_export_xxx are already loaded for required datatoexport
 	 *
-	 *  @param      string	$model              Name of import engine ('csv', ...)
-	 *  @param      string	$headerlinefields   Array of values for first line of example file
-	 *  @param      string	$contentlinevalues	Array of values for content line of example file
-	 *  @param		string	$datatoimport		Dataset to import
-	 *  @return		string						Return integer <0 if KO, >0 if OK
+	 *  @param      string		$model              Name of import engine ('csv', ...)
+	 *  @param      string[]	$headerlinefields   Array of values for first line of example file
+	 *  @param      string[]	$contentlinevalues	Array of values for content line of example file
+	 *  @param		string		$datatoimport		Dataset to import
+	 *  @return		string							Return integer <0 if KO, >0 if OK
 	 */
 	public function build_example_file($model, $headerlinefields, $contentlinevalues, $datatoimport)
 	{
@@ -324,7 +324,7 @@ class Import
 		$classname = "Import".$model;
 		require_once $dir.$file;
 		$objmodel = new $classname($this->db, $datatoimport);
-		'@phan-var-force CommonObject $objmodel';
+		'@phan-var-force ModeleImports $objmodel';
 
 		$outputlangs = $langs; // Lang for output
 		$s = '';

@@ -5,7 +5,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2020 	   Nicolas ZABOURI		<info@inovea-conseil.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,22 +38,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class WebsitePage extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string 		Id to identify managed objects
 	 */
 	public $element = 'websitepage';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
 
 	/**
-	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 		String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'file-code';
 
 	/**
-	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 		Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
@@ -63,72 +63,77 @@ class WebsitePage extends CommonObject
 	protected $childtablesoncascade = array('categorie_website_page');
 
 	/**
-	 * @var int Website ID
+	 * @var int 		Website ID
 	 */
 	public $fk_website;
 
 	/**
-	 * @var ?int Page ID
+	 * @var ?int 		Page ID
 	 */
 	public $fk_page;		// If translation of another page
 
 	/**
-	 * @var string Page url
+	 * @var string 		Page url
 	 */
 	public $pageurl;
 
 	/**
-	 * @var string Alias alt
+	 * @var string 		Alias alt
 	 */
 	public $aliasalt;
 
 	/**
-	 * @var string Container type
+	 * @var string 		Container type
 	 */
 	public $type_container;
 
 	/**
-	 * @var string title
+	 * @var string 		Title
 	 */
 	public $title;
 
 	/**
-	 * @var string description
+	 * @var string 		Description
 	 */
 	public $description;
 
 	/**
-	 * @var string image
+	 * @var string 		Image (deprecated)
 	 */
 	public $image;
 
 	/**
-	 * @var string keywords
+	 * @var string 		Keywords
 	 */
 	public $keywords;
 
 	/**
-	 * @var string language code ('en', 'fr', 'en-gb', ..)
+	 * @var string 		Language code ('en', 'fr', 'en-gb', ..)
 	 */
 	public $lang;
 
 	/**
-	 * @var int allowed in frames
+	 * @var int 		Page allowed in frames
 	 */
 	public $allowed_in_frames;
 
 	/**
-	 * @var string html header
+	 * @var int<0,1>	Disable WAF
+	 */
+	public $disable_waf = 0;
+
+	/**
+	 * @var string 		Page html header
 	 */
 	public $htmlheader;
 
 	/**
-	 * @var string content
+	 * @var string 		Page content
 	 */
 	public $content;
 
 	/**
-	 * @var string grabbed from
+	 * @var string 		Url page was grabbed from
 	 */
 	public $grabbed_from;
 
@@ -138,12 +143,12 @@ class WebsitePage extends CommonObject
 	public $status;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID use of creation
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID user of last modification
 	 */
 	public $fk_user_modif;
 
@@ -163,7 +168,7 @@ class WebsitePage extends CommonObject
 	public $fk_object;
 
 	/**
-	 * @var int			Another ID that is the $id but with an offset so that ID of pages of the website start at 1
+	 * @var int			Another ID that is the but with an offset so that ID of pages of the website start at 1
 	 */
 	public $newid;
 
@@ -198,7 +203,7 @@ class WebsitePage extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-5,5>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid'          => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
@@ -662,7 +667,7 @@ class WebsitePage extends CommonObject
 				return -1;
 			}
 			$tmppage = new WebsitePage($this->db);
-			$tmppage->fetch($this->fk_page);
+			$tmppage->fetch((int) $this->fk_page);
 			if ($tmppage->lang == $this->lang) {
 				$this->error = "ErrorLanguageOfTranslatedPageIsSameThanThisPage";
 				return -1;

@@ -12,7 +12,8 @@
  * Copyright (C) 2023  		Lenin Rivas	            <lenin.rivas777@gmail.com>
  * Copyright (C) 2023       Sylvain Legrand	        <technique@infras.fr>
  * Copyright (C) 2023		William Mead			<william.mead@manchenumerique.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Josep Lluís Amador      <joseplluis@lliuretic.cat>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,7 @@ if (empty($reshook)) {
 		$tmpinvoice = new Facture($db);
 		foreach ($_POST as $key => $value) {
 			if (substr($key, 0, 7) == 'amount_' && GETPOST($key) != '') {
-				$cursorfacid = substr($key, 7);
+				$cursorfacid = (int) substr($key, 7);
 				$amounts[$cursorfacid] = price2num(GETPOST($key));
 				if (!empty($amounts[$cursorfacid])) {
 					$totalpayment += (float) $amounts[$cursorfacid];
@@ -147,7 +148,7 @@ if (empty($reshook)) {
 
 				$formquestion[$i++] = array('type' => 'hidden', 'name' => $key, 'value' => GETPOST($key));
 			} elseif (substr($key, 0, 21) == 'multicurrency_amount_') {
-				$cursorfacid = substr($key, 21);
+				$cursorfacid = (int) substr($key, 21);
 				$multicurrency_amounts[$cursorfacid] = price2num(GETPOST($key));
 				$multicurrency_totalpayment += (float) $multicurrency_amounts[$cursorfacid];
 				if (!empty($multicurrency_amounts[$cursorfacid])) {
@@ -248,7 +249,7 @@ if (empty($reshook)) {
 
 		foreach ($multicurrency_amounts as $key => $value) {	// How payment is dispatched
 			$tmpinvoice = new Facture($db);
-			$tmpinvoice->fetch($key);
+			$tmpinvoice->fetch((int) $key);
 			if ($tmpinvoice->type == Facture::TYPE_CREDIT_NOTE) {
 				$newvalue = price2num($value, 'MT');
 				$multicurrency_amounts[$key] = - abs((float) $newvalue);
@@ -346,8 +347,8 @@ $form = new Form($db);
 llxHeader('', $langs->trans("Payment"));
 
 
-	$facture = new Facture($db);
-	$result = $facture->fetch($facid);
+$facture = new Facture($db);
+$result = $facture->fetch($facid);
 
 if ($result >= 0) {
 	$facture->fetch_thirdparty();
@@ -501,7 +502,9 @@ if ($result >= 0) {
 	print '<tr><td><span class="fieldrequired">'.$langs->trans('Date').'</span></td><td>';
 	$datepayment = dol_mktime(12, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 	$datepayment = ($datepayment == '' ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $datepayment);
-	print $form->selectDate($datepayment, '', 0, 0, 0, "add_paiement", 1, 1, 0, '', '', $facture->date);
+	$adddateof = array(array('adddateof'=>$facture->date));
+	$adddateof[] = array('adddateof'=>$facture->date_lim_reglement, 'labeladddateof'=>$langs->transnoentities('DateDue'));
+	print $form->selectDate($datepayment, '', 0, 0, 0, "add_paiement", 1, 1, 0, '', '', $adddateof);
 	print '</td></tr>';
 
 	// Payment mode
@@ -570,28 +573,33 @@ if ($result >= 0) {
 	 * List of unpaid invoices
 	 */
 
-	$sql = 'SELECT f.rowid as facid, f.ref, f.total_ht, f.total_tva, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc, f.type,';
-	$sql .= ' f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-	$sql .= ' WHERE f.entity IN ('.getEntity('facture').')';
-	$sql .= ' AND (f.fk_soc = '.((int) $facture->socid);
+	$sql = "SELECT f.rowid as facid, f.ref, f.total_ht, f.total_tva, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ht, f.multicurrency_total_tva, f.multicurrency_total_ttc, f.type,";
+	$sql .= " f.datef as df, f.fk_soc as socid, f.date_lim_reglement as dlr";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " WHERE f.entity IN (".getEntity('facture').")";
+	$sql .= " AND (f.fk_soc = ".((int) $facture->socid);
 	// Can pay invoices of all child of parent company
 	if (getDolGlobalString('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS') && !empty($facture->thirdparty->parent)) {
-		$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->parent).')';
+		$sql .= " OR f.fk_soc IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE parent = ".((int) $facture->thirdparty->parent).")";
 	}
 	// Can pay invoices of all child of myself
 	if (getDolGlobalString('FACTURE_PAYMENTS_ON_SUBSIDIARY_COMPANIES')) {
-		$sql .= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.((int) $facture->thirdparty->id).')';
+		$sql .= " OR f.fk_soc IN (SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE parent = ".((int) $facture->thirdparty->id).")";
 	}
-	$sql .= ') AND f.paye = 0';
-	$sql .= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
+	$sql .= ") AND f.paye = 0";
+	$sql .= " AND f.fk_statut = 1"; // Statut=0 => not validated, Statut=2 => canceled
 	if ($facture->type != Facture::TYPE_CREDIT_NOTE) {
-		$sql .= ' AND type IN (0,1,3,5)'; // Standard invoice, replacement, deposit, situation
+		$sql .= " AND type IN (0,1,3,5)"; // Standard invoice, replacement, deposit, situation
 	} else {
-		$sql .= ' AND type = 2'; // If paying back a credit note, we show all credit notes
+		$sql .= " AND type = 2"; // If paying back a credit note, we show all credit notes
 	}
-	// Sort invoices by date and serial number: the older one comes first
-	$sql .= ' ORDER BY f.datef ASC, f.ref ASC';
+	if (!getDolGlobalInt('FACTURE_PAYMENTS_INVOICE_REQUESTED_SORT_FIRST')) {
+		// Sort invoices by date and serial number: the older one comes first
+		$sql .= " ORDER BY f.datef ASC, f.ref ASC";
+	} else {
+		// The requested invoice sort first
+		$sql .= " ORDER BY f.rowid = ".((int) $facid)." DESC, f.datef ASC, f.ref ASC";
+	}
 
 	$resql = $db->query($sql);
 	if ($resql) {
@@ -917,10 +925,10 @@ if ($result >= 0) {
 		print '<br>';
 		$text = '';
 		if (!empty($totalpayment)) {
-			$text = $langs->trans('ConfirmCustomerPayment', $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
+			$text = $langs->trans('ConfirmCustomerPayment', (string) $totalpayment, $langs->transnoentitiesnoconv("Currency".$conf->currency));
 		}
 		if (!empty($multicurrency_totalpayment)) {
-			$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
+			$text .= '<br>'.$langs->trans('ConfirmCustomerPayment', (string) $multicurrency_totalpayment, $langs->transnoentitiesnoconv("paymentInInvoiceCurrency"));
 		}
 		if (GETPOST('closepaidinvoices')) {
 			$text .= '<br>'.$langs->trans("AllCompletelyPayedInvoiceWillBeClosed");
