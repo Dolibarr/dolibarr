@@ -1282,6 +1282,8 @@ Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Check deposit not done
 Delays_MAIN_DELAY_EXPENSEREPORTS=Expense report to approve
 Delays_MAIN_DELAY_HOLIDAYS=Leave requests to approve
 Delays_MAIN_DELAY_MRP=Manufacturing order in progress
+Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE=Supplier proposal not closed
+Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL=Supplier proposal not billed
 SetupDescription1=Before starting to use Dolibarr some initial parameters must be defined and modules enabled/configured.
 SetupDescription2=The following two sections are mandatory (the two first entries in the Setup menu):
 SetupDescription3=<a href="%s">%s -> %s</a><br><br>Basic parameters used to customize the default behavior of your application (e.g for country-related features).
