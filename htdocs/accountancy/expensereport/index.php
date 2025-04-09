@@ -347,7 +347,24 @@ for ($i = 1; $i <= 12; $i++) {
 	if ($j > 12) {
 		$j -= 12;
 	}
-	print '<td width="60" class="right">'.$langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT)).'</td>';
+	$cursormonth = $j;
+	if ($cursormonth > 12) {
+		$cursormonth -= 12;
+	}
+	$cursoryear = ($cursormonth < getDolGlobalInt('SOCIETE_FISCAL_MONTH_START', 1)) ? $y + 1 : $y;
+	$tmp = dol_getdate(dol_get_last_day($cursoryear, $cursormonth, 'gmt'), false, 'gmt');
+
+	print '<td width="60" class="right">';
+	if (!empty($tmp['mday'])) {
+		$param = 'search_date_startday=1&search_date_startmonth='.$cursormonth.'&search_date_startyear='.$cursoryear;
+		$param .= '&search_date_endday='.$tmp['mday'].'&search_date_endmonth='.$tmp['mon'].'&search_date_endyear='.$tmp['year'];
+		print '<a href="'.DOL_URL_ROOT.'/accountancy/expensereport/lines.php?'.$param.'">';
+	}
+	print $langs->trans('MonthShort'.str_pad((string) $j, 2, '0', STR_PAD_LEFT));
+	if (!empty($tmp['mday'])) {
+		print '</a>';
+	}
+	print '</td>';
 }
 print '<td width="60" class="right"><b>'.$langs->trans("Total").'</b></td></tr>';
 
