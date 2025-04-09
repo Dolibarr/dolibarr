@@ -160,6 +160,7 @@ MovementLabel=Label of movement
 TypeMovement=Direction of movement
 DateMovement=Date of movement
 InventoryCode=Movement or inventory code
+LabelMovement=Label movement
 IsInPackage=Contained into package
 WarehouseAllowNegativeTransfer=Stock can be negative
 qtyToTranferIsNotEnough=You don't have enough stock from your source warehouse and your setup does not allow negative stocks.

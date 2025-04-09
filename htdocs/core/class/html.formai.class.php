@@ -142,6 +142,15 @@ class FormAI extends Form
 			$out .= '</div>';
 		}
 
+		if (empty($onlyenhancements) || in_array($onlyenhancements, array('textrephrase'))) {
+			$stylearray = getListForAIRephraseStyle();
+			$out .= ($out ? '<br>' : '');
+			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
+			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
+			$out .= '</div>';
+		}
+
 		$out = '<!-- getSectionForAIEnhancement -->'.$out;
 		$out = '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">'.$out;
 
@@ -158,6 +167,7 @@ class FormAI extends Form
 			$(document).ready(function() {
 				$('#ai_translation".$htmlContent."_select').data('functionai', 'texttranslation')
 				$('#ai_summarize".$htmlContent."_select').data('functionai', 'textsummarize')
+				$('#ai_rephraser".$htmlContent."_select').data('functionai', 'textrephraser')
 
 				$('#ai_instructions".$htmlContent."').keyup(function(){
 					console.log('We type a key up on #ai_instructions".$htmlContent."');
@@ -190,6 +200,13 @@ class FormAI extends Form
 				});
 
 				$('#ai_summarize".$htmlContent."_select').on('change', function() {
+					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
+					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
+						prepareCallAIGenerator($(this));
+					}
+				});
+
+				$('#ai_rephraser".$htmlContent."_select').on('change', function() {
 					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
@@ -256,7 +273,10 @@ class FormAI extends Form
 								break;
 						}
 						instructions = 'Summarize the following text '+ (unit == 'percent' ? 'by ' : 'in') + width + ' ' + unit + ': ' + texttomodify;
-					}else {
+					} else if (functionai == 'textrephraser') {
+						style = $('#ai_rephraser'+htmlname+'_select').val();
+						instructions = 'Rephrase the following text in the '+style+' style: ' + texttomodify;
+					} else {
 						instructions = userprompt;
 					}
 
@@ -389,12 +409,14 @@ class FormAI extends Form
 							//}
 						}
 
-						// remove readonly
+						// Remove all value from Ai Section select
 						$('#ai_instructions'+htmlname).val('');
 						$('#ai_translation'+htmlname+'_select').val('-1');
 						$('#ai_translation'+htmlname+'_select').trigger('change');
 						$('#ai_summarize'+htmlname+'_select').val('-1');
 						$('#ai_summarize'+htmlname+'_select').trigger('change');
+						$('#ai_rephraser'+htmlname+'_select').val('-1');
+						$('#ai_rephraser'+htmlname+'_select').trigger('change');
 						$('#ai_status_message'+htmlname).hide();
 						$('#ai_dropdown'+htmlname).hide();
 					},
