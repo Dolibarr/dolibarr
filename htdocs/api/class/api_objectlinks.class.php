@@ -145,6 +145,8 @@ class ObjectLinks extends DolibarrApi
 	 *
 	 * @param   int     $id         object link ID
 	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url	DELETE {id}
 	 *
@@ -196,6 +198,8 @@ class ObjectLinks extends DolibarrApi
 	 *  @param		string	$targettype 	type of the target object
 	 *  @param		string	$relationtype 	type of the relation, usually null
 	 *  @return		array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url GET
 	 *
@@ -262,6 +266,8 @@ class ObjectLinks extends DolibarrApi
 	 *  @param		string	$relationtype 	type of the relation, usually null
 	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return		array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url DELETE
 	 *
@@ -335,6 +341,8 @@ class ObjectLinks extends DolibarrApi
 	 *
 	 * @param   int         $id             ID of objectlink
 	 * @return  Object						Object with cleaned properties
+	 * @phan-return array<array<string,int|string|null>>
+	 * @phpstan-return array<array<string,int|string|null>>
 	 *
 	 * @throws	RestException 403
 	 * @throws	RestException 404
@@ -369,7 +377,13 @@ class ObjectLinks extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     Object to clean
+	 * @phan-param ?array<string,string>	$object
+	 * @phpstan-param ?array<string,string>	$object
+	 *
 	 * @return  Object              Object with cleaned properties
+	 * @phan-return array<array<string,int|string|null>>
+	 * @phpstan-return array<array<string,int|string|null>>
+	 *
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -462,7 +476,13 @@ class ObjectLinks extends DolibarrApi
 	 * Validate fields before create or update object
 	 *
 	 * @param   array           $data   Array with data to verify
+	 * @phan-param ?array<string,string>	$data
+	 * @phpstan-param ?array<string,string>	$data
+	 *
 	 * @return  array
+	 * @phan-return array<array<string,int|string|null>>
+	 * @phpstan-return array<array<string,int|string|null>>
+	 *
 	 * @throws  RestException 400
 	 */
 	private function _validate($data)
