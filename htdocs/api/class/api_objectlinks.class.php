@@ -62,6 +62,9 @@ class ObjectLinks extends DolibarrApi
 	 *
 	 * @param   int         $id				ID of objectlink
 	 * @return  Object						Object with cleaned properties
+	 * @phan-return array<array<string,null|int|string>>
+	 * @phpstan-return array<array<string,null|int|string>>
+	 *
 	 *
 	 * @url	GET {id}
 	 *
@@ -82,7 +85,11 @@ class ObjectLinks extends DolibarrApi
 	 *  {"fk_source":"167","sourcetype":"facture","fk_target":"123","targettype":"subscription"}
 	 *
 	 *  @param 		array   $request_data   Request data, see Example above for required parameters. Currently unused is relationtype. notrigger is default 0, which means to trigger, else set notrigger: 1
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
 	 *  @return		array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
 	 *
 	 * @url POST
 	 *
