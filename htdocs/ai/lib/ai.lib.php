@@ -66,6 +66,7 @@ function getListOfAIServices()
 			'textgeneration' => 'gpt-3.5-turbo',		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
 			'imagegeneration' => 'dall-e-3',
 			'audiogeneration' => 'tts-1',
+			'videogeneration' => 'na',
 			'transcription' => 'whisper-1',				// audio to text
 			'translation' => 'whisper-1',				// audio to text into another language
 		),
@@ -73,10 +74,11 @@ function getListOfAIServices()
 			'label' => 'Groq',
 			'url' => 'https://api.groq.com/openai/',
 			'textgeneration' => 'mixtral-8x7b-32768',	// 'llama3-8b-8192', 'gemma-7b-it'
-			'imagegeneration' => 'mixtral-8x7b-32768',
-			'audiogeneration' => 'mixtral-8x7b-32768',
-			'transcription' => 'mixtral-8x7b-32768',
-			'translation' => 'mixtral-8x7b-32768',
+			'imagegeneration' => 'na',
+			'audiogeneration' => 'na',
+			'videogeneration' => 'na',
+			'transcription' => 'na',
+			'translation' => 'na',
 		),
 		'mistral' => array(
 			'label' => 'Mistral',
@@ -84,6 +86,7 @@ function getListOfAIServices()
 			'textgeneration' => 'open-mistral-7b',
 			'imagegeneration' => 'na',
 			'audiogeneration' => 'na',
+			'videogeneration' => 'na',
 			'transcription' => 'na',
 			'translation' => 'na',
 		),
@@ -93,6 +96,7 @@ function getListOfAIServices()
 			'textgeneration' => 'tinyllama-1.1b',
 			'imagegeneration' => 'mixtral-8x7b-32768',
 			'audiogeneration' => 'mixtral-8x7b-32768',
+			'videogeneration' => 'na',
 			'transcription' => 'mixtral-8x7b-32768',
 			'translation' => 'mixtral-8x7b-32768',
 		)
