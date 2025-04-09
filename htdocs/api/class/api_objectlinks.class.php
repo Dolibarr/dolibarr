@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/objectlink.class.php';
 class ObjectLinks extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'fk_source',
@@ -306,7 +306,6 @@ class ObjectLinks extends DolibarrApi
 		}
 
 		if ($findresult > 0 ) {
-
 			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $this->objectlink->notrigger);
 
 			if ($result < 0 ) {
