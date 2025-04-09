@@ -244,14 +244,10 @@ class ObjectLinks extends DolibarrApi
 
 		if ($findresult < 0 ) {
 			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
-		}
-
-		if ($findresult == 0 ) {
-			throw new RestException(404, 'Object Link not found');
-		}
-
-		if ($findresult > 0 ) {
+		} elseif ($findresult > 0 ) {
 			return $this->_cleanObjectDatas($this->objectlink);
+		} else {
+			throw new RestException(404, 'Object Link not found');
 		}
 	}
 
