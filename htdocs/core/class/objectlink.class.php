@@ -53,9 +53,10 @@ class ObjectLink extends CommonObject
 	public $sourcetype;
 
 	/**
-	 * @var int source id is a foreign key
+	 * @var int target id is a foreign key
 	 */
-	public $target;
+	public $fk_target;
+
 	/**
 	 * @var string source type
 	 */
