@@ -1318,6 +1318,7 @@ class FactureRec extends CommonInvoice
 				$this->db->begin();
 
 				$invoiceidgenerated = 0;
+				$error = 0;
 
 				$facture = null;
 				$facturerec = new FactureRec($this->db);
@@ -1426,7 +1427,7 @@ class FactureRec extends CommonInvoice
 
 		$this->output = trim($this->output);
 
-		return $error ? $error : 0;
+		return count($this->errors);
 	}
 
 	/**
