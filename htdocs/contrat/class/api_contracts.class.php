@@ -451,13 +451,15 @@ class Contracts extends DolibarrApi
 
 		if ($updateRes > 0) {
 			if (getDolGlobalInt('API_CONTRAT_PUTLINE_OUTPUT_LINE_ONLY')) {
-				$result = $this->contractLine;
-				$result->fetch($id);
+				$result = new ContratLigne($this->db);
+				$result->fetch($lineid);
 				foreach (array(
 					'array_languages',
 					'contacts_ids',
 					'linked_objects',
 					'linkedObjectsIds',
+					'actiontypecode',
+					'module',
 					'canvas',
 					'user',
 					'origin',
@@ -474,6 +476,7 @@ class Contracts extends DolibarrApi
 					'cond_reglement_id',
 					'demand_reason_id',
 					'transport_mode_id',
+					'shipping_method',
 					'shipping_method_id',
 					'model_pdf',
 					'last_main_doc',
@@ -493,6 +496,12 @@ class Contracts extends DolibarrApi
 					'user_valid',
 					'user_validation',
 					'user_validation_id',
+					'user_modification',
+					'user_modification_id',
+					'cond_reglement_supplier_id',
+					'deposit_percent',
+					'retained_warranty_fk_cond_reglement',
+					'date_commande',
 					'fk_user_creat',
 					'fk_user_modif',
 					'specimen',
@@ -507,6 +516,8 @@ class Contracts extends DolibarrApi
 					'width_units',
 					'length',
 					'length_units',
+					'height',
+					'height_units',
 					'surface',
 					'surface_units',
 					'volume',
@@ -515,6 +526,8 @@ class Contracts extends DolibarrApi
 					'desc',
 					'product',
 					'fk_product_type',
+					'warehouse_id',
+					'totalpaid',
 					'type',
 					'libelle'
 						 ) as $fieldToUnset) {
