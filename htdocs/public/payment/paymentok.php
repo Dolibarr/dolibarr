@@ -1072,9 +1072,19 @@ if ($ispaymentok) {
 					$invoice = new Facture($db);
 					$result = $invoice->createFromOrder($object, $user);
 					if ($result > 0) {
-						$object->classifyBilled($user);
-						$invoice->validate($user);
-						// Creation of payment line
+						if ($FinalPaymentAmt != $object->total_ttc) {
+							// The amount paid can be lower than the order only if the user tried to modified the amount from the payment page. A payment has been received but it is a hack attempt
+							// We can add a line to reduce the amount of the invoice but with which vat ?
+							// TODO Test if vat on line is the same everywhere, if yes we can add
+							// $invoice->addline('Fix amount of invoice', $FinalPaymentAmt - $object->total_ttc, 1, $txtva);
+							// TODO Send a warning email.
+						}
+
+						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+
+						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
+
+						// Creation of payment line (warning: if amount has been modified on page, the payment may be partial)
 						include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 						$paiement = new Paiement($db);
 						$paiement->datepaye = $now;

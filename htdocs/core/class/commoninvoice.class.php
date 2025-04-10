@@ -196,8 +196,8 @@ abstract class CommonInvoice extends CommonObject
 	public $situation_cycle_ref;
 
 	/**
-	 * ! Closing after partial payment: discount_vat, badsupplier, abandon
-	 * ! Closing when no payment: replaced, abandoned
+	 * ! Closing after partial payment: CLOSECODE_DISCOUNTVAT, CLOSECODE_BADDEBT, CLOSECODE_BANKCHARGE, CLOSECODE_OTHER
+	 * ! Closing when no payment: CLOSECODE_ABANDONED, CLOSECODE_REPLACED
 	 * @var string Close code
 	 */
 	public $close_code;
@@ -275,6 +275,15 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	const STATUS_ABANDONED = 3;
 
+
+	const CLOSECODE_DISCOUNTVAT = 'discount_vat'; // Abandoned remain - escompte
+	const CLOSECODE_BADDEBT = 'badcustomer'; // Abandoned remain - bad customer
+	const CLOSECODE_BANKCHARGE = 'bankcharge'; // Abandoned remain - bank charge
+	const CLOSECODE_WITHHOLDINGTAX = 'withholdingtax';	// Abandoned remain - source tax
+	const CLOSECODE_OTHER = 'other'; // Abandoned remain - other
+
+	const CLOSECODE_ABANDONED = 'abandon'; // Abandoned - other
+	const CLOSECODE_REPLACED = 'replaced'; // Closed after doing a replacement invoice
 
 
 	/**
@@ -918,22 +927,28 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	public function getLibStatut($mode = 0, $alreadypaid = -1)
 	{
-		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $this->nbofopendirectdebitorcredittransfer);
+		$moreparams = array(
+			'nbofopendirectdebitorcredittransfer' => $this->nbofopendirectdebitorcredittransfer,
+			'close_code' => $this->close_code,
+			'close_note' => $this->close_note,
+		);
+
+		return $this->LibStatut($this->paye, $this->status, $mode, $alreadypaid, $this->type, $moreparams);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Return label of a status
 	 *
-	 *	@param    	int			$paye          	Status field paye (or $recur)
-	 *	@param      int			$status        	Id status
+	 *	@param    	int			$paye          	Status field $paye (no more used, replaced with $status) or $recur.
+	 *	@param      int			$status        	ID status
 	 *	@param      int<0,6>	$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=short label + picto, 6=long label + picto
 	 *	@param		int|float	$alreadypaid	0=No payment already done, >0=Some payments were already done (we recommend to put here float amount paid if you have it, -1 otherwise)
 	 *	@param		int			$type			Type invoice. If -1, we use $this->type
-	 *  @param		int			$nbofopendirectdebitorcredittransfer	Nb of open direct debit or credit transfer
+	 *  @param		int|array<string,int|string>	$moreparams		More params. Example: array('nbofopendirectdebitorcredittransfer' => x) for nb of open direct debit or credit transfer
 	 *	@return     string						Label of status
 	 */
-	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $nbofopendirectdebitorcredittransfer = 0)
+	public function LibStatut($paye, $status, $mode = 0, $alreadypaid = -1, $type = -1, $moreparams = array())
 	{
 		// phpcs:enable
 		global $langs, $hookmanager;
@@ -941,6 +956,18 @@ abstract class CommonInvoice extends CommonObject
 
 		if ($type == -1) {
 			$type = $this->type;
+		}
+
+		// For backward compatibility
+		if (is_int($moreparams)) {
+			$moreparams = array('nbofopendirectdebitorcredittransfer' => (int) $moreparams);
+		}
+
+		$nbofopendirectdebitorcredittransfer = 0;
+		foreach ($moreparams as $moreparamkey => $moreparamvalue) {
+			if ($moreparamkey == 'nbofopendirectdebitorcredittransfer') {
+				$nbofopendirectdebitorcredittransfer = $moreparamvalue;
+			}
 		}
 
 		$statusType = 'status0';
@@ -1000,7 +1027,28 @@ abstract class CommonInvoice extends CommonObject
 			return $hookmanager->resPrint;
 		}
 
-		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode);
+		if ($moreparams['close_code']) {
+			$titlestringtoshow = '';
+
+			if ($moreparams['close_code'] == self::CLOSECODE_DISCOUNTVAT) {
+				$titlestringtoshow = $langs->trans("HelpEscompte");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_BADDEBT) {
+				$titlestringtoshow = $langs->trans("ConfirmClassifyPaidPartiallyReasonBadCustomer");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_BANKCHARGE) {
+				$titlestringtoshow = $langs->trans("ConfirmClassifyPaidPartiallyReasonBankCharge");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_WITHHOLDINGTAX) {
+				$titlestringtoshow = $langs->trans("ConfirmClassifyPaidPartiallyReasonWithholdingTax");
+			} elseif ($moreparams['close_code'] == self::CLOSECODE_OTHER) {
+				$titlestringtoshow = $langs->trans("Other");
+			}
+
+			//$paramsbutton = array('badgeParams' => array('attr' => array('title' => 'rrrr')));
+			$paramsbutton = array('badgeParams' => array('attr' => array('title' => $titlestringtoshow)));
+		} else {
+			$paramsbutton = array();
+		}
+
+		return dolGetStatus($labelStatus, $labelStatusShort, '', $statusType, $mode, '', $paramsbutton);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps

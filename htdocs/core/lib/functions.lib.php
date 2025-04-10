@@ -7124,13 +7124,13 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 
 	// If force rounding
-	if ((string) $forcerounding != '-1') {
+	if ((string) $forcerounding != '-1' && (string) $forcerounding != '') {
 		if ($forcerounding === 'MU') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($forcerounding >= 0) {
-			$nbdecimal = $forcerounding;
+			$nbdecimal = (int) $forcerounding;
 		}
 	}
 

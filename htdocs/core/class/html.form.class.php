@@ -5819,7 +5819,7 @@ class Form
 					$moreattr = (!empty($input['moreattr']) ? ' ' . $input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' ' . $input['morecss'] : '');
 
-					if ($input['type'] == 'text') {
+					if ($input['type'] == 'text' || $input['type'] == 'input') {	// traditional input
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div><div class="tagtd"><input type="text" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'password') {
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
@@ -10476,7 +10476,7 @@ class Form
 			$morehtmlstatus = $hookmanager->resPrint;
 		}
 		if ($morehtmlstatus) {
-			$ret .= '<div class="statusref">' . $morehtmlstatus . '</div>';
+			$ret .= '<!-- status --><div class="statusref">' . $morehtmlstatus . '</div>';
 		}
 
 		$parameters = array();
