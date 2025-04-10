@@ -1000,6 +1000,14 @@ class Conf extends stdClass
 				$this->propal->cloture->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_CLOSE) ? (int) $this->global->MAIN_DELAY_PROPALS_TO_CLOSE : 0) * 86400;
 				$this->propal->facturation->warning_delay = (isset($this->global->MAIN_DELAY_PROPALS_TO_BILL) ? (int) $this->global->MAIN_DELAY_PROPALS_TO_BILL : 0) * 86400;
 			}
+			/** BACKPORT PR #33800 */
+			if (isset($this->supplier_proposal)) {
+				$this->supplier_proposal->cloture = new stdClass();
+				$this->supplier_proposal->facturation = new stdClass();
+				$this->supplier_proposal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE') * 86400;
+				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
+			}
+			/** END BACKPORT PR #33800 */
 			if (isset($this->facture)) {
 				$this->facture->client = new stdClass();
 				$this->facture->fournisseur = new stdClass();

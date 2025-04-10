@@ -1,0 +1,1 @@
+- Backported from develop PR #33800 : Supplier proposals delays

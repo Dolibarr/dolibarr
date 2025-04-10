@@ -1266,6 +1266,8 @@ Delays_MAIN_DELAY_MEMBERS=Cotisations adhérents en retard
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Dépôt de chèque non effectué
 Delays_MAIN_DELAY_EXPENSEREPORTS=Note de frais à approuver
 Delays_MAIN_DELAY_HOLIDAYS=Demandes de congés à approuver
+Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE=Proposition commercial fournisseur non fermée
+Delays_MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL=Proposition commercial fournisseur non facturée
 SetupDescription1=L'espace configuration permet de réaliser le paramétrage initial afin de pouvoir commencer à utiliser l'application.
 SetupDescription2=Les deux étapes obligatoires sont les deux premières entrées dans le menu de configuration, soit
 SetupDescription3=<a href="%s">%s -> %s</a><br><br>Paramètres basiques pour personnaliser le comportement par défaut du logiciel (comportement lié au pays par exemple).
