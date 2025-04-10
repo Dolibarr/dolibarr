@@ -453,7 +453,7 @@ class Contracts extends DolibarrApi
 			if (getDolGlobalInt('API_CONTRAT_PUTLINE_OUTPUT_LINE_ONLY')) {
 				$result = $this->contractLine;
 				$result->fetch($id);
-				foreach ([
+				foreach (array(
 					'array_languages',
 					'contacts_ids',
 					'linked_objects',
@@ -517,11 +517,10 @@ class Contracts extends DolibarrApi
 					'fk_product_type',
 					'type',
 					'libelle'
-						 ] as $fieldToUnset) {
+						 ) as $fieldToUnset) {
 					unset($result->{$fieldToUnset});
 				}
-			}
-			else {
+			} else {
 				$result = $this->get($id);
 				unset($result->line);
 			}
