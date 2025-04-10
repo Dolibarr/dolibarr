@@ -1491,6 +1491,7 @@ class Facture extends CommonInvoice
 		$this->pos_source = $object->pos_source;
 
 		$this->origin = $object->element;
+		$this->origin_type = $object->element;
 		$this->origin_id = $object->id;
 
 		$this->fk_user_author = $user->id;
