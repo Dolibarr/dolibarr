@@ -1256,7 +1256,7 @@ abstract class CommonObject
 			return -2;
 		}
 
-		if ($this->restrictiononfksoc && property_exists('socid', $this) && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
 			$sql_allowed_contacts.= ' WHERE sc.fk_soc = '.(int) $this->socid;
 			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
