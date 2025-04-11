@@ -302,12 +302,10 @@ class ProductCombination
 	 *
 	 * @param	int							$fk_product_parent	Rowid of parent product
 	 * @param	bool						$sort_by_ref		Sort result by product child reference
-	 * @return	int|ProductCombination[]						Return integer <0 KO
+	 * @return	ProductCombination[]						Return empty array if ko
 	 */
 	public function fetchAllByFkProductParent($fk_product_parent, $sort_by_ref = false)
 	{
-		global $conf;
-
 		$sql = "SELECT pac.rowid, pac.fk_product_parent, pac.fk_product_child, pac.variation_price, pac.variation_price_percentage, pac.variation_ref_ext, pac.variation_weight";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination AS pac";
 		if ($sort_by_ref) {
@@ -321,7 +319,7 @@ class ProductCombination
 		$query = $this->db->query($sql);
 
 		if (!$query) {
-			return -1;
+			return array();
 		}
 
 		$return = array();
