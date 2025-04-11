@@ -4769,10 +4769,12 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  */
 function dol_print_ip($ip, $mode = 0)
 {
-	global $langs;
+	global $conf, $langs;
 
 	$ret = '';
-	$resolveips = [];
+	if (!isset($conf->cache['resolveips'])) {
+		$conf->cache['resolveips'] = [];
+	}
 
 	if ($mode != 2) {
 		$countrycode = dolGetCountryCodeFromIp($ip);
@@ -4790,11 +4792,11 @@ function dol_print_ip($ip, $mode = 0)
 	}
 
 	if (in_array($mode, [0, 2])) {
-		if (empty($resolveips[$ip])) {
+		if (empty($conf->cache['resolveips'][$ip])) {
 			$domain = gethostbyaddr($ip);
-			$resolveips[$ip] = $domain; // false or domain
+			$conf->cache['resolveips'][$ip] = $domain; // false or domain
 		} else {
-			$domain = $resolveips[$ip];
+			$domain = $conf->cache['resolveips'][$ip];
 		}
 		if ($domain) {
 			$ret .= $domain;
