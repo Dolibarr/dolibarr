@@ -6,7 +6,7 @@
  * Copyright (C) 2019      Josep Lluís Amador  <joseplluis@lliuretic.cat>
  * Copyright (C) 2021      Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,7 +281,7 @@ if (getDolGlobalString('TAKEPOS_SHOW_DATE_OF_PRINING')) {
 		?>
 	<tr>
 		<th align="right"><?php if ($gift != 1) {
-			echo $langs->trans("VAT").' '.vatrate($key, 1);
+			echo $langs->trans("VAT").' '.vatrate($key, true);
 						  } ?></th>
 		<td align="right"><?php if ($gift != 1) {
 			echo price($val, 1, '', 1, - 1, - 1, $conf->currency)."\n";

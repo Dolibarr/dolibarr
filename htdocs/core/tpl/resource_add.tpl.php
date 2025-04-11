@@ -1,6 +1,7 @@
 <!-- BEGIN TEMPLATE resource_add.tpl.php -->
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,11 @@
  * @var int $element_id
  * @var string $element_ref
  */
+'
+@phan-var-force string $element
+@phan-var-force int $element_id
+@phan-var-force string $element_ref
+';
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
 	print "Error, template page can't be called as URL";
@@ -56,7 +62,7 @@ $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block">';
 $events = array();
 $out .= img_picto('', 'resource', 'class="pictofixedwidth"');
-$out .= $formresources->select_resource_list(0, 'fk_resource', [], 1, 1, 0, $events, '', 2, 0);
+$out .= $formresources->select_resource_list(0, 'fk_resource', '', 1, 1, 0, $events, '', 2, 0);
 $out .= '</div>';
 
 $out .= '<div class="divsearchfield paddingtop paddingbottom valignmiddle inline-block marginleftonly"><label for="resbusy">'.$langs->trans('Busy').'</label> ';

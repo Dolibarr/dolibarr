@@ -2,6 +2,7 @@
 IdAgenda=ID event
 Actions=Events
 Agenda=Agenda
+AgendaEvents=Agenda events
 TMenuAgenda=Agenda
 Agendas=Agendas
 LocalAgenda=Default calendar
@@ -206,3 +207,6 @@ BookcalBookingTitle=Online appointment
 Transparency = Transparency
 ReadMore = Read more
 ReadLess = Read less
+RecurringEvent=Recurring event
+EventPartOfARecurringSerie=Event is part of a recurring serie with ID %s
+BookCalSystem=Online booking

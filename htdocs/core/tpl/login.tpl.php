@@ -4,6 +4,7 @@
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Charlene Benke          <charlene@patas-monkey.com>
+ * Copyright (C) 2025       Marc de Lima Lucio      <marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,8 @@ if (!defined('NOBROWSERNOTIF')) {
  * @var DoliDB $db
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $dolibarr_main_force_https
  *
  * @var string $captcha
  *
@@ -166,7 +169,7 @@ if (getDolGlobalInt('MAIN_MODULE_OPENIDCONNECT', 0) > 0 && isset($conf->file->ma
 	// Set a cookie to transfer rollback page information
 	$prefix = dol_getprefix('');
 	if (empty($_COOKIE["DOL_rollback_url_$prefix"])) {
-		setcookie('DOL_rollback_url_' . $prefix, $_SERVER['REQUEST_URI'], time() + 3600, '/');
+		dolSetCookie('DOL_rollback_url_'.$prefix, $_SERVER['REQUEST_URI'], time() + 3600);	// $_SERVER["REQUEST_URI"] is for example /mydolibarr/mypage.php
 	}
 
 	// Auto redirect if OpenID Connect is the only authentication
@@ -296,14 +299,33 @@ if ($disablenofollow) {
 
 <!-- Password -->
 <div class="trinputlogin">
-<div class="tagtd nowraponall center valignmiddle tdinputlogin">
+<div class="tagtd nowraponall center valignmiddle tdinputlogin" id="tdpasswordlogin">
 	<?php if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 		?><label for="password" class="hidden"><?php echo $langs->trans("Password"); ?></label><?php
 	} ?>
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key"></span>
 <input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo !getDolGlobalString('MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE') ? 'off' : 'on'; ?>" />
+<span id="togglepassword" tabindex="-1"><span class="fa fa-eye"></span></span>
 </div></div>
+<script nonce="<?php echo getNonce(); ?>">
+	$(document).ready(function () {
+		$('#togglepassword').on('click', function (e) {
+			e.preventDefault();
+			if (event.detail === 0) return false; // Ignore keyboard "clicks"
+			console.log("We click on togglepassword");
+			const $passwordInput = $('#password');
+
+			if ($passwordInput.is('[type=password]')) {
+				$passwordInput.attr('type', 'text');
+			} else {
+				$passwordInput.attr('type', 'password');
+			}
+
+			return false; // This prevents the click from reloading the page
+		});
+	});
+</script>
 <?php } ?>
 
 

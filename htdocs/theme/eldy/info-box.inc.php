@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
@@ -7,6 +7,8 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 }
 /**
  * @var Conf $conf
+ * @var string $left
+ * @var string $right
  */
 // Expected to be defined by including parent
 '
@@ -425,6 +427,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114 !important;
 }
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e !important;
+}
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
@@ -505,6 +510,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .fa-dol-holiday:before {
 	content: "\f5ca";
+}
+.fa-dol-cubes:before {
+	content: "\f1b3";
 }
 
 

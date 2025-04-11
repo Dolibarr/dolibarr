@@ -3,8 +3,8 @@
  * Copyright (C) 2017		Olivier Geffroy			<jeff@jeffinfo.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
  * Copyright (C) 2018-2022  Thibault FOUCART		<support@ptibogxiv.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,12 +254,12 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY') && getDolGlobalString('STRIPE_TEST_SECRET_KEY') && getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
-			if (utf8_check($conf->global->STRIPE_TEST_SECRET_KEY)) {
+			if (utf8_check(getDolGlobalString('STRIPE_TEST_SECRET_KEY'))) {
 				try {
-					\Stripe\Stripe::setApiKey($conf->global->STRIPE_TEST_SECRET_KEY);
-					$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_TEST_WEBHOOK_ID);
+					\Stripe\Stripe::setApiKey(getDolGlobalString('STRIPE_TEST_SECRET_KEY'));
+					$endpoint = \Stripe\WebhookEndpoint::retrieve(getDolGlobalString('STRIPE_TEST_WEBHOOK_ID'));
 					$endpoint->enabled_events = $stripearrayofwebhookevents;
-					if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_TEST_WEBHOOK_ID) {
+					if (GETPOST('webhook', 'alpha') == getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
 						if (!GETPOST('status', 'alpha')) {
 							$endpoint->disabled = true;
 						} else {
@@ -327,12 +327,12 @@ if (empty($conf->stripeconnect->enabled)) {
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY') && getDolGlobalString('STRIPE_LIVE_SECRET_KEY') && getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
-			if (utf8_check($conf->global->STRIPE_TEST_SECRET_KEY)) {
+			if (utf8_check(getDolGlobalString('STRIPE_TEST_SECRET_KEY'))) {
 				try {
-					\Stripe\Stripe::setApiKey($conf->global->STRIPE_LIVE_SECRET_KEY);
-					$endpoint = \Stripe\WebhookEndpoint::retrieve($conf->global->STRIPE_LIVE_WEBHOOK_ID);
+					\Stripe\Stripe::setApiKey(getDolGlobalString('STRIPE_LIVE_SECRET_KEY'));
+					$endpoint = \Stripe\WebhookEndpoint::retrieve(getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID'));
 					$endpoint->enabled_events = $stripearrayofwebhookevents;
-					if (GETPOST('webhook', 'alpha') == $conf->global->STRIPE_LIVE_WEBHOOK_ID) {
+					if (GETPOST('webhook', 'alpha') == getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
 						if (empty(GETPOST('status', 'alpha'))) {
 							$endpoint->disabled = true;
 						} else {
@@ -387,6 +387,8 @@ print '</td></tr>';
 
 
 // Param to record automatically payouts (received from IPN payout.paid and payout.created)
+// https://docs.stripe.com/api/events/types#event_types-payout.created
+// https://docs.stripe.com/api/events/types#event_types-payout.paid
 print '<tr class="oddeven"><td>';
 print $langs->trans("StripeAutoRecordPayout").'</td><td>';
 if ($conf->use_javascript_ajax) {
@@ -453,7 +455,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {	// TODO Not used by current c
 			// If $site_account not defined, then key not set and no way to call API Location
 			$stripeacc = $stripe->getStripeAccount($service);
 			if ($stripeacc) {
-				$locations = \Stripe\Terminal\Location::all('', array("stripe_account" => $stripeacc));
+				$locations = \Stripe\Terminal\Location::all(null, array("stripe_account" => $stripeacc));
 			} else {
 				$locations = \Stripe\Terminal\Location::all();
 			}

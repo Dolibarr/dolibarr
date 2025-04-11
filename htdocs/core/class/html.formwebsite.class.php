@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW				<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ class FormWebsite
 	 *  @param	int<0,1>	$showempty		Show empty record
 	 *  @param	string		$action			Action on page that use this select list
 	 *  @param	string		$morecss		More CSS
-	 *  @param	null|string[]	$excludeids	Exclude some ID in list
+	 *  @param	?array<int|string>	$excludeids	Exclude some ID in list
 	 * 	@return	string						HTML select component with list of block containers
 	 */
 	public function selectContainer($website, $htmlname = 'pageid', $pageid = 0, $showempty = 0, $action = '', $morecss = 'minwidth200', $excludeids = null)

@@ -27,7 +27,8 @@
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
-require_once '../lib/ai.lib.php';
+require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/html.formai.class.php";
 
 /**
  * @var Conf $conf
@@ -38,6 +39,9 @@ require_once '../lib/ai.lib.php';
  */
 
 $langs->loadLangs(array("admin", "website", "other"));
+
+$arrayofaifeatures = getListOfAIFeatures();
+$arrayofai = getListOfAIServices();
 
 // Parameters
 $action = GETPOST('action', 'aZ09');
@@ -72,26 +76,27 @@ if (!class_exists('FormSetup')) {
 }
 
 $formSetup = new FormSetup($db);
+$aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
-// Setup conf AI_PROMPT
-$item = $formSetup->newItem('AI_CONFIGURATIONS_PROMPT');
-$item->defaultFieldValue = '';
+// Setup conf for AI model
+$formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
+foreach ($arrayofaifeatures as $key => $val) {
+	$newkey = $key;
+	if (preg_match('/^text/', $key)) {
+		$newkey = 'textgeneration';
+	}
+	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$val["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	if ($arrayofai[$aiservice][$newkey] != 'na') {
+		$item->nameText = $langs->trans("AI_API_MODEL_".$val["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
+	} else {
+		$item->nameText = $langs->trans("AI_API_MODEL_".$val["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
+	}
+	$item->cssClass = 'minwidth500 input';
+}
 
 $setupnotempty += count($formSetup->items);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
-
-// List of AI features
-$arrayofaifeatures = array(
-	'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'development'),
-	'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'development'),
-	'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused'),
-	'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused'),
-	'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused'),
-	'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused'),
-	'transcription' => array('label' => 'Transcription', 'picto'=>'', 'status'=>'notused'),
-	'translation' => array('label' => 'Translation', 'picto'=>'', 'status'=>'notused')
-);
 
 
 /*
@@ -102,6 +107,11 @@ $arrayofaifeatures = array(
 
 $currentConfigurationsJson = getDolGlobalString('AI_CONFIGURATIONS_PROMPT');
 $currentConfigurations = json_decode($currentConfigurationsJson, true);
+
+if ($action == 'updatefeaturemodel' && !empty($user->admin)) {
+	$formSetup->saveConfFromPost();
+	$action = 'edit';
+}
 
 if ($action == 'update' && $cancel) {
 	$action = 'edit';
@@ -200,6 +210,7 @@ if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
  */
 
 $form = new Form($db);
+$formai = new FormAI($db);
 
 $help_url = '';
 $title = "AiSetup";
@@ -213,12 +224,17 @@ print load_fiche_titre($langs->trans($title), $linkback, 'title_setup');
 
 // Configuration header
 $head = aiAdminPrepareHead();
-print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "fa-microchip");
+print dol_get_fiche_head($head, 'custom', $langs->trans($title), -1, "ai");
 
-//$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("New").'</a>';
-$newbutton = '';
+$newcardbutton = dolGetButtonTitle($langs->trans('NewCustomPrompt'), '', 'fa fa-plus-circle', $_SERVER["PHP_SELF"].'?action=create', '', 1);
+/*
+$newbutton = '<a href="'.$_SERVER["PHP_SELF"].'?action=create" title="'.$langs->trans("NewCustomPrompt").'">';
+$newbutton .= img_picto('', 'add');
+$newbutton .= '</a>';
+*/
 
-print load_fiche_titre($langs->trans("AIPromptForFeatures"), $newbutton, '');
+print load_fiche_titre($langs->trans("AIPromptForFeatures", $arrayofai[$aiservice]['label']), $newcardbutton, '');
+
 
 if ($action == 'deleteproperty') {
 	$formconfirm = $form->formconfirm(
@@ -233,8 +249,12 @@ if ($action == 'deleteproperty') {
 	print $formconfirm;
 }
 
-if ($action == 'edit' || $action == 'deleteproperty') {
-	$out = '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+print '<br>';
+
+if ($action == 'create') {
+	$out = '<div class="addcustomprompt">';
+
+	$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	$out .= '<input type="hidden" name="token" value="'.newToken().'">';
 	$out .= '<input type="hidden" name="action" value="update">';
 
@@ -242,7 +262,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '<table class="noborder centpercent">';
 	$out .= '<thead>';
 	$out .= '<tr class="liste_titre">';
-	$out .= '<td>'.$langs->trans('Add').'</td>';
+	$out .= '<td>'.$langs->trans('NewCustomPrompt').'</td>';
 	$out .= '<td></td>';
 	$out .= '</tr>';
 	$out .= '</thead>';
@@ -279,6 +299,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= '</td>';
 	$out .= '</tr>';
+
 	$out .= '<tr class="oddeven">';
 	$out .= '<td class="col-setup-title">';
 	$out .= '<span id="prePrompt" class="spanforparamtooltip">';
@@ -306,7 +327,7 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists" rows="3"></textarea>';
+	$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklistsInput" name="blacklists">';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '</tbody>';
@@ -314,7 +335,9 @@ if ($action == 'edit' || $action == 'deleteproperty') {
 
 	$out .= $form->buttonsSaveCancel("Add", "");
 	$out .= '</form>';
+
 	$out .= '<br><br><br>';
+	$out .= '</div>';
 
 	print $out;
 }
@@ -365,23 +388,24 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</tr>';
 
 			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven">';
-			$out .= '<td>'.$langs->trans("BlackListWords").'</td>';
+			$out .= '<td>'.$form->textwithpicto($langs->trans("BlackListWords"), $langs->trans("BlackListWordsHelp")).'</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" rows="3">'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'</textarea>';
+			$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" value="'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'">';
 			$out .= '</td>';
 			$out .= '</tr>';
 
 			$out .= '<tr>';
-			$out .= '<td></td>';
+			$out .= '<td>'.$langs->trans("Test").'</td>';
 			$out .= '<td>';
-			$out .= '<input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Modify")).'"/>';
-			$out .= ' &nbsp; ';
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-			$showlinktoai = $key;		// 'textgeneration', 'imagegeneration', ...
-			$showlinktoailabel = $langs->trans("ToTest");
 			$formmail = new FormMail($db);
+			$formmail->withaiprompt = 'html';		// set format
+
+			$showlinktoai = $key;		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+			$showlinktoailabel = $langs->trans("ToTest");
 			$htmlname = $key;
+			$onlyenhancements = $key;
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -394,7 +418,11 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</tbody>';
 			$out .= '</table>';
 
+			$out .= '<center><input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></center>';
+
 			$out .= '</form>';
+
+			$out .= '<br><br>';
 		}
 	}
 
@@ -402,6 +430,13 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 
 	print '<br>';
 }
+
+
+if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
+	print load_fiche_titre($langs->trans("AIModelForFeature", $arrayofai[$aiservice]['label']), '', '');
+	print $formSetup->generateOutput(true);
+}
+
 
 if (empty($setupnotempty)) {
 	print '<br>'.$langs->trans("NothingToSetup");

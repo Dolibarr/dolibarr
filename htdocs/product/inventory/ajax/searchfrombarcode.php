@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW	<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  */
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -90,10 +90,10 @@ if ($action == "existbarcode" && !empty($barcode) && $user->hasRight('stock', 'l
 		$sql .= " WHERE p.barcode = '".$db->escape($barcode)."'";
 	}
 	if (!empty($fk_entrepot)) {
-		$sql .= " AND ps.fk_entrepot = '".$db->escape($fk_entrepot)."'";
+		$sql .= " AND ps.fk_entrepot = '".((int) ($fk_entrepot))."'";
 	}
 	if (!empty($fk_product)) {
-		$sql .= " AND ps.fk_product = '".$db->escape($fk_product)."'";
+		$sql .= " AND ps.fk_product = '".((int) ($fk_product))."'";
 	}
 	$result = $db->query($sql);
 	if ($result) {

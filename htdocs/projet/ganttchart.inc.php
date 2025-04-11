@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,13 @@
  * @var DoliDB $db
  * @var Translate $langs
  */
+'
+@phan-var-force string $dateformatinput
+@phan-var-force string $dateformat
+@phan-var-force string $datehourformat
+@phan-var-force array<int,array{task_id:int,task_alternate_id:int,task_project_id:int,task_parent:int,task_is_group:int<0,1>,task_css:string,task_position:int,task_planned_workload:int,task_milestone:int,task_percent_complete:float,task_name:string,task_start_date:int,task_end_date:int,task_color:string,task_resources:string,note:string,task_parent_alternate_id:int}> $tasks
+@phan-var-force array{} $task_dependencies
+';
 ?>
 
 <div id="principal_content" style="margin-left: 0;">
@@ -129,14 +136,14 @@ if (g.getDivId() != null)
 			$projecttmp = new Project($db);
 			$projecttmp->fetch($t['task_project_id']);
 			$tmpt = array(
-			'task_id' => '-'.$t['task_project_id'],
-			'task_alternate_id' => '-'.$t['task_project_id'],
+			'task_id' => (int) -$t['task_project_id'],
+			'task_alternate_id' => (int) -$t['task_project_id'],
 			'task_name' => $projecttmp->ref.' '.$projecttmp->title,
 			'task_resources' => '',
-			'task_start_date' => '',
-			'task_end_date' => '',
+			'task_start_date' => 0,
+			'task_end_date' => 0,
 			'task_is_group' => 1, 'task_position' => 0, 'task_css' => 'ggroupblack', 'task_milestone' => 0, 'task_parent' => 0, 'task_parent_alternate_id' => 0,
-			'task_notes' => '',
+			'note' => '',
 			'task_planned_workload' => 0
 			);
 			constructGanttLine($tasks, $tmpt, array(), 0, $t['task_project_id']);
@@ -166,10 +173,10 @@ else
 
 <?php
 /**
- * Add a gant chart line
+ * Add a gantt chart line
  *
- * @param 	array<int,array{task_id:string,task_alternate_id:string,task_name:string,task_resources:string,task_start_date:string,task_end_date:string,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}>	$tarr					Array of all tasks
- * @param	array{task_id:string,task_alternate_id:string,task_name:string,task_resources:string,task_start_date:string,task_end_date:string,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}	$task					Array with properties of one task
+ * @param 	array<int,array{task_id:int,task_alternate_id:int,task_name:string,task_resources:string,task_start_date:int,task_end_date:int,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}>	$tarr					Array of all tasks
+ * @param	array{task_id:int,task_alternate_id:int,task_name:string,task_resources:string,task_start_date:int,task_end_date:int,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}	$task					Array with properties of one task
  * @param 	array<int[]>	$task_dependencies		Task dependencies (array(array(0=>idtask,1=>idtasktofinishfisrt))
  * @param 	int		$level					Level
  * @param 	int		$project_id				Id of project
@@ -280,8 +287,8 @@ function constructGanttLine($tarr, $task, $task_dependencies, $level = 0, $proje
 /**
  * Find child Gantt line
  *
- * @param 	array<int,array{task_id:string,task_alternate_id:string,task_name:string,task_resources:string,task_start_date:string,task_end_date:string,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}>	$tarr					tarr
- * @param	string	$parent					Parent
+ * @param 	array<int,array{task_id:int,task_alternate_id:int,task_name:string,task_resources:string,task_start_date:int,task_end_date:int,task_is_group:int<0,1>,task_position:int,task_css:string,task_milestone:int,task_parent:int,task_parent_alternate_id:int}>	$tarr					tarr
+ * @param	int		$parent					Parent
  * @param 	array<int[]>	$task_dependencies		Task dependencies
  * @param 	int		$level					Level
  * @return	void
@@ -298,12 +305,12 @@ function findChildGanttLine($tarr, $parent, $task_dependencies, $level)
 			{
 				$tmpt = array(
 				'task_id'=> -98, 'task_name'=>'Level '.$level, 'task_resources'=>'', 'task_start_date'=>'', 'task_end_date'=>'',
-				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'task_notes'=>'');
+				'task_is_group'=>1, 'task_css'=>'ggroupblack', 'task_milestone'=> 0, 'task_parent'=>$tarr[$x]["task_parent"], 'note'=>'');
 				constructGanttLine($tasks, $tmpt, array(), 0, $tarr[$x]['task_project_id']);
 				$old_parent_id = $tarr[$x]['task_project_id'];
 			}*/
 
-			constructGanttLine($tarr, $tarr[$x], $task_dependencies, $level, null);
+			constructGanttLine($tarr, $tarr[$x], $task_dependencies, $level, 0);
 			findChildGanttLine($tarr, $tarr[$x]["task_id"], $task_dependencies, $level + 1);
 		}
 	}

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,9 @@
  * @var CommonObject $object
  */
 
+'
+@phan-var-force CommonObject $object
+';
 
 // Protection to avoid direct call of template
 if (empty($conf) || !is_object($conf)) {
@@ -45,7 +49,8 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					continue;
 				}
 
-				$cssclass = $extrafields->getAlignFlag($key, $extrafieldsobjectkey);
+				$cssclasstd = $extrafields->getCSSClass($key, $extrafieldsobjectkey, 'csslist');
+				$cssclassview = $extrafields->getCSSClass($key, $extrafieldsobjectkey, 'cssview');
 
 				$tmpkey = 'options_'.$key;
 
@@ -56,15 +61,15 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 					}
 					$value = $datenotinstring;
 				} elseif (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('int'))) {
-					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0'  ? $obj->$tmpkey : '');
+					$value = (!empty($obj->$tmpkey) || $obj->$tmpkey === '0' ? $obj->$tmpkey : '');
 				} else {
 					// The key may be in $obj->array_options if not in $obj
 					$value = (isset($obj->$tmpkey) ? $obj->$tmpkey :
-						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : '') );
+						(isset($obj->array_options[$tmpkey]) ? $obj->array_options[$tmpkey] : ''));
 				}
 				// If field is a computed field, we make computation to get value
 				if ($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]) {
-					$objectoffield = $object; //For compatibility with the computed formula
+					$objectoffield = $object; // For compatibility with the computed formula. $objectoffield is exported by dol_eval().
 					$value = dol_eval((string) $extrafields->attributes[$extrafieldsobjectkey]['computed'][$key], 1, 1, '2');
 					if (is_numeric(price2num($value)) && $extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
 						$obj->$tmpkey = price2num($value);
@@ -74,11 +79,13 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 				$valuetoshow = $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey, null, $object);
 				$title = dol_string_nohtmltag($valuetoshow);
 
-				print '<td'.($cssclass ? ' class="'.$cssclass.'"' : '');	// TODO Add 'css' and 'cssview' and 'csslist' for extrafields and use here 'csslist'
+				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
 				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
+				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;
+				print $cssclassview ? '</span>' : '';
 				print '</td>';
 
 				if (!$i) {
