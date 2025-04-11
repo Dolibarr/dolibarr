@@ -679,6 +679,8 @@ class Notify
 
 		// Check notification per third party
 		if (!empty($object->socid) && $object->socid > 0) {
+			$object->thirdparty = new Societe($this->db);
+			$object->thirdparty->fetch($object->socid);
 			$sql .= "SELECT 'tocontactid' as type_target, c.email, c.rowid as cid, c.lastname, c.firstname, c.default_lang,";
 			$sql .= " a.rowid as adid, a.label, a.code, n.rowid, n.threshold, n.context, n.type";
 			$sql .= " FROM ".$this->db->prefix()."socpeople as c,";
