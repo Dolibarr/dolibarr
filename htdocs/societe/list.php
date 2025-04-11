@@ -6,7 +6,7 @@
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2016-2024  Josep Lluis Amador      <joseplluis@lliuretic.cat>
- * Copyright (C) 2016       Ferran Marcet      	    <fmarcet@2byte.es>
+ * Copyright (C) 2016-2025  Ferran Marcet      	    <fmarcet@2byte.es>
  * Copyright (C) 2017       Rui Strecht      	    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      	    <jmenent@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
@@ -1794,10 +1794,6 @@ if (!empty($arrayfields['s.tms']['checked'])) {
 	print_liste_field_titre($arrayfields['s.tms']['label'], $_SERVER["PHP_SELF"], "s.tms", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;	// For the column action
 }
-if (!empty($arrayfields['s.status']['checked'])) {
-	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
-	$totalarray['nbfield']++;	// For the column action
-}
 if (!empty($arrayfields['s.note_public']['checked'])) {
 	print_liste_field_titre($arrayfields['s.note_public']['label'], $_SERVER["PHP_SELF"], "s.note_public", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
@@ -1805,6 +1801,10 @@ if (!empty($arrayfields['s.note_public']['checked'])) {
 if (!empty($arrayfields['s.note_private']['checked'])) {
 	print_liste_field_titre($arrayfields['s.note_private']['label'], $_SERVER["PHP_SELF"], "s.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['s.status']['checked'])) {
+	print_liste_field_titre($arrayfields['s.status']['label'], $_SERVER["PHP_SELF"], "s.status", "", $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;	// For the column action
 }
 if (!empty($arrayfields['s.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['s.import_key']['label'], $_SERVER["PHP_SELF"], "s.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
