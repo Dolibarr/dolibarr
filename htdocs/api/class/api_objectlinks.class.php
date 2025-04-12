@@ -1,6 +1,7 @@
 <?php
 /*
 /* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@
  */
 
 use Luracast\Restler\RestException;
+
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/objectlink.class.php';
@@ -49,7 +51,7 @@ class ObjectLinks extends DolibarrApi
 	);
 
 	/**
-	 * @var ObjectLink $objectlink {@type ObjectLink}
+	 * @var ObjectLink {@type ObjectLink}
 	 */
 	public $objectlink;
 
@@ -74,7 +76,7 @@ class ObjectLinks extends DolibarrApi
 	 * Return an array with object link information
 	 *
 	 * @param   int         $id		ID of objectlink
-	 * @return  ObjectLink			Object with cleaned properties
+	 * @return  Object				Object with cleaned properties
 	 * @phan-return		ObjectLink
 	 * @phpstan-return	ObjectLink
 	 *
@@ -146,11 +148,11 @@ class ObjectLinks extends DolibarrApi
 
 		$result = $this->objectlink->create(DolibarrApiAccess::$user, $this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype, $this->notrigger);
 
-		if ($result < 0 ) {
+		if ($result < 0) {
 			throw new RestException(500, 'when create objectlink : '.$this->objectlink->error);
 		}
 
-		if ($result == 0 ) {
+		if ($result == 0) {
 			throw new RestException(304, 'Object link already exists');
 		}
 
@@ -219,7 +221,7 @@ class ObjectLinks extends DolibarrApi
 	 *  @param		int		$fk_target		target id of object we link to
 	 *  @param		string	$targettype 	type of the target object
 	 *  @param		string	$relationtype 	type of the relation, usually null
-	 *  @return		ObjectLink
+	 *  @return		Object
 	 * @phan-return		ObjectLink
 	 * @phpstan-return	ObjectLink
 	 *
@@ -269,9 +271,9 @@ class ObjectLinks extends DolibarrApi
 
 		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
 
-		if ($findresult < 0 ) {
+		if ($findresult < 0) {
 			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
-		} elseif ($findresult > 0 ) {
+		} elseif ($findresult > 0) {
 			return $this->_cleanObjectDatas($this->objectlink);
 		} else {
 			throw new RestException(404, 'Object Link not found');
@@ -287,7 +289,7 @@ class ObjectLinks extends DolibarrApi
 	 *  @param		int		$fk_target		target id of object we link to
 	 *  @param		string	$targettype 	type of the target object
 	 *  @param		string	$relationtype 	type of the relation, usually null
-	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@param		int     $notrigger	    1=Does not execute triggers, 0=execute triggers {@choice 0,1}
 	 *  @return		array
 	 * @phan-return array<array<string,int|string>>
 	 * @phpstan-return array<array<string,int|string>>
@@ -338,12 +340,12 @@ class ObjectLinks extends DolibarrApi
 
 		$findresult = $this->objectlink->fetchByValues($this->objectlink->fk_source, $this->objectlink->sourcetype, $this->objectlink->fk_target, $this->objectlink->targettype, $this->objectlink->relationtype);
 
-		if ($findresult < 0 ) {
+		if ($findresult < 0) {
 			throw new RestException(500, 'Error when finding objectlink : '.$this->objectlink->error);
-		} elseif ($findresult > 0 ) {
+		} elseif ($findresult > 0) {
 			$result = $this->objectlink->delete(DolibarrApiAccess::$user, $notrigger);
 
-			if ($result < 0 ) {
+			if ($result < 0) {
 				throw new RestException(500, 'Error when delete objectlink : '.$this->objectlink->error);
 			}
 
@@ -407,7 +409,6 @@ class ObjectLinks extends DolibarrApi
 	 * @return  Object	Object with cleaned properties
 	 * @phan-return		ObjectLink
 	 * @phpstan-return	ObjectLink
-	 *
 	 */
 	protected function _cleanObjectDatas($object)
 	{
