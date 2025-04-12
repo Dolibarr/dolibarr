@@ -117,7 +117,7 @@ class ObjectLinks extends DolibarrApi
 				$this->notrigger = (int) $value;
 			} else {
 				$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
-				if (in_array($field, $this->INTFIELDS)) {
+				if (in_array($field, ObjectLinks::$INTFIELDS)) {
 					$this->objectlink->$field = (int) $clean_field;
 				} else {
 					$this->objectlink->$field = (string) $clean_field;
@@ -241,7 +241,7 @@ class ObjectLinks extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
-			if (in_array($field, $this->INTFIELDS)) {
+			if (in_array($field, ObjectLinks::$INTFIELDS)) {
 				$this->objectlink->$field = (int) $clean_field;
 			} else {
 				$this->objectlink->$field = (string) $clean_field;
@@ -310,7 +310,7 @@ class ObjectLinks extends DolibarrApi
 
 		foreach ($request_data as $field => $value) {
 			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
-			if (in_array($field, $this->INTFIELDS)) {
+			if (in_array($field, ObjectLinks::$INTFIELDS)) {
 				$this->objectlink->$field = (int) $clean_field;
 			} else {
 				$this->objectlink->$field = (string) $clean_field;
