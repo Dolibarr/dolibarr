@@ -279,23 +279,26 @@ if ($action == 'create') {
 	foreach ($arrayofaifeatures as $key => $val) {
 		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
 		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-		$out .= '<option value="'.$key.'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+		$out .= '<option value="'.dol_escape_js($key).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
-	/*
-	$sql = "SELECT name FROM llx_const WHERE name LIKE 'MAIN_MODULE_%' AND value = '1'";
-	$resql = $db->query($sql);
-
-	if ($resql) {
-		while ($obj = $db->fetch_object($resql)) {
-			$moduleName = str_replace('MAIN_MODULE_', '', $obj->name);
-			$out .= '<option value="' . htmlspecialchars($moduleName) . '">' . htmlspecialchars($moduleName) . '</option>';
-		}
-	} else {
-		$out.= '<option disabled>Erreur :'. $db->lasterror().'</option>';
-	}
-	*/
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
+	$out .= '<script type="text/javascript">
+    	jQuery(document).ready(function() {
+			jQuery("#functioncode").on("change", function() {
+				console.log("We change value of ai function");
+ 				var changedValue = $(this).val();
+				console.log(changedValue);
+				var arrayplaceholder = {';
+	foreach ($arrayofaifeatures as $key => $val) {
+		$out .= dol_escape_js($key).': \''.dol_escape_js(empty($val['placeholder']) ? '' : $val['placeholder']).'\',';
+	}
+	$out .= '}
+				jQuery("#prePromptInput'.dol_escape_js($key).'").val(arrayplaceholder[changedValue]);
+			});
+		});
+		</script>
+	';
 
 	$out .= '</td>';
 	$out .= '</tr>';
@@ -307,7 +310,7 @@ if ($action == 'create') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput" name="prePrompt" rows="3"></textarea>';
+	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput'.$key.'" name="prePrompt" rows="2"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
@@ -317,7 +320,7 @@ if ($action == 'create') {
 	$out .= '</span>';
 	$out .= '</td>';
 	$out .= '<td>';
-	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="3"></textarea>';
+	$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput" name="postPrompt" rows="2"></textarea>';
 	$out .= '</td>';
 	$out .= '</tr>';
 	$out .= '<tr class="oddeven">';
