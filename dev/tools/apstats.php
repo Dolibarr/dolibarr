@@ -270,7 +270,7 @@ foreach ($output_arrglpu as $val) {
 	// Parse the line to split interesting data
 	$tmpval = cleanVal2($val);
 
-	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s)/i', $tmpval['title'])) {
+	if (preg_match('/(#yogosha|CVE|Sec:|Sec\s|Sec$)/i', $tmpval['title'])) {	// Recommended git comment:  "Sec: Fix #..."
 		$alreadyfound = '';
 		$alreadyfoundcommitid = '';
 		foreach ($arrayofalerts as $val) {

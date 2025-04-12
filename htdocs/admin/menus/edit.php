@@ -380,7 +380,12 @@ if ($action == 'create') {
 
 	// Picto
 	print '<tr><td>'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-global</td></tr>';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-globe-americas';
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print '</span>';
+	print '</td></tr>';
 
 	// URL
 	print '<tr><td class="fieldrequired">'.$langs->trans('URL').'</td>';
@@ -422,7 +427,6 @@ if ($action == 'create') {
 	print '</form>';
 } elseif ($action == 'edit') {
 	print load_fiche_titre($langs->trans("ModifMenu"), '', 'title_setup');
-	print '<br>';
 
 	print '<form action="./edit.php" method="POST" name="formmenuedit">';
 	print '<input type="hidden" name="action" value="update">';
@@ -509,7 +513,7 @@ if ($action == 'create') {
 
 	// Picto
 	print '<tr><td>'.$langs->trans('Image').'</td>';
-	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-global-america';
+	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-globe-americas';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
 	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');

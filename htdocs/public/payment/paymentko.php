@@ -58,7 +58,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
@@ -353,15 +353,18 @@ $db->close();
 
 // If option to do a redirect somewhere else is defined.
 if (!empty($doactionsthenredirect)) {
+	$randomseckey = getRandomPassword(true, null, 20);
+	$_SESSION['paymentsessionkey'] = $randomseckey;
+
 	// Redirect to an error page
 	// Paymentko page must be created for the specific website
 	if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-		$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+		$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentsessionkey='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 	} else {
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentsessionkey='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 	}
 
-	if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Use a property in website module
+	if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Remove this to make only a http redirect, if the website need a js redirect to parent frame, he must do it itself.
 		dol_syslog("Now do a redirect in iframe mode in js to ".$ext_urlko, LOG_DEBUG, 0, '_payment');
 
 		// Redirect in js is not reliable

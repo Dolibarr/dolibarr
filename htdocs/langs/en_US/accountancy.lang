@@ -513,3 +513,5 @@ ClickToShowAlreadyExportedLines=Click to show already exported lines
 NAccounts=%s accounts
 ACCOUNTING_USE_TREASURY_Desc=This is the mode for treasury accountancy. We are using the payments only and their date for doing the accountancy.
 ACCOUNTING_USE_NON_TREASURY_Desc=This is the mode for real accountancy. We are using both the invoices and payments for doing the accountancy.
+PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
+BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)

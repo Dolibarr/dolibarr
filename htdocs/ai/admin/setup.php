@@ -95,6 +95,9 @@ foreach ($arrayofai as $ia => $iarecord) {
 	$item->defaultFieldValue = '';
 	$item->fieldParams['trClass'] = 'iaservice iaurl '.$ia;
 	$item->cssClass = 'minwidth500 input'.$ia;
+	if ($ia == 'custom') {
+		$item->fieldAttr['placeholder'] = 'https://domainofapi.com/v1/';
+	}
 }
 
 $setupnotempty = + count($formSetup->items);

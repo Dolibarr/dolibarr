@@ -995,6 +995,10 @@ class Conf extends stdClass
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
 			}
+			// MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME
+			if (!isset($this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME)) {
+				$this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME = 1;
+			}
 
 			// conf->liste_limit = constant to limit size of lists
 			// This value can be overwritten by user choice in main.inc.php

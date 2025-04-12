@@ -791,7 +791,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
-		$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
+		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
