@@ -41,6 +41,11 @@ class ObjectLinks extends DolibarrApi
 	);
 
 	/**
+	 * @var string[]       Mandatory fields which needs to be an integer, checked when create and update object
+	 */
+	public static $INTFIELDS = array('fk_source','fk_target');
+
+	/**
 	 * @var ObjectLink $objectlink {@type ObjectLink}
 	 */
 	public $objectlink;
@@ -111,7 +116,12 @@ class ObjectLinks extends DolibarrApi
 			if ($field == 'notrigger') {
 				$this->notrigger = (int) $value;
 			} else {
-				$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+				$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
+				if (in_array($field, $this->INTFIELDS)) {
+					$this->objectlink->$field = (int) $clean_field;
+				} else {
+					$this->objectlink->$field = (string) $clean_field;
+				}
 			}
 		}
 
@@ -230,7 +240,12 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
+			if (in_array($field, $this->INTFIELDS)) {
+				$this->objectlink->$field = (int) $clean_field;
+			} else {
+				$this->objectlink->$field = (string) $clean_field;
+			}
 		}
 
 		// Permission check
@@ -294,7 +309,12 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$this->objectlink->$field = $this->_checkValForAPI($field, $value, $this->objectlink);
+			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
+			if (in_array($field, $this->INTFIELDS)) {
+				$this->objectlink->$field = (int) $clean_field;
+			} else {
+				$this->objectlink->$field = (string) $clean_field;
+			}
 		}
 
 		// Permission check
