@@ -6500,7 +6500,6 @@ a.cke_dialog_ui_button
 .cke_combo_text {
 	width: 40px !important;
 }
-
 /*
 .cke_editable
 {
@@ -6517,6 +6516,21 @@ a.cke_button, a.cke_combo_button {
 }
 div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
+}
+
+.cke.cke_reset {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+/* CSS to round border */
+.cke.cke_reset, .cke_inner.cke_reset, .cke_top.cke_reset_all {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+.cke.cke_reset, .cke_inner.cke_reset, .cke_contents.cke_reset {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
 /* CSS To hide the picto menu on smartphone, except when maximize */
@@ -7570,6 +7584,8 @@ dl.dropdown {
 }
 .dropdown dd ul li a, .dropdown dd ul li span {
 	padding: 3px;
+}
+.dropdown dd ul li a {
 	display: block;
 }
 .dropdown dd ul li span {

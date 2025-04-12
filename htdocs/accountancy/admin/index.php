@@ -430,30 +430,32 @@ if (getDolGlobalString('MAIN_PRODUCT_PERENTITY_SHARED')) {
 print '<br>';
 
 
-// case of the parameter ACCOUNTING_MODE
+// Case of the parameter ACCOUNTING_MODE
 
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="token" value="'.newToken().'">';
-print '<input type="hidden" name="action" value="updatemode">';
+if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<input type="hidden" name="token" value="'.newToken().'">';
+	print '<input type="hidden" name="action" value="updatemode">';
 
-print '<table class="noborder centpercent">';
+	print '<table class="noborder centpercent">';
 
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
-print "</tr>\n";
-print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
-print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc')).'</span>';
-print "</td></tr>\n";
-print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
-print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc'))."</span></td></tr>\n";
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans('OptionMode').'</td>';
+	print "</tr>\n";
+	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_1" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_1"> '.$langs->trans('OptionModeTrue').'</label></td>';
+	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_TREASURY_Desc')).'</span>';
+	print "</td></tr>\n";
+	print '<tr class="oddeven"><td class="nowraponall"><input type="radio" id="accounting_mode_2" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'><label for="accounting_mode_2"> '.$langs->trans('OptionModeVirtual').'</label></td>';
+	print '<td><span class="opacitymedium">'.nl2br($langs->trans('ACCOUNTING_USE_NON_TREASURY_Desc'))."</span></td></tr>\n";
 
-print "</table>\n";
+	print "</table>\n";
 
-print '<div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
-print '</form>';
+	print '<div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
+	print '</form>';
 
 
-print '<br><br><br>';
+	print '<br><br><br>';
+}
 
 
 // Show form main options

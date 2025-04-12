@@ -23,6 +23,8 @@
  * \brief   Library files with common functions for Ai
  */
 
+include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+
 
 /**
  * Prepare admin pages header
@@ -34,17 +36,19 @@ function getListOfAIFeatures()
 	global $langs;
 
 	$arrayofaifeatures = array(
-		'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused', 'function' => 'TEXT'),
-		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'IMAGE'),
-		'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'VIDEO'),
-		'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'AUDIO'),
-		'transcription' => array('label' => 'AudioTranscription', 'picto'=>'', 'status'=>'notused', 'function' => 'TRANSCRIPT'),
-		'translation' => array('label' => 'AudioTranslation', 'picto'=>'', 'status'=>'notused', 'function' => 'TRANSLATE')
+		'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto' => '', 'status' => 'dolibarr', 'function' => 'TEXT', 'placeholder' => AI::AI_DEFAULT_PROMPT_FOR_EMAIL),
+		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto' => '', 'status' => 'dolibarr', 'function' => 'TEXT', 'placeholder' => AI::AI_DEFAULT_PROMPT_FOR_WEBPAGE),
+		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto' => '', 'status' => 'notused', 'function' => 'TEXT'),
+
+		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => AI::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
+		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => AI::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
+		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => AI::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
+
+		'imagegeneration' => array('label' => 'ImageGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'IMAGE'),
+		'videogeneration' => array('label' => 'VideoGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'VIDEO'),
+		'audiogeneration' => array('label' => 'AudioGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'AUDIO'),
+		'transcription' => array('label' => 'AudioTranscription', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSCRIPT'),
+		'translation' => array('label' => 'AudioTranslation', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSLATE')
 	);
 
 	return $arrayofaifeatures;
@@ -93,7 +97,7 @@ function getListOfAIServices()
 		),
 		'custom' => array(
 			'label' => 'Custom',
-			'url' => 'https://mydomainofapi.com/v1/',
+			'url' => 'https://domainofapi.com/v1/',
 			'textgeneration' => 'tinyllama-1.1b',
 			'imagegeneration' => 'mixtral-8x7b-32768',
 			'audiogeneration' => 'mixtral-8x7b-32768',
