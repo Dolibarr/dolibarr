@@ -43,7 +43,10 @@ class ObjectLinks extends DolibarrApi
 	/**
 	 * @var string[]       Mandatory fields which needs to be an integer, checked when create and update object
 	 */
-	public static $INTFIELDS = array('fk_source','fk_target');
+	public static $INTFIELDS = array(
+		'fk_source',
+		'fk_target'
+	);
 
 	/**
 	 * @var ObjectLink $objectlink {@type ObjectLink}
