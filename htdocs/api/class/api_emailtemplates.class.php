@@ -73,7 +73,7 @@ class EmailTemplates extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
-		$allowaccess = $this->_CheckAccessRights();
+		$allowaccess = $this->_checkAccessRights();
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied access to email templates');
 		}
@@ -111,7 +111,7 @@ class EmailTemplates extends DolibarrApi
 	 */
 	public function deleteByLAbel($label)
 	{
-		$allowaccess = $this->_CheckAccessRights();
+		$allowaccess = $this->_checkAccessRights();
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied access to email templates');
 		}
@@ -190,7 +190,7 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _fetch($id, $label = '')
 	{
-		$allowaccess = $this->_CheckAccessRights();
+		$allowaccess = $this->_checkAccessRights();
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied access to email templates');
 		}
@@ -329,7 +329,7 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @throws  RestException 403
 	 */
-	private function _CheckAccessRights()
+	private function _checkAccessRights()
 	{
 		// what kind of access management do we need?
 		$allowaccess = false;
