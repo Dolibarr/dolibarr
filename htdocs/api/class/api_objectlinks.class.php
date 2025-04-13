@@ -248,7 +248,9 @@ class ObjectLinks extends DolibarrApi
 			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
 			if (in_array($field, ObjectLinks::$INTFIELDS)) {
 				$this->objectlink->$field = (int) $clean_field;
+				dol_syslog("integer and ".$field, LOG_DEBUG);
 			} else {
+				dol_syslog("string and ".$field, LOG_DEBUG);
 				$this->objectlink->$field = (string) $clean_field;
 			}
 		}

@@ -62,7 +62,7 @@ class ObjectLink extends CommonObject
 	public $targettype;
 
 	/**
-	 * @var string relation type, not sure if ever used, but it is in the database
+	 * @var  null|string relation type, not sure if ever used, but it is in the database
 	 */
 	public $relationtype;
 
