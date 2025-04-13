@@ -40,7 +40,7 @@ class EmailTemplates extends DolibarrApi
 	 * @var string[]       Mandatory fields which needs to be an integer, checked when create and update object
 	 */
 	public static $INTFIELDS = array(
-    );
+	);
 
 	/**
 	 * @var cEmailTemplate {@type cEmailTemplate}
@@ -87,8 +87,8 @@ class EmailTemplates extends DolibarrApi
 	 * @return      Object				    Object with cleaned properties
 	 * @phan-return		cEmailTemplate
 	 * @phpstan-return	cEmailTemplate
-     *
-     * @url GET    label/{label}
+	 *
+	 * @url GET    label/{label}
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
@@ -114,27 +114,26 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _fetch($id, $label = '')
 	{
+		$allowaccess = FALSE;
+		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			$allowaccess = TRUE;
+		}
+		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			$allowaccess = TRUE;
+		}
+		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
+			$allowaccess = TRUE;
+		}
+		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
+			$allowaccess = TRUE;
+		}
+		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
+		$allowaccess = TRUE;
+		}
 
-        $allowaccess = FALSE;
-        if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
-            $allowaccess = TRUE;
-        }
-        if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-            $allowaccess = TRUE;
-        }
-        if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
-            $allowaccess = TRUE;
-        }
-        if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-            $allowaccess = TRUE;
-        }
-        if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
-            $allowaccess = TRUE;
-        }
-
-        if (!$allowaccess) {
-            throw new RestException(403, 'denied access to email templates');
-        }
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to email templates');
+		}
 		$result = $this->email_template->apifetch($id, $label);
 		if (!$result) {
 			throw new RestException(404, 'Object Link not found');
