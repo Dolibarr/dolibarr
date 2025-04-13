@@ -90,7 +90,7 @@ class cEmailTemplate extends CommonObject
 	 */
 	public $active;
 	/**
-	 * @var null|string
+	 * @var null|string unknown what it does or is used for
 	 */
 	public $enabled;
 	/**
