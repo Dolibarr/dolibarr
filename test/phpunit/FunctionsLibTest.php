@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -482,10 +483,10 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
-	* testGetBrowserInfo
-	*
-	* @return void
-	*/
+	 * testGetBrowserInfo
+	 *
+	 * @return void
+	 */
 	public function testGetBrowserInfo()
 	{
 		// MSIE 5.0
@@ -1658,6 +1659,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(21500000, price2num('21 500 000'), 'Test 21 500 000 give 21500000 with french language');
 		$this->assertEquals(21500, price2num('21500.00'), 'Test 21500.00 give 21500 with french language');
 		$this->assertEquals(21500, price2num('21500,00'), 'Test 21500,00 give 21500 with french language');
+		$this->assertEquals(21500, price2num('21.500,00'), 'Test 21.500,00 give 21500 with french language');
 
 		$langs = $oldlangs;
 
