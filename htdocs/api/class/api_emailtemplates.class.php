@@ -58,6 +58,82 @@ class EmailTemplates extends DolibarrApi
 	}
 
 	/**
+	 * Delete an email template
+	 *
+	 * @param   int     $id         email template ID
+	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
+	 *
+	 * @url	DELETE {id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteById($id)
+	{
+		$allowaccess = $this->_check_access_rights();
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to email templates');
+		}
+
+		$result = $this->email_template->apifetch($id, '');
+		if (!$result) {
+			throw new RestException(404, 'Email Template not found');
+		}
+
+		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete email template : '.$this->email_template->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'email template deleted'
+			)
+		);
+	}
+
+	/**
+	 * Delete an email template
+	 *
+	 * @param   string     $label         email template label
+	 * @return  array
+	 * @phan-return array<array<string,int|string>>
+	 * @phpstan-return array<array<string,int|string>>
+	 *
+	 * @url	DELETE label/{label}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 * @throws RestException 500
+	 */
+	public function deleteByLAbel($label)
+	{
+		$allowaccess = $this->_check_access_rights();
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to email templates');
+		}
+
+		$result = $this->email_template->apifetch(0, $label);
+		if (!$result) {
+			throw new RestException(404, 'Email Template not found');
+		}
+
+		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
+			throw new RestException(500, 'Error when delete email template : '.$this->email_template->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'email template deleted'
+			)
+		);
+	}
+
+	/**
 	 * Get properties of a email template by id
 	 *
 	 * Return an array with email template information
@@ -114,26 +190,11 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _fetch($id, $label = '')
 	{
-		$allowaccess = false;
-		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
-			$allowaccess = true;
-		}
-		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			$allowaccess = true;
-		}
-		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
-			$allowaccess = true;
-		}
-		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			$allowaccess = true;
-		}
-		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
-			$allowaccess = true;
-		}
-
+		$allowaccess = $this->_check_access_rights();
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied access to email templates');
 		}
+
 		$result = $this->email_template->apifetch($id, $label);
 		if (!$result) {
 			throw new RestException(404, 'Object Link not found');
@@ -147,12 +208,12 @@ class EmailTemplates extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     	Object to clean
-	 * @phan-param		ObjectLink	$object
-	 * @phpstan-param	ObjectLink	$object
+	 * @phan-param		cEmailTemplate	$object
+	 * @phpstan-param	cEmailTemplate	$object
 	 *
 	 * @return  Object	Object with cleaned properties
-	 * @phan-return		ObjectLink
-	 * @phpstan-return	ObjectLink
+	 * @phan-return		cEmailTemplate
+	 * @phpstan-return	cEmailTemplate
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -234,7 +295,6 @@ class EmailTemplates extends DolibarrApi
 		return $object;
 	}
 
-	// source before modifications was api_orders.class.php
 	/**
 	 * Validate fields before create or update object
 	 *
@@ -246,13 +306,47 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _validate($data)
 	{
-		$objectlink = array();
-		foreach (ObjectLinks::$FIELDS as $field) {
+		$email_template = array();
+		foreach (EmailTemplates::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, $field." field missing");
 			}
-			$objectlink[$field] = $data[$field];
+			$email_template[$field] = $data[$field];
 		}
-		return $objectlink;
+		return $email_template;
+	}
+	/**
+	 * Validate fields before create or update object
+	 *
+	 * @param ?array<string,null|int|string>	$data   Data to validate
+	 * @return array<string,null|int|string>			Return array with validated mandatory fields and their value
+	 * @phan-return array<string,?int|?string>			Return array with validated mandatory fields and their value
+	 *
+	 * @throws  RestException 403
+	 */
+	private function _check_access_rights()
+	{
+		// what kind of access management do we need?
+		$allowaccess = false;
+		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+			$allowaccess = true;
+		}
+		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+			$allowaccess = true;
+		}
+		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
+			$allowaccess = true;
+		}
+		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
+			$allowaccess = true;
+		}
+		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
+			$allowaccess = true;
+		}
+		if ($allowaccess) {
+			return $allowaccess;
+		} else {
+			throw new RestException(403, 'denied access to email templates');
+		}
 	}
 }
