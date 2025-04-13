@@ -322,11 +322,10 @@ class EmailTemplates extends DolibarrApi
 		return $email_template;
 	}
 	/**
-	 * Validate fields before create or update object
+	 * function to check for access rights - should probably have 1. parameter which is read/write/delete/...
+	 * Why a separate function? because we probably needs to check so many many different kinds of objects
 	 *
-	 * @param ?array<string,null|int|string>	$data   Data to validate
-	 * @return array<string,null|int|string>			Return array with validated mandatory fields and their value
-	 * @phan-return array<string,?int|?string>			Return array with validated mandatory fields and their value
+	 * @return 	bool     				Return true if access is granted else false
 	 *
 	 * @throws  RestException 403
 	 */
