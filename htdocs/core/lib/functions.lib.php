@@ -403,38 +403,38 @@ function isModEnabled($module)
  */
 function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 {
-		global $conf;
+	global $conf;
 
-		// For compatibility with bad naming on module
-		$moduletomoduletouse = array(
-			'invoice' => 'facture',
-		);
-		$moduleParmsMapping = array(
-			'product' => 'produit',
-		);
+	// For compatibility with bad naming on module
+	$moduletomoduletouse = array(
+		'invoice' => 'facture',
+	);
+	$moduleParmsMapping = array(
+		'product' => 'produit',
+	);
 
-		if (!empty($moduletomoduletouse[$module])) {
-			$module = $moduletomoduletouse[$module];
-		}
+	if (!empty($moduletomoduletouse[$module])) {
+		$module = $moduletomoduletouse[$module];
+	}
 
-		$warningDelayPath = $parmlevel1;
-		if (!empty($moduleParmsMapping[$warningDelayPath])) {
-			$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
-		}
+	$warningDelayPath = $parmlevel1;
+	if (!empty($moduleParmsMapping[$warningDelayPath])) {
+		$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
+	}
 
-		if ($parmlevel2) {
-			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-				if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
-					return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
-				}
-			}
-		} else {
-			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-				return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+	if ($parmlevel2) {
+		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+			if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+				return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
 			}
 		}
+	} else {
+		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+		}
+	}
 
-		return 0;
+	return 0;
 }
 
 /**
@@ -2595,7 +2595,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 					$data['ip'] .= (($j == 1) ? ' [via ' : ',').$remoteip;
 				}
 				$data['ip'] .= (($j > 0) ? ']' : '');
-			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) ) {
+			} elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 				$tmpips = explode(',', $_SERVER['HTTP_CLIENT_IP']);
 				$data['ip'] = '';
 				$foundremoteip = 0;
@@ -7260,7 +7260,20 @@ function price2num($amount, $rounding = '', $option = 0)
 
 		// Now make replace (the main goal of function)
 		if ($thousand != ',' && $thousand != '.') {
-			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+			// Accept the two types of decimal points french users (i.e., using ' ' for thousands)
+
+			// Find the integral and decimal parts.
+			// We require that the decimal point only appears once.
+			if (preg_match('/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u', $amount, $matches)) {
+				$intPart = $matches['int'];
+				$decPart = $matches['dec'];
+
+				// Remove all commas and dots from intPart
+				$intPart = str_replace(['.', ','], '', $intPart);
+
+				// Combine intPart and decPart with a dot
+				$amount = $intPart . $dec . $decPart;
+			}
 		}
 
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
@@ -12122,16 +12135,23 @@ function dolExplodeKeepIfQuotes($input)
 		 * @return string
 		 */
 		static function ($a, $b, $c) {
-			if ($a !== '') return $a;
-			if ($b !== '') return $b;
-			if ($c !== '') return $c;
+			if ($a !== '') {
+				return $a;
+			}
+			if ($b !== '') {
+				return $b;
+			}
+			if ($c !== '') {
+				return $c;
+			}
 			return '';
 		},
 		$matches[1],
 		$matches[2],
 		$matches[3]
 	);
-	return array_values(array_filter($result,
+	return array_values(array_filter(
+		$result,
 		/**
 		 * Filter out empty strings from the result array.
 		 *
@@ -12140,7 +12160,8 @@ function dolExplodeKeepIfQuotes($input)
 		 */
 		static function ($val) {
 			return $val !== '';
-		}));
+		}
+	));
 }
 
 
