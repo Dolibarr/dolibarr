@@ -114,21 +114,21 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _fetch($id, $label = '')
 	{
-		$allowaccess = FALSE;
+		$allowaccess = false;
 		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
-			$allowaccess = TRUE;
+			$allowaccess = true;
 		}
 		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
-			$allowaccess = TRUE;
+			$allowaccess = true;
 		}
 		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
-			$allowaccess = TRUE;
+			$allowaccess = true;
 		}
 		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
-			$allowaccess = TRUE;
+			$allowaccess = true;
 		}
 		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
-		$allowaccess = TRUE;
+			$allowaccess = true;
 		}
 
 		if (!$allowaccess) {
