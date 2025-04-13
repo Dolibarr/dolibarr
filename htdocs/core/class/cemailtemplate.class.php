@@ -220,6 +220,55 @@ class cEmailTemplate extends CommonObject
 		}
 	}
 
+	/**
+	 *	Delete the email template
+	 *
+	 *	@param	User	$user		User object
+	 *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 * 	@return	int					Return integer <=0 if KO, >0 if OK
+	 */
+	public function delete($user, $notrigger = 0)
+	{
+
+		global $conf, $langs;
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+		$error = 0;
+
+		dol_syslog(get_class($this)."::delete ".$this->id, LOG_DEBUG);
+
+		$this->db->begin();
+
+		if (!$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_DELETE', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		// Delete object link
+		if (!$error) {
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element." WHERE rowid = ".((int) $this->id);
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+				dol_syslog(get_class($this)."::delete error ".$this->error, LOG_ERR);
+			}
+		}
+
+		if (!$error) {
+			dol_syslog(get_class($this)."::delete ".$this->id." by ".$user->id, LOG_DEBUG);
+			$this->db->commit();
+			return 1;
+		} else {
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 	/**
 	 * Load object in memory from the database
@@ -303,7 +352,12 @@ class cEmailTemplate extends CommonObject
 
 				return 1;
 			} else {
-				$this->error = 'Email template with id '.((string) $rowid).' not found sql='.$sql;
+				if ($id) {
+					$this->error = 'Email template with id '.((string) $id).' not found sql='.$sql;
+				}
+				if ($label) {
+					$this->error = 'Email template with label '.$label.' not found sql='.$sql;
+				}
 				return 0;
 			}
 		} else {
