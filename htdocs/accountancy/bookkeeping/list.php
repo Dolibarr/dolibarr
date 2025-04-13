@@ -872,7 +872,7 @@ if (!empty($arrayfields['t.piece_num']['checked'])) {
 // Code journal
 if (!empty($arrayfields['t.code_journal']['checked'])) {
 	print '<td class="liste_titre center">';
-	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'small maxwidth75');
+	print $formaccounting->multi_select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1, 'maxwidth75');
 	print '</td>';
 }
 // Date document
@@ -888,7 +888,7 @@ if (!empty($arrayfields['t.doc_date']['checked'])) {
 }
 // Ref document
 if (!empty($arrayfields['t.doc_ref']['checked'])) {
-	print '<td class="liste_titre"><input type="text" name="search_doc_ref" size="8" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" name="search_doc_ref" class="width75" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
 }
 // Accountancy account
 if (!empty($arrayfields['t.numero_compte']['checked'])) {

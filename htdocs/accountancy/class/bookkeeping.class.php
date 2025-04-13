@@ -2609,42 +2609,55 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Generate label operation when operation is transferred into accounting
+	 * Generate label operation when operation is transferred into accounting according to ACCOUNTING_LABEL_OPERATION_ON_TRANSFER
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 0, we concat thirdparty name, ref and label.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
 	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param	string	$full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
-	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
 	{
-		global $conf;
-
 		$accountingLabelOperation = '';
 
-		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+		if (!getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER')) {
 			$truncThirdpartyName = 16;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
 			if (!empty($labelaccount)) {
 				$accountingLabelOperation .= ' - '. $labelaccount;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
 			$truncThirdpartyName = 32;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
 			$truncThirdpartyName = 64;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 		}
-		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
 
 		return $accountingLabelOperation;
 	}
