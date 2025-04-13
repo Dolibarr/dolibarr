@@ -1129,7 +1129,7 @@ $journal_label = $langs->transnoentitiesnoconv($accountingjournalstatic->label);
 $MAXNBERRORS = 5;
 
 // Write bookkeeping
-if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
+if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'write') */) { // Test on permission already done
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
@@ -1343,7 +1343,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 		$param .= '&date_endmonth='.$date_endmonth;
 		$param .= '&date_endyear='.$date_endyear;
 		$param .= '&in_bookkeeping='.$in_bookkeeping;
-		header("Location: ".$_SERVER['PHP_SELF'].($param ? '?'.$param : ''));
+		header("Location: " . $_SERVER['PHP_SELF'] . '?' . $param);
 		exit;
 	}
 }
