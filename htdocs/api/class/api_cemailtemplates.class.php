@@ -20,16 +20,15 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/api/class/api.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/emailtemplate.class.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
 
 /**
- * API that gives shows links between objects in an Dolibarr instance.
+ * API for handling Object of table llx_c_email_templates
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class EmailTemplates extends DolibarrApi
+class cEmailTemplates extends DolibarrApi
 {
 	/**
 	 * @var string[]       Mandatory fields, checked when create and update object
@@ -44,9 +43,9 @@ class EmailTemplates extends DolibarrApi
     );
 
 	/**
-	 * @var EmailTemplate {@type EmailTemplate}
+	 * @var cEmailTemplate {@type cEmailTemplate}
 	 */
-	public $emailtemplate;
+	public $email_template;
 
 	/**
 	 * Constructor of the class
@@ -55,7 +54,7 @@ class EmailTemplates extends DolibarrApi
 	{
 		global $db;
 		$this->db = $db;
-		$this->emailtemplate = new EmailTemplate($this->db);
+		$this->email_template = new cEmailTemplate($this->db);
 	}
 
 	/**
@@ -65,8 +64,8 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @param   int         $id		ID of email template
 	 * @return  Object				Object with cleaned properties
-	 * @phan-return		EmailTemplate
-	 * @phpstan-return	EmailTemplate
+	 * @phan-return		cEmailTemplate
+	 * @phpstan-return	cEmailTemplate
 	 *
 	 *
 	 * @url	GET {id}
@@ -86,8 +85,8 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * @param       string		$label		Label of object
 	 * @return      Object				    Object with cleaned properties
-	 * @phan-return		EmailTemplate
-	 * @phpstan-return	EmailTemplate
+	 * @phan-return		cEmailTemplate
+	 * @phpstan-return	cEmailTemplate
      *
      * @url GET    label/{label}
 	 *
@@ -104,11 +103,11 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * Return an array with object links
 	 *
-	 * @param   int         $id             ID of emailtemplate
-	 * @param	string		$label			Label of emailtemplate
+	 * @param   int         $id             ID of email_template
+	 * @param	string		$label			Label of email_template
 	 * @return  Object						Object with cleaned properties
-	 * @phan-return		EmailTemplate
-	 * @phpstan-return	EmailTemplate
+	 * @phan-return		cEmailTemplate
+	 * @phpstan-return	cEmailTemplate
 	 *
 	 * @throws	RestException 403
 	 * @throws	RestException 404
@@ -136,12 +135,12 @@ class EmailTemplates extends DolibarrApi
         if (!$allowaccess) {
             throw new RestException(403, 'denied access to email templates');
         }
-		$result = $this->emailtemplate->fetch($id, $label);
+		$result = $this->email_template->apifetch($id, $label);
 		if (!$result) {
 			throw new RestException(404, 'Object Link not found');
 		}
 
-		return $this->_cleanObjectDatas($this->emailtemplate);
+		return $this->_cleanObjectDatas($this->email_template);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
