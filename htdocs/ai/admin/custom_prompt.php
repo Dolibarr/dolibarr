@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -276,22 +276,22 @@ if ($action == 'create') {
 	// Combo list of AI features
 	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
-	foreach ($arrayofaifeatures as $key => $val) {
-		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-		$out .= '<option value="'.dol_escape_js($key).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+	foreach ($arrayofaifeatures as $akey => $aval) {
+		$labelhtml = $langs->trans($arrayofaifeatures[$akey]['label']).($arrayofaifeatures[$akey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$akey]['label']);
+		$out .= '<option value="'.dol_escape_js($akey).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
 	$out .= '<script type="text/javascript">
-    	jQuery(document).ready(function() {
+		jQuery(document).ready(function() {
 			jQuery("#functioncode").on("change", function() {
 				console.log("We change value of ai function");
  				var changedValue = $(this).val();
 				console.log(changedValue);
 				var arrayplaceholder = {';
-	foreach ($arrayofaifeatures as $key => $val) {
-		$out .= dol_escape_js($key).': \''.dol_escape_js(empty($val['placeholder']) ? '' : $val['placeholder']).'\',';
+	foreach ($arrayofaifeatures as $akey => $aval) {
+		$out .= dol_escape_js($akey).': \''.dol_escape_js(empty($aval['placeholder']) ? '' : $aval['placeholder']).'\',';
 	}
 	$out .= '}
 				jQuery("#prePromptInput'.dol_escape_js($key).'").val(arrayplaceholder[changedValue]);
