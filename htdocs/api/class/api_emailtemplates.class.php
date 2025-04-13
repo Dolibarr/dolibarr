@@ -59,14 +59,14 @@ class EmailTemplates extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a ObjectLink object
+	 * Get properties of a email template by id
 	 *
-	 * Return an array with object link information
+	 * Return an array with email template information
 	 *
-	 * @param   int         $id		ID of objectlink
+	 * @param   int         $id		ID of email template
 	 * @return  Object				Object with cleaned properties
-	 * @phan-return		ObjectLink
-	 * @phpstan-return	ObjectLink
+	 * @phan-return		EmailTemplate
+	 * @phpstan-return	EmailTemplate
 	 *
 	 *
 	 * @url	GET {id}
@@ -80,14 +80,16 @@ class EmailTemplates extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an order object by ref
+	 * Get properties of an email template by label
 	 *
 	 * Return an array with order information
 	 *
-	 * @param       string		$label			Label of object
-	 * @return	array|mixed data without useless information
-	 *
-	 * @url GET    label/{label}
+	 * @param       string		$label		Label of object
+	 * @return      Object				    Object with cleaned properties
+	 * @phan-return		EmailTemplate
+	 * @phpstan-return	EmailTemplate
+     *
+     * @url GET    label/{label}
 	 *
 	 * @throws RestException 403
 	 * @throws RestException 404
