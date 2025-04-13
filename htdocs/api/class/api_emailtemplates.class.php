@@ -184,15 +184,15 @@ class EmailTemplates extends DolibarrApi
 	 *
 	 * Get a list of email templates
 	 *
-	 * @param string		   $sortfield			Sort field
-	 * @param string		   $sortorder			Sort order
-	 * @param int			   $limit				Limit for list
-	 * @param int			   $page				Page number
-	 * @param string		   $fk_user				User ids to filter email templates of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(e.ref:like:'SO-%') and (e.date_creation:<:'20160101')"
-	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array                               Array of order objects
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$fk_user			User ids to filter email templates of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(e.active:=:1) and (e.module:=:'adherent')"
+	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array						Array of order objects
 	 * @phan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
@@ -401,6 +401,11 @@ class EmailTemplates extends DolibarrApi
 		unset($object->array_options);
 		unset($object->extraparams);
 		unset($object->specimen);
+		unset($object->date_validation);
+		unset($object->date_modification);
+		unset($object->date_cloture);
+		unset($object->datec);
+		unset($object->rowid);
 
 		return $object;
 	}
