@@ -499,7 +499,6 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				// Remove all -1 values
-				// @phan-ignore-next-line PhanPluginUnknownClosureParamType
 				$actioncode = array_filter($actioncode, function ($value) {
 					return ((string) $value !== '-1');
 				});
