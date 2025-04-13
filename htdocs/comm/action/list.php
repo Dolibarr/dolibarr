@@ -499,8 +499,8 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				// Remove all -1 values
+				// @phan-ignore-next-line
 				$actioncode = array_filter($actioncode, function ($value) {
-					// @phan-ignore-current-line
 					return ((string) $value !== '-1');
 				});
 				if (count($actioncode)) {
