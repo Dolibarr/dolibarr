@@ -81,16 +81,16 @@ $aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
 // Setup conf for AI model
 $formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
-foreach ($arrayofaifeatures as $akey => $aval) {
-	$newkey = $akey;
-	if (preg_match('/^text/', $akey)) {
+foreach ($arrayofaifeatures as $featurekey => $feature) {
+	$newkey = $featurekey;
+	if (preg_match('/^text/', $featurekey)) {
 		$newkey = 'textgeneration';
 	}
-	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$aval["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	if ($arrayofai[$aiservice][$newkey] != 'na') {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$aval["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
+		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
 	} else {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$aval["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
+		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
 	}
 	$item->cssClass = 'minwidth500 input';
 }
@@ -273,10 +273,10 @@ if ($action == 'create') {
 	// Combo list of AI features
 	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
-	foreach ($arrayofaifeatures as $akey => $aval) {
-		$labelhtml = $langs->trans($arrayofaifeatures[$akey]['label']).($arrayofaifeatures[$akey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-		$labeltext = $langs->trans($arrayofaifeatures[$akey]['label']);
-		$out .= '<option value="'.dol_escape_js($akey).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+	foreach ($arrayofaifeatures as $featurekey => $feature) {
+		$labelhtml = $langs->trans($arrayofaifeatures[$featurekey]['label']).($arrayofaifeatures[$featurekey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$featurekey]['label']);
+		$out .= '<option value="'.dol_escape_js($featurekey).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
@@ -287,8 +287,8 @@ if ($action == 'create') {
  				var changedValue = $(this).val();
 				console.log(changedValue);
 				var arrayplaceholder = {';
-	foreach ($arrayofaifeatures as $akey => $aval) {
-		$out .= dol_escape_js($akey).': \''.dol_escape_js(empty($aval['placeholder']) ? '' : $aval['placeholder']).'\',';
+	foreach ($arrayofaifeatures as $featurekey => $feature) {
+		$out .= dol_escape_js($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
 	}
 	$out .= '}
 				jQuery("#prePromptInput'.dol_escape_js($key).'").val(arrayplaceholder[changedValue]);
