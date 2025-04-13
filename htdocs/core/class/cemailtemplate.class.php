@@ -259,16 +259,16 @@ class cEmailTemplate extends CommonObject
 		}
 
 		$sql = "SELECT e.rowid, e.entity, e.module, e.type_template, e.lang,";
-        $sql .= " e.private, e.fk_user, e.datec, e.tms, e.label, e.position,";
-        $sql .= " e.defaultfortype, e.enabled, e.active, e.email_from, e.email_to,";
-        $sql .= " e.email_tocc, e.email_tobcc, e.topic, e.joinfiles, e.content,";
-        $sql .= " e.content_lines FROM ".$this->db->prefix().$this->table_element." as e";
+		$sql .= " e.private, e.fk_user, e.datec, e.tms, e.label, e.position,";
+		$sql .= " e.defaultfortype, e.enabled, e.active, e.email_from, e.email_to,";
+		$sql .= " e.email_tocc, e.email_tobcc, e.topic, e.joinfiles, e.content,";
+		$sql .= " e.content_lines FROM ".$this->db->prefix().$this->table_element." as e";
 		if ($id) {
 			$sql .= " WHERE e.rowid = ".((int) $id);
-        }
+		}
 		if ($label) {
 			$sql .= " WHERE e.label = '".((string) $label)."'";
-        }
+		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
@@ -278,29 +278,29 @@ class cEmailTemplate extends CommonObject
 				$this->id = (int) $obj->rowid;
 				$this->entity = (int) $obj->entity;
 
-                $this->active = (int) $obj->active;
-                $this->content = (string) $obj->content;
-                $this->content_lines = (string) $obj->content_lines;
-                $this->datec = (int) $obj->datec;
-                $this->defaultfortype = (int) $obj->defaultfortype;
-                $this->email_from = (string) $obj->email_from;
-                $this->email_to = (string) $obj->email_to;
-                $this->email_tobcc = (string) $obj->email_tobcc;
-                $this->email_tocc = (string) $obj->email_tocc;
-                $this->enabled = (string) $obj->enabled;
-                $this->fk_user = (int) $obj->fk_user;
-                $this->joinfiles = (string) $obj->joinfiles;
-                $this->label = (string) $obj->label;
-                $this->lang = (string) $obj->lang;
-                $this->module = (string) $obj->module;
-                $this->position = (int) $obj->position;
-                $this->private = (int) $obj->private;
-                $this->tms = $obj->tms;
-                $this->topic = (string) $obj->topic;
-                $this->type_template = (string) $obj->type_template;
+				$this->active = (int) $obj->active;
+				$this->content = (string) $obj->content;
+				$this->content_lines = (string) $obj->content_lines;
+				$this->datec = (int) $obj->datec;
+				$this->defaultfortype = (int) $obj->defaultfortype;
+				$this->email_from = (string) $obj->email_from;
+				$this->email_to = (string) $obj->email_to;
+				$this->email_tobcc = (string) $obj->email_tobcc;
+				$this->email_tocc = (string) $obj->email_tocc;
+				$this->enabled = (string) $obj->enabled;
+				$this->fk_user = (int) $obj->fk_user;
+				$this->joinfiles = (string) $obj->joinfiles;
+				$this->label = (string) $obj->label;
+				$this->lang = (string) $obj->lang;
+				$this->module = (string) $obj->module;
+				$this->position = (int) $obj->position;
+				$this->private = (int) $obj->private;
+				$this->tms = $obj->tms;
+				$this->topic = (string) $obj->topic;
+				$this->type_template = (string) $obj->type_template;
 
-                // direct copy from facture.class.php
-				$this->date_creation        = $this->db->jdate($obj->datec);
+				// direct copy from facture.class.php
+				$this->date_creation = $this->db->jdate($obj->datec);
                 
 				return 1;
 			} else {
@@ -316,4 +316,6 @@ class cEmailTemplate extends CommonObject
 
 // I prefer the cEmailTemplate name as it better reflects the database
 class ModelMail extends cEmailTemplate
-{}
+{
+	// just another name
+}
