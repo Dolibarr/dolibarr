@@ -267,6 +267,7 @@ class cEmailTemplate extends CommonObject
 		if ($label) {
 			$sql .= " WHERE e.label = '".((string) $label)."'";
 		}
+		$sql .= " AND entity = ".((int) $this->entity);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$result = $this->db->query($sql);
