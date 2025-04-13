@@ -48,6 +48,11 @@ class EmailTemplates extends DolibarrApi
 	public $email_template;
 
 	/**
+	 * @var string 	Name of table without prefix where object is stored. This is also the key used for extrafields management (so extrafields know the link to the parent table).
+	 */
+	public $table_element = 'c_email_templates';
+
+	/**
 	 * Constructor of the class
 	 */
 	public function __construct()
@@ -172,6 +177,105 @@ class EmailTemplates extends DolibarrApi
 	public function getByLabel($label)
 	{
 		return $this->_fetch(0, $label);
+	}
+
+	/**
+	 * List email templates
+	 *
+	 * Get a list of email templates
+	 *
+	 * @param string		   $sortfield			Sort field
+	 * @param string		   $sortorder			Sort order
+	 * @param int			   $limit				Limit for list
+	 * @param int			   $page				Page number
+	 * @param string		   $fk_user				User ids to filter email templates of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(e.ref:like:'SO-%') and (e.date_creation:<:'20160101')"
+	 * @param string		   $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                               Array of order objects
+	 * @phan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws RestException 404 Not found
+	 * @throws RestException 503 Error
+	 */
+	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	{
+		$allowaccess = $this->_checkAccessRights();
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied access to email templates');
+		}
+		// entity stolen from api_setup.class.php
+		$entity = (int) DolibarrApiAccess::$user->entity;
+		$obj_ret = array();
+
+		$sql = "SELECT e.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS e";
+		$sql .= " WHERE e.entity = ".((int) $entity);
+		if (!$fk_user == '') {
+			$sql .= " AND e.fk_user = ".((int) $fk_user);
+		}
+
+		// Add sql filters
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
+		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT e.rowid', 'SELECT count(e.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog(get_class($this)."::index", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		dol_syslog(get_class($this)."::pindex", LOG_DEBUG);
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$email_template_static = new cEmailTemplate($this->db);
+				if ($email_template_static->apifetch($obj->rowid, '') > 0) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($email_template_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve email template list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
 	}
 
 	/**
