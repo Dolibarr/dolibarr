@@ -1,6 +1,5 @@
 <?php
-/*
-/* Copyright (C) 2025  Jon Bendtsen         <jon.bendtsen.github@jonb.dk>
+/* Copyright (C) 2025		Jon Bendtsen<jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,14 +39,6 @@ class ObjectLinks extends DolibarrApi
 		'sourcetype',
 		'fk_target',
 		'targettype'
-	);
-
-	/**
-	 * @var string[]       Mandatory fields which needs to be an integer, checked when create and update object
-	 */
-	public static $INTFIELDS = array(
-		'fk_source',
-		'fk_target'
 	);
 
 	/**
@@ -91,6 +82,36 @@ class ObjectLinks extends DolibarrApi
 		return $this->_fetch($id);
 	}
 
+
+
+	/**
+	 * Set a field of $this->objectlink, with proper type
+	 *
+	 * @param string		$field	The field to set
+	 * @param string|float	$value	The "unclean" value
+	 * @return void					No return value, but field is set in $this->objectlink
+	 */
+	private function _setObjectLinkField($field, $value)
+	{
+
+		$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
+
+		/**
+		 * Fields that are of integer type, used for casting during object creation and update
+		 */
+		$intFields = array(
+			'fk_source',
+			'fk_target'
+		);
+
+		if (in_array($field, $intFields)) {
+			$this->objectlink->$field = (int) $clean_field;
+		} else {
+			$this->objectlink->$field = (string) $clean_field;
+		}
+	}
+
+
 	/**
 	 *	Create object link
 	 *
@@ -121,12 +142,7 @@ class ObjectLinks extends DolibarrApi
 			if ($field == 'notrigger') {
 				$this->notrigger = (int) $value;
 			} else {
-				$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
-				if (in_array($field, ObjectLinks::$INTFIELDS)) {
-					$this->objectlink->$field = (int) $clean_field;
-				} else {
-					$this->objectlink->$field = (string) $clean_field;
-				}
+				$this->_setObjectLinkField($field, $value);
 			}
 		}
 
@@ -245,12 +261,7 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
-			if (in_array($field, ObjectLinks::$INTFIELDS)) {
-				$this->objectlink->$field = (int) $clean_field;
-			} else {
-				$this->objectlink->$field = (string) $clean_field;
-			}
+			$this->_setObjectLinkField($field, $value);
 		}
 
 		// Permission check
@@ -314,12 +325,7 @@ class ObjectLinks extends DolibarrApi
 		$result = $this->_validate($request_data);
 
 		foreach ($request_data as $field => $value) {
-			$clean_field = $this->_checkValForAPI($field, $value, $this->objectlink);
-			if (in_array($field, ObjectLinks::$INTFIELDS)) {
-				$this->objectlink->$field = (int) $clean_field;
-			} else {
-				$this->objectlink->$field = (string) $clean_field;
-			}
+			$this->_setObjectLinkField($field, $value);
 		}
 
 		// Permission check
