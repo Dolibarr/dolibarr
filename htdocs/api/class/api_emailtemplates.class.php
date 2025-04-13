@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/cemailtemplate.class.php';
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
-class cEmailTemplates extends DolibarrApi
+class EmailTemplates extends DolibarrApi
 {
 	/**
 	 * @var string[]       Mandatory fields, checked when create and update object
