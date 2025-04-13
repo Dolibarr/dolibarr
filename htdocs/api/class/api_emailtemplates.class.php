@@ -80,7 +80,7 @@ class EmailTemplates extends DolibarrApi
 
 		$result = $this->email_template->apifetch($id, '');
 		if (!$result) {
-			throw new RestException(404, 'Email Template not found');
+			throw new RestException(404, 'Email Template with id '.$id.' not found');
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
@@ -118,7 +118,7 @@ class EmailTemplates extends DolibarrApi
 
 		$result = $this->email_template->apifetch(0, $label);
 		if (!$result) {
-			throw new RestException(404, 'Email Template not found');
+			throw new RestException(404, "Email Template with label ".$label." not found");
 		}
 
 		if (!$this->email_template->delete(DolibarrApiAccess::$user)) {
@@ -197,6 +197,12 @@ class EmailTemplates extends DolibarrApi
 
 		$result = $this->email_template->apifetch($id, $label);
 		if (!$result) {
+			if ($id) {
+				throw new RestException(404, 'Email template with id '.((string) $id).' not found');
+			}
+			if ($label) {
+				throw new RestException(404, 'Email template with label '.$label.' not found');
+			}
 			throw new RestException(404, 'Email Template not found');
 		}
 
