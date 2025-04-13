@@ -27,8 +27,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doldeprecationhandler.class.php';
 
 /**
  * Object of table llx_c_email_templates
- *
- *
  */
 class cEmailTemplate extends CommonObject
 {
@@ -301,7 +299,7 @@ class cEmailTemplate extends CommonObject
 
 				// direct copy from facture.class.php
 				$this->date_creation = $this->db->jdate($obj->datec);
-                
+
 				return 1;
 			} else {
 				$this->error = 'Email template with id '.((string) $rowid).' not found sql='.$sql;
@@ -314,7 +312,10 @@ class cEmailTemplate extends CommonObject
 	}
 }
 
-// I prefer the cEmailTemplate name as it better reflects the database
+/**
+ * old class name for Object of table llx_c_email_templates
+ * I prefer the cEmailTemplate name as it better reflects the database
+ */
 class ModelMail extends cEmailTemplate
 {
 	// just another name
