@@ -221,6 +221,201 @@ class cEmailTemplate extends CommonObject
 	}
 
 	/**
+	 *	Create email template
+	 *  Required fields: label, type_template, topic
+	 *
+	 *	@param		User	$user 		Object user that make creation
+	 *	@param		int	    $notrigger	Disable all triggers
+	 *	@return 	int			        Return integer <0 if KO, >0 if OK
+	 */
+	public function create($user, $notrigger = 0)
+	{
+		global $db, $conf;
+		$error = 0;
+
+		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
+		$this->entity = setEntity($this);
+
+		dol_syslog(get_class($this)."::create user=".$user->id);
+
+		// Check parameters
+		if (!empty($this->label)) {	// We check that label is not already used
+			$result = $this->isExistingObject($this->element, 0, $this->label); // Check label is not yet used
+			if ($result > 0) {
+				$this->error = 'ErrorLabelAlreadyExists';
+				dol_syslog(get_class($this)."::create ".$this->error, LOG_WARNING);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+
+		if (is_null($this->active)) {
+			dol_syslog("active is null");
+		} else {
+			dol_syslog("active is ".$active);
+		}
+
+		$now = dol_now();
+
+		$this->db->begin();
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element." (entity,";
+		$sql .= " module, type_template, lang, private, fk_user, datec, label,";
+		$sql .= " position, defaultfortype, enabled, active, email_from, email_to,";
+		$sql .= " email_tocc, email_tobcc, topic, joinfiles, content, content_lines)";
+		$sql .= " VALUES (";
+		$sql .= " ".((int) $this->entity).",";
+		if (is_null($this->module)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->module))."',";
+		}
+		$sql .= " '".((string) $db->escape($this->type_template))."',";
+		if (is_null($this->lang)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->lang))."',";
+		}
+		$sql .= " ".((int) $this->private).",";
+		if (is_null($this->fk_user)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((int) $this->fk_user)."',";
+		}
+		if (is_null($this->datec)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((int) $this->datec)."',";
+		}
+		$sql .= " '".((string) $db->escape($this->label))."',";
+		$sql .= " ".((int) $this->position).", ".((int) $this->defaultfortype ).",";
+		if (is_null($this->enabled)) {
+			$sql .= " 1,";
+		} else {
+			$sql .= " '".((int) $this->enabled)."',";
+		}
+		if (is_null($this->active)) {
+			$sql .= " 1,";
+		} else {
+			$sql .= " '".((int) $this->active)."',";
+		}
+		if (is_null($this->email_from)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->email_from))."',";
+		}
+		if (is_null($this->email_to)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->email_to))."',";
+		}
+		if (is_null($this->email_tocc)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->email_tocc))."',";
+		}
+		if (is_null($this->email_tobcc)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->email_tobcc))."',";
+		}
+		$sql .= " '".((string) $db->escape($this->topic))."',";
+		$sql .= " ".((int) $this->joinfiles).",";
+		if (is_null($this->content)) {
+			$sql .= " NULL,";
+		} else {
+			$sql .= " '".((string) $db->escape($this->content))."',";
+		}
+		if (is_null($this->content_lines)) {
+			$sql .= " NULL";
+		} else {
+			$sql .= " '".((string) $db->escape($this->content_lines))."',";
+		}
+		$sql .= ")";
+
+
+		dol_syslog(get_class($this)."::create", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
+
+			if (!$error && !$notrigger) {
+				// Call trigger
+				$result = $this->call_trigger(self::TRIGGER_PREFIX.'_CREATE', $user);
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			} else {
+				$this->db->rollback();
+				return -1 * $error;
+			}
+		} else {
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+	/**
+	 * Check if an email template id or ref exists
+	 * If you don't need or want to instantiate the email template and just need to know if the email template exists, use this method instead of fetch
+	 *
+	 *  @param	string	$element   	String which is "email_template"
+	 *  @param	int		$id      	Id of email template
+	 *  @param  string	$label     	Label of email template to check
+	 *  @param	string	$ref_ext	UNUSED, making the function similar to the one in commonobject.class.php
+
+	 *  @return int     			Return integer <0 if KO, 0 if OK but not found, >0 if OK and exists
+	 */
+	public static function isExistingObject($element, $id, $label = '', $ref_ext = '')
+	{
+		global $db, $conf;
+
+		// hardcoded string because I kept getting this error
+		// PHP Fatal error:  Uncaught Error: Using $this when not in object context
+		// same with the $sql .= " FROM line
+		$myelement = 'email_template';
+		if ($myelement != $element) {
+			return -1;
+		}
+
+		$sql = "SELECT rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX."c_email_templates";
+		$sql .= " WHERE entity IN (".getEntity($element).")";
+
+		if ($id > 0) {
+			$sql .= " AND rowid = ".((int) $id);
+		} elseif ($label) {
+			$sql .= " AND label = '".$db->escape($label)."'";
+		} else {
+			$error = 'ErrorWrongParameters';
+			dol_syslog(get_class()."::isExistingObject ".$error, LOG_ERR);
+			return -1;
+		}
+		if ($label) {		// Because the same label can exists in 2 different entities, we force the current one in priority
+			$sql .= " AND entity = ".((int) $conf->entity);
+		}
+
+		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
+		$resql = $db->query($sql);
+		if ($resql) {
+			$num = $db->num_rows($resql);
+			if ($num > 0) {
+				return 1;
+			} else {
+				return 0;
+			}
+		}
+		return -1;
+	}
+
+	/**
 	 *	Delete the email template
 	 *
 	 *	@param	User	$user		User object

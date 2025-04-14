@@ -287,6 +287,44 @@ class EmailTemplates extends DolibarrApi
 	}
 
 	/**
+	 * Create an email template
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"label":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"label":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return  int     ID of email template
+	 */
+	public function post($request_data = null)
+	{
+		$allowaccess = $this->_checkAccessRights('creer');
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied create access to email templates');
+		}
+
+		// Check mandatory fields
+		$result = $this->_validate($request_data);
+
+		foreach ($request_data as $field => $value) {
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->email_template->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->email_template->$field = $this->_checkValForAPI($field, $value, $this->email_template);
+		}
+
+		if ($this->email_template->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, "Error creating email template", array_merge(array($this->email_template->error), $this->email_template->errors));
+		}
+
+		return ((int) $this->email_template->id);
+	}
+
+	/**
 	 * Get properties of an email template
 	 *
 	 * Return an array with email templates
