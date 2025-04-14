@@ -972,9 +972,9 @@ class Conf extends stdClass
 				$this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30; // Less than 1 minutes to be sure
 			}
 
-			// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
+			// Option for accounting modules (simple or double parties). Define mode of calculation of reports.
 			if (empty($this->global->ACCOUNTING_MODE)) {
-				$this->global->ACCOUNTING_MODE = 'RECETTES-DEPENSES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+				$this->global->ACCOUNTING_MODE = 'CREANCES-DETTES'; // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES' (default)
 			}
 
 			if (!isset($this->global->MAIN_ENABLE_AJAX_TOOLTIP)) {
@@ -994,6 +994,10 @@ class Conf extends stdClass
 			// MAIN_HTML_TITLE
 			if (!isset($this->global->MAIN_HTML_TITLE)) {
 				$this->global->MAIN_HTML_TITLE = 'thirdpartynameonly,contactnameonly,projectnameonly';
+			}
+			// MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME
+			if (!isset($this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME)) {
+				$this->global->MAIN_FEATURE_TO_SHOW_TOP_MENU_URL_IN_FRAME = 1;
 			}
 
 			// conf->liste_limit = constant to limit size of lists
@@ -1210,6 +1214,13 @@ class Conf extends stdClass
 				$this->propal->facturation = new stdClass();
 				$this->propal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_CLOSE') * 86400;
 				$this->propal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_PROPALS_TO_BILL') * 86400;
+			}
+			// @phpstan-ignore-next-line
+			if (isset($this->supplier_proposal)) {
+				$this->supplier_proposal->cloture = new stdClass();
+				$this->supplier_proposal->facturation = new stdClass();
+				$this->supplier_proposal->cloture->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_CLOSE') * 86400;
+				$this->supplier_proposal->facturation->warning_delay = getDolGlobalInt('MAIN_DELAY_SUPPLIER_PROPALS_TO_BILL') * 86400;
 			}
 			if (isset($this->facture)) {
 				$this->facture->client = new stdClass();

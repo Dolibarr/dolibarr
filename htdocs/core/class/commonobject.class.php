@@ -905,7 +905,7 @@ abstract class CommonObject
 	{
 		global $db, $conf;
 
-		$sql = "SELECT rowid, ref, ref_ext";
+		$sql = "SELECT rowid";
 		$sql .= " FROM ".$db->prefix().$element;
 		$sql .= " WHERE entity IN (".getEntity($element).")";
 
@@ -1240,7 +1240,6 @@ abstract class CommonObject
 		// phpcs:enable
 		global $user, $langs;
 
-
 		dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source, $notrigger");
 
 		// Check parameters
@@ -1255,6 +1254,26 @@ abstract class CommonObject
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
 			dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 			return -2;
+		}
+
+		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
+			$sql_allowed_contacts.= ' WHERE sc.fk_soc = '.(int) $this->socid;
+			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
+
+			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
+
+			if (!$resql_allowed_contacts) {
+				$this->errors[] = $this->db->lasterror();
+				return -3;
+			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
+				if ($obj->cnt == 0) {
+					$langs->load("companies");
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->admin);
+					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
+					return -3;
+				}
+			}
 		}
 
 		$id_type_contact = 0;
@@ -1276,7 +1295,6 @@ abstract class CommonObject
 				}
 			}
 		}
-
 		if ($id_type_contact == 0) {
 			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
 			return 0;
@@ -6299,6 +6317,7 @@ abstract class CommonObject
 	/**
 	 *  Function to get alternative languages of a data into $this->array_languages
 	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *  Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 *  @return	int<-1,1>					Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
 	 *  @see fetch_optionnals()
@@ -6368,6 +6387,7 @@ abstract class CommonObject
 
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
+	 * Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
 	 * @return	int<-1,1>				1 if array_options set, 0 if no value, -1 if error (field required missing for example)
@@ -7009,9 +7029,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Add/Update all extra fields values for the current object.
-	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
+	 *	Add/Update all extra languages values for the current object.
+	 *  Data to describe values to insert/update are stored into $this->array_languages=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 *  This function delete record with all languages and insert them again from the array $this->array_languages.
+	 *  Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
@@ -9865,7 +9886,7 @@ abstract class CommonObject
 		 $filearray=array_merge($filearray, $filearrayold);
 		 }*/
 
-		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir, $this);
 		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 		if (count($filearray)) {

@@ -858,6 +858,8 @@ if (empty($reshook)) {
 			$result = $object->setPaid($user, $close_code, $close_note);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$object->fetch($object->id);	// Reload properties
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -871,6 +873,8 @@ if (empty($reshook)) {
 			$result = $object->setCanceled($user, $close_code, $close_note);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$object->fetch($object->id);	// Reload properties
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -1049,6 +1053,7 @@ if (empty($reshook)) {
 					// Set invoice as paid
 					$result = $object->setPaid($user);
 					if ($result >= 0) {
+						$object->fetch($object->id);	// Reload properties
 						$db->commit();
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -2387,12 +2392,12 @@ if (empty($reshook)) {
 					}
 				}
 
+				$outputlangs = $langs;
+				$newlang = '';
 				$desc = '';
 
 				// Define output language
 				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-					$outputlangs = $langs;
-					$newlang = '';
 					if (/* empty($newlang) && */ GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
@@ -2423,19 +2428,6 @@ if (empty($reshook)) {
 					$tmptxt = '(';
 					// Define output language
 					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-						$outputlangs = $langs;
-						$newlang = '';
-						if (/* empty($newlang) && */ GETPOST('lang_id', 'alpha')) {
-							$newlang = GETPOST('lang_id', 'alpha');
-						}
-						if (empty($newlang)) {
-							$newlang = $object->thirdparty->default_lang;
-						}
-						if (!empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-							$outputlangs->load('products');
-						}
 						if (!empty($prod->customcode)) {
 							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
 						}
@@ -2528,7 +2520,7 @@ if (empty($reshook)) {
 			 */
 
 			// Margin
-			$fournprice = price2num(GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');
+			$fournprice = (int) (GETPOST('fournprice'.$predef) ? GETPOST('fournprice'.$predef) : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 			$buyingprice = price2num(GETPOST('buying_price'.$predef) != '' ? GETPOST('buying_price'.$predef) : ''); // If buying_price is '0', we must keep this value
 
 
@@ -2727,7 +2719,7 @@ if (empty($reshook)) {
 		$localtax2_rate = get_localtax($vat_rate, 2, $object->thirdparty);
 
 		// Add buying price
-		$fournprice = price2num(GETPOST('fournprice') ? GETPOST('fournprice') : '');
+		$fournprice = (int) (GETPOST('fournprice') ? GETPOST('fournprice') : '');				// This can be id of supplier price, or 'pmpprice' or 'costprice', or 'inputprice', we force to keep ID only
 		$buyingprice = price2num(GETPOST('buying_price') != '' ? GETPOST('buying_price') : ''); // If buying_price is '0', we must keep this value
 
 		// Prepare a price equivalent for minimum price check
@@ -2918,7 +2910,7 @@ if (empty($reshook)) {
 				$type,
 				GETPOSTINT('fk_parent_line'),
 				0,
-				$fournprice,
+				(int) $fournprice,
 				$buyingprice,
 				$label,
 				$special_code,
@@ -2985,7 +2977,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
-	} elseif ($action == 'updatealllines' && $usercancreate && GETPOST('all_percent') == $langs->trans('Modifier')) {	// Update all lines of situation invoice
+	} elseif ($action == 'updatealllines' && $usercancreate && GETPOST('all_percent') == $langs->trans('Modify')) {	// Update all lines of situation invoice
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
 		}
@@ -3889,8 +3881,7 @@ if ($action == 'create') {
 				print '<div class="listofinvoicetype"><div class="">';
 				$tmp = '<input type="radio" name="type" id="radio_situation" value="0" disabled> ';
 				$text = $tmp.'<label>'.$langs->trans("InvoiceSituationAsk").'</label> ';
-				$text .= '<span class="opacitymedium">('.$langs->trans("YouMustCreateInvoiceFromThird").')</span> ';
-				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
+				$desc = $form->textwithpicto($text, $langs->transnoentities("InvoiceFirstSituationDesc").'<br><br>'.$langs->trans("YouMustCreateInvoiceFromThird"), 1, 'help', 'nowraponall', 0, 3, 'firstsituationonsmartphone');
 				print $desc;
 				print '</div></div>'."\n";
 			}
@@ -4436,7 +4427,7 @@ if ($action == 'create') {
 		}
 	}
 
-	if ($object->paye) {
+	if ($object->paye || $object->status == $object::STATUS_CLOSED) {
 		$resteapayer = 0;
 	}
 	$resteapayeraffiche = $resteapayer;
@@ -4673,15 +4664,15 @@ if ($action == 'create') {
 		$close = array();
 		// Code
 		$i = 0;
-		$close[$i]['code'] = 'discount_vat'; // escompte
+		$close[$i]['code'] = $object::CLOSECODE_DISCOUNTVAT; // escompte
 		$i++;
-		$close[$i]['code'] = 'badcustomer';
+		$close[$i]['code'] = $object::CLOSECODE_BADDEBT;
 		$i++;
-		$close[$i]['code'] = 'bankcharge';
+		$close[$i]['code'] = $object::CLOSECODE_BANKCHARGE;
 		$i++;
-		$close[$i]['code'] = 'withholdingtax';
+		$close[$i]['code'] = $object::CLOSECODE_WITHHOLDINGTAX;
 		$i++;
-		$close[$i]['code'] = 'other';
+		$close[$i]['code'] = $object::CLOSECODE_OTHER;
 		$i++;
 		// Help
 		$i = 0;
@@ -4710,13 +4701,18 @@ if ($action == 'create') {
 		// arrayreasons[code]=reason
 		$arrayreasons = [];
 		foreach ($close as $key => $val) {
-			$arrayreasons[$close[$key]['code']] = $close[$key]['reason'];
+			$arrayreasons[$close[$key]['code']] = '<span class="small">'.$close[$key]['reason'].'</span>';
 		}
 
 		// Create a form table
-		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"), 0 => array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), 1 => array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
+		$formquestion = array(
+			'text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),
+			0 => array('type' => 'radio', 'name' => 'close_code', 'label' => '', 'values' => $arrayreasons),
+			1 => array('type' => 'text', 'name' => 'close_note', 'moreattr' => 'placeholder = "'.$langs->trans("Comment").'"', 'value' => '', 'morecss' => 'minwidth300'),
+			2 => array('type' => 'separator')
+		);
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 380, 600);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
 	}
 
 	// Confirmation of status abandoned

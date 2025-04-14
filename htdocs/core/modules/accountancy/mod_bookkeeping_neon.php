@@ -48,6 +48,11 @@ class mod_bookkeeping_neon extends ModeleNumRefBookkeeping
 	 */
 	public $name = 'Neon';
 
+	/**
+	 * @var int	position
+	 */
+	public $position = 40;
+
 
 	/**
 	 *  Return description of module

@@ -618,7 +618,7 @@ class Propal extends CommonObject
 	 *      @param		int			$special_code		Special code (also used by externals modules!)
 	 *      @param		int			$fk_parent_line		Id of parent line
 	 *      @param		int			$fk_fournprice		Id supplier price
-	 *      @param		int			$pa_ht				Buying price without tax
+	 *      @param		float|string	$pa_ht			Buying price without tax ('' to keep PMP unchanged or a float)
 	 *      @param		string		$label				???
 	 *		@param      int|string	$date_start       	Start date of the line
 	 *		@param      int|string	$date_end         	End date of the line
@@ -668,7 +668,7 @@ class Propal extends CommonObject
 			}
 			$txlocaltax1 = price2num($txlocaltax1);
 			$txlocaltax2 = price2num($txlocaltax2);
-			$pa_ht = price2num($pa_ht);  // do not convert to float here, it breaks the functioning of $pa_ht_isemptystring
+			$pa_ht = price2num($pa_ht);  // do not convert to float here, it breaks the functioning of $pa_ht is empty string
 			if ($price_base_type == 'HT') {
 				$pu = $pu_ht;
 			} else {
@@ -886,7 +886,7 @@ class Propal extends CommonObject
 	 * 	@param		int			$fk_parent_line		Id of parent line (0 in most cases, used by modules adding sublevels into lines).
 	 * 	@param		int			$skip_update_total	Keep fields total_xxx to 0 (used for special lines by some modules)
 	 *  @param		int			$fk_fournprice		Id of origin supplier price
-	 *  @param		float		$pa_ht				Price (without tax) of product when it was bought
+	 *  @param		float|string	$pa_ht			Price (without tax) of product when it was bought (Can be '' to keep AWP unchanged or a float value)
 	 *  @param		string		$label				???
 	 *  @param		int			$type				0/1=Product/service
 	 *	@param      int|string	$date_start       	Start date of the line
@@ -894,8 +894,8 @@ class Propal extends CommonObject
 	 *  @param		array<string,mixed>	$array_options	extrafields array
 	 * 	@param 		int|null	$fk_unit 			Code of the unit to use. Null to use the default one
 	 * 	@param		float		$pu_ht_devise		Unit price in currency
-	 * 	@param		int			$notrigger			disable line update trigger
-	 *	@param       int			$rang   line rank
+	 * 	@param		int			$notrigger			Disable line update trigger
+	 *	@param      int			$rang   			Line rank
 	 *  @return     int     		        		0 if OK, <0 if KO
 	 */
 	public function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $desc = '', $price_base_type = 'HT', $info_bits = 0, $special_code = 0, $fk_parent_line = 0, $skip_update_total = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $type = 0, $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $pu_ht_devise = 0, $notrigger = 0, $rang = 0)

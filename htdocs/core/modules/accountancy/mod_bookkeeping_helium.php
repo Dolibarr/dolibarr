@@ -52,6 +52,11 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 	 */
 	public $name = 'Helium';
 
+	/**
+	 * @var int	position
+	 */
+	public $position = 60;
+
 
 	/**
 	 *  Returns the description of the numbering model
@@ -72,7 +77,9 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconstbookkeeping" value="BOOKKEEPING_HELIUM_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Bookkeeping"), $langs->transnoentities("Bookkeeping"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -85,7 +92,7 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskbookkeeping" value="'.getDolGlobalString("BOOKKEEPING_HELIUM_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -126,7 +133,7 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 	 */
 	public function getNextValue(BookKeeping $object)
 	{
-		global $db;
+		global $conf, $db;
 
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -139,9 +146,10 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		}
 
 		// Get entities
-		$entity = getEntity('accountingbookkeeping', 1, $object);
+		//$entity = getEntity('accountingbookkeeping', 1, $object);
+		$entity = $conf->entity;	// In accountancy, we can't share entities
 
-		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', '', '', $object->doc_date, 'next', false, null, $entity);
+		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', '', '', $object->doc_date, 'next', false, null, (string) $entity, $object);
 
 		return $numFinal;
 	}

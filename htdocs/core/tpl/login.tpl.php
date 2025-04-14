@@ -224,7 +224,7 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', var(--colorbackbody) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
 	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
 	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
 	print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
@@ -306,11 +306,14 @@ if ($disablenofollow) {
 <!--<span class="span-icon-password">-->
 <span class="fa fa-key"></span>
 <input type="password" id="password" maxlength="128" placeholder="<?php echo $langs->trans("Password"); ?>" name="password" class="flat input-icon-password minwidth150" value="<?php echo dol_escape_htmltag($password); ?>" tabindex="2" autocomplete="<?php echo !getDolGlobalString('MAIN_LOGIN_ENABLE_PASSWORD_AUTOCOMPLETE') ? 'off' : 'on'; ?>" />
-<button id="togglepassword" tabindex="3"><span class="fa fa-eye"></span></button>
+<span id="togglepassword" tabindex="-1"><span class="fa fa-eye"></span></span>
 </div></div>
 <script nonce="<?php echo getNonce(); ?>">
 	$(document).ready(function () {
-		$('#togglepassword').on('click', function () {
+		$('#togglepassword').on('click', function (e) {
+			e.preventDefault();
+			if (event.detail === 0) return false; // Ignore keyboard "clicks"
+			console.log("We click on togglepassword");
 			const $passwordInput = $('#password');
 
 			if ($passwordInput.is('[type=password]')) {

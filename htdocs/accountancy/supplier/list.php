@@ -748,9 +748,9 @@ if ($result) {
 			$shelp .= $langs->trans("SaleExport");
 		}
 		$s .= ($code_buy_l > 0 ? length_accountg($code_buy_l) : '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>');
-		print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
+		$textforrule = $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 		if ($product_static->id > 0) {
-			print '<br>';
+			$textforrule .= '<br>';
 			$s = '2. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 			$shelp = '';
 			$ttype = 'help';
@@ -765,26 +765,27 @@ if ($result) {
 				$shelp = $langs->trans("SaleExport");
 			}
 			$s .= (empty($code_buy_p) ? '<span style="'.$code_buy_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($code_buy_p));
-			print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
+			$textforrule .= $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 		} else {
-			print '<br>';
+			$textforrule .= '<br>';
 			$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 			$shelp = '';
 			$s .= $langs->trans("NotDefined");
-			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+			$textforrule .= $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
 		if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
-			print '<br>';
+			$textforrule .= '<br>';
 			$s = '3. '.(($facturefourn_static_det->product_type == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
 			$shelp = '';
 			$s .= ($code_buy_t > 0 ? length_accountg($code_buy_t) : '<span style="'.$code_buy_t_notset.'">'.$langs->trans("NotDefined").'</span>');
-			print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+			$textforrule .= $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 		}
+		print $textforrule;
 		print '</td>';
 
 		// Suggested accounting account
 		print '<td>';
-		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? (string) $default_account : (string) $suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth150 maxwidthonsmartphone', 'cachewithshowemptyone');
+		print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? (string) $default_account : (string) $suggestedid, 'codeventil'.$facturefourn_static_det->id, 1, array(), 0, 0, 'codeventil minwidth125onall maxwidth150', 'cachewithshowemptyone');
 		print '</td>';
 
 		// Column with checkbox

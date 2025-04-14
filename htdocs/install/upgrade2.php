@@ -5227,20 +5227,23 @@ function migrate_accountingbookkeeping(int $entity)
 
 	$error = 0;
 	$resultstring = '';
+	$bookKeepingAddon = '';
 
-	// ref migration supports only standard ref numbering model. We set the default ref model if no other model has been set
-	if (!$bookKeepingAddon = getDolGlobalString('BOOKKEEPING_ADDON')) {
-		dolibarr_set_const($db, 'BOOKKEEPING_ADDON', 'mod_bookkeeping_argon', 'chaine', 0, '', $entity);
-		$bookKeepingAddon = 'mod_bookkeeping_argon';
+	// For the moment we set the numbering rule to neon (the rule argon has a lot of critical bugs to fix first).
+	if (getDolGlobalString('BOOKKEEPING_ADDON') == '') {
+		dolibarr_set_const($db, 'BOOKKEEPING_ADDON', 'mod_bookkeeping_neon', 'chaine', 0, '', $entity);
+		$bookKeepingAddon = 'mod_bookkeeping_neon';
 	}
 
 	print '<tr class="trforrunsql"><td colspan="4">';
 	print '<b>'.$langs->trans('MigrationAccountancyBookkeeping')."</b><br>\n";
 
+	// TODO
 	if ($bookKeepingAddon === 'mod_bookkeeping_argon') {
 		$db->begin();
-		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM {$db->prefix()}accounting_bookkeeping";
-		$sql .= " WHERE ref IS NULL AND entity = {$entity}";
+
+		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM ".$db->prefix()."accounting_bookkeeping";
+		$sql .= " WHERE ref IS NULL AND entity = ".((int) $entity);
 		$sql .= " ORDER BY doc_year, doc_month, code_journal, piece_num";
 
 		$resql = $db->query($sql);
@@ -5253,7 +5256,7 @@ function migrate_accountingbookkeeping(int $entity)
 				$bookkeeping->code_journal = $obj->code_journal;
 				$ref = $bookkeeping->getNextNumRef();
 
-				$sqlUpd = "UPDATE {$db->prefix()}accounting_bookkeeping SET ref='{$ref}' WHERE piece_num = '{$obj->piece_num}' AND entity = {$entity}";
+				$sqlUpd = "UPDATE ".$db->prefix()."accounting_bookkeeping SET ref = '".$db->escape($ref)."' WHERE piece_num = '".$db->escape($obj->piece_num)."' AND entity = ".((int) $entity);
 				$resultstring = '.';
 				print $resultstring;
 				$resqlUpd = $db->query($sqlUpd);
@@ -5265,13 +5268,12 @@ function migrate_accountingbookkeeping(int $entity)
 		} else {
 			$error++;
 		}
-	}
 
-
-	if (!$error) {
-		$db->commit();
-	} else {
-		$db->rollback();
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 
 	print '</td></tr>';

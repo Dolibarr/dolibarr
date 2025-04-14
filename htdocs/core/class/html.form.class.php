@@ -1134,7 +1134,7 @@ class Form
 				$out .= ajax_multiautocompleter('location_incoterms', array(), DOL_URL_ROOT . '/core/ajax/locationincoterms.php') . "\n";
 				//$moreattrib .= ' autocomplete="off"';
 			}
-			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
+			$out .= '<input id="location_incoterms" class="maxwidthonsmartphone heightofcombo" type="text" name="location_incoterms" value="' . $location_incoterms . '">' . "\n";
 
 			if (!empty($page)) {
 				$out .= '<input type="submit" class="button valignmiddle smallpaddingimp nomargintop nomarginbottom" value="' . $langs->trans("Modify") . '"></form>';
@@ -1827,6 +1827,13 @@ class Form
 		}
 		if (getDolGlobalString('CONTACT_HIDE_INACTIVE_IN_COMBOBOX')) {
 			$sql .= " AND sp.statut <> 0";
+		}
+		// filter user access
+		if (!$user->hasRight('societe', 'client', 'voir') && !$user->socid) {
+			$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = sp.fk_soc AND sc.fk_user = ".(int) $user->id .")";
+		}
+		if ($user->socid > 0) {
+			$sql .= " AND s.rowid = ".((int) $user->socid);
 		}
 		if ($filter) {
 			// $filter is safe because, if it contains '(' or ')', it has been sanitized by testSqlAndScriptInject() and forgeSQLFromUniversalSearchCriteria()
@@ -2523,7 +2530,10 @@ class Form
 			if ($showproperties) {
 				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid))) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
+					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>';
+					$out .= '</span>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -2613,7 +2623,10 @@ class Form
 			if ($showproperties) {
 				if (is_array($listofresourceid) && count($listofresourceid)) {
 					$out .= '<div class="myavailability inline-block">';
-					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparencyresource" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
+					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;';
+					//$out .= '<span class="opacitymedium">' . $langs->trans("Availability") . ': </span>';
+					$out .= '</span>';
+					$out .= ' <input title="'.$langs->trans("Availability").'" id="transparencyresource'.$value['id'].'" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofresourceid[$value['id']]['transparency'] ? ' checked' : '') . '><label for="transparencyresource'.$value['id'].'">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
 				}
 			}
@@ -3033,7 +3046,9 @@ class Form
 		}
 
 		// Add from (left join) from hooks
-		$parameters = array();
+		$parameters = array(
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
@@ -3116,7 +3131,10 @@ class Form
 		}
 
 		// Add where from hooks
-		$parameters = array();
+		$parameters = array(
+			'filterkey' => &$filterkey,
+			'socid' => $socid,
+		);
 		$reshook = $hookmanager->executeHooks('selectProductsListWhere', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 		// Add criteria on ref/label
@@ -4405,7 +4423,7 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *      Load int a cache property the list of possible delivery delays.
+	 * Load int a cache property the list of possible delivery delays.
 	 *
 	 * @return     int             Nb of lines loaded, <0 if KO
 	 */
@@ -5801,7 +5819,7 @@ class Form
 					$moreattr = (!empty($input['moreattr']) ? ' ' . $input['moreattr'] : '');
 					$morecss = (!empty($input['morecss']) ? ' ' . $input['morecss'] : '');
 
-					if ($input['type'] == 'text') {
+					if ($input['type'] == 'text' || $input['type'] == 'input') {	// traditional input
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div><div class="tagtd"><input type="text" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
 					} elseif ($input['type'] == 'password') {
 						$more .= '<div class="tagtr"><div class="tagtd' . (empty($input['tdclass']) ? '' : (' ' . $input['tdclass'])) . '">' . $input['label'] . '</div><div class="tagtd"><input type="password" class="flat' . $morecss . '" id="' . dol_escape_htmltag($input['name']) . '" name="' . dol_escape_htmltag($input['name']) . '"' . $size . ' value="' . (empty($input['value']) ? '' : $input['value']) . '"' . $moreattr . ' /></div></div>' . "\n";
@@ -10458,7 +10476,7 @@ class Form
 			$morehtmlstatus = $hookmanager->resPrint;
 		}
 		if ($morehtmlstatus) {
-			$ret .= '<div class="statusref">' . $morehtmlstatus . '</div>';
+			$ret .= '<!-- status --><div class="statusref">' . $morehtmlstatus . '</div>';
 		}
 
 		$parameters = array();
@@ -10479,7 +10497,7 @@ class Form
 		}
 
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
-		$ret .= '<div class="inline-block floatleft valignmiddle maxwidth750 marginbottomonly refid' . (($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '') . '">';
+		$ret .= '<!-- Ref or ID --><div class="inline-block floatleft valignmiddle maxwidth750 marginbottomonly refid' . (($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '') . '">';
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe') {
@@ -10535,6 +10553,8 @@ class Form
 			$ret .= $object->label;
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
+		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
+			$ret .= $langs->trans("Draft");
 		} elseif ($fieldref != 'none') {
 			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
 		}

@@ -87,7 +87,7 @@ if (!isModEnabled('societe')) {
 }
 
 if (!getDolGlobalString('SOCIETE_ENABLE_PUBLIC')) {
-	httponly_accessforbidden("Online form for contact for public visitors has not been enabled");
+	httponly_accessforbidden("Online form for contact for public visitors has not been enabled (option SOCIETE_ENABLE_PUBLIC)");
 }
 
 
@@ -127,38 +127,8 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewmemberform">';
 
-	// Define urllogo
-	$urllogo = DOL_URL_ROOT . '/theme/common/login_logo.png';
-
-	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
-		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=' . urlencode('logos/thumbs/' . $mysoc->logo_small);
-	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
-		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=' . urlencode('logos/' . $mysoc->logo);
-	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.svg')) {
-		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.svg';
-	}
-
-	print '<header class="center">';
-
-	// Output html code for logo
-	// if ($urllogo) { // test always true
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="' . $urllogo . '">';
-	print '</div>';
-	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">' . $langs->trans("PoweredBy") . '<br><img class="poweredbyimg" src="' . DOL_URL_ROOT . '/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-	// }
-
-	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
-		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION') . '">';
-		print '</div>';
-	}
-
-	print '</header>';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	htmlPrintOnlineHeader($mysoc, $langs, 1, getDolGlobalString('THIRDPARTY_PUBLIC_INTERFACE_TOPIC'), 'THIRDPARTY_PUBLIC_INTERFACE_IMAGE');
 
 	print '<div class="divmainbodylarge">';
 }
