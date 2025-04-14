@@ -175,6 +175,7 @@ if ($resql) {
 				'fk_bank_account' => $obj->fk_account,
 				'objects' => array(),
 			);
+			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $obj->label, $reg)) {
 				$tabpay[$obj->rowid]["lib"] = $langs->trans($reg[1]);
 			} else {
