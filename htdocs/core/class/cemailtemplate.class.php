@@ -534,7 +534,7 @@ class cEmailTemplate extends CommonObject
 				$this->email_tocc = (string) $obj->email_tocc;
 				$this->enabled = (string) $obj->enabled;
 				$this->fk_user = (int) $obj->fk_user;
-				$this->joinfiles = (string) $obj->joinfiles;
+				$this->joinfiles = (int) $obj->joinfiles;
 				$this->label = (string) $obj->label;
 				$this->lang = (string) $obj->lang;
 				$this->module = (string) $obj->module;
