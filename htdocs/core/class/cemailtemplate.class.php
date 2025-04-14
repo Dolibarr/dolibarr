@@ -333,7 +333,7 @@ class cEmailTemplate extends CommonObject
 		if ($resql) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 
-			if (!$error && !$notrigger) {
+			if (!$notrigger) {
 				// Call trigger
 				$result = $this->call_trigger(self::TRIGGER_PREFIX.'_CREATE', $user);
 				if ($result < 0) {
