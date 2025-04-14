@@ -2667,6 +2667,6 @@ MULTICURRENCY_APP_ENDPOINT=API endpoint URL to get live multicurrencies from a s
 NoWebsite=No website
 UploadName=Upload
 MAIN_SECURITY_MAXFILESIZE_DOWNLOADED=Max size of downloaded files
-ShowTopMenuURLIntoAFrame=Show the content into a frame
+ShowTopMenuURLIntoAFrame=Include content of URL into a frame under the top menu
 SameWindow=Same window
 NewWindow=New window / New tab

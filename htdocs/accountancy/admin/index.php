@@ -158,8 +158,8 @@ if ($action == 'updatemode') {
 	$error = 0;
 
 	$accounting_modes = array(
-		'RECETTES-DEPENSES',
-		'CREANCES-DETTES'
+		'CREANCES-DETTES',
+		'RECETTES-DEPENSES'
 	);
 
 	$accounting_mode = GETPOST('accounting_mode', 'alpha');

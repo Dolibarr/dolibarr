@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
+ * @var Societe $mysoc
  * @var Translate $langs
  * @var User $user
  */
@@ -1129,7 +1130,7 @@ $journal_label = $langs->transnoentitiesnoconv($accountingjournalstatic->label);
 $MAXNBERRORS = 5;
 
 // Write bookkeeping
-if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
+if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'write') */) { // Test on permission already done
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
@@ -1346,7 +1347,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 		$param .= '&date_endmonth='.$date_endmonth;
 		$param .= '&date_endyear='.$date_endyear;
 		$param .= '&in_bookkeeping='.$in_bookkeeping;
-		header("Location: ".$_SERVER['PHP_SELF'].($param ? '?'.$param : ''));
+		header("Location: " . $_SERVER['PHP_SELF'] . '?' . $param);
 		exit;
 	}
 }

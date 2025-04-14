@@ -256,10 +256,10 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 
 
 <!-- Title with version -->
-<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<div class="login_table_title center" tabindex="-1" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
+	echo '<a class="login_table_title" tabindex="-1" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
 echo dol_escape_htmltag($title);
 if ($disablenofollow) {
@@ -318,8 +318,10 @@ if ($disablenofollow) {
 
 			if ($passwordInput.is('[type=password]')) {
 				$passwordInput.attr('type', 'text');
+				jQuery('#togglepassword .fa-eye').attr('class', 'fa fa-eye-slash');
 			} else {
 				$passwordInput.attr('type', 'password');
+				jQuery('#togglepassword .fa-eye-slash').attr('class', 'fa fa-eye');
 			}
 
 			return false; // This prevents the click from reloading the page
