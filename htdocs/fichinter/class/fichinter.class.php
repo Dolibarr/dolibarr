@@ -438,7 +438,7 @@ class Fichinter extends CommonObject
 		$sql .= "description  = '".$this->db->escape($this->description)."'";
 		$sql .= ", duree = ".((int) $this->duration);
 		$sql .= ", ref_client = ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		if (isset($this->fk_project)) {
+		if ((int) $this->fk_project > 0) {
 			$sql .= ", fk_projet = ".((int) $this->fk_project);
 		}
 		if (isset($this->datec)) {
