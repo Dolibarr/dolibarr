@@ -165,7 +165,7 @@ class Fichinter extends CommonObject
 	public $fk_contrat = 0;
 
 	/**
-	 * @var null|int 	Project ID
+	 * @var int 	Project ID
 	 */
 	public $fk_project;
 
