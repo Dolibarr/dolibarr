@@ -5420,7 +5420,7 @@ img.boxhandle, img.boxclose {
 	margin: 0 !important;
 }
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
-	display: contents;
+	display: inline-block;
 }
 .search-component-assistance .btn-div{
 	margin-top: 10px;
