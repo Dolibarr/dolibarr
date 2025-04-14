@@ -83,7 +83,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	color: #fff;
 	text-align: center;
 	background-color: #337ab7;
-	-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 	-webkit-transition: width .6s ease;
 	-o-transition: width .6s ease;
@@ -427,6 +426,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114 !important;
 }
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e !important;
+}
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
@@ -507,6 +509,9 @@ a.vmenu span, span.vmenu, span.vmenu span {
 }
 .fa-dol-holiday:before {
 	content: "\f5ca";
+}
+.fa-dol-cubes:before {
+	content: "\f1b3";
 }
 
 

@@ -84,6 +84,7 @@ if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 }
 // Add link to add AI content
 if ($showlinktoai) {
+	// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
 	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
 	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
@@ -105,10 +106,19 @@ if ($showlinktoai) {
 									}
 								}
 							});
+							$(document).on("click", function (event) {
+								aidropdown = $(".ai_dropdown'.$htmlname.'");
+								aidropdownbutton = $("#linkforaiprompt'.$showlinktoai.'");
+								if (!aidropdown.is(event.target) && !aidropdownbutton.is(event.target) && $(event.target).closest(aidropdown).length === 0 && $(event.target).closest(aidropdownbutton).length === 0 && aidropdown.is(":visible")) {
+									console.log("You clicked outside of ai_dropdown - we close it");
+									$(".ai_dropdown'.$htmlname.'").hide();
+								}
+							});
 						});
 					</script>
 					';
 }
+
 if ($showlinktolayout) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
@@ -118,13 +128,18 @@ if ($showlinktolayout) {
 } else {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
+
 if ($showlinktoai) {
 	if (empty($formai) || $formai instanceof FormAI) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
 		$formai = new FormAI($db);
 	}
 	$out .= $formai->getAjaxAICallFunction();
-	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname);
+
+	if (empty($onlyenhancements)) {
+		$onlyenhancements = '';
+	}
+	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname, $onlyenhancements);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }

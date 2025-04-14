@@ -239,15 +239,24 @@ class Contracts extends DolibarrApi
 	/**
 	 * Get lines of a contract
 	 *
-	 * @param int   $id             Id of contract
+	 * @param int   	$id             	Id of contract
+	 * @param string 	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string 	$properties 		Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool 		$pagination_data 	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return array						Array of contrat det objects
+	 * @phan-return ContratLigne[]
+	 * @phpstan-return ContratLigne[]
 	 *
 	 * @url	GET {id}/lines
 	 *
-	 * @return array
-	 * @phan-return ContratLigne[]
-	 * @phpstan-return ContratLigne[]
+	 * @throws RestException 404 Not Found
+	 * @throws RestException 503 Error
 	 */
-	public function getLines($id)
+	public function getLines($id, $sortfield = "d.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('contrat', 'lire')) {
 			throw new RestException(403);
@@ -261,12 +270,70 @@ class Contracts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contrat', $this->contract->id)) {
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		$this->contract->getLinesArray();
-		$result = array();
-		foreach ($this->contract->lines as $line) {
-			array_push($result, $this->_cleanObjectDatas($line));
+
+		$obj_ret = [];
+
+		$sql = "SELECT d.rowid";
+		$sql .= " FROM ".$this->db->prefix()."contratdet AS d";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."contrat AS c ON (c.rowid = d.fk_contrat)";
+		$sql .= " LEFT JOIN ".$this->db->prefix()."contratdet_extrafields AS ef ON (ef.fk_object = d.rowid)";
+		$sql .= " WHERE d.fk_contrat = ".((int) $id);
+		$sql .= ' AND c.entity IN ('.getEntity('contrat').')';
+
+		if ($sqlfilters) {
+			$errormessage = '';
+			$sql .= forgeSQLFromUniversalSearchCriteria($sqlfilters, $errormessage);
+			if ($errormessage) {
+				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
+			}
 		}
-		return $result;
+
+		$sqlTotals = str_replace('SELECT d.rowid', 'SELECT count(d.rowid) as total', $sql);
+
+		$sql .= $this->db->order($sortfield, $sortorder);
+		if ($limit) {
+			if ($page < 0) {
+				$page = 0;
+			}
+			$offset = $limit * $page;
+
+			$sql .= $this->db->plimit($limit + 1, $offset);
+		}
+
+		dol_syslog("API Rest request");
+		$result = $this->db->query($sql);
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			$min = min($num, ($limit <= 0 ? $num : $limit));
+			$i = 0;
+			while ($i < $min) {
+				$obj = $this->db->fetch_object($result);
+				$contratdet_static = new ContratLigne($this->db);
+				if ($contratdet_static->fetch($obj->rowid)) {
+					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($contratdet_static), $properties);
+				}
+				$i++;
+			}
+		} else {
+			throw new RestException(503, 'Error when retrieve contratdet list : '.$this->db->lasterror());
+		}
+
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page,
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
+		return $obj_ret;
 	}
 
 	/**
@@ -383,8 +450,93 @@ class Contracts extends DolibarrApi
 		);
 
 		if ($updateRes > 0) {
-			$result = $this->get($id);
-			unset($result->line);
+			if (getDolGlobalInt('API_CONTRAT_PUTLINE_OUTPUT_LINE_ONLY')) {
+				$result = new ContratLigne($this->db);
+				$result->fetch($lineid);
+				foreach (array(
+					'array_languages',
+					'contacts_ids',
+					'linked_objects',
+					'linkedObjectsIds',
+					'actiontypecode',
+					'module',
+					'canvas',
+					'user',
+					'origin',
+					'origin_id',
+					'ref_ext',
+					'status',
+					'country_id',
+					'country_code',
+					'state_id',
+					'region_id',
+					'barcode_type',
+					'barcode_type_coder',
+					'mode_reglement_id',
+					'cond_reglement_id',
+					'demand_reason_id',
+					'transport_mode_id',
+					'shipping_method',
+					'shipping_method_id',
+					'model_pdf',
+					'last_main_doc',
+					'fk_bank',
+					'fk_account',
+					'lines',
+					'name',
+					'firstname',
+					'lastname',
+					'date_creation',
+					'date_validation',
+					'date_modification',
+					'date_cloture',
+					'user_author',
+					'user_creation',
+					'user_creation_id',
+					'user_valid',
+					'user_validation',
+					'user_validation_id',
+					'user_modification',
+					'user_modification_id',
+					'cond_reglement_supplier_id',
+					'deposit_percent',
+					'retained_warranty_fk_cond_reglement',
+					'date_commande',
+					'fk_user_creat',
+					'fk_user_modif',
+					'specimen',
+					'fk_unit',
+					'date_debut_prevue',
+					'date_debut_reel',
+					'date_fin_prevue',
+					'date_fin_reel',
+					'weight',
+					'weight_units',
+					'width',
+					'width_units',
+					'length',
+					'length_units',
+					'height',
+					'height_units',
+					'surface',
+					'surface_units',
+					'volume',
+					'volume_units',
+					'multilangs',
+					'desc',
+					'product',
+					'fk_product_type',
+					'warehouse_id',
+					'totalpaid',
+					'type',
+					'libelle'
+						 ) as $fieldToUnset) {
+					unset($result->{$fieldToUnset});
+				}
+			} else {
+				$result = $this->get($id);
+				unset($result->line);
+			}
 			return $this->_cleanObjectDatas($result);
 		}
 

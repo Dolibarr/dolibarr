@@ -142,3 +142,23 @@ DocMySectionTitle=Title of my section
 DocMySectionText=A line of text to describe my component
 DocMySectionText2=You can add more lines of text
 DocMySectionExample=Here you can put an example of your component
+
+#ExperimentalUx
+ExperimentalUx = Experimental UX
+ExperimentalUxTitle = UX Experiments in Dolibarr
+ExperimentalUxIntroductionTitle = Introduction
+ExperimentalUxIntroductionMenu = Introduction
+ExperimentalUxIntroductionTxt01 = This section gathers UX experiments that are not yet integrated into Dolibarr but are available only on these dedicated pages. They allow testing different approaches before a possible integration into the <code>develop</code> branch.
+ExperimentalUxIntroductionTxt02 = Each experiment is isolated within a well-defined file structure, making future integration easier.
+ExperimentalUxIntroductionTxt03 = <b>Note:</b> To avoid polluting the translation files with temporary text, the documentation for these experiments will be written in English only, without using Dolibarr’s translation system or language files.
+
+ExperimentalUxContributionTitle = UX Experiments in Dolibarr
+ExperimentalUxContributionTxt01 = Each experiment is grouped into a folder corresponding to its specific action. If a UX experiment concerns action "A", it will be stored in the following directory:
+ExperimentalUxContributionTxt02 = The different variants of this experiment will be stored in the assets/ subfolder, following this naming convention:
+ExperimentalUxContributionTxt03 = In some cases, variants may be incompatible with each other. It is often challenging to make different behaviors coexist when they are based on the same interaction. For this reason, it may be necessary to separate the demos in such situations.
+ExperimentalUxContributionEnd = This structure ensures a clear and modular organization of UX experiments, making testing and future integration more efficient.
+
+# Start experiements menu title
+ExperimentalUxFreezeTooltip = Tooltip freeze
+ExperimentalUxInputAjaxFeedback = Input feedback
+# End experiements manu tyile

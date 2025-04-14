@@ -75,18 +75,17 @@ class FactureFournisseurRec extends CommonInvoice
 	protected $table_ref_field = 'titre';
 
 	/**
-	 * @var string 	The label of recurring invoice
+	 * @var string 	The ref of the recurring invoice
 	 * @deprecated	Use $title
 	 */
 	public $titre;
 	/**
-	 * @var string The label of recurring invoice
+	 * @var string 	The ref of the recurring invoice
 	 */
 	public $title;
 
 	/**
 	 * @var string
-	 * @deprecated
 	 */
 	public $ref_supplier;
 	/**
@@ -336,9 +335,10 @@ class FactureFournisseurRec extends CommonInvoice
 	 * @param 	User		$user 			User object
 	 * @param 	int			$facFournId		Id invoice
 	 * @param 	int<0,1> 	$notrigger 		No trigger
+	 *  @param	int[]		$onlylines		Only the lines of the array
 	 * @return	int			            	Return integer <0 if KO, id of invoice created if OK
 	 */
-	public function create($user, $facFournId, $notrigger = 0)
+	public function create($user, $facFournId, $notrigger = 0, $onlylines = array())
 	{
 		global $conf;
 
@@ -350,7 +350,9 @@ class FactureFournisseurRec extends CommonInvoice
 		$this->title = empty($this->title) ? '' : $this->title;
 		$keyforref = $this->table_ref_field;
 		$this->ref = $this->$keyforref;
+
 		$this->ref_supplier = empty($this->ref_supplier) ? '' : $this->ref_supplier;
+
 		$this->usenewprice = empty($this->usenewprice) ? 0 : $this->usenewprice;
 		$this->suspended = empty($this->suspended) ? 0 : $this->suspended;
 		// No frequency defined then no next date to execution
@@ -448,6 +450,9 @@ class FactureFournisseurRec extends CommonInvoice
 				for ($i = 0; $i < $num; $i++) {
 					$facfourn_line = $facfourn_src->lines[$i];
 					'@phan-var-force SupplierInvoiceLine $facfourn_line';
+					if (!empty($onlylines) && !in_array($facfourn_line->id, $onlylines)) {
+						continue; // Skip unselected lines
+					}
 
 					$tva_tx = $facfourn_line->tva_tx;
 					if (!empty($facfourn_line->vat_src_code) && !preg_match('/\(/', (string) $tva_tx)) {

@@ -58,7 +58,7 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
@@ -119,14 +119,14 @@ if (empty($paymentmethod)) {
 	dol_print_error(null, 'The back url does not contain a parameter fulltag that should help us to find the payment method used');
 	exit;
 } else {
-	dol_syslog("paymentmethod=".$paymentmethod);
+	dol_syslog("paymentko.php: paymentmethod=".$paymentmethod, LOG_DEBUG, 0, '_payment');
 }
 
 // Detect $ws
 $reg_ws = array();
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
-	dol_syslog("Paymentko.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentko must be created for this website.", LOG_DEBUG, 0, '_payment');
+	dol_syslog("paymentko.php: page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentko must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
 
@@ -145,6 +145,7 @@ $error = 0;
 
 // Check if we have redirtodomain to do.
 $ws_virtuelhost = null;
+$ws_id = 0;
 $doactionsthenredirect = 0;
 if ($ws) {
 	$doactionsthenredirect = 1;
@@ -153,6 +154,7 @@ if ($ws) {
 	$result = $website->fetch(0, $ws);
 	if ($result > 0) {
 		$ws_virtuelhost = $website->virtualhost;
+		$ws_id = $website->id;
 	}
 }
 
@@ -351,13 +353,26 @@ $db->close();
 
 // If option to do a redirect somewhere else is defined.
 if (!empty($doactionsthenredirect)) {
+	$randomseckey = getRandomPassword(true, null, 20);
+	$_SESSION['paymentsessionkey'] = $randomseckey;
+
 	// Redirect to an error page
 	// Paymentko page must be created for the specific website
 	if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-		$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+		$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentsessionkey='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 	} else {
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentsessionkey='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 	}
 
-	print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
+	if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Remove this to make only a http redirect, if the website need a js redirect to parent frame, he must do it itself.
+		dol_syslog("Now do a redirect in iframe mode in js to ".$ext_urlko, LOG_DEBUG, 0, '_payment');
+
+		// Redirect in js is not reliable
+		print "<!DOCTYPE html><html><head></head><script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script></html>";
+	} else {
+		dol_syslog("Now do a redirect using Location : ".$ext_urlko, LOG_DEBUG, 0, '_payment');
+
+		header("Location: ".$ext_urlko);
+		exit;
+	}
 }

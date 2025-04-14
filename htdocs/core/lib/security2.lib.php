@@ -465,10 +465,10 @@ function encodedecode_dbpassconf($level = 0)
 /**
  * Return a generated password using default module
  *
- * @param		bool		$generic				true=Create generic password (32 chars/numbers), false=Use the configured password generation module
- * @param		?array<string>	$replaceambiguouschars	Discard ambiguous characters. For example array('I').
- * @param       int         $length                 Length of random string (Used only if $generic is true)
- * @return		string		    					New value for password
+ * @param		bool			$generic				true=Create a generic key (32 chars/numbers), false=Create a password using the configured password generation module.
+ * @param		?array<string>	$replaceambiguouschars	Discard ambiguous characters. For example: array('I').
+ * @param       int        		$length                	Length of random string (Used only if $generic is true)
+ * @return		string		    						New value for password
  * @see dol_hash(), dolJSToSetRandomPassword()
  */
 function getRandomPassword($generic = false, $replaceambiguouschars = null, $length = 32)

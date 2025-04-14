@@ -1630,8 +1630,12 @@ while ($i < $imaxinloop) {
 		}
 		// Price
 		if (!empty($arrayfields['m.price']['checked'])) {
+			$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('product', 'product_advance', 'read_supplier_prices') : $user->hasRight('product', 'lire');
+			if ($productstatic->isService()) {
+				$usercancreadsupplierprice = getDolGlobalString('MAIN_USE_ADVANCED_PERMS') ? $user->hasRight('service', 'service_advance', 'read_supplier_prices') : $user->hasRight('service', 'lire');
+			}
 			print '<td class="right">';
-			if ($obj->price != 0) {
+			if ($obj->price != 0 && $usercancreadsupplierprice) {
 				print price($obj->price);
 			}
 			print '</td>';

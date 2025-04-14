@@ -216,7 +216,7 @@ class DocumentController extends Controller
 		$fileSizeMax = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
 		if ($fileSizeMax && $fileSize > $fileSizeMax) {
 			dol_syslog('ErrorFileSizeTooLarge: ' . $fileSize);
-			print 'ErrorFileSizeTooLarge: ' . $fileSize . ' (max ' . $fileSizeMax . ')';
+			print 'ErrorFileSizeTooLarge: ' . $fileSize . ' (max ' . $fileSizeMax . ' Kb)';
 			exit;
 		}
 
