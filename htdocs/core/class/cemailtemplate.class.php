@@ -249,12 +249,6 @@ class cEmailTemplate extends CommonObject
 			}
 		}
 
-		if (is_null($this->active)) {
-			dol_syslog("active is null");
-		} else {
-			dol_syslog("active is ".$active);
-		}
-
 		$now = dol_now();
 
 		$this->db->begin();
