@@ -509,7 +509,7 @@ class cEmailTemplate extends CommonObject
 			$sql .= " WHERE e.rowid = ".((int) $id);
 		}
 		if ($label) {
-			$sql .= " WHERE e.label = '".((string) $label)."'";
+			$sql .= " WHERE e.label = '".$db->escape($label)."'";
 		}
 		$sql .= " AND e.entity = ".((int) $this->entity);
 
