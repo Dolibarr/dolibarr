@@ -293,8 +293,6 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		global $conf;
-
 		if ($type == 'supplier') {
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$typethirdparty = 'accountancy_code_supplier';

@@ -196,10 +196,17 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_
 ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
 UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
+
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN ref VARCHAR(30) AFTER rowid;
 ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN ref VARCHAR(30) AFTER rowid;
 
-ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_ref (ref);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_ref (ref);
+
+ALTER TABLE llx_session ADD COLUMN date_creation datetime AFTER session_variable;
+UPDATE llx_session SET date_creation = NOW() WHERE date_creation IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_session MODIFY COLUMN date_creation datetime NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_session ALTER COLUMN date_creation SET NOT NULL;
 
 ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
@@ -235,3 +242,7 @@ ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (f
 ALTER TABLE llx_website ADD COLUMN paymentframemode integer DEFAULT 0;
 ALTER TABLE llx_contratdet DROP COLUMN price_ht;
 ALTER TABLE llx_contratdet DROP COLUMN remise;
+
+ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
+
+ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;

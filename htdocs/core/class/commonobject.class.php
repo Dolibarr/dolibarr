@@ -905,7 +905,7 @@ abstract class CommonObject
 	{
 		global $db, $conf;
 
-		$sql = "SELECT rowid, ref, ref_ext";
+		$sql = "SELECT rowid";
 		$sql .= " FROM ".$db->prefix().$element;
 		$sql .= " WHERE entity IN (".getEntity($element).")";
 
@@ -1240,7 +1240,6 @@ abstract class CommonObject
 		// phpcs:enable
 		global $user, $langs;
 
-
 		dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source, $notrigger");
 
 		// Check parameters
@@ -1255,6 +1254,26 @@ abstract class CommonObject
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
 			dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 			return -2;
+		}
+
+		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
+			$sql_allowed_contacts.= ' WHERE sc.fk_soc = '.(int) $this->socid;
+			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
+
+			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
+
+			if (!$resql_allowed_contacts) {
+				$this->errors[] = $this->db->lasterror();
+				return -3;
+			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
+				if ($obj->cnt == 0) {
+					$langs->load("companies");
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->admin);
+					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
+					return -3;
+				}
+			}
 		}
 
 		$id_type_contact = 0;
@@ -1276,7 +1295,6 @@ abstract class CommonObject
 				}
 			}
 		}
-
 		if ($id_type_contact == 0) {
 			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
 			return 0;
@@ -1794,7 +1812,7 @@ abstract class CommonObject
 		$result = array();
 		$i = 0;
 		// Particular case for shipping
-		if ($this->element == 'shipping' && $this->origin_id != 0) {
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $this->element == 'shipping' && $this->origin_id != 0) {
 			$id = $this->origin_id;
 			$element = 'commande';
 		} elseif ($this->element == 'reception' && $this->origin_id != 0) {
@@ -5298,60 +5316,64 @@ abstract class CommonObject
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
 
 		if (method_exists($this, 'loadExpeditions')) {
+			// TODO No reason to have this here. This fill an array ->expeditions not used here. This can be called before going here of by the code that need it.
 			$this->loadExpeditions();
 		}
 
-		$parameters = array('num' => $num, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $this->table_element_line);
-		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('printObjectLinesBlock', $parameters, $this, $action);
 		if (empty($reshook)) {
-			// Output template part (modules that overwrite templates must declare this into descriptor)
-			// Use global variables + $dateSelector + $seller and $buyer
-			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
-			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-			foreach ($dirtpls as $module => $reldir) {
-				$res = 0;
-				if (!empty($module)) {
-					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
-				} else {
-					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
-				}
-				if (file_exists($tpl)) {
-					if (empty($conf->file->strict_mode)) {
-						$res = @include $tpl;
+			$parameters = array('num' => $num, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $this->table_element_line);
+			$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook)) {
+				// Output template part (modules that overwrite templates must declare this into descriptor)
+				// Use global variables + $dateSelector + $seller and $buyer
+				// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
+				$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+				foreach ($dirtpls as $module => $reldir) {
+					$res = 0;
+					if (!empty($module)) {
+						$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
 					} else {
-						$res = include $tpl; // for debug
+						$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
+					}
+					if (file_exists($tpl)) {
+						if (empty($conf->file->strict_mode)) {
+							$res = @include $tpl;
+						} else {
+							$res = include $tpl; // for debug
+						}
+					}
+					if ($res) {
+						break;
 					}
 				}
-				if ($res) {
-					break;
+			}
+
+			$i = 0;
+
+			print "<!-- begin printObjectLines() -->\n";
+			foreach ($this->lines as $line) {
+				//Line extrafield
+				$line->fetch_optionals();
+
+				if (is_object($hookmanager)) {
+					if (empty($line->fk_parent_line)) {
+						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
+						$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					} else {
+						$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
+						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+					}
 				}
-			}
-		}
-
-		$i = 0;
-
-		print "<!-- begin printObjectLines() -->\n";
-		foreach ($this->lines as $line) {
-			//Line extrafield
-			$line->fetch_optionals();
-
-			//if (is_object($hookmanager) && (($line->product_type == 9 && !empty($line->special_code)) || !empty($line->fk_parent_line)))
-			if (is_object($hookmanager)) {   // Old code is commented on preceding line.
-				if (empty($line->fk_parent_line)) {
-					$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'defaulttpldir' => $defaulttpldir);
-					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				} else {
-					$parameters = array('line' => $line, 'num' => $num, 'i' => $i, 'dateSelector' => $dateSelector, 'seller' => $seller, 'buyer' => $buyer, 'selected' => $selected, 'table_element_line' => $line->table_element, 'fk_parent_line' => $line->fk_parent_line, 'defaulttpldir' => $defaulttpldir);
-					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				if (empty($reshook) && $buyer !== null) {
+					$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 				}
-			}
-			if (empty($reshook) && $buyer !== null) {
-				$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
-			}
 
-			$i++;
+				$i++;
+			}
+			print "<!-- end printObjectLines() -->\n";
 		}
-		print "<!-- end printObjectLines() -->\n";
 	}
 
 	/**
@@ -6295,6 +6317,7 @@ abstract class CommonObject
 	/**
 	 *  Function to get alternative languages of a data into $this->array_languages
 	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *  Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 *  @return	int<-1,1>					Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
 	 *  @see fetch_optionnals()
@@ -6364,6 +6387,7 @@ abstract class CommonObject
 
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
+	 * Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
 	 * @return	int<-1,1>				1 if array_options set, 0 if no value, -1 if error (field required missing for example)
@@ -7005,9 +7029,10 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Add/Update all extra fields values for the current object.
-	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
+	 *	Add/Update all extra languages values for the current object.
+	 *  Data to describe values to insert/update are stored into $this->array_languages=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 *  This function delete record with all languages and insert them again from the array $this->array_languages.
+	 *  Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
@@ -9861,7 +9886,7 @@ abstract class CommonObject
 		 $filearray=array_merge($filearray, $filearrayold);
 		 }*/
 
-		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir, $this);
 		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 		if (count($filearray)) {

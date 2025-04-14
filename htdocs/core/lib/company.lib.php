@@ -2737,42 +2737,76 @@ function addMailingEventTypeSQL($actioncode, $objcon, $filterobj)
 
 
 /**
- * Show header of company in HTML public pages
+ * Show the header of a company in HTML public pages
  *
  * @param   Societe		$mysoc			Third party
  * @param   Translate	$langs			Output language
+ * @param	int|string	$showlogo		'1'=Show logo or 'url' for click on logo
+ * @param	string		$alttext		Text to show in header
+ * @param	string		$subimageconst	Constant to check if we must add image under the main header
+ * @param	string		$altlogo1		To use an alternative logo defined into setup (instead of company logo)
+ * @param	string		$altlogo2		To use an alternative logo defined into setup (instead of company logo)
  * @return	void
  */
-function htmlPrintOnlineHeader($mysoc, $langs)
+function htmlPrintOnlineHeader($mysoc, $langs, $showlogo = 1, $alttext = '', $subimageconst = '', $altlogo1 = '', $altlogo2 = '')
 {
-	global $conf;
+	global $conf, $dolibarr_main_url_root;
 
-	// Define urllogo
-	$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
+	// Set logo of company by default
+	$logosmall = $mysoc->logo_small;
+	$logo = $mysoc->logo;
 
-	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-		$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$mysoc->logo);
-	} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-		$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+	if ($altlogo1 && getDolGlobalString($altlogo1)) {
+		$logosmall = getDolGlobalString($altlogo1);
+	} elseif ($altlogo2 && getDolGlobalString($altlogo2)) {
+		$logosmall = getDolGlobalString($altlogo2);
+	}
+
+	// Define $urllogo and $urllogopublic
+	//$urllogo = '';
+	$urllogopublic = '';
+	if ($showlogo) {
+		if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$logosmall)) {
+			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/thumbs/'.$logosmall);
+			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/thumbs/'.$logosmall);
+		} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$logo)) {
+			//$urllogo = DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file='.urlencode('logos/'.$logo);
+			$urllogopublic = $dolibarr_main_url_root.'/viewimage.php?modulepart=mycompany&entity='.$conf->entity.'&file='.urlencode('logos/'.$logo);
+		} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
+			//$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
+			$urllogopublic = $dolibarr_main_url_root.'/theme/dolibarr_logo.svg';
+		}
 	}
 
 	print '<header class="center">';
 
 	// Output html code for logo
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
-	print '</div>';
-	if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+	if ($urllogopublic || $alttext) {
+		print '<div class="backgreypublicpayment">';
+		print '<div class="logopublicpayment">';
+		if ($urllogopublic) {
+			if (!is_numeric($showlogo)) {
+				print '<a href="'.$showlogo.'">';
+			}
+			print '<img id="dolpaymentlogo" src="'.$urllogopublic.'">';
+			if (!is_numeric($showlogo)) {
+				print '</a>';
+			}
+		}
+		if ($alttext) {
+				print '<div class="clearboth"></div><strong>'.$alttext.'</strong>';
+		}
+		print '</div>';
+		if (!getDolGlobalString('MAIN_HIDE_POWERED_BY')) {
+			print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
+		}
+		print '</div>';
 	}
-	print '</div>';
 
-	if (getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION')) {
-		print '<div class="backimagepublicregistration">';
-		print '<img id="idEVENTORGANIZATION_IMAGE_PUBLIC_INTERFACE" src="' . getDolGlobalString('MEMBER_IMAGE_PUBLIC_REGISTRATION').'">';
+	// Add an optional image under the ban with logo/title
+	if (getDolGlobalString($subimageconst)) {
+		print '<div class="backimagepublicsubimage">';
+		print '<img id="id'.$subimageconst.'" src="' . getDolGlobalString($subimageconst).'">';
 		print '</div>';
 	}
 

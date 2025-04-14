@@ -2,6 +2,7 @@
 /* Copyright (C) 2004-2024	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Marc de Lima Lucio			<marc-dll@user.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,7 +220,7 @@ $borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobal
 }
 
 <?php
-if (getDolGlobalString('THEME_DARKMODEENABLED')) {
+if (getDolGlobalInt('THEME_DARKMODEENABLED')) {
 	print "/* For dark mode */\n";
 	if (getDolGlobalInt('THEME_DARKMODEENABLED') != 2) {
 		print "@media (prefers-color-scheme: dark) {";	// To test, click on the 3 dots menu, then Other options then Display then emulate prefer-color-schemes
@@ -229,7 +230,7 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 	print ":root {
 	            --colorbackhmenu1: #3d3e40;
 	            --colorbackvmenu1: #2b2c2e;
-	            --colorbacktitle1: #2b2d2f;
+	            --colorbacktitle1: #3b3c3e;
 	            --colorbacktabcard1: #1d1e20;				/* Must be same than colorbackbody */
 	            --colorbacktabactive: rgb(220,220,220);
 	            --colorbacklineimpair1: #38393d;
@@ -409,7 +410,8 @@ input[type=submit], input[type=submit]:hover {
 	margin-left: 5px;
 }
 input[type=checkbox], input[type=radio] {
-	margin: 0 3px 0 1px;
+	margin: 0 5px 0 1px;
+	transform: scale(1.2);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -450,7 +452,6 @@ input, select {
 	padding: 3px 4px;
 }
 input.button:hover {
-	-webkit-box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
 	box-shadow: 0px 0px 6px 1px rgb(50 50 50 / 40%), 0px 0px 0px rgb(60 60 60 / 10%);
 }
 input.button:focus {
@@ -839,7 +840,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	background-repeat: repeat-x;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border: 1px solid #aaa;
-	-webkit-border-radius: 2px;
 	border-radius: 1px;
 
 	font-weight: bold;
@@ -853,18 +853,15 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	padding: 5px !important;
 }
 .button:focus, .buttonDelete:focus  {
-	-webkit-box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 5px 1px rgba(0, 0, 60, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:hover:not(.nohover), .buttonDelete:hover:not(.nohover)   {
 	/* warning: having a larger shadow has side effect when button is completely on left of a table */
-	-webkit-box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.2), 0px 0px 0px rgba(60,60,60,0.1);
 }
 .button:disabled, .buttonDelete:disabled, .button.disabled, .buttonDelete.disabled {
 	opacity: 0.4;
 	box-shadow: none;
-	-webkit-box-shadow: none;
 	cursor: auto;
 	text-decoration: none;
 }
@@ -873,7 +870,6 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	   cursor: default;
 	opacity: 0.4;
 	box-shadow: none;
-	-webkit-box-shadow: none;
 }
 .button_search, .button_removefilter {
 	border: unset;
@@ -934,9 +930,7 @@ button:focus {
 }
 
 th .button {
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
-	-webkit-border-radius:0px !important;
 	border-radius:0px !important;
 }
 .maxwidthsearch {		/* Max width of column with the search picto */
@@ -1203,7 +1197,7 @@ td.wordbreak img, td.wordbreakimp img {
 	cursor: move;
 }
 .cursornotallowed {
-	cursor: not-allowed;
+	cursor: not-allowed !important;
 }
 .cursorwait {
 	cursor: wait;
@@ -1422,9 +1416,7 @@ div.divsearchfield {
 	padding-bottom: 2px;
 	padding-top: 2px;
 }
-.divadvancedsearchfield span.select2.select2-container.select2-container--default {
-	/* padding-bottom: 4px; */
-}
+
 .search_component_params {
 	/*display: flex; */
 	-webkit-flex-flow: row wrap;
@@ -2036,6 +2028,7 @@ maxscreenheightless200 {
 .maxwidth75imp  { max-width: 75px !important; }
 
 .minwidth100onall { min-width: 100px !important; }
+.minwidth125onall { min-width: 125px !important; }
 .minwidth200onall { min-width: 200px !important; }
 .minwidth250onall { min-width: 250px !important; }
 
@@ -2200,7 +2193,7 @@ datalist {
 
 	div#login_left, div#login_right {
 		min-width: 150px !important;
-		max-width: 200px !important;
+		max-width: 240px !important;
 		padding-left: 5px !important;
 		padding-right: 5px !important;
 	}
@@ -2255,7 +2248,7 @@ datalist {
 		min-width: 20px;
 	}
 	.trinputlogin input[type=text], input[type=password] {
-		max-width: 140px;
+		max-width: 180px;
 	}
 	.vmenu .searchform input {
 		max-width: 138px;	/* length of input text in the quick search box when using a smartphone and without dolidroid */
@@ -2305,7 +2298,6 @@ datalist {
 	img.photoref, div.photoref {
 		border: 1px solid rgba(0, 0, 0, 0.2);
 		box-shadow: none;
-		-webkit-box-shadow: none;
 		padding: 4px;
 		height: 20px;
 		width: 20px;
@@ -2903,7 +2895,6 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	/* border: 1px solid #DDD; */
-	-webkit-box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
 	box-shadow: 1px 1px 8px rgba(0, 0, 0, 0.2);
 	padding: 4px;
 	height: 80px;
@@ -3374,17 +3365,11 @@ form#login {
 if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	print '	background-color: rgba(255, 255, 255, 0.9);';
 } else {
-	print '	background-color: #FFFFFF;';
+	print '	background-color: var(--colorbackbody);';
 }
 ?>
-	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
-
+	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, <?php print getDolGlobalInt('THEME_DARKMODEENABLED') ? 0.4 : 0.2; ?>), 0 2px 6px rgba(60, 60, 60, 0.15);
 	border-radius: 5px;
-	/*border-top:solid 1px rgba(180,180,180,.4);
-	border-left:solid 1px rgba(180,180,180,.4);
-	border-right:solid 1px rgba(180,180,180,.4);
-	border-bottom:solid 1px rgba(180,180,180,.4);*/
 }
 .login_table input#username, .login_table input#password, .login_table input#securitycode {
 	border: none;
@@ -3393,6 +3378,7 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	margin-left: 5px;
 	margin-top: 5px;
 	margin-bottom: 5px;
+	margin-right: 10px;
 }
 .login_table input#username:focus, .login_table input#password:focus, .login_table input#securitycode:focus {
 	outline: none !important;
@@ -3414,6 +3400,23 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 .login_table .tdinputlogin input#username, .login_table .tdinputlogin input#password, .login_table .tdinputlogin input#securitycode {
 	font-size: 1.1em;
 }
+/* Serve as reference for icon that toggles showing the password */
+.login_table #tdpasswordlogin {
+	position: relative;
+}
+.login_table #tdpasswordlogin #togglepassword {
+	position: absolute;
+	top: 0.7em;
+	right: 11px;
+	background: none;
+	border: none;
+	opacity: 0.3;
+}
+.login_table #tdpasswordlogin #togglepassword .fa {
+	padding: 0 3px;
+	width: auto;
+}
+
 /* For the static info message */
 .login_main_home {
 	word-break: break-word;
@@ -3433,6 +3436,7 @@ div#login_left, div#login_right {
 	display: inline-block;
 	min-width: 245px;
 	padding-top: 10px;
+	padding-bottom: 10px;
 	padding-left: 16px;
 	padding-right: 16px;
 	text-align: center;
@@ -3458,7 +3462,7 @@ table.login_table_securitycode tr td {
 	border: 1px solid #DDDDDD;
 }
 #img_logo, .img_logo {
-	max-width: 170px;
+	max-width: 160px;
 	max-height: 90px;
 }
 
@@ -4094,7 +4098,6 @@ span.tabspan {
 	margin: 0em 0.2em;
 	text-decoration: none;
 	white-space: nowrap;
-	-webkit-border-radius:4px 4px 0px 0px;
 	border-radius:4px 4px 0px 0px;
 
 	border-<?php print $right; ?>: 1px solid #555555;
@@ -4650,7 +4653,6 @@ div.pagination li.pagination span.inactive {
 li.noborder.litext, li.noborder.litext a,
 div.pagination li a.inactive:hover,
 div.pagination li span.inactive:hover {
-	  -webkit-box-shadow: none !important;
 	  box-shadow: none !important;
 }
 div.pagination li.litext a {
@@ -4761,7 +4763,6 @@ table.hidepaginationnext .paginationnext {
 .nohoverborder:hover {
 	border: unset;
 	box-shadow: unset;
-	-webkit-box-shadow: unset;
 }
 .oddeven, .evenodd, .impair, .pair, .nohover .impair:hover, tr.impair td.nohover, tr.pair td.nohover, .tagtr.oddeven {
 	font-family: <?php print $fontlist ?>;
@@ -4991,21 +4992,17 @@ table.noborder.paymenttable {
 
 /* Disable-Enable shadows */
 .noshadow {
-	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 .shadow {
-	-webkit-box-shadow: 1px 1px 7px #CCC !important;
 	box-shadow: 1px 1px 7px #CCC !important;
 }
 
 .boxshadow {
-	-webkit-box-shadow: 0px 0px 5px #888;
 	box-shadow: 0px 0px 5px #888;
 }
 
 div.tabBar .noborder {
-	-webkit-box-shadow: 0px 0px 0px #DDD !important;
 	box-shadow: 0px 0px 0px #DDD !important;
 }
 
@@ -5748,7 +5745,6 @@ div#card-errors {
   top: 80%;
   max-width:300px;
   background: #777;
-  -webkit-box-shadow: 0 15px 10px #777;
   box-shadow: 0 15px 10px #777;
   -webkit-transform: rotate(-3deg);
   -moz-transform: rotate(-3deg);
@@ -5846,9 +5842,6 @@ div.ui-tooltip.mytooltip {
 	border-radius: 4px;
 	margin: 2px;
 	font-stretch: condensed;
-	-moz-box-shadow:   0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
-	-webkit-box-shadow:0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
-	-o-box-shadow:     0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	box-shadow:        0.5px 0.5px 4px 0px rgba(0, 0, 0, 0.5);
 	filter: progid:DXImageTransform.Microsoft.Shadow(color=#656565, Direction=134, Strength=5);
 	background: var(--tooltipbgcolor) !important;
@@ -5938,7 +5931,6 @@ select.ui-datepicker-year {
 }
 
 .bodyline {
-	-webkit-border-radius: 8px;
 	border-radius: 8px;
 	border: 1px #E4ECEC outset;
 	padding: 0px;
@@ -6572,9 +6564,7 @@ a.cke_dialog_ui_button
 	background-image: url(<?php echo $img_button ?>) !important;
 	background-position: bottom !important;
 	border: 1px solid #C0C0C0 !important;
-	-webkit-border-radius:0px 5px 0px 5px !important;
 	border-radius:0px 5px 0px 5px !important;
-	-webkit-box-shadow: 3px 3px 4px #DDD !important;
 	box-shadow: 3px 3px 4px #DDD !important;
 }
 .cke_dialog_ui_hbox_first {
@@ -6599,6 +6589,21 @@ a.cke_button, a.cke_combo_button {
 }
 div.cke_notifications_area .cke_notification_warning {
 	visibility: hidden;
+}
+
+.cke.cke_reset {
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+
+/* CSS to round border */
+.cke.cke_reset, .cke_inner.cke_reset, .cke_top.cke_reset_all {
+	border-top-left-radius: <?php echo $borderradius; ?>px;
+	border-top-right-radius: <?php echo $borderradius; ?>px;
+}
+.cke.cke_reset, .cke_inner.cke_reset, .cke_contents.cke_reset {
+	border-bottom-left-radius: <?php echo $borderradius; ?>px;
+	border-bottom-right-radius: <?php echo $borderradius; ?>px;
 }
 
 /* CSS To hide the picto menu on smartphone, except when maximize */
@@ -6969,7 +6974,6 @@ div#ecm-layout-center {
 /* use or not ? */
 div.jnotify-background {
 	opacity : 0.95 !important;
-	-webkit-box-shadow: 2px 2px 4px #8888 !important;
 	box-shadow: 2px 2px 4px #8888 !important;
 }
 
@@ -7106,6 +7110,13 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.heightofcombo {
+	height: 28px;
+}
+.select2-container .select2-selection--single {
+	height: 28px;
+}
+
 span.select2-selection--single.flat[aria-disabled="true"] span.select2-selection__rendered {
 	opacity: 0.5;
 }
@@ -7124,10 +7135,6 @@ span.select2.select2-container.select2-container--default {
 	border-left: none;
 	border-top: none;
 	border-right: none;
-	<?php } ?>
-}
-span.select2.select2-container.select2-container--default {
-	<?php if (!getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT')) { ?>
 	/*border-bottom: solid 1px var(--inputbordercolor);*/
 	<?php } ?>
 }
@@ -7228,7 +7235,6 @@ input.select2-input {
 
 	border<?php echo !getDolGlobalString('THEME_SHOW_BORDER_ON_INPUT') ? '-bottom' : ''; ?>: solid 1px var(--inputbordercolor);
 
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 3px;
 }
@@ -7270,7 +7276,6 @@ input.select2-input {
 	border-left: none !important;
 	border-right: none !important;
 	border-bottom: solid 1px var(--inputbordercolor) !important;
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	border-radius: 0 !important;
 	/* color: black; */
@@ -7281,7 +7286,6 @@ input.select2-input {
 	border-top: none;
 	border-left: none;
 	border-bottom: none;
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
 .select2-dropdown {
@@ -7300,7 +7304,6 @@ input.select2-input {
 	border-top: none;
 	border-left: none;
 	border-bottom: none;
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	background-color: var(--colorbackvmenu1);
 }
@@ -7321,7 +7324,6 @@ input.select2-input {
 div.select2-drop-above
 {
 	background: var(--colorbackvmenu1);
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 }
 .select2-drop-active
@@ -7425,7 +7427,6 @@ span#select2-boxbookmark-container {
   cursor: default;
   border: 1px solid #aaaaaa;
   border-radius: 3px;
-  -webkit-box-shadow: 0 0 2px var(--inputbackgroundcolor) inset, 0 1px 0 rgba(0, 0, 0, 0.05);
   box-shadow: 0 0 2px var(--inputbackgroundcolor) inset, 0 1px 0 rgba(0, 0, 0, 0.05);
   background-clip: padding-box;
   -webkit-touch-callout: none;
@@ -7518,7 +7519,6 @@ select.multiselectononeline {
 	border: none !important;
 	border-radius: 5px !important;
 	box-shadow: none;
-	-webkit-box-shadow: none !important;
 	box-shadow: none !important;
 	margin-top: 1px !important;
 	margin-bottom: 0 !important;
@@ -7703,6 +7703,8 @@ dropdown dd ul li:hover:not(.linputsearch) {
 }
 .dropdown dd ul li a, .dropdown dd ul li span {
 	padding: 3px;
+}
+.dropdown dd ul li a {
 	display: block;
 }
 .dropdown dd ul li span {
@@ -7813,11 +7815,9 @@ div.ui-controlgroup-controls div.tabsElem
 }
 div.ui-controlgroup-controls div.tabsElem a
 {
-	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.2);
 }
 div.ui-controlgroup-controls div.tabsElem a#active {
-	-webkit-box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 	box-shadow: 0 -3px 6px rgba(0,0,0,.3);
 }
 
@@ -7872,7 +7872,6 @@ div.ui-checkbox label+input, div.ui-radio label+input {
 
 ul.ulmenu {
 	border-radius: 0;
-	-webkit-border-radius: 0;
 }
 
 .ui-field-contain label.ui-input-text {
@@ -7891,7 +7890,6 @@ ul.ulmenu {
 	font-weight: normal;
 }
 .ui-focus, .ui-btn:focus {
-	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 .ui-bar-b {
@@ -8618,14 +8616,14 @@ table.jPicker {
 	padding: 12px;
 	left: inherit !important;
 	top: inherit !important;
-	border-radius: 5px !important;
+	border-radius: <?php echo $borderradius; ?>px !important;
 }
 .ai_feature {
 	background-color: var(--colorbackgrey);
 	padding: 10px;
 	padding-bottom: 6px;
 	padding-top: 6px;
-	border-radius: 5px;
+	border-radius: <?php echo $borderradius; ?>px;
 }
 
 
@@ -8658,7 +8656,6 @@ table.jPicker {
 	div.tabBar {
 		padding-left: 0px;
 		padding-right: 0px;
-		-webkit-border-radius: 0;
 		border-radius: 0px;
 		border-right: none;
 		border-left: none;

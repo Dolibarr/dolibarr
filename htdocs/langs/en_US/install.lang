@@ -220,3 +220,4 @@ NodoUpgradeAfterFiles=No action requested by external modules after upgrade of f
 MigrationContractLineRank=Migrate Contract Line to use Rank (and enable Reorder)
 MigrationProductLotPath=Migrate Product Batch files path
 MigrationAccountancyBookkeeping=Migrate accountancy bookkeeping to use a ref
+InvoiceExportModelsMigration=Migrate invoice export models

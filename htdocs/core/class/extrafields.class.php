@@ -9,7 +9,7 @@
  * Copyright (C) 2015-2023  Charlene BENKE          <charlene@patas-monkey.com>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022 		Antonin MARCHAL         <antonin@letempledujeu.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benoît PASCAL			<contact@p-ben.com>
@@ -999,8 +999,9 @@ class ExtraFields
 			$elementtype = 'commande_fournisseur';
 		}
 
-		// Test cache $this->attributes[$elementtype]['loaded'] to see if we must do something
-		// TODO
+		if ($elementtype != 'all' && isset($this->attributes[$elementtype]) && $this->attributes[$elementtype]['loaded'] == 1 && !$forceload && isset($this->attributes[$elementtype]['label'])) {
+			return $this->attributes[$elementtype]['label'];
+		}
 
 		$array_name_label = array();
 
@@ -2725,7 +2726,7 @@ class ExtraFields
 					$value_key = dol_mktime(GETPOSTINT("options_".$key."hour"), GETPOSTINT("options_".$key."min"), GETPOSTINT("options_".$key."sec"), GETPOSTINT("options_".$key."month"), GETPOSTINT("options_".$key."day"), GETPOSTINT("options_".$key."year"), 'gmt');
 				} elseif (in_array($key_type, array('duration'))) {
 					$value_hours = GETPOSTINT("options_" . $key . "hour");
-					$value_minutes = GETPOSTINT("options_" . $key . "minute");
+					$value_minutes = GETPOSTINT("options_" . $key . "min");
 					$value_key = $value_hours * 3600 + $value_minutes * 60;
 				} elseif (in_array($key_type, array('checkbox', 'chkbxlst'))) {
 					$value_arr = GETPOST("options_".$key, 'array'); // check if an array

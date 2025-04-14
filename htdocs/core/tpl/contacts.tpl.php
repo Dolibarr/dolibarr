@@ -156,7 +156,7 @@ if ($permission) {
 		<div class="tagtd maxwidthonsmartphone">
 		<?php
 		$tmpobject = $object;
-		if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+		if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
 			$tmpobject = $objectsrc;
 		}
 		$formcompany->selectTypeContact($tmpobject, '', 'type', 'internal', 'position', 0, 'minwidth150imp widthcentpercentminusx maxwidth200'); ?></div>
@@ -201,7 +201,7 @@ if ($permission) {
 		<div class="tagtd noborderbottom">
 			<?php
 			$tmpobject = $object;
-			if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+			if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
 				'@phan-var-force Commande|Facture $objectsrc';
 				$tmpobject = $objectsrc;
 			}
@@ -230,7 +230,7 @@ if ($permission) {
 // TODO: replace this with 1 single direct SQL (for both internal and external string to use $db->sort($sortfield, $sortorder)
 $list = array();
 foreach (array('internal', 'external') as $source) {
-	if (($object->element == 'shipping' || $object->element == 'reception') && is_object($objectsrc)) {
+	if (((!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->element == 'shipping') || $object->element == 'reception') && is_object($objectsrc)) {
 		'@phan-var-force Commande|Facture $objectsrc';
 		$contactlist = $objectsrc->liste_contact(-1, $source);
 	} else {
