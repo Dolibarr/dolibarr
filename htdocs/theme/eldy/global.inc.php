@@ -3416,6 +3416,14 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding: 0 3px;
 	width: auto;
 }
+#togglepassword .fa::before {
+	visibility: hidden;
+}
+.trinputlogin:hover #togglepassword .fa::before, input#password:focus + #togglepassword .fa::before {
+	visibility: visible;
+}
+
+
 
 /* For the static info message */
 .login_main_home {

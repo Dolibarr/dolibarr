@@ -331,7 +331,7 @@ $manifestjsoncontentdefault .= '{
 $listofpages = array();
 
 $algo = '';
-if (GETPOST('optiopagecontent')) {
+if (GETPOST('optionpagecontent')) {
 	$algo .= 'content';
 }
 if (GETPOST('optionmeta')) {
@@ -631,7 +631,7 @@ if ($massaction == 'replace' && GETPOST('confirmmassaction', 'alpha') && $userca
 			if ($objectpage->pageurl) {
 				dol_syslog("Replace string into page ".$objectpage->pageurl);
 
-				if (GETPOST('optiopagecontent', 'aZ09')) {
+				if (GETPOST('optionpagecontent', 'aZ09')) {
 					$objectpage->content = str_replace($searchkey, $replacestring, $objectpage->content);
 				}
 				if (GETPOST('optionmeta', 'aZ09')) {
@@ -5425,7 +5425,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 	print $langs->trans("SearchReplaceInto");
 	print '</div>';
 	print '<div class="tagtd">';
-	print '<input type="checkbox" class="marginleftonly" id="checkboxoptiopagecontent" name="optiopagecontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optiopagecontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptiopagecontent" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Content").'</label><br>';
+	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionpagecontent" name="optionpagecontent" value="content"'.((!GETPOSTISSET('buttonreplacesitesearch') || GETPOST('optionpagecontent', 'aZ09')) ? ' checked' : '').'> <label for="checkboxoptionpagecontent" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Content").'</label><br>';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionmeta" name="optionmeta" value="meta"'.(GETPOST('optionmeta', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionmeta" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("Title").' | '.$langs->trans("Description").' | '.$langs->trans("Keywords").'</label><br>';
 	print '<input type="checkbox" class="marginleftonly" id="checkboxoptionsitefiles" name="optionsitefiles" value="sitefiles"'.(GETPOST('optionsitefiles', 'aZ09') ? ' checked' : '').'> <label for="checkboxoptionsitefiles" class="tdoverflowmax150onsmartphone inline-block valignmiddle">'.$langs->trans("GlobalCSSorJS").'</label><br>';
 	print '</div>';
@@ -5545,8 +5545,8 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 
 			$param = 'mode=replacesite&website='.urlencode($website->ref);
 			$param .= '&searchstring='.urlencode($searchkey);
-			if (GETPOST('optiopagecontent')) {
-				$param .= '&optiopagecontent=content';
+			if (GETPOST('optionpagecontent')) {
+				$param .= '&optionpagecontent=content';
 			}
 			if (GETPOST('optionmeta')) {
 				$param .= '&optionmeta=meta';
@@ -5595,7 +5595,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 				if (is_object($answerrecord) && get_class($answerrecord) == 'WebsitePage') {
 					$param = '?mode=replacesite';
 					$param .= '&websiteid='.$website->id;
-					$param .= '&optiopagecontent='.GETPOST('optiopagecontent', 'aZ09');
+					$param .= '&optionpagecontent='.GETPOST('optionpagecontent', 'aZ09');
 					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
 					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
@@ -5740,7 +5740,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 					'@phan-var-force array{type:string} $answerrecord';
 					$param = '?mode=replacesite';
 					$param .= '&websiteid='.$website->id;
-					$param .= '&optiopagecontent='.GETPOST('optiopagecontent', 'aZ09');
+					$param .= '&optionpagecontent='.GETPOST('optionpagecontent', 'aZ09');
 					$param .= '&optionmeta='.GETPOST('optionmeta', 'aZ09');
 					$param .= '&optionsitefiles='.GETPOST('optionsitefiles', 'aZ09');
 					$param .= '&optioncontainertype='.GETPOST('optioncontainertype', 'aZ09');
