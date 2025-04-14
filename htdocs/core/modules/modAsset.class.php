@@ -113,6 +113,16 @@ class modAsset extends DolibarrModules
 			1
 		);
 
+		$this->const[2] = array(
+			"ASSET_ASSET_ADDON",
+			"chaine",
+			"mod_asset_standard",
+			"Name of numbering rules for fixed asset",
+			0,
+			'current',
+			1
+		);
+
 
 		if (!isModEnabled('asset')) {
 			$conf->asset = new stdClass();
