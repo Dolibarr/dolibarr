@@ -11760,8 +11760,8 @@ class Form
 		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
 		global $langs, $form;
 
-		require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
-		$formother = new FormOther($this->db);
+		//require_once DOL_DOCUMENT_ROOT."/core/class/html.formother.class.php";
+		//$formother = new FormOther($this->db);
 
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
@@ -11933,7 +11933,7 @@ class Form
 		$ret .= '</select>';
 		$ret .= '<script>$(document).ready(function() {';
 		$ret .= '   $(".operator-selector").select2({';
-		$ret .= '       placeholder: \'' . dol_escape_js($langs->trans('Operator')) . '\'';
+		$ret .= '       placeholder: \'' . dol_escape_js($langs->transnoentitiesnoconv('Operator')) . '\'';
 		$ret .= '   });';
 		$ret .= '});</script>';
 		$ret .= '</div>';
