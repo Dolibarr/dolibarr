@@ -439,7 +439,7 @@ class cEmailTemplate extends CommonObject
 		$sql .= " email_tocc=".(isset($this->email_tocc) ? "'".$this->db->escape($this->email_tocc)."'" : "null").",";
 		$sql .= " email_tobcc=".(isset($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").",";
 		$sql .= " topic=".(isset($this->topic) ? "'".$this->db->escape($this->topic)."'" : "null").",";
-		$sql .= " joinfiles=".(isset($this->joinfiles) ? "'".$this->db->escape($this->joinfiles)."'" : "null").",";
+		$sql .= " joinfiles=".(isset($this->joinfiles) ? $this->joinfiles : "null").",";
 		$sql .= " content=".(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").",";
 		$sql .= " content_lines=".(isset($this->content_lines) ? "'".$this->db->escape($this->content_lines)."'" : "null");
 		$sql .= " WHERE rowid=".((int) $this->id);
