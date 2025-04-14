@@ -2344,6 +2344,12 @@ if (empty($reshook)) {
 		}
 		header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$id);
 		exit();
+	} elseif ($action == 'addline' && GETPOST('updateallvatlinesblock', 'alpha') && GETPOST('vatforblocklines', 'alpha') !== '' && $usercancreate) {
+		$tx_tva = GETPOST('vatforblocklines') ? GETPOST('vatforblocklines') : 0;
+		$object->updateSubtotalLineBlockLines($langs, $object->getRangOfLine($lineid), 'tva', $tx_tva);
+	} elseif ($action == 'addline' && GETPOST('updatealldiscountlinesblock', 'alpha') && GETPOST('discountforblocklines', 'alpha') !== '' && $usercancreate) {
+		$discount = GETPOST('discountforblocklines') ? GETPOST('discountforblocklines') : 0;
+		$object->updateSubtotalLineBlockLines($langs, $object->getRangOfLine($lineid), 'discount', $discount);
 	} elseif ($action == 'addline' && !GETPOST('submitforalllines', 'alpha') && !GETPOST('submitforallmargins', 'alpha') && !GETPOST('submitforallmark', 'alpha') && $usercancreate) { // Add a new line
 		$langs->load('errors');
 		$error = 0;
@@ -3419,12 +3425,6 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans('ErrorsOnXLines', $error), null, 'errors');
 			}
 		}
-	} elseif ($action == 'addline' && GETPOST('updateallvatlinesblock', 'alpha') && GETPOST('vatforblocklines', 'alpha') !== '' && $usercancreate) {
-		$tx_tva = GETPOST('vatforblocklines') ? GETPOST('vatforblocklines') : 0;
-		$object->updateSubtotalLineBlockLines($langs, $object->getRangOfLine($lineid), 'tva', $tx_tva);
-	} elseif ($action == 'addline' && GETPOST('updatealldiscountlinesblock', 'alpha') && GETPOST('discountforblocklines', 'alpha') !== '' && $usercancreate) {
-		$discount = GETPOST('discountforblocklines') ? GETPOST('discountforblocklines') : 0;
-		$object->updateSubtotalLineBlockLines($langs, $object->getRangOfLine($lineid), 'discount', $discount);
 	}
 
 

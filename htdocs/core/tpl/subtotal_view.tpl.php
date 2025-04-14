@@ -137,6 +137,15 @@ if ($line->qty > 0) { ?>
 		?>
 	</td>
 	<?php
+	// Handling if situation invoices conf is enabled
+	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+		print '<td class="linecolcycleref nowrap right"></td>';
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			print '<td  class="nowrap right"></td>';
+		}
+		print '<td class="linecolcycleref2 right nowrap"></td>';
+	}
+
 	// Handling colspan if margin module is enabled
 	if (!empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')) && isModEnabled('margin') && empty($user->socid)) {
 		if ($user->hasRight('margins', 'creer')) {
@@ -157,6 +166,13 @@ if ($line->qty > 0) { ?>
 <?php } elseif ($line->qty < 0) {
 	// Base colspan if there is no module activated to display line correctly
 	$colspan = 3;
+
+	if (isset($this->situation_cycle_ref) && $this->situation_cycle_ref) {
+		$colspan += 2;
+		if (getDolGlobalInt('INVOICE_USE_SITUATION') == 2) {
+			$colspan += 1;
+		}
+	}
 
 	// Handling colspan if margin module is enabled
 	if (!empty($object->element) && in_array($object->element, array('facture', 'facturerec', 'propal', 'commande')) && isModEnabled('margin') && empty($user->socid)) {
