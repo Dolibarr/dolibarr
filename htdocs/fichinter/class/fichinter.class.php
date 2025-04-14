@@ -15,7 +15,7 @@
  * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * This program is distributed in the hopothat it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
@@ -165,9 +165,9 @@ class Fichinter extends CommonObject
 	public $fk_contrat = 0;
 
 	/**
-	 * @var int Project ID
+	 * @var null|int 	Project ID
 	 */
-	public $fk_project = 0;
+	public $fk_project;
 
 	/**
 	 * Customer Ref
@@ -344,8 +344,8 @@ class Fichinter extends CommonObject
 		$sql .= ", ".((int) $user->id);
 		$sql .= ", ".($this->description ? "'".$this->db->escape($this->description)."'" : "null");
 		$sql .= ", '".$this->db->escape($this->model_pdf)."'";
-		$sql .= ", ".($this->fk_project ? ((int) $this->fk_project) : 0);
-		$sql .= ", ".($this->fk_contrat ? ((int) $this->fk_contrat) : 0);
+		$sql .= ", ".((int) $this->fk_project > 0 ? ((int) $this->fk_project) : 0);
+		$sql .= ", ".((int) $this->fk_contrat > 0 ? ((int) $this->fk_contrat) : 0);
 		$sql .= ", ".((int) $this->status);
 		$sql .= ", ".($this->signed_status);
 		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
