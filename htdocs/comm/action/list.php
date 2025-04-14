@@ -499,9 +499,16 @@ if (!empty($actioncode)) {
 		} else {
 			if (is_array($actioncode)) {
 				// Remove all -1 values
-				$actioncode = array_filter($actioncode, function ($value) {
-					return ((string) $value !== '-1');
-				});
+				$actioncode = array_filter(
+					$actioncode,
+					/**
+					 * @param string $value
+					 * @return	bool
+					 */
+					function ($value) {
+						return ((string) $value !== '-1');
+					}
+				);
 				if (count($actioncode)) {
 					$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
 				}
