@@ -2449,7 +2449,7 @@ class BookKeeping extends CommonObject
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
 	 * @param 	string  $labelaccount           Label of the accounting account
-	 * @param	string	$full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
+	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
 	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
