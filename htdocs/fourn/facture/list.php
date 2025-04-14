@@ -406,14 +406,40 @@ if (empty($reshook)) {
 			if (!empty($listofbills)) {
 				$nbwithdrawrequestok = 0;
 				foreach ($listofbills as $aBill) {
-					$db->begin();
-					$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
-					if ($result > 0) {
-						$db->commit();
-						$nbwithdrawrequestok++;
-					} else {
-						$db->rollback();
+					$pendingAmount = 0;
+					$sqlPending = "SELECT SUM(pfd.amount) as amount";
+					$sqlPending .= " FROM ".$db->prefix()."prelevement_demande as pfd";
+					$sqlPending .= " LEFT JOIN ".$db->prefix()."prelevement_lignes as pl ON pfd.fk_prelevement_bons = pl.fk_prelevement_bons";
+					$sqlPending .= " WHERE fk_facture_fourn = ".((int) $aBill->id);
+					$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+					$sqlPending .= " AND pfd.type = 'ban'";
+					$resPending = $db->query($sqlPending);
+					if (!$resPending) {
+						$aBill->error = $db->lasterror();
+						$aBill->errors[] = $aBill->error;
 						setEventMessages($aBill->error, $aBill->errors, 'errors');
+					} else {
+						if ($objPending = $db->fetch_object($resPending)) {
+							$pendingAmount = (float) $objPending->amount;
+						}
+						$db->free($resPending);
+
+						$requestAmount = $aBill->resteapayer - $pendingAmount;
+						if ($requestAmount > 0) {
+							$db->begin();
+							$result = $aBill->demande_prelevement($user, $requestAmount, 'bank-transfer', 'supplier_invoice');
+							if ($result > 0) {
+								$db->commit();
+								$nbwithdrawrequestok++;
+							} else {
+								$db->rollback();
+								setEventMessages($aBill->error, $aBill->errors, 'errors');
+							}
+						} else {
+							$aBill->error = 'WithdrawRequestErrorNilAmount';
+							$aBill->errors[] = $aBill->error;
+							setEventMessages($aBill->error, $aBill->errors, 'errors');
+						}
 					}
 				}
 				if ($nbwithdrawrequestok > 0) {

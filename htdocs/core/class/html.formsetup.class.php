@@ -817,6 +817,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'restricthtml');
 			} elseif ($this->type == 'email') {
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
+			} elseif ($this->type == 'number') {
+				$val_const = GETPOSTINT($this->confKey);
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
@@ -1410,6 +1412,31 @@ class FormSetupItem
 		$this->type = 'string';
 		return $this;
 	}
+
+	/**
+	 * Set type of input as number
+	 * @param int $min minimum value for input number
+	 * @param int $max maximum value for input number
+	 * @param int $step legal number intervals
+	 *
+	 * @return self
+	 */
+	public function setAsNumber($min = null, $max = null, $step = null)
+	{
+		$this->type = 'number'; //for GETPOSTINT
+		$this->fieldAttr['type'] = 'number'; //generic thanks to generateAttributesStringFromArray
+		if (!is_null($min)) {
+			$this->fieldAttr['min'] = $min;
+		}
+		if (!is_null($max)) {
+			$this->fieldAttr['max'] = $max;
+		}
+		if (!is_null($step)) {
+			$this->fieldAttr['step'] = $step;
+		}
+		return $this;
+	}
+
 
 	/**
 	 * Set type of input as string
