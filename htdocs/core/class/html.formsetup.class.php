@@ -974,7 +974,7 @@ class FormSetupItem
 		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
 			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
 		}
-		return '<input type="number" ' . $this->fieldAttr['max'] . '" '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+		return '<input type="number" '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
 
 
