@@ -438,10 +438,18 @@ class Fichinter extends CommonObject
 		$sql .= "description  = '".$this->db->escape($this->description)."'";
 		$sql .= ", duree = ".((int) $this->duration);
 		$sql .= ", ref_client = ".($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null");
-		$sql .= ", fk_projet = ".((int) $this->fk_project);
-		$sql .= ", datec = ".($this->datec ?"'".$this->db->idate($this->datec)."'":"null");
-		$sql .= ", date_valid = ".($this->datev ?"'".$this->db->idate($this->datev)."'":"null");
-		$sql .= ", datet = '".($this->datet ?"'".$this->db->idate($this->datet)."'":"null");
+		if (isset($this->fk_project)) {
+			$sql .= ", fk_projet = ".((int) $this->fk_project);
+		}
+		if (isset($this->datec)) {
+			$sql .= ", datec = ".($this->datec ? "'".$this->db->idate($this->datec)."'" : "null");
+		}
+		if (isset($this->datev)) {
+			$sql .= ", date_valid = ".($this->datev ? "'".$this->db->idate($this->datev)."'" : "null");
+		}
+		if (isset($this->datet)) {
+			$sql .= ", datet = '".($this->datet ? "'".$this->db->idate($this->datet)."'" : "null");
+		}
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");
 		$sql .= ", fk_user_modif = ".((int) $user->id);
