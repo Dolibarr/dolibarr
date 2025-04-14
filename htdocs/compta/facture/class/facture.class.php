@@ -5244,7 +5244,7 @@ class Facture extends CommonInvoice
 		}
 		$sql .= " ORDER BY f.ref";
 
-		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED', 0) > 0) {
+		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED') > 0) {
 			$sql .= " DESC"; //order by
 			$sql .= " LIMIT " . getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED');
 		}
