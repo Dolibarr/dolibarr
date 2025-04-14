@@ -90,7 +90,7 @@ class cEmailTemplate extends CommonObject
 	 */
 	public $active;
 	/**
-	 * @var null|string unknown what it does or is used for
+	 * @var null|string if 0 hidden from GUI, if 1 visible in GUI
 	 */
 	public $enabled;
 	/**
@@ -407,6 +407,73 @@ class cEmailTemplate extends CommonObject
 			}
 		}
 		return -1;
+	}
+
+	/**
+	 *      Update database with changed email template
+	 *
+	 *      @param      User	$user        	User that modify
+	 *      @param      int		$notrigger	    0=launch triggers after, 1=disable triggers
+	 *      @return     int      			   	Return integer <0 if KO, >0 if OK
+	 */
+	public function update(User $user, $notrigger = 0)
+	{
+		$error = 0;
+
+		// Update request
+		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
+		$sql .= " entity=".(isset($this->entity) ? $this->entity : "null").",";
+		$sql .= " module=".(isset($this->module) ? "'".$this->db->escape($this->module)."'" : "null").",";
+		$sql .= " type_template=".(isset($this->type_template) ? "'".$this->db->escape($this->type_template)."'" : "null").",";
+		$sql .= " lang=".(isset($this->lang) ? "'".$this->db->escape($this->lang)."'" : "null").",";
+		$sql .= " private=".(isset($this->private) ? $this->private : "null").",";
+		$sql .= " fk_user=".(isset($this->fk_user) ? $this->fk_user : "null").",";
+		$sql .= " datec=".(isset($this->datec) ? $this->datec : "null").",";
+		$sql .= " label=".(isset($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
+		$sql .= " position=".(isset($this->position) ? $this->position : "null").",";
+		$sql .= " defaultfortype=".(isset($this->defaultfortype) ? $this->defaultfortype : "null").",";
+		$sql .= " enabled=".(isset($this->enabled) ? $this->enabled : "null").",";
+		$sql .= " active=".(isset($this->active) ? $this->active : "null").",";
+		$sql .= " email_from=".(isset($this->email_from) ? "'".$this->db->escape($this->email_from)."'" : "null").",";
+		$sql .= " email_to=".(isset($this->email_to) ? "'".$this->db->escape($this->email_to)."'" : "null").",";
+		$sql .= " email_tocc=".(isset($this->email_tocc) ? "'".$this->db->escape($this->email_tocc)."'" : "null").",";
+		$sql .= " email_tobcc=".(isset($this->email_tobcc) ? "'".$this->db->escape($this->email_tobcc)."'" : "null").",";
+		$sql .= " topic=".(isset($this->topic) ? "'".$this->db->escape($this->topic)."'" : "null").",";
+		$sql .= " joinfiles=".(isset($this->joinfiles) ? "'".$this->db->escape($this->joinfiles)."'" : "null").",";
+		$sql .= " content=".(isset($this->content) ? "'".$this->db->escape($this->content)."'" : "null").",";
+		$sql .= " content_lines=".(isset($this->content_lines) ? "'".$this->db->escape($this->content_lines)."'" : "null");
+		$sql .= " WHERE rowid=".((int) $this->id);
+
+		$this->db->begin();
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$error++;
+			$this->errors[] = "Error ".$this->db->lasterror();
+		}
+
+		if (!$error && !$notrigger) {
+			// Call trigger
+			$result = $this->call_trigger(self::TRIGGER_PREFIX.'_MODIFY', $user);
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
+
+		// Commit or rollback
+		if ($error) {
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -1 * $error;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
 	}
 
 	/**

@@ -156,7 +156,6 @@ class EmailTemplates extends DolibarrApi
 	 * @phan-return		cEmailTemplate
 	 * @phpstan-return	cEmailTemplate
 	 *
-	 *
 	 * @url	GET {id}
 	 *
 	 * @throws RestException 403
@@ -203,6 +202,8 @@ class EmailTemplates extends DolibarrApi
 	 * @return  array						Array of order objects
 	 * @phan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @url GET
 	 *
 	 * @throws RestException 404 Not found
 	 * @throws RestException 503 Error
@@ -295,7 +296,14 @@ class EmailTemplates extends DolibarrApi
 	 * @param   array   $request_data   Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url POST
+	 *
 	 * @return  int     ID of email template
+	 *
+	 * @throws	RestException 304
+	 * @throws	RestException 403
+	 * @throws	RestException 500
 	 */
 	public function post($request_data = null)
 	{
@@ -322,6 +330,112 @@ class EmailTemplates extends DolibarrApi
 		}
 
 		return ((int) $this->email_template->id);
+	}
+
+	/**
+	 * Update an email template
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"label":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"label":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param	int		$id             Id of order to update
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url PUT {id}
+	 *
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 * @throws	RestException 500
+	 */
+	public function putById($id, $request_data = null)
+	{
+		$allowaccess = $this->_checkAccessRights('creer');
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied update access to email templates');
+		}
+
+		$result = $this->email_template->apifetch($id, '');
+		if (!$result) {
+			throw new RestException(404, 'email template not found');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->email_template->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->email_template->$field = $this->_checkValForAPI($field, $value, $this->email_template);
+		}
+
+		if ($this->email_template->update(DolibarrApiAccess::$user) > 0) {
+			return $this->_fetch($id, '');
+		} else {
+			throw new RestException(500, $this->email_template->error);
+		}
+	}
+
+	/**
+	 * Update an email template
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"label":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"label":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param	string	$label			Label of order to update
+	 * @param	array	$request_data	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url PUT label/{label}
+	 *
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 * @throws	RestException 500
+	 */
+	public function putbyLabel($label, $request_data = null)
+	{
+		$allowaccess = $this->_checkAccessRights('creer');
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied update access to email templates');
+		}
+
+		$result = $this->email_template->apifetch(0, $label);
+		if (!$result) {
+			throw new RestException(404, 'email template not found');
+		}
+
+		$newlabel = $label;
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'label') {
+				$newlabel = $this->_checkValForAPI($field, $value, $this->email_template);
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->email_template->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->email_template->$field = $this->_checkValForAPI($field, $value, $this->email_template);
+		}
+
+		if ($this->email_template->update(DolibarrApiAccess::$user) > 0) {
+			return $this->_fetch(0, $newlabel);
+		} else {
+			throw new RestException(500, $this->email_template->error);
+		}
 	}
 
 	/**
