@@ -495,6 +495,8 @@ class cEmailTemplate extends CommonObject
 	 */
 	public function apifetch($id, $label = '')
 	{
+		global $db, $conf;
+
 		// Check parameters
 		if (empty($id) && empty($label)) {
 			return -1;
