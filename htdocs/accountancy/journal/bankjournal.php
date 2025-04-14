@@ -1139,7 +1139,7 @@ if (empty($action) || $action == 'view') {
 		'already' => $langs->trans("AlreadyInGeneralLedger")
 	);
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
-	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period .= '<span class="valignmiddle"> -  '.$langs->trans("JournalizationInLedgerStatus").' </span>'.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle');
 
 	$varlink = 'id_journal='.$id_journal;
 	$periodlink = '';
@@ -1149,7 +1149,7 @@ if (empty($action) || $action == 'view') {
 		1 => $langs->trans("TransfertAllBankLines"),
 		2 => $langs->trans("TransfertOnlyConciliatedBankLine")
 	);
-	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro)];
+	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle')];
 
 	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink, $moreoptions);
 
