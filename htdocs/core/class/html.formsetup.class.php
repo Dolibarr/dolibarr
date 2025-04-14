@@ -817,6 +817,8 @@ class FormSetupItem
 				$val_const = GETPOST($this->confKey, 'restricthtml');
 			} elseif ($this->type == 'email') {
 				$val_const = GETPOST($this->confKey, 'alphawithlgt');
+			} elseif ($this->type == 'number') {
+				$val_const = GETPOSTINT($this->confKey);
 			} else {
 				$val_const = GETPOST($this->confKey, 'alphanohtml');
 			}
@@ -936,6 +938,8 @@ class FormSetupItem
 				$selected = (empty($this->fieldValue) ? '' : $this->fieldValue);
 				$out .= img_picto('', 'bank', 'class="pictofixedwidth"').$this->form->select_comptes($selected, $this->confKey, 0, '', 0, '', 0, '', 1);
 			}
+		} elseif ($this->type == 'number') {
+			$out .= $this->generateInputFieldNumber();
 		} elseif ($this->type == 'password') {
 			$out .= $this->generateInputFieldPassword('dolibarr');
 		} elseif ($this->type == 'genericpassword') {
@@ -959,6 +963,20 @@ class FormSetupItem
 		}
 		return '<input '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
 	}
+
+	/**
+	 * Generate input field for numbers
+	 *
+	 * @return int
+	 */
+	public function generateInputFieldNumber()
+	{
+		if (empty($this->fieldAttr) || empty($this->fieldAttr['class'])) {
+			$this->fieldAttr['class'] = 'flat '.(empty($this->cssClass) ? 'minwidth200' : $this->cssClass);
+		}
+		return '<input type="number" ' . $this->fieldAttr['max'] . '" '.FormSetup::generateAttributesStringFromArray($this->fieldAttr).' />';
+	}
+
 
 	/**
 	 * generate input field for textarea
@@ -1410,6 +1428,30 @@ class FormSetupItem
 		$this->type = 'string';
 		return $this;
 	}
+
+	/**
+	 * Set type of input as number
+	 * @param int $min minimum value for input number
+	 * @param int $max maximum value for input number
+	 * @param int $step legal number intervals
+	 *
+	 * @return self
+	 */
+	public function setAsNumber($min = null, $max = null, $step = null)
+	{
+		$this->type = 'number';
+		if (!is_null($min)) {
+			$this->fieldAttr['min'] = $min;
+		}
+		if (!is_null($max)) {
+			$this->fieldAttr['max'] = $max;
+		}
+		if (!is_null($step)) {
+			$this->fieldAttr['step'] = $step;
+		}
+		return $this;
+	}
+
 
 	/**
 	 * Set type of input as string
