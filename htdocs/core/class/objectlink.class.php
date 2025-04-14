@@ -130,11 +130,11 @@ class ObjectLink extends CommonObject
 		$sql .= " targettype, relationtype FROM";
 		$sql .= " ".MAIN_DB_PREFIX.$this->table_element;
 		$sql .= " WHERE fk_source=".((int) $fk_source);
-		$sql .= " AND sourcetype='".$db->escape($sourcetype)."'";
+		$sql .= " AND sourcetype='".$this->db->escape($sourcetype)."'";
 		$sql .= " AND fk_target=".((int) $fk_target);
-		$sql .= " AND targettype='".$db->escape($targettype)."'";
+		$sql .= " AND targettype='".$this->db->escape($targettype)."'";
 		if ($relationtype) {
-			$sql .= " AND relationtype='".$db->escape($relationtype)."'";
+			$sql .= " AND relationtype='".$this->db->escape($relationtype)."'";
 		}
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -274,10 +274,10 @@ class ObjectLink extends CommonObject
 		} else {
 			$sql .= " (fk_source, sourcetype, fk_target, targettype )";
 		}
-		$sql .= " VALUES (".((int) $this->fk_source).", '".$db->escape($sourcetype)."', ";
-		$sql .= ((int) $this->fk_target).", '".$db->escape($targettype)."'";
+		$sql .= " VALUES (".((int) $this->fk_source).", '".$this->db->escape($sourcetype)."', ";
+		$sql .= ((int) $this->fk_target).", '".$this->db->escape($targettype)."'";
 		if ($relationtype) {
-			$sql .= ", '".$db->escape($relationtype)."'";
+			$sql .= ", '".$this->db->escape($relationtype)."'";
 		}
 		$sql .= ")";
 
