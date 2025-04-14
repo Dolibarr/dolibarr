@@ -34,12 +34,20 @@ class EmailTemplates extends DolibarrApi
 	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
+		'label',
+		'topic',
+		'type_template'
 	);
 
 	/**
 	 * @var string[]       Mandatory fields which needs to be an integer, checked when create and update object
 	 */
 	public static $INTFIELDS = array(
+		'active',
+		'private',
+		'fk_user',
+		'joinfiles',
+		'position'
 	);
 
 	/**
@@ -78,9 +86,9 @@ class EmailTemplates extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
-		$allowaccess = $this->_checkAccessRights();
+		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
-			throw new RestException(403, 'denied access to email templates');
+			throw new RestException(403, 'denied read access to email templates');
 		}
 
 		$result = $this->email_template->apifetch($id, '');
@@ -116,9 +124,9 @@ class EmailTemplates extends DolibarrApi
 	 */
 	public function deleteByLAbel($label)
 	{
-		$allowaccess = $this->_checkAccessRights();
+		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
-			throw new RestException(403, 'denied access to email templates');
+			throw new RestException(403, 'denied read access to email templates');
 		}
 
 		$result = $this->email_template->apifetch(0, $label);
@@ -201,9 +209,9 @@ class EmailTemplates extends DolibarrApi
 	 */
 	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		$allowaccess = $this->_checkAccessRights();
+		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
-			throw new RestException(403, 'denied access to email templates');
+			throw new RestException(403, 'denied read access to email templates');
 		}
 		// entity stolen from api_setup.class.php
 		$entity = (int) DolibarrApiAccess::$user->entity;
@@ -294,9 +302,9 @@ class EmailTemplates extends DolibarrApi
 	 */
 	private function _fetch($id, $label = '')
 	{
-		$allowaccess = $this->_checkAccessRights();
+		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
-			throw new RestException(403, 'denied access to email templates');
+			throw new RestException(403, 'denied read access to email templates');
 		}
 
 		$result = $this->email_template->apifetch($id, $label);
@@ -404,7 +412,6 @@ class EmailTemplates extends DolibarrApi
 		unset($object->date_validation);
 		unset($object->date_modification);
 		unset($object->date_cloture);
-		unset($object->datec);
 		unset($object->rowid);
 
 		return $object;
@@ -434,27 +441,28 @@ class EmailTemplates extends DolibarrApi
 	 * function to check for access rights - should probably have 1. parameter which is read/write/delete/...
 	 * Why a separate function? because we probably needs to check so many many different kinds of objects
 	 *
-	 * @return 	bool     				Return true if access is granted else false
+	 * @param	string		$accesstype		accesstype: read, write, delete, ...
+	 * @return 	bool     					Return true if access is granted else false
 	 *
 	 * @throws  RestException 403
 	 */
-	private function _checkAccessRights()
+	private function _checkAccessRights($accesstype)
 	{
 		// what kind of access management do we need?
 		$allowaccess = false;
-		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', 'lire')) {
+		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', $accesstype)) {
 			$allowaccess = true;
 		}
-		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', 'lire')) {
+		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', $accesstype)) {
 			$allowaccess = true;
 		}
-		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
+		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', $accesstype)) {
 			$allowaccess = true;
 		}
-		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
+		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', $accesstype)) {
 			$allowaccess = true;
 		}
-		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', 'lire')) {
+		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', $accesstype)) {
 			$allowaccess = true;
 		}
 		if ($allowaccess) {
