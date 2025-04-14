@@ -331,6 +331,7 @@ foreach ($workflowcodes as $key => $params) {
 				$header .= ' - '.$langs->trans('Ticket');
 			}
 		} else {
+			$headerfamily = $langs->trans("Other");
 			$header = $langs->trans("Description");
 		}
 

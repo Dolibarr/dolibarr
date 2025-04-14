@@ -275,7 +275,7 @@ class FormAI extends Form
 						instructions = 'Summarize the following text '+ (unit == 'percent' ? 'by ' : 'in') + width + ' ' + unit + ': ' + texttomodify;
 					} else if (functionai == 'textrephraser') {
 						style = $('#ai_rephraser'+htmlname+'_select').val();
-						instructions = 'Rephrase the following text in the '+style+' style: ' + texttomodify;
+						instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
 					} else {
 						instructions = userprompt;
 					}

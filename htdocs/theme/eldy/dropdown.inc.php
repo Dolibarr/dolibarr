@@ -70,7 +70,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-bookmark {
@@ -93,7 +92,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-quickadd {
@@ -116,7 +114,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
@@ -136,7 +133,6 @@ button.dropdown-item.global-search-item {
 	background-clip: padding-box;
 	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
@@ -366,8 +362,6 @@ a.dropdown-item {
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
 	border-radius: 0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -376,8 +370,6 @@ a.dropdown-item {
 
 .dropdown-menu a.top-menu-dropdown-link {
 	color: rgb(<?php print $colortextlink; ?>) !important;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	display: block;
 	margin: 5px 0px;
@@ -394,9 +386,6 @@ a.dropdown-item {
 	text-align: inherit;
 	background-color: transparent;
 	border: 0;
-
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 }
 .dropdown-item.bookmark-item {
@@ -536,7 +525,6 @@ div.quickaddblock:focus {
 	background: #fff;
 	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
 
@@ -651,7 +639,6 @@ div.quickaddblock:focus {
 	}
 	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
-		-webkit-box-shadow: none;
 		box-shadow: none;
 	}
 

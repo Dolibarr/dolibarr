@@ -224,7 +224,7 @@ $(document).ready(function () {
 
 <div class="login_center center"<?php
 if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
-	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', rgb(240,240,240) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
+	$backstyle = 'background: linear-gradient('.((!empty($conf->browser->layout) && $conf->browser->layout == 'phone') ? '0deg' : '4deg').', var(--colorbackbody) 52%, rgb('.$colorbackhmenu1.') 52.1%);';
 	// old style:  $backstyle = 'background-image: linear-gradient(rgb('.$colorbackhmenu1.',0.3), rgb(240,240,240));';
 	$backstyle = getDolGlobalString('MAIN_LOGIN_BACKGROUND_STYLE', $backstyle);
 	print !getDolGlobalString('MAIN_LOGIN_BACKGROUND') ? ' style="background-size: cover; background-position: center center; background-attachment: fixed; background-repeat: no-repeat; '.$backstyle.'"' : '';
@@ -256,10 +256,10 @@ if (!getDolGlobalString('ADD_UNSPLASH_LOGIN_BACKGROUND')) {
 
 
 <!-- Title with version -->
-<div class="login_table_title center" title="<?php echo dol_escape_htmltag($title); ?>">
+<div class="login_table_title center" tabindex="-1" title="<?php echo dol_escape_htmltag($title); ?>">
 <?php
 if ($disablenofollow) {
-	echo '<a class="login_table_title" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
+	echo '<a class="login_table_title" tabindex="-1" href="https://www.dolibarr.org" target="_blank" rel="noopener noreferrer external">';
 }
 echo dol_escape_htmltag($title);
 if ($disablenofollow) {
@@ -318,8 +318,10 @@ if ($disablenofollow) {
 
 			if ($passwordInput.is('[type=password]')) {
 				$passwordInput.attr('type', 'text');
+				jQuery('#togglepassword .fa-eye').attr('class', 'fa fa-eye-slash');
 			} else {
 				$passwordInput.attr('type', 'password');
+				jQuery('#togglepassword .fa-eye-slash').attr('class', 'fa fa-eye');
 			}
 
 			return false; // This prevents the click from reloading the page

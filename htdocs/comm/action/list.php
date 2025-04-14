@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin				<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Open-DSI					<support@open-dsi.fr>
- * Copyright (C) 2018-2024  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -492,13 +492,26 @@ if (!empty($actioncode)) {
 			}
 		}
 	} else {
-		if ($actioncode == 'AC_NON_AUTO') {
+		if ($actioncode === 'AC_NON_AUTO') {
 			$sql .= " AND c.type != 'systemauto'";
-		} elseif ($actioncode == 'AC_ALL_AUTO') {
+		} elseif ($actioncode === 'AC_ALL_AUTO') {
 			$sql .= " AND c.type = 'systemauto'";
 		} else {
 			if (is_array($actioncode)) {
-				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				// Remove all -1 values
+				$actioncode = array_filter(
+					$actioncode,
+					/**
+					 * @param string $value
+					 * @return	bool
+					 */
+					function ($value) {
+						return ((string) $value !== '-1');
+					}
+				);
+				if (count($actioncode)) {
+					$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", $actioncode)."'", 1).")";
+				}
 			} elseif ($actioncode !== '-1') {
 				$sql .= " AND c.code IN (".$db->sanitize("'".implode("','", explode(',', $actioncode))."'", 1).")";
 			}
@@ -511,6 +524,7 @@ if ($resourceid > 0) {
 if ($pid) {
 	$sql .= " AND a.fk_project=".((int) $pid);
 }
+
 // If the internal user must only see his customers, force searching by him
 $search_sale = 0;
 if (isModEnabled("societe") && !$user->hasRight('societe', 'client', 'voir')) {
