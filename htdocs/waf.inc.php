@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2025  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,12 +191,12 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/=data:/si', $val);
 
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
-	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|content|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drag|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(key|load|lostpointercapture|mouse)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(offline|online|pagehide|pageshow|pointer)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|select|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|touch|transition|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
 	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $val);
 
@@ -244,7 +245,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	if (is_array($var)) {
 		foreach ($var as $key => $value) {	// Warning, $key may also be used for attacks
 			// Exclude check for some variable keys
-			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, constant('NOSCANPOSTFORINJECTION'))) {
+			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, (array) constant('NOSCANPOSTFORINJECTION'))) {
 				continue;
 			}
 

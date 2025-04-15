@@ -263,9 +263,9 @@ $arrayfields = array(
 	'multicurrency_dynamount_payed' => array('label' => 'MulticurrencyAlreadyPaid', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 295),
 	'multicurrency_rtp' => array('label' => 'MulticurrencyRemainderToPay', 'checked' => '0', 'enabled' => (!isModEnabled('multicurrency') ? '0' : '1'), 'position' => 296), // Not enabled by default because slow
 	'total_pa' => array('label' => ((getDolGlobalString('MARGIN_TYPE') == '1') ? 'BuyingPrice' : 'CostPrice'), 'checked' => '0', 'position' => 300, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
-	'total_margin' => array('label' => 'Margin', 'checked' => '0', 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
-	'total_margin_rate' => array('label' => 'MarginRate', 'checked' => '0', 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? '0' : '1')),
-	'total_mark_rate' => array('label' => 'MarkRate', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
+	'total_margin' => array('label' => 'Margin', 'langfile' => 'margins', 'checked' => '0', 'position' => 301, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') ? '0' : '1')),
+	'total_margin_rate' => array('label' => 'MarginRate', 'langfile' => 'margins', 'checked' => '0', 'position' => 302, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARGIN_RATES') ? '0' : '1')),
+	'total_mark_rate' => array('label' => 'MarkRate', 'langfile' => 'margins', 'checked' => '0', 'position' => 303, 'enabled' => (!isModEnabled('margin') || !$user->hasRight('margins', 'liretous') || !getDolGlobalString('DISPLAY_MARK_RATES') ? '0' : '1')),
 	'f.datec' => array('label' => "DateCreation", 'checked' => '0', 'position' => 500),
 	'f.tms' => array('type' => 'timestamp', 'label' => 'DateModificationShort', 'enabled' => '1', 'visible' => -1, 'notnull' => 1, 'position' => 502),
 	'u.login' => array('label' => "UserAuthor", 'checked' => '1', 'visible' => -1, 'position' => 504),
@@ -614,13 +614,63 @@ if ($action == 'makepayment_confirm' && $user->hasRight('facture', 'paiement')) 
 		if (!empty($listofbills)) {
 			$nbwithdrawrequestok = 0;
 			foreach ($listofbills as $aBill) {
-				$db->begin();
-				$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'direct-debit', 'facture');
-				if ($result > 0) {
-					$db->commit();
-					$nbwithdrawrequestok++;
+				// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
+				// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+				// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
+				// Step 2: Move field fk_... + status into prelevement_demande.
+				$pending = 0;
+				// Get pending requests open with no transfer receipt yet
+				$sql = "SELECT SUM(pfd.amount) as amount";
+				$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+				//if ($type == 'bank-transfer') {
+				//$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $aBill->id);
+				//} else {
+				$sql .= " WHERE pfd.fk_facture = ".((int) $aBill->id);
+				//}
+				$sql .= " AND pfd.traite = 0";
+				//$sql .= " AND pfd.type = 'ban'";
+				$resql = $db->query($sql);
+				if ($resql) {
+					$obj = $db->fetch_object($resql);
+					if ($obj) {
+						$pending += (float) $obj->amount;
+					}
 				} else {
-					$db->rollback();
+					dol_print_error($db);
+				}
+				// Get pending request with a transfer receipt generated but not yet processed
+				$sqlPending = "SELECT SUM(pl.amount) as amount";
+				$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+				$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+				//if ($type == 'bank-transfer') {
+				//$sqlPending .= " WHERE p.fk_facture_fourn = ".((int) $aBill->id);
+				//} else {
+				$sqlPending .= " WHERE p.fk_facture = ".((int) $aBill->id);
+				//}
+				$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+				$resPending = $db->query($sqlPending);
+				if ($resPending) {
+					if ($objPending = $db->fetch_object($resPending)) {
+						$pending += (float) $objPending->amount;
+					}
+				}
+				$db->free($resPending);
+
+				$requestAmount = $aBill->resteapayer - $pending;
+
+				$db->begin();
+				$result = $aBill->demande_prelevement($user, $requestAmount, 'direct-debit', 'facture');
+				if ($requestAmount > 0) {
+					if ($result > 0) {
+						$db->commit();
+						$nbwithdrawrequestok++;
+					} else {
+						$db->rollback();
+						setEventMessages($aBill->error, $aBill->errors, 'errors');
+					}
+				} else {
+					$aBill->error = 'WithdrawRequestErrorNilAmount';
+					$aBill->errors[] = $aBill->error;
 					setEventMessages($aBill->error, $aBill->errors, 'errors');
 				}
 			}
@@ -2112,7 +2162,7 @@ if ($num > 0) {
 		$multicurrency_totalpay = $multicurrency_paiement + $multicurrency_totalcreditnotes + $multicurrency_totaldeposits;
 		$multicurrency_remaintopay = price2num($facturestatic->multicurrency_total_ttc - $multicurrency_totalpay);
 
-		if ($facturestatic->status == Facture::STATUS_CLOSED && $facturestatic->close_code == 'discount_vat') {		// If invoice closed with discount for anticipated payment
+		if ($facturestatic->status == Facture::STATUS_CLOSED) {
 			$remaintopay = 0;
 			$multicurrency_remaintopay = 0;
 		}

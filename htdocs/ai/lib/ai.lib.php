@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2022 Alice Adminson <aadminson@example.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,8 @@
  * \brief   Library files with common functions for Ai
  */
 
+include_once DOL_DOCUMENT_ROOT.'/ai/class/ai.class.php';
+
 
 /**
  * Prepare admin pages header
@@ -34,16 +36,19 @@ function getListOfAIFeatures()
 	global $langs;
 
 	$arrayofaifeatures = array(
-		'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto'=>'', 'status'=>'notused', 'function' => 'TEXT'),
-		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto'=>'', 'status'=>'dolibarr', 'function' => 'TEXT'),
-		'imagegeneration' => array('label' => 'ImageGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'IMAGE'),
-		'videogeneration' => array('label' => 'VideoGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'VIDEO'),
-		'audiogeneration' => array('label' => 'AudioGeneration', 'picto'=>'', 'status'=>'notused', 'function' => 'AUDIO'),
-		'transcription' => array('label' => 'AudioTranscription', 'picto'=>'', 'status'=>'notused', 'function' => 'TRANSCRIPT'),
-		'translation' => array('label' => 'AudioTranslation', 'picto'=>'', 'status'=>'notused', 'function' => 'TRANSLATE')
+		'textgenerationemail' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("EmailContent").')', 'picto' => '', 'status' => 'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_EMAIL),
+		'textgenerationwebpage' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("WebsitePage").')', 'picto' => '', 'status' => 'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_WEBPAGE),
+		'textgeneration' => array('label' => $langs->trans('TextGeneration').' ('.$langs->trans("Other").')', 'picto' => '', 'status' => 'notused', 'function' => 'TEXT'),
+
+		'texttranslation' => array('label' => $langs->trans('TextTranslation'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION),
+		'textsummarize' => array('label' => $langs->trans('TextSummarize'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE),
+		'textrephrase' => array('label' => $langs->trans('TextRephraser'), 'picto' => '', 'status'=>'dolibarr', 'function' => 'TEXT', 'placeholder' => Ai::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER),
+
+		'imagegeneration' => array('label' => 'ImageGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'IMAGE'),
+		'videogeneration' => array('label' => 'VideoGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'VIDEO'),
+		'audiogeneration' => array('label' => 'AudioGeneration', 'picto' => '', 'status' => 'notused', 'function' => 'AUDIO'),
+		'transcription' => array('label' => 'AudioTranscription', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSCRIPT'),
+		'translation' => array('label' => 'AudioTranslation', 'picto' => '', 'status' => 'notused', 'function' => 'TRANSLATE')
 	);
 
 	return $arrayofaifeatures;
@@ -66,6 +71,7 @@ function getListOfAIServices()
 			'textgeneration' => 'gpt-3.5-turbo',		// a lot of text transformation like: 'textgenerationemail', 'textgenerationwebpage', 'textgeneration', 'texttranslation', 'textsummarize'
 			'imagegeneration' => 'dall-e-3',
 			'audiogeneration' => 'tts-1',
+			'videogeneration' => 'na',
 			'transcription' => 'whisper-1',				// audio to text
 			'translation' => 'whisper-1',				// audio to text into another language
 		),
@@ -73,10 +79,11 @@ function getListOfAIServices()
 			'label' => 'Groq',
 			'url' => 'https://api.groq.com/openai/',
 			'textgeneration' => 'mixtral-8x7b-32768',	// 'llama3-8b-8192', 'gemma-7b-it'
-			'imagegeneration' => 'mixtral-8x7b-32768',
-			'audiogeneration' => 'mixtral-8x7b-32768',
-			'transcription' => 'mixtral-8x7b-32768',
-			'translation' => 'mixtral-8x7b-32768',
+			'imagegeneration' => 'na',
+			'audiogeneration' => 'na',
+			'videogeneration' => 'na',
+			'transcription' => 'na',
+			'translation' => 'na',
 		),
 		'mistral' => array(
 			'label' => 'Mistral',
@@ -84,15 +91,17 @@ function getListOfAIServices()
 			'textgeneration' => 'open-mistral-7b',
 			'imagegeneration' => 'na',
 			'audiogeneration' => 'na',
+			'videogeneration' => 'na',
 			'transcription' => 'na',
 			'translation' => 'na',
 		),
 		'custom' => array(
 			'label' => 'Custom',
-			'url' => 'https://mydomainofapi.com/v1/',
+			'url' => 'https://domainofapi.com/v1/',
 			'textgeneration' => 'tinyllama-1.1b',
 			'imagegeneration' => 'mixtral-8x7b-32768',
 			'audiogeneration' => 'mixtral-8x7b-32768',
+			'videogeneration' => 'na',
 			'transcription' => 'mixtral-8x7b-32768',
 			'translation' => 'mixtral-8x7b-32768',
 		)
@@ -127,6 +136,21 @@ function getListForAISummarize()
 	);
 
 	return $arrayforaisummarize;
+}
+
+/**
+ * Get list for AI style of writing
+ *
+ * @return array<int|string,mixed>
+ */
+function getListForAIRephraseStyle()
+{
+	$arrayforaierephrasestyle = array(
+		'professional' => 'RephraseStyleProfessional',
+		'humouristic' => 'RephraseStyleHumouristic'
+	);
+
+	return $arrayforaierephrasestyle;
 }
 
 /**

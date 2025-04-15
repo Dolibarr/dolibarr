@@ -334,7 +334,7 @@ if (isModEnabled('stock')) {
 	if (!$disabled) {
 		print '</span>';
 	}
-	if (!getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
+	if (!$disabled && !getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$terminal)) {
 		print img_warning($langs->trans("DisableStockChange").' - '.$langs->trans("NoWarehouseDefinedForTerminal"));
 	}
 	print '</td>'; // Force warehouse (this is not a default value)

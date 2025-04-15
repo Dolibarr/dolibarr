@@ -31,6 +31,7 @@ Reconciliation=Reconciliation
 RIB=Bank Account Number
 IBAN=IBAN number
 BIC=BIC/SWIFT code
+CCI=Interbank code
 SwiftValid=BIC/SWIFT valid
 SwiftNotValid=BIC/SWIFT not valid
 IbanValid=BAN valid

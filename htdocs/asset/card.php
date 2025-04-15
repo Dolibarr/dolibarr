@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018 Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024		Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -186,7 +186,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-asset page-card');
 
 // Part to create
 if ($action == 'create') {
-	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Asset")), '', 'object_'.$object->picto);
+	print load_fiche_titre($langs->trans("NewAsset"), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -270,7 +270,33 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Confirmation to delete
 	if ($action == 'delete') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteAsset'), $langs->trans('ConfirmDeleteObject'), 'confirm_delete', '', 0, 1);
-	} elseif ($action == 'disposal') {
+	}
+
+	// Confirmation of validation
+	if ($action == 'validate') {
+		// We check that object has a temporary ref
+		$ref = substr($object->ref, 1, 4);
+		if ($ref == 'PROV') {
+			$numref = $object->getNextNumRef();
+		} else {
+			$numref = $object->ref;
+		}
+
+		$text = $langs->trans('ConfirmValidateAsset', $numref);
+		if (isModEnabled('notification')) {
+			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
+			$notify = new Notify($db);
+			$text .= '<br>';
+			$text .= $notify->confirmMessage('ASSET_VALIDATE', 0, $object);
+		}
+
+		$formquestion = array();
+
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('Validate'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
+	}
+
+	// Confirmation of disposal
+	if ($action == 'disposal') {
 		// Disposal
 		$langs->load('bills');
 
@@ -301,12 +327,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			array('type' => 'checkbox', 'name' => 'disposal_subject_to_vat', 'label' => $langs->trans("AssetDisposalSubjectToVat"), 'value' => $disposal_subject_to_vat),
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('AssetDisposal'), $langs->trans('AssetConfirmDisposalAsk', $object->ref . ' - ' . $object->label), 'confirm_disposal', $formquestion, 'yes', 1);
-	} elseif ($action == 'reopen') {
+	}
+
+	// Confirmation of reopen
+	if ($action == 'reopen') {
 		// Re-open
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ReOpen'), $langs->trans('AssetConfirmReOpenAsk', $object->ref), 'confirm_reopen', $formquestion, 'yes', 1);
 	}
+
+	// Confirmation of setdraft
+	if ($action == 'setdraft') {
+		$text = $langs->trans('ConfirmSetToDraft', $object->ref);
+
+		$formquestion = array();
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('SetToDraft'), $text, 'confirm_setdraft', $formquestion, 0, 1, 220);
+	}
+
 	// Clone confirmation
 	/*  elseif ($action == 'clone') {
 		// Create an array for form
@@ -375,18 +413,34 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print dolGetButtonAction('', $langs->trans('SendMail'), 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init&token=' . newToken() . '#formmailbeforetitle');
 			}
 
+			// Back to draft
+			if ($object->status == $object::STATUS_VALIDATED) {
+				if ($permissiontoadd) {
+					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=setdraft&token='.newToken().'">'.$langs->trans("SetToDraft").'</a>'."\n";
+				}
+			}
+
+			// Modify
 			if ($object->status == $object::STATUS_DRAFT) {
 				print dolGetButtonAction($langs->trans('Modify'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=edit&token=' . newToken(), '', $permissiontoadd);
 			}
 
-			// Clone
-			//print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', false && $permissiontoadd);
-
+			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
+				print dolGetButtonAction($langs->trans('Validate'), '', 'default', $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=validate&token=' . newToken(), '', $permissiontoadd);
+			}
+
+			if ($object->status == $object::STATUS_VALIDATED) {
 				print dolGetButtonAction($langs->trans('AssetDisposal'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disposal&token=' . newToken(), '', $permissiontoadd);
-			} else {
+			}
+
+			// Re-open
+			if ($permissiontoadd && $object->status == $object::STATUS_DISPOSED) {
 				print dolGetButtonAction($langs->trans('ReOpen'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=reopen&token=' . newToken(), '', $permissiontoadd);
 			}
+
+			// Clone
+			//print dolGetButtonAction($langs->trans('ToClone'), '', 'default', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=clone&token=' . newToken(), '', false && $permissiontoadd);
 
 			// Delete (need delete permission, or if draft, just need create/modify permission)
 			print dolGetButtonAction($langs->trans('Delete'), '', 'delete', $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=delete&token=' . newToken(), '', $permissiontodelete || ($object->status == $object::STATUS_DRAFT && $permissiontoadd));

@@ -306,8 +306,6 @@ class ProductCombination
 	 */
 	public function fetchAllByFkProductParent($fk_product_parent, $sort_by_ref = false)
 	{
-		global $conf;
-
 		$sql = "SELECT pac.rowid, pac.fk_product_parent, pac.fk_product_child, pac.variation_price, pac.variation_price_percentage, pac.variation_ref_ext, pac.variation_weight";
 		$sql .= " FROM ".MAIN_DB_PREFIX."product_attribute_combination AS pac";
 		if ($sort_by_ref) {
@@ -376,8 +374,6 @@ class ProductCombination
 	 */
 	public function create($user)
 	{
-		global $conf;
-
 		/* $this->fk_product_child may be empty and will be filled later after subproduct has been created */
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_combination";
@@ -412,8 +408,6 @@ class ProductCombination
 	 */
 	public function update(User $user)
 	{
-		global $conf;
-
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute_combination";
 		$sql .= " SET fk_product_parent = ".(int) $this->fk_product_parent.", fk_product_child = ".(int) $this->fk_product_child.",";
 		$sql .= " variation_price = ".(float) $this->variation_price.", variation_price_percentage = ".(int) $this->variation_price_percentage.",";
@@ -481,22 +475,26 @@ class ProductCombination
 	{
 		$this->db->begin();
 
-		foreach ($this->fetchAllByFkProductParent($fk_product_parent) as $prodcomb) {
-			$prodstatic = new Product($this->db);
+		$arrayofparent = $this->fetchAllByFkProductParent($fk_product_parent);
 
-			$res = $prodstatic->fetch($prodcomb->fk_product_child);
+		if (is_array($arrayofparent)) {
+			foreach ($arrayofparent as $prodcomb) {
+				$prodstatic = new Product($this->db);
 
-			if ($res > 0) {
-				$res = $prodcomb->delete($user);
-			}
+				$res = $prodstatic->fetch($prodcomb->fk_product_child);
 
-			if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
-				$res = $prodstatic->delete($user);
-			}
+				if ($res > 0) {
+					$res = $prodcomb->delete($user);
+				}
 
-			if ($res < 0) {
-				$this->db->rollback();
-				return -1;
+				if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
+					$res = $prodstatic->delete($user);
+				}
+
+				if ($res < 0) {
+					$this->db->rollback();
+					return -1;
+				}
 			}
 		}
 
@@ -514,8 +512,6 @@ class ProductCombination
 	 */
 	public function updateProperties(Product $parent, User $user)
 	{
-		global $conf;
-
 		$this->db->begin();
 
 		$child = new Product($this->db);
