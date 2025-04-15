@@ -626,7 +626,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 
 						print '<div class="div-table-responsive-no-min">';
-						print '<table  id="fourn-invoices-paiments-list" class="tagtable liste">'."\n";
+						print '<table  id="fourn-invoices-paiments-list" data-display-all-invoices="' . (int) $displayAllInvoices . '" class="tagtable liste" >'."\n";
 						print '<thead>';
 						print '<tr class="liste_titre">';
 						print '<th>'.$langs->trans('Invoice').'</th>';
