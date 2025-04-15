@@ -295,8 +295,9 @@ class ExternalModules
 
 	/**
 	 * Generate HTML for products.
-	 * @param array<string, mixed> $options Options for the request
-	 * @return string|null HTML string representing the products.
+	 *
+	 * @param 	array<string,mixed> 	$options 	Options for the request
+	 * @return 	string|null 						HTML string representing the products.
 	 */
 	public function getProducts($options)
 	{
@@ -404,11 +405,11 @@ class ExternalModules
 			}
 
 			// add image or default ?
-			if ($product["cover_photo_url"] != '') {
+			if ($product["cover_photo_url"] != '' && $product["cover_photo_url"] != '#') {
 				$images = '<a href="'.$product["cover_photo_url"].'" class="documentpreview" target="_blank" rel="noopener noreferrer" mime="image/png" title="'.dol_escape_htmltag($product["label"].', '.$langs->trans('Version').' '.$product["module_version"]).'">';
 				$images .= '<img class="imgstore" src="'.$product["cover_photo_url"].'" alt="" /></a>';
 			} else {
-				$images = '<img class="imgstore" src="'.DOL_URL_ROOT.'/admin/dolistore/img/NoImageAvailable.png" />';
+				$images = '<img class="imgstore" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" />';
 			}
 
 			// free or pay ?
@@ -441,39 +442,50 @@ class ExternalModules
 			// Set and check version
 			$version = '';
 			if ($this->version_compare($product["dolibarr_min"], $dolibarrversiontouse) <= 0) {
-				if ($this->version_compare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
+				if (!empty($product["dolibarr_max"]) && $product["dolibarr_max"] != 'auto' && $product["dolibarr_max"] != 'unknown' && $this->version_compare($product["dolibarr_max"], $dolibarrversiontouse) >= 0) {
 					//compatible
 					$version = '<span class="compatible">'.$langs->trans(
 						'CompatibleUpTo',
-						$product["dolibarr_max"],
-						$product["dolibarr_min"],
-						$product["dolibarr_max"]
+						$dolibarrversiontouse,
+						(float) $product["dolibarr_min"],
+						(float) $product["dolibarr_max"]
 					).'</span>';
 					$compatible = '';
 				} else {
-					//never compatible, module expired
+					// never compatible, module expired
 					$version = '<span class="notcompatible">'.$langs->trans(
 						'NotCompatible',
+						$dolibarrversiontouse,
+						(float)	$product["dolibarr_min"],
+						(float) $product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				}
+			} else {
+				if ($product["dolibarr_min"] == 'auto' || $product["dolibarr_min"] != 'unknown') {
+					// never compatible, module expired
+					$version = '<span class="notcompatible">'.$langs->trans(
+						'NotCompatible',
+						$dolibarrversiontouse,
+						(float)	$product["dolibarr_min"],
+						(float) $product["dolibarr_max"]
+					).'</span>';
+					$compatible = 'NotCompatible';
+				} else {
+					//need update
+					$version = '<span class="compatibleafterupdate">'.$langs->trans(
+						'CompatibleAfterUpdate',
 						$dolibarrversiontouse,
 						$product["dolibarr_min"],
 						$product["dolibarr_max"]
 					).'</span>';
 					$compatible = 'NotCompatible';
 				}
-			} else {
-				//need update
-				$version = '<span class="compatibleafterupdate">'.$langs->trans(
-					'CompatibleAfterUpdate',
-					$dolibarrversiontouse,
-					$product["dolibarr_min"],
-					$product["dolibarr_max"]
-				).'</span>';
-				$compatible = 'NotCompatible';
 			}
 
-			//output template
-			$html .= '<tr class="app oddeven '.dol_escape_htmltag($compatible).'">';
-			$html .= '<td class="center" width="160"><div class="newAppParent">';
+			// Output the line
+			$html .= '<tr class="app oddeven nohover '.dol_escape_htmltag($compatible).'">';
+			$html .= '<td class="center width150"><div class="newAppParent">';
 			$html .= $newapp.$images;	// No dol_escape_htmltag, it is already escape html
 			$html .= '</div></td>';
 			$html .= '<td class="margeCote"><h2 class="appTitle">';
@@ -485,7 +497,7 @@ class ExternalModules
 			if (empty($product['tms'])) {
 				$html .= '<span class="opacitymedium">'.$langs->trans("DateCreation").': '.$langs->trans("Unknown").'</span>';
 			} else {
-				$html .= dol_print_date(dol_stringtotime($product['tms']), 'day');
+				$html .= '<span class="opacitymedium">'.dol_print_date(dol_stringtotime($product['tms']), 'day').'</span>';
 			}
 			$html .= ' - '.$langs->trans('Ref').' '.dol_escape_htmltag($product["ref"]);
 			//$html .= ' - '.dol_escape_htmltag($langs->trans('Id')).': '.((int) $product["id"]);
@@ -517,8 +529,8 @@ class ExternalModules
 
 	/**
 	 * Sort an array by a key
-	 * @param string $key Key to sort by
 	 *
+	 * @param string $key Key to sort by
 	 * @return Closure(array<string, mixed>, array<string, mixed>): int
 	 */
 	public function buildSorter(string $key): Closure
@@ -655,7 +667,7 @@ class ExternalModules
 	public function getPagination()
 	{
 
-		global $conf, $langs;
+		global $langs;
 
 		$page = $this->no_page;
 		$limit = $this->per_page;
@@ -780,8 +792,8 @@ class ExternalModules
 
 	/**
 	 * Read a YAML string and convert it to an array
-	 * @param string $yaml YAML string
 	 *
+	 * @param string $yaml YAML string
 	 * @return list<array<string, array<string, string|null>|string|null>> Parsed array representation
 	 */
 	public function readYaml($yaml)
@@ -846,9 +858,9 @@ class ExternalModules
 
 	/**
 	 * Adapter data fetched from github remote source to the expected format
+	 *
 	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data Data fetched from github remote source
 	 * @param string $source Source of the data
-	 *
 	 * @return list<array<string, array<string, string|null>|string|null>> Data adapted to the expected format
 	 */
 	public function adaptData($data, $source)
@@ -865,7 +877,7 @@ class ExternalModules
 					continue;
 				}
 				$adaptedPackage = [
-					'ref' => str_replace(' ', '', $package['author'].'@'.$package['modulename'].'@'.$package['current_version']),
+					'ref' => str_replace(' ', '', $package['modulename'].'-'.$package['current_version'].'@'.$package['author']),
 					'label' => !empty($package['label'][substr($this->lang, 0, 2)])
 						? $package['label'][substr($this->lang, 0, 2)]
 						: (!empty($package['label']['en']) ? $package['label']['en'] : $package['modulename']),

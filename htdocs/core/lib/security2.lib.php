@@ -589,3 +589,36 @@ function dolJSToSetRandomPassword($htmlname, $htmlnameofbutton = 'generate_token
 
 	return $out;
 }
+
+/**
+ * Output the eye picto to show/hide a password HTML field.
+ *
+ * @param		string 		$htmlname			HTML name of element to insert key into
+ * @param		string		$htmlnameofinput	HTML id of input field
+ * @return		string		    				HTML javascript code to set a password
+ */
+function showEyeForField($htmlname, $htmlnameofinput)
+{
+	return '<!-- code to manage the eye hide/show -->
+<span id="'.$htmlname.'" tabindex="-1"><span class="fa fa-eye"></span></span>
+<script nonce="<?php echo getNonce(); ?>">
+	$(document).ready(function () {
+		$(\'#'.$htmlname.'\').on(\'click\', function (e) {
+			e.preventDefault();
+			if (event.detail === 0) return false; // Ignore keyboard "clicks"
+			console.log("We click on '.$htmlname.'");
+			const $passwordInput = $(\'#'.$htmlnameofinput.'\');
+
+			if ($passwordInput.is(\'[type=password]\')) {
+				$passwordInput.attr(\'type\', \'text\');
+				jQuery(\'#'.$htmlname.' .fa-eye\').attr(\'class\', \'fa fa-eye-slash\');
+			} else {
+				$passwordInput.attr(\'type\', \'password\');
+				jQuery(\'#'.$htmlname.' .fa-eye-slash\').attr(\'class\', \'fa fa-eye\');
+			}
+
+			return false; // This prevents the click from reloading the page
+		});
+	});
+</script>';
+}

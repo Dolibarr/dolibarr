@@ -27,6 +27,8 @@ $atoploginusername = empty($user->photo) ? 52 : 0;
 @phan-var-force string $right
 ';
 
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -271,6 +273,7 @@ a.top-menu-dropdown-link {
 
 .dropdown-menu > .user-header{
 	background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu);
 }
 
 
@@ -388,12 +391,11 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: <?php echo $borderradius; ?>px;
 }
 
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
-	border-radius: 0;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -487,7 +489,8 @@ li.liinputsearch {
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
 	background-position: 95% center;
-	border-radius: 50px;
+	border-radius: <?php print $borderradius; ?>px;
+
 	border: 1px solid #c4c4c2 !important;
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;

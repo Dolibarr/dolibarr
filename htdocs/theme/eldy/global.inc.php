@@ -2039,6 +2039,7 @@ maxscreenheightless200 {
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 45%; }
 .titlefieldmax45 { max-width: 45%; min-width: 180px; }
+.imgmaxwidth100 { max-width: 100px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -3416,6 +3417,14 @@ if (getDolGlobalString('MAIN_LOGIN_BACKGROUND')) {
 	padding: 0 3px;
 	width: auto;
 }
+#togglepassword .fa::before {
+	visibility: hidden;
+}
+.trinputlogin:hover #togglepassword .fa::before, input#password:focus + #togglepassword .fa::before {
+	visibility: visible;
+}
+
+
 
 /* For the static info message */
 .login_main_home {
@@ -5420,7 +5429,7 @@ img.boxhandle, img.boxclose {
 	margin: 0 !important;
 }
 .search-component-assistance .operand, .search-component-assistance .operator, .search-component-assistance .value {
-	display: contents;
+	display: inline-block;
 }
 .search-component-assistance .btn-div{
 	margin-top: 10px;
