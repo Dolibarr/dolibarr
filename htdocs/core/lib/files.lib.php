@@ -3025,7 +3025,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->member->dir_output)) {
 		// Wrapping for members photos
 		$accessallowed = 0;
+		// Simple chosen for automatic generation of member codes
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
+		// Advanced chosen for automatic generation of member codes
+		if (preg_match('/^MEM\d\d\d\d-\d\d\d\d\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_output.'/'.$original_file;
