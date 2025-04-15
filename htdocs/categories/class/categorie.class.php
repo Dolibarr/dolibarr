@@ -1952,13 +1952,18 @@ class Categorie extends CommonObject
 		}
 
 		if (file_exists($dir)) {
+			$moreinfo = [
+				'gen_or_uploaded' => 'uploaded',
+				'src_object_type' => $this->element,
+				'src_object_id' => $this->id,
+			];
 			if (is_array($file['name'])) {
 				$nbfile = count($file['name']);
 				for ($i = 0; $i < $nbfile; $i++) {
 					$originImage = $dir.$file['name'][$i];
 
 					// Cree fichier en taille origine
-					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
+					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0, 0, 'addedfile', '', $moreinfo);
 
 					if (file_exists($originImage)) {
 						// Create thumbs
@@ -1969,7 +1974,7 @@ class Categorie extends CommonObject
 				$originImage = $dir.$file['name'];
 
 				// Cree fichier en taille origine
-				dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
+				dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0, 0, 'addedfile', '', $moreinfo);
 
 				if (file_exists($originImage)) {
 					// Create thumbs
@@ -2054,7 +2059,7 @@ class Categorie extends CommonObject
 		$filename = preg_replace('/'.preg_quote($dir, '/').'/i', '', $file); // Nom du fichier
 
 		// On efface l'image d'origine
-		dol_delete_file($file, 1);
+		dol_delete_file($file, 0); // do not use disableglob, ecmfiles will not be deleted
 
 		// Si elle existe, on efface la vignette
 		$regs = array();
