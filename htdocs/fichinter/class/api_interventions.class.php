@@ -222,6 +222,8 @@ class Interventions extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of fichinter to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
 	 * @return 	Object						Updated object
 	 */
 	public function put($id, $request_data = null)
