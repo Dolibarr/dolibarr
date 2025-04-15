@@ -1660,6 +1660,8 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(21500, price2num('21500.00'), 'Test 21500.00 give 21500 with french language');
 		$this->assertEquals(21500, price2num('21500,00'), 'Test 21500,00 give 21500 with french language');
 		$this->assertEquals(21500, price2num('21.500,00'), 'Test 21.500,00 give 21500 with french language');
+		$this->assertEquals('1.023.210.00', price2num('1.023,210.00'), 'Test invalid 1.023,210.00 with french language');
+		$this->assertEquals('1.023.210.00', price2num('1,023.210,00'), 'Test invalid 1,023.210,00 with french language');
 
 		$langs = $oldlangs;
 
