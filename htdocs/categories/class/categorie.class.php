@@ -1954,7 +1954,7 @@ class Categorie extends CommonObject
 		if (file_exists($dir)) {
 			$moreinfo = [
 				'gen_or_uploaded' => 'uploaded',
-				'src_object_type' => $this->element,
+				'src_object_type' => $this->table_element,
 				'src_object_id' => $this->id,
 			];
 			if (is_array($file['name'])) {
