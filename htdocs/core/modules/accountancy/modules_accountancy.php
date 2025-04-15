@@ -31,7 +31,49 @@
  *                  and parent class for accountancy numbering models
  */
 
+require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
+
+
+/**
+ *	Parent class of accountancy models
+ */
+abstract class ModelePdfAccountancy extends CommonDocGenerator
+{
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param  DoliDB  	$db                 Database handler
+	 *  @param  int<0,max>	$maxfilenamelength  Max length of value to show
+	 *  @return string[]|int<-1,0>				List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		$type = 'accountancy';
+		$list = array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$list = getListOfModels($db, $type, $maxfilenamelength);
+
+		return $list;
+	}
+
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Function to build pdf onto disk
+	 *
+	 *	@param		BookKeeping	$object				Object source to build document
+	 *  @param		Translate	$outputlangs		Lang output object
+	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 *  @param		bool		$directDownload		Send the generated pdf to the browser
+	 *  @return		int<-1,1>						1 if OK, <=0 if KO
+	 */
+	abstract public function write_file(BookKeeping $object, Translate $outputlangs, string $srctemplatepath = '', bool $directDownload = true);
+	// phpcs:enable
+}
 
 /**
  *  Parent class to manage numbering of Sale Orders
