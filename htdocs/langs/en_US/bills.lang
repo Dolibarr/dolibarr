@@ -468,6 +468,11 @@ ValidateGeneratedDeposit=Validate the generated deposit
 DepositGenerated=Deposit generated
 ErrorCanOnlyAutomaticallyGenerateADepositFromProposalOrOrder=You can only automatically generate a deposit from a proposal or an order
 ErrorPaymentConditionsNotEligibleToDepositCreation=The chose payment conditions are not eligible for automatic deposit generation
+# Paiement page
+DisplayOtherInvoicesToo = Display other invoices too
+DisplayCreditNotesToo = Display credit notes too
+HideOtherInvoices = Hide other invoices
+HideCreditNotes = Hide credit notes
 # PaymentType
 PaymentTypeVIR=Bank transfer
 PaymentTypeShortVIR=Bank transfer
