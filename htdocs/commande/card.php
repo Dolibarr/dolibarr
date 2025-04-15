@@ -2365,7 +2365,7 @@ if ($action == 'create' && $usercancreate) {
 		$res = $object->fetch_optionals();
 
 		$head = commande_prepare_head($object);
-		print dol_get_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order');
+		print dol_get_fiche_head($head, 'order', $langs->trans("CustomerOrder"), -1, 'order', 0, '', '', 0, '', 1);
 
 		$formconfirm = '';
 
