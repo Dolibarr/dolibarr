@@ -4,7 +4,7 @@
  * Copyright (C) 2012-2016  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2019-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023       Lenin Rivas         <lenin.rivas777@gmail.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
@@ -1376,10 +1376,11 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$nohook				Disable all hooks
  * 	@param	string	$varfiles			_FILES var name
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
- *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
+ *  @param  array   $moreinfo           Array with more information to set in index table
+ *  @return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '')
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '', $moreinfo = [])
 {
 	global $conf;
 	global $object, $hookmanager;
@@ -1488,7 +1489,8 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 		}
 
 		// Move file
-		$return = move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		// $return = move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		$return = dol_move($src_file_osencoded, $file_name_osencoded, '0', $allowoverwrite, 0, 1, $moreinfo);
 		if ($return) {
 			dolChmod($file_name_osencoded);
 			dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=" . getDolGlobalString('MAIN_UMASK'), LOG_DEBUG);

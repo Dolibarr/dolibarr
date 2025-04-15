@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2011-2022	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2011-2023	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -448,7 +448,12 @@ class FileUpload
 					if ($append_file) {
 						file_put_contents($file_path, fopen($uploaded_file, 'r'), FILE_APPEND);
 					} else {
-						$result = dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile');
+						$moreinfo = [
+							'gen_or_uploaded' => 'uploaded',
+							'src_object_type' => $this->element,
+							'src_object_id' => $this->fk_element,
+						];
+						$result = dol_move_uploaded_file($uploaded_file, $file_path, 1, 0, 0, 0, 'userfile', '', $moreinfo);
 					}
 				} else {
 					// Non-multipart uploads (PUT method support)
