@@ -450,8 +450,93 @@ class Contracts extends DolibarrApi
 		);
 
 		if ($updateRes > 0) {
-			$result = $this->get($id);
-			unset($result->line);
+			if (getDolGlobalInt('API_CONTRAT_PUTLINE_OUTPUT_LINE_ONLY')) {
+				$result = new ContratLigne($this->db);
+				$result->fetch($lineid);
+				foreach (array(
+					'array_languages',
+					'contacts_ids',
+					'linked_objects',
+					'linkedObjectsIds',
+					'actiontypecode',
+					'module',
+					'canvas',
+					'user',
+					'origin',
+					'origin_id',
+					'ref_ext',
+					'status',
+					'country_id',
+					'country_code',
+					'state_id',
+					'region_id',
+					'barcode_type',
+					'barcode_type_coder',
+					'mode_reglement_id',
+					'cond_reglement_id',
+					'demand_reason_id',
+					'transport_mode_id',
+					'shipping_method',
+					'shipping_method_id',
+					'model_pdf',
+					'last_main_doc',
+					'fk_bank',
+					'fk_account',
+					'lines',
+					'name',
+					'firstname',
+					'lastname',
+					'date_creation',
+					'date_validation',
+					'date_modification',
+					'date_cloture',
+					'user_author',
+					'user_creation',
+					'user_creation_id',
+					'user_valid',
+					'user_validation',
+					'user_validation_id',
+					'user_modification',
+					'user_modification_id',
+					'cond_reglement_supplier_id',
+					'deposit_percent',
+					'retained_warranty_fk_cond_reglement',
+					'date_commande',
+					'fk_user_creat',
+					'fk_user_modif',
+					'specimen',
+					'fk_unit',
+					'date_debut_prevue',
+					'date_debut_reel',
+					'date_fin_prevue',
+					'date_fin_reel',
+					'weight',
+					'weight_units',
+					'width',
+					'width_units',
+					'length',
+					'length_units',
+					'height',
+					'height_units',
+					'surface',
+					'surface_units',
+					'volume',
+					'volume_units',
+					'multilangs',
+					'desc',
+					'product',
+					'fk_product_type',
+					'warehouse_id',
+					'totalpaid',
+					'type',
+					'libelle'
+						 ) as $fieldToUnset) {
+					unset($result->{$fieldToUnset});
+				}
+			} else {
+				$result = $this->get($id);
+				unset($result->line);
+			}
 			return $this->_cleanObjectDatas($result);
 		}
 

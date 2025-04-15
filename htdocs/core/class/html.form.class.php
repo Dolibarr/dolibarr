@@ -10459,7 +10459,7 @@ class Form
 		}
 
 		//if ($conf->browser->layout == 'phone') $ret.='<div class="clearboth"></div>';
-		$ret .= '<div class="inline-block floatleft valignmiddle maxwidth750 marginbottomonly refid' . (($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '') . '">';
+		$ret .= '<!-- Ref or ID --><div class="inline-block floatleft valignmiddle maxwidth750 marginbottomonly refid' . (($shownav && ($previous_ref || $next_ref)) ? ' refidpadding' : '') . '">';
 
 		// For thirdparty, contact, user, member, the ref is the id, so we show something else
 		if ($object->element == 'societe') {
@@ -10514,6 +10514,8 @@ class Form
 			$ret .= $object->label;
 		} elseif ($object->element == 'ecm_directories') {
 			$ret .= '';
+		} elseif ($object->element == 'accountingbookkeeping' && !empty($object->context['mode']) && $object->context['mode'] == '_tmp') {
+			$ret .= $langs->trans("Draft");
 		} elseif ($fieldref != 'none') {
 			$ret .= dol_htmlentities(!empty($object->$fieldref) ? $object->$fieldref : "");
 		}
@@ -11717,8 +11719,6 @@ class Form
 		// TODO: Use $arrayoffiltercriterias param instead of $arrayofcriterias to include linked object fields in search
 		global $langs, $form;
 
-		$formother = new FormOther($this->db);
-
 		if ($search_component_params_hidden != '' && !preg_match('/^\(.*\)$/', $search_component_params_hidden)) {    // If $search_component_params_hidden does not start and end with ()
 			$search_component_params_hidden = '(' . $search_component_params_hidden . ')';
 		}
@@ -11889,7 +11889,7 @@ class Form
 		$ret .= '</select>';
 		$ret .= '<script>$(document).ready(function() {';
 		$ret .= '   $(".operator-selector").select2({';
-		$ret .= '       placeholder: \'' . dol_escape_js($langs->trans('Operator')) . '\'';
+		$ret .= '       placeholder: \'' . dol_escape_js($langs->transnoentitiesnoconv('Operator')) . '\'';
 		$ret .= '   });';
 		$ret .= '});</script>';
 		$ret .= '</div>';

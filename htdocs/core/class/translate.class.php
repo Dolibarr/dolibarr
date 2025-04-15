@@ -526,14 +526,11 @@ class Translate
 
 		if ($usecachekey) {
 			//dol_syslog('Translate::Load we will cache result into usecachekey '.$usecachekey);
-			//global $aaa; $aaa+=1;
-			//print $aaa." ".$usecachekey."\n";
 			require_once DOL_DOCUMENT_ROOT . '/core/lib/memory.lib.php';
 			$tmparray = dol_getcache($usecachekey);
 			if (is_array($tmparray) && count($tmparray)) {
 				$this->tab_translate += $tmparray; // Faster than array_merge($tmparray,$this->tab_translate). Note: If a value already exists into tab_translate, value into tmparaay is not added.
 				//print $newdomain."\n";
-				//var_dump($this->tab_translate);
 				$fileread = 1;
 				$found = true; // Found in dolibarr PHP cache
 			}
@@ -659,13 +656,13 @@ class Translate
 	 *  If there is no match for this text, we look in alternative file and if still not found, it is returned as it is.
 	 *  The parameters of this method should not contain HTML tags. If there is, they will be htmlencoded to have no effect.
 	 *
-	 *  @param	string		$key        Key to translate
-	 *  @param  string|int	$param1     param1 string
-	 *  @param  string|int	$param2     param2 string
-	 *  @param  string|int	$param3     param3 string
-	 *  @param  string|int	$param4     param4 string
-	 *	@param	int		$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
-	 *  @return string      		Translated string (encoded into HTML entities and UTF8)
+	 *  @param	string				$key        Key to translate
+	 *  @param  string|float|int	$param1     param1 string
+	 *  @param  string|float|int	$param2     param2 string
+	 *  @param  string|float|int	$param3     param3 string
+	 *  @param  string|float|int	$param4     param4 string
+	 *	@param	int					$maxsize	Max length of text. Warning: Will not work if paramX has HTML content. deprecated.
+	 *  @return string      					Translated string (encoded into HTML entities and UTF8)
 	 */
 	public function trans($key, $param1 = '', $param2 = '', $param3 = '', $param4 = '', $maxsize = 0)
 	{

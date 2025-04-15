@@ -234,7 +234,7 @@ Updated=Mise à jour effectuée
 AchatTelechargement=Acheter/télécharger
 GoModuleSetupArea=Pour déployer/installer un nouveau module, rendez vous dans la zone de configuration des modules : <a href="%s">%s</a>
 DoliStoreDesc=DoliStore, la place de marché officielle des modules et extensions complémentaires pour Dolibarr ERP/CRM
-CommunityModulesDesc=dolibarr-community-modules, This repository contains all community modules for Dolibarr ERP CRM.
+CommunityModulesDesc=Dolibarr community modules repository. This repository contains some modules for Dolibarr ERP CRM referenced on the community repository.
 DoliPartnersDesc=Liste de quelques sociétés qui peuvent fournir/développer des modules ou fonctions sur mesure. <br>Remarque: Dolibarr étant une application Open Source, <i>toute société</i> connaissant le langage PHP peut fournir du développement spécifique.
 WebSiteDesc=Sites fournisseurs à consulter pour trouver plus de modules (extensions)...
 DevelopYourModuleDesc=Quelques pistes pour développer votre propre module/application...

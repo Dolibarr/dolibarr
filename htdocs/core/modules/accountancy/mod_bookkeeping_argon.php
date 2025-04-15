@@ -45,6 +45,11 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 */
 	public $name = 'Argon';
 
+	/**
+	 * @var int	position
+	 */
+	public $position = 50;
+
 
 	/**
 	 * Constructor

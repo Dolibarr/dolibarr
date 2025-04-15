@@ -139,6 +139,9 @@ $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
 	$search_status = '1,2';
 }
+if ($search_option == 'recv_late') {
+	$search_status = '3,4';
+}
 
 $diroutputmassaction = $conf->fournisseur->commande->dir_output.'/temp/massgeneration/'.$user->id;
 
@@ -1345,7 +1348,7 @@ if ($resql) {
 	}
 	// alert on late date
 	$moreforfilter .= '<div class="divsearchfield">';
-	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+	$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="'.(($search_status == '3,4') ? 'recv_late' : 'late').'"'.((array_search($search_option, array('late','recv_late')) !== false) ? ' checked' : '').'>';
 	$moreforfilter .= '</div>';
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldPreListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
