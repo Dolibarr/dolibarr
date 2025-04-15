@@ -295,8 +295,9 @@ class ExternalModules
 
 	/**
 	 * Generate HTML for products.
-	 * @param array<string, mixed> $options Options for the request
-	 * @return string|null HTML string representing the products.
+	 *
+	 * @param 	array<string,mixed> 	$options 	Options for the request
+	 * @return 	string|null 						HTML string representing the products.
 	 */
 	public function getProducts($options)
 	{
@@ -528,8 +529,8 @@ class ExternalModules
 
 	/**
 	 * Sort an array by a key
-	 * @param string $key Key to sort by
 	 *
+	 * @param string $key Key to sort by
 	 * @return Closure(array<string, mixed>, array<string, mixed>): int
 	 */
 	public function buildSorter(string $key): Closure
@@ -666,7 +667,7 @@ class ExternalModules
 	public function getPagination()
 	{
 
-		global $conf, $langs;
+		global $langs;
 
 		$page = $this->no_page;
 		$limit = $this->per_page;
@@ -791,8 +792,8 @@ class ExternalModules
 
 	/**
 	 * Read a YAML string and convert it to an array
-	 * @param string $yaml YAML string
 	 *
+	 * @param string $yaml YAML string
 	 * @return list<array<string, array<string, string|null>|string|null>> Parsed array representation
 	 */
 	public function readYaml($yaml)
@@ -857,9 +858,9 @@ class ExternalModules
 
 	/**
 	 * Adapter data fetched from github remote source to the expected format
+	 *
 	 * @param array<string, mixed>|list<array<string, array<string, string|null>|string|null>> $data Data fetched from github remote source
 	 * @param string $source Source of the data
-	 *
 	 * @return list<array<string, array<string, string|null>|string|null>> Data adapted to the expected format
 	 */
 	public function adaptData($data, $source)
@@ -876,7 +877,7 @@ class ExternalModules
 					continue;
 				}
 				$adaptedPackage = [
-					'ref' => str_replace(' ', '', $package['modulename'].'@'.$package['current_version'].'@'.$package['author']),
+					'ref' => str_replace(' ', '', $package['modulename'].'-'.$package['current_version'].'@'.$package['author']),
 					'label' => !empty($package['label'][substr($this->lang, 0, 2)])
 						? $package['label'][substr($this->lang, 0, 2)]
 						: (!empty($package['label']['en']) ? $package['label']['en'] : $package['modulename']),

@@ -1374,12 +1374,13 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  * 	@param	int		$disablevirusscan	1=Disable virus scan
  * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
  * 	@param	int		$nohook				Disable all hooks
- * 	@param	string	$varfiles			_FILES var name
+ * 	@param	string	$keyforsourcefile	Key for source frile in _FILES (not used)
  *  @param	string	$upload_dir			For information. Already included into $dest_file.
+ *  @param	int		$mode				0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
  *	@return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
-function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '')
+function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $keyforsourcefile = 'addedfile', $upload_dir = '', $mode = 0)
 {
 	global $conf;
 	global $object, $hookmanager;
@@ -1391,7 +1392,7 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 	if (empty($nohook)) {
 		$reshook = $hookmanager->initHooks(array('fileslib'));
 
-		$parameters = array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $varfiles, 'allowoverwrite' => $allowoverwrite);
+		$parameters = array('dest_file' => $dest_file, 'src_file' => $src_file, 'file_name' => $file_name, 'varfiles' => $keyforsourcefile, 'allowoverwrite' => $allowoverwrite);
 		$reshook = $hookmanager->executeHooks('moveUploadedFile', $parameters, $object);
 	}
 
@@ -1487,8 +1488,13 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
 			}
 		}
 
-		// Move file
-		$return = move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		// Move file using a simple system function
+		if ($mode == 0) {
+			$return = move_uploaded_file($src_file_osencoded, $file_name_osencoded);
+		} else {
+			$return	= rename($src_file_osencoded, $file_name_osencoded);
+		}
+
 		if ($return) {
 			dolChmod($file_name_osencoded);
 			dol_syslog("Files.lib::dol_move_uploaded_file Success to move ".$src_file." to ".$file_name." - Umask=" . getDolGlobalString('MAIN_UMASK'), LOG_DEBUG);
@@ -1912,33 +1918,43 @@ function dol_init_file_process($pathtoscan = '', $trackid = '')
 
 
 /**
- * Get and save an upload file (for example after submitting a new file a mail form). Database index of file is also updated if updatesessionordb is set to 1.
- * All information used are in db, conf, langs, user and _FILES.
+ * Get and save an upload file (for example after submitting a new file in a mail form).
+ * The database index of the file is also updated if $updatesessionordb is set to 1.
+ * Function can work in 2 mode, one to get file from $_FILES, one to get file from its full path.
  * Note: This function can be used only into a HTML page context.
  *
- * @param	string		$upload_dir			Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
- * @param	int<0,1>	$allowoverwrite		1=Allow overwrite existing file
- * @param	int<-1,1>	$updatesessionordb	1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
- * @param	string		$varfiles			_FILES var name
- * @param	string		$savingdocmask		Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
- * @param	?string		$link				Link to add (to add a link instead of a file)
- * @param   string		$trackid			Track id (used to prefix name of session vars to avoid conflict)
- * @param	int<0,1>	$generatethumbs		1=Generate also thumbs for uploaded image files
- * @param   ?Object		$object				Object used to set 'src_object_*' fields
- * @param	string		$forceFullTestIndexation		'1'=Force full text storage in database even if global option not set (consume a high level of data)
- * @return	int                             Return integer <=0 if KO, nb of success if OK (>0)
- * @see dol_remove_file_process()
+ * @param	string		$upload_dir					If mode=0, directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename). If $mode=1, the full destination path.
+ * @param	int<0,1>	$allowoverwrite				1=Allow overwrite existing file
+ * @param	int<-1,1>	$updatesessionordb			1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
+ * @param	string		$keyforsourcefile					If $mode=0, the key into _FILES with information of the file to move. If $mode=1, the source file name on disk (To Implement).
+ * @param	string		$savingdocmask				Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
+ * @param	?string		$link						Link to add (to add a link instead of a file)
+ * @param   string		$trackid					Track id (used to prefix name of session vars to avoid conflict, when $updatesessionordb is 0)
+ * @param	int<0,1>	$generatethumbs				1=Generate also thumbs for uploaded image files
+ * @param   ?Object		$object						Object used to set the fields src_object_type and src_object_id.
+ * @param	string		$forceFullTestIndexation	'1'=Force full text storage in database even if global option not set (consume a high level of data)
+ * @param	int			$mode						0=Default mode use to move a file from default system upload dir to $upload_dir. 1=Mode to move an uploaded file from $keyforsourcefile into $upload_dir.
+ * @return	int                             		Return integer <=0 if KO, nb of success if OK (>0)
+ * @see dol_remove_file_process(), FileUpload::handleFileUpload()
  */
-function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $varfiles = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '')
+function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionordb = 0, $keyforsourcefile = 'addedfile', $savingdocmask = '', $link = null, $trackid = '', $generatethumbs = 1, $object = null, $forceFullTestIndexation = '', $mode = 0)
 {
 	global $db, $user, $conf, $langs;
 
 	$res = 0;
 
-	if (!empty($_FILES[$varfiles])) { // For view $_FILES[$varfiles]['error']
-		dol_syslog('dol_add_file_process upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' updatesessionordb='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
+	// If mode 1, prepare environment to be compatible with mode 0
+	if ($mode == 1) {
+		$_FILES = array($keyforsourcefile => array());
+		$_FILES[$keyforsourcefile]['tmp_name'] = $keyforsourcefile;
+		$_FILES[$keyforsourcefile]['name'] = $keyforsourcefile;
+		$mode = 0;
+	}
+
+	if (!empty($_FILES[$keyforsourcefile])) { 	// For view $_FILES[$keyforsourcefile]['error']
+		dol_syslog('dol_add_file_process varfiles = '.$keyforsourcefile.' upload_dir='.$upload_dir.' allowoverwrite='.$allowoverwrite.' updatesessionordb='.$updatesessionordb.' savingdocmask='.$savingdocmask, LOG_DEBUG);
 		$maxfilesinform = getDolGlobalInt("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 10);
-		if (is_array($_FILES[$varfiles]["name"]) && count($_FILES[$varfiles]["name"]) > $maxfilesinform) {
+		if (is_array($_FILES[$keyforsourcefile]["name"]) && count($_FILES[$keyforsourcefile]["name"]) > $maxfilesinform) {
 			$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
 			setEventMessages($langs->trans("ErrorTooMuchFileInForm", $maxfilesinform), null, "errors");
 			return -1;
@@ -1948,7 +1964,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 		//var_dump($result);exit;
 
 		if ($result >= 0) {
-			$TFile = $_FILES[$varfiles];
+			$TFile = $_FILES[$keyforsourcefile];
 			// Convert value of $TFile
 			if (!is_array($TFile['name'])) {
 				foreach ($TFile as $key => &$val) {
@@ -2016,8 +2032,8 @@ function dol_add_file_process($upload_dir, $allowoverwrite = 0, $updatesessionor
 					}
 				}
 
-				// Move file from temp directory to final directory. A .noexe may also be appended on file name.
-				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $varfiles, $upload_dir);
+				// Move file from source directory to final destination. Check for virus is also embedded and a .noexe may also be appended on file name.
+				$resupload = dol_move_uploaded_file($TFile['tmp_name'][$i], $destfull, $allowoverwrite, 0, $TFile['error'][$i], 0, $keyforsourcefile, $upload_dir, $mode);
 
 				if (is_numeric($resupload) && $resupload > 0) {   // $resupload can be 'ErrorFileAlreadyExists', 'ErrorFileIsInfectedWithAVirus...'
 					include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
