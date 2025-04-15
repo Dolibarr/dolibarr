@@ -1368,16 +1368,16 @@ function dolCheckOnFileName($src_file, $dest_file = '')
  *  - Database of files is NOT updated (this is done by dol_add_file_process() that calls this function).
  *  - Extension .noexe may be added if file is executable and MAIN_DOCUMENT_IS_OUTSIDE_WEBROOT_SO_NOEXE_NOT_REQUIRED is not set.
  *
- *	@param	string	$src_file			Source full path filename ($_FILES['field']['tmp_name'])
- *	@param	string	$dest_file			Target full path filename  ($_FILES['field']['name'])
- * 	@param	int		$allowoverwrite		1=Overwrite target file if it already exists
- * 	@param	int		$disablevirusscan	1=Disable virus scan
- * 	@param	integer	$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
- * 	@param	int		$nohook				Disable all hooks
- * 	@param	string	$varfiles			_FILES var name
- *  @param	string	$upload_dir			For information. Already included into $dest_file.
- *  @param  array   $moreinfo           Array with more information to set in index table
- *  @return int|string       			1 if OK, 2 if OK and .noexe appended, <0 or string if KO
+ *	@param	string				$src_file			Source full path filename ($_FILES['field']['tmp_name'])
+ *	@param	string				$dest_file			Target full path filename  ($_FILES['field']['name'])
+ * 	@param	int					$allowoverwrite		1=Overwrite target file if it already exists
+ * 	@param	int					$disablevirusscan	1=Disable virus scan
+ * 	@param	integer				$uploaderrorcode	Value of PHP upload error code ($_FILES['field']['error'])
+ * 	@param	int					$nohook				Disable all hooks
+ * 	@param	string				$varfiles			_FILES var name
+ *  @param	string				$upload_dir			For information. Already included into $dest_file.
+ *  @param  array<string,mixed> $moreinfo			Array with more information to set in index table
+ *  @return int|string       			    		1 if OK, 2 if OK and .noexe appended, <0 or string if KO
  *  @see    dol_move()
  */
 function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disablevirusscan = 0, $uploaderrorcode = 0, $nohook = 0, $varfiles = 'addedfile', $upload_dir = '', $moreinfo = [])
