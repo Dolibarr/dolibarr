@@ -1657,7 +1657,7 @@ class Asset extends CommonObject
 	}
 
 	/**
-	 *	Validate bom
+	 *	Validate asset
 	 *
 	 *	@param		User		$user     	User making status change
 	 *  @param		int<0,1>	$notrigger	1=Does not execute triggers, 0= execute triggers
