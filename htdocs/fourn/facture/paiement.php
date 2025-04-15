@@ -418,7 +418,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 	}
 	$resql = $db->query($sql);
 	if ($resql) {
-		$num = $db->num_rows($resql);
+		$totalnboflines = $num = $db->num_rows($resql);
 		if ($num) {
 			$obj = $db->fetch_object($resql);
 			$total = $obj->total;
@@ -622,7 +622,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							$moreHtmlRight.= dolGetButtonTitle($btnTitle, '', $btnIcon, $urlToggleDisplayMod);
 						}
 
-						print_barre_liste($langs->trans('Invoices'), 0, $_SERVER["PHP_SELF"], '', '', '', '', $num, $num, 'bill', 0, $moreHtmlRight, '', 0, 0, 0, 1);
+						print_barre_liste($langs->trans('Invoices'), 0, $_SERVER["PHP_SELF"], '', '', '', '', $num, $totalnboflines, 'bill', 0, $moreHtmlRight, '', 0, 0, 0, 1);
 
 
 						print '<div class="div-table-responsive-no-min">';
