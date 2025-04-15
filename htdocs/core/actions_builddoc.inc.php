@@ -55,11 +55,6 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		// Reload to get all modified line records and be ready for hooks
 		$ret = $object->fetch($id);
 		$ret = $object->fetch_thirdparty();
-		/*if (empty($object->id) || ! $object->id > 0)
-		{
-			dol_print_error(null, 'Object must have been loaded by a fetch');
-			exit;
-		}*/
 
 		// Save last template used to generate document
 		if (GETPOST('model', 'alpha')) {
