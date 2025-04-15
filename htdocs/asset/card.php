@@ -287,7 +287,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$text .= '<br>';
-			$text .= $notify->confirmMessage('ASSET_VALIDATE', $object->socid, $object);
+			$text .= $notify->confirmMessage('ASSET_VALIDATE', 0, $object);
 		}
 
 		$formquestion = array();
