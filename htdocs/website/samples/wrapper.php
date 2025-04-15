@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,11 +153,11 @@ if ($rss) {
 	$website = new Website($db);
 	$websitepage = new WebsitePage($db);
 
-	$website->fetch('', $websitekey);
+	$website->fetch(0, $websitekey);
 
-	$filters = array('type_container'=>'blogpost', 'status'=>1);
+	$filters = array('type_container' => 'blogpost', 'status' => '1');
 	if ($l) {
-		$filters['lang'] = $l;
+		$filters['lang'] = (string) $l;
 	}
 
 	$MAXNEWS = $limit;
@@ -237,45 +238,43 @@ if ($rss) {
 		}
 	}
 
-	if ($result >= 0) {
-		$attachment = false;
-		if (GETPOSTISSET("attachment")) {
-			$attachment = GETPOST("attachment");
-		}
-		//$attachment = false;
-		$contenttype = 'application/rss+xml';
-		if (GETPOSTISSET("contenttype")) {
-			$contenttype = GETPOST("contenttype");
-		}
-		//$contenttype='text/plain';
-		$outputencoding = 'UTF-8';
-
-		if ($contenttype) {
-			header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
-		}
-		if ($attachment) {
-			header('Content-Disposition: attachment; filename="'.$filename.'"');
-		}
-
-		// Ajout directives pour resoudre bug IE
-		//header('Cache-Control: Public, must-revalidate');
-		//header('Pragma: public');
-		if ($cachedelay) {
-			header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
-		} else {
-			header('Cache-Control: private, must-revalidate');
-		}
-
-		// Clean parameters
-		$outputfile = $dir_temp.'/'.$filename;
-		$result = readfile($outputfile);
-		if (!$result) {
-			print 'File '.$outputfile.' was empty.';
-		}
-
-		// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
-		exit(5);
+	$attachment = false;
+	if (GETPOSTISSET("attachment")) {
+		$attachment = GETPOST("attachment");
 	}
+	//$attachment = false;
+	$contenttype = 'application/rss+xml';
+	if (GETPOSTISSET("contenttype")) {
+		$contenttype = GETPOST("contenttype");
+	}
+	//$contenttype='text/plain';
+	$outputencoding = 'UTF-8';
+
+	if ($contenttype) {
+		header('Content-Type: '.$contenttype.($outputencoding ? '; charset='.$outputencoding : ''));
+	}
+	if ($attachment) {
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+	}
+
+	// Ajout directives pour resoudre bug IE
+	//header('Cache-Control: Public, must-revalidate');
+	//header('Pragma: public');
+	if ($cachedelay) {
+		header('Cache-Control: max-age='.$cachedelay.', private, must-revalidate');
+	} else {
+		header('Cache-Control: private, must-revalidate');
+	}
+
+	// Clean parameters
+	$outputfile = $dir_temp.'/'.$filename;
+	$result = readfile($outputfile);
+	if (!$result) {
+		print 'File '.$outputfile.' was empty.';
+	}
+
+	// header("Location: ".DOL_URL_ROOT.'/document.php?modulepart=agenda&file='.urlencode($filename));
+	exit(5);
 } elseif ($modulepart == "mycompany" && preg_match('/^\/?logos\//', $original_file)) {
 	// Get logos
 	readfile(dol_osencode($conf->mycompany->dir_output."/".$original_file));
