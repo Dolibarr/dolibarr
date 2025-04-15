@@ -1308,7 +1308,7 @@ class Asset extends CommonObject
 	}
 
 	/**
-	 *	Set back to validated atatus
+	 *	Set back to validated status if disposed status
 	 *
 	 *	@param	User	$user			Object user that modify
 	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
@@ -1319,7 +1319,7 @@ class Asset extends CommonObject
 		global $conf, $langs;
 
 		// Protection
-		if ($this->status != self::STATUS_DISPOSED || $this->status == self::STATUS_VALIDATED) {
+		if ($this->status != self::STATUS_DISPOSED) {
 			return 0;
 		}
 
