@@ -824,7 +824,7 @@ if ($result) {
 		}
 		// Ref Product
 		if (!empty($arrayfields['p.ref']['checked'])) {
-			print '<td class="tdoverflowmax100">';
+			print '<td class="tdoverflowmax125">';
 			if ($product_static->id > 0) {
 				print $product_static->getNomUrl(1);
 			}
@@ -883,8 +883,9 @@ if ($result) {
 			$totalarray['nbfield']++;
 		}
 		// Thirdparty
+
 		if (!empty($arrayfields['s.nom']['checked'])) {
-			print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'customer').'</td>';
+			print '<td class="tdoverflowmax125">'.$thirdpartystatic->getNomUrl(1, 'customer').'</td>';
 			$totalarray['nbfield']++;
 		}
 		// Country
@@ -918,46 +919,47 @@ if ($result) {
 				$shelp .= $langs->trans("SaleExport");
 			}
 			$s .= ($code_sell_l > 0 ? length_accountg($code_sell_l) : '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>');
-			print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
+			$textforrule = $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 			// Now show account for product
 			if ($product_static->id > 0) {
-				print '<br>';
+				$textforrule .= '<br>';
 				$s = '2. '.(($facture_static_det->product_type == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 				$shelp = '';
 				$ttype = 'help';
-				if ($suggestedaccountingaccountfor == 'eec') {
-					$shelp = $langs->trans("SaleEEC");
-				} elseif ($suggestedaccountingaccountfor == 'eecwithvat') {
+				if ($suggestedaccountingaccountbydefaultfor == 'eec') {
+					$shelp .= $langs->trans("SaleEEC");
+				} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithvat') {
 					$shelp = $langs->trans("SaleEECWithVAT");
-				} elseif ($suggestedaccountingaccountfor == 'eecwithoutvatnumber') {
+				} elseif ($suggestedaccountingaccountbydefaultfor == 'eecwithoutvatnumber') {
 					$shelp = $langs->trans("SaleEECWithoutVATNumber");
 					$ttype = 'warning';
-				} elseif ($suggestedaccountingaccountfor == 'export') {
-					$shelp = $langs->trans("SaleExport");
+				} elseif ($suggestedaccountingaccountbydefaultfor == 'export') {
+					$shelp .= $langs->trans("SaleExport");
 				}
 				$s .= (empty($code_sell_p) ? '<span style="'.$code_sell_p_notset.'">'.$langs->trans("NotDefined").'</span>' : length_accountg($code_sell_p));
-				print $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
+				$textforrule .= $form->textwithpicto($s, $shelp, 1, $ttype, '', 0, 2, '', 1);
 			} else {
-				print '<br>';
+				$textforrule .= '<br>';
 				$s = '2. '.(($objp->type_l == 1) ? $langs->trans("ThisService") : $langs->trans("ThisProduct")).': ';
 				$shelp = '';
 				$s .= $langs->trans("NotDefined");
-				print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+				$textforrule .= $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 			}
 			if (getDolGlobalString('ACCOUNTANCY_USE_PRODUCT_ACCOUNT_ON_THIRDPARTY')) {
-				print '<br>';
+				$textforrule .= '<br>';
 				$s = '3. '.(($facture_static_det->product_type == 1) ? $langs->trans("ServiceForThisThirdparty") : $langs->trans("ProductForThisThirdparty")).': ';
 				$shelp = '';
 				$s .= ($code_sell_t > 0 ? length_accountg($code_sell_t) : '<span style="'.$code_sell_t_notset.'">'.$langs->trans("NotDefined").'</span>');
-				print $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
+				$textforrule .= $form->textwithpicto($s, $shelp, 1, 'help', '', 0, 2, '', 1);
 			}
+			print $textforrule;
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
 		// Suggested accounting account
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
 			print '<td>';
-			print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? (string) $default_account : (string) $suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil maxwidth150 maxwidthonsmartphone', 'cachewithshowemptyone');
+			print $formaccounting->select_account(($default_account > 0 && $confirm === 'yes' && in_array($objp->rowid."_".$i, $toselect)) ? (string) $default_account : (string) $suggestedid, 'codeventil'.$facture_static_det->id, 1, array(), 0, 0, 'codeventil minwidth125onall maxwidth150', 'cachewithshowemptyone');
 			print '</td>';
 			$totalarray['nbfield']++;
 		}

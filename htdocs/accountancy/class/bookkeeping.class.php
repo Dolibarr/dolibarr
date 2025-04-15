@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
  *
@@ -791,7 +791,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
-		$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
+		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
@@ -2609,42 +2609,55 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Generate label operation when operation is transferred into accounting
+	 * Generate label operation when operation is transferred into accounting according to ACCOUNTING_LABEL_OPERATION_ON_TRANSFER
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 0, we concat thirdparty name, ref and label.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
 	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
-	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
 	{
-		global $conf;
-
 		$accountingLabelOperation = '';
 
-		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+		if (!getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER')) {
 			$truncThirdpartyName = 16;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
 			if (!empty($labelaccount)) {
 				$accountingLabelOperation .= ' - '. $labelaccount;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
 			$truncThirdpartyName = 32;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
 			$truncThirdpartyName = 64;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 		}
-		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
 
 		return $accountingLabelOperation;
 	}

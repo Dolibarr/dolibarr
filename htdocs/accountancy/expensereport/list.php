@@ -674,7 +674,7 @@ if ($result) {
 		// Suggested accounting account
 		if (!empty($arrayfields['aa.account_number']['checked'])) {
 			print '<td>';
-			print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil maxwidth200 maxwidthonsmartphone', 'cachewithshowemptyone');
+			print $formaccounting->select_account($objp->aarowid_suggest, 'codeventil'.$objp->rowid, 1, array(), 0, 0, 'codeventil minwidth125onall maxwidth200', 'cachewithshowemptyone');
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
