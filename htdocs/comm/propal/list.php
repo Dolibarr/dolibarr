@@ -244,7 +244,7 @@ $arrayfields = array(
 	'p.fin_validite' => array('label' => "DateEnd", 'checked' => '1'),
 	'p.date_livraison' => array('label' => "DeliveryDate", 'checked' => '0'),
 	'p.date_signature' => array('label' => "DateSigning", 'checked' => '0'),
-	'c.ref' => array('label' => "Order", 'checked' => '0', 'enabled' => (string) (int) isModEnabled("commande")),
+	'c.ref' => array('label' => "Order", 'checked' => '0', 'enabled' => (string) (int) isModEnabled('order')),
 	'ava.rowid' => array('label' => "AvailabilityPeriod", 'checked' => '0'),
 	'p.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => '0', 'enabled' => (string) (int) isModEnabled("shipping")),
 	'p.fk_input_reason' => array('label' => "Origin", 'checked' => '0', 'enabled' => '1'),
@@ -574,9 +574,6 @@ $formpropal = new FormPropal($db);
 $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
-}
-if (isModEnabled('order')) {
-	$commandestatic = new Commande($db);
 }
 $companystatic = new Societe($db);
 $projectstatic = new Project($db);
@@ -2088,6 +2085,7 @@ while ($i < $imaxinloop) {
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="tdoverflowmax150">';
 			if (isModEnabled('order') && !empty($obj->fk_commande)) {
+				$commandestatic = new Commande($db);
 				$commandestatic->fetch($obj->fk_commande);
 				print $commandestatic->getNomURL(1);
 			} else {
