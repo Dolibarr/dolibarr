@@ -439,9 +439,9 @@ if (!empty($withproject)) {
 
 	print '<br>';
 }
-
+var_dump($confOrBooth);
 // Part to create
-if ($action == 'create' && $confOrBooth !== null) {
+if ($action == 'create' && $confOrBooth === null) {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBoothAttendee")), '', 'object_'.$object->picto);
 
 
@@ -449,9 +449,9 @@ if ($action == 'create' && $confOrBooth !== null) {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	if ($confOrBooth->id > 0) {
-		print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
-	}
+	// if ($confOrBooth->id > 0) {
+	// 	print '<input type="hidden" name="conforboothid" value="'.$confOrBooth->id.'">';
+	// }
 	if ($projectstatic->id > 0) {
 		print '<input type="hidden" name="fk_project" value="'.$projectstatic->id.'">';
 		print '<input type="hidden" name="projectid" value="'.$projectstatic->id.'">';
