@@ -2179,6 +2179,7 @@ tr.nobottom td {
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 50%; }
 .titlefieldmax45 { max-width: 45%; min-width: 180px; }
+.imgmaxwidth100 { max-width: 100px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 
@@ -2538,7 +2539,7 @@ td.showDragHandle {
 <?php } else { ?>
 	background: var(--colorbackvmenu1);
 	/* border-<?php echo $right; ?>: 1px solid rgba(0,0,0,0.2); */
-	box-shadow: 3px 0 6px -2px #eee;
+	box-shadow: 3px 0 6px <?php echo ($left == 'left' ? -2 : 2); ?>px #eee;
 	bottom: 0;
 	color: #333;
 	display: block;
@@ -2589,16 +2590,18 @@ td.showDragHandle {
  *	Slide animation
  */
 .side-nav-vert, #id-right {
-	transition: padding-left 0.5s ease, margin-left 0.5s ease;
+	transition: padding-<?php echo $left; ?> 0.5s ease, margin-<?php echo $left; ?> 0.5s ease;
 }
 
 .side-nav, .login_block {
-	transition: left 0.5s ease;
+	transition: <?php echo $left; ?> 0.5s ease;
 }
 
 body.sidebar-collapse .side-nav-vert, body.sidebar-collapse #id-right {
 	margin-left: 0;
-	padding-left:0
+	padding-left:0;
+	margin-right: 0;
+	padding-right:0;
 }
 
 
@@ -4859,7 +4862,7 @@ table.dataTable tr.oddeven {
 }
 
 /* For no hover style */
-td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, form.nohover, form.nohover:hover {
+td.oddeven, table.nohover tr.impair, table.nohover tr.pair, table.nohover tr.impair td, table.nohover tr.pair td, tr.nohover td, tr.nohover td:hover, form.nohover, form.nohover:hover {
 	background-color: var(--colorbacklineimpair2) !important;
 	background: var(--colorbacklineimpair2) !important;
 }
@@ -5792,17 +5795,13 @@ div.ui-tooltip {
 }
 
 div.ui-tooltip.mytooltip {
-	border-top: solid 1px #BBBBBB;
-	border-<?php print $left; ?>: solid 1px #BBBBBB;
-	border-<?php print $right; ?>: solid 1px #444444;
-	border-bottom: solid 1px #444444;
 	padding: 10px 20px;
-	border-radius: 0;
-	box-shadow: 0 0 4px grey;
+	border-radius: 4px;
+	box-shadow: 0 0 4px #888;
 	margin: 2px;
 	font-stretch: condensed;
-	/*background: var(--tooltipbgcolor) !important;
-	color : var(--tooltipfontcolor);*/
+	background: var(--colorbacklineimpair2) !important;
+	/* color : var(--tooltipfontcolor);*/
 	line-height: 1.6em;
 	min-width: 550px;
 }
@@ -7031,7 +7030,7 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
-.heightofcombo {
+.heightofcombo:not(.pageplusone) {
 	height: 28px;
 }
 .select2-container .select2-selection--single {
@@ -7297,7 +7296,9 @@ span#select2-taskid-container[title^='--'] {
 }
 span#select2-boxbookmark-container, span#select2-boxcombo-container {
 	text-align: <?php echo $left; ?>;
-	opacity: 0.5;
+}
+span#select2-boxcombo-container {
+	/* opacity: 0.5; */
 }
 .select2-container .select2-selection--single .select2-selection__rendered {
 	padding-left: 6px;

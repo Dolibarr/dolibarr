@@ -3664,12 +3664,12 @@ class FactureFournisseur extends CommonInvoice
 
 							$email_tocc = '';
 							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
-								$email_tocc = $arraymessage->email_tocc;
+								$email_tocc = (string) $arraymessage->email_tocc;
 							}
 
 							$email_tobcc = '';
 							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
-								$email_tobcc = $arraymessage->email_tobcc;
+								$email_tobcc = (string) $arraymessage->email_tobcc;
 							}
 
 							// Mail Creation

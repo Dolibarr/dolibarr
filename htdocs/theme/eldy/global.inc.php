@@ -2039,6 +2039,7 @@ maxscreenheightless200 {
 .titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
 .titlefieldmiddle { width: 45%; }
 .titlefieldmax45 { max-width: 45%; min-width: 180px; }
+.imgmaxwidth100 { max-width: 100px; }
 .imgmaxwidth180 { max-width: 180px; }
 .imgmaxheight50 { max-height: 50px; }
 

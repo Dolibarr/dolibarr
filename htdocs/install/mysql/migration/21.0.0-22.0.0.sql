@@ -246,3 +246,6 @@ ALTER TABLE llx_contratdet DROP COLUMN remise;
 ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
 
 ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
+
+ALTER TABLE llx_asset ADD COLUMN fk_user_valid integer;
+ALTER TABLE llx_asset ADD COLUMN date_valid datetime;
