@@ -53,6 +53,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+if (isModEnabled('commande')) {
+	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+}
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcategory.class.php';
@@ -139,6 +142,7 @@ $search_date_delivery_endyear = GETPOSTINT('search_date_delivery_endyear');
 $search_date_delivery_start = dol_mktime(0, 0, 0, $search_date_delivery_startmonth, $search_date_delivery_startday, $search_date_delivery_startyear);
 $search_date_delivery_end = dol_mktime(23, 59, 59, $search_date_delivery_endmonth, $search_date_delivery_endday, $search_date_delivery_endyear);
 $search_availability = GETPOST('search_availability', 'intcomma');
+$search_commande = GETPOST('search_availability', 'alpha');
 $search_categ_cus = GETPOST("search_categ_cus", 'intcomma');
 $search_fk_cond_reglement = GETPOST("search_fk_cond_reglement", 'intcomma');
 $search_fk_shipping_method = GETPOST("search_fk_shipping_method", 'intcomma');
@@ -240,6 +244,7 @@ $arrayfields = array(
 	'p.fin_validite' => array('label' => "DateEnd", 'checked' => '1'),
 	'p.date_livraison' => array('label' => "DeliveryDate", 'checked' => '0'),
 	'p.date_signature' => array('label' => "DateSigning", 'checked' => '0'),
+	'c.ref' => array('label' => "Order", 'checked' => '0', 'enabled' => (string) (int) isModEnabled("commande")),
 	'ava.rowid' => array('label' => "AvailabilityPeriod", 'checked' => '0'),
 	'p.fk_shipping_method' => array('label' => "SendingMethod", 'checked' => '0', 'enabled' => (string) (int) isModEnabled("shipping")),
 	'p.fk_input_reason' => array('label' => "Origin", 'checked' => '0', 'enabled' => '1'),
@@ -396,6 +401,7 @@ if (empty($reshook)) {
 		$search_date_delivery_endyear = '';
 		$search_date_delivery_start = '';
 		$search_date_delivery_end = '';
+		$search_commande = '';
 		$search_availability = '';
 		$search_option = '';
 		$search_status = '';
@@ -569,6 +575,9 @@ $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
+if (isModEnabled('commande')) {
+	$commandestatic = new Commande($db);
+}
 $companystatic = new Societe($db);
 $projectstatic = new Project($db);
 $formcompany = new FormCompany($db);
@@ -583,6 +592,9 @@ if ($search_all !== '') {
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
+if (isModEnabled('commande')) {
+	$sql .= ' elt.fk_target as fk_commande, c.ref as cmd_ref,';
+}
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
 $sql .= " state.code_departement as state_code, state.nom as state_name,";
@@ -623,6 +635,10 @@ if ($search_all) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
+if (isModEnabled('commande')) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as elt on (p.rowid = elt.fk_source AND elt.sourcetype='propal' AND elt.targettype='commande')";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c on (elt.fk_target = c.rowid)";
+}
 // Add table from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object); // Note that $action and $object may have been modified by hook
@@ -656,6 +672,9 @@ if ($search_refproject) {
 }
 if ($search_project) {
 	$sql .= natural_search('pr.title', $search_project);
+}
+if ($search_commande) {
+	$sql .= natural_search('c.ref', $search_commande);
 }
 if ($search_availability) {
 	$sql .= " AND p.fk_availability IN (".$db->sanitize($db->escape($search_availability)).')';
@@ -1097,6 +1116,9 @@ if ($search_date_signature_endyear) {
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
+if ($search_commande) {
+	$param .= '&serach_commande='.urlencode((string) ($search_commande));
+}
 
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -1353,6 +1375,12 @@ if (!empty($arrayfields['p.date_signature']['checked'])) {
 	print '</div>';
 	print '</td>';
 }
+// Commande
+if (!empty($arrayfields['c.ref']['checked'])) {
+	print '<td class="liste_titre" align="left">';
+	print '<input class="flat maxwidth100" type="text" name="search_commande" value="'.dol_escape_htmltag($search_commande).'">';
+	print '</td>';
+}
 // Availability
 if (!empty($arrayfields['ava.rowid']['checked'])) {
 	print '<td class="liste_titre maxwidth100onsmartphone center">';
@@ -1604,6 +1632,10 @@ if (!empty($arrayfields['p.date_livraison']['checked'])) {
 }
 if (!empty($arrayfields['p.date_signature']['checked'])) {
 	print_liste_field_titre($arrayfields['p.date_signature']['label'], $_SERVER["PHP_SELF"], 'p.date_signature', '', $param, '', $sortfield, $sortorder, 'center ');
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['c.ref']['checked'])) {
+	print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], 'c.ref', '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['ava.rowid']['checked'])) {
@@ -2048,6 +2080,20 @@ while ($i < $imaxinloop) {
 			} else {
 				print '<td>&nbsp;</td>';
 			}
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Commande
+		if (!empty($arrayfields['c.ref']['checked'])) {
+			print '<td class="tdoverflowmax150">';
+			if (!empty($obj->fk_commande)) {
+				$commandestatic->fetch($obj->fk_commande);
+				print $commandestatic->getNomURL(1);
+			} else {
+				print '&nbsp;';
+			}
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
