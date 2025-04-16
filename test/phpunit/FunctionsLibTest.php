@@ -1587,6 +1587,7 @@ class FunctionsLibTest extends CommonClassTest
 
 		$oldlangs = $langs;
 
+		// For US language SeparatorThousand=, and SeparatorDecimal=.
 		$newlangs = new Translate('', $conf);
 		$newlangs->setDefaultLang('en_US');
 		$newlangs->load("main");
@@ -1598,7 +1599,10 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(1000, price2num('1 000', 'MT'));
 		$this->assertEquals(1000, price2num('1 000', 'MU'));
 
-		$this->assertEquals(1000.123456, price2num('1 000.123456'));
+		$this->assertEquals(1000.123456, price2num('1 000.123456'), 'Test 1 000.123456 give 1000.123456 with us language');
+		$this->assertEquals(1000.123456, price2num('1,000.123456'), 'Test 1,000.123456 give 1000.123456 with us language');
+		$this->assertEquals(1000.123, price2num('1 000.123'), 'Test 1 000.123 give 1000.123 with us language');
+		$this->assertEquals(1000.123, price2num('1,000.123'), 'Test 1,000.123 give 1000.123 with us language');
 
 		// Round down
 		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'), 'Error in round down with MT');
@@ -1614,7 +1618,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('12.4', price2num('12.4$'));
 		$this->assertEquals('12.4', price2num('12r.4$'));
 
-		// For spanish language
+		// For spanish language SeparatorThousand=. and SeparatorDecimal=,
 		$newlangs2 = new Translate('', $conf);
 		$newlangs2->setDefaultLang('es_ES');
 		$newlangs2->load("main");
@@ -1627,7 +1631,8 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(1234, price2num('1 234', '', 2), 'Test 1 234 give 1234 with spanish language if user input');
 		$this->assertEquals(-1.234, price2num('-1.234'), 'Test 1.234 give 1.234 with spanish language');
 		$this->assertEquals(-1.234, price2num('-1,234'), 'Test 1,234 give 1234 with spanish language');
-		$this->assertEquals(-1234, price2num('-1 234'), 'Test 1 234 give 1234 with spanish language');
+		$this->assertEquals(-1234, price2num('-1 234'), 'Test -1 234 give 1234 with spanish language');
+		$this->assertEquals(1111.234, price2num('1.111,234'), 'Test 1.111,234 give 1111.234 with spanish language');
 		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
 		$this->assertEquals(21500123, price2num('21500.123', 0, 2), 'Test 21500.123 give 21500123 with spanish language if user input');
 		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');
@@ -1641,7 +1646,7 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language');
 		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language');
 
-		// For french language
+		// For french language SeparatorThousand=Space and SeparatorDecimal=,
 		$newlangs3 = new Translate('', $conf);
 		$newlangs3->setDefaultLang('fr_FR');
 		$newlangs3->load("main");
