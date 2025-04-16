@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -198,6 +198,7 @@ class CMailFile
 		'png'  => 'image/png',
 		'tif'  => 'image/tiff',
 		'tiff' => 'image/tiff',
+		'webp' => 'image/webp',
 	);
 
 
@@ -415,10 +416,12 @@ class CMailFile
 
 		// Verify if $to, $addr_cc and addr_bcc have unwanted addresses
 		if (getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO')) {
+			// Parse to, cc and bcc to remove MAIN_MAIL_FORCE_NOT_SENDING_TO
+			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
+
 			//Verify for $to
 			$replaceto = false;
 			$tabto = explode(",", $to);
-			$listofemailstonotsendto = explode(',', getDolGlobalString('MAIN_MAIL_FORCE_NOT_SENDING_TO'));
 			foreach ($tabto as $key => $addrto) {
 				$addrto = array_keys($this->getArrayAddress($addrto));
 				if (in_array($addrto[0], $listofemailstonotsendto)) {

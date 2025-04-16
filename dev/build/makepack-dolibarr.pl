@@ -377,6 +377,7 @@ if ($nboftargetok) {
 		$TMPBUILDTOCHECKCHANGELOG=$BUILD;
 		$TMPBUILDTOCHECKCHANGELOG =~ s/\-rc\d*//;
 		$TMPBUILDTOCHECKCHANGELOG =~ s/\-beta\d*//;
+		$TMPBUILDTOCHECKCHANGELOG =~ s/\-alpha\d*//;
 		print "\nCheck if ChangeLog is ok for version $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG\n";
 		$ret=`grep "ChangeLog for $MAJOR.$MINOR\.$TMPBUILDTOCHECKCHANGELOG" "$SOURCE/ChangeLog" 2>&1`;
 		if (! $ret)
@@ -387,14 +388,16 @@ if ($nboftargetok) {
 		{
 			print "ChangeLog for $MAJOR.$MINOR\.$BUILD was found into '$SOURCE/ChangeLog'. But you can regenerate it with command:\n";
 		}
-		if (! $BUILD || $BUILD eq '0-rc')	# For a major version
+		if (! $BUILD || $BUILD eq '0-alpha' || $BUILD eq '0-beta' || $BUILD eq '0-rc')	# For a major or future version
 		{
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print "Building changeLog file for a major version:\n";
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log `git rev-list --boundary '.$MAJOR.'.'.$MINOR.'..origin/develop | grep ^- | cut -c2- | head -n 1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' | sed \'s/^* //g\' > /tmp/aaa';
 		}
 		else			# For a maintenance release
 		{
+			print "Building changeLog file for a maintenance version:\n";
 			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\'| sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\|PERF\|SEC\|QUAL\|CLOSE\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/CLOSE/NEW/g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' | sed \'s/^* //g\' > /tmp/aaa';
 		}
 		print "\n";
 		if (! $ret)

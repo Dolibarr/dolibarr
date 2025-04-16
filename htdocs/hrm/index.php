@@ -370,7 +370,7 @@ if (isModEnabled('expensereport') && $user->hasRight('expensereport', 'read')) {
 				print '<td class="tdoverflowmax150">'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td class="right amount">'.price($obj->total_ht).'</td>';
 				print '<td class="right amount">'.price($obj->total_ttc).'</td>';
-				print '<td class="right">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
+				print '<td class="right" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($obj->dm), 'dayhour').'">'.dol_print_date($db->jdate($obj->dm), 'dayreduceformat').'</td>';
 				print '<td class="right nowraponall" width="16">'.$expensereportstatic->LibStatut($obj->status, 3).'</td>';
 				print '</tr>';
 
@@ -447,7 +447,7 @@ if (isModEnabled('recruitment') && $user->hasRight('recruitment', 'recruitmentjo
 				print '<td class="nowraponall">'.$staticrecruitmentcandidature->getNomUrl(1, '').'</td>';
 				print '<td class="tdoverflowmax150">'.$staticrecruitmentcandidature->getFullName($langs).'</td>';
 				print '<td class="nowraponall">'.$staticrecruitmentjobposition->getNomUrl(1).'</td>';
-				print '<td class="right nowrap">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
+				print '<td class="right nowrap" title="'.$langs->trans("DateModification").': '.dol_print_date($db->jdate($objp->tms), 'dayhour').'">'.dol_print_date($db->jdate($objp->tms), 'dayreduceformat').'</td>';
 				print '<td class="right nowrap" width="16">';
 				print $staticrecruitmentcandidature->getLibStatut(3);
 				print "</td>";

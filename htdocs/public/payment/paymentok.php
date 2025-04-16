@@ -60,10 +60,12 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -93,14 +95,6 @@ if (isModEnabled('paypal')) {
 	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
 	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
 	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
-	/*$PAYPAL_API_OK = "";
-	if ($urlok) {
-		$PAYPAL_API_OK = $urlok;
-	}
-	$PAYPAL_API_KO = "";
-	if ($urlko) {
-		$PAYPAL_API_KO = $urlko;
-	}*/
 
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
@@ -285,7 +279,10 @@ if (empty($doactionsthenredirect)) {
 }
 
 
-// Another step to validate the payment (for payment modes like Paypal that need another step after the callback return for this).
+// Add steps to validate payment is complete when we enter this page
+
+
+// For Paypal: validate the payment (Paypal need another step after the callback return to validate the payment).
 if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this page only if payment is ok on payment system
 	if (!empty($PAYPALTOKEN)) {
 		// Get on url call
@@ -293,11 +290,10 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 		$fulltag            = $FULLTAG;
 		$payerID 			= !empty($PAYPALPAYERID) ? $PAYPALPAYERID : '';
 		// Set by newpayment.php
+		$ipaddress          = $_SESSION['ipaddress'];
 		$currencyCodeType   = $_SESSION['currencyCodeType'];
 		$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 		$paymentType        = $_SESSION['PaymentType'];			// Value can be 'Mark', 'Sole', 'Sale' for example
-		// From env
-		$ipaddress          = $_SESSION['ipaddress'];
 
 		dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
@@ -364,6 +360,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 	}
 }
 
+// For Paybox
 if (isModEnabled('paybox')) {
 	if ($paymentmethod === 'paybox') {
 		// TODO Add a check to validate that payment is ok.
@@ -371,6 +368,7 @@ if (isModEnabled('paybox')) {
 	}
 }
 
+// For Stripe
 if (isModEnabled('stripe')) {
 	if ($paymentmethod === 'stripe') {
 		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
@@ -378,30 +376,25 @@ if (isModEnabled('stripe')) {
 	}
 }
 
-// Check status of the object to verify if it is paid by external payment modules
-$action = '';
-$parameters = [
-	'paymentmethod' => $paymentmethod,
-];
-$reshook = $hookmanager->executeHooks('isPaymentOK', $parameters, $object, $action);
-if ($reshook >= 0) {
-	if (isset($hookmanager->resArray['ispaymentok'])) {
-		dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
-		$ispaymentok = $hookmanager->resArray['ispaymentok'];
+// For other payment modules
+if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
+	// Check status of the object to verify if it is paid by external payment modules
+	$action = '';
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+	];
+	$reshook = $hookmanager->executeHooks('isPaymentOK', $parameters, $object, $action);
+	if ($reshook >= 0) {
+		if (isset($hookmanager->resArray['ispaymentok'])) {
+			dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
+			$ispaymentok = $hookmanager->resArray['ispaymentok'];
+		}
 	}
 }
 
-
-// If data not provided into callback url, search them into the session env
+// Get variable into the session env
 if (empty($ipaddress)) {
 	$ipaddress = $_SESSION['ipaddress'];
-}
-if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
-	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
-		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
-		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
-	}
 }
 if (empty($FinalPaymentAmt)) {
 	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
@@ -409,9 +402,16 @@ if (empty($FinalPaymentAmt)) {
 if (empty($currencyCodeType)) {
 	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
 }
-// Seems used only by Paypal
-if (empty($paymentType)) {
+if (empty($paymentType)) {	// Seems used only by Paypal
 	$paymentType = empty($_SESSION["paymentType"]) ? '' : $_SESSION["paymentType"];
+}
+
+if (empty($TRANSACTIONID)) {
+	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+		$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+	}
 }
 
 $fulltag = $FULLTAG;
@@ -2159,16 +2159,19 @@ $db->close();
 
 // If option to do a redirect somewhere else.
 if (!empty($doactionsthenredirect)) {
+	$randomseckey = getRandomPassword(true, null, 20);
+	$_SESSION['paymentsessionkey'] = $randomseckey;
+
 	if ($ispaymentok) {
 		// Redirect to a success page
 		// Paymentok page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-			$ext_urlok = $ws_virtuelhost . '/paymentok.php?fulltag='.$FULLTAG;
+			$ext_urlok = $ws_virtuelhost . '/paymentok.php?paymentsessionkey='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 		} else {
-			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?paymentsessionkey='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
 		}
 
-		if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Use a property in website module
+		if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Remove this to make only a http redirect, if the website need a js redirect to parent frame, he must do it itself.
 			dol_syslog("Now do a redirect in iframe mode in js to ".$ext_urlok, LOG_DEBUG, 0, '_payment');
 
 			// Redirect in js is not reliable
@@ -2183,12 +2186,12 @@ if (!empty($doactionsthenredirect)) {
 		// Redirect to an error page
 		// Paymentko page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-			$ext_urlko = $ws_virtuelhost . '/paymentko.php?fulltag='.$FULLTAG;
+			$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentsessionkey='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 		} else {
-			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentsessionkey='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 		}
 
-		if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Use a property in website module
+		if (getDolGlobalInt('MARKETPLACE_PAYMENT_IN_FRAME') == 1) {	// TODO Remove this to make only a http redirect, if the website need a js redirect to parent frame, he must do it itself.
 			dol_syslog("Now do a redirect in iframe mode in js to ".$ext_urlko, LOG_DEBUG, 0, '_payment');
 
 			// Redirect in js is not reliable

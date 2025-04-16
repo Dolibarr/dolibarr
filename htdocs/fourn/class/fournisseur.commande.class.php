@@ -3465,6 +3465,7 @@ class CommandeFournisseur extends CommonOrder
 				$response->label = $langs->trans("SuppliersOrdersAwaitingReception");
 				$response->labelShort = $langs->trans("AwaitingReception");
 				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
+				$response->url_late = DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers&search_option=recv_late';
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {

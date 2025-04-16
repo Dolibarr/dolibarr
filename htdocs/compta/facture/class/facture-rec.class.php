@@ -7,7 +7,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2017-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -1364,11 +1364,11 @@ class FactureRec extends CommonInvoice
 	 *  @param	int<0,max>	$restrictioninvoiceid	0=All qualified template invoices found. > 0 = restrict action on invoice ID
 	 *  @param	int<0,1>	$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
 	 *	@param	int<0,1> 	$notrigger				Disable the trigger
-	 *  @return	int									0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @return	int									0 if OK, > 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	public function createRecurringInvoices($restrictioninvoiceid = 0, $forcevalidation = 0, $notrigger = 0)
 	{
-		global $conf, $langs, $db, $user, $hookmanager, $action;
+		global $conf, $langs, $user, $hookmanager, $action;
 
 		$error = 0;
 		$nb_create = 0;
@@ -1419,6 +1419,7 @@ class FactureRec extends CommonInvoice
 
 				$this->db->begin();
 
+				$errorforinvoice = 0;
 				$invoiceidgenerated = 0;
 
 				$facture = null;
@@ -1460,28 +1461,28 @@ class FactureRec extends CommonInvoice
 
 					$invoiceidgenerated = $facture->create($user);
 					if ($invoiceidgenerated <= 0) {
-						$this->errors = $facture->errors;
-						$this->error = $facture->error;
+						$this->setErrorsFromObject($facture);
 						$error++;
+						$errorforinvoice++;
 					}
 
 
-					if (!$error && ($facturerec->auto_validate || $forcevalidation)) {
+					if (!$errorforinvoice && ($facturerec->auto_validate || $forcevalidation)) {
 						$result = $facture->validate($user);
 						if ($result <= 0) {
-							$this->errors = $facture->errors;
-							$this->error = $facture->error;
+							$this->setErrorsFromObject($facture);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
-					if (!$error && $facturerec->generate_pdf) {
+					if (!$errorforinvoice && $facturerec->generate_pdf) {
 						// We refresh the object in order to have all necessary data (like date_lim_reglement)
 						$facture->fetch($facture->id);
 						$result = $facture->generateDocument($facturerec->model_pdf, $langs);
 						if ($result <= 0) {
-							$this->errors = $facture->errors;
-							$this->error = $facture->error;
+							$this->setErrorsFromObject($facture);
 							$error++;
+							$errorforinvoice++;
 						}
 					}
 				} else {
@@ -1491,6 +1492,7 @@ class FactureRec extends CommonInvoice
 					dol_syslog("createRecurringInvoices Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity);
 				}
 
+				// Commit or rollback
 				if (!$error && $invoiceidgenerated >= 0) {
 					$this->db->commit("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 					dol_syslog("createRecurringInvoices Process invoice template ".$facturerec->ref." is finished with a success generation");
@@ -1505,6 +1507,7 @@ class FactureRec extends CommonInvoice
 					'cpt'        => $i,
 					'total'      => $num,
 					'errorCount' => $error,
+					'errorForInvoice' => $errorforinvoice,
 					'invoiceidgenerated' => $invoiceidgenerated,
 					'facturerec' => $facturerec, // it's an object which PHP passes by "reference", so modifiable by hooks.
 					'this'       => $this, // it's an object which PHP passes by "reference", so modifiable by hooks.
@@ -1839,14 +1842,13 @@ class FactureRec extends CommonInvoice
 		$this->socid = 1;
 		$this->date = $nownotime;
 		$this->date_lim_reglement = $nownotime + 3600 * 24 * 30;
-		$this->cond_reglement_id   = 1;
+		$this->cond_reglement_id = 1;
 		$this->cond_reglement_code = 'RECEP';
 		$this->date_lim_reglement = $this->calculate_date_lim_reglement();
-		$this->mode_reglement_id   = 0; // Not forced to show payment mode CHQ + VIR
+		$this->mode_reglement_id = 0; // Not forced to show payment mode CHQ + VIR
 		$this->mode_reglement_code = ''; // Not forced to show payment mode CHQ + VIR
 		$this->note_public = 'This is a comment (public)';
 		$this->note_private = 'This is a comment (private)';
-		$this->note = 'This is a comment (private)';
 		$this->fk_incoterms = 0;
 		$this->location_incoterms = '';
 
@@ -2418,7 +2420,7 @@ class FactureLigneRec extends CommonInvoiceLine
 
 			$this->rang = $objp->rang;
 			$this->special_code = $objp->special_code;
-			$this->fk_unit          = $objp->fk_unit;
+			$this->fk_unit = $objp->fk_unit;
 			$this->fk_contract_line = $objp->fk_contract_line;
 			$this->import_key = $objp->import_key;
 			$this->fk_multicurrency = $objp->fk_multicurrency;

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2025  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,7 +245,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	if (is_array($var)) {
 		foreach ($var as $key => $value) {	// Warning, $key may also be used for attacks
 			// Exclude check for some variable keys
-			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, constant('NOSCANPOSTFORINJECTION'))) {
+			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, (array) constant('NOSCANPOSTFORINJECTION'))) {
 				continue;
 			}
 
