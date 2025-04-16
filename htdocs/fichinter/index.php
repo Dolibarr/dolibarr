@@ -127,6 +127,12 @@ if ($resql) {
 	 * @var string $badgeStatus2
 	 * @var string $badgeStatus4
 	 */
+	'
+	@phan-var-force string $badgeStatus0
+	@phan-var-force string $badgeStatus1
+	@phan-var-force string $badgeStatus2
+	@phan-var-force string $badgeStatus4
+	';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
