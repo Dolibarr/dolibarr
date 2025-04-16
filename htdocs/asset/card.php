@@ -313,7 +313,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$disposal_type_form = $object->showInputField(null, 'fk_disposal_type', (string) $fk_disposal_type, '', '', '', 0);
 		$object->fields['fk_disposal_type']['visible'] = -2;
 
-		$object->fields['disposal_invoice_id'] = array('type' => 'integer:Facture:compta/facture/class/facture.class.php::entity IN (__SHARED_ENTITIES__)', 'enabled' => '1', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'validate' => '1',);
+		$object->fields['disposal_invoice_id'] = array('type' => 'integer:Facture:compta/facture/class/facture.class.php::(entity:in:__SHARED_ENTITIES__)', 'enabled' => '1', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'validate' => '1',);
 		$disposal_invoice_form = $object->showInputField(null, 'disposal_invoice_id', (string) $disposal_invoice_id, '', '', '', 0);
 		unset($object->fields['disposal_invoice_id']);
 

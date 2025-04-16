@@ -3003,8 +3003,8 @@ class Facture extends CommonInvoice
 			$this->db->begin();
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET fk_input_reason = ".($inputReasonId > 0 ? $inputReasonId : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET fk_input_reason = ".($inputReasonId > 0 ? (int) $inputReasonId : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$res = $this->db->query($sql);
