@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2019      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -153,6 +153,14 @@ print_barre_liste($form->textwithpicto($title, $htmltooltip), 0, $_SERVER["PHP_S
 
 // Get list of ponderated percent and colors for each status
 include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
+/**
+ * @var string $badgeStatus0
+ * @var string $badgeStatus1
+ * @var string $badgeStatus2
+ * @var string $badgeStatus4
+ * @var string $badgeStatus6
+ * @var string $badgeStatus9
+ */
 // Available from theme_vars:
 '
 @phan-var-force string $badgeStatus0
