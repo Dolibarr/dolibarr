@@ -14329,24 +14329,6 @@ parameters:
 			path: ../../../htdocs/fichinter/document.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fichinter/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fichinter/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/fichinter/index.php
-
-		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 1
