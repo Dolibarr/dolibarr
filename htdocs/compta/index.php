@@ -708,7 +708,8 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;
-				$commandestatic->statut = $obj->status;
+				$commandestatic->statut = $obj->status; // deprecated
+				$commandestatic->status = $obj->status;
 				$commandestatic->billed = $obj->facture;
 
 				print '<tr class="oddeven">';
