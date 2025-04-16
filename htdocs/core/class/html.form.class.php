@@ -12197,18 +12197,18 @@ class Form
 			'label_key' => 'Cancel',
 		);
 
-		if (!empty($morebuttons)) {
-			$buttons[] = $morebuttons;
-		}
-		$mainBtnFirst = getDolGlobalInt('MAIN_BUTTON_POSITION_FIRST_OR_LEFT');
-
-		if ($mainBtnFirst) {
+		// If MAIN_BUTTON_POSITION_FIRST_OR_LEFT not set, default is to have main action first, then complementary, then cancel at end
+		if (!getDolGlobalInt('MAIN_BUTTON_POSITION_FIRST_OR_LEFT')) {
 			!empty($save_label) ? $buttons[] = $save : '';
-		}
-
-		!empty($cancel_label) ? $buttons[] = $cancel : '';
-
-		if (!$mainBtnFirst) {
+			if (!empty($morebuttons)) {
+				$buttons[] = $morebuttons;
+			}
+			!empty($cancel_label) ? $buttons[] = $cancel : '';
+		} else {
+			if (!empty($morebuttons)) {
+				$buttons[] = $morebuttons;
+			}
+			!empty($cancel_label) ? $buttons[] = $cancel : '';
 			!empty($save_label) ? $buttons[] = $save : '';
 		}
 
