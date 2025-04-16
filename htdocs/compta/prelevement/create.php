@@ -220,8 +220,7 @@ $bprev = new BonPrelevement($db);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 // List of mass actions available
-$arrayofmassactions = array(
-);
+$arrayofmassactions = array();
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
 	$arrayofmassactions = array();
 }
@@ -298,7 +297,7 @@ print dol_get_fiche_end();
 
 print '<div class="tabsAction">'."\n";
 
-print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
+print '<form id="createBankTransfer" action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 print '<input type="hidden" name="action" value="create">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
@@ -388,6 +387,20 @@ if ($nb) {
 }
 
 print "</form>\n";
+
+// Send selected lines to build the transfer file
+print '<script>
+	$().ready(() => {
+		let form_create_transfer = $("#createBankTransfer");
+		let form_list = $("#searchFormList");
+		form_create_transfer.submit(() => {
+			let selected_lines = Array.from(document.querySelectorAll("input.checkforselect:checked"))
+			selected_lines.map(line => {
+				form_create_transfer.append(line);
+			})
+		})
+	})
+</script>';
 
 print "</div>\n";
 
@@ -519,7 +532,7 @@ if ($resql) {
 	print '<tr class="liste_titre">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+		if ($num) {
 			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 		}
 	}
@@ -551,9 +564,7 @@ if ($resql) {
 	print '<td class="right">'.$langs->trans("PendingSince").'</td>';
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-			print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
-		}
+		print '<td align="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
 	}
 	print '</tr>';
 
@@ -588,15 +599,13 @@ if ($resql) {
 
 			// Action column
 			if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					print '<td class="nowrap center">';
-					$selected = 0;
-					if (in_array($obj->request_row_id, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
-					print '</td>';
+				print '<td class="nowrap center">';
+				$selected = 0;
+				if (in_array($obj->request_row_id, $arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '</td>';
 			}
 
 			// Ref invoice
@@ -682,15 +691,13 @@ if ($resql) {
 			print '</td>';
 			// Action column
 			if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-				if ($massactionbutton || $massaction) { // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-					print '<td class="nowrap center">';
-					$selected = 0;
-					if (in_array($obj->request_row_id, $arrayofselected)) {
-						$selected = 1;
-					}
-					print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
-					print '</td>';
+				print '<td class="nowrap center">';
+				$selected = 0;
+				if (in_array($obj->request_row_id, $arrayofselected)) {
+					$selected = 1;
 				}
+				print '<input id="cb'.$obj->request_row_id.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->request_row_id.'"'.($selected ? ' checked="checked"' : '').'>';
+				print '</td>';
 			}
 			print '</tr>';
 			$i++;
