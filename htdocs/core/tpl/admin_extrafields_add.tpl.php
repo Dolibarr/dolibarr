@@ -219,7 +219,7 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <td class="valeur"><textarea name="computed_value" id="computed_value" class="quatrevingtpercent" rows="<?php echo ROWS_4 ?>"><?php echo(GETPOSTISSET('computed_value') ? GETPOST('computed_value', 'restricthtml') : ''); ?></textarea></td>
 </tr>
 <!-- Default Value (at sql setup level) -->
-<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" size="5" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>"></td></tr>
+<tr class="extra_default_value"><td><?php echo $langs->trans("DefaultValue").' ('.$langs->trans("Database").')'; ?></td><td class="valeur"><input id="default_value" type="text" name="default_value" class="minwidth200" value="<?php echo(GETPOST('default_value', 'alpha') ? GETPOST('default_value', 'alpha') : ''); ?>"></td></tr>
 <!-- Unique -->
 <tr class="extra_unique"><td><?php echo $langs->trans("Unique"); ?></td><td class="valeur"><input id="unique" type="checkbox" name="unique"<?php echo(GETPOST('unique', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Required -->
@@ -228,10 +228,10 @@ print $formadmin->selectTypeOfFields('type', GETPOST('type', 'alpha'));
 <tr class="extra_alwayseditable"><td><?php echo $form->textwithpicto($langs->trans("AlwaysEditable"), $langs->trans("EditableWhenDraftOnly")); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo((GETPOST('alwayseditable', 'alpha') || !GETPOST('button', 'alpha')) ? ' checked' : ''); ?>></td></tr>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc").'<br><br>'.$langs->trans("ItCanBeAnExpression")); ?>
-</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOSTINT('list') : '1'; ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="width50" type="text" name="list" value="<?php echo GETPOSTISSET('list') ? GETPOSTINT('list') : '1'; ?>"></td></tr>
 <!-- Visibility for PDF-->
 <tr><td class="extra_pdf"><?php echo $form->textwithpicto($langs->trans("DisplayOnPdf"), $langs->trans("DisplayOnPdfDesc")); ?>
-</td><td class="valeur"><input id="printable" class="minwidth100" type="text" name="printable" value="<?php echo dol_escape_htmltag(GETPOSTISSET('printable') ? GETPOST('printable') : '1'); ?>"></td></tr>
+</td><td class="valeur"><input id="printable" class="width50" type="text" name="printable" value="<?php echo dol_escape_htmltag(GETPOSTISSET('printable') ? GETPOST('printable') : '1'); ?>"></td></tr>
 <!-- Totalizable -->
 <tr class="extra_totalizable"><td><?php echo $langs->trans("Totalizable"); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo(GETPOST('totalizable', 'alpha') ? ' checked' : ''); ?>></td></tr>
 <!-- Css edit -->
