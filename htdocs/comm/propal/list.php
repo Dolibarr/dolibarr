@@ -590,7 +590,7 @@ if ($search_all !== '') {
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
 if (isModEnabled('order')) {
-	$sql .= ' elt.fk_target as fk_commande, c.ref as cmd_ref,';
+	$sql .= ' c.rowid as fk_commande, c.ref as cmd_ref,';
 }
 $sql .= " ava.rowid as availability,";
 $sql .= " country.code as country_code,";
@@ -633,8 +633,8 @@ $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
 if (isModEnabled('order')) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as elt on (p.rowid = elt.fk_source AND elt.sourcetype='propal' AND elt.targettype='commande')";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c on (elt.fk_target = c.rowid)";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as elt on ((p.rowid = elt.fk_source AND elt.sourcetype='propal' AND elt.targettype='commande') OR (p.rowid = elt.fk_target AND elt.sourcetype='commande' AND elt.targettype='propal'))";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c on ((elt.fk_target = c.rowid AND elt.sourcetype='propal') OR (elt.fk_source = c.rowid AND elt.targettype='propal'))";
 }
 // Add table from hooks
 $parameters = array();
