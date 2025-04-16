@@ -133,13 +133,18 @@ if (empty($reshook)) {
 			$action = '';
 			$error++;
 		}
-
+		if (empty($toselect)) {
+			$errormessage = $langs->trans('ErrorBankTransferNoPaymentRequestSelected');
+			setEventMessages($errormessage, null, 'errors');
+			$action = '';
+			$error++;
+		}
 
 		$bprev = new BonPrelevement($db);
 
 		if (!$error) {
 			// getDolGlobalString('PRELEVEMENT_CODE_BANQUE') and getDolGlobalString('PRELEVEMENT_CODE_GUICHET') should be empty (we don't use them anymore)
-			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, 0, 0, $sourcetype);
+			$result = $bprev->create(getDolGlobalString('PRELEVEMENT_CODE_BANQUE'), getDolGlobalString('PRELEVEMENT_CODE_GUICHET'), $mode, $format, $executiondate, 0, $type, $toselect, 0, $sourcetype);
 			if ($result < 0) {
 				$mesg = '';
 
