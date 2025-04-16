@@ -289,7 +289,7 @@ foreach ($workflowcodes as $key => $params) {
 	if ($params['family'] == 'separator') {
 		if ($atleastoneline) {
 			print '</table>';
-			print '<br>';
+			print '<br>'."\n";
 
 			$oldfamily = '';
 			$atleastoneline = 0;
@@ -301,8 +301,10 @@ foreach ($workflowcodes as $key => $params) {
 	if ($oldfamily != $params['family']) {
 		// New group
 		if ($params['family'] == 'create') {
+			$headerfamily = $langs->trans("AutomaticCreation");
 			$header = $langs->trans("AutomaticCreation");
 		} elseif (preg_match('/classify_(.*)/', $params['family'], $reg)) {
+			$headerfamily = $langs->trans("AutomaticClassification");
 			$header = $langs->trans("AutomaticClassification");
 			if ($reg[1] == 'proposal') {
 				$header .= ' - '.$langs->trans('Proposal');
@@ -323,20 +325,31 @@ foreach ($workflowcodes as $key => $params) {
 				$header .= ' - '.$langs->trans('Shipment');
 			}
 		} elseif (preg_match('/link_(.*)/', $params['family'], $reg)) {
+			$headerfamily = $langs->trans("AutomaticLinking");
 			$header = $langs->trans("AutomaticLinking");
 			if ($reg[1] == 'ticket') {
 				$header .= ' - '.$langs->trans('Ticket');
 			}
 		} else {
+			$headerfamily = $langs->trans("Other");
 			$header = $langs->trans("Description");
 		}
 
+		if ($tableopen) {
+			print '</table><br>'."\n";
+		}
+
+		if ($oldfamily == '') {
+			print load_fiche_titre($headerfamily);
+		}
+
+		print "\n";
 		print '<table class="noborder centpercent">';
 		$tableopen = 1;
 
 		print '<tr class="liste_titre">';
 		print '<th>'.$header.'</th>';
-		print '<th class="right">'.$langs->trans("Status").'</th>';
+		print '<th class="right"></th>';
 		print '</tr>';
 
 		$oldfamily = $params['family'];

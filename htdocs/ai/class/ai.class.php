@@ -19,10 +19,10 @@
  */
 
 /**
-* \file    htdocs/ai/class/ai.class.php
-* \ingroup ai
-* \brief   Class files with common methods for Ai
-*/
+ * \file    htdocs/ai/class/ai.class.php
+ * \ingroup ai
+ * \brief   Class files with common methods for Ai
+ */
 
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
@@ -56,8 +56,9 @@ class Ai
 
 	const AI_DEFAULT_PROMPT_FOR_EMAIL = 'You are an email editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation';
-
+	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original to rephrase.';
 
 	/**
 	 * Constructor
@@ -165,6 +166,12 @@ class Ai
 			}
 			if (empty($prePrompt) && $function == 'texttranslation') {
 				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION;
+			}
+			if (empty($prePrompt) && $function == 'textsummarize') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE;
+			}
+			if (empty($prePrompt) && $function == 'textrephraser') {
+				$prePrompt = self::AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER;
 			}
 
 			$fullInstructions = $instructions.($postPrompt ? (preg_match('/[\.\!\?]$/', $instructions) ? '' : '.').' '.$postPrompt : '');

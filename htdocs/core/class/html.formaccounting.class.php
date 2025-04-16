@@ -673,15 +673,16 @@ class FormAccounting extends Form
 		$out .= '<td>';
 		$accounttoshow = length_accountg($accountAccounting);
 		if (empty($accounttoshow) || $accounttoshow == 'NotDefined') {
-			$out .= '<span class="error">'.$langs->trans('BankAccountNotDefined').'</span>';
+			// Could be ProductAccountNotDefined, VATAccountNotDefined, ...
+			$out .= '<span class="error">'.$langs->trans('AccountNotDefined').'</span>';
 		} else {
 			$out .= $accounttoshow;
 		}
 		$out .= '</td>';
 		$out .= '<td>'.$labelOperation.'</td>';
-		$out .= '<td>'.$paymentMode.'</td>';
-		$out .= '<td class="nowrap right">'.($amount >= 0 ? price($amount) : '').'</td>';
-		$out .= '<td class="nowrap right">'.($amount < 0 ? price(-$amount) : '').'</td>';
+		$out .= '<td class="center">'.$paymentMode.'</td>';
+		$out .= '<td class="nowraponall right amount">'.($amount >= 0 ? price($amount) : '').'</td>';
+		$out .= '<td class="nowraponall right amount">'.($amount < 0 ? price(-$amount) : '').'</td>';
 		$out .= '</tr>';
 
 		print $out;

@@ -765,7 +765,7 @@ if (empty($action) || $action == 'view') {
 				print '</td>';
 				$userstatic->id = $tabuser[$key]['id'];
 				$userstatic->name = $tabuser[$key]['name'];
-				print "<td>" . $bookkeepingstatic->accountingLabelForOperation($userstatic->getNomUrl(0, 'user'), '', $accountingaccount->label) . "</td>";
+				print "<td>" . $bookkeepingstatic->accountingLabelForOperation($userstatic->getNomUrl(0, 'user'), '', $accountingaccount->label, 1) . "</td>";
 				print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 				print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 				print "</tr>";
@@ -801,7 +801,7 @@ if (empty($action) || $action == 'view') {
 				print $accountoshow;
 			}
 			print '</td>';
-			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($userstatic->getNomUrl(0, 'user'), '', $langs->trans("SubledgerAccount")) . "</td>";
+			print "<td>" . $bookkeepingstatic->accountingLabelForOperation($userstatic->getNomUrl(0, 'user'), '', $langs->trans("SubledgerAccount"), 1) . "</td>";
 			print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 			print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 			print "</tr>";
@@ -841,7 +841,7 @@ if (empty($action) || $action == 'view') {
 					$tmpvatrate = (empty($def_tva[$key][$k]) ? (empty($arrayofvat[$key][$k]) ? '' : $arrayofvat[$key][$k]) : implode(', ', $def_tva[$key][$k]));
 					$labelvatrate = $langs->trans("Taxes").' '.$tmpvatrate.' %';
 					$labelvatrate .= ($numtax ? ' - Localtax '.$numtax : '');
-					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($userstatic->getNomUrl(0, 'user'), '', $labelvatrate) . "</td>";
+					print "<td>" . $bookkeepingstatic->accountingLabelForOperation($userstatic->getNomUrl(0, 'user'), '', $labelvatrate, 1) . "</td>";
 					print '<td class="right nowraponall amount">'.($mt >= 0 ? price($mt) : '')."</td>";
 					print '<td class="right nowraponall amount">'.($mt < 0 ? price(-$mt) : '')."</td>";
 					print "</tr>";

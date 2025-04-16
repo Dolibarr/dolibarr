@@ -406,13 +406,62 @@ if (empty($reshook)) {
 			if (!empty($listofbills)) {
 				$nbwithdrawrequestok = 0;
 				foreach ($listofbills as $aBill) {
-					$db->begin();
-					$result = $aBill->demande_prelevement($user, $aBill->resteapayer, 'bank-transfer', 'supplier_invoice');
-					if ($result > 0) {
-						$db->commit();
-						$nbwithdrawrequestok++;
+					// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
+					// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+					// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
+					// Step 2: Move field fk_... + status into prelevement_demande.
+					$pending = 0;
+					// Get pending requests open with no transfer receipt yet
+					$sql = "SELECT SUM(pfd.amount) as amount";
+					$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+					//if ($type == 'bank-transfer') {
+					$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $aBill->id);
+					//} else {
+					//	$sql .= " WHERE pfd.fk_facture = ".((int) $aBill->id);
+					//}
+					$sql .= " AND pfd.traite = 0";
+					//$sql .= " AND pfd.type = 'ban'";
+					$resql = $db->query($sql);
+					if ($resql) {
+						$obj = $db->fetch_object($resql);
+						if ($obj) {
+							$pending += (float) $obj->amount;
+						}
 					} else {
-						$db->rollback();
+						dol_print_error($db);
+					}
+					// Get pending request with a transfer receipt generated but not yet processed
+					$sqlPending = "SELECT SUM(pl.amount) as amount";
+					$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+					$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+					//if ($type == 'bank-transfer') {
+					$sqlPending .= " WHERE p.fk_facture_fourn = ".((int) $aBill->id);
+					//} else {
+					//	$sqlPending .= " WHERE p.fk_facture = ".((int) $aBill->id);
+					//}
+					$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+					$resPending = $db->query($sqlPending);
+					if ($resPending) {
+						if ($objPending = $db->fetch_object($resPending)) {
+							$pending += (float) $objPending->amount;
+						}
+					}
+					$db->free($resPending);
+
+					$requestAmount = $aBill->resteapayer - $pending;
+					if ($requestAmount > 0) {
+						$db->begin();
+						$result = $aBill->demande_prelevement($user, $requestAmount, 'bank-transfer', 'supplier_invoice');
+						if ($result > 0) {
+							$db->commit();
+							$nbwithdrawrequestok++;
+						} else {
+							$db->rollback();
+							setEventMessages($aBill->error, $aBill->errors, 'errors');
+						}
+					} else {
+						$aBill->error = 'WithdrawRequestErrorNilAmount';
+						$aBill->errors[] = $aBill->error;
 						setEventMessages($aBill->error, $aBill->errors, 'errors');
 					}
 				}

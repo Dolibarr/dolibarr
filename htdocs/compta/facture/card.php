@@ -110,6 +110,7 @@ $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origi
 $fac_rec = GETPOSTINT('fac_rec');
 $facid = GETPOSTINT('facid');
 $ref_client = GETPOSTINT('ref_client');
+$inputReasonId = GETPOSTINT('input_reason_id');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
 $selectedLines = GETPOST('toselect', 'array');
@@ -694,6 +695,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client'));
+	} elseif ($action == 'setdemandreason' && $usercancreate) {
+		$result = $object->setInputReason($inputReasonId);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOSTINT('idwarehouse');
@@ -852,6 +858,8 @@ if (empty($reshook)) {
 			$result = $object->setPaid($user, $close_code, $close_note);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$object->fetch($object->id);	// Reload properties
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -865,6 +873,8 @@ if (empty($reshook)) {
 			$result = $object->setCanceled($user, $close_code, $close_note);
 			if ($result < 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
+			} else {
+				$object->fetch($object->id);	// Reload properties
 			}
 		} else {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Reason")), null, 'errors');
@@ -1043,6 +1053,7 @@ if (empty($reshook)) {
 					// Set invoice as paid
 					$result = $object->setPaid($user);
 					if ($result >= 0) {
+						$object->fetch($object->id);	// Reload properties
 						$db->commit();
 					} else {
 						setEventMessages($object->error, $object->errors, 'errors');
@@ -1086,6 +1097,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$originentity = GETPOSTINT('originentity');
+		$object->demand_reason_id = $inputReasonId;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -1445,7 +1457,7 @@ if (empty($reshook)) {
 		}
 
 		// Standard or deposit invoice, not from a Predefined template invoice
-		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT || GETPOST('type') == Facture::TYPE_PROFORMA || (GETPOST('type') == Facture::TYPE_SITUATION && !GETPOST('situations'))) && GETPOST('fac_rec') <= 0) {
+		if ((GETPOST('type') == Facture::TYPE_STANDARD || GETPOST('type') == Facture::TYPE_DEPOSIT || GETPOST('type') == Facture::TYPE_PROFORMA || (GETPOST('type') == Facture::TYPE_SITUATION && GETPOSTINT('situations') < 0)) && GETPOST('fac_rec') <= 0) {
 			$typeamount = GETPOST('typedeposit', 'aZ09');
 			$valuestandardinvoice = price2num(str_replace('%', '', GETPOST('valuestandardinvoice', 'alpha')), 'MU');
 			$valuedeposit = price2num(str_replace('%', '', GETPOST('valuedeposit', 'alpha')), 'MU');
@@ -1986,7 +1998,7 @@ if (empty($reshook)) {
 		}
 
 		// Situation invoices
-		if (GETPOST('type') == Facture::TYPE_SITUATION && GETPOST('situations')) {
+		if (GETPOST('type') == Facture::TYPE_SITUATION && GETPOSTINT('situations') > 0) {
 			if (empty($dateinvoice)) {
 				$error++;
 				$mesg = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date"));
@@ -3408,6 +3420,9 @@ if ($action == 'create') {
 					$currency_tx 	= (!empty($expesrc->multicurrency_tx) ? $expesrc->multicurrency_tx : (!empty($soc->multicurrency_tx) ? $soc->multicurrency_tx : $objectsrc->multicurrency_tx));
 				}
 
+				// replicate input reason
+				$inputReasonId = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
+
 				//Replicate extrafields
 				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
@@ -3425,6 +3440,9 @@ if ($action == 'create') {
 					}
 				}
 
+				// replicate input reason
+				$inputReasonId = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
+
 				// Replicate extrafields
 				$objectsrc->fetch_optionals();
 				$object->array_options = $objectsrc->array_options;
@@ -3434,6 +3452,7 @@ if ($action == 'create') {
 		$cond_reglement_id 	= empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
+		$inputReasonId = empty($soc->demand_reason_id) ? $inputReasonId : $soc->demand_reason_id;
 
 		$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
@@ -4131,6 +4150,12 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Source / Channel - What trigger creation
+		print '<tr><td>'.$langs->trans('Source').'</td><td>';
+		print img_picto('', 'question', 'class="pictofixedwidth"');
+		$form->selectInputReason((string) $inputReasonId, 'input_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		print '</td></tr>';
+
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
 			$langs->load('projects');
@@ -4402,7 +4427,7 @@ if ($action == 'create') {
 		}
 	}
 
-	if ($object->paye) {
+	if ($object->paye || $object->status == $object::STATUS_CLOSED) {
 		$resteapayer = 0;
 	}
 	$resteapayeraffiche = $resteapayer;
@@ -4639,15 +4664,15 @@ if ($action == 'create') {
 		$close = array();
 		// Code
 		$i = 0;
-		$close[$i]['code'] = 'discount_vat'; // escompte
+		$close[$i]['code'] = $object::CLOSECODE_DISCOUNTVAT; // escompte
 		$i++;
-		$close[$i]['code'] = 'badcustomer';
+		$close[$i]['code'] = $object::CLOSECODE_BADDEBT;
 		$i++;
-		$close[$i]['code'] = 'bankcharge';
+		$close[$i]['code'] = $object::CLOSECODE_BANKCHARGE;
 		$i++;
-		$close[$i]['code'] = 'withholdingtax';
+		$close[$i]['code'] = $object::CLOSECODE_WITHHOLDINGTAX;
 		$i++;
-		$close[$i]['code'] = 'other';
+		$close[$i]['code'] = $object::CLOSECODE_OTHER;
 		$i++;
 		// Help
 		$i = 0;
@@ -4676,13 +4701,18 @@ if ($action == 'create') {
 		// arrayreasons[code]=reason
 		$arrayreasons = [];
 		foreach ($close as $key => $val) {
-			$arrayreasons[$close[$key]['code']] = $close[$key]['reason'];
+			$arrayreasons[$close[$key]['code']] = '<span class="small">'.$close[$key]['reason'].'</span>';
 		}
 
 		// Create a form table
-		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"), 0 => array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"), 'values' => $arrayreasons), 1 => array('type' => 'text', 'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'morecss' => 'minwidth300'));
+		$formquestion = array(
+			'text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),
+			0 => array('type' => 'radio', 'name' => 'close_code', 'label' => '', 'values' => $arrayreasons),
+			1 => array('type' => 'text', 'name' => 'close_note', 'moreattr' => 'placeholder = "'.$langs->trans("Comment").'"', 'value' => '', 'morecss' => 'minwidth300'),
+			2 => array('type' => 'separator')
+		);
 		// Incomplete payment. We ask if reason = discount or other
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 380, 600);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?facid='.$object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 400, 600);
 	}
 
 	// Confirmation of status abandoned
@@ -4949,6 +4979,17 @@ if ($action == 'create') {
 			}
 			print '</td></tr>';
 		}
+
+		// Source reason (why we have an invoice)
+		print '<tr><td>';
+		print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate);
+		print '</td><td class="valuefield">';
+		if ($action == 'editinput_reason') {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'input_reason_id', 1);
+		} else {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'none');
+		}
+		print '</td></tr>';
 
 		// Payment term
 		print '<tr><td>';

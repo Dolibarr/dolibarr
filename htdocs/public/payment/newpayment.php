@@ -1010,6 +1010,7 @@ if (isModEnabled('paybox')) {
 }
 if (isModEnabled('stripe')) {
 	print '<!-- STRIPE_LIVE = '.getDolGlobalString('STRIPE_LIVE').' -->'."\n";
+	print '<!-- STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = '.getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION').' -->'."\n";
 }
 print '<!-- urlok = '.$urlok.' -->'."\n";
 print '<!-- urlko = '.$urlko.' -->'."\n";
@@ -2368,7 +2369,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		print '<input type="hidden" name="fulltag" value="'.$FULLTAG.'">'."\n";
 		print '<input type="hidden" name="suffix" value="'.$suffix.'">'."\n";
 		print '<input type="hidden" name="securekey" value="'.$SECUREKEY.'">'."\n";
-		print '<input type="hidden" name="e" value="'.$entity.'" />';
+		print '<input type="hidden" name="e" value="'.$entity.'" />'."\n";
 		print '<input type="hidden" name="amount" value="'.$amount.'">'."\n";
 		print '<input type="hidden" name="currency" value="'.$currency.'">'."\n";
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbox').'" />';
@@ -2376,7 +2377,28 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOSTINT('thirdparty_id').'" />';
 		print '<input type="hidden" name="lang" value="'.$getpostlang.'">';
 
-		if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT')) {	// Use a SCA ready method
+		// Make some check on amount: We accept an amount that is different to allow to pay an existing invoice partially or
+		// to allow to pay a membership with open amount, but for a payment of an order, we have no reason to accept partial payment.
+		$checkamount = 1;
+		$tmptag = dolExplodeIntoArray($fulltag, '.', '=');
+		if (array_key_exists('ORD', $tmptag) && (int) $tmptag['ORD'] > 0) {
+			include_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+			$object = new Commande($db);
+			$result = $object->fetch((int) $tmptag['ORD']);
+			if ($result > 0) {
+				if ($object->total_ttc != $amount) {
+					$checkamount = 0;
+				}
+			} else {
+				$checkamount = 0;
+			}
+		}
+		if (!$checkamount) {
+			dol_syslog("Hack attempt detected", LOG_WARNING);
+			setEventMessages('Bad value for amount. Reported as a hack attempt.', null, 'errors');
+		}
+
+		if ($checkamount && (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') || getDolGlobalString('STRIPE_USE_NEW_CHECKOUT'))) {	// Use a SCA ready method
 			require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
 			$service = 'StripeLive';
@@ -2449,7 +2471,7 @@ if (preg_match('/^dopayment/', $action)) {			// If we chose/clicked on the payme
 
 		if (getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')) {
 			if (empty($paymentintent)) {
-				print '<center>'.$langs->trans("Error").'</center>';
+				print '<center>'.$langs->trans("Error").' - Failed to get PaymentIntent</center>';
 			} else {
 				print '<input type="hidden" name="paymentintent_id" value="'.$paymentintent->id.'">';
 				//$_SESSION["paymentintent_id"] = $paymentintent->id;
