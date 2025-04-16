@@ -12202,13 +12202,13 @@ class Form
 		}
 		$mainBtnFirst = getDolGlobalInt(MAIN_BUTTON_POSITION_FIRST_OR_LEFT);
 		
-		if(!$mainBtnFirst){
+		if($mainBtnFirst){
 			!empty($save_label) ? $buttons[] = $save : '';
 		}
 
 		!empty($cancel_label) ? $buttons[] = $cancel : '';
 
-		if($mainBtnFirst){
+		if(!$mainBtnFirst){
 			!empty($save_label) ? $buttons[] = $save : '';
 		}
 
