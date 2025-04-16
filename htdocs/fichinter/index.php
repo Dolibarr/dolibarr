@@ -120,18 +120,18 @@ if ($resql) {
 	}
 	$db->free($resql);
 
+	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 	/**
 	 * @var string $badgeStatus0
 	 * @var string $badgeStatus1
 	 * @var string $badgeStatus2
 	 * @var string $badgeStatus4
 	 */
-	include DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/theme_vars.inc.php';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover centpercent">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("Interventions").'</th></tr>'."\n";
-	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED);
+	$listofstatus = array(Fichinter::STATUS_DRAFT, Fichinter::STATUS_VALIDATED, Fichinter::STATUS_CLOSED);
 	if (getDolGlobalString('FICHINTER_CLASSIFY_BILLED')) {
 		$listofstatus[] = Fichinter::STATUS_BILLED;
 	}
@@ -144,6 +144,9 @@ if ($resql) {
 		}
 		if ($status == Fichinter::STATUS_VALIDATED) {
 			$colorseries[$status] = $badgeStatus1;
+		}
+		if ($status == Fichinter::STATUS_CLOSED) {
+			$colorseries[$status] = $badgeStatus2;
 		}
 		if ($status == Fichinter::STATUS_BILLED) {
 			$colorseries[$status] = $badgeStatus4;
