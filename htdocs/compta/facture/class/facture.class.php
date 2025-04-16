@@ -3004,7 +3004,7 @@ class Facture extends CommonInvoice
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
 			$sql .= " SET fk_input_reason = ".($inputReasonId > 0 ? $inputReasonId : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " WHERE rowid = ". (int) $this->id;
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$res = $this->db->query($sql);
@@ -3853,14 +3853,14 @@ class Facture extends CommonInvoice
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'facture/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filename LIKE '".$this->db->escape($this->ref)."%' AND filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".(int) $conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
 						$this->error = $this->db->lasterror();
 					}
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filepath = 'facture/".$this->db->escape($this->newref)."'";
-					$sql .= " WHERE filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".$conf->entity;
+					$sql .= " WHERE filepath = 'facture/".$this->db->escape($this->ref)."' and entity = ".(int) $conf->entity;
 					$resql = $this->db->query($sql);
 					if (!$resql) {
 						$error++;
