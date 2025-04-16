@@ -217,6 +217,54 @@ class Interventions extends DolibarrApi
 		return $this->fichinter->id;
 	}
 
+	/**
+	 * Update interventional general fields (won't touch lines of ficinter)
+	 *
+	 * @param 	int   	$id             	Id of fichinter to update
+	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string>	$request_data
+	 * @phpstan-param ?array<string,string>	$request_data
+	 * @return 	Object						Updated object
+	 */
+	public function put($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->fichinter->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Fichinter not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->fichinter->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->fichinter->array_options[$index] = $this->_checkValForAPI($field, $val, $this->fichinter);
+				}
+				continue;
+			}
+
+			$this->fichinter->$field = $this->_checkValForAPI($field, $value, $this->fichinter);
+		}
+
+		if ($this->fichinter->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($id);
+		} else {
+			throw new RestException(500, $this->fichinter->error);
+		}
+	}
 
 	/**
 	 * Get lines of an intervention
