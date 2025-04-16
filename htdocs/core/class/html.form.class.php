@@ -12200,7 +12200,7 @@ class Form
 		if (!empty($morebuttons)) {
 			$buttons[] = $morebuttons;
 		}
-		$mainBtnFirst = getDolGlobalInt(MAIN_BUTTON_POSITION_FIRST_OR_LEFT);
+		$mainBtnFirst = getDolGlobalInt('MAIN_BUTTON_POSITION_FIRST_OR_LEFT');
 
 		if ($mainBtnFirst) {
 			!empty($save_label) ? $buttons[] = $save : '';
