@@ -506,7 +506,7 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Protection
-		if ($this->statut == self::STATUS_VALIDATED) {
+		if ($this->status == self::STATUS_VALIDATED) {
 			dol_syslog(get_class($this)."::valid action abandoned: already validated", LOG_WARNING);
 			return 0;
 		}
@@ -667,7 +667,7 @@ class Commande extends CommonOrder
 		$error = 0;
 
 		// Protection
-		if ($this->statut <= self::STATUS_DRAFT && !getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
+		if ($this->status <= self::STATUS_DRAFT && !getDolGlobalInt('ORDER_REOPEN_TO_DRAFT')) {
 			return 0;
 		}
 
@@ -724,7 +724,7 @@ class Commande extends CommonOrder
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_DRAFT;
+				$this->statut = self::STATUS_DRAFT;	// deprecated
 				$this->status = self::STATUS_DRAFT;
 				$this->db->commit();
 				return 1;
@@ -753,7 +753,7 @@ class Commande extends CommonOrder
 		// phpcs:enable
 		$error = 0;
 
-		if ($this->statut != self::STATUS_CANCELED && $this->statut != self::STATUS_CLOSED) {
+		if ($this->status != self::STATUS_CANCELED && $this->status != self::STATUS_CLOSED) {
 			dol_syslog(get_class($this)."::set_reopen order has not status closed", LOG_WARNING);
 			return 0;
 		}
@@ -781,7 +781,8 @@ class Commande extends CommonOrder
 		}
 
 		if (!$error) {
-			$this->statut = self::STATUS_VALIDATED;
+			$this->statut = self::STATUS_VALIDATED;	// deprecated
+			$this->status = self::STATUS_VALIDATED;
 			$this->billed = 0;
 
 			$this->db->commit();
@@ -811,7 +812,7 @@ class Commande extends CommonOrder
 			|| (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && $user->hasRight('commande', 'order_advance', 'close')));
 
 		if ($usercanclose) {
-			if ($this->statut == self::STATUS_CLOSED) {
+			if ($this->status == self::STATUS_CLOSED) {
 				return 0;
 			}
 			$this->db->begin();
@@ -836,7 +837,8 @@ class Commande extends CommonOrder
 				}
 
 				if (!$error) {
-					$this->statut = self::STATUS_CLOSED;
+					$this->statut = self::STATUS_CLOSED;	// deprecated
+					$this->status = self::STATUS_CLOSED;
 
 					$this->db->commit();
 					return 1;
@@ -925,7 +927,8 @@ class Commande extends CommonOrder
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_CANCELED;
+				$this->statut = self::STATUS_CANCELED;	// deprecated
+				$this->status = self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
 			} else {
@@ -1290,15 +1293,16 @@ class Commande extends CommonOrder
 
 		$this->id = 0;
 		$this->ref = '';
-		$this->statut = self::STATUS_DRAFT;
+		$this->statut = self::STATUS_DRAFT;	// deprecated
+		$this->status = self::STATUS_DRAFT;
 
 		// Clear fields
-		$this->user_author_id     = $user->id;
+		$this->user_author_id = $user->id;
 		$this->user_validation_id = 0;
 		$this->date = dol_now();
 		$this->date_commande = dol_now();
-		$this->date_creation      = '';
-		$this->date_validation    = '';
+		$this->date_creation = '';
+		$this->date_validation = '';
 		if (!getDolGlobalString('MAIN_KEEP_REF_CUSTOMER_ON_CLONING')) {
 			$this->ref_client = '';
 			$this->ref_customer = '';
@@ -1568,7 +1572,7 @@ class Commande extends CommonOrder
 		$logtext .= ", date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit, origin=$origin, origin_id=$origin_id, pu_ht_devise=$pu_ht_devise, ref_ext=$ref_ext rang=$rang";
 		dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -1985,18 +1989,18 @@ class Commande extends CommonOrder
 				$this->fk_project = $obj->fk_project;
 				$this->project = null; // Clear if another value was already set by fetch_projet
 
-				$this->statut = $obj->status;
+				$this->statut = $obj->status;	// deprecated
 				$this->status = $obj->status;
 
 				$this->user_author_id = $obj->fk_user_author;
 				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_validation_id = $obj->fk_user_valid;
 				$this->user_modification_id = $obj->fk_user_modif;
-				$this->total_ht				= $obj->total_ht;
-				$this->total_tva			= $obj->total_tva;
-				$this->total_localtax1		= $obj->total_localtax1;
-				$this->total_localtax2		= $obj->total_localtax2;
-				$this->total_ttc			= $obj->total_ttc;
+				$this->total_ht = $obj->total_ht;
+				$this->total_tva = $obj->total_tva;
+				$this->total_localtax1 = $obj->total_localtax1;
+				$this->total_localtax2 = $obj->total_localtax2;
+				$this->total_ttc = $obj->total_ttc;
 				$this->date = $this->db->jdate($obj->date_commande);
 				$this->date_commande		= $this->db->jdate($obj->date_commande);
 				$this->date_creation		= $this->db->jdate($obj->date_creation);
@@ -2427,7 +2431,7 @@ class Commande extends CommonOrder
 	 */
 	public function deleteLine($user = null, $lineid = 0, $id = 0)
 	{
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			$this->db->begin();
 
 			// Delete line
@@ -2766,7 +2770,7 @@ class Commande extends CommonOrder
 		global $user;
 
 		dol_syslog('Commande::availability('.$availability_id.')');
-		if ($this->statut >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2808,7 +2812,7 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'Command status do not meet requirement '.$this->statut;
+			$error_str = 'Command status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -2830,7 +2834,7 @@ class Commande extends CommonOrder
 		global $user;
 
 		dol_syslog('Commande::demand_reason('.$demand_reason_id.')');
-		if ($this->statut >= self::STATUS_DRAFT) {
+		if ($this->status >= self::STATUS_DRAFT) {
 			$error = 0;
 
 			$this->db->begin();
@@ -2872,7 +2876,7 @@ class Commande extends CommonOrder
 				return -1 * $error;
 			}
 		} else {
-			$error_str = 'order status do not meet requirement '.$this->statut;
+			$error_str = 'order status do not meet requirement '.$this->status;
 			dol_syslog(__METHOD__.$error_str, LOG_ERR);
 			$this->error = $error_str;
 			$this->errors[] = $this->error;
@@ -3082,7 +3086,7 @@ class Commande extends CommonOrder
 		dol_syslog(get_class($this)."::updateline id=$rowid, desc=$desc, pu=$pu, qty=$qty, remise_percent=$remise_percent, txtva=$txtva, txlocaltax1=$txlocaltax1, txlocaltax2=$txlocaltax2, price_base_type=$price_base_type, info_bits=$info_bits, date_start=$date_start, date_end=$date_end, type=$type, fk_parent_line=$fk_parent_line, pa_ht=$pa_ht, special_code=$special_code, ref_ext=$ref_ext");
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-		if ($this->statut == Commande::STATUS_DRAFT) {
+		if ($this->status == Commande::STATUS_DRAFT) {
 			// Clean parameters
 			if (empty($qty)) {
 				$qty = 0;
@@ -3344,7 +3348,7 @@ class Commande extends CommonOrder
 		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
 		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
 		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->statut) ? $this->statut : "null").",";
+		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
 		$sql .= " fk_user_modif=".(isset($user->id) ? $user->id : "null").",";
 		$sql .= " fk_user_valid=".((isset($this->user_validation_id) && $this->user_validation_id > 0) ? $this->user_validation_id : "null").",";
 		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
@@ -3662,7 +3666,7 @@ class Commande extends CommonOrder
 	 */
 	public function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->statut, $this->billed, $mode);
+		return $this->LibStatut($this->status, $this->billed, $mode);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -3755,7 +3759,7 @@ class Commande extends CommonOrder
 
 		if ($user->hasRight('commande', 'lire')) {
 			$datas['picto'] = img_picto('', $this->picto, '', 0, 0, 0, '', 'paddingrightonly').'<u>'.$langs->trans("Order").'</u>';
-			if (isset($this->statut)) {
+			if (isset($this->status)) {
 				$datas['status'] = ' '.$this->getLibStatut(5);
 			}
 			$datas['Ref'] = '<br><b>'.$langs->trans('Ref').':</b> '.$this->ref;
@@ -4045,9 +4049,9 @@ class Commande extends CommonOrder
 
 			$this->lines[$xnbp] = $line;
 
-			$this->total_ht       += $line->total_ht;
-			$this->total_tva      += $line->total_tva;
-			$this->total_ttc      += $line->total_ttc;
+			$this->total_ht += $line->total_ht;
+			$this->total_tva += $line->total_tva;
+			$this->total_ttc += $line->total_ttc;
 
 			$xnbp++;
 		}
@@ -4179,7 +4183,7 @@ class Commande extends CommonOrder
 	{
 		global $conf;
 
-		if (!($this->statut > Commande::STATUS_DRAFT && $this->statut < Commande::STATUS_CLOSED)) {
+		if (!($this->status > Commande::STATUS_DRAFT && $this->status < Commande::STATUS_CLOSED)) {
 			return false; // Never late if not inside this status range
 		}
 
