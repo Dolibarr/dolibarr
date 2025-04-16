@@ -637,12 +637,6 @@ parameters:
 			path: ../../../htdocs/accountancy/customer/list.php
 
 		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: ../../../htdocs/accountancy/customer/list.php
-
-		-
 			message: '#^Right side of && is always true\.$#'
 			identifier: booleanAnd.rightAlwaysTrue
 			count: 1
@@ -675,12 +669,6 @@ parameters:
 		-
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
-			count: 1
-			path: ../../../htdocs/accountancy/expensereport/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/accountancy/expensereport/list.php
 
@@ -802,12 +790,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
-			path: ../../../htdocs/accountancy/supplier/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/accountancy/supplier/list.php
 
 		-
@@ -2102,12 +2084,6 @@ parameters:
 
 		-
 			message: '#^Loose comparison using \=\= between 0 and 9 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/asset/class/asset.class.php
-
-		-
-			message: '#^Loose comparison using \=\= between 9 and 0 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
 			count: 1
 			path: ../../../htdocs/asset/class/asset.class.php
@@ -15159,12 +15135,6 @@ parameters:
 		-
 			message: '#^Call to function is_numeric\(\) with float will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/fourn/facture/paiement.php
-
-		-
-			message: '#^Variable \$moreforfilter might not be defined\.$#'
-			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/fourn/facture/paiement.php
 
