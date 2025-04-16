@@ -7258,12 +7258,20 @@ function price2num($amount, $rounding = '', $option = 0)
 		}
 		//print "QQ".$amount."<br>\n";
 
-		// Now make replace (the main goal of function)
+		// Now make replaceents (the main goal of function)
+
 		if ($thousand != ',' && $thousand != '.') {
 			// Accept the two types of decimal points french users (i.e., using ' ' for thousands)
 
-			// Find the integral and decimal parts.
-			// We require that the decimal point only appears once.
+			// REGEX: Find the integral and decimal parts.
+			//
+			// We require that the decimal point only appears once in $amount.
+			// The regex `/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u` can be broken down as follows:
+			// - `(?<int>[^,]*,|[^.]*\.)` is any accepted sequence up to the last potential decimal point '.' or ',' and named `int`.
+			//   It covers two cases:
+			//   - `[^,]*,`: Any sequence of characters that is not ',' with ',' accepted as the decimal point (from start of string because of earlier `^`);
+			//   - `[^.]*\.`: Any sequence of characters that is not a '.' with '.' accepted as the decimal point (from start of string.
+			// - `(?<dec>[^.,]*)`: The sequence after the character accepted as the decimal point, not including it.
 			if (preg_match('/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u', $amount, $matches)) {
 				$intPart = $matches['int'];
 				$decPart = $matches['dec'];

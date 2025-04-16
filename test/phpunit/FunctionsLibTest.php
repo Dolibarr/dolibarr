@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1613,7 +1613,9 @@ class FunctionsLibTest extends CommonClassTest
 
 		// Text can't be converted
 		$this->assertEquals('12.4', price2num('12.4$'));
-		$this->assertEquals('12.4', price2num('12r.4$'));
+
+		$this->assertEquals('1.023210.00', price2num('1.023,210.00'), 'Test invalid 1.023,210.00 with en_US');
+		$this->assertEquals('1023.21000', price2num('1,023.210,00'), 'Test invalid 1,023.210,00 with en_US');
 
 		// For spanish language
 		$newlangs2 = new Translate('', $conf);
