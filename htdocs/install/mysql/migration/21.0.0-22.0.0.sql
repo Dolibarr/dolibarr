@@ -262,3 +262,5 @@ CREATE TABLE llx_webhook_history(
 	import_key varchar(14),
 	status integer DEFAULT 1 NOT NULL
 ) ENGINE=innodb;
+
+ALTER TABLE llx_societe_rib ADD COLUMN cci varchar(100) after iban_prefix;    -- Interbank code for some countries like Chile
