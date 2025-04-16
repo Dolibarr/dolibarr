@@ -861,22 +861,6 @@ class pdf_balance extends ModelePdfAccountancy
 	}
 
 	/**
-	 * @param TCPDF $pdf
-	 * @param int $page
-	 * @param int|float $y
-	 * @return void
-	 */
-	private function addDashLine(TCPDF $pdf, int $page, $y)
-	{
-		// Add line
-		$pdf->setPage($page);
-		$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
-		//$pdf->SetDrawColor(190,190,200);
-		$pdf->line($this->marge_gauche, $y, $this->page_largeur - $this->marge_droite, $y);
-		$pdf->SetLineStyle(array('dash' => 0));
-	}
-
-	/**
 	 * Add the total accountancy group line to pdf
 	 * @param TCPDF $pdf TCPDF object
 	 * @param int|float $curY Current line Y
@@ -889,7 +873,7 @@ class pdf_balance extends ModelePdfAccountancy
 	 * @param bool $uppercase
 	 * @return void
 	 */
-	private function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
+	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();

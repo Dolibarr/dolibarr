@@ -40,6 +40,21 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonnumrefgenerator.class.php';
  */
 abstract class ModelePdfAccountancy extends CommonDocGenerator
 {
+	/**
+	 * @var int $fromDate Start timestamp
+	 */
+	public $fromDate;
+
+	/**
+	 * @var int $toDate Start timestamp
+	 */
+	public $toDate;
+
+	/**
+	 * @var array $verticalLinesSpacesCoordinates Array to store vertical coordinates where vertical column lines should be avoid
+	 */
+	public $verticalLinesSpacesCoordinates = [];
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *  Return list of active generation modules
@@ -73,6 +88,199 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	 */
 	abstract public function write_file(BookKeeping $object, Translate $outputlangs, string $srctemplatepath = '', bool $directDownload = true);
 	// phpcs:enable
+
+	/**
+	 * @param TCPDF $pdf
+	 * @param int $page
+	 * @param int|float $y
+	 * @return void
+	 */
+	protected function addDashLine(TCPDF $pdf, int $page, $y)
+	{
+		// Add line
+		$pdf->setPage($page);
+		$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
+		//$pdf->SetDrawColor(190,190,200);
+		$pdf->line($this->marge_gauche, $y, $this->page_largeur - $this->marge_droite, $y);
+		$pdf->SetLineStyle(array('dash' => 0));
+	}
+
+	/**
+	 * Add a total line to pdf
+	 * @param TCPDF $pdf TCPDF object
+	 * @param int|float $curY Current line Y
+	 * @param int|float $nexY Next line Y
+	 * @param int|float $default_font_size Default font size
+	 * @param string $label Line label
+	 * @param int|float $tab_top_newpage
+	 * @param int|float|string $debit
+	 * @param int|float|string $credit
+	 * @param bool $uppercase
+	 * @return void
+	 */
+	abstract protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true);
+
+	/**
+	 * Add the total accountancy group line to pdf
+	 * @param TCPDF $pdf TCPDF object
+	 * @param int|float $curY Current line Y
+	 * @param int|float $nexY Next line Y
+	 * @param int|float $default_font_size Default font size
+	 * @param string $columnKey Column where to place title
+	 * @param string $label Line label
+	 * @param int|float $tab_top_newpage
+	 * @param bool $uppercase
+	 * @return void
+	 */
+	protected function addTitleLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $columnKey, string $label, $tab_top_newpage, bool $uppercase = true)
+	{
+		$curY = $nexY;
+		$pageposbefore = $pdf->getPage();
+		$pdf->SetFont('', 'B', $default_font_size);
+		$pdf->startTransaction();
+
+		if ($uppercase) {
+			$label = mb_strtoupper($label);
+		}
+		$this->printTitleContent($pdf, $curY, $columnKey, $label);
+
+		$pageposafter = $pdf->getPage();
+		if ($pageposafter > $pageposbefore) {    // There is a pagebreak
+			$pdf->rollbackTransaction(true);
+
+			$pdf->AddPage('', '', true);
+			$pdf->setPage($pageposafter);
+			$curY = $tab_top_newpage + $this->tabTitleHeight;
+			$this->printTitleContent($pdf, $curY, $columnKey, $label);
+		}
+
+		$nexY = $pdf->GetY();
+
+		$this->verticalLinesSpacesCoordinates[$pdf->getPage()][] = ['start' => $curY, 'end' => $nexY];
+		if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
+			$this->addDashLine($pdf, $pageposafter, $nexY);
+		}
+	}
+
+	/**
+	 * Print a title using the colKey start position, and the end of table as end position
+	 * @param $pdf
+	 * @param $colKey
+	 * @param $curY
+	 * @param $columnText
+	 * @return void
+	 */
+	protected function printTitleContent($pdf, $curY, $colKey, $columnText) {
+		$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set current position
+		$colDef = $this->cols[$colKey];
+		// save current cell padding
+		$curentCellPaddinds = $pdf->getCellPaddings();
+		// set cell padding with column content definition
+		$pdf->setCellPaddings(isset($colDef['content']['padding'][3]) ? $colDef['content']['padding'][3] : 0, isset($colDef['content']['padding'][0]) ? $colDef['content']['padding'][0] : 0, isset($colDef['content']['padding'][1]) ? $colDef['content']['padding'][1] : 0, isset($colDef['content']['padding'][2]) ? $colDef['content']['padding'][2] : 0);
+		$pdf->writeHTMLCell($this->page_largeur - $this->marge_droite, 2, isset($colDef['xStartPos']) ? $colDef['xStartPos'] : 0, $curY, $columnText, 0, 1, false, true, $colDef['content']['align']);
+		$this->setAfterColsLinePositionsData($colKey, $pdf->GetY(), $pdf->getPage());
+
+		// restore cell padding
+		$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
+	}
+
+	/**
+	 * Print standard column content
+	 *
+	 * @param TCPDI|TCPDF	$pdf            Pdf object
+	 * @param float			$tab_top        Tab top position
+	 * @param float			$tab_height     Default tab height
+	 * @param Translate		$outputlangs    Output language
+	 * @param int			$hidetop        Hide top
+	 * @return float						Height of col tab titles
+	 */
+	public function pdfTabTitles(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0)
+	{
+		global $hookmanager, $conf;
+
+		foreach ($this->cols as $colKey => $colDef) {
+			$parameters = array(
+				'colKey' => $colKey,
+				'pdf' => $pdf,
+				'outputlangs' => $outputlangs,
+				'tab_top' => $tab_top,
+				'tab_height' => $tab_height,
+				'hidetop' => $hidetop
+			);
+
+			$reshook = $hookmanager->executeHooks('pdfTabTitles', $parameters, $this); // Note that $object may have been modified by hook
+			if ($reshook < 0) {
+				setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+			} elseif (empty($reshook)) {
+				if (!$this->getColumnStatus($colKey)) {
+					continue;
+				}
+
+				// get title label
+				$colDef['title']['label'] = !empty($colDef['title']['label']) ? $colDef['title']['label'] : $outputlangs->transnoentities($colDef['title']['textkey']);
+
+				// Add column separator
+				if (!empty($colDef['border-left']) && isset($colDef['xStartPos'])) {
+					// Use title coordinates if exists
+					if (!empty($this->verticalLinesSpacesCoordinates[$pdf->getPage()])) {
+						$coordinates = $this->verticalLinesSpacesCoordinates[$pdf->getPage()];
+						array_unshift($coordinates, ['start' => null, 'end' => $tab_top]);
+						$coordinates[] = ['start' => $tab_top + $tab_height, 'end' => null];
+
+						foreach ($coordinates as $key => $yCoordinates) {
+							if (!isset($coordinates[$key-1]['end'])) {
+								continue;
+							}
+							$pdf->line($colDef['xStartPos'], $coordinates[$key-1]['end'], $colDef['xStartPos'], $yCoordinates['start']);
+						}
+
+					} else {
+						$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+					}
+				}
+
+				if (empty($hidetop)) {
+					// save current cell padding
+					$curentCellPaddinds = $pdf->getCellPaddings();
+
+					// Add space for lines (more if we need to show a second alternative language)
+					global $outputlangsbis;
+					if (is_object($outputlangsbis)) {
+						// set cell padding with column title definition
+						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], 0.5);
+					} else {
+						// set cell padding with column title definition
+						$pdf->setCellPaddings($colDef['title']['padding'][3], $colDef['title']['padding'][0], $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
+					}
+					if (isset($colDef['title']['align'])) {
+						$align = $colDef['title']['align'];
+					} else {
+						$align = '';
+					}
+					$pdf->SetXY($colDef['xStartPos'], $tab_top);
+					$textWidth = $colDef['width'];
+					$pdf->MultiCell($textWidth, 2, $colDef['title']['label'], '', $align);
+
+					// Add variant of translation if $outputlangsbis is an object
+					if (is_object($outputlangsbis) && trim($colDef['title']['label'])) {
+						$pdf->setCellPaddings($colDef['title']['padding'][3], 0, $colDef['title']['padding'][1], $colDef['title']['padding'][2]);
+						$pdf->SetXY($colDef['xStartPos'], $pdf->GetY());
+						$textbis = $outputlangsbis->transnoentities($colDef['title']['textkey']);
+						$pdf->MultiCell($textWidth, 2, $textbis, '', $align);
+					}
+
+					$this->tabTitleHeight = max($pdf->GetY() - $tab_top, $this->tabTitleHeight);
+
+					// restore cell padding
+					$pdf->setCellPaddings($curentCellPaddinds['L'], $curentCellPaddinds['T'], $curentCellPaddinds['R'], $curentCellPaddinds['B']);
+				}
+			}
+		}
+
+		return $this->tabTitleHeight;
+	}
+
+
 }
 
 /**

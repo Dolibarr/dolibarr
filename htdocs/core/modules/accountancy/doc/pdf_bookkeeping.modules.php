@@ -306,7 +306,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 						$curY,
 						$nexY,
 						$default_font_size,
-						"{$langs->trans('Total')} {$object->lines[$i]->code_journal}",
+						"{$langs->trans('Total')} {$journal}",
 						$tab_top_newpage,
 						$journalDebit,
 						$journalCredit
@@ -319,6 +319,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 					$curY,
 					$nexY,
 					$default_font_size,
+					'piece_num',
 					"{$langs->trans('Journal')} {$object->lines[$i]->code_journal}",
 					$tab_top_newpage
 				);
@@ -488,7 +489,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		}
 
 		// Add total line for last group
-		if (!empty($accountingAccount->pcg_type)) {
+		if (!empty($journal)) {
 			// Add line
 			if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
 				$this->addDashLine($pdf, $pdf->getPage(), $nexY);
@@ -498,7 +499,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 				$curY,
 				$nexY,
 				$default_font_size,
-				$langs->trans('Total') . ' ' . $langs->trans('AccountancyGroup' . $accountingAccount->pcg_type),
+				"{$langs->trans('Total')} {$journal}",
 				$tab_top_newpage,
 				$journalDebit,
 				$journalCredit
@@ -903,22 +904,6 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	}
 
 	/**
-	 * @param TCPDF $pdf
-	 * @param int $page
-	 * @param int|float $y
-	 * @return void
-	 */
-	private function addDashLine(TCPDF $pdf, int $page, $y)
-	{
-		// Add line
-		$pdf->setPage($page);
-		$pdf->SetLineStyle(array('dash' => '1,1', 'color' => array(80, 80, 80)));
-		//$pdf->SetDrawColor(190,190,200);
-		$pdf->line($this->marge_gauche, $y, $this->page_largeur - $this->marge_droite, $y);
-		$pdf->SetLineStyle(array('dash' => 0));
-	}
-
-	/**
 	 * Add the total accountancy group line to pdf
 	 * @param TCPDF $pdf TCPDF object
 	 * @param int|float $curY Current line Y
@@ -931,7 +916,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	 * @param bool $uppercase
 	 * @return void
 	 */
-	private function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
+	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
 	{
 		$curY = $nexY;
 		$pageposbefore = $pdf->getPage();
@@ -971,45 +956,6 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$this->printStdColumnContent($pdf, $curY, 'balance', $soldeText);
 			$nexY = max($pdf->GetY(), $nexY);
 		}
-
-		if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
-			$this->addDashLine($pdf, $pageposafter, $nexY);
-		}
-	}
-	/**
-	 * Add the total accountancy group line to pdf
-	 * @param TCPDF $pdf TCPDF object
-	 * @param int|float $curY Current line Y
-	 * @param int|float $nexY Next line Y
-	 * @param int|float $default_font_size Default font size
-	 * @param string $label Line label
-	 * @param int|float $tab_top_newpage
-	 * @param bool $uppercase
-	 * @return void
-	 */
-	private function addTitleLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, bool $uppercase = true)
-	{
-		$curY = $nexY;
-		$pageposbefore = $pdf->getPage();
-		$pdf->SetFont('', 'B', $default_font_size);
-		$pdf->startTransaction();
-
-		if ($uppercase) {
-			$label = mb_strtoupper($label);
-		}
-		$this->printStdColumnContent($pdf, $curY, 'label', $label);
-
-		$pageposafter = $pdf->getPage();
-		if ($pageposafter > $pageposbefore) {    // There is a pagebreak
-			$pdf->rollbackTransaction(true);
-
-			$pdf->AddPage('', '', true);
-			$pdf->setPage($pageposafter);
-			$curY = $tab_top_newpage + $this->tabTitleHeight;
-			$this->printStdColumnContent($pdf, $curY, 'label', $label);
-		}
-
-		$nexY = $pdf->GetY();
 
 		if (getDolGlobalString('MAIN_PDF_DASH_BETWEEN_LINES')) {
 			$this->addDashLine($pdf, $pageposafter, $nexY);
