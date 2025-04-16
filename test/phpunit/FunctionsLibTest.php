@@ -1631,24 +1631,27 @@ class FunctionsLibTest extends CommonClassTest
 		// Test with 3 chars after . or ,
 		// If a . is used and there is 3 digits after, it is a thousand separator
 		$this->assertEquals(1234, price2num('1.234', '', 2), 'Test 1.234 give 1234 with spanish language if user input');
-		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1234 with spanish language if user input');
+		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1.234 with spanish language if user input');
 		$this->assertEquals(1234, price2num('1 234', '', 2), 'Test 1 234 give 1234 with spanish language if user input');
-		$this->assertEquals(-1.234, price2num('-1.234'), 'Test 1.234 give 1.234 with spanish language');
-		$this->assertEquals(-1.234, price2num('-1,234'), 'Test 1,234 give 1234 with spanish language');
-		$this->assertEquals(-1234, price2num('-1 234'), 'Test -1 234 give 1234 with spanish language');
-		$this->assertEquals(1111.234, price2num('1.111,234'), 'Test 1.111,234 give 1111.234 with spanish language');
-		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
+		$this->assertEquals(-1.234, price2num('-1.234'), 'Test -1.234 give 1.234 with spanish language and not user input (this differs when user input)');
+		$this->assertEquals(-1.234, price2num('-1,234'), 'Test -1,234 give 1234 with spanish language and not user input');
+		$this->assertEquals(-1234, price2num('-1 234'), 'Test -1 234 give 1234 with spanish language and not user input');
+		$this->assertEquals(1111.234, price2num('1.111,234'), 'Test 1.111,234 give 1111.234 with spanish language and not user input');
+		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language and not user input');
 		$this->assertEquals(21500123, price2num('21500.123', 0, 2), 'Test 21500.123 give 21500123 with spanish language if user input');
-		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');
-		$this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language');
-		// Test with 2 digits
-		$this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language');
-		$this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language');
+		$this->assertEquals(21500123, price2num('21 500.123', 0, 2), 'Test 21 500.123 give 21500123 with spanish language if user input');
+		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language and not user input');
+		$this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language and not user input');
+		// Test with 2 digits (we can guess that , is not a thousand separator)
+		$this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language and not user input');
+		$this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language and not user input');
 		// Test with 3 digits
 		$this->assertEquals(12123, price2num('12.123', '', 2), 'Test 12.123 give 12123 with spanish language if user input');
 		$this->assertEquals(12.123, price2num('12,123', '', 2), 'Test 12,123 give 12.123 with spanish language if user input');
-		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language');
-		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language');
+		$this->assertEquals(1012.123, price2num('1.012,123', '', 2), 'Test 1.012,123 give 1012.123 with spanish language if user input');
+		$this->assertEquals(1012.123, price2num('1 012,123', '', 2), 'Test 1 012,123 give 1012.123 with spanish language if user input');
+		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language and not user input');
+		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language and not user input');
 
 		// For french language SeparatorThousand=Space and SeparatorDecimal=,
 		$newlangs3 = new Translate('', $conf);
