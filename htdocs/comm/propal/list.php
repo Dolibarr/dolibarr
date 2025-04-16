@@ -53,7 +53,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 }
 if (isModEnabled('category')) {
@@ -575,7 +575,7 @@ $formmargin = null;
 if (isModEnabled('margin')) {
 	$formmargin = new FormMargin($db);
 }
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$commandestatic = new Commande($db);
 }
 $companystatic = new Societe($db);
@@ -592,7 +592,7 @@ if ($search_all !== '') {
 }
 $sql .= ' s.rowid as socid, s.nom as name, s.name_alias as alias, s.email, s.phone, s.fax , s.address, s.town, s.zip, s.fk_pays, s.client, s.fournisseur, s.code_client,';
 $sql .= " typent.code as typent_code,";
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$sql .= ' elt.fk_target as fk_commande, c.ref as cmd_ref,';
 }
 $sql .= " ava.rowid as availability,";
@@ -635,7 +635,7 @@ if ($search_all) {
 $sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON p.fk_user_author = u.rowid';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet as pr ON pr.rowid = p.fk_projet";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_availability as ava on (ava.rowid = p.fk_availability)";
-if (isModEnabled('commande')) {
+if (isModEnabled('order')) {
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as elt on (p.rowid = elt.fk_source AND elt.sourcetype='propal' AND elt.targettype='commande')";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c on (elt.fk_target = c.rowid)";
 }
@@ -1117,7 +1117,7 @@ if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 if ($search_commande) {
-	$param .= '&serach_commande='.urlencode((string) ($search_commande));
+	$param .= '&search_commande='.urlencode((string) ($search_commande));
 }
 
 // Add $param from extra fields
@@ -2087,7 +2087,7 @@ while ($i < $imaxinloop) {
 		// Commande
 		if (!empty($arrayfields['c.ref']['checked'])) {
 			print '<td class="tdoverflowmax150">';
-			if (!empty($obj->fk_commande)) {
+			if (isModEnabled('order') && !empty($obj->fk_commande)) {
 				$commandestatic->fetch($obj->fk_commande);
 				print $commandestatic->getNomURL(1);
 			} else {
