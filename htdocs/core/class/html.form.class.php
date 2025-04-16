@@ -12197,13 +12197,12 @@ class Form
 			'label_key' => 'Cancel',
 		);
 
-		!empty($save_label) ? $buttons[] = $save : '';
-
 		if (!empty($morebuttons)) {
 			$buttons[] = $morebuttons;
 		}
 
 		!empty($cancel_label) ? $buttons[] = $cancel : '';
+		!empty($save_label) ? $buttons[] = $save : '';
 
 		$retstring = $withoutdiv ? '' : '<div class="center">';
 
