@@ -118,6 +118,7 @@ $search_multicurrency_montant_ttc = GETPOST('search_multicurrency_montant_ttc', 
 $search_status = GETPOST('search_status', 'intcomma');
 $search_paymentmode = GETPOST('search_paymentmode', 'intcomma');
 $search_paymentterms = GETPOST('search_paymentterms', 'intcomma');
+$search_fk_input_reason = GETPOSTINT('search_fk_input_reason');
 $search_module_source = GETPOST('search_module_source', 'alpha');
 $search_pos_source = GETPOST('search_pos_source', 'alpha');
 $search_town = GETPOST('search_town', 'alpha');
@@ -246,6 +247,7 @@ $arrayfields = array(
 	'typent.code' => array('label' => "ThirdPartyType", 'checked' => $checkedtypetiers, 'position' => 75),
 	'f.fk_mode_reglement' => array('label' => "PaymentMode", 'checked' => '1', 'position' => 80),
 	'f.fk_cond_reglement' => array('label' => "PaymentConditionsShort", 'checked' => '1', 'position' => 85),
+	'f.fk_input_reason' => array('label' => "Source", 'checked' => 0, 'enabled' => 1, 'position' => 88),
 	'f.module_source' => array('label' => "POSModule", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 90),
 	'f.pos_source' => array('label' => "POSTerminal", 'langfile' => 'cashdesk', 'checked' => ($contextpage == 'poslist' ? '1' : '0'), 'enabled' => "(isModEnabled('cashdesk') || isModEnabled('takepos') || getDolGlobalInt('INVOICE_SHOW_POS'))", 'position' => 91),
 	'f.total_ht' => array('label' => "AmountHT", 'checked' => '1', 'position' => 95),
@@ -387,6 +389,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter', 
 	$search_status = '';
 	$search_paymentmode = '';
 	$search_paymentterms = '';
+	$search_fk_input_reason = '';
 	$search_module_source = '';
 	$search_pos_source = '';
 	$search_town = '';
@@ -724,7 +727,9 @@ $sql .= ' f.rowid as id, f.ref, f.ref_client, f.fk_soc, f.type, f.subtype, f.not
 $sql .= ' f.localtax1 as total_localtax1, f.localtax2 as total_localtax2,';
 $sql .= ' f.fk_user_author,';
 $sql .= ' f.fk_multicurrency, f.multicurrency_code, f.multicurrency_tx, f.multicurrency_total_ht, f.multicurrency_total_tva as multicurrency_total_vat, f.multicurrency_total_ttc,';
-$sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite, f.module_source, f.pos_source,';
+$sql .= ' f.datef, f.date_valid, f.date_lim_reglement as datelimite,';
+$sql .= " f.fk_input_reason,";
+$sql .= " f.module_source, f.pos_source,";
 $sql .= ' f.paye as paye, f.fk_statut, f.import_key, f.close_code,';
 $sql .= ' f.datec as date_creation, f.tms as date_modification, f.date_closing as date_closing,';
 $sql .= ' f.retained_warranty, f.retained_warranty_date_limit, f.situation_final, f.situation_cycle_ref, f.situation_counter,';
@@ -920,6 +925,9 @@ if ($search_paymentmode > 0) {
 }
 if ($search_paymentterms > 0) {
 	$sql .= " AND f.fk_cond_reglement = ".((int) $search_paymentterms);
+}
+if ($search_fk_input_reason > 0) {
+	$sql .= " AND f.fk_input_reason = ".((int) $search_fk_input_reason);
 }
 if ($search_module_source) {
 	$sql .= natural_search("f.module_source", $search_module_source);
@@ -1293,6 +1301,9 @@ if ($search_paymentmode > 0) {
 if ($search_paymentterms > 0) {
 	$param .= '&search_paymentterms='.urlencode((string) ($search_paymentterms));
 }
+if ($search_fk_input_reason > 0) {
+	$param .= '&search_fk_input_reason='.urlencode((string) $search_fk_input_reason);
+}
 if ($search_module_source) {
 	$param .= '&search_module_source='.urlencode($search_module_source);
 }
@@ -1622,6 +1633,12 @@ if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print $form->getSelectConditionsPaiements((int) $search_paymentterms, 'search_paymentterms', -1, 1, 1, 'minwidth100 maxwidth100');
 	print '</td>';
 }
+// Channel
+if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
+	print '<td class="liste_titre">';
+	$form->selectInputReason($search_fk_input_reason, 'search_fk_input_reason', '', 1, '', 1);
+	print '</td>';
+}
 // Module source
 if (!empty($arrayfields['f.module_source']['checked'])) {
 	print '<td class="liste_titre">';
@@ -1907,6 +1924,9 @@ if (!empty($arrayfields['f.fk_mode_reglement']['checked'])) {
 if (!empty($arrayfields['f.fk_cond_reglement']['checked'])) {
 	print_liste_field_titre($arrayfields['f.fk_cond_reglement']['label'], $_SERVER["PHP_SELF"], "f.fk_cond_reglement", "", $param, "", $sortfield, $sortorder);
 	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
+	print_liste_field_titre($arrayfields['f.fk_input_reason']['label'], $_SERVER['PHP_SELF'], 'f.fk_input_reason', '', $param, '', $sortfield, $sortorder);
 }
 if (!empty($arrayfields['f.module_source']['checked'])) {
 	print_liste_field_titre($arrayfields['f.module_source']['label'], $_SERVER["PHP_SELF"], "f.module_source", "", $param, "", $sortfield, $sortorder);
@@ -2497,6 +2517,16 @@ if ($num > 0) {
 				$s = $form->form_conditions_reglement($_SERVER['PHP_SELF'], $obj->fk_cond_reglement, 'none', 0, '', -1, -1, 1);
 				print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($s).'">';
 				print $s;
+				print '</td>';
+				if (!$i) {
+					$totalarray['nbfield']++;
+				}
+			}
+
+			// Channel
+			if (!empty($arrayfields['f.fk_input_reason']['checked'])) {
+				print '<td>';
+				$form->formInputReason($_SERVER['PHP_SELF'], (string) $obj->fk_input_reason, 'none');
 				print '</td>';
 				if (!$i) {
 					$totalarray['nbfield']++;

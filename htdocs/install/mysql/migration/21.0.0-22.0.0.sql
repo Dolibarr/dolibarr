@@ -249,3 +249,16 @@ ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
 
 ALTER TABLE llx_asset ADD COLUMN fk_user_valid integer;
 ALTER TABLE llx_asset ADD COLUMN date_valid datetime;
+
+CREATE TABLE llx_webhook_history(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	trigger_data text NOT NULL,
+	fk_target integer NOT NULL,
+	url integer NOT NULL,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	import_key varchar(14),
+	status integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;

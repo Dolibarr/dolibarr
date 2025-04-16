@@ -248,8 +248,6 @@ class MyModuleApi extends DolibarrApi
 	 * @phan-return MyObject
 	 * @phpstan-return MyObject
 	 *
-	 * @phan-return  MyObject
-	 *
 	 * @throws RestException 403 Not allowed
 	 * @throws RestException 404 Not found
 	 * @throws RestException 500 System error

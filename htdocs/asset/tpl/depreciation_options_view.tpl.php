@@ -68,7 +68,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$class_type = get_class($object) == 'Asset' ? 0 : 1;
-	print '<br>';
+
 	foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $mode_info) {
 		if (!empty($mode_info['enabled_field'])) {
 			$info = explode(':', $mode_info['enabled_field']);
