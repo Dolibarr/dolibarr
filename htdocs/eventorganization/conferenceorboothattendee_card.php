@@ -389,15 +389,7 @@ if (!empty($withproject)) {
 
 	// Show message
 	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
-	if (isset($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
-		if (is_null($conf->global->MAIN_AGENDA_XCAL_EXPORTKEY)) {
-			$message .= '&exportkey=...';
-		} else {
-			$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY'));
-		}
-	} else {
-		$message .= '&exportkey=...';
-	}
+	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
 	$message .= "&project=".$projectstatic->id.'&module='.urlencode('@eventorganization').'&status='.ConferenceOrBooth::STATUS_CONFIRMED.'">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
