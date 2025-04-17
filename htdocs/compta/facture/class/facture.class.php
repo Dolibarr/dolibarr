@@ -2574,7 +2574,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				$this->array_options = array();
+				$line->array_options = array();
 				if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
 					foreach ($extrafields->attributes[$this->table_element_line]['label'] as $key => $val) {
 						$type = !empty($extrafields->attributes[$this->table_element_line]['type'][$key])
@@ -2586,15 +2586,15 @@ class Facture extends CommonInvoice
 
 							// date/datetime
 							if (in_array($type, array('date', 'datetime'))) {
-								$this->array_options['options_' . $key] = $this->db->jdate($rawval);
+								$line->array_options['options_' . $key] = $this->db->jdate($rawval);
 							} elseif ($type == 'password') {
 								if (!empty($rawval) && preg_match('/^dolcrypt:/', $rawval)) {
-									$this->array_options['options_' . $key] = dolDecrypt($rawval);
+									$line->array_options['options_' . $key] = dolDecrypt($rawval);
 								} else {
-									$this->array_options['options_' . $key] = $rawval;
+									$line->array_options['options_' . $key] = $rawval;
 								}
 							} else {
-								$this->array_options['options_' . $key] = $rawval;
+								$line->array_options['options_' . $key] = $rawval;
 							}
 						}
 					}
@@ -2604,8 +2604,8 @@ class Facture extends CommonInvoice
 						if (!empty($extrafields->attributes[$this->table_element_line]['computed'][$key])) {
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
-								$objectoffield = $this;
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
+								$objectoffield = $line;
+								$line->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -2613,7 +2613,7 @@ class Facture extends CommonInvoice
 
 				if (!$doFetchInOneSqlRequest) {
 					// Retrieve all extrafield
-					$this->fetch_optionals();
+					$line->fetch_optionals();
 				}
 
 				// multilangs
