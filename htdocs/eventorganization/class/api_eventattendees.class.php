@@ -34,7 +34,6 @@ class EventAttendees extends DolibarrApi
 	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
-		'ref',
 		'fk_project'
 	);
 
@@ -90,7 +89,7 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
 
-		$result = $this->event_attendees->apifetch($id, '');
+		$result = $this->event_attendees->fetch($id, '');
 		if (!$result) {
 			throw new RestException(404, 'Event attendee with id '.$id.' not found');
 		}
@@ -128,7 +127,7 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
 
-		$result = $this->event_attendees->apifetch(0, $ref);
+		$result = $this->event_attendees->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, "Event attendee with ref ".$ref." not found");
 		}
@@ -257,7 +256,7 @@ class EventAttendees extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
-				if ($event_attendees_static->apifetch($obj->rowid, '') > 0) {
+				if ($event_attendees_static->fetch($obj->rowid, '') > 0) {
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
 				}
 				$i++;
@@ -357,7 +356,7 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied update access to Event attendees');
 		}
 
-		$result = $this->event_attendees->apifetch($id, '');
+		$result = $this->event_attendees->fetch($id, '');
 		if (!$result) {
 			throw new RestException(404, 'event attendee not found');
 		}
@@ -408,7 +407,7 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied update access to Event attendees');
 		}
 
-		$result = $this->event_attendees->apifetch(0, $ref);
+		$result = $this->event_attendees->fetch(0, $ref);
 		if (!$result) {
 			throw new RestException(404, 'event attendee not found');
 		}
@@ -458,7 +457,7 @@ class EventAttendees extends DolibarrApi
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
 
-		$result = $this->event_attendees->apifetch($id, $ref);
+		$result = $this->event_attendees->fetch($id, $ref);
 		if (!$result) {
 			if ($id) {
 				throw new RestException(404, 'Event attendee with id '.((string) $id).' not found');
@@ -569,7 +568,7 @@ class EventAttendees extends DolibarrApi
 	private function _validate($data)
 	{
 		$event_attendees = array();
-		foreach (EmailTemplates::$FIELDS as $field) {
+		foreach (EventAttendees::$FIELDS as $field) {
 			if (!isset($data[$field])) {
 				throw new RestException(400, $field." field missing");
 			}
