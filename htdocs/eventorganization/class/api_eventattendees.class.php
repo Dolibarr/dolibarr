@@ -152,8 +152,8 @@ class EventAttendees extends DolibarrApi
 	 *
 	 * @param   int         $id		ID of event attendee
 	 * @return  Object				Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
 	 *
 	 * @url	GET {id}
 	 *
@@ -172,8 +172,8 @@ class EventAttendees extends DolibarrApi
 	 *
 	 * @param       string		$ref		Ref of object
 	 * @return      Object				    Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
 	 *
 	 * @url GET    ref/{ref}
 	 *
@@ -199,8 +199,8 @@ class EventAttendees extends DolibarrApi
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array						Array of order objects
-	 * @phan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
-	 * @phpstan-return cEmailTemplate[]|array{data:cEmailTemplate[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return ConferenceOrBoothAttendee[]|array{data:ConferenceOrBoothAttendee[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @url GET
 	 *
@@ -256,7 +256,7 @@ class EventAttendees extends DolibarrApi
 			$i = 0;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
-				$event_attendees_static = new cEmailTemplate($this->db);
+				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
 				if ($event_attendees_static->apifetch($obj->rowid, '') > 0) {
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
 				}
@@ -445,8 +445,8 @@ class EventAttendees extends DolibarrApi
 	 * @param   int         $id             ID of event_attendees
 	 * @param	string		$ref			Ref of event_attendees
 	 * @return  Object						Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
 	 *
 	 * @throws	RestException 403
 	 * @throws	RestException 404
@@ -477,12 +477,12 @@ class EventAttendees extends DolibarrApi
 	 * Clean sensible object datas
 	 *
 	 * @param   Object  $object     	Object to clean
-	 * @phan-param		cEmailTemplate	$object
-	 * @phpstan-param	cEmailTemplate	$object
+	 * @phan-param		ConferenceOrBoothAttendee	$object
+	 * @phpstan-param	ConferenceOrBoothAttendee	$object
 	 *
 	 * @return  Object	Object with cleaned properties
-	 * @phan-return		cEmailTemplate
-	 * @phpstan-return	cEmailTemplate
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
 	 */
 	protected function _cleanObjectDatas($object)
 	{
