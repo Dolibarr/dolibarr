@@ -216,7 +216,7 @@ class EventAttendees extends DolibarrApi
 		$obj_ret = array();
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS t";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS t WHERE 1=1";
 
 
 		// Add sql filters
