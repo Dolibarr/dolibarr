@@ -60,7 +60,8 @@ print '<br>';
 
 print '<div class="center">';
 if (count($import->array_import_code)) {
-	print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import');
+	$params = array('forcenohideoftext' => 1);
+	print dolGetButtonTitle($langs->trans('NewImport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/imports/import.php?leftmenu=import', '', 1, $params);
 }
 print '</div>';
 print '<br>';
