@@ -2662,6 +2662,7 @@ class Adherent extends CommonObject
 
 				$adherentstatic->datefin = $this->db->jdate($obj->datefin);
 				$adherentstatic->statut = $obj->statut;
+				$adherentstatic->status = $obj->statut;
 
 				if ($adherentstatic->hasDelay()) {
 					$response->nbtodolate++;

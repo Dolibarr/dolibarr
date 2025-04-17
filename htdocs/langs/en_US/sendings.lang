@@ -79,6 +79,7 @@ SumOfProductWeights=Sum of product weights
 # warehouse details
 DetailWarehouseNumber= Warehouse details
 DetailWarehouseFormat= W:%s (Qty: %d)
+DetailChildrenFormat=%s : %s (Qty: %s)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Display last date of entry in stock during shipment creation for serial number or batch
 CreationOptions=Available options during shipment creation
 ShipmentDistribution=Shipment distribution
@@ -93,3 +94,4 @@ TypeContact_shipping_external_SHIPPING=Customer contact for shipping
 TypeContact_shipping_external_DELIVERY=Customer contact for delivery
 CloseShipment=Close shipment
 ConfirmCloseShipment=Confirm close shipment
+SHIPPING_SELL_EAT_BY_DATE_PRE_SELECT_EARLIEST=Pre-select the batch/serial number with the earliest sell-by/eat-by date when creating a shipment
