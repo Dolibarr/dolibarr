@@ -769,7 +769,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set boardingPassAuto status - because a boarding pass was automatically generated
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 * 	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function boardingPassAuto($user, $notrigger = 0)
@@ -786,7 +786,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set boardingPassUser status - user requested their boarding pass
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function boardingPassUser($user, $notrigger = 0)
@@ -820,7 +820,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set paidFull status
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function paidFull($user, $notrigger = 0)
@@ -837,7 +837,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set paidPartially status - at the door ask for reminder of payment
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function paidPartially($user, $notrigger = 0)
@@ -854,7 +854,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set back to validated status
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function reopen($user, $notrigger = 0)
@@ -871,7 +871,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 *	Set used status - only 1 person may get in
 	 *
 	 *	@param	User	$user			Object user that modify
-	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
 	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
 	 */
 	public function use($user, $notrigger = 0)
