@@ -489,20 +489,16 @@ class EventAttendees extends DolibarrApi
 		// phpcs:enable
 		$object = parent::_cleanObjectDatas($object);
 
-		unset($object->import_key);
 		unset($object->array_languages);
 		unset($object->contacts_ids);
 		unset($object->linkedObjectsIds);
 		unset($object->canvas);
-		unset($object->fk_project);
 		unset($object->contact_id);
 		unset($object->user);
 		unset($object->origin_type);
 		unset($object->origin_id);
-		unset($object->ref);
 		unset($object->ref_ext);
 		unset($object->statut);
-		unset($object->status);
 		unset($object->civility_code);
 		unset($object->country_id);
 		unset($object->country_code);
@@ -524,10 +520,7 @@ class EventAttendees extends DolibarrApi
 		unset($object->multicurrency_total_ttc);
 		unset($object->multicurrency_total_localtax1);
 		unset($object->multicurrency_total_localtax2);
-		unset($object->last_main_doc);
 		unset($object->fk_account);
-		unset($object->note_public);
-		unset($object->note_private);
 		unset($object->total_ht);
 		unset($object->total_tva);
 		unset($object->total_localtax1);
@@ -536,8 +529,6 @@ class EventAttendees extends DolibarrApi
 		unset($object->lines);
 		unset($object->actiontypecode);
 		unset($object->name);
-		unset($object->lastname);
-		unset($object->firstname);
 		unset($object->civility_id);
 		unset($object->user_author);
 		unset($object->user_creation);
@@ -548,8 +539,6 @@ class EventAttendees extends DolibarrApi
 		unset($object->user_closing_id);
 		unset($object->user_modification);
 		unset($object->user_modification_id);
-		unset($object->fk_user_creat);
-		unset($object->fk_user_modif);
 		unset($object->totalpaid);
 		unset($object->product);
 		unset($object->cond_reglement_supplier_id);
