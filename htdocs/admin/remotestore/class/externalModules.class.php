@@ -351,7 +351,7 @@ class ExternalModules
 			}
 		}
 
-		// fetch from github repo
+		// Fetch the products from the github repo
 		$fileProducts = array();
 		$fileProductsTotal = 0;
 		if (!empty($this->githubFileStatus) && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
@@ -810,11 +810,14 @@ class ExternalModules
 				continue;
 			}
 
-			// Match a new package entry (e.g., "- modulename: 'helloasso'")
+			// Match a new package entry (e.g., "- modulename: 'helloasso'") - Found a break in file.
 			$matches = array();
 			if (preg_match('/^\s*-\s*modulename:\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
 				if ($currentPackage !== null) {
-					$data[] = $currentPackage;
+					// Add the package to $data
+					if (!empty($currentPackage['status']) && $currentPackage['status'] == 'enabled') {
+						$data[] = $currentPackage;
+					}
 				}
 				$currentPackage = ['modulename' => $matches[1]];
 				$currentSection = null;
@@ -830,7 +833,7 @@ class ExternalModules
 			if (preg_match('/^(\w[\w-]*):\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
 				if ($currentPackage !== null) {
 					if ($currentSection) {
-						// Store in the nested section
+						// Store in the sub section (language into label or description for example)
 						$currentPackage[$currentSection][$matches[1]] = $matches[2] === '' ? null : $matches[2];
 					} else {
 						// Store as a normal key-value pair
@@ -850,7 +853,9 @@ class ExternalModules
 
 		// Add the last package if available
 		if ($currentPackage !== null) {
-			$data[] = $currentPackage;
+			if (!empty($currentPackage['status']) && $currentPackage['status'] == 'enabled') {
+				$data[] = $currentPackage;
+			}
 		}
 
 		return $data;

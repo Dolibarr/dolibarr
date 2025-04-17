@@ -3641,7 +3641,7 @@ class FactureFournisseur extends CommonInvoice
 						// Sender
 						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-							$from = $arraymessage->email_from;
+							$from = (string) $arraymessage->email_from;
 						}
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";

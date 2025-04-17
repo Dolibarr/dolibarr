@@ -451,7 +451,7 @@ if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 
 	print "</table>\n";
 
-	print '<div style="text-align:center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
+	print '<div class="center"><input type="submit" class="button button-edit" name="button" value="'.$langs->trans('Save').'"></div>';
 	print '</form>';
 
 

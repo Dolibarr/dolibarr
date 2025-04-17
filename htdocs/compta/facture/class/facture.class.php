@@ -3003,8 +3003,8 @@ class Facture extends CommonInvoice
 			$this->db->begin();
 
 			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
-			$sql .= " SET fk_input_reason = ".($inputReasonId > 0 ? $inputReasonId : 'null');
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql .= " SET fk_input_reason = ".($inputReasonId > 0 ? (int) $inputReasonId : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
 
 			dol_syslog(__METHOD__, LOG_DEBUG);
 			$res = $this->db->query($sql);
@@ -4256,11 +4256,36 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+					// get real stock
+					$productChildrenNb = 0;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						// compute real stock from each subcomponent
+						$product_stock = null;
+						$product->loadStockForVirtualProduct('warehouseopen', $qty);
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+						if ($product_stock === null) {
+							$product_stock = 0;
+						}
+					} else {
+						$product_stock = $product->stock_reel;
+					}
+
+					if ($product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 
@@ -4574,11 +4599,36 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+					// get real stock
+					$productChildrenNb = 0;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						// compute real stock from each subcomponent
+						$product_stock = null;
+						$product->loadStockForVirtualProduct('warehouseopen', $qty);
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+						if ($product_stock === null) {
+							$product_stock = 0;
+						}
+					} else {
+						$product_stock = $product->stock_reel;
+					}
+
+					if ($product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 

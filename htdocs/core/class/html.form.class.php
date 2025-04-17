@@ -5748,10 +5748,9 @@ class Form
 	}
 
 	/**
-	 *     Show a confirmation HTML form or AJAX popup.
-	 *     Easiest way to use this is with useajax=1.
-	 *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
-	 *     just after calling this method. For example:
+	 * Show a confirmation HTML form or AJAX popup.
+	 * Easiest way to use this is with useajax=1.
+	 * If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters) just after calling this method. For example:
 	 *       print '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 	 *       print 'jQuery(document).ready(function() {'."\n";
 	 *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
