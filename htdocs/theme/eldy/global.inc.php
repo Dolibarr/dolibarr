@@ -475,7 +475,7 @@ section.setupsection {
 .field-error-icon { color: #ea1212 !important; }
 
 /* Focus definitions must be after standard definition */
-div.tabBar textarea:focus:not(.textarea-ai_feature) {
+div.tabBar textarea:focus:not(.textarea-ai_feature):not(.cke_source) {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
@@ -6554,10 +6554,15 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
-body.cke_show_borders {
+textarea.dolibarr_mailings > div.cke body.cke_show_borders {
+	margin: 0 !important;
+}
+/*body.cke_show_borders {
+	margin: 5px !important;
+}*/
+.cke_source {
 	margin: 5px !important;
 }
-
 .cke_dialog {
 	border: 1px #bbb solid ! important;
 }

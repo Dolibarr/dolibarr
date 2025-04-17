@@ -7,7 +7,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
@@ -1363,6 +1363,7 @@ if ($object->id > 0) {
 				$fichinter_static->id = $objp->id;
 				$fichinter_static->ref = $objp->ref;
 				$fichinter_static->statut = $objp->fk_statut;
+				$fichinter_static->status = $objp->fk_statut;
 				$fichinter_static->fk_project = $objp->fk_projet;
 
 				print '<tr class="oddeven">';
@@ -1586,7 +1587,7 @@ if ($object->id > 0) {
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
-				$facturestatic->statut = $objp->status;
+				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
 				$facturestatic->alreadypaid = $objp->am;

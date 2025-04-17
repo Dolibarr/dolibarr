@@ -123,6 +123,11 @@ if ($showlinktolayout) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
 	} else {
+		if (!is_object($formmail)) {
+			// Create form object
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+		}
 		$out .= $formmail->getModelEmailTemplate($htmlname, $showlinktolayout);
 	}
 } else {

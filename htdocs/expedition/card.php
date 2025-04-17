@@ -439,7 +439,14 @@ if (empty($reshook)) {
 				} else {
 					// batch mode
 					if ($batch_line[$i]['qty'] > 0 || ($batch_line[$i]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
-						$ret = $object->addline_batch($batch_line[$i], $array_options[$i]);
+						$origin_line_id = (int) $batch_line[$i]['ix_l'];
+						$origin_line = new OrderLine($db);
+						$res = $origin_line->fetch($origin_line_id);
+						if ($res <= 0) {
+							$error++;
+							setEventMessages($origin_line->error, $origin_line->errors, 'errors');
+						}
+						$ret = $object->addline_batch($batch_line[$i], $array_options[$i], $origin_line);
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
@@ -1252,13 +1259,22 @@ if ($action == 'create') {
 					print '<!-- line for order line '.$line->id.' -->'."\n";
 					print '<tr class="oddeven" id="row-'.$line->id.'">'."\n";
 
+					$qtyProdCom = $line->qty;
+					$productChildrenNb = 0;
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
 						$res = $product->fetch($line->fk_product);
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+							$productChildrenNb = $product->hasFatherOrChild(1);
+						}
+						if ($productChildrenNb > 0) {
+							$product->loadStockForVirtualProduct('warehouseopen', $qtyProdCom);
+						} else {
+							$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						}
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';
@@ -1319,7 +1335,6 @@ if ($action == 'create') {
 					print '<td class="center">'.$line->qty;
 					print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 					print ''.$unit_order.'</td>';
-					$qtyProdCom = $line->qty;
 
 					// Qty already shipped
 					print '<td class="center">';
@@ -1391,10 +1406,14 @@ if ($action == 'create') {
 										if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
-										if ($product->stockable_product == Product::ENABLED_STOCK) {
-											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										if ($productChildrenNb > 0) {
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
 										} else {
-											print img_warning().' '.$langs->trans('StockDisabled');
+											if ($product->stockable_product == Product::ENABLED_STOCK) {
+												print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+											} else {
+												print img_warning().' '.$langs->trans('StockDisabled');
+											}
 										}
 
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
@@ -1636,10 +1655,12 @@ if ($action == 'create') {
 									if (isModEnabled('stock')) {
 										print '<td class="left">';
 										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-											if ($product->stockable_product == Product::ENABLED_STOCK) {
+											if ($product->stockable_product == Product::ENABLED_STOCK || $productChildrenNb > 0) {
 												print $tmpwarehouseObject->getNomUrl(0).' ';
-												print '<!-- Show details of stock -->';
-												print '('.$stock.')';
+												if ($productChildrenNb <= 0) {
+													print '<!-- Show details of stock -->';
+													print '('.$stock.')';
+												}
 											} else {
 												print img_warning().' '.$langs->trans('StockDisabled');
 											}
@@ -2686,6 +2707,34 @@ if ($action == 'create') {
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
+					} elseif (count($lines[$i]->detail_children) > 1) {
+						$detail = '';
+						foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
+							foreach ($child_stock_list as $warehouse_id => $total_qty) {
+								// get product from cache
+								$child_product_label = '';
+								if (!isset($conf->cache['product'][$child_product_id])) {
+									$child_product = new Product($db);
+									$child_product->fetch($child_product_id);
+									$conf->cache['product'][$child_product_id] = $child_product;
+								} else {
+									$child_product = $conf->cache['product'][$child_product_id];
+								}
+								$child_product_label = $child_product->ref . ' ' . $child_product->label;
+
+								// get warehouse from cache
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$child_warehouse = new Entrepot($db);
+									$child_warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $child_warehouse;
+								} else {
+									$child_warehouse = $conf->cache['warehouse'][$warehouse_id];
+								}
+
+								$detail .= $langs->trans('DetailChildrenFormat', $child_product_label, $child_warehouse->label, price2num($total_qty, 'MS')).'<br>';
+							}
+						}
+						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans('DetailWarehouseNumber'), $detail);
 					}
 					print '</td>';
 				}
@@ -2746,9 +2795,25 @@ if ($action == 'create') {
 				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 				print '</td>';
 			} elseif ($object->status == Expedition::STATUS_DRAFT) {
+				$edit_url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id;
+				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+					$product_id = $lines[$i]->fk_product;
+					if (!isset($conf->cache['product'][$product_id])) {
+						$product = new Product($db);
+						$product->fetch($product_id);
+						$conf->cache['product'][$product_id] = $product;
+					} else {
+						$product = $conf->cache['product'][$product_id];
+					}
+
+					if ($product->hasFatherOrChild(1)) {
+						$edit_url = dol_buildpath('/expedition/dispatch.php?id='.$object->id, 1);
+					}
+				}
+
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda reposition" href="'.$edit_url.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';

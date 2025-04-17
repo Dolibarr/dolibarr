@@ -358,9 +358,8 @@ if (!empty($formSetup->items)) {
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if (!empty($myTmpObjectArray['includerefgeneration'])) {
-		/*
-		 * Orders Numbering model
-		 */
+		// Numbering models
+
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectArray['label']), '', '');
@@ -421,7 +420,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if (getDolGlobalString($constforvar) == $file) {
+								$defaultifnotset = 'thevaluetousebydefault';
+								$activenumberingmodel = getDolGlobalString($constforvar, $defaultifnotset);
+								if ($activenumberingmodel == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';

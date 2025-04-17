@@ -320,13 +320,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Create an array for form
 		$formquestion = array(
 			array('type' => 'date', 'name' => 'disposal_date', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalDate"), 'value' => $disposal_date),
-			array('type' => 'text', 'name' => 'disposal_amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalAmount"), 'value' => $disposal_amount),
+			array('type' => 'text', 'name' => 'disposal_amount', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalAmount"), 'value' => $disposal_amount, 'morecss' => 'maxwidth100'),
 			array('type' => 'other', 'name' => 'fk_disposal_type', 'tdclass' => 'fieldrequired', 'label' => $langs->trans("AssetDisposalType"), 'value' => $disposal_type_form),
 			array('type' => 'other', 'name' => 'disposal_invoice_id', 'label' => $langs->trans("InvoiceCustomer"), 'value' => $disposal_invoice_form),
 			array('type' => 'checkbox', 'name' => 'disposal_depreciated', 'label' => $langs->trans("AssetDisposalDepreciated"), 'value' => $disposal_depreciated),
 			array('type' => 'checkbox', 'name' => 'disposal_subject_to_vat', 'label' => $langs->trans("AssetDisposalSubjectToVat"), 'value' => $disposal_subject_to_vat),
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('AssetDisposal'), $langs->trans('AssetConfirmDisposalAsk', $object->ref . ' - ' . $object->label), 'confirm_disposal', $formquestion, 'yes', 1);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('AssetDisposal'), $langs->trans('AssetConfirmDisposalAsk', $object->ref . ' - ' . $object->label), 'confirm_disposal', $formquestion, 'yes', 1, 350);
 	}
 
 	// Confirmation of reopen

@@ -270,7 +270,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'ASSET_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if (getDolGlobalString($constforvar) == $file) {
+								$defaultifnotset = 'mod_asset_standard';
+								$activenumberingmodel = getDolGlobalString($constforvar, $defaultifnotset);
+								if ($activenumberingmodel == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';

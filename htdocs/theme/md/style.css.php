@@ -684,6 +684,17 @@ section.setupsection {
 
 .field-error-icon { color: #ea1212 !important; }
 
+/* Focus definitions must be after standard definition */
+div.tabBar textarea:focus:not(.textarea-ai_feature):not(.cke_source) {
+	border: 1px solid #aaa !important;
+}
+textarea.cke_source:focus
+{
+	box-shadow: none;
+}
+div#cke_dp_desc {
+	margin-top: 5px;
+}
 textarea {
 	border-radius: 0;
 	border-top:solid 1px var(--inputbordercolor);
