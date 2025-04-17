@@ -361,6 +361,7 @@ if (empty($reshook)) {
 
 						if (!$error) {
 							// Record production
+							//TODO GREGM Create Mrp_production_extrafield Here ?????
 							$moline = new MoLine($db);
 							$moline->fk_mo = $object->id;
 							$moline->position = $pos;

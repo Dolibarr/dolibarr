@@ -292,6 +292,7 @@ class Mo extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
+		//TODO GREGM Create Mrp_production_extrafield Here ?????
 		$error = 0;
 		$idcreated = 0;
 
@@ -316,6 +317,8 @@ class Mo extends CommonObject
 			$tmpbom->fetch($this->fk_bom);
 
 			$this->mrptype = $tmpbom->bomtype;
+
+
 		}
 
 		if (!$error) {

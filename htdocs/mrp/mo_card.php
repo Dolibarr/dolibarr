@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp_mo.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
@@ -89,6 +90,42 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be includ
 if (GETPOSTINT('fk_bom') > 0) {
 	$objectbom->fetch(GETPOSTINT('fk_bom'));
 
+	$ObjMrpProduction = new MoLine($db);
+
+	//---------- CREATE Extrafields MO From Extrafields BOM ----------
+	$e = new ExtraFields($object->db);
+	$element_extrafields = $e->fetch_name_optionals_label($object->table_element);
+
+	foreach ($objectbom->array_options as $options_key => $value) {
+		if (array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)) {
+			$object->array_options[$options_key] = $value;
+		}
+	}
+	// ----------------------------- OK -----------------------------
+
+
+
+	//TODO ----------- IN PROGRESS : DATA EXTRAFIELDS_BOM_Lines ----------
+	foreach ($objectbom->lines as $line) {
+		$line->fetch_optionals();
+		if ($action == 'add'){
+			$e = new ExtraFields($object->db);
+			$element_extrafields = $e->fetch_name_optionals_label($ObjMrpProduction->table_element);
+
+			foreach ($line->array_options as $options_key => $value) {
+
+				if (array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)) {
+					if ($value != null) {
+						$ObjMrpProduction->array_options[str_replace('options_', '', $options_key)] = $value;
+					}
+				}
+			}
+		}
+	}
+	// TODO ----------------------------- IN PROGRESS -----------------------------
+
+
+
 	if ($action != 'add') {
 		// We force calling parameters if we are not in the submit of creation of MO
 		$_POST['fk_product'] = $objectbom->fk_product;
@@ -118,7 +155,9 @@ $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->enti
  */
 
 $parameters = array();
+
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+//TODO Check create 'OF' by 'BOM' with Mod 'GPAO+' activated ($action se vide à cause du doActions)
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -146,6 +185,7 @@ if (empty($reshook)) {
 
 	// Create MO with Children
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
+		//TODO GREGM ------- Créer OF depuis BOM ne passe pas par ici ! ---------
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -427,6 +467,11 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	if ($objectbom->id > 0) {
+		//Passage par ici si on arrive sur le formulaire de création de l'OF depuis une BOM
+		var_dump('FROM BOM ID = '.$objectbom->id);
+		var_dump('ACTION = '.$action);
+		var_dump('Le Bouton CREER RENVOI ACTION = add');
+//		exit;
 		print load_fiche_titre($titlelist);
 
 		print '<!-- list of product/services to consume -->'."\n";
@@ -445,6 +490,8 @@ if ($action == 'create') {
 			$moLine->disable_stock_change = $objectbom->lines[$key]->disable_stock_change;
 
 			$arrayOfMoLines[] = $moLine;
+
+			//TODO GREGM --------------------Add Data Here ???-----------------------------
 		}
 		$object->lines = $arrayOfMoLines;
 		$object->mrptype = $objectbom->bomtype;
