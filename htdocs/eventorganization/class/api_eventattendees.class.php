@@ -587,21 +587,10 @@ class EventAttendees extends DolibarrApi
 	{
 		// what kind of access management do we need?
 		$allowaccess = false;
-		if (isModEnabled("societe") && DolibarrApiAccess::$user->hasRight('societe', $accesstype)) {
+		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('eventorganization', $accesstype)) {
 			$allowaccess = true;
 		}
-		if (isModEnabled('member') && DolibarrApiAccess::$user->hasRight('adherent', $accesstype)) {
-			$allowaccess = true;
-		}
-		if (isModEnabled("propal") && DolibarrApiAccess::$user->hasRight('propal', $accesstype)) {
-			$allowaccess = true;
-		}
-		if (isModEnabled('order') && DolibarrApiAccess::$user->hasRight('commande', $accesstype)) {
-			$allowaccess = true;
-		}
-		if (isModEnabled('invoice') && DolibarrApiAccess::$user->hasRight('facture', $accesstype)) {
-			$allowaccess = true;
-		}
+		// we should also check project visibility and if set to assigned contacts it should be only those contacts.
 		if ($allowaccess) {
 			return $allowaccess;
 		} else {
