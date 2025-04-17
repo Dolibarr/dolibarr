@@ -22,6 +22,7 @@ CREATE TABLE llx_webhook_history(
 	trigger_data text NOT NULL,
 	fk_target integer NOT NULL,
 	url integer NOT NULL,
+	error_messsage text,
 	--note_public text,
 	note_private text,
 	date_creation datetime NOT NULL,
