@@ -13786,6 +13786,7 @@ function getElementProperties($elementType)
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
+		$classname = 'SupplierProposalLine';
 		$table_element = 'supplier_proposaldet';
 		$parent_element = 'supplier_proposal';
 	} elseif ($elementType == 'contract') {
