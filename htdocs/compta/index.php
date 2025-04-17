@@ -360,7 +360,7 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$facstatic->total_ht = $obj->total_ht;
 				$facstatic->total_tva = $obj->total_tva;
 				$facstatic->total_ttc = $obj->total_ttc;
-				$facstatic->statut = $obj->status;
+				$facstatic->statut = $obj->status;	// deprecated
 				$facstatic->status = $obj->status;
 				$facstatic->paye = $obj->paye;
 				$facstatic->paid = $obj->paye;
@@ -481,7 +481,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->lastname = $obj->lastname;
 				$donationstatic->firstname = $obj->firstname;
 				$donationstatic->date = $db->jdate($obj->date);
-				$donationstatic->statut = $obj->status;
+				$donationstatic->statut = $obj->status;	// deprecated
 				$donationstatic->status = $obj->status;
 
 				$label = '';
@@ -708,7 +708,8 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;
-				$commandestatic->statut = $obj->status;
+				$commandestatic->statut = $obj->status; // deprecated
+				$commandestatic->status = $obj->status;
 				$commandestatic->billed = $obj->facture;
 
 				print '<tr class="oddeven">';
