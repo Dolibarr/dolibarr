@@ -62,7 +62,14 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
-
+	const STATUS_PAIDPARTIALLY = 20;		// if at the conference entrance ask for more payment
+	const STATUS_PAIDFULL = 25;
+	const STATUS_BOARDINGPASSAUTO = 30;		// pre conference a boarding pass was auto generated
+	const STATUS_BOARDINGPASSUSER = 32;		// pre conference a boarding pass was user generated
+	const STATUS_USED = 35;					// no more entrances can be done using this ticket
+	// idea with STATUS_BOARDINGPASS is to at that generation ask them when they arrive and use that to door staffing
+	// idea with STATUS_USED is to make sure only one person can get in, hopefully later linked with some badge id so badge id can be invalidated is lost
+	// idea with STATUS_PAID is to track if it was fully paid or some payment needs to happen at the door
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -759,6 +766,40 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
+	 *	Set boardingPassAuto status - because a boarding pass was automatically generated
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function boardingPassAuto($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_BOARDINGPASSAUTO) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_BOARDINGPASSAUTO, $notrigger, 'CONFERENCEORBOOTHATTENDEE_BOARDINGPASS');
+	}
+
+	/**
+	 *	Set boardingPassUser status - user requested their boarding pass
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function boardingPassUser($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_BOARDINGPASSUSER) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_BOARDINGPASSUSER, $notrigger, 'CONFERENCEORBOOTHATTENDEE_BOARDINGPASS');
+	}
+
+	/**
 	 *	Set cancel status
 	 *
 	 *	@param	User	$user			Object user that modify
@@ -776,6 +817,40 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
+	 *	Set paidFull status
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function paidFull($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_PAIDFULL) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_PAIDFULL, $notrigger, 'CONFERENCEORBOOTHATTENDEE_PAIDFULL');
+	}
+
+	/**
+	 *	Set paidPartially status - at the door ask for reminder of payment
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function paidPartially($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_PAIDPARTIALLY) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_PAIDPARTIALLY, $notrigger, 'CONFERENCEORBOOTHATTENDEE_PAIDPARTIALLY');
+	}
+
+	/**
 	 *	Set back to validated status
 	 *
 	 *	@param	User	$user			Object user that modify
@@ -790,6 +865,23 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'CONFERENCEORBOOTHATTENDEE_REOPEN');
+	}
+
+	/**
+	 *	Set used status - only 1 person may get in
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *  @param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function use($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status != self::STATUS_USED) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_USED, $notrigger, 'CONFERENCEORBOOTHATTENDEE_USED');
 	}
 
 	/**
