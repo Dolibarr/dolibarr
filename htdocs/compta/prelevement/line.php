@@ -278,7 +278,7 @@ if ($id) {
 		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
-					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
+					print '<a class="butActionDelete" href="line.php?action=rejet&token='.newToken().'&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}
