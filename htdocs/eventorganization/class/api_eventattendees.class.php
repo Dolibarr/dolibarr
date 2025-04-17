@@ -193,8 +193,7 @@ class EventAttendees extends DolibarrApi
 	 * @param string	$sortorder			Sort order
 	 * @param int		$limit				Limit for list
 	 * @param int		$page				Page number
-	 * @param string	$fk_user			User ids to filter Event attendees of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(e.active:=:1) and (e.module:=:'adherent')"
+	 * @param string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "(t.status:=:1) and (t.email:=:'bad@example.com')"
 	 * @param string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
 	 * @param bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array						Array of order objects
@@ -203,10 +202,10 @@ class EventAttendees extends DolibarrApi
 	 *
 	 * @url GET
 	 *
-	 * @throws RestException 404 Not found
+	 * @throws RestException 403 Access denied
 	 * @throws RestException 503 Error
 	 */
-	public function index($sortfield = "e.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $fk_user = '', $sqlfilters = '', $properties = '', $pagination_data = false)
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		$allowaccess = $this->_checkAccessRights('lire');
 		if (!$allowaccess) {
@@ -216,12 +215,9 @@ class EventAttendees extends DolibarrApi
 		$entity = (int) DolibarrApiAccess::$user->entity;
 		$obj_ret = array();
 
-		$sql = "SELECT e.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS e";
-		$sql .= " WHERE e.entity = ".((int) $entity);
-		if (!$fk_user == '') {
-			$sql .= " AND e.fk_user = ".((int) $fk_user);
-		}
+		$sql = "SELECT t.rowid";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS t";
+
 
 		// Add sql filters
 		if ($sqlfilters) {
@@ -233,7 +229,7 @@ class EventAttendees extends DolibarrApi
 		}
 
 		//this query will return total orders with the filters given
-		$sqlTotals = str_replace('SELECT e.rowid', 'SELECT count(e.rowid) as total', $sql);
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -247,7 +243,6 @@ class EventAttendees extends DolibarrApi
 
 		dol_syslog(get_class($this)."::index", LOG_DEBUG);
 		$result = $this->db->query($sql);
-		dol_syslog(get_class($this)."::pindex", LOG_DEBUG);
 
 		if ($result) {
 			$num = $this->db->num_rows($result);
@@ -552,6 +547,9 @@ class EventAttendees extends DolibarrApi
 		unset($object->date_modification);
 		unset($object->date_cloture);
 		unset($object->rowid);
+		unset($object->module);
+		unset($object->entity);
+		unset($object->paid);
 
 		return $object;
 	}
