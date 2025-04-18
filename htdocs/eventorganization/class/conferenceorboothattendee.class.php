@@ -777,7 +777,13 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function boardingPassAuto($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_BOARDINGPASSAUTO) {
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_USED) {
 			return 0;
 		}
 
@@ -794,11 +800,63 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function boardingPassUser($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_BOARDINGPASSUSER) {
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_USED) {
 			return 0;
 		}
 
 		return $this->setStatusCommon($user, self::STATUS_BOARDINGPASSUSER, $notrigger, 'CONFERENCEORBOOTHATTENDEE_BOARDINGPASS');
+	}
+
+	/**
+	 *	Set ordered status - user requested their boarding pass
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function ordered($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_USED) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_BOARDINGPASSUSER, $notrigger, 'CONFERENCEORBOOTHATTENDEE_ORDERED');
+	}
+
+	/**
+	 *	Set invoiced status - user requested their boarding pass
+	 *
+	 *	@param	User	$user			Object user that modify
+	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
+	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function invoiced($user, $notrigger = 0)
+	{
+		// Protection
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_USED) {
+			return 0;
+		}
+
+		return $this->setStatusCommon($user, self::STATUS_BOARDINGPASSUSER, $notrigger, 'CONFERENCEORBOOTHATTENDEE_INVOICED');
 	}
 
 	/**
@@ -828,7 +886,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function paidFull($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_PAIDFULL) {
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -845,7 +906,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function paidPartially($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_PAIDPARTIALLY) {
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -879,7 +943,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function use($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_USED) {
+		if ($this->status = self::STATUS_DRAFT) {
+			return 0;
+		}
+		if ($this->status = self::STATUS_CANCELED) {
 			return 0;
 		}
 
