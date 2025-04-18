@@ -239,7 +239,7 @@ print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbo
 print "\n";
 
 
-print '<div align="center">';
+print '<div class="center">';
 print '<div id="divsubscribe">';
 
 
@@ -250,7 +250,7 @@ print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center'
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $project->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title).'</span><br>';
 print '</div>';
 
 // Help text
