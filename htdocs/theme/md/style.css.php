@@ -788,6 +788,7 @@ input.buttonpaymentstripe {
 	max-height: 80px;
 	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
+	border-radius: 4px;
 }
 a.butStatus {
 	padding-left: 5px;
@@ -1201,6 +1202,11 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centergrid {
+	display: grid;
+	text-align: center;
+	place-items: center;
 }
 .alignstart {
 	text-align: start;

@@ -54,6 +54,10 @@ $modulepart = GETPOST('modulepart', 'aZ09');	// Used by actions_setmoduleoptions
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'myobject';
 
+if (empty($action)) {
+	$action = 'edit';
+}
+
 $arrayofparameters = array(
 	'EVENTORGANIZATION_TASK_LABEL' => array('type' => 'textarea','enabled' => 1, 'css' => ''),
 	'EVENTORGANIZATION_CATEG_THIRDPARTY_CONF' => array('type' => 'category:'.Categorie::TYPE_CUSTOMER, 'enabled' => 1, 'css' => ''),
@@ -129,31 +133,7 @@ if ($action == 'updateMask') {
 			}
 		}
 	}
-}/* elseif ($action == 'setdoc') {
-	// Set or unset default model
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		if (dolibarr_set_const($db, $constforval, $value, 'chaine', 0, '', $conf->entity)) {
-			// The constant that was read before the new set
-			// We therefore requires a variable to have a coherent view
-			$conf->global->$constforval = $value;
-		}
-
-		// We disable/enable the document template (into llx_document_model table)
-		$ret = delDocumentModel($value, $type);
-		if ($ret > 0) {
-			$ret = addDocumentModel($value, $type, $label, $scandir);
-		}
-	}
-} elseif ($action == 'unsetdoc') {
-	$tmpobjectkey = GETPOST('object', 'aZ09');
-	if (!empty($tmpobjectkey)) {
-		$constforval = 'EVENTORGANIZATION_'.strtoupper($tmpobjectkey).'_ADDON_PDF';
-		dolibarr_del_const($db, $constforval, $conf->entity);
-	}
-}*/
-
+}
 
 
 /*
@@ -176,7 +156,8 @@ $head = eventorganizationAdminPrepareHead();
 print dol_get_fiche_head($head, 'settings', $langs->trans($page_name), -1, 'eventorganization');
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
+//print '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br>';
+print '<br>';
 
 
 if ($action == 'edit') {
@@ -261,7 +242,7 @@ if ($action == 'edit') {
 	}
 	print '</table>';
 
-	print $form->buttonsSaveCancel();
+	print $form->buttonsSaveCancel('Save', '');
 
 	print '</form>';
 	print '<br>';
