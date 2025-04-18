@@ -501,7 +501,6 @@ class EventAttendees extends DolibarrApi
 
 		unset($object->array_languages);
 		unset($object->contacts_ids);
-		unset($object->linkedObjectsIds);
 		unset($object->canvas);
 		unset($object->contact_id);
 		unset($object->user);
@@ -556,7 +555,6 @@ class EventAttendees extends DolibarrApi
 		unset($object->retained_warranty_fk_cond_reglement);
 		unset($object->warehouse_id);
 		unset($object->target);
-		unset($object->array_options);
 		unset($object->extraparams);
 		unset($object->specimen);
 		unset($object->date_validation);

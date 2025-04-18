@@ -440,7 +440,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public function fetch($id, $ref = null)
 	{
-		$result = $this->fetchCommon($id, $ref);
+		$result = $this->fetchCommon($id, $ref, '', 0);
 		if ($result > 0 && !empty($this->table_element_line)) {
 			$this->fetchLines();
 		}
