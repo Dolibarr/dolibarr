@@ -84,7 +84,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
-		$allowaccess = $this->_checkAccessRights('lire');
+		$allowaccess = $this->_checkAccessRights('delete');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -122,7 +122,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteByRef($ref)
 	{
-		$allowaccess = $this->_checkAccessRights('lire');
+		$allowaccess = $this->_checkAccessRights('delete');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -207,7 +207,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		$allowaccess = $this->_checkAccessRights('lire');
+		$allowaccess = $this->_checkAccessRights('read');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -216,7 +216,13 @@ class EventAttendees extends DolibarrApi
 		$obj_ret = array();
 
 		$sql = "SELECT t.rowid";
-		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS t WHERE 1=1";
+		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS t";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet AS p ON t.fk_project = p.rowid";
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			$sql .= ' WHERE p.entity IN ('.getEntity($this->element).')';
+		} else {
+			$sql .= ' WHERE 1 = 1';
+		}
 
 
 		// Add sql filters
@@ -300,7 +306,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		$allowaccess = $this->_checkAccessRights('creer');
+		$allowaccess = $this->_checkAccessRights('write');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied create access to Event attendees');
 		}
@@ -346,7 +352,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putById($id, $request_data = null)
 	{
-		$allowaccess = $this->_checkAccessRights('creer');
+		$allowaccess = $this->_checkAccessRights('write');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
 		}
@@ -397,7 +403,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putByRef($ref, $request_data = null)
 	{
-		$allowaccess = $this->_checkAccessRights('creer');
+		$allowaccess = $this->_checkAccessRights('write');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
 		}
@@ -447,7 +453,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '')
 	{
-		$allowaccess = $this->_checkAccessRights('lire');
+		$allowaccess = $this->_checkAccessRights('read');
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -586,13 +592,14 @@ class EventAttendees extends DolibarrApi
 	private function _checkAccessRights($accesstype)
 	{
 		// what kind of access management do we need?
-		$allowaccess = false;
+		$moduleaccess = false;
 		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('eventorganization', $accesstype)) {
-			$allowaccess = true;
+			$moduleaccess = true;
 		}
+		$projectaccess = false;
 		// we should also check project visibility and if set to assigned contacts it should be only those contacts.
-		if ($allowaccess) {
-			return $allowaccess;
+		if ($moduleaccess) {
+			return true;
 		} else {
 			throw new RestException(403, 'denied access to Event attendees');
 		}
