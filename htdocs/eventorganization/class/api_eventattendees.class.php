@@ -219,7 +219,7 @@ class EventAttendees extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX.$this->table_element." AS t";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."projet AS p ON t.fk_project = p.rowid";
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
-			$sql .= ' WHERE p.entity IN ('.getEntity($this->element).')';
+			$sql .= ' WHERE p.entity = '.((int) $entity);
 		} else {
 			$sql .= ' WHERE 1 = 1';
 		}
