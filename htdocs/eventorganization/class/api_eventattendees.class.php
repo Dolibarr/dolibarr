@@ -619,7 +619,13 @@ class EventAttendees extends DolibarrApi
 					if ( 1 == $public) {
 						$singleprojectaccess = true;
 					} else {
-						// check if my user is a contact on that project or in a group that is a contact of that project
+						$userProjectAccessListId = $event_project->getProjectsAuthorizedForUser(DolibarrApiAccess::$user, 0, 0);
+						$project_title = $event_project->title;
+						if (in_array($project_title, $userProjectAccessListId)) {
+							$singleprojectaccess = true;
+						} else {
+							dol_syslog("project_title ".$project_title." is NOT in array from getProjectsAuthorizedForUser()", LOG_DEBUG);
+						}
 					}
 				} elseif (0 == $result) {
 					throw new RestException(500, 'Project id '.$project_id.' not found');
