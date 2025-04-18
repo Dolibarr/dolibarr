@@ -68,6 +68,9 @@ if (empty($user->admin)) {
 	accessforbidden();
 }
 
+if (empty($action)) {
+	$action = 'edit';
+}
 
 
 /*
@@ -102,8 +105,8 @@ $head = eventorganizationAdminPrepareHead();
 print dol_get_fiche_head($head, 'public', $langs->trans($page_name), -1, 'eventorganization');
 
 // Setup page goes here
-echo '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br><br>';
-
+// print '<span class="opacitymedium">'.$langs->trans("EventOrganizationSetupPage").'</span><br>';
+print '<br>';
 
 if ($action == 'edit') {
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -114,6 +117,7 @@ if ($action == 'edit') {
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $constname => $val) {
+		// @phpstan-ignore-next-line
 		if ($val['enabled'] == 1) {
 			$setupnotempty++;
 			print '<tr class="oddeven"><td><!-- '.$constname.' -->';
@@ -122,7 +126,7 @@ if ($action == 'edit') {
 			print '<span id="helplink'.$constname.'" class="spanforparamtooltip">'.$form->textwithpicto($langs->trans($constname), $tooltiphelp, 1, 'info', '', 0, 3, 'tootips'.$constname).'</span>';
 			print '</td><td>';
 
-			if ($val['type'] == 'textarea') {
+			/*if ($val['type'] == 'textarea') {
 				print '<textarea class="flat" name="'.$constname.'" id="'.$constname.'" cols="50" rows="5" wrap="soft">' . "\n";
 				print getDolGlobalString($constname);
 				print "</textarea>\n";
@@ -164,16 +168,16 @@ if ($action == 'edit') {
 				require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 				$formcompany = new FormCompany($db);
 				print $formcompany->selectProspectCustomerType(getDolGlobalString($constname), $constname, 'customerorprospect', 'form', '', '1');
-			} elseif ($val['type'] == 'securekey') {
-				print '<input type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
-				if (!empty($conf->use_javascript_ajax)) {
-					print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
-				}
+			} elseif ($val['type'] == 'securekey') { */
+			print '<input type="text" class="flat" id="'.$constname.'" name="'.$constname.'" value="'.(GETPOST($constname, 'alpha') ? GETPOST($constname, 'alpha') : getDolGlobalString($constname)).'" size="40">';
+			if (!empty($conf->use_javascript_ajax)) {
+				print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token'.$constname.'" class="linkobject"');
+			}
 
-				// Add button to autosuggest a key
-				include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
-				print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
-			} elseif ($val['type'] == 'product') {
+			// Add button to autosuggest a key
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			print dolJSToSetRandomPassword($constname, 'generate_token'.$constname);
+			/* } elseif ($val['type'] == 'product') {
 				if (isModEnabled("product") || isModEnabled("service")) {
 					$selected = getDolGlobalInt($constname);
 					print img_picto('', 'product', 'class="pictofixedwidth"');
@@ -181,13 +185,13 @@ if ($action == 'edit') {
 				}
 			} else {
 				print '<input name="' . $constname . '"  class="flat ' . (empty($val['css']) ? 'minwidth200' : $val['css']) . '" value="' . getDolGlobalString($constname) . '">';
-			}
+			}*/
 			print '</td></tr>';
 		}
 	}
 	print '</table>';
 
-	print $form->buttonsSaveCancel();
+	print $form->buttonsSaveCancel('Save', '');
 
 	print '</form>';
 	print '<br>';
