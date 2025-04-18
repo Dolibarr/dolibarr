@@ -1703,6 +1703,37 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print '</span>';
 			print '</td></tr>'."\n";
 
+			// Company / Contact
+			if (isModEnabled("societe") && $object->socid) {
+				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
+				print '<td>';
+				$s = '';
+				if (isset($object->socid) && $object->socid > 0) {
+					$societe = new Societe($db);
+					$societe->fetch($object->socid);
+					if ($societe->id > 0) {
+						$s .= $societe->getNomUrl(1, '');
+					}
+				} else {
+					$s .= '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
+				}
+				if (!empty($object->contact_id)) {
+					$contact = new Contact($db);
+					$contact->fetch($object->contact_id);
+					if ($contact->id > 0) {
+						if ($object->socid > 0 && $s) {
+							$s .= ' / ';
+						} else {
+							$s .= '<br>';
+						}
+						$s .= $contact->getNomUrl(1, '');
+					}
+				}
+				print $s;
+				print '</td>';
+				print '</tr>'."\n";
+			}
+
 			// Ldap sid
 			if ($object->ldap_sid && is_object($ldap)) {
 				print '<tr><td>'.$langs->trans("Type").'</td><td>';
@@ -1916,37 +1947,6 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 			// Other attributes
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
-
-			// Company / Contact
-			if (isModEnabled("societe")) {
-				print '<tr><td>'.$langs->trans("LinkToCompanyContact").'</td>';
-				print '<td>';
-				$s = '';
-				if (isset($object->socid) && $object->socid > 0) {
-					$societe = new Societe($db);
-					$societe->fetch($object->socid);
-					if ($societe->id > 0) {
-						$s .= $societe->getNomUrl(1, '');
-					}
-				} else {
-					$s .= '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ThisUserIsNot").'</span>';
-				}
-				if (!empty($object->contact_id)) {
-					$contact = new Contact($db);
-					$contact->fetch($object->contact_id);
-					if ($contact->id > 0) {
-						if ($object->socid > 0 && $s) {
-							$s .= ' / ';
-						} else {
-							$s .= '<br>';
-						}
-						$s .= $contact->getNomUrl(1, '');
-					}
-				}
-				print $s;
-				print '</td>';
-				print '</tr>'."\n";
-			}
 
 			// Module Adherent
 			if (isModEnabled('member')) {
@@ -2465,6 +2465,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				}
 				print '</td></tr>';
 			}
+
 
 			// Gender
 			print '<tr><td>'.$langs->trans("Gender").'</td>';
