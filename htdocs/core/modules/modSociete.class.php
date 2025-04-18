@@ -278,8 +278,9 @@ class modSociete extends DolibarrModules
 			's.status' => "Status", 's.client' => "Customer", 's.fournisseur' => "Supplier", 's.datec' => "DateCreation", 's.tms' => "DateLastModification",
 			's.code_client' => "CustomerCode", 's.code_fournisseur' => "SupplierCode", 's.code_compta' => "AccountancyCode", 's.code_compta_fournisseur' => "SupplierAccountancyCode",
 			's.address' => "Address", 's.zip' => "Zip", 's.town' => "Town", 'd.nom' => 'State', 'r.nom' => 'Region', 'c.label' => "Country", 'c.code' => "CountryCode", 's.phone' => "Phone", 's.fax' => "Fax",
-			's.phone_mobile' => "PhoneMobile", 's.url' => "Url", 's.email' => "Email", 's.default_lang' => "DefaultLang", 's.canvas' => "Canvas", 's.siren' => "ProfId1", 's.siret' => "ProfId2", 's.ape' => "ProfId3", 
-			's.idprof4' => "ProfId4", 's.idprof5' => "ProfId5", 's.idprof6' => "ProfId6", 's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_private' => "NotePrivate", 
+			's.phone_mobile' => "PhoneMobile", 's.url' => "Url", 's.email' => "Email", 's.default_lang' => "DefaultLang", 's.canvas' => "Canvas",
+			's.siren' => "ProfId1", 's.siret' => "ProfId2", 's.ape' => "ProfId3", 's.idprof4' => "ProfId4", 's.idprof5' => "ProfId5", 's.idprof6' => "ProfId6",
+			's.tva_intra' => "VATIntraShort", 's.capital' => "Capital", 's.note_private' => "NotePrivate",
 			's.note_public' => "NotePublic", 't.code' => "ThirdPartyType", 'ce.code' => "DictionaryStaff", "cfj.libelle" => "JuridicalStatus", 's.fk_prospectlevel' => 'ProspectLevel',
 			'st.code' => 'ProspectStatus', 'payterm.libelle' => 'PaymentConditions', 'paymode.libelle' => 'PaymentMode',
 			's.outstanding_limit' => 'OutstandingBill', 'pbacc.ref' => 'PaymentBankAccount', 'incoterm.code' => 'IncotermLabel'
