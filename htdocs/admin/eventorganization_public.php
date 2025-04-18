@@ -196,96 +196,28 @@ if ($action == 'edit') {
 	print '</form>';
 	print '<br>';
 } else {
-	if (!empty($arrayofparameters)) {
-		print '<table class="noborder centpercent">';
-		print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td></td></tr>';
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td></td></tr>';
 
-		foreach ($arrayofparameters as $constname => $val) {
-			if ($val['enabled'] == 1) {
-				$setupnotempty++;
-				print '<tr class="oddeven">';
-				print '<td><!-- '.$constname.' -->';
-				$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
-				$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
-				print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
-				print '</td><td>';
+	foreach ($arrayofparameters as $constname => $val) {
+		$setupnotempty++;
+		print '<tr class="oddeven">';
+		print '<td><!-- '.$constname.' -->';
+		$tooltiphelp = (($langs->trans($constname . 'Tooltip') != $constname . 'Tooltip') ? $langs->trans($constname . 'Tooltip') : '');
+		$tooltiphelp .= (($langs->trans($constname . 'Tooltip2') && $langs->trans($constname . 'Tooltip2') != $constname . 'Tooltip2') ? '<br><br>'."\n".$langs->trans($constname . 'Tooltip2') : '');
+		print $form->textwithpicto($langs->trans($constname), $tooltiphelp);
+		print '</td><td>';
+		print getDolGlobalString($constname);
+		print '</td>';
 
-				if ($val['type'] == 'textarea') {
-					print dol_nl2br(getDolGlobalString($constname));
-				} elseif ($val['type'] == 'html') {
-					print getDolGlobalString($constname);
-				} elseif ($val['type'] == 'yesno') {
-					print ajax_constantonoff($constname);
-				} elseif (preg_match('/emailtemplate:/', $val['type'])) {
-					if (getDolGlobalString($constname)) {
-						include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
-						$formmail = new FormMail($db);
-
-						$tmp = explode(':', $val['type']);
-						$labelemailtemplate = getDolGlobalString($constname);
-						if ($labelemailtemplate && $labelemailtemplate != '-1') {
-							$template = $formmail->getEMailTemplate($db, $tmp[1], $user, $langs, getDolGlobalInt($constname));
-							if (is_numeric($template) && $template < 0) {
-								setEventMessages($formmail->error, $formmail->errors, 'errors');
-							} else {
-								if ($template->label != 'default') {
-									print $langs->trans($template->label);
-								}
-							}
-						}
-					}
-				} elseif (preg_match('/category:/', $val['type'])) {
-					if (getDolGlobalInt($constname)) {
-						$c = new Categorie($db);
-						$result = $c->fetch(getDolGlobalInt($constname));
-						if ($result < 0) {
-							setEventMessages(null, $c->errors, 'errors');
-						}
-						$ways = $c->print_all_ways(' &gt;&gt; ', 'none', 0, 1); // $ways[0] = "ccc2 >> ccc2a >> ccc2a1" with html formatted text
-						$toprint = array();
-						foreach ($ways as $way) {
-							$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories"' . ($c->color ? ' style="background: #' . $c->color . ';"' : ' style="background: #bbb"') . '>' . $way . '</li>';
-						}
-						print '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">' . implode(' ', $toprint) . '</ul></div>';
-					}
-				} elseif (preg_match('/thirdparty_type/', $val['type'])) {
-					if (getDolGlobalString($constname) == 2) {
-						print $langs->trans("Prospect");
-					} elseif (getDolGlobalString($constname) == 3) {
-						print $langs->trans("ProspectCustomer");
-					} elseif (getDolGlobalString($constname) == 1) {
-						print $langs->trans("Customer");
-					} elseif (getDolGlobalString($constname) == 0) {
-						print $langs->trans("NorProspectNorCustomer");
-					}
-				} elseif ($val['type'] == 'product') {
-					$product = new Product($db);
-					$idproduct = getDolGlobalInt($constname);
-					if ($idproduct > 0) {
-						$resprod = $product->fetch($idproduct);
-						if ($resprod > 0) {
-							print $product->getNomUrl(1);
-						} elseif ($resprod < 0) {
-							setEventMessages($product->error, $product->errors, "errors");
-						}
-					}
-				} else {
-					print getDolGlobalString($constname);
-				}
-				print '</td>';
-
-				print '</tr>';
-			}
-		}
-
-		print '</table>';
-
-		print '<div class="tabsAction">';
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
-		print '</div>';
-	} else {
-		print '<br>'.$langs->trans("NothingToSetup");
+		print '</tr>';
 	}
+
+	print '</table>';
+
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'">'.$langs->trans("Modify").'</a>';
+	print '</div>';
 }
 
 
