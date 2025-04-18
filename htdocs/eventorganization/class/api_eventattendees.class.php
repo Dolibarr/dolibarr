@@ -207,10 +207,11 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		$allowaccess = $this->_checkAccessRights('read', 0);
-		if (!$allowaccess) {
-			throw new RestException(403, 'denied read access to Event attendees');
-		}
+//		$allowaccess = $this->_checkAccessRights('read', 0);
+//		if (!$allowaccess) {
+//			throw new RestException(403, 'denied read access to Event attendees');
+//		}
+// access check delayed until we can do it for each row checking each fk_project
 		// entity stolen from api_setup.class.php
 		$entity = (int) DolibarrApiAccess::$user->entity;
 		$obj_ret = array();
@@ -254,13 +255,21 @@ class EventAttendees extends DolibarrApi
 			$num = $this->db->num_rows($result);
 			$min = min($num, ($limit <= 0 ? $num : $limit));
 			$i = 0;
+			$onerowaccessgranted = false;
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$event_attendees_static = new ConferenceOrBoothAttendee($this->db);
 				if ($event_attendees_static->fetch($obj->rowid, '') > 0) {
-					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
+					$rowallowaccess = $this->_checkAccessRights('read', $event_attendees_static->fk_project);
+					if ($rowallowaccess) {
+						$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($event_attendees_static), $properties);
+						$onerowaccessgranted = $rowallowaccess;
+					}
 				}
 				$i++;
+			}
+			if (($num > 0) && !$onerowaccessgranted) {
+				throw new RestException(403, 'No access granted for even a single of the rows found');
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve event attendee list : '.$this->db->lasterror());
@@ -625,6 +634,7 @@ class EventAttendees extends DolibarrApi
 							$singleprojectaccess = true;
 						} else {
 							dol_syslog("project_title ".$project_title." is NOT in array from getProjectsAuthorizedForUser()", LOG_DEBUG);
+							return false;
 						}
 					}
 				} elseif (0 == $result) {
@@ -632,6 +642,9 @@ class EventAttendees extends DolibarrApi
 				} else {
 					throw new RestException(500, 'Error during fetch project '.$project_id.': '.$this->db->lasterror());
 				}
+			} elseif ($moduleaccess && ($project_id == 0)) {
+				return true;
+				// because we assume that the caller will know to check for each fk_projekt
 			}
 			if ($moduleaccess && $singleprojectaccess) {
 				return true;
