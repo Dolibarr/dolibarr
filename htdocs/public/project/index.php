@@ -239,7 +239,7 @@ print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbo
 print "\n";
 
 
-print '<div class="center">';
+print '<div class="centergrid">';
 print '<div id="divsubscribe">';
 
 
