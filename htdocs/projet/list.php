@@ -104,9 +104,19 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$search_all = GETPOST('search_all', 'alphanohtml');
-$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
 
+$search_all = GETPOST('search_all', 'alphanohtml');
+
+//TODO : What a mess about Tranvers mode and user and conf
+// We already have checkUserAccessToObject and getEntity to manage that
+// We should let
+//if (getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE')) {
+//	$search_entity = ($conf->entity > 0 ? $conf->entity : GETPOSTINT('search_entity'));
+//} else {
+//	$search_entity = ($user->entity > 0 ? $user->entity : GETPOSTINT('search_entity'));
+//}
+
+$search_entity = GETPOSTINT('search_entity');
 $search_ref = GETPOST("search_ref", 'alpha');
 $search_label = GETPOST("search_label", 'alpha');
 $search_societe = GETPOST("search_societe", 'alpha');
