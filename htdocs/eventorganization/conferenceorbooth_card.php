@@ -130,7 +130,7 @@ if (empty($reshook)) {
 	$error = 0;
 
 	if (!empty($withproject)) {
-		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?withproject=1&fk_project='.((int) $fk_project);
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?withproject=1&fk_project='.((int) $object->id);
 	} else {
 		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php';
 	}
@@ -140,7 +140,7 @@ if (empty($reshook)) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__').($withproject ? '&withproject=1' : '');
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?fk_project='.((int) $object->id).'&id='.($id > 0 ? $id : '__ID__').($withproject ? '&withproject=1' : '');
 			}
 		}
 	}
@@ -393,7 +393,7 @@ if (!empty($withproject)) {
 	// Show message
 	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
 	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
-	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+	$message .= "&project=".$projectstatic->id.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$projectstatic->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
 	print $message;
 	print "</td></tr>";
 
