@@ -69,10 +69,10 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a Expense Report object
-	 * Return an array with Expense Report information
+	 * Get properties of intervention object
+	 * Return an array with intervention information
 	 *
-	 * @param       int         $id         ID of Expense Report
+	 * @param       int         $id         ID of intervention
 	 * @return		Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
@@ -218,7 +218,7 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Update interventional general fields (won't touch lines of ficinter)
+	 * Update intervention general fields (won't touch lines of ficinter)
 	 *
 	 * @param 	int   	$id             	Id of fichinter to update
 	 * @param 	array 	$request_data   	Datas
@@ -267,7 +267,7 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Get lines of an intervention
+	 * Get lines of intervention
 	 *
 	 * @param int   $id             Id of intervention
 	 *
@@ -353,9 +353,9 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Delete order
+	 * Delete intervention
 	 *
-	 * @param   int     $id         Order ID
+	 * @param   int     $id         Intervention ID
 	 * @return  array
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
