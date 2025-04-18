@@ -72,12 +72,13 @@ class Interventions extends DolibarrApi
 	 * Get properties of intervention object
 	 * Return an array with intervention information
 	 *
-	 * @param       int         $id         ID of intervention
-	 * @return		Object					Object with cleaned properties
+	 * @param       int         $id         		ID of intervention
+	 * @param		string		$contact_type		Type of contact to return: 'external', 'thirdparty' or 'internal'
+	 * @return		Object							Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
-	public function get($id)
+	public function get($id, $contact_type = 'thirdparty')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -93,6 +94,7 @@ class Interventions extends DolibarrApi
 		}
 
 		$this->fichinter->fetchObjectLinked();
+		$this->fichinter->contacts_ids = $this->fichinter->liste_contact(-1, $contact_type, 1);
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
@@ -107,13 +109,14 @@ class Interventions extends DolibarrApi
 	 * @param string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters             Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param string    $properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string	$contact_type			Type of contact to return: 'external', 'thirdparty' or 'internal'
 	 * @return  array                           Array of order objects
 	 * @phan-return array<object>
 	 * @phpstan-return array<object>
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = 'thirdparty')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -174,6 +177,7 @@ class Interventions extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$fichinter_static = new Fichinter($this->db);
 				if ($fichinter_static->fetch($obj->rowid)) {
+					$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($fichinter_static), $properties);
 				}
 				$i++;
