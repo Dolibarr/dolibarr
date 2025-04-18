@@ -335,8 +335,9 @@ print '</div>'."\n";
 print '<br>';
 
 
+$suffix = '';
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $suffix);
 
 llxFooter('', 'public');
 
