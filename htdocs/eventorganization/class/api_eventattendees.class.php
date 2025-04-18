@@ -207,11 +207,11 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-//		$allowaccess = $this->_checkAccessRights('read', 0);
-//		if (!$allowaccess) {
-//			throw new RestException(403, 'denied read access to Event attendees');
-//		}
-// access check delayed until we can do it for each row checking each fk_project
+		// $allowaccess = $this->_checkAccessRights('read', 0);
+		// if (!$allowaccess) {
+		//		throw new RestException(403, 'denied read access to Event attendees');
+		// }
+		// access check delayed until we can do it for each row checking each fk_project
 		// entity stolen from api_setup.class.php
 		$entity = (int) DolibarrApiAccess::$user->entity;
 		$obj_ret = array();
