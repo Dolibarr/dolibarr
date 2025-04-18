@@ -56,28 +56,16 @@ llxHeader('', $langs->trans("ExportsArea"), $help_url, '', 0, 0, '', '', '', 'mo
 
 print load_fiche_titre($langs->trans("ExportsArea"));
 
-print $langs->trans("FormatedExportDesc1").'<br>';
-print '<br>';
-
-
-print '<div class="center">';
-if (count($export->array_export_code)) {
-	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', $user->hasRight('export', 'lire'));
-}
-print '</div>';
-print '<br>';
-
-
 
 // List of available export formats
-
-print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="noborder centpercent">';
-print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
-print '<td>'.$langs->trans("LibraryShort").'</td>';
-print '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
-print '</tr>';
+$out = '';
+$out .= '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+$out .= '<table class="noborder centpercent nomarginbottom">';
+$out .= '<tr class="liste_titre">';
+$out .= '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
+$out .= '<td>'.$langs->trans("LibraryShort").'</td>';
+$out .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
+$out .= '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 $model = new ModeleExports($db);
@@ -88,19 +76,36 @@ foreach ($liste as $key => $val) {
 		$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
 	}
 
-	print '<tr class="oddeven">';
-	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
+	$out .= '<tr class="oddeven">';
+	$out .= '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
 	$text = $model->getDriverDescForKey($key);
 	$label = $liste[$key];
 	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-	print '<td>'.$form->textwithpicto($label, $text).'</td>';
-	print '<td>'.$model->getLibLabelForKey($key).'</td>';
-	print '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
-	print '</tr>';
+	$out .= '<td>'.$form->textwithpicto($label, $text).'</td>';
+	$out .= '<td>'.$model->getLibLabelForKey($key).'</td>';
+	$out .= '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
+	$out .= '</tr>';
 }
 
-print '</table>';
+$out .= '</table>';
+$out .= '</div>';
+
+
+print '<div class="divsection wordwrap center">';
+print '<br>';
+print $form->textwithpicto($langs->trans("FormatedExportDesc1"), $out, 1, 'help', 'valignmiddle', 1, 3, 'ttexport').'<br>';
+print '<br><br>';
+
+print '<div class="center">';
+if (count($export->array_export_code)) {
+	$params = array('forcenohideoftext' => 1);
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle size4x', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', 1, $params);
+}
 print '</div>';
+print '<br>';
+
+print '</div>';
+
 
 // End of page
 llxFooter();

@@ -1199,6 +1199,7 @@ if ($action == 'edit') {
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
 
+		// Add editor assistants
 		$formmail->withlayout = 'emailing';		// Note: MAIN_EMAIL_USE_LAYOUT must be set
 		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');	// Note: Module AI must be enabled
 

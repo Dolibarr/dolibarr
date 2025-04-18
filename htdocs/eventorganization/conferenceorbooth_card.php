@@ -129,14 +129,18 @@ if ($reshook < 0) {
 if (empty($reshook)) {
 	$error = 0;
 
-	$backurlforlist = dol_buildpath('/eventorganization/conferenceorbooth_list.php', 1);
+	if (!empty($withproject)) {
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php?withproject=1&fk_project='.((int) $fk_project);
+	} else {
+		$backurlforlist = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_list.php';
+	}
 
 	if (empty($backtopage) || ($cancel && empty($id))) {
 		if (empty($backtopage) || ($cancel && strpos($backtopage, '__ID__'))) {
 			if (empty($id) && (($action != 'add' && $action != 'create') || $cancel)) {
 				$backtopage = $backurlforlist;
 			} else {
-				$backtopage = dol_buildpath('/eventorganization/conferenceorbooth_card.php', 1).'?id='.($id > 0 ? $id : '__ID__').($withproject ? '&withproject=1' : '');
+				$backtopage = DOL_URL_ROOT.'/eventorganization/conferenceorbooth_card.php?fk_project='.((int) $fk_project).'&id='.($id > 0 ? $id : '__ID__').($withproject ? '&withproject=1' : '');
 			}
 		}
 	}
@@ -271,17 +275,6 @@ if (!empty($withproject)) {
 		print '</td></tr>';
 	}
 
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($projectstatic->public == 0) {
-		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-		print $langs->trans("PrivateProject");
-	} else {
-		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-		print $langs->trans("SharedProject");
-	}
-	print '</td></tr>';
-
 	// Budget
 	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
 	if (strcmp($projectstatic->budget_amount, '')) {
@@ -296,7 +289,7 @@ if (!empty($withproject)) {
 	$end = dol_print_date($projectstatic->date_end, 'day');
 	print ' - ';
 	print($end ? $end : '?');
-	if ($object->hasDelay()) {
+	if ($projectstatic->hasDelay()) {
 		print img_warning("Late");
 	}
 	print '</td></tr>';
@@ -308,8 +301,19 @@ if (!empty($withproject)) {
 	$end = dol_print_date($projectstatic->date_end_event, 'day');
 	print ' - ';
 	print($end ? $end : '?');
-	if ($object->hasDelay()) {
+	if ($projectstatic->hasDelay()) {
 		print img_warning("Late");
+	}
+	print '</td></tr>';
+
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($projectstatic->public == 0) {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+		print $langs->trans("PrivateProject");
+	} else {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+		print $langs->trans("SharedProject");
 	}
 	print '</td></tr>';
 
@@ -334,17 +338,17 @@ if (!empty($withproject)) {
 
 	print '<table class="border tableforfield centpercent">';
 
-	// Description
-	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td class="valuefield">';
-	print dol_htmlentitiesbr($projectstatic->description);
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category')) {
 		print '<tr><td class="titlefield valignmiddle">'.$langs->trans("Categories").'</td><td class="valuefield">';
 		print $form->showCategories($projectstatic->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
+
+	// Description
+	print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td><td class="valuefield">';
+	print dol_htmlentitiesbr($projectstatic->description);
+	print '</td></tr>';
 
 	print '<tr><td class="titlefield nowrap">';
 	$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
@@ -380,6 +384,20 @@ if (!empty($withproject)) {
 	print $form->editfieldval($form->textwithpicto($langs->trans('MaxNbOfAttendees'), ''), 'max_attendees', $projectstatic->max_attendees, $projectstatic, $permissiontoadd, 'integer:3', '', null, null, '', 0, '', 'projectid');
 	print "</td></tr>";
 
+	// Link to ICS for the event
+	print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLinkProject").'</td><td class="valuefield">';
+	// Define $urlwithroot
+	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+	$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT;
+
+	// Show message
+	$message = '<a target="_blank" rel="noopener noreferrer" href="'.$urlwithroot.'/public/agenda/agendaexport.php?format=ical'.($conf->entity > 1 ? "&entity=".$conf->entity : "");
+	$message .= '&exportkey='.urlencode(getDolGlobalString('MAIN_AGENDA_XCAL_EXPORTKEY', '...'));
+	$message .= "&project=".$projectid.'&module='.urlencode('project@eventorganization').'&file='.urlencode('calendar-'.$project->ref.'.ics').'&output=file">'.$langs->trans('DownloadICSLink').img_picto('', 'download', 'class="paddingleft"').'</a>';
+	print $message;
+	print "</td></tr>";
+
+	// Link for ICS for conference or booth
 	print '<tr><td class="titlefield valignmiddle">'.$langs->trans("EventOrganizationICSLink").'</td><td>';
 	// Define $urlwithroot
 	$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
@@ -421,7 +439,7 @@ if (!empty($withproject)) {
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
 	print '<div class="tdoverflowmax200 inline-block valignmiddle"><a target="_blank" href="'.$link_subscription.'" class="quatrevingtpercent">'.$link_subscription.'</a></div>';
-	print '<a target="_blank" rel="noopener noreferrer" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
+	print '<a target="_blank" rel="noopener noreferrer" href="'.$link_subscription.'">'.img_picto('', 'globe').'</a>';
 	//print '</div>';
 	//print ajax_autoselect("linkregister");
 	print '</td></tr>';
@@ -438,7 +456,7 @@ if (!empty($withproject)) {
 	print '<br>';
 }
 
-// Part to create
+// Part to create a conference or booth
 if ($action == 'create') {
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("ConferenceOrBooth")), '', 'object_'.$object->picto);
 
@@ -477,7 +495,7 @@ if ($action == 'create') {
 	//dol_set_focus('input[name="ref"]');
 }
 
-// Part to edit record
+// Part to edit conference or booth
 if (($id || $ref) && $action == 'edit') {
 	print load_fiche_titre($langs->trans("ConferenceOrBooth"), '', 'object_'.$object->picto);
 
@@ -514,7 +532,7 @@ if (($id || $ref) && $action == 'edit') {
 	print '</form>';
 }
 
-// Part to show record
+// Part to show conference or booth
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	$res = $object->fetch_optionals();
 
