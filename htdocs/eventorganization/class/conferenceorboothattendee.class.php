@@ -777,13 +777,13 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function boardingPassAuto($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_USED) {
+		if ($this->status == self::STATUS_USED) {
 			return 0;
 		}
 
@@ -800,13 +800,13 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function boardingPassUser($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_USED) {
+		if ($this->status == self::STATUS_USED) {
 			return 0;
 		}
 
@@ -823,13 +823,13 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function ordered($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_USED) {
+		if ($this->status == self::STATUS_USED) {
 			return 0;
 		}
 
@@ -846,13 +846,13 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function invoiced($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_USED) {
+		if ($this->status == self::STATUS_USED) {
 			return 0;
 		}
 
@@ -886,10 +886,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function paidFull($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -906,10 +906,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function paidPartially($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
 
@@ -943,10 +943,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 	public function use($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status = self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			return 0;
 		}
-		if ($this->status = self::STATUS_CANCELED) {
+		if ($this->status == self::STATUS_CANCELED) {
 			return 0;
 		}
 
