@@ -638,7 +638,7 @@ class Propal extends CommonObject
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -1575,6 +1575,7 @@ class Propal extends CommonObject
 		$object->ref = '';
 		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
 		$object->statut = self::STATUS_DRAFT;
+		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
 		$object->user_creation_id = $user->id;
@@ -2707,7 +2708,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->statut = $status;
+				$this->statut = $status;	// deprecated
 				$this->status = $status;
 				$this->date_signature = $date_signature;
 				$this->note_private = $newprivatenote;
@@ -2726,7 +2727,7 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->status;
+				$this->statut = $this->oldcopy->status;	// deprecated
 				$this->status = $this->oldcopy->status;
 				$this->date_signature = $this->oldcopy->date_signature;
 				$this->note_private = $this->oldcopy->note_private;
@@ -2857,7 +2858,7 @@ class Propal extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_CANCELED;
+				$this->statut = self::STATUS_CANCELED;	// deprecated
 				$this->status = self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
@@ -2923,7 +2924,7 @@ class Propal extends CommonObject
 		}
 
 		if (!$error) {
-			$this->statut = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;	// deprecated
 			$this->status = self::STATUS_DRAFT;
 
 			$this->db->commit();

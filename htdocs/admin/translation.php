@@ -244,13 +244,12 @@ if (!getDolGlobalString('MAIN_ENABLE_OVERWRITE_TRANSLATION')) {
 	$enabledisablehtml .= '</a>';
 }
 
-print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'title_setup');
-
 $current_language_code = $langs->defaultlang;
 $s = picto_from_langcode($current_language_code);
-print $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("CurrentUserLanguage").':</span> <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
+$infoOnCurrentLang = $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("CurrentUserLanguage").':</span> <strong>'.$s.' '.$current_language_code.'</strong>', $langs->trans("TranslationDesc")).'</span><br>';
 
-print '<br>';
+print load_fiche_titre($langs->trans("Translation"), $enabledisablehtml, 'language', 0, '', '', $infoOnCurrentLang);
+
 
 if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 	$param .= '&contextpage='.urlencode($contextpage);
@@ -361,14 +360,16 @@ if ($mode == 'overwrite') {
 		$disablededit = ' disabled';
 	}
 
-	print '<div class="justify"><span class="opacitymedium">';
-	print img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
+	$infoOnTransProcess = '<div class="justify"><span class="opacitymedium">';
+	$infoOnTransProcess .= img_info().' '.$langs->trans("SomeTranslationAreUncomplete");
 	$urlwikitranslatordoc = 'https://wiki.dolibarr.org/index.php/Translator_documentation';
-	print ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
-	print '<br>';
-	print $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
-	print ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
-	print '</span></div>';
+	$infoOnTransProcess .= ' ('.str_replace('{s1}', '<a href="'.$urlwikitranslatordoc.'" target="_blank" rel="noopener noreferrer external">'.$langs->trans("Here").'</a>', $langs->trans("SeeAlso", '{s1}')).')<br>';
+	$infoOnTransProcess .= '<br>';
+	$infoOnTransProcess .= $langs->trans("TranslationOverwriteDesc", $langs->transnoentitiesnoconv("Language"), $langs->transnoentitiesnoconv("TranslationKey"), $langs->transnoentitiesnoconv("NewTranslationStringToShow"))."\n";
+	$infoOnTransProcess .= ' ('.$langs->trans("TranslationOverwriteDesc2").').'."<br>\n";
+	$infoOnTransProcess .= '</span></div>';
+
+	print $infoOnTransProcess;
 
 	print '<br>';
 
@@ -383,7 +384,7 @@ if ($mode == 'overwrite') {
 	print_liste_field_titre("TranslationKey", $_SERVER["PHP_SELF"], 'transkey', '', $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("NewTranslationStringToShow", $_SERVER["PHP_SELF"], 'transvalue', '', $param, '', $sortfield, $sortorder);
 	if (isModEnabled('multicompany') && !$user->entity) {
-		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'Entity', '', $param, '', $sortfield, $sortorder);
+		print_liste_field_titre("Entity", $_SERVER["PHP_SELF"], 'Entity', '', $param, '', $sortfield, $sortorder, 'center ');
 	}
 	print '<td align="center"></td>';
 	print "</tr>\n";
@@ -411,8 +412,8 @@ if ($mode == 'overwrite') {
 
 	// Multi company
 	if (isModEnabled('multicompany') && !$user->entity) {
-		print '<td>';
-		print '<input type="text" class="quatrevingtpercent"' . $disablededit . ' name="entity" id="entity" value="' . (!empty($entity) ? $entity : "") . '">';
+		print '<td class="center">';
+		print '<input type="text" class="width50 center"' . $disablededit . ' name="entity" id="entity" value="' . (!empty($entity) ? $entity : "") . '">';
 		print '</td>';
 	}
 
@@ -477,7 +478,7 @@ if ($mode == 'overwrite') {
 
 			// Entity limit to superadmin
 			if (isModEnabled('multicompany') && empty($user->entity)) {
-				print '<td>';
+				print '<td class="center">';
 				if ($action == 'edit' && $obj->rowid == GETPOSTINT('rowid')) {
 					print '<input type="text" class="flat" size="1" name="entity" value="' . ((int) $obj->entity) . '">';
 				} else {
