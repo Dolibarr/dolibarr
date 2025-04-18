@@ -3295,7 +3295,7 @@ if (!function_exists("llxFooter")) {
 	 */
 	function llxFooter($comment = '', $zone = 'private', $disabledoutputofmessages = 0)
 	{
-		global $conf, $db, $langs, $user, $mysoc, $object;
+		global $conf, $db, $langs, $user, $mysoc, $object, $hookmanager;
 		global $delayedhtmlcontent;
 		global $contextpage, $page, $limit;
 		global $dolibarr_distrib;
@@ -3517,6 +3517,12 @@ if (!function_exists("llxFooter")) {
 					dolibarr_set_const($db, 'MAIN_FIRST_PING_OK_ID', 'disabled', 'chaine', 0, '', $conf->entity);
 				}
 			}
+		}
+
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('beforeBodyClose', $parameters); // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) {
+			print $hookmanager->resPrint;
 		}
 
 		print "</body>\n";
