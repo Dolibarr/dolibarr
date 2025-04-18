@@ -84,7 +84,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteById($id)
 	{
-		$allowaccess = $this->_checkAccessRights('delete');
+		$allowaccess = $this->_checkAccessRights('delete', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -122,7 +122,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function deleteByRef($ref)
 	{
-		$allowaccess = $this->_checkAccessRights('delete');
+		$allowaccess = $this->_checkAccessRights('delete', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -207,7 +207,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
-		$allowaccess = $this->_checkAccessRights('read');
+		$allowaccess = $this->_checkAccessRights('read', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied read access to Event attendees');
 		}
@@ -306,7 +306,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function post($request_data = null)
 	{
-		$allowaccess = $this->_checkAccessRights('write');
+		$allowaccess = $this->_checkAccessRights('write', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied create access to Event attendees');
 		}
@@ -352,7 +352,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putById($id, $request_data = null)
 	{
-		$allowaccess = $this->_checkAccessRights('write');
+		$allowaccess = $this->_checkAccessRights('write', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
 		}
@@ -403,7 +403,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	public function putByRef($ref, $request_data = null)
 	{
-		$allowaccess = $this->_checkAccessRights('write');
+		$allowaccess = $this->_checkAccessRights('write', 0);
 		if (!$allowaccess) {
 			throw new RestException(403, 'denied update access to Event attendees');
 		}
@@ -453,11 +453,7 @@ class EventAttendees extends DolibarrApi
 	 */
 	private function _fetch($id, $ref = '')
 	{
-		$allowaccess = $this->_checkAccessRights('read');
-		if (!$allowaccess) {
-			throw new RestException(403, 'denied read access to Event attendees');
-		}
-
+		// we first need to fetch the object so we can get the fk_project id and then check for access
 		$result = $this->event_attendees->fetch($id, $ref);
 		if (!$result) {
 			if ($id) {
@@ -467,6 +463,11 @@ class EventAttendees extends DolibarrApi
 				throw new RestException(404, 'Event attendee with ref '.$ref.' not found');
 			}
 			throw new RestException(404, 'Event attendee not found');
+		}
+		$project_id = $this->event_attendees->fk_project;
+		$allowaccess = $this->_checkAccessRights('read', $project_id);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
 		}
 
 		return $this->_cleanObjectDatas($this->event_attendees);
@@ -580,28 +581,61 @@ class EventAttendees extends DolibarrApi
 		}
 		return $event_attendees;
 	}
+
 	/**
 	 * function to check for access rights - should probably have 1. parameter which is read/write/delete/...
 	 * Why a separate function? because we probably needs to check so many many different kinds of objects
 	 *
 	 * @param	string		$accesstype		accesstype: read, write, delete, ...
+	 * @param	int			$project_id		which project do we need to check for access to, 0 means don't check
 	 * @return 	bool     					Return true if access is granted else false
 	 *
 	 * @throws  RestException 403
+	 * @throws  RestException 500
 	 */
-	private function _checkAccessRights($accesstype)
+	private function _checkAccessRights($accesstype, $project_id = 0)
 	{
 		// what kind of access management do we need?
 		$moduleaccess = false;
 		if (isModEnabled("eventorganization") && DolibarrApiAccess::$user->hasRight('eventorganization', $accesstype)) {
 			$moduleaccess = true;
 		}
-		$projectaccess = false;
-		// we should also check project visibility and if set to assigned contacts it should be only those contacts.
-		if ($moduleaccess) {
+		$fullprojectaccess = false;
+		if (DolibarrApiAccess::$user->hasRight('projet', 'all', $accesstype)) {
+			$fullprojectaccess = true;
+		}
+
+		if ($moduleaccess && $fullprojectaccess) {
 			return true;
 		} else {
-			throw new RestException(403, 'denied access to Event attendees');
+			$singleprojectaccess = false;
+			if (0 < $project_id) {
+				// we should also check project visibility and if set to assigned contacts it should be only those contacts.
+				require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$event_project = new Project($this->db);
+				$result = $event_project->fetch($project_id);
+				if (0 < $result) {
+					$public = $event_project->public;
+					if ( 1 == $public) {
+						$singleprojectaccess = true;
+					} else {
+						// check if my user is a contact on that project or in a group that is a contact of that project
+					}
+				} elseif (0 == $result) {
+					throw new RestException(500, 'Project id '.$project_id.' not found');
+				} else {
+					throw new RestException(500, 'Error during fetch project '.$project_id.': '.$this->db->lasterror());
+				}
+			}
+			if ($moduleaccess && $singleprojectaccess) {
+				return true;
+			} elseif ($moduleaccess) {
+				throw new RestException(403, 'Event attendees access granted, but denied access to the project');
+			} elseif ($singleprojectaccess) {
+				throw new RestException(403, 'project access granted, but denied access to Event attendees');
+			} else {
+				throw new RestException(403, 'denied access both Event attendees and the project');
+			}
 		}
 	}
 }
