@@ -448,7 +448,7 @@ class Fichinter extends CommonObject
 			$sql .= ", date_valid = ".($this->datev ? "'".$this->db->idate($this->datev)."'" : "null");
 		}
 		if (isset($this->datet)) {
-			$sql .= ", datet = '".($this->datet ? "'".$this->db->idate($this->datet)."'" : "null");
+			$sql .= ", datet = ".($this->datet ? "'".$this->db->idate($this->datet)."'" : "null");
 		}
 		$sql .= ", note_private = ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ", note_public = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : "null");

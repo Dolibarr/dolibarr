@@ -2353,8 +2353,9 @@ class Facture extends CommonInvoice
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
 				// Now process extrafields
-				$this->array_options = array();
 				if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
+					$this->array_options = array();
+
 					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 						$type = !empty($extrafields->attributes[$this->table_element]['type'][$key])
 							? $extrafields->attributes[$this->table_element]['type'][$key]
