@@ -6,7 +6,7 @@
  * Copyright (C) 2019		Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2020		Pierre Ardoin			<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan			<tobias.sekan@startmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
