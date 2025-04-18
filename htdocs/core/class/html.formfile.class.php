@@ -936,7 +936,7 @@ class FormFile
 
 				// Get list of files stored into database for same relative directory
 				if ($relativedir) {
-					completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+					completeFileArrayWithDatabaseInfo($file_list, $relativedir, $object);
 					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 					//var_dump($sortfield.' - '.$sortorder);
@@ -973,7 +973,6 @@ class FormFile
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
-
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
 						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
@@ -988,7 +987,6 @@ class FormFile
 							$out .= 'target="_blank" ';
 						}
 						$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
-
 						$mime = dol_mimetype($relativepath, '', 0);
 						if (preg_match('/text/', $mime)) {
 							$out .= ' target="_blank" rel="noopener noreferrer"';
@@ -999,9 +997,11 @@ class FormFile
 						$out .= dol_trunc($file["name"], 150);
 						$out .= '</a>';
 					}
+
 					$out .= '</span>'."\n";
 					$out .= $imgpreview;
 					$out .= '</td>';
+
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
@@ -1429,7 +1429,7 @@ class FormFile
 
 			// Get list of files stored into database for same relative directory
 			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object);
 				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 				//var_dump($sortfield.' - '.$sortorder);

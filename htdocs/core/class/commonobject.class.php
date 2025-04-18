@@ -9797,7 +9797,7 @@ abstract class CommonObject
 		 $filearray=array_merge($filearray, $filearrayold);
 		 }*/
 
-		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir, $this);
 		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 		if (count($filearray)) {

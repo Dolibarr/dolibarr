@@ -1025,8 +1025,6 @@ class EcmFiles extends CommonObject
 					$tmppath = preg_replace('/^[^\/]+\//', '', $this->filepath);
 				}
 			}
-			//var_dump($this->filepath);
-
 			$url = DOL_URL_ROOT.'/document.php?modulepart='.urlencode($option).'&file='.urlencode($tmppath.'/'.$this->filename).'&entity='.((int) $this->entity);
 		} else {
 			$url = DOL_URL_ROOT.'/ecm/file_card.php?id='.$this->id;
