@@ -246,3 +246,15 @@ ALTER TABLE llx_contratdet DROP COLUMN remise;
 ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
 
 ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
+
+ALTER TABLE llx_entrepot MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_entrepot MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_establishment MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_resource MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone_mobile varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_phone varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN user_mobile varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN personal_mobile varchar(30);
