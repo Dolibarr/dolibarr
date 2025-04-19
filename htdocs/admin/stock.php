@@ -228,6 +228,15 @@ $formproduct = new FormProduct($db);
 
 
 $disableStockCalculateOn = array();
+if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+	$langs->load('products');
+	$disableStockCalculateOn[] = 'BILL';
+	$disableStockCalculateOn[] = 'VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SUPPLIER_BILL';
+	$disableStockCalculateOn[] = 'SUPPLIER_VALIDATE_ORDER';
+	$disableStockCalculateOn[] = 'SHIPMENT_CLOSE';
+	print info_admin($langs->trans('WhenProductVirtualOnOptionAreForced'));
+}
 if (isModEnabled('productbatch')) {
 	// If module lot/serial enabled, we force the inc/dec mode to STOCK_CALCULATE_ON_SHIPMENT_CLOSE and STOCK_CALCULATE_ON_RECEPTION_CLOSE
 	$langs->load("productbatch");

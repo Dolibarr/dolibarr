@@ -695,8 +695,8 @@ if (empty($reshook)) {
 				}
 
 				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
+					$subject = (string) $arraydefaultmessage->topic;
+					$msg     = (string) $arraydefaultmessage->content;
 				}
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
@@ -763,8 +763,8 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
+						$subject = (string) $arraydefaultmessage->topic;
+						$msg     = (string) $arraydefaultmessage->content;
 					}
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
@@ -830,8 +830,8 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
+						$subject = (string) $arraydefaultmessage->topic;
+						$msg     = (string) $arraydefaultmessage->content;
 					}
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
@@ -1615,8 +1615,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg = $arraydefaultmessage->content;
+				$subject = (string) $arraydefaultmessage->topic;
+				$msg	 = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1679,8 +1679,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$subject = (string) $arraydefaultmessage->topic;
+				$msg     = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1740,8 +1740,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$subject = (string) $arraydefaultmessage->topic;
+				$msg     = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);

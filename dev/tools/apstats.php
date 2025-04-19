@@ -261,7 +261,7 @@ $nbofmonth = 3;
 $delay = (3600 * 24 * 30 * $nbofmonth);
 $arrayofalerts = array();
 
-$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec )");
+$commandcheck = "git log --all --shortstat --no-renames --use-mailmap --pretty=".escapeshellarg('format:%cI;%H;%aN;%aE;%ce;%s')." --since=".escapeshellarg(dol_print_date(dol_now() - $delay, '%Y-%m-%d'))." | grep -i -E ".escapeshellarg("(#yogosha|CVE|Sec:|Sec |Sec$)");
 print 'Execute git log to get commits related to security: '.$commandcheck."\n";
 $output_arrglpu = array();
 $resexecglpu = 0;

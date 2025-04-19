@@ -676,7 +676,6 @@ RECUR
 RSS
 RateIndirect
 Re-Open
-Rechercher
 ReconciledBy
 RecordNotFound
 RecruitmentJobPosition
@@ -808,8 +807,6 @@ SupplierMissingRef
 Synchronize
 Syslog
 TLS/STARTTLS
-TLSv1
-TLSv1.2
 TYPE_
 Tabs
 Tag

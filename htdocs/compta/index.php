@@ -209,9 +209,10 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				$tmpinvoice->total_ht = $obj->total_ht;
 				$tmpinvoice->total_tva = $obj->total_tva;
 				$tmpinvoice->total_ttc = $obj->total_ttc;
-				$tmpinvoice->statut = $obj->status;
+				$tmpinvoice->statut = $obj->status;	// deprecated
 				$tmpinvoice->status = $obj->status;
-				$tmpinvoice->paye = $obj->paye;
+				$tmpinvoice->paye = $obj->paye;	// deprecated
+				$tmpinvoice->paid = $obj->paye;
 				$tmpinvoice->date_lim_reglement = $db->jdate($obj->datelimite);
 				$tmpinvoice->type = $obj->type;
 
@@ -360,9 +361,9 @@ if ((isModEnabled('fournisseur') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMO
 				$facstatic->total_ht = $obj->total_ht;
 				$facstatic->total_tva = $obj->total_tva;
 				$facstatic->total_ttc = $obj->total_ttc;
-				$facstatic->statut = $obj->status;
+				$facstatic->statut = $obj->status;	// deprecated
 				$facstatic->status = $obj->status;
-				$facstatic->paye = $obj->paye;
+				$facstatic->paye = $obj->paye;	// deprecated
 				$facstatic->paid = $obj->paye;
 				$facstatic->type = $obj->type;
 				$facstatic->ref_supplier = $obj->ref_supplier;
@@ -481,7 +482,7 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->lastname = $obj->lastname;
 				$donationstatic->firstname = $obj->firstname;
 				$donationstatic->date = $db->jdate($obj->date);
-				$donationstatic->statut = $obj->status;
+				$donationstatic->statut = $obj->status;	// deprecated
 				$donationstatic->status = $obj->status;
 
 				$label = '';
@@ -708,7 +709,8 @@ if (isModEnabled('invoice') && isModEnabled('order') && $user->hasRight("command
 
 				$commandestatic->id = $obj->rowid;
 				$commandestatic->ref = $obj->ref;
-				$commandestatic->statut = $obj->status;
+				$commandestatic->statut = $obj->status; // deprecated
+				$commandestatic->status = $obj->status;
 				$commandestatic->billed = $obj->facture;
 
 				print '<tr class="oddeven">';

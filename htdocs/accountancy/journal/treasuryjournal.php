@@ -7,7 +7,7 @@
  * Copyright (C) 2013-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2017-2018  Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2017-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018		Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,10 +38,17 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/bookkeeping.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 
-global $conf, $db, $mysoc, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
-$langs->loadLangs(array("compta", "accountancy", "banks", "other"));
+$langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
 
 // Multi journal
 $id_journal = GETPOSTINT('id_journal');
@@ -53,19 +60,32 @@ $date_endmonth = GETPOSTINT('date_endmonth');
 $date_endday = GETPOSTINT('date_endday');
 $date_endyear = GETPOSTINT('date_endyear');
 $in_bookkeeping = GETPOST('in_bookkeeping', 'aZ09');
-if ($in_bookkeeping == '') {
-	$in_bookkeeping = 'notyet';
+
+$only_rappro = GETPOSTINT('only_rappro');
+if ($only_rappro == 0) {
+	//GET page for the first time, use default settings
+	$only_rappro = getDolGlobalInt('ACCOUNTING_BANK_CONCILIATED');
 }
 
 $now = dol_now();
 
 $action = GETPOST('action', 'aZ09');
 
-$socid = 0;
+if ($in_bookkeeping == '') {
+	$in_bookkeeping = 'notyet';
+}
+
 // Security check
-if ($user->socid > 0 && empty($id_journal)) {
+if (!isModEnabled('accounting')) {
 	accessforbidden();
 }
+if ($user->socid > 0) {
+	accessforbidden();
+}
+if (!$user->hasRight('accounting', 'bind', 'write')) {
+	accessforbidden();
+}
+
 
 /*
  * Actions
@@ -73,41 +93,61 @@ if ($user->socid > 0 && empty($id_journal)) {
 
 $error = 0;
 
-$pastmonth = '';
-$pastmonthyear = '';
 $date_start = dol_mktime(0, 0, 0, $date_startmonth, $date_startday, $date_startyear);
 $date_end = dol_mktime(23, 59, 59, $date_endmonth, $date_endday, $date_endyear);
 
-if (empty($date_startmonth) || empty($date_endmonth)) {
+$pastmonth = null;  // Initialise for static analysis  (could be really unseg)
+$pastmonthyear = null;
+
+if (empty($date_startmonth)) {
 	// Period by default on transfer
 	$dates = getDefaultDatesForTransfer();
 	$date_start = $dates['date_start'];
+	$pastmonthyear = $dates['pastmonthyear'];
+	$pastmonth = $dates['pastmonth'];
+}
+if (empty($date_endmonth)) {
+	// Period by default on transfer
+	$dates = getDefaultDatesForTransfer();
 	$date_end = $dates['date_end'];
 	$pastmonthyear = $dates['pastmonthyear'];
 	$pastmonth = $dates['pastmonth'];
 }
 
-if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) {
-	// We define date_start and date_end, only if we did not submit the form
-	$date_start = dol_get_first_day($pastmonthyear, $pastmonth, false);
-	$date_end = dol_get_last_day($pastmonthyear, $pastmonth, false);
+if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))) { // We define date_start and date_end, only if we did not submit the form
+	$date_start = dol_get_first_day((int) $pastmonthyear, (int) $pastmonth, false);
+	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
 // Get all bank lines
 //-------------------------------------
-$sql = "SELECT b.rowid, b.dateo as do, b.label, b.fk_type, b.fk_account,";
-$sql .= " ba.ref as baref, ba.account_number,";
+$sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_currency, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
+$sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " bu.type as bu_type";
 $sql .= " FROM ".$db->prefix()."bank as b";
-$sql .= " LEFT JOIN ".$db->prefix()."bank_account as ba on b.fk_account = ba.rowid";
+$sql .= " JOIN ".$db->prefix()."bank_account as ba on b.fk_account = ba.rowid";
 $sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu ON bu.fk_bank = b.rowid";
 $sql .= " WHERE ba.fk_accountancy_journal = ".((int) $id_journal);
-$sql .= " AND ba.entity IN (".getEntity('bank_account').')'; // We don't share object for accountancy, we use source object sharing
-// Filter by dates
+$sql .= " AND b.amount <> 0 AND ba.entity IN (".getEntity('bank_account').")"; // We don't share object for accountancy, we use source object sharing
 if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
 }
+// Define begin binding date
+if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
+	$sql .= " AND b.dateo >= '".$db->idate(getDolGlobalInt('ACCOUNTING_DATE_START_BINDING'))."'";
+}
+// Already in bookkeeping or not
+if ($in_bookkeeping == 'already') {
+	$sql .= " AND (b.rowid IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
+if ($in_bookkeeping == 'notyet') {
+	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+}
+if ($only_rappro == 2) {
+	$sql .= " AND (b.rappro = '1')";
+}
 $sql .= " ORDER BY b.dateo";
+//print $sql;
 
 $result_lines = array();
 
@@ -136,6 +176,7 @@ if ($resql) {
 				'fk_bank_account' => $obj->fk_account,
 				'objects' => array(),
 			);
+			$reg = array();
 			if (preg_match('/^\((.*)\)$/i', $obj->label, $reg)) {
 				$tabpay[$obj->rowid]["lib"] = $langs->trans($reg[1]);
 			} else {
@@ -171,7 +212,7 @@ if ($resql) {
 				$sql .= " aa.account_number as accountancy_code, aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."facturedet as fd";
-				$sql .= " LEFT JOIN ".$db->prefix()."facture as f ON f.rowid = fd.fk_facture";
+				$sql .= " INNER JOIN ".$db->prefix()."facture as f ON f.rowid = fd.fk_facture";
 				$sql .= " INNER JOIN ".$db->prefix()."paiement_facture as pf ON pf.fk_facture = f.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pf.fk_paiement AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = fd.fk_product";
@@ -192,7 +233,7 @@ if ($resql) {
 				$sql .= " AND fd.product_type IN (0,1)";
 				$sql .= " AND f.type IN (".Facture::TYPE_STANDARD.",".Facture::TYPE_REPLACEMENT.",".Facture::TYPE_CREDIT_NOTE.",".(!getDolGlobalString('FACTURE_DEPOSITS_ARE_JUST_PAYMENTS') ? Facture::TYPE_DEPOSIT."," : "").Facture::TYPE_SITUATION.")";
 				$sql .= " AND bu.fk_bank IN (".$db->sanitize(implode(',', $ids)).")";
-				$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id";
+				$sql .= " GROUP BY fd.rowid, bu.fk_bank, pf.amount, bu.url_id";	// TODO Must never have a GROUP BY on a field if field is not inside an aggregate function.
 				$sql .= " ORDER BY aa.account_number";
 
 				$resql = $db->query($sql);
@@ -204,6 +245,10 @@ if ($resql) {
 
 					while ($obj = $db->fetch_object($resql)) {
 						$object_key = $obj->bu_type.'_'.$obj->rowid;
+
+						// To check...
+						// If 1 invoice has 2 payments at 2 different date, seems ok, we have 2 record $tabpay because $obj->fk_bank is different (obj->fk_bank is ID of payment in bank record table).
+						// If 2 invoices are paid in the same payment, we have 2 $tabobject but also 2 $tabpay (because $object_key has 2 different values) when we should have 1.
 
 						// Add object in payment
 						if (!isset($tabpay[$obj->fk_bank]['objects'][$object_key])) {
@@ -224,7 +269,7 @@ if ($resql) {
 							$static_invoice->ref = $obj->ref;
 							$tabobject[$object_key] = array(
 								'id' => $obj->rowid,
-								'ref' => $obj->ref,
+								'ref' => $obj->ref,		// It would be better to have a doc_ref that is 'BankId '.$obj->fk_bank.' - Facture FAzzz' and not just 'FAzzz' to be protected against duplicate, where xxx = $obj->fk_bank
 								'total_ht' => $obj->invoice_total_ht,
 								'total_ttc' => $obj->invoice_total_ttc,
 								'url' => $static_invoice->getNomUrl(1),
@@ -284,7 +329,7 @@ if ($resql) {
 				$sql .= " aa.account_number as accountancy_code, aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."facture_fourn_det as ffd";
-				$sql .= " LEFT JOIN ".$db->prefix()."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
+				$sql .= " INNER JOIN ".$db->prefix()."facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
 				$sql .= " INNER JOIN ".$db->prefix()."paiementfourn_facturefourn as pff ON pff.fk_facturefourn = ff.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pff.fk_paiementfourn AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."product as p ON p.rowid = ffd.fk_product";
@@ -337,7 +382,7 @@ if ($resql) {
 							$static_supplier_invoice->ref = $obj->ref;
 							$tabobject[$object_key] = array(
 								'id' => $obj->rowid,
-								'ref' => $obj->ref,
+								'ref' => $obj->ref,		// It would be better to have a doc_ref that is 'BankId '.$obj->fk_bank.' - Facture FAzzz' and not just 'FAzzz' to be protected against duplicate, where xxx = $obj->fk_bank
 								'total_ht' => -$obj->supplier_invoice_total_ht,
 								'total_ttc' => -$obj->supplier_invoice_total_ttc,
 								'url' => $static_supplier_invoice->getNomUrl(1),
@@ -398,7 +443,7 @@ if ($resql) {
 				$sql .= " aa.label as accountancy_code_label,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."expensereport_det as erf";
-				$sql .= " LEFT JOIN ".$db->prefix()."expensereport as er ON er.rowid = erf.fk_expensereport";
+				$sql .= " INNER JOIN ".$db->prefix()."expensereport as er ON er.rowid = erf.fk_expensereport";
 				$sql .= " INNER JOIN ".$db->prefix()."payment_expensereport as per ON per.fk_expensereport = er.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = per.rowid AND bu.type = '".$db->escape($type)."'";
 				$sql .= " LEFT JOIN ".$db->prefix()."c_type_fees as ctf ON ctf.id = erf.fk_c_type_fees";
@@ -572,7 +617,7 @@ if ($resql) {
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."paiementcharge as pc";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pc.rowid AND bu.type = '".$db->escape($type)."'";
-				$sql .= " LEFT JOIN ".$db->prefix()."chargesociales AS cs ON cs.rowid = pc.fk_charge";
+				$sql .= " INNER JOIN ".$db->prefix()."chargesociales AS cs ON cs.rowid = pc.fk_charge";
 				$sql .= " LEFT JOIN ".$db->prefix()."c_chargesociales as ccs ON ccs.id = cs.fk_type";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
@@ -706,7 +751,7 @@ if ($resql) {
 				$sql .= " pd.amount AS amount_payment,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_donation as pd";
-				$sql .= " LEFT JOIN ".$db->prefix()."don as d ON pd.fk_donation = d.rowid";
+				$sql .= " INNER JOIN ".$db->prefix()."don as d ON pd.fk_donation = d.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pd.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
@@ -773,7 +818,7 @@ if ($resql) {
 				$sql .= " pl.amount_capital, pl.amount_interest, pl.amount_insurance,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."payment_loan as pl";
-				$sql .= " LEFT JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
+				$sql .= " INNER JOIN ".$db->prefix()."loan as l ON pl.fk_loan = l.rowid";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = pl.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
@@ -930,7 +975,7 @@ if ($resql) {
 				$sql .= " adh.lastname, adh.firstname,";
 				$sql .= " bu.fk_bank, bu.url_id AS bu_url_id, bu.type AS bu_type";
 				$sql .= " FROM ".$db->prefix()."subscription as su";
-				$sql .= " LEFT JOIN ".$db->prefix()."adherent as adh ON adh.rowid = su.fk_adherent";
+				$sql .= " INNER JOIN ".$db->prefix()."adherent as adh ON adh.rowid = su.fk_adherent";
 				$sql .= " INNER JOIN ".$db->prefix()."bank_url as bu ON bu.url_id = su.rowid AND bu.type = '".$db->escape($type)."'";
 				// Already in bookkeeping or not
 				if ($in_bookkeeping == 'already') {
@@ -1085,7 +1130,7 @@ $journal_label = $langs->transnoentitiesnoconv($accountingjournalstatic->label);
 $MAXNBERRORS = 5;
 
 // Write bookkeeping
-if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'write')) {
+if ($action == 'writebookkeeping' /* && $user->hasRight('accounting', 'bind', 'write') */) { // Test on permission already done
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 
@@ -1103,7 +1148,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 		}
 
 
-		$error_for_line = 0;
+		$errorforline = 0;
 		$db->begin();
 
 		foreach ($payment['objects'] as $object_key => $object_data) {
@@ -1117,9 +1162,14 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
-				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+
+				// Unique key is on couple: $payment_id, $objectInfos['id']
+				// For record in llx_accountaing_bookkeeping, for record with doc_type = 'bank', the value of fk_doc is ID in llx_bank and fk_docdet too. Wetry a fix this way;
+				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+
 				if ($result < 0) {
-					$error_for_line++;
+					$errorforline++;
 
 					if (!empty($bookkeepingToCreate->warnings)) {
 						setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1144,7 +1194,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 						if ($result < 0) {
 							setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
 							$accountancy_code_label = $accountingaccount->errorsToString();
-							$error_for_line++;
+							$errorforline++;
 						} elseif ($result > 0) {
 							$accountancy_code_label = $accountingaccount->label;
 						} else {
@@ -1162,9 +1212,10 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 					$total_check -= $amount;
 
 					$bookkeepingToCreate = new BookKeeping($db);
-					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
+					$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], (!empty($operation['label']) ? $operation['label'] : $accountingAccountInfos['label']), -$amount, $journal, $journal_label, '');
 					if ($result < 0) {
-						$error_for_line++;
+						$errorforline++;
 
 						if (!empty($bookkeepingToCreate->warnings)) {
 							setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1196,7 +1247,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 							if ($result < 0) {
 								setEventMessages($accountingaccount->error, $accountingaccount->errors, 'errors');
 								$accountancy_code_label = $accountingaccount->errorsToString();
-								$error_for_line++;
+								$errorforline++;
 							} elseif ($result > 0) {
 								$accountancy_code_label = $accountingaccount->label;
 							} else {
@@ -1210,9 +1261,10 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 						$total_check -= $amount;
 
 						$bookkeepingToCreate = new BookKeeping($db);
-						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
+						//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
+						$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountancy_code, $accountingAccountInfos['label'], $langs->trans('VAT').' '.price($vat_infos['tva_tx']).'%', -$amount, $journal, $journal_label, '');
 						if ($result < 0) {
-							$error_for_line++;
+							$errorforline++;
 
 							if (!empty($bookkeepingToCreate->warnings)) {
 								setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1232,9 +1284,10 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 				$total_check += $amount;
 
 				$bookkeepingToCreate = new BookKeeping($db);
-				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				//$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, $objectInfos['id'], $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
+				$result = $bookkeepingToCreate->createFromValues($payment["date"], $objectInfos['ref'], 'bank', $payment_id, 0, $accountInfos['account_number'], $tabaccountingaccount[$accountInfos['account_number']]['label'], $accountInfos['account_ref'], $amount, $journal, $journal_label, '');
 				if ($result < 0) {
-					$error_for_line++;
+					$errorforline++;
 
 					if (!empty($bookkeepingToCreate->warnings)) {
 						setEventMessages(null, $bookkeepingToCreate->warnings, 'warnings');
@@ -1247,26 +1300,28 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 
 			$total_check = price2num($total_check, 'MT');
 			if (!empty($total_check)) {
-				$error_for_line++;
+				$errorforline++;
 				setEventMessages($langs->trans('ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled', $objectInfos['ref'], $object_data['bu_url_id']), null, 'errors');
 			}
 
-			if ($error_for_line) {
+			if ($errorforline) {
 				$error++;
 
 				if ($error >= $MAXNBERRORS) {
-					setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
 					break;  // Break in the foreach
 				}
 			}
 		}
 
-		if (!$error_for_line) {
+		if (!$errorforline) {
 			$db->commit();
 		} else {
+			//print 'KO for line '.$key.' '.$error.'<br>';
 			$db->rollback();
 
+			$MAXNBERRORS = 5;
 			if ($error >= $MAXNBERRORS) {
+				setEventMessages($langs->trans("ErrorTooManyErrorsProcessStopped").' (>'.$MAXNBERRORS.')', null, 'errors');
 				break;  // Break in the foreach
 			}
 		}
@@ -1292,7 +1347,7 @@ if ($action == 'writebookkeeping' && $user->hasRight('accounting', 'bind', 'writ
 		$param .= '&date_endmonth='.$date_endmonth;
 		$param .= '&date_endyear='.$date_endyear;
 		$param .= '&in_bookkeeping='.$in_bookkeeping;
-		header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
+		header("Location: " . $_SERVER['PHP_SELF'] . '?' . $param);
 		exit;
 	}
 }
@@ -1384,23 +1439,22 @@ if (empty($action) || $action == 'view') {
 
 	$i = 0;
 	print '<div class="div-table-responsive">';
-	print '<table class="noborder" width="100%">';
+	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
-	print '<td></td>';
-	print '<td>'.$langs->trans('Date').'</td>';
-	print '<td>'.$langs->trans('Piece').' ('.$langs->trans('ObjectsRef').')</td>';
-	print '<td>'.$langs->trans('AccountAccounting').'</td>';
-	print '<td>'.$langs->trans('LabelOperation').'</td>';
-	print '<td>'.$langs->trans('PaymentMode').'</td>';
-	print '<td align="right">'.$langs->trans('Debit').'</td>';
-	print '<td align="right">'.$langs->trans('Credit').'</td>';
-	print '</tr>';
-
-	$r = '';
+	print "<td></td>";
+	print "<td>".$langs->trans("Date")."</td>";
+	print "<td>".$langs->trans("Piece").' ('.$langs->trans("ObjectsRef").')</td>';
+	print "<td>".$langs->trans("AccountAccounting")."</td>";
+	print "<td>".$langs->trans("LabelOperation")."</td>";
+	print '<td class="center">'.$langs->trans("PaymentMode")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingDebit")."</td>";
+	print '<td class="right">'.$langs->trans("AccountingCredit")."</td>";
+	print "</tr>\n";
 
 	foreach ($tabpay as $payment_id => $payment) {
 		$accountInfos = $tabaccount[$payment["fk_bank_account"]];
 		$date = dol_print_date($payment["date"], 'day');
+		$i++;
 
 		foreach ($payment['objects'] as $object_key => $object_data) {
 			$objectInfos = $tabobject[$object_key];
@@ -1465,7 +1519,12 @@ if (empty($action) || $action == 'view') {
 		}
 	}
 
-	print '</table>';
+	if (!$i) {
+		$colspan = 8;
+		print '<tr class="oddeven"><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+	}
+
+	print "</table>";
 	print '</div>';
 
 	llxFooter();

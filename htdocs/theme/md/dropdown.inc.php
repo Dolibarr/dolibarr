@@ -27,6 +27,8 @@ $atoploginusername = empty($user->photo) ? 52 : 0;
 @phan-var-force string $right
 ';
 
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -106,7 +108,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-bookmark {
@@ -129,7 +130,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
@@ -152,7 +152,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
@@ -273,9 +272,9 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu > .user-header{
-	background: rgb(--colorbackhmenu1);
+	background: var(--colorbackhmenu1);
+	color: var(--colortextbackhmenu);
 }
-
 
 
 .dropdown-menu .dropdown-header{
@@ -392,14 +391,11 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: <?php echo $borderradius; ?>px;
 }
 
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
-	border-radius: 0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -408,8 +404,6 @@ a.dropdown-item {
 
 .dropdown-menu a.top-menu-dropdown-link {
 	color: rgb(<?php print $colortextlink; ?>) !important;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	display: block;
 	margin: 5px 0px;
@@ -426,9 +420,6 @@ a.dropdown-item {
 	text-align: inherit;
 	background-color: transparent;
 	border: 0;
-
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 }
 
@@ -498,7 +489,8 @@ li.liinputsearch {
 	background-repeat: no-repeat;
 	background-size: 16px 16px;
 	background-position: 95% center;
-	border-radius: 50px;
+	border-radius: <?php print $borderradius; ?>px;
+
 	border: 1px solid #c4c4c2 !important;
 	transition: all 250ms ease-in-out;
 	backface-visibility: hidden;
@@ -594,7 +586,6 @@ div.quickaddblock:focus {
 	background: #fff;
 	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
 
@@ -710,7 +701,6 @@ div.quickaddblock:focus {
 
 	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
-		-webkit-box-shadow: none;
 		box-shadow: none;
 	}
 

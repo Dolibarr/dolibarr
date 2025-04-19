@@ -4300,10 +4300,13 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($type).'_URL';
 			if (getDolGlobalString($networkconstname)) {
 				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
+				$valuetoshow = $value;
 				if (preg_match('/^https?:\/\//i', $link)) {
-					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\./', 'linkedin.', $valuetoshow);
+					//$valuetoshow = preg_replace('/www\.twitter\./', 'twitter.', $valuetoshow);
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($valuetoshow).'</a>';
 				} elseif ($link) {
-					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($valuetoshow).'</a>';
 				}
 			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
@@ -4766,24 +4769,39 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  */
 function dol_print_ip($ip, $mode = 0)
 {
-	global $langs;
+	global $conf, $langs;
 
 	$ret = '';
-
-	if (empty($mode)) {
-		$ret .= $ip;
+	if (!isset($conf->cache['resolveips'])) {
+		$conf->cache['resolveips'] = [];
 	}
 
 	if ($mode != 2) {
 		$countrycode = dolGetCountryCodeFromIp($ip);
 		if ($countrycode) {	// If success, countrycode is us, fr, ...
 			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png')) {
-				$ret .= ' '.img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"), DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png', '', 1);
+				$ret .= picto_from_langcode($countrycode);
+				// $ret .= img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"), DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png', '', 1);
 			} else {
-				$ret .= ' ('.$countrycode.')';
+				$ret .= '('.$countrycode.')';
 			}
+			$ret .= '&nbsp;';
 		} else {
 			// Nothing
+		}
+	}
+
+	if (in_array($mode, [0, 2])) {
+		if (empty($conf->cache['resolveips'][$ip])) {
+			$domain = gethostbyaddr($ip);
+			$conf->cache['resolveips'][$ip] = $domain; // false or domain
+		} else {
+			$domain = $conf->cache['resolveips'][$ip];
+		}
+		if ($domain) {
+			$ret .= $domain;
+		} else {
+			$ret .= $ip;
 		}
 	}
 
@@ -6662,7 +6680,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show (HTML sanitized content)
+ *	@param	string	$title				Title to show (HTML sanitized content). Can be a string with a <br> as a substring.
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int<0,1>	$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -13768,6 +13786,7 @@ function getElementProperties($elementType)
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
+		$classname = 'SupplierProposalLine';
 		$table_element = 'supplier_proposaldet';
 		$parent_element = 'supplier_proposal';
 	} elseif ($elementType == 'contract') {

@@ -173,7 +173,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 
 .butAction:hover, .dropdown-holder.open > .butAction   {
 	/** TODO use css var with hsl from --colortextlink to allow create darken or lighten color */
-	-webkit-box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 	box-shadow: 0px 0px 6px rgba(50,50,50,0.4), inset 0px 0px 200px rgba(0,0,0,0.3); /* fix hover feedback : use "inset" background to easily darken background */
 }
 .butActionNew:hover   {
@@ -188,7 +187,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionDelete:hover {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
@@ -239,7 +237,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	color: #999 !important;
 	padding-top: 0.2em;
 	box-shadow: none !important;
-	-webkit-box-shadow: none !important;
 }
 
 .butActionTransparent {
@@ -303,10 +300,10 @@ a.btnTitle.btnTitleSelected {
 	text-decoration: none;
 	box-shadow: none;
 }
-/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus is growing on hover (don't know why). This is to avoid to have the cell growing too */
 .btnTitlePlus:hover {
-	max-width: 24px;
-	max-height: 40px;
+	/* max-width: 24px; */ /* max width is a problem when the button has a text under */
+	max-height: 42px;
 }
 
 .btnTitle.refused, a.btnTitle.refused, .btnTitle.refused:hover, a.btnTitle.refused:hover {
