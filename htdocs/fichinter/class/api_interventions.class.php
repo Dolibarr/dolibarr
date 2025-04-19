@@ -78,7 +78,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws	RestException
 	 */
-	public function get($id, $contact_type = 'thirdparty')
+	public function get($id, $contact_type = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -94,7 +94,9 @@ class Interventions extends DolibarrApi
 		}
 
 		$this->fichinter->fetchObjectLinked();
-		$this->fichinter->contacts_ids = $this->fichinter->liste_contact(-1, $contact_type, 1);
+		if ($contact_type) {
+			$this->fichinter->contacts_ids = $this->fichinter->liste_contact(-1, $contact_type, 1);
+		}
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
@@ -116,7 +118,7 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = 'thirdparty')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $contact_type = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
@@ -177,7 +179,9 @@ class Interventions extends DolibarrApi
 				$obj = $this->db->fetch_object($result);
 				$fichinter_static = new Fichinter($this->db);
 				if ($fichinter_static->fetch($obj->rowid)) {
-					$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
+					if ($contact_type) {
+						$fichinter_static->contacts_ids = $fichinter_static->liste_contact(-1, $contact_type, 1);
+					}
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($fichinter_static), $properties);
 				}
 				$i++;
