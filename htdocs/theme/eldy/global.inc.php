@@ -7462,6 +7462,9 @@ span#select2-boxbookmark-container {
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
 }
+.mytooltip .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
+  padding: 1px 3px 1px 3px;
+}
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr a {
 	font-weight: normal;
 }

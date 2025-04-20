@@ -1027,7 +1027,7 @@ abstract class CommonInvoice extends CommonObject
 			return $hookmanager->resPrint;
 		}
 
-		if ($moreparams['close_code']) {
+		if (!empty($moreparams['close_code'])) {
 			$titlestringtoshow = '';
 
 			if ($moreparams['close_code'] == self::CLOSECODE_DISCOUNTVAT) {

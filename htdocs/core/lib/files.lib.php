@@ -2609,7 +2609,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 /**
  * Uncompress a file
  *
- * @param 	string 	$inputfile		File to uncompress
+ * @param 	string 	$inputfile		File (.zip, .gz, .bz2, .zst, ...) to uncompress
  * @param 	string	$outputdir		Target dir name
  * @return 	array{error?:string}	array('error'=>'Error code') or array() if no error
  * @see dol_compress_file(), dol_compress_dir()

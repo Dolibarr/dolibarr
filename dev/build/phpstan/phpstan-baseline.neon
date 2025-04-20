@@ -1111,32 +1111,8 @@ parameters:
 			path: ../../../htdocs/admin/eventorganization.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''category\:customer''\|''emailtemplate…''\|''product''\|''securekey''\|''thirdparty_type\:'' and ''html'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/eventorganization.php
-
-		-
-			message: '#^Loose comparison using \=\= between ''category\:customer''\|''emailtemplate…''\|''product''\|''securekey''\|''thirdparty_type\:'' and ''yesno'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 2
-			path: ../../../htdocs/admin/eventorganization.php
-
-		-
 			message: '#^Loose comparison using \=\= between 1 and 1 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
-			count: 2
-			path: ../../../htdocs/admin/eventorganization.php
-
-		-
-			message: '#^Offset ''css'' on array\{type\: ''category\:customer''\|''emailtemplate…''\|''product''\|''securekey''\|''textarea''\|''thirdparty_type\:'', enabled\: 1, css\: ''''\} in empty\(\) always exists and is always falsy\.$#'
-			identifier: empty.offset
-			count: 1
-			path: ../../../htdocs/admin/eventorganization.php
-
-		-
-			message: '#^Variable \$arrayofparameters in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
 			count: 1
 			path: ../../../htdocs/admin/eventorganization.php
 
@@ -2081,12 +2057,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/asset/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between 0 and 9 will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/asset/class/asset.class.php
 
 		-
 			message: '#^Property Asset\:\:\$date_start \(int\|string\) in isset\(\) is not nullable\.$#'
@@ -3922,12 +3892,6 @@ parameters:
 			message: '#^Property Commande\:\:\$socid \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/commande/class/commande.class.php
-
-		-
-			message: '#^Property Commande\:\:\$statut \(int\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
 			path: ../../../htdocs/commande/class/commande.class.php
 
 		-
@@ -13407,7 +13371,7 @@ parameters:
 		-
 			message: '#^Variable \$withproject in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
-			count: 3
+			count: 2
 			path: ../../../htdocs/eventorganization/conferenceorboothattendee_card.php
 
 		-
@@ -19993,42 +19957,6 @@ parameters:
 			path: ../../../htdocs/projet/index.php
 
 		-
-			message: '#^Variable \$badgeStatus0 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/index.php
-
-		-
-			message: '#^Variable \$badgeStatus1 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/projet/index.php
-
-		-
-			message: '#^Variable \$badgeStatus2 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/index.php
-
-		-
-			message: '#^Variable \$badgeStatus4 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/index.php
-
-		-
-			message: '#^Variable \$badgeStatus6 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/index.php
-
-		-
-			message: '#^Variable \$badgeStatus9 might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/projet/index.php
-
-		-
 			message: '#^If condition is always false\.$#'
 			identifier: if.alwaysFalse
 			count: 1
@@ -20824,24 +20752,6 @@ parameters:
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 2
-			path: ../../../htdocs/public/project/index.php
-
-		-
-			message: '#^Variable \$conference might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/project/index.php
-
-		-
-			message: '#^Variable \$suffix might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/public/project/index.php
-
-		-
-			message: '#^Variable \$text might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
 			path: ../../../htdocs/public/project/index.php
 
 		-

@@ -1560,11 +1560,11 @@ class Categorie extends CommonObject
 					$linkend = '</a>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {
-					$link = '<span class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
+					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
 					$linkend = '</span>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
-					$w[] = '<a class="'.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
+					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
 			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
