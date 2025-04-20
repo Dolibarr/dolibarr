@@ -337,7 +337,7 @@ print '<br>';
 
 $suffix = '';
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $suffix);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $project);
 
 llxFooter('', 'public');
 
