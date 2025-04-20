@@ -49,7 +49,7 @@ class Ccountry extends CommonDict
 	/**
 	 * @var string
 	 */
-	public $ecc;
+	public $eec;
 
 	/**
 	 * @var int
