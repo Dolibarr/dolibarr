@@ -804,7 +804,6 @@ Success
 Supervisor
 SupplierDepositsAreNotIncluded
 SupplierMissingRef
-Synchronize
 Syslog
 TLS/STARTTLS
 TYPE_
@@ -919,7 +918,6 @@ period_interval
 period_recurrences
 period_start_date
 point
-productlot
 refunded
 save
 seconds

@@ -395,10 +395,10 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	border-color: #ddd;
 }
 
-/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus is growing on hover (don't know why). This is to avoid to have the cell growing too */
 .btnTitlePlus:hover {
-	max-width: 24px;
-	max-height: 40px;
+	/* max-width: 24px; */ /* max width is a problem when the button has a text under */
+	max-height: 42px;
 }
 
 

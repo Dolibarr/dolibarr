@@ -18,9 +18,11 @@ CREATE TABLE llx_webhook_history(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	--ref varchar(128) NOT NULL,
+	trigger_code varchar(128) NOT NULL, 
 	trigger_data text NOT NULL,
 	fk_target integer NOT NULL,
 	url integer NOT NULL,
+	error_messsage text,
 	--note_public text,
 	note_private text,
 	date_creation datetime NOT NULL,

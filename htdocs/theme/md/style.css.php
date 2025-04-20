@@ -788,6 +788,7 @@ input.buttonpaymentstripe {
 	max-height: 80px;
 	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
+	border-radius: 4px;
 }
 a.butStatus {
 	padding-left: 5px;
@@ -1202,6 +1203,11 @@ textarea.centpercent {
 .centerimp {
 	text-align: center !important;
 }
+.centergrid {
+	display: grid;
+	text-align: center;
+	place-items: center;
+}
 .alignstart {
 	text-align: start;
 }
@@ -1501,7 +1507,9 @@ span.fa.fa-plus-circle.paddingleft {
 
 .size12x { font-size: 1.2em !important; }
 .size15x { font-size: 1.5em !important; }
-.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
+.size2x { font-size: 2em; }
+.size4x { font-size: 4em !important; }
+.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
@@ -7349,6 +7357,9 @@ span#select2-boxcombo-container {
   background-image: -webkit-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
+}
+.mytooltip .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
+  padding: 1px 3px 1px 3px;
 }
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr a {
 	font-weight: normal;

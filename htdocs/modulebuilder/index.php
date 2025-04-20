@@ -970,7 +970,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 			$destdir = $diroflang.'/langs/'.$newlangcode;
 
 			$arrayofreplacement = array();
-			if (!dol_is_dir($srcfile) || !dol_is_file($srcfile)) {
+			if (!dol_is_dir($srcdir) || !dol_is_file($srcfile)) {
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}

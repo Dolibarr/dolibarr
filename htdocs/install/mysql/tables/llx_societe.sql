@@ -55,9 +55,9 @@ create table llx_societe
   geopoint                 point DEFAULT NULL,
   georesultcode            varchar(16),
 
-  phone                    varchar(20),                         		-- phone number
-  phone_mobile             varchar(20),                         		-- mobile phone number
-  fax                      varchar(20),                         		-- fax number
+  phone                    varchar(30),                         		-- phone number
+  phone_mobile             varchar(30),                         		-- mobile phone number
+  fax                      varchar(30),                         		-- fax number
   url                      varchar(255),                        		-- web site
   email                    varchar(128),                        		-- main email
 
