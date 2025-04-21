@@ -2353,8 +2353,9 @@ class Facture extends CommonInvoice
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
 				// Now process extrafields
-				$this->array_options = array();
 				if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
+					$this->array_options = array();
+
 					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 						$type = !empty($extrafields->attributes[$this->table_element]['type'][$key])
 							? $extrafields->attributes[$this->table_element]['type'][$key]
@@ -2574,7 +2575,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				$this->array_options = array();
+				$line->array_options = array();
 				if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
 					foreach ($extrafields->attributes[$this->table_element_line]['label'] as $key => $val) {
 						$type = !empty($extrafields->attributes[$this->table_element_line]['type'][$key])
@@ -2586,15 +2587,15 @@ class Facture extends CommonInvoice
 
 							// date/datetime
 							if (in_array($type, array('date', 'datetime'))) {
-								$this->array_options['options_' . $key] = $this->db->jdate($rawval);
+								$line->array_options['options_' . $key] = $this->db->jdate($rawval);
 							} elseif ($type == 'password') {
 								if (!empty($rawval) && preg_match('/^dolcrypt:/', $rawval)) {
-									$this->array_options['options_' . $key] = dolDecrypt($rawval);
+									$line->array_options['options_' . $key] = dolDecrypt($rawval);
 								} else {
-									$this->array_options['options_' . $key] = $rawval;
+									$line->array_options['options_' . $key] = $rawval;
 								}
 							} else {
-								$this->array_options['options_' . $key] = $rawval;
+								$line->array_options['options_' . $key] = $rawval;
 							}
 						}
 					}
@@ -2604,8 +2605,8 @@ class Facture extends CommonInvoice
 						if (!empty($extrafields->attributes[$this->table_element_line]['computed'][$key])) {
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
-								$objectoffield = $this;
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
+								$objectoffield = $line;
+								$line->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -2613,7 +2614,7 @@ class Facture extends CommonInvoice
 
 				if (!$doFetchInOneSqlRequest) {
 					// Retrieve all extrafield
-					$this->fetch_optionals();
+					$line->fetch_optionals();
 				}
 
 				// multilangs
@@ -4256,11 +4257,36 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+					// get real stock
+					$productChildrenNb = 0;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						// compute real stock from each subcomponent
+						$product_stock = null;
+						$product->loadStockForVirtualProduct('warehouseopen', $qty);
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+						if ($product_stock === null) {
+							$product_stock = 0;
+						}
+					} else {
+						$product_stock = $product->stock_reel;
+					}
+
+					if ($product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 
@@ -4574,11 +4600,36 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+					// get real stock
+					$productChildrenNb = 0;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						// compute real stock from each subcomponent
+						$product_stock = null;
+						$product->loadStockForVirtualProduct('warehouseopen', $qty);
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+						if ($product_stock === null) {
+							$product_stock = 0;
+						}
+					} else {
+						$product_stock = $product->stock_reel;
+					}
+
+					if ($product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 

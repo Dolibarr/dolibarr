@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023   Maximilien Rozniecki    <mrozniecki@easya.solutions>
  *
  * This program is free software; you can redistribute it and/or modify
