@@ -10951,12 +10951,12 @@ class Form
 	}
 
 	/**
-	 *    Return HTML to show the search and clear search button
+	 * Return HTML to show the search and clear search button
 	 *
-	 * @param string $cssclass CSS class
-	 * @param int $calljsfunction 0=default. 1=call function initCheckForSelect() after changing status of checkboxes
-	 * @param string $massactionname Mass action button name that will launch an action on the selected items
-	 * @return    string
+	 * @param 	string 	$cssclass 			CSS class
+	 * @param 	int 	$calljsfunction 	0=default. 1=call function initCheckForSelect() after changing status of checkboxes
+	 * @param 	string 	$massactionname 	Mass action button name that will launch an action on the selected items
+	 * @return	string						HTML code with checkbox button
 	 */
 	public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
