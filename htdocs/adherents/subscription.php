@@ -385,8 +385,8 @@ if (empty($reshook) && $user->hasRight('adherent', 'cotisation', 'creer') && $ac
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
+						$subject = (string) $arraydefaultmessage->topic;
+						$msg     = (string) $arraydefaultmessage->content;
 					}
 
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1174,8 +1174,8 @@ if (($action == 'addsubscription' || $action == 'create_thirdparty') && $user->h
 		}
 
 		if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-			$subject = $arraydefaultmessage->topic;
-			$msg     = $arraydefaultmessage->content;
+			$subject = (string) $arraydefaultmessage->topic;
+			$msg     = (string) $arraydefaultmessage->content;
 		}
 
 		$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);

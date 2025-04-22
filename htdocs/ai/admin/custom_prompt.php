@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2022		Alice Adminson				<aadminson@example.com>
- * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France				<frederic.france@free.fr>
  * Coryright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,6 +54,7 @@ $pre_prompt = GETPOST('prePrompt');
 $post_prompt = GETPOST('postPrompt');
 $blacklists = GETPOST('blacklists');
 $test = GETPOST('test');
+$key = (string) GETPOST('key', 'alpha');
 
 if (empty($action)) {
 	$action = 'edit';
@@ -80,16 +81,16 @@ $aiservice = getDolGlobalString('AI_API_SERVICE', 'chatgpt');
 
 // Setup conf for AI model
 $formSetup->formHiddenInputs['action'] = "updatefeaturemodel";
-foreach ($arrayofaifeatures as $key => $val) {
-	$newkey = $key;
-	if (preg_match('/^text/', $key)) {
+foreach ($arrayofaifeatures as $featurekey => $feature) {
+	$newkey = $featurekey;
+	if (preg_match('/^text/', $featurekey)) {
 		$newkey = 'textgeneration';
 	}
-	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$val["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
+	$item = $formSetup->newItem('AI_API_'.strtoupper($aiservice).'_MODEL_'.$feature["function"]);	// Name of constant must end with _KEY so it is encrypted when saved into database.
 	if ($arrayofai[$aiservice][$newkey] != 'na') {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$val["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
+		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("Default").' = '.$arrayofai[$aiservice][$newkey].')</span>';
 	} else {
-		$item->nameText = $langs->trans("AI_API_MODEL_".$val["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
+		$item->nameText = $langs->trans("AI_API_MODEL_".$feature["function"]).' <span class="opacitymedium">('.$langs->trans("None").')</span>';
 	}
 	$item->cssClass = 'minwidth500 input';
 }
@@ -158,8 +159,6 @@ if ($action == 'update' && !$cancel && !$test) {
 
 // Update entry
 if ($action == 'updatePrompts' && !$test) {
-	$key = GETPOST('key', 'alpha');
-
 	$blacklistArray = array_filter(array_map('trim', explode(',', $blacklists)));
 
 	$currentConfigurations[$key] = [
@@ -187,8 +186,6 @@ if ($action == 'updatePrompts' && $test) {
 
 // Delete entry
 if ($action == 'confirm_deleteproperty' && GETPOST('confirm') == 'yes') {
-	$key = GETPOST('key', 'alpha');
-
 	if (isset($currentConfigurations[$key])) {
 		unset($currentConfigurations[$key]);
 
@@ -276,10 +273,10 @@ if ($action == 'create') {
 	// Combo list of AI features
 	$out .= '<select name="functioncode" id="functioncode" class="flat minwidth500">';
 	$out .= '<option>&nbsp;</option>';
-	foreach ($arrayofaifeatures as $key => $val) {
-		$labelhtml = $langs->trans($arrayofaifeatures[$key]['label']).($arrayofaifeatures[$key]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
-		$labeltext = $langs->trans($arrayofaifeatures[$key]['label']);
-		$out .= '<option value="'.dol_escape_js($key).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
+	foreach ($arrayofaifeatures as $featurekey => $feature) {
+		$labelhtml = $langs->trans($arrayofaifeatures[$featurekey]['label']).($arrayofaifeatures[$featurekey]['status'] == 'notused' ? ' <span class="opacitymedium">('.$langs->trans("NotYetAvailable").')</span>' : "");
+		$labeltext = $langs->trans($arrayofaifeatures[$featurekey]['label']);
+		$out .= '<option value="'.dol_escape_js($featurekey).'" data-html="'.dol_escape_htmltag($labelhtml).'">'.dol_escape_htmltag($labeltext).'</option>';
 	}
 	$out .= '</select>';
 	$out .= ajax_combobox("functioncode");
@@ -290,8 +287,8 @@ if ($action == 'create') {
  				var changedValue = $(this).val();
 				console.log(changedValue);
 				var arrayplaceholder = {';
-	foreach ($arrayofaifeatures as $key => $val) {
-		$out .= dol_escape_js($key).': \''.dol_escape_js(empty($val['placeholder']) ? '' : $val['placeholder']).'\',';
+	foreach ($arrayofaifeatures as $featurekey => $feature) {
+		$out .= dol_escape_js($featurekey).': \''.dol_escape_js(empty($feature['placeholder']) ? '' : $feature['placeholder']).'\',';
 	}
 	$out .= '}
 				jQuery("#prePromptInput'.dol_escape_js($key).'").val(arrayplaceholder[changedValue]);
@@ -350,22 +347,22 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 	$out = '';
 
 	if (!empty($currentConfigurations)) {
-		foreach ($currentConfigurations as $key => $config) {
-			if (!empty($key) && !preg_match('/^[a-z]+$/i', $key)) {	// Ignore empty saved setup
+		foreach ($currentConfigurations as $confkey => $config) {
+			if (!empty($confkey) && !preg_match('/^[a-z]+$/i', $confkey)) {	// Ignore empty saved setup
 				continue;
 			}
 
 			$out .= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 			$out .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$out .= '<input type="hidden" name="key" value="'.$key.'" />';
+			$out .= '<input type="hidden" name="key" value="'.$confkey.'" />';
 			$out .= '<input type="hidden" name="action" value="updatePrompts">';
 			$out .= '<input type="hidden" name="page_y" value="">';
 
 			$out .= '<table class="noborder centpercent">';
 			$out .= '<thead>';
 			$out .= '<tr class="liste_titre">';
-			$out .= '<td class="titlefield">'.$arrayofaifeatures[$key]['picto'].' '.$langs->trans($arrayofaifeatures[$key]['label']);
-			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($key).'">'.img_delete().'</a>';
+			$out .= '<td class="titlefield">'.$arrayofaifeatures[$confkey]['picto'].' '.$langs->trans($arrayofaifeatures[$confkey]['label']);
+			$out .= '<a class="deletefielda reposition marginleftonly right" href="'.$_SERVER["PHP_SELF"].'?action=deleteproperty&token='.newToken().'&key='.urlencode($confkey).'">'.img_delete().'</a>';
 			$out .= '</td>';
 			$out .= '<td></td>';
 			$out .= '</tr>';
@@ -377,7 +374,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<span id="prePrompt" class="spanforparamtooltip">'.$langs->trans("Pre-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput_'.$key.'" name="prePrompt" rows="2">'.$config['prePrompt'].'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="prePromptInput_'.$confkey.'" name="prePrompt" rows="2">'.$config['prePrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
@@ -386,14 +383,14 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '<span id="postPrompt" class="spanforparamtooltip">'.$langs->trans("Post-Prompt").'</span>';
 			$out .= '</td>';
 			$out .= '<td>';
-			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput_'.$key.'" name="postPrompt" rows="2">'.$config['postPrompt'].'</textarea>';
+			$out .= '<textarea class="flat minwidth500 quatrevingtpercent" id="postPromptInput_'.$confkey.'" name="postPrompt" rows="2">'.$config['postPrompt'].'</textarea>';
 			$out .= '</td>';
 			$out .= '</tr>';
 
-			$out .= '<tr id="fichetwothirdright-'.$key.'" class="oddeven">';
+			$out .= '<tr id="fichetwothirdright-'.$confkey.'" class="oddeven">';
 			$out .= '<td>'.$form->textwithpicto($langs->trans("BlackListWords"), $langs->trans("BlackListWordsHelp")).'</td>';
 			$out .= '<td>';
-			$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$key.'" name="blacklists" value="'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'">';
+			$out .= '<input type="text" class="flat minwidth500 quatrevingtpercent" id="blacklist_'.$confkey.'" name="blacklists" value="'.(isset($config['blacklists']) ? implode(', ', (array) $config['blacklists']) : '').'">';
 			$out .= '</td>';
 			$out .= '</tr>';
 
@@ -405,10 +402,10 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$formmail = new FormMail($db);
 			$formmail->withaiprompt = 'html';		// set format
 
-			$showlinktoai = $key;		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+			$showlinktoai = $confkey;		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
 			$showlinktoailabel = $langs->trans("ToTest");
-			$htmlname = $key;
-			$onlyenhancements = $key;
+			$htmlname = $confkey;
+			$onlyenhancements = $confkey;
 
 			// Fill $out
 			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -421,7 +418,7 @@ if ($action == 'edit' || $action == 'create' || $action == 'deleteproperty') {
 			$out .= '</tbody>';
 			$out .= '</table>';
 
-			$out .= '<center><input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$key.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></center>';
+			$out .= '<center><input type="submit" class="button small submitBtn reposition" name="modify" data-index="'.$confkey.'" value="'.dol_escape_htmltag($langs->trans("Save")).'"/></center>';
 
 			$out .= '</form>';
 

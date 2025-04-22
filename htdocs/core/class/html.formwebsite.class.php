@@ -395,6 +395,7 @@ class FormWebsite
 		$out .= '<input type="hidden" name="sample" value="" />';
 		$out .= '</div>';
 
+		$out .= '<!-- Js code to manage choice of a page layout for website -->'."\n";
 		$out .= '<script type="text/javascript">
 				$(document).ready(function() {
 					$(".template-option").click(function() {

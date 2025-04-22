@@ -53,7 +53,7 @@ $langs->loadLangs(array("compta", "bills", "other", "accountancy", "productbatch
 $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $account_parent = GETPOST('account_parent');
-$changeaccount = GETPOST('changeaccount');
+$changeaccount = GETPOST('changeaccount', 'array');
 // Search Getpost
 $search_societe = GETPOST('search_societe', 'alpha');
 $search_lineid = GETPOST('search_lineid', 'alpha');		// Can be '> 100'
@@ -98,7 +98,9 @@ if (!$sortorder) {
 	}
 }
 
-$formaccounting = new FormAccounting($db);
+// Initialize technical objects
+$contextpage = 'accountancysupplierlines';
+$hookmanager->initHooks([$contextpage]);
 
 // Security check
 if (!isModEnabled('accounting')) {
@@ -111,13 +113,32 @@ if (!$user->hasRight('accounting', 'bind', 'write')) {
 	accessforbidden();
 }
 
-
 $formaccounting = new FormAccounting($db);
+
+$arrayfields = array(
+	   'l.rowid'               => array('label' => "LineId",                           'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'f.ref'                 => array('label' => "Invoice",                          'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'f.libelle'             => array('label' => "InvoiceLabel",                     'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'f.datef'               => array('label' => "Date",                             'position' => 1, 'checked' => '1', 'enabled' => '1'), // f.datef, f.ref, l.rowid
+	   'p.ref'                 => array('label' => "ProductRef",                       'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'l.description'         => array('label' => "ProductDescription",       'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'l.total_ht'            => array('label' => "Amount",                           'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'l.tva_tx'              => array('label' => "VATRate",                          'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   's.nom'                 => array('label' => "ThirdParty",                       'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'co.label'              => array('label' => "Country",                          'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   's.tva_intra'           => array('label' => "VATIntra",                         'position' => 1, 'checked' => '1', 'enabled' => '1'),
+	   'aa.account_number'     => array('label' => "AccountAccounting",        'position' => 1, 'checked' => '1', 'enabled' => '1'),
+);
+// @phpstan-ignore-next-line
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 /*
  * Actions
  */
+
+// Selection of new fields
+include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
@@ -338,7 +359,7 @@ if ($result) {
 	$i = 0;
 
 	$param = '';
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {
@@ -413,62 +434,195 @@ if ($result) {
 
 	$moreforfilter = '';
 
+	$varpage = $contextpage;
+	$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+	$selectedfields = $htmlofselectarray;
+	$selectedfields .= $form->showCheckAddButtons('checkforselect', 1);
+
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 	// We add search filter
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'"></td>';
-	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
-	print '<td class="liste_titre center">';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
-	print '</div>';
-	print '<div class="nowrapfordate">';
-	print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
-	print '</div>';
-	print '</td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'"></td>';
-	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
-	print '<td class="liste_titre right"><input type="text" class="right flat maxwidth50" name="search_vat" placeholder="%" size="1" value="'.dol_escape_htmltag($search_vat).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'"></td>';
-	print '<td class="liste_titre">';
-	print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth100', 'code2', 1, 0, 1);
-	//	print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
-	print '</td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
-	print '<td class="liste_titre center">';
-	$searchpicto = $form->showFilterButtons();
-	print $searchpicto;
-	print "</td></tr>\n";
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print '<td class="liste_titre maxwidthsearch center actioncolumn">';
+		$searchpicto = $form->showFilterButtons('left');
+		print $searchpicto;
+		print '</td>';
+	}
+	// Line ID
+	if (!empty($arrayfields['l.rowid']['checked'])) {
+			print '<td class="liste_titre" data-key="lineid">';
+			print '<input type="text" class="flat maxwidth40" name="search_lineid" value="'.dol_escape_htmltag($search_lineid).'">';
+			print '</td>';
+	}
+	// Ref invoice
+	if (!empty($arrayfields['f.ref']['checked'])) {
+			print '<td class="liste_titre" data-key="invoice">';
+			print '<input type="text" class="flat maxwidth50" name="search_invoice" value="'.dol_escape_htmltag($search_invoice).'">';
+			print '</td>';
+	}
+	// Invoice label
+	if (!empty($arrayfields['f.libelle']['checked'])) {
+			print '<td class="liste_titre" data-key="invoice">';
+			print '<input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
+			print '</td>';
+	}
+	// date
+	if (!empty($arrayfields['f.datef']['checked'])) {
+			print '<td class="liste_titre center nowraponall">';
+			print '<div class="nowrapfordate">';
+			print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
+			print '</div>';
+			print '<div class="nowrapfordate">';
+			print $form->selectDate($search_date_end ? $search_date_end : -1, 'search_date_end', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('to'));
+			print '</div>';
+			print '</td>';
+	}
+	// Product ref
+	if (!empty($arrayfields['p.ref']['checked'])) {
+			print '<td class="liste_titre" data-key="ref">';
+			print '<input type="text" class="flat maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
+			print '</td>';
+	}
+	// description
+	if (!empty($arrayfields['l.description']['checked'])) {
+			print '<td class="liste_titre" data-key="desc">';
+			print '<input type="text" class="flat maxwidth50" name="search_desc" value="'.dol_escape_htmltag($search_desc).'">';
+			print '</td>';
+	}
+	// amount
+	if (!empty($arrayfields['l.total_ht']['checked'])) {
+			print '<td class="liste_titre" data-key="amount">';
+			print '<input type="text" class="right flat maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
+			print '</td>';
+	}
+	// VAT
+	if (!empty($arrayfields['l.tva_tx']['checked'])) {
+			print '<td class="liste_titre" data-key="vat">';
+			print '<input type="text" class="right flat maxwidth50" placeholder="%" name="search_vat" size="1" value="'.dol_escape_htmltag($search_vat).'">';
+			print '</td>';
+	}
+	// Thirdparty
+	if (!empty($arrayfields['s.nom']['checked'])) {
+			print '<td class="liste_titre" data-key="societe">';
+			print '<input type="text" class="flat maxwidth75imp" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
+			print '</td>';
+	}
+	// Country
+	if (!empty($arrayfields['co.label']['checked'])) {
+			print '<td class="liste_titre" data-key="country">';
+			print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
+			//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
+			print '</td>';
+	}
+	// TVA Intracom
+	if (!empty($arrayfields['s.tva_intra']['checked'])) {
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth50" name="search_tvaintra" value="'.dol_escape_htmltag($search_tvaintra).'">';
+			print '</td>';
+	}
+	// Account
+	if (!empty($arrayfields['aa.account_number']['checked'])) {
+			print '<td class="liste_titre">';
+			print '<input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'">';
+			print '</td>';
+	}
+
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
+		$searchpicto = $form->showFilterButtons();
+		print $searchpicto;
+		print '</td>';
+	}
+	print "</tr>\n";
+
+	// Fields title label
+	// --------------------------------------------------------------------
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	print '<tr class="liste_titre">';
-	print_liste_field_titre("LineId", $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Invoice", $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre("RefSupplier", $_SERVER["PHP_SELF"], "f.ref_supplier", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("InvoiceLabel", $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Date", $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
-	print_liste_field_titre("ProductRef", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
-	//print_liste_field_titre("ProductLabel", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("ProductDescription", $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Amount", $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("VATRate", $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
-	print_liste_field_titre("ThirdParty", $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("Country", $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("VATIntraShort", $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("AccountAccounting", $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
-	$checkpicto = $form->showCheckAddButtons();
-	print_liste_field_titre($checkpicto, '', '', '', '', '', '', '', 'center ');
+	// Action column
+	if ($conf->main_checkbox_left_column) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+		$totalarray['nbfield']++;
+	}
+	// Line ID
+	if (!empty($arrayfields['l.rowid']['checked'])) {
+		print_liste_field_titre($arrayfields['l.rowid']['label'], $_SERVER["PHP_SELF"], "l.rowid", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// Ref invoice
+	if (!empty($arrayfields['f.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['f.ref']['label'], $_SERVER["PHP_SELF"], "f.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// invoice label
+	if (!empty($arrayfields['f.libelle']['checked'])) {
+		print_liste_field_titre($arrayfields['f.libelle']['label'], $_SERVER["PHP_SELF"], "f.libelle", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// date
+	if (!empty($arrayfields['f.datef']['checked'])) {
+		print_liste_field_titre($arrayfields['f.datef']['label'], $_SERVER["PHP_SELF"], "f.datef, f.ref, l.rowid", "", $param, '', $sortfield, $sortorder, 'center ');
+		$totalarray['nbfield']++;
+	}
+	// Product ref
+	if (!empty($arrayfields['p.ref']['checked'])) {
+		print_liste_field_titre($arrayfields['p.ref']['label'], $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// description
+	if (!empty($arrayfields['l.description']['checked'])) {
+		print_liste_field_titre($arrayfields['l.description']['label'], $_SERVER["PHP_SELF"], "l.description", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// Amount
+	if (!empty($arrayfields['l.total_ht']['checked'])) {
+		print_liste_field_titre($arrayfields['l.total_ht']['label'], $_SERVER["PHP_SELF"], "l.total_ht", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
+	}
+	// VAT
+	if (!empty($arrayfields['l.tva_tx']['checked'])) {
+		print_liste_field_titre($arrayfields['l.tva_tx']['label'], $_SERVER["PHP_SELF"], "l.tva_tx", "", $param, '', $sortfield, $sortorder, 'right ');
+		$totalarray['nbfield']++;
+	}
+	// Thirdparty
+	if (!empty($arrayfields['s.nom']['checked'])) {
+		print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// Country
+	if (!empty($arrayfields['co.label']['checked'])) {
+		print_liste_field_titre($arrayfields['co.label']['label'], $_SERVER["PHP_SELF"], "co.label", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// TVA Intracom
+	if (!empty($arrayfields['s.tva_intra']['checked'])) {
+		print_liste_field_titre($arrayfields['s.tva_intra']['label'], $_SERVER["PHP_SELF"], "s.tva_intra", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// Account
+	if (!empty($arrayfields['aa.account_number']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
+	}
+	// Action column
+	if (!$conf->main_checkbox_left_column) {
+		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+		$totalarray['nbfield']++;
+	}
 	print "</tr>\n";
 
 	$thirdpartystatic = new Societe($db);
 	$facturefournisseur_static = new FactureFournisseur($db);
 	$productstatic = new ProductFournisseur($db);
 	$accountingaccountstatic = new AccountingAccount($db);
+	$totalarray = array();
+	$totalarray['nbfield'] = 0;
 
 	$i = 0;
 	while ($i < min($num_lines, $limit)) {
@@ -508,81 +662,129 @@ if ($result) {
 
 		print '<tr class="oddeven">';
 
-		// Line id
-		print '<td>'.$objp->rowid.'</td>';
-
-		// Ref Invoice
-		print '<td class="nowraponall tdoverflowmax125">';
-		print $facturefournisseur_static->getNomUrl(1);
-		if ($objp->ref_supplier) {
-			print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
+		// Action column
+		if ($conf->main_checkbox_left_column) {
+			print '<td class="nowrap center actioncolumn">';
+			$selected = in_array($objp->rowid, $changeaccount);
+			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
 		}
-		print '</td>';
 
+		// Line id
+		if (!empty($arrayfields['l.rowid']['checked'])) {
+			print '<td>'.$objp->rowid.'</td>';
+			$totalarray['nbfield']++;
+		}
+		// Ref Invoice
+		if (!empty($arrayfields['f.ref']['checked'])) {
+			print '<td class="nowraponall tdoverflowmax125">';
+			print $facturefournisseur_static->getNomUrl(1);
+			if ($objp->ref_supplier) {
+				print '<br><span class="opacitymedium small">'.dol_escape_htmltag($objp->ref_supplier).'</span>';
+			}
+			print '</td>';
+			$totalarray['nbfield']++;
+		}
 		// Ref supplier invoice
 		/*
 		print '<td class="tdoverflowmax100" title="'.dol_escape_htmltag($objp->ref_supplier).'">';
 		print $objp->ref_supplier;
 		print '</td>';
 		*/
-
 		// Supplier invoice label
-		print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
-		print dol_escape_htmltag($objp->invoice_label);
-		print '</td>';
-
+		if (!empty($arrayfields['l.description']['checked'])) {
+			print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
+			print dol_escape_htmltag($objp->invoice_label);
+			print '</td>';
+			$totalarray['nbfield']++;
+		}
 		// Date invoice
-		print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
-
+		if (!empty($arrayfields['f.datef']['checked'])) {
+			print '<td class="center">'.dol_print_date($db->jdate($objp->datef), 'day').'</td>';
+			$totalarray['nbfield']++;
+		}
 		// Ref Product
-		print '<td class="tdoverflowmax100">';
-		if ($productstatic->id > 0) {
-			print $productstatic->getNomUrl(1);
+		if (!empty($arrayfields['p.ref']['checked'])) {
+			print '<td class="tdoverflowmax100">';
+			if ($productstatic->id > 0) {
+				print $productstatic->getNomUrl(1);
+			}
+			if ($productstatic->id > 0 && $objp->product_label) {
+				print '<br>';
+			}
+			if ($objp->product_label) {
+				print '<span class="opacitymedium">'.$objp->product_label.'</span>';
+			}
+			print '</td>';
+			$totalarray['nbfield']++;
 		}
-		if ($productstatic->id > 0 && $objp->product_label) {
-			print '<br>';
+		// Description
+		if (!empty($arrayfields['l.description']['checked'])) {
+			$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
+			print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
+			$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
+			print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
+			print '</td>';
+			$totalarray['nbfield']++;
 		}
-		if ($objp->product_label) {
-			print '<span class="opacitymedium">'.$objp->product_label.'</span>';
+		// Amount
+		if (!empty($arrayfields['l.total_ht']['checked'])) {
+			print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
+			$totalarray['nbfield']++;
 		}
-		print '</td>';
-
-		$text = dolGetFirstLineOfText(dol_string_nohtmltag($objp->description, 1));
-		print '<td class="tdoverflowmax200 small" title="'.dol_escape_htmltag($text).'">';
-		$trunclength = getDolGlobalInt('ACCOUNTING_LENGTH_DESCRIPTION', 32);
-		print $form->textwithtooltip(dol_trunc($text, $trunclength), $objp->description);
-		print '</td>';
-
-		print '<td class="right nowraponall amount">'.price($objp->total_ht).'</td>';
-
-		print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
-
+		// VAT Rate
+		if (!empty($arrayfields['l.tva_tx']['checked'])) {
+			print '<td class="right">'.vatrate($objp->tva_tx.($objp->vat_src_code ? ' ('.$objp->vat_src_code.')' : '')).'</td>';
+			$totalarray['nbfield']++;
+		}
 		// Thirdparty
-		print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
-
-		// Country
-		print '<td class="tdoverflowmax100">';
-		if ($objp->country_code) {
-			print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
+		if (!empty($arrayfields['s.nom']['checked'])) {
+			print '<td class="tdoverflowmax100">'.$thirdpartystatic->getNomUrl(1, 'supplier').'</td>';
+			$totalarray['nbfield']++;
 		}
-		print '</td>';
-
-		print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
-
-		print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
-		print '<a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
-		print img_edit();
-		print '</a> ';
-		print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
-		print '</td>';
-
-		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="'.$objp->rowid.'"/></td>';
+		// Country
+		if (!empty($arrayfields['co.label']['checked'])) {
+			print '<td class="tdoverflowmax100">';
+			if ($objp->country_code) {
+				print $langs->trans("Country".$objp->country_code).' ('.$objp->country_code.')';
+			}
+			print '</td>';
+			$totalarray['nbfield']++;
+		}
+		// TVA Intracom
+		if (!empty($arrayfields['s.tva_intra']['checked'])) {
+			print '<td class="tdoverflowmax80" title="'.dol_escape_htmltag($objp->tva_intra).'">'.dol_escape_htmltag($objp->tva_intra).'</td>';
+			$totalarray['nbfield']++;
+		}
+		// Account
+		if (!empty($arrayfields['aa.account_number']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dol_escape_htmltag($accountingaccountstatic->label).'">';
+			print '<a class="editfielda" href="./card.php?id='.$objp->rowid.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($param ? '?'.$param : '')).'">';
+			print img_edit();
+			print '</a> ';
+			print $accountingaccountstatic->getNomUrl(0, 1, 1, '', 1);
+			print '</td>';
+			$totalarray['nbfield']++;
+		}
+		// Action column
+		if (!$conf->main_checkbox_left_column) {
+			print '<td class="nowrap center actioncolumn">';
+			$selected = in_array($objp->rowid, $changeaccount);
+			print '<input id="cb'.$objp->rowid.'" class="flat checkforselect checkforaction" type="checkbox" name="changeaccount[]" value="'.$objp->rowid.'"'.($selected ? ' checked="checked"' : '').'>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
 
 		print '</tr>';
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	print '</table>';

@@ -676,7 +676,6 @@ RECUR
 RSS
 RateIndirect
 Re-Open
-Rechercher
 ReconciledBy
 RecordNotFound
 RecruitmentJobPosition
@@ -805,11 +804,8 @@ Success
 Supervisor
 SupplierDepositsAreNotIncluded
 SupplierMissingRef
-Synchronize
 Syslog
 TLS/STARTTLS
-TLSv1
-TLSv1.2
 TYPE_
 Tabs
 Tag
@@ -922,7 +918,6 @@ period_interval
 period_recurrences
 period_start_date
 point
-productlot
 refunded
 save
 seconds

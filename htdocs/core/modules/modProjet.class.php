@@ -146,7 +146,7 @@ class modProjet extends DolibarrModules
 			'frequency' => 1,
 			'unitfrequency' => 86400 * 7,
 			'status' => 0,
-			'test' => '$conf->projet->enabled',
+			'test' => 'isModEnabled("project")',
 		);
 		// Permissions
 		$this->rights = array();

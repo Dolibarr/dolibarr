@@ -364,6 +364,7 @@ class Facture extends CommonInvoice
 		'note_private' => array('type' => 'html', 'label' => 'NotePrivate', 'enabled' => 1, 'visible' => 0, 'position' => 205),
 		'note_public' => array('type' => 'html', 'label' => 'NotePublic', 'enabled' => 1, 'visible' => 0, 'position' => 210),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'visible' => 0, 'position' => 215),
+		'fk_input_reason' => array('type' => 'integer', 'label' => 'Source', 'enabled' => 1, 'visible' => -1, 'position' => 220),
 		'extraparams' => array('type' => 'varchar(255)', 'label' => 'Extraparams', 'enabled' => 1, 'visible' => -1, 'position' => 225),
 		'situation_cycle_ref' => array('type' => 'smallint(6)', 'label' => 'Situation cycle ref', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 230),
 		'situation_counter' => array('type' => 'smallint(6)', 'label' => 'Situation counter', 'enabled' => 'getDolGlobalInt("INVOICE_USE_SITUATION")', 'visible' => -1, 'position' => 235),
@@ -717,6 +718,7 @@ class Facture extends CommonInvoice
 		$sql .= ", fk_account";
 		$sql .= ", module_source, pos_source, fk_fac_rec_source, fk_facture_source, fk_user_author, fk_projet";
 		$sql .= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf";
+		$sql .= ", fk_input_reason";
 		$sql .= ", situation_cycle_ref, situation_counter, situation_final";
 		$sql .= ", fk_incoterms, location_incoterms";
 		$sql .= ", fk_multicurrency";
@@ -752,6 +754,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".((int) $this->mode_reglement_id);
 		$sql .= ", '".$this->db->idate($this->date_lim_reglement)."'";
 		$sql .= ", ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null");
+		$sql .= ", ".($this->demand_reason_id > 0 ? (int) $this->demand_reason_id : "null");
 		$sql .= ", ".($this->situation_cycle_ref ? "'".$this->db->escape((string) $this->situation_cycle_ref)."'" : "null");
 		$sql .= ", ".($this->situation_counter ? "'".$this->db->escape((string) $this->situation_counter)."'" : "null");
 		$sql .= ", ".($this->situation_final ? (int) $this->situation_final : 0);
@@ -2217,6 +2220,7 @@ class Facture extends CommonInvoice
 		$sql .= ', f.date_valid as datev';
 		$sql .= ', f.tms as datem';
 		$sql .= ', f.note_private, f.note_public, f.fk_statut as status, f.paye, f.close_code, f.close_note, f.fk_user_author, f.fk_user_valid, f.fk_user_modif, f.model_pdf, f.last_main_doc';
+		$sql .= ", f.fk_input_reason";
 		$sql .= ', f.fk_facture_source, f.fk_fac_rec_source';
 		$sql .= ', f.fk_mode_reglement, f.fk_cond_reglement, f.fk_projet as fk_project, f.extraparams';
 		$sql .= ', f.situation_cycle_ref, f.situation_counter, f.situation_final';
@@ -2255,6 +2259,7 @@ class Facture extends CommonInvoice
 
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_paiement as p ON f.fk_mode_reglement = p.id';
+		$sql .= " LEFT JOIN ".$this->db->prefix()."c_input_reason as dr ON dr.rowid = f.fk_input_reason";
 		$sql .= ' LEFT JOIN '.$this->db->prefix().'c_incoterms as i ON f.fk_incoterms = i.rowid';
 
 		if ($rowid) {
@@ -2331,6 +2336,7 @@ class Facture extends CommonInvoice
 				$this->fk_user_modif        = $obj->fk_user_modif;
 				$this->model_pdf = $obj->model_pdf;
 				$this->last_main_doc = $obj->last_main_doc;
+				$this->demand_reason_id = $obj->fk_input_reason;
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
 				$this->situation_final      = $obj->situation_final;
@@ -2357,8 +2363,9 @@ class Facture extends CommonInvoice
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
 
 				// Now process extrafields
-				$this->array_options = array();
 				if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
+					$this->array_options = array();
+
 					foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 						$type = !empty($extrafields->attributes[$this->table_element]['type'][$key])
 							? $extrafields->attributes[$this->table_element]['type'][$key]
@@ -2578,7 +2585,7 @@ class Facture extends CommonInvoice
 				$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
-				$this->array_options = array();
+				$line->array_options = array();
 				if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
 					foreach ($extrafields->attributes[$this->table_element_line]['label'] as $key => $val) {
 						$type = !empty($extrafields->attributes[$this->table_element_line]['type'][$key])
@@ -2590,15 +2597,15 @@ class Facture extends CommonInvoice
 
 							// date/datetime
 							if (in_array($type, array('date', 'datetime'))) {
-								$this->array_options['options_' . $key] = $this->db->jdate($rawval);
+								$line->array_options['options_' . $key] = $this->db->jdate($rawval);
 							} elseif ($type == 'password') {
 								if (!empty($rawval) && preg_match('/^dolcrypt:/', $rawval)) {
-									$this->array_options['options_' . $key] = dolDecrypt($rawval);
+									$line->array_options['options_' . $key] = dolDecrypt($rawval);
 								} else {
-									$this->array_options['options_' . $key] = $rawval;
+									$line->array_options['options_' . $key] = $rawval;
 								}
 							} else {
-								$this->array_options['options_' . $key] = $rawval;
+								$line->array_options['options_' . $key] = $rawval;
 							}
 						}
 					}
@@ -2608,8 +2615,8 @@ class Facture extends CommonInvoice
 						if (!empty($extrafields->attributes[$this->table_element_line]['computed'][$key])) {
 							if (empty($conf->disable_compute)) {
 								global $objectoffield;
-								$objectoffield = $this;
-								$this->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
+								$objectoffield = $line;
+								$line->array_options['options_' . $key] = dol_eval($extrafields->attributes[$this->table_element_line]['computed'][$key], 1, 0, '2');
 							}
 						}
 					}
@@ -2617,7 +2624,7 @@ class Facture extends CommonInvoice
 
 				if (!$doFetchInOneSqlRequest) {
 					// Retrieve all extrafield
-					$this->fetch_optionals();
+					$line->fetch_optionals();
 				}
 
 				// multilangs
@@ -2982,6 +2989,69 @@ class Facture extends CommonInvoice
 			$this->db->rollback();
 			return -1 * $error;
 		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *	Update invoice input reason
+	 *
+	 *  @param      int			$inputReasonId		Input reason id or 0 to set to null
+	 *  @param     	int			$notrigger			1=Does not execute triggers, 0= execute triggers
+	 *  @return     int        			 			Return integer <0 if KO, 0 do nothing, >0 if OK
+	 */
+	public function setInputReason($inputReasonId, $notrigger = 0)
+	{
+		// phpcs:enable
+		global $user;
+
+		$error = 0;
+
+		dol_syslog(__METHOD__.' : inputReasonId='.$inputReasonId, LOG_DEBUG);
+		if ($this->status >= self::STATUS_DRAFT) {
+			$this->oldcopy = dol_clone($this, 2);
+			$this->demand_reason_id = $inputReasonId;
+
+			$this->db->begin();
+
+			$sql = "UPDATE ".$this->db->prefix().$this->table_element;
+			$sql .= " SET fk_input_reason = ".($inputReasonId > 0 ? (int) $inputReasonId : 'null');
+			$sql .= " WHERE rowid = ".((int) $this->id);
+
+			dol_syslog(__METHOD__, LOG_DEBUG);
+			$res = $this->db->query($sql);
+			if (!$res) {
+				$error++;
+				$this->error = $this->db->lasterror();
+				$this->errors[] = $this->error;
+			}
+
+			if (!$error) {
+				if (!$notrigger) {
+					// Call trigger
+					$result = $this->call_trigger('BILL_MODIFY', $user);
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+			}
+
+			if (!$error) {
+				$this->db->commit();
+			} else {
+				$this->demand_reason_id = $this->oldcopy->demand_reason_id;
+				$this->db->rollback();
+				dol_syslog(__METHOD__.' Error : '.$this->errorsToString(), LOG_ERR);
+			}
+
+			if (!$error) {
+				return 1;
+			} else {
+				return -1;
+			}
+		}
+
+		return 0;
 	}
 
 	/**
@@ -4197,11 +4267,36 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+					// get real stock
+					$productChildrenNb = 0;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						// compute real stock from each subcomponent
+						$product_stock = null;
+						$product->loadStockForVirtualProduct('warehouseopen', $qty);
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+						if ($product_stock === null) {
+							$product_stock = 0;
+						}
+					} else {
+						$product_stock = $product->stock_reel;
+					}
+
+					if ($product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 
@@ -4522,11 +4617,36 @@ class Facture extends CommonInvoice
 				$result = $product->fetch($line->fk_product);
 				$product_type = $product->type;
 
-				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0 && $product->stock_reel < $qty) {
-					$langs->load("errors");
-					$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
-					$this->db->rollback();
-					return -3;
+				if (getDolGlobalString('STOCK_MUST_BE_ENOUGH_FOR_INVOICE') && $product_type == 0) {
+					// get real stock
+					$productChildrenNb = 0;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $product->hasFatherOrChild(1);
+					}
+					if ($productChildrenNb > 0) {
+						// compute real stock from each subcomponent
+						$product_stock = null;
+						$product->loadStockForVirtualProduct('warehouseopen', $qty);
+						foreach ($product->stock_warehouse as $componentStockWarehouse) {
+							if ($product_stock === null) {
+								$product_stock = $componentStockWarehouse->real;
+							} else {
+								$product_stock = min($product_stock, $componentStockWarehouse->real);
+							}
+						}
+						if ($product_stock === null) {
+							$product_stock = 0;
+						}
+					} else {
+						$product_stock = $product->stock_reel;
+					}
+
+					if ($product_stock < $qty) {
+						$langs->load("errors");
+						$this->error = $langs->trans('ErrorStockIsNotEnoughToAddProductOnInvoice', $product->ref);
+						$this->db->rollback();
+						return -3;
+					}
 				}
 			}
 
@@ -5260,6 +5380,11 @@ class Facture extends CommonInvoice
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
 		$sql .= " ORDER BY f.ref";
+
+		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED') > 0) {
+			$sql .= " DESC"; //order by
+			$sql .= " LIMIT " . getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED');
+		}
 
 		dol_syslog(get_class($this)."::list_qualified_avoir_invoices", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -6174,7 +6299,7 @@ class Facture extends CommonInvoice
 						// Sender
 						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-							$from = $arraymessage->email_from;
+							$from = (string) $arraymessage->email_from;
 						}
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
@@ -6197,12 +6322,12 @@ class Facture extends CommonInvoice
 
 							$email_tocc = '';
 							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
-								$email_tocc = $arraymessage->email_tocc;
+								$email_tocc = (string) $arraymessage->email_tocc;
 							}
 
 							$email_tobcc = '';
 							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
-								$email_tobcc = $arraymessage->email_tobcc;
+								$email_tobcc = (string) $arraymessage->email_tobcc;
 							}
 
 							//join file is asked

@@ -49,7 +49,7 @@ class Ccountry extends CommonDict
 	/**
 	 * @var string
 	 */
-	public $ecc;
+	public $eec;
 
 	/**
 	 * @var int
@@ -192,7 +192,7 @@ class Ccountry extends CommonDict
 					$this->code = $obj->code;
 					$this->code_iso = $obj->code_iso;
 					$this->label = $obj->label;
-					$this->ecc = $obj->ecc;
+					$this->eec = $obj->eec;
 					$this->active = $obj->active;
 					$this->favorite = $obj->favorite;
 					$this->numeric_code = $obj->numeric_code;

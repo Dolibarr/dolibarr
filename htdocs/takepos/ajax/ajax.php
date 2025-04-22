@@ -111,13 +111,20 @@ if ($action == 'getProducts' && $user->hasRight('takepos', 'run')) {
 		// Removed properties we don't need
 		$res = array();
 		if (is_array($prods) && count($prods) > 0) {
+			$productChildrenNb = 0;
 			foreach ($prods as $prod) {
 				'@phan-var-force Product $prod';
 				if (getDolGlobalInt('TAKEPOS_PRODUCT_IN_STOCK') == 1) {
-					// remove products without stock
-					$prod->load_stock('nobatch,novirtual');
-					if ($prod->stock_warehouse[getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])]->real <= 0) {
-						continue;
+					if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+						$productChildrenNb = $prod->hasFatherOrChild(1);
+					}
+					// always show virtual products (don't manage stock)
+					if ($productChildrenNb == 0) {
+						// remove products without stock
+						$prod->load_stock('nobatch,novirtual');
+						if ($prod->stock_warehouse[getDolGlobalString('CASHDESK_ID_WAREHOUSE'.$_SESSION['takeposterminal'])]->real <= 0) {
+							continue;
+						}
 					}
 				}
 				unset($prod->fields);
