@@ -6,9 +6,10 @@
 *		@param	array		$substitutionarray	Array with substitution key=>val
 *		@param	Translate	$langs			Output langs
 *		@param	Object		$object			Object to use to get values
+*		@param 	Object 		$line 			Line to use to get values
 * 		@return	void					The entry parameter $substitutionarray is modified
 */
-function subtotals_completesubstitutionarray_lines(&$substitutionarray,$langs,$object,$line)
+function subtotals_completesubstitutionarray_lines(&$substitutionarray, $langs, $object, $line)
 {
 	global $conf,$db;
 
