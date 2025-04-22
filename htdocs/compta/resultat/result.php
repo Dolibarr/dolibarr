@@ -523,9 +523,13 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$yeartoprocess++;
 						}
 
+						// Define month-specific date range
+						$month_start = dol_mktime(0, 0, 0, $monthtoprocess, 1, $yeartoprocess);
+						$month_end = dol_mktime(23, 59, 59, $monthtoprocess, dol_get_last_day($yeartoprocess, $monthtoprocess), $yeartoprocess);
+
 						//var_dump($monthtoprocess.'_'.$yeartoprocess);
 						if (isset($cpt['account_number'])) {
-							$return = $AccCat->getSumDebitCredit($cpt['account_number'], $date_start, $date_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
+							$return = $AccCat->getSumDebitCredit($cpt['account_number'], $month_start, $month_end, empty($cat['dc']) ? 0 : $cat['dc'], 'nofilter', $monthtoprocess, $yeartoprocess);
 							if ($return < 0) {
 								setEventMessages(null, $AccCat->errors, 'errors');
 								$resultM = 0;
@@ -549,7 +553,9 @@ if ($modecompta == 'CREANCES-DETTES') {
 							$totPerAccount[$cpt['account_number']]['M'][$k] = $resultM;
 						}
 
-						$resultN += $resultM;
+						if ($month_start >= $date_start && $month_start <= $date_end) {
+							$resultN += $resultM;
+						}
 					}
 
 					if (empty($totCat)) {
