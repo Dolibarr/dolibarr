@@ -538,11 +538,11 @@ class Interventions extends DolibarrApi
 	/**
 	 * Get a list of contacts for an intervention
 	 *
-	 * @param 	int    $id     	ID of intervention
-	 * @param 	string $type   	Type of contacts (internal, external, thirdparty)
-	 * @param 	string $code   	Filter on a code (Example: 'BILLING', 'SHIPPING', 'INTERVENING', etc.)
-	 * @param 	int    $status 	Status of contacts (0=disabled, 1=enabled)
-	 * @return 	array        	Array of contact IDs
+	 * @param 	int    $id     								ID of intervention
+	 * @param 	string $type   								Type of contacts (internal, external, thirdparty)
+	 * @param 	string $code   								Filter on a code (Example: 'BILLING', 'SHIPPING', 'INTERVENING', etc.)
+	 * @param 	int    $status 								Status of contacts (0=closed, 1=open)
+	 * @return 	array<string,null|int|float|string>        	Array of contact IDs
 	 *
 	 * @url     GET {id}/contacts
 	 *
