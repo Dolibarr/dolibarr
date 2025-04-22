@@ -180,6 +180,7 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
+
 	 * Create an event attendee
 	 *
 	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
