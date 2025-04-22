@@ -126,6 +126,8 @@ if (empty($action) && empty($object->id)) {
 
 $permissiontoread = $user->hasRight('mailing', 'lire');
 $permissiontoadd = $user->hasRight('mailing', 'creer');
+$permissiontovalidatesend = $user->hasRight('mailing', 'valider');
+$permissiontodelete = $user->hasRight('mailing', 'supprimer');
 
 
 /*
@@ -434,13 +436,14 @@ if (GETPOST("button_removefilter")) {
  * View
  */
 
-llxHeader('', $langs->trans("MailAdvTargetRecipients"), 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing');
-
 $form = new Form($db);
 $formmailing = new FormMailing($db);
 $formadvtargetemaling = new FormAdvTargetEmailing($db);
 $formcompany = new FormCompany($db);
 $formother = new FormOther($db);
+
+$help_url = 'EN:Module_EMailing|FR:Module_Mailing|ES:M&oacute;dulo_Mailing';
+llxHeader('', $langs->trans("MailAdvTargetRecipients"), $help_url);
 
 $arrayofselected = is_array($toselect) ? $toselect : array();
 $totalarray = [
@@ -480,10 +483,11 @@ if ($object->fetch($id) >= 0) {
 	print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
 
-	print '<table class="border centpercent tableforfield">';
+	print '<table class="border centpercent tableforfield">'."\n";
 
 	// From
-	print '<tr><td class="titlefield">'.$langs->trans("MailFrom").'</td><td>';
+	print '<tr><td class="titlefield">';
+	print $langs->trans("MailFrom").'</td><td>';
 	$emailarray = CMailFile::getArrayAddress($object->email_from);
 	foreach ($emailarray as $email => $name) {
 		if ($name && $name != $email) {
@@ -556,20 +560,19 @@ if ($object->fetch($id) >= 0) {
 	print '</td><td>';
 	$nbemail = ($object->nbemail ? $object->nbemail : 0);
 	if (is_numeric($nbemail)) {
-		$text = '';
+		$htmltooltip = '';
 		if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || ($object->status == 2 && $nbtry < $nbemail))) {
 			if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
-				$text .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
+				$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 			} else {
-				$text .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
+				$htmltooltip .= $langs->trans('SendingFromWebInterfaceIsNotAllowed');
 			}
 		}
 		if (empty($nbemail)) {
 			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
-		if ($text) {
-			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			print $form->textwithpicto($nbemail, $text, 1, 'warning');
+		if ($htmltooltip) {
+			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
 		} else {
 			print $nbemail;
 		}
@@ -589,7 +592,7 @@ if ($object->fetch($id) >= 0) {
 		}
 		print $text;
 		if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+			if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
 				print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
 			}
 		} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
@@ -668,7 +671,7 @@ if ($object->fetch($id) >= 0) {
 		print '<input type="hidden" name="action" value="">'."\n";
 		print '<table class="border centpercent">'."\n";
 
-		print '<tr><td>'.$langs->trans('AdvTgtNameTemplate').'</td><td class="valignmiddle">';
+		print '<tr><td class="titlefieldcreate">'.$langs->trans('AdvTgtNameTemplate').'</td><td class="valignmiddle">';
 		if (!empty($template_id)) {
 			$default_template = $template_id;
 		} else {
@@ -687,7 +690,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td><td>'."\n";
 		print '</td></tr>'."\n";
 
-		print '<tr><td colspan="2"><hr></td></tr>';
+		print '<tr><td colspan="3"><hr></td></tr>';
 
 		print '<tr>'."\n";
 		print '<td colspan="3" class="center">'."\n";
@@ -810,7 +813,7 @@ if ($object->fetch($id) >= 0) {
 			1 => $langs->trans('Customer'),
 			0 => $langs->trans('NorProspectNorCustomer')
 		);
-		print $formadvtargetemaling->advMultiselectarray('cust_typecust', $options_array, $array_query['cust_typecust']);
+		print $formadvtargetemaling->advMultiselectarray('cust_typecust', $options_array, $selected);
 		print '</td><td>'."\n";
 		print '</td></tr>'."\n";
 
@@ -989,7 +992,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td></tr>'."\n";
 
 		// Civility
-		print '<tr><td width="15%">'.$langs->trans("UserTitle");
+		print '<tr><td>'.$langs->trans("UserTitle");
 		if (!empty($array_query['contact_civility'])) {
 			print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 		}
