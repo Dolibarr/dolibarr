@@ -118,6 +118,7 @@ class modSubtotals extends DolibarrModules
 		//-------
 		$this->menu = 1; // This module add menu entries. They are coded into menu manager.
 
+		$this->module_parts = array('substitutions' => 1);
 
 		// Exports
 		$r = 0;
