@@ -122,6 +122,8 @@ $arrayfields = array(
 	'p.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 70, 'tooltip' => "ChequeOrTransferNumber"),
 	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 	'p.note'			=> array('label' => "Comment", 'checked' => '-1', 'position' => 85),
+	'p.ext_payment_id'	=> array('label' => "ExtPaymentID", 'checked' => -1, 'position' => 87),
+	'p.ext_payment_site' => array('label' => "ExtPaymentSite", 'checked' => -1, 'position' => 88),
 	'p.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 90, 'enabled' => (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
@@ -215,7 +217,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 } else {
-	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount, p.note as note_private";
+	$sql = "SELECT p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement as num_payment, p.amount, p.note as note_private, p.ext_payment_id, p.ext_payment_site";
 	$sql .= ", c.code as paiement_code";
 	$sql .= ", ba.rowid as bid, ba.ref as bref, ba.label as blabel, ba.number, ba.account_number as account_number, ba.fk_accountancy_journal as accountancy_journal";
 	$sql .= ", s.rowid as socid, s.nom as name, s.email";
@@ -301,7 +303,7 @@ if (GETPOST("orphelins", "alpha")) {
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 
-	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, p.note";
+	$sql .= " GROUP BY p.rowid, p.ref, p.datep, p.fk_bank, p.statut, p.num_paiement, p.amount, p.note, p.ext_payment_id, p.ext_payment_site";
 	$sql .= ", c.code";
 	$sql .= ", ba.rowid, ba.ref, ba.label, ba.number, ba.account_number, ba.fk_accountancy_journal";
 	$sql .= ", s.rowid, s.nom, s.email";
@@ -516,6 +518,20 @@ if (!empty($arrayfields['p.note']['checked'])) {
 	print '</td>';
 }
 
+// Filter: ext_payment_id
+if (!empty($arrayfields['p.ext_payment_id']['checked'])) {
+	print '<td class="liste_titre">';
+	//print '<input class="flat maxwidth150" type="text" name="search_ext_payment_id" value="'.dol_escape_htmltag($search_ext_payment_id).'">';
+	print '</td>';
+}
+
+// Filter: ext_payment_site
+if (!empty($arrayfields['p.ext_payment_site']['checked'])) {
+	print '<td class="liste_titre">';
+	//print '<input class="flat maxwidth150" type="text" name="search_ext_payment_site" value="'.dol_escape_htmltag($search_payment_site).'">';
+	print '</td>';
+}
+
 // Filter: Status (only placeholder)
 if (!empty($arrayfields['p.statut']['checked'])) {
 	print '<td class="liste_titre right">';
@@ -587,6 +603,14 @@ if (!empty($arrayfields['p.amount']['checked'])) {
 }
 if (!empty($arrayfields['p.note']['checked'])) {
 	print_liste_field_titre($arrayfields['p.note']['label'], $_SERVER["PHP_SELF"], "p.note", '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.ext_payment_id']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ext_payment_id']['label'], $_SERVER["PHP_SELF"], "p.ext_payment_id", '', $param, '', $sortfield, $sortorder);
+	$totalarray['nbfield']++;
+}
+if (!empty($arrayfields['p.ext_payment_site']['checked'])) {
+	print_liste_field_titre($arrayfields['p.ext_payment_site']['label'], $_SERVER["PHP_SELF"], "p.ext_payment_site", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['p.statut']['checked'])) {
@@ -793,6 +817,26 @@ while ($i < $imaxinloop) {
 			$firstline = dolGetFirstLineOfText($objp->note_private, 1);
 			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($firstline).'">';
 			print dolPrintHTML($firstline).'</span>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// ext_payment_id
+		if (!empty($arrayfields['p.ext_payment_id']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objp->ext_payment_id).'">';
+			print dolPrintHTML($objp->ext_payment_id).'</span>';
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// ext_payment_site
+		if (!empty($arrayfields['p.ext_payment_site']['checked'])) {
+			print '<td class="tdoverflowmax200" title="'.dolPrintHTMLForAttribute($objp->ext_payment_site).'">';
+			print dolPrintHTML($objp->ext_payment_site).'</span>';
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;

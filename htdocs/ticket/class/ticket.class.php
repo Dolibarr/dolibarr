@@ -3,7 +3,7 @@
  * Copyright (C) 2016       Christophe Battarel 	<christophe@altairis.fr>
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Laurent Destailleur 	<eldy@users.sourceforge.net>
- * Copyright (C) 2023       Charlene Benke 	   		<charlene@patas-monkey.com>
+ * Copyright (C) 2023-2025  Charlene Benke 	   		<charlene@patas-monkey.com>
  * Copyright (C) 2023-2024  Benjamin Falière	    <benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
@@ -494,7 +494,9 @@ class Ticket extends CommonObject
 		$error = 0;
 
 		// Clean parameters
-		$this->datec = dol_now();
+		if (empty($this->datec)) {
+			$this->datec = dol_now();
+		}
 		if (empty($this->track_id)) {
 			$this->track_id = generate_random_id(16);
 		}

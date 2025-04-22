@@ -1907,7 +1907,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	margin: 20px 20px 20px 20px;
 }
 .flexcontainer {
-	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+	<?php if (in_array($conf->browser->name, array('chrome', 'firefox', 'safari'))) {
 		echo 'display: inline-flex;'."\n";
 	} ?>
 	flex-flow: row wrap;
@@ -2235,7 +2235,7 @@ datalist {
 
 
 	div.tabs div.tab a.tab  {
-		max-width: 200px;
+		max-width: 180px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -5170,7 +5170,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	}
 
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
-		padding: 12px 12px 13px;
+		padding: 12px 3px 13px;
 	}
 	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 		padding: 0px 0px 0px 0px;
@@ -7462,6 +7462,9 @@ span#select2-boxbookmark-container {
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
 }
+.mytooltip .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
+  padding: 1px 3px 1px 3px;
+}
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr a {
 	font-weight: normal;
 }
@@ -7983,16 +7986,19 @@ div.tabsElem a.tab {
 {
 	padding-left: 44px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 .lilevel4
 {
 	padding-left: 66px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 .lilevel5
 {
 	padding-left: 88px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 
 

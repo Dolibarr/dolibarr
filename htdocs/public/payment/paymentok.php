@@ -135,7 +135,7 @@ dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLT
 $reg_ws = array();
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
-	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
+	dol_syslog("paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
@@ -182,9 +182,15 @@ if ($ws) {
 	}
 }
 
+/*
+ * Actions
+ */
+
+// None
+
 
 /*
- * Actions and view
+ * View
  */
 
 $now = dol_now();
@@ -200,13 +206,16 @@ foreach ($_POST as $k => $v) {
 	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
+
 $tracesession = "";
 foreach ($_SESSION as $k => $v) {
-	if (is_scalar($k) && is_scalar($v)) {
+	if (is_scalar($k) && is_scalar($v) && in_array($k, array('currencyCodeType', 'errormessage', 'FinalPaymentAmt', 'ipaddress', 'onlinetoken', 'payerID', 'paymentType', 'TRANSACTIONID', 'paymentoksessionkey', 'paymentkosessionkey'))) {
 		$tracesession .= "$k - $v\n";
 	}
 }
 dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');
+
+dol_syslog("paymentoksessioncode=".GETPOST('paymentoksessioncode')." SESSION['paymentoksessioncode']=".$_SESSION['paymentoksessioncode'], LOG_DEBUG, 0, '_payment');
 
 $head = '';
 if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
@@ -371,8 +380,13 @@ if (isModEnabled('paybox')) {
 // For Stripe
 if (isModEnabled('stripe')) {
 	if ($paymentmethod === 'stripe') {
-		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
-		$ispaymentok = true; // We call this page only if payment is ok on payment system
+		// Check we are coming from the newpaymentpage
+		if (GETPOST('paymentoksessionkey') == $_SESSION['paymentoksessionkey']) {
+			// We can also request Stripe with payment_intent and payment_intent_client_secret the sameway we do in newpayment after comment "// Get here amount and currency used for payment".
+			$ispaymentok = true; // We call this page only if payment is ok on payment system
+		} else {
+			$ispaymentok = false; // We call this page only if payment is ok on payment system
+		}
 	}
 }
 
@@ -1068,6 +1082,8 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+					$db->begin();
+
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
 					$result = $invoice->createFromOrder($object, $user);
@@ -1156,15 +1172,16 @@ if ($ispaymentok) {
 								$error++;
 							}
 						}
-
-						if (!$error) {
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
 					} else {
 						$postactionmessages[] = 'Failed to create invoice form order ' . $tmptag['ORD'] . '.';
 						$ispostactionok = -1;
+						$error++;
+					}
+
+					if (!$error) {
+						$db->commit();
+					} else {
+						$db->rollback();
 					}
 				} else {
 					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of order ' . $tmptag['ORD'] . '. May be payment was already recorded.';
@@ -1684,6 +1701,8 @@ if ($ispaymentok) {
 										$error++;
 										setEventMessages(null, $thirdparty->errors, "errors");
 									} else {
+										// TODO Move the send of email out of the db transaction
+
 										// Sending mail
 										require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 										include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1790,6 +1809,8 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+					$db->begin();
+
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
 					$result = $invoice->createFromContract($object, $user, array((int) $contract_lines));
@@ -1868,12 +1889,6 @@ if ($ispaymentok) {
 								$error++;
 							}
 						}
-
-						if (!$error) {
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
 					} else {
 						$msg = 'Failed to create invoice form contract ' . $tmptag['CON'];
 						if (!empty($tmptag['COL'])) {
@@ -1881,6 +1896,13 @@ if ($ispaymentok) {
 						}
 						$postactionmessages[] = $msg;
 						$ispostactionok = -1;
+						$error++;
+					}
+
+					if (!$error) {
+						$db->commit();
+					} else {
+						$db->rollback();
 					}
 				} else {
 					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of contract ' . $tmptag['CON'] .'. Maybe payment was already recorded.';
@@ -2159,16 +2181,16 @@ $db->close();
 
 // If option to do a redirect somewhere else.
 if (!empty($doactionsthenredirect)) {
-	$randomseckey = getRandomPassword(true, null, 20);
-	$_SESSION['paymentsessionkey'] = $randomseckey;
-
 	if ($ispaymentok) {
 		// Redirect to a success page
+		$randomseckey = getRandomPassword(true, null, 20);
+		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentok of the website.
+
 		// Paymentok page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-			$ext_urlok = $ws_virtuelhost . '/paymentok.php?paymentsessionkey='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
+			$ext_urlok = $ws_virtuelhost . '/paymentok.php?paymentoksessioncode='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 		} else {
-			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?paymentsessionkey='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?paymentoksessioncode='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
 		}
 
 		dol_syslog("Now do a redirect using a Location: ".$ext_urlok, LOG_DEBUG, 0, '_payment');
@@ -2176,11 +2198,14 @@ if (!empty($doactionsthenredirect)) {
 		exit;
 	} else {
 		// Redirect to an error page
+		$randomseckey = getRandomPassword(true, null, 20);
+		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+
 		// Paymentko page must be created for the specific website
 		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
-			$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentsessionkey='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
+			$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentkosessioncode='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
 		} else {
-			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentsessionkey='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentkosessioncode='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
 		}
 
 		dol_syslog("Now do a redirect using a Location:".$ext_urlko, LOG_DEBUG, 0, '_payment');

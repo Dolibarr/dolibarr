@@ -359,7 +359,7 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: <?php echo $borderradius; ?>px;
+	border-radius: 3px;
 }
 
 .user-footer .button-top-menu-dropdown {
