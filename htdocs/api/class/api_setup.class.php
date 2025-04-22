@@ -1481,7 +1481,7 @@ class Setup extends DolibarrApi
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];
-		$default_value = $request_data['default_value'];
+		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
 		$required = $request_data['required'];
