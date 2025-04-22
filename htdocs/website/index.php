@@ -1996,7 +1996,7 @@ if ($action == "updatesecurity" && $usercanedit && GETPOST("btn_WEBSITE_SECURITY
 					$sourcestring .= " '".$source."'";
 				} elseif ($directivetype != "none") {
 					$sourcestring .= " ".$source;
-				}				
+				}
 			}
 			$securityspstring .= $directive . $sourcestring;
 		}
@@ -3020,7 +3020,7 @@ if ($action == 'removecspsource' && $usercanedit) {
 					$sourcestring .= " '".$source."'";
 				} else {
 					$sourcestring .= " ".$source;
-				}				
+				}
 			}
 			$securityspstring .= $directive . $sourcestring;
 		}
