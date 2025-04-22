@@ -534,4 +534,36 @@ class Interventions extends DolibarrApi
 		}
 		return $fichinter;
 	}
+
+	/**
+	 * Get a list of contacts for an intervention
+	 *
+	 * @param 	int    $id     	ID of intervention
+	 * @param 	string $type   	Type of contacts (internal, external, thirdparty)
+	 * @param 	string $code   	Filter on a code (Example: 'BILLING', 'SHIPPING', 'INTERVENING', etc.)
+	 * @param 	int    $status 	Status of contacts (0=disabled, 1=enabled)
+	 * @return 	array        	Array of contact IDs
+	 *
+	 * @url     GET {id}/contacts
+	 *
+	 * @throws RestException
+	 */
+	public function getContacts($id, $type, $code = '', $status = 1) {
+		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
+		}
+		$result = $this->fichinter->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Intervention not found');
+		}
+		if (!DolibarrApi::_checkAccessToResource('fichinter', $this->fichinter->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+		$contacts = $this->fichinter->liste_contact(-1, $type, 0, $code, $status);
+		if (empty($contacts)) {
+			throw new RestException(404, 'No intervention contacts found');
+		} else {
+			return $contacts;
+		}
+	}
 }
