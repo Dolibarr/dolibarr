@@ -1996,8 +1996,7 @@ if ($action == "updatesecurity" && $usercanedit && GETPOST("btn_WEBSITE_SECURITY
 					$sourcestring .= " '".$source."'";
 				} elseif ($directivetype != "none") {
 					$sourcestring .= " ".$source;
-				}
-				
+				}				
 			}
 			$securityspstring .= $directive . $sourcestring;
 		}
@@ -3021,8 +3020,7 @@ if ($action == 'removecspsource' && $usercanedit) {
 					$sourcestring .= " '".$source."'";
 				} else {
 					$sourcestring .= " ".$source;
-				}
-				
+				}				
 			}
 			$securityspstring .= $directive . $sourcestring;
 		}
@@ -4400,7 +4398,7 @@ if ($action == 'editsecurity') {
 	print '<input class="minwidth500 quatrevingtpercent" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
 
 	print '<br>';
-	
+
 	print '<div id="selectaddcontentsecuritypolicy" class="hidden">';
 	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPDirective"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth350 inline-block');
 	print ' ';
