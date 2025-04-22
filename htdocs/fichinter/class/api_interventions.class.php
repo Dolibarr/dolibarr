@@ -548,7 +548,8 @@ class Interventions extends DolibarrApi
 	 *
 	 * @throws RestException
 	 */
-	public function getContacts($id, $type, $code = '', $status = 1) {
+	public function getContacts($id, $type, $code = '', $status = 1)
+	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
