@@ -92,7 +92,6 @@ if (GETPOSTINT('fk_bom') > 0) {
 
 	$ObjMrpProduction = new MoLine($db);
 
-	//---------- CREATE Extrafields MO From Extrafields BOM ----------
 	$e = new ExtraFields($object->db);
 	$element_extrafields = $e->fetch_name_optionals_label($object->table_element);
 
@@ -101,30 +100,6 @@ if (GETPOSTINT('fk_bom') > 0) {
 			$object->array_options[$options_key] = $value;
 		}
 	}
-	// ----------------------------- OK -----------------------------
-
-
-
-	//TODO ----------- IN PROGRESS : DATA EXTRAFIELDS_BOM_Lines ----------
-	foreach ($objectbom->lines as $line) {
-		$line->fetch_optionals();
-		if ($action == 'add'){
-			$e = new ExtraFields($object->db);
-			$element_extrafields = $e->fetch_name_optionals_label($ObjMrpProduction->table_element);
-
-			foreach ($line->array_options as $options_key => $value) {
-
-				if (array_key_exists(str_replace('options_', '', $options_key), $element_extrafields)) {
-					if ($value != null) {
-						$ObjMrpProduction->array_options[str_replace('options_', '', $options_key)] = $value;
-					}
-				}
-			}
-		}
-	}
-	// TODO ----------------------------- IN PROGRESS -----------------------------
-
-
 
 	if ($action != 'add') {
 		// We force calling parameters if we are not in the submit of creation of MO
@@ -467,16 +442,12 @@ if ($action == 'create') {
 	print $form->buttonsSaveCancel("Create");
 
 	if ($objectbom->id > 0) {
-		//Passage par ici si on arrive sur le formulaire de création de l'OF depuis une BOM
-		var_dump('FROM BOM ID = '.$objectbom->id);
-		var_dump('ACTION = '.$action);
-		var_dump('Le Bouton CREER RENVOI ACTION = add');
-//		exit;
 		print load_fiche_titre($titlelist);
 
 		print '<!-- list of product/services to consume -->'."\n";
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
+
 
 		$arrayOfMoLines = array();
 		foreach ($objectbom->lines as $key => $val) {
@@ -491,7 +462,6 @@ if ($action == 'create') {
 
 			$arrayOfMoLines[] = $moLine;
 
-			//TODO GREGM --------------------Add Data Here ???-----------------------------
 		}
 		$object->lines = $arrayOfMoLines;
 		$object->mrptype = $objectbom->bomtype;

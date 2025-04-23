@@ -292,7 +292,6 @@ class Mo extends CommonObject
 	 */
 	public function create(User $user, $notrigger = 0)
 	{
-		//TODO GREGM Create Mrp_production_extrafield Here ?????
 		$error = 0;
 		$idcreated = 0;
 
@@ -727,6 +726,7 @@ class Mo extends CommonObject
 				include_once DOL_DOCUMENT_ROOT.'/bom/class/bom.class.php';
 				$bom = new BOM($this->db);
 				$bom->fetch($this->fk_bom);
+
 				if ($bom->bomtype == 1) {
 					$role = 'toproduce';
 					$moline->role = 'toconsume';
@@ -754,6 +754,7 @@ class Mo extends CommonObject
 					// Lines to consume
 					if (!$error) {
 						foreach ($bom->lines as $line) {
+							$line->fetch_optionals();
 							$moline = new MoLine($this->db);
 
 							$moline->fk_mo = $this->id;
@@ -780,6 +781,11 @@ class Mo extends CommonObject
 								$moline->disable_stock_change = $line->disable_stock_change;
 								if (!empty($line->fk_default_workstation)) {
 									$moline->fk_default_workstation = $line->fk_default_workstation;
+								}
+
+								// get extrafields from bom line
+								foreach ($line->array_options as $options_key => $value) {
+									$moline->array_options[$options_key] = $value;
 								}
 
 								$resultline = $moline->create($user, false); // Never use triggers here
