@@ -782,8 +782,10 @@ class Mo extends CommonObject
 								}
 
 								// get extrafields from bom line
-								foreach ($line->array_options as $options_key => $value) {
-									$moline->array_options[$options_key] = $value;
+								if (!empty($line->array_options) && is_array($line->array_options)) {
+									foreach ($line->array_options as $options_key => $value) {
+										$moline->array_options[$options_key] = $value;
+									}
 								}
 
 								$resultline = $moline->create($user, false); // Never use triggers here
