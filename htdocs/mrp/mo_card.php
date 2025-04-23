@@ -446,7 +446,6 @@ if ($action == 'create') {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder centpercent">';
 
-
 		$arrayOfMoLines = array();
 		foreach ($objectbom->lines as $key => $val) {
 			$moLine = new MoLine($db);

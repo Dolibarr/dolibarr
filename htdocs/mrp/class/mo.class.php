@@ -316,8 +316,6 @@ class Mo extends CommonObject
 			$tmpbom->fetch($this->fk_bom);
 
 			$this->mrptype = $tmpbom->bomtype;
-
-
 		}
 
 		if (!$error) {
