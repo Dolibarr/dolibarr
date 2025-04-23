@@ -212,9 +212,8 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Categorie';
 	$objectlabel = 'Categorie';
-	$uploaddir = $conf->aaa->dir_output;
+	$uploaddir = $conf->categorie->dir_output;
 
-	global $error;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 
 	// You can add more action here
@@ -500,6 +499,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="page_y" value="">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 
