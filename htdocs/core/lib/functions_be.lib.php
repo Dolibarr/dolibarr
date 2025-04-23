@@ -61,7 +61,7 @@ function dolBECalculateStructuredCommunication($invoice_number, $invoice_type)
 	// Calculate module97
 	$invoice_number = $invoice_type.$invoice_number;
 	$mod97 = intval($invoice_number) % 97;
-	$controlKey = ($mod97 === 0) ? 97 : $mod97;
+	$controlKey = ($mod97 === 0) ? 97 : str_pad($mod97, 2, '0', STR_PAD_LEFT);
 
 	// Add the check digit at the end of the reference
 	$invoice_number .= $controlKey;
