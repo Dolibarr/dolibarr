@@ -14857,10 +14857,11 @@ function getActionCommEcmList($object)
 
 	$documents = array();
 
-	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename';
+	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename, ecm.agenda_id';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
 	$sql .= " WHERE ecm.filepath = 'agenda/".((int) $object->id)."'";
 	//$sql.= " ecm.src_object_type = '".$db->escape($object->element)."' AND ecm.src_object_id = ".((int) $object->id); // Old version didn't add object_type during upload
+	$sql.= ' OR ecm.agenda_id = '.(int) $object->id;
 	$sql .= ' ORDER BY ecm.position ASC';
 
 	$resql = $db->query($sql);
@@ -15580,10 +15581,21 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 					$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
 					$mime = dol_mimetype($filePath);
-					$file = $actionstatic->id.'/'.$doc->filename;
-					$thumb = $actionstatic->id.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-					$doclink = dol_buildpath('document.php', 1).'?modulepart=actions&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
-					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart=actions&file='.urlencode($thumb).'&entity='.$conf->entity;
+					if (empty($doc->agenda_id)) {
+						$dir_ref = $actionstatic->id;
+						$modulepart = 'actions';
+					} else {
+						$split_dir = explode('/', $doc->filepath);
+						$modulepart = array_shift($split_dir);
+						$dir_ref = implode('/', $split_dir);
+					}
+
+					$file = $dir_ref.'/'.$doc->filename;
+					$thumb = $dir_ref.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
+					$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
+					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart='.$modulepart.'&file='.urlencode($thumb).'&entity='.$conf->entity;
+
+
 
 					$mimeAttr = ' mime="'.$mime.'" ';
 					$class = '';

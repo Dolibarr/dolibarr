@@ -1562,8 +1562,13 @@ class Contrat extends CommonObject
 			$total_localtax1 = $tabprice[9];
 			$total_localtax2 = $tabprice[10];
 
-			$localtax1_type = $localtaxes_type[0];
-			$localtax2_type = $localtaxes_type[2];
+			if (count($localtaxes_type) > 0) {
+				$localtax1_type = $localtaxes_type[0];
+				$localtax2_type = $localtaxes_type[2];
+			} else {
+				$localtax1_type = "";
+				$localtax2_type = "";
+			}
 
 			if (empty($pa_ht)) {
 				$pa_ht = 0;
