@@ -223,6 +223,22 @@ foreach ($_POST as $key => $val) {
 	}
 }
 
+// Complete urls for post treatment
+$ref = $REF = GETPOST('ref', 'alpha');
+$TAG = GETPOST("tag", 'alpha');
+$FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more information
+$SECUREKEY = GETPOST("securekey"); // Secure key
+$PAYPAL_API_OK = "";
+$PAYPAL_API_KO = "";
+$PAYPAL_API_SANDBOX = "";
+$PAYPAL_API_USER = "";
+$PAYPAL_API_PASSWORD = "";
+$PAYPAL_API_SIGNATURE = "";
+
+$reg = array();
+if (empty($ws) && preg_match('/WS=([^=&]+)/', $FULLTAG, $reg)) {
+	$ws = $reg[1];
+}
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -240,23 +256,11 @@ if ($ws && !defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {	// 
 	$urlko = $tmpwebsite->virtualhost.'/public/payment/paymentko.php?';
 }
 
-// Complete urls for post treatment
-$ref = $REF = GETPOST('ref', 'alpha');
-$TAG = GETPOST("tag", 'alpha');
-$FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more information
-$SECUREKEY = GETPOST("securekey"); // Secure key
-$PAYPAL_API_OK = "";
-$PAYPAL_API_KO = "";
-$PAYPAL_API_SANDBOX = "";
-$PAYPAL_API_USER = "";
-$PAYPAL_API_PASSWORD = "";
-$PAYPAL_API_SIGNATURE = "";
-
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
 }
 
-if ($ws) {
+if ($ws && !preg_match('/'.preg_quote('WS='.$ws, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'WS='.$ws;
 }
 
@@ -361,10 +365,10 @@ if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 				$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
 			}
 		} else {
-			$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN, $SECUREKEY, '2');
+			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), $SECUREKEY, '2');
 		}
 	} else {
-		$tokenisok = ($conf->global->PAYMENT_SECURITY_TOKEN == $SECUREKEY);
+		$tokenisok = (getDolGlobalString('PAYMENT_SECURITY_TOKEN') == $SECUREKEY);
 	}
 
 	if (! $tokenisok) {
@@ -410,7 +414,9 @@ $mesg = '';
  */
 
 // First log into the dolibarr_payment.log file
-dol_syslog("--- newpayment.php action = ".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
+dol_syslog("--- newpayment.php action=".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
+
+dol_syslog("fulltag=".GETPOST("fulltag", 'alpha')." ws=".$ws." urlok=".$urlok, LOG_DEBUG, 0, '_payment');
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
@@ -551,7 +557,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		$amountstripe *= 100;
 	}
 
-	dol_syslog("--- newpayment.php Execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
+	dol_syslog("newpayment.php execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
 	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_payment');
 	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_payment');
 
@@ -786,12 +792,12 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		}
 
 		if ($error) {
-			$randomseckey = getRandomPassword(true, null, 20);
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
 			$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between newpayment.php to paymentko.php
 
 			$urlko .= '&paymentkosessioncode='.urlencode($randomseckey);
 		} else {
-			$randomseckey = getRandomPassword(true, null, 20);
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
 			$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between newpayment.php to paymentok.php
 
 			$urlok .= '&paymentoksessioncode='.urlencode($randomseckey);
@@ -839,7 +845,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			setEventMessages($paymentintent->status, null, 'errors');
 			$action = '';
 
-			$randomseckey = getRandomPassword(true, null, 20);
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
 			$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between newpayment.php to paymentko.php
 
 			$urlko .= '&paymentkosessioncode='.urlencode($randomseckey);
@@ -866,7 +872,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 
 			dol_syslog("StatusOfRetrievedIntent is succeeded for amount = ".$amount." currency = ".$currency, LOG_DEBUG, 0, '_payment');
 
-			$randomseckey = getRandomPassword(true, null, 20);
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
 			$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between newpayment.php to paymentok.php
 
 			$urlok .= '&paymentoksessioncode='.urlencode($randomseckey);
@@ -1055,7 +1061,8 @@ print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 $text = '';
 if (getDolGlobalString('PAYMENT_NEWFORM_TEXT')) {
 	$langs->load("members");
-	if (preg_match('/^\((.*)\)$/', $conf->global->PAYMENT_NEWFORM_TEXT, $reg)) {
+	$reg = array();
+	if (preg_match('/^\((.*)\)$/', getDolGlobalString('PAYMENT_NEWFORM_TEXT'), $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
 		$text .= getDolGlobalString('PAYMENT_NEWFORM_TEXT') . "<br>\n";
