@@ -122,8 +122,8 @@ $arrayfields = array(
 	'p.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 70, 'tooltip' => "ChequeOrTransferNumber"),
 	'p.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 	'p.note'			=> array('label' => "Comment", 'checked' => '-1', 'position' => 85),
-	'p.ext_payment_id'	=> array('label' => "ExtPaymentID", 'checked' => -1, 'position' => 87),
-	'p.ext_payment_site' => array('label' => "ExtPaymentSite", 'checked' => -1, 'position' => 88),
+	'p.ext_payment_id'	=> array('label' => "ExtPaymentID", 'checked' => '-1', 'position' => 87),
+	'p.ext_payment_site' => array('label' => "ExtPaymentSite", 'checked' => '-1', 'position' => 88),
 	'p.statut'			=> array('label' => "Status", 'checked' => '1', 'position' => 90, 'enabled' => (getDolGlobalString('BILL_ADD_PAYMENT_VALIDATION'))),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');

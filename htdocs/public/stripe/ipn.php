@@ -177,13 +177,13 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
-dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, 0, '_payment');
+dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
 
 
 if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout is created by Stripe to transfer money to your account
 	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), 0, '_payment');
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
 	$error = 0;
 
@@ -229,7 +229,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 } elseif ($event->type == 'payout.paid' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout to transfer money to your account is completely done
 	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), 0, '_payment');
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
@@ -346,7 +346,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 } elseif ($event->type == 'payment_intent.succeeded') {
 	// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	dol_syslog("object = ".var_export($event->data, true));
-	dol_syslog("object = ".var_export($event->data, true), 0, '_payment');
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	global $stripearrayofkeysbyenv;
@@ -365,7 +365,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$payment_amountInDolibarr = 0;
 
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID);
-	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID, 0, '_payment');
+	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
@@ -387,7 +387,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 					$paymentTypeCodeInDolibarr = $obj->type;
 
 					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
-					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")", 0, '_payment');
+					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")", LOG_DEBUG, 0, '_payment');
 				} else {
 					dol_syslog("Found a request in database not yet generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id."). Was the order deleted after being sent ?", LOG_WARNING);
 					dol_syslog("Found a request in database not yet generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id."). Was the order deleted after being sent ?", LOG_WARNING, 0, '_payment');
@@ -402,15 +402,15 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 					$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1");
-					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1", 0, '_payment');
+					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1", LOG_DEBUG, 0, '_payment');
 				} else {
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid.") already set to traite=1. Nothing to fix.");
-					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid.") already set to traite=1. Nothing to fix.", 0, '_payment');
+					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid.") already set to traite=1. Nothing to fix.", LOG_DEBUG, 0, '_payment');
 				}
 			}
 		} else {
 			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.");
-			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.", 0, '_payment');
+			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.", LOG_DEBUG, 0, '_payment');
 			http_response_code(200);
 			print "Payment intent ".$TRANSACTIONID." not found into database, so ignored.";
 			return 1;
@@ -427,7 +427,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
 		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid));
-		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid), 0, '_payment');
+		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid), LOG_DEBUG, 0, '_payment');
 
 		$s = new \Stripe\StripeClient($stripeacc);
 
