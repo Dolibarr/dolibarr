@@ -132,7 +132,6 @@ $upload_dir = $conf->mrp->multidir_output[isset($object->entity) ? $object->enti
 $parameters = array();
 
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-//TODO Check create 'OF' by 'BOM' with Mod 'GPAO+' activated ($action se vide à cause du doActions)
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -160,7 +159,6 @@ if (empty($reshook)) {
 
 	// Create MO with Children
 	if ($action == 'add' && empty($id) && !empty($TBomLineId)) {
-		//TODO GREGM ------- Créer OF depuis BOM ne passe pas par ici ! ---------
 		$noback = 1;
 		include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 

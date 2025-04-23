@@ -924,10 +924,6 @@ MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
 ConfirmMassDeletion=Bulk Delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record(s)?
-//TODO DELETE AT Dolibarr 22.0 ---------------------------------------- START BACKPORT Dolibarr V22 -------------------------------------------
-ConfirmMassCancellationQuestion = Are you sure you want to cancel the %s selected record(s)?
-//TODO DELETE AT Dolibarr 22.0 ---------------------------------------- END BACKPORT Dolibarr V22 ---------------------------------------------
-
 ConfirmMassClone=Bulk clone confirmation
 ConfirmMassCloneQuestion=Select project to clone to
 ConfirmMassCloneToOneProject=Clone to project %s
