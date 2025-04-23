@@ -8,6 +8,8 @@ DocHowContribute=How to contribute ?
 DocHowContributeDescription=This documentation is currently being written. Learn how to contribute and enrich this documentation
 DocListLinks=List of links - %s
 DocGroupIndexDescription= This page brings together all the links from the "%s" section.
+DocCodeForMenuOrModuleBuilder=Image code to use for menu setup or fields in modulebuilder
+DocExampleForPHPCode=Example of code to use in PHP
 
 # Components
 DocComponentsTitle=Components
