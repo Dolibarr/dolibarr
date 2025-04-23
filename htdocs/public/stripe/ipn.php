@@ -898,6 +898,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 				// This is a card payment.
 				$pdid = $obj->rowid;
 				$invoice_id = $obj->fk_facture;
+				$directdebitorcreditransfer_id = 0;
 				$payment_amountInDolibarr = $obj->amount;
 				$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
