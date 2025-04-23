@@ -101,6 +101,9 @@ div.mainmenu.generic4::before {
 .fa-link, .fa-unlink {
 	color: #555;
 }
+.fa-project-diagram:before {
+	font-size: 0.9em;
+}
 
 /* Define square Dolibarr logo in pure CSS */
 
