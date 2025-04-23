@@ -1013,7 +1013,7 @@ if ($action == 'create') {	// aaa
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
-			if ($object->status == 2 || $object->status == 3) {
+			if ($object->status == $object::STATUS_SENTPARTIALY || $object->status == $object::STATUS_SENTCOMPLETELY) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
@@ -1029,6 +1029,7 @@ if ($action == 'create') {	// aaa
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
+
 			print '<table class="border centpercent tableforfield">'."\n";
 
 			// From
@@ -1137,7 +1138,7 @@ if ($action == 'create') {	// aaa
 				}
 				print $text;
 				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
 						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
 					}
 				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
@@ -1414,7 +1415,8 @@ if ($action == 'create') {	// aaa
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$htmltooltip = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || $object->status == 2)) {
+				// MAILING_LIMIT_SENDBYWEB can be 'default'
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || $object->status == 2)) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 						$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {

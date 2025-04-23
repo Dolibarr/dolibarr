@@ -832,7 +832,7 @@ if (empty($reshook)) {
 					}
 				} else {
 					$object->status = $oldstatus;
-					$object->statut = $oldstatus;
+					$object->statut = $oldstatus;	// deprecated
 
 					$db->rollback();
 					$action = '';
@@ -851,7 +851,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			} else {
-				$object->statut = $newstatus;
+				$object->statut = $newstatus;	// deprecated
 				$object->status = $newstatus;
 			}
 

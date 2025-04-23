@@ -2617,12 +2617,18 @@ if ($action == 'exportsite' && $user->hasRight('website', 'export')) {
 // Overwrite site
 if ($action == 'overwritesite' && $user->hasRight('website', 'export')) {
 	if (getDolGlobalString('WEBSITE_ALLOW_OVERWRITE_GIT_SOURCE')) {
+		// Generate a zip of the website
 		$fileofzip = $object->exportWebSite();
 		$pathToExport = GETPOST('export_path');
 		if ($fileofzip) {
-			$object->overwriteTemplate($fileofzip, $pathToExport);
+			// Uncompress the exported web site into a destination directory
+			$result = $object->overwriteTemplate($fileofzip, $pathToExport);
+			if ($result < 0) {
+				$action = 'preview';
+			}
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'preview';
 		}
 	}
 }

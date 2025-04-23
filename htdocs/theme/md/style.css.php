@@ -788,6 +788,7 @@ input.buttonpaymentstripe {
 	max-height: 80px;
 	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
+	border-radius: 4px;
 }
 a.butStatus {
 	padding-left: 5px;
@@ -1201,6 +1202,11 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centergrid {
+	display: grid;
+	text-align: center;
+	place-items: center;
 }
 .alignstart {
 	text-align: start;
@@ -2049,7 +2055,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 }
 
 .flexcontainer {
-	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+	<?php if (in_array($conf->browser->name, array('chrome', 'firefox', 'safari'))) {
 		echo 'display: inline-flex;'."\n";
 	} ?>
 	flex-flow: row wrap;
@@ -2366,7 +2372,7 @@ select.widthcentpercentminusxx, span.widthcentpercentminusxx:not(.select2-select
 	}
 
 	div.tabs div.tab a.tab  {
-		max-width: 200px;
+		max-width: 180px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -7352,6 +7358,9 @@ span#select2-boxcombo-container {
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
 }
+.mytooltip .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
+  padding: 1px 3px 1px 3px;
+}
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr a {
 	font-weight: normal;
 }
@@ -7878,16 +7887,19 @@ border-top-right-radius: 6px;
 {
 	padding-left: 44px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 .lilevel4
 {
 	padding-left: 66px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 .lilevel5
 {
 	padding-left: 88px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 
 
@@ -8588,6 +8600,10 @@ table.jPicker {
 	#bookinghoursection {
 		font-size: small;
 		width: 122px;
+	}
+
+	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
+		padding: 10px 3px 10px;
 	}
 }
 

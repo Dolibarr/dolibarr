@@ -6920,7 +6920,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = "SELECT code FROM " . $this->db->prefix() . "multicurrency";
-		$sql .= " WHERE entity IN ('" . getEntity('mutlicurrency') . "')";
+		$sql .= " WHERE entity IN ('" . getEntity('multicurrency') . "')";
 		if ($filter) {
 			$sql .= " AND " . $filter;
 		}
@@ -10951,12 +10951,12 @@ class Form
 	}
 
 	/**
-	 *    Return HTML to show the search and clear search button
+	 * Return HTML to show the search and clear search button
 	 *
-	 * @param string $cssclass CSS class
-	 * @param int $calljsfunction 0=default. 1=call function initCheckForSelect() after changing status of checkboxes
-	 * @param string $massactionname Mass action button name that will launch an action on the selected items
-	 * @return    string
+	 * @param 	string 	$cssclass 			CSS class
+	 * @param 	int 	$calljsfunction 	0=default. 1=call function initCheckForSelect() after changing status of checkboxes
+	 * @param 	string 	$massactionname 	Mass action button name that will launch an action on the selected items
+	 * @return	string						HTML code with checkbox button
 	 */
 	public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
@@ -12196,13 +12196,20 @@ class Form
 			'label_key' => 'Cancel',
 		);
 
-		!empty($save_label) ? $buttons[] = $save : '';
-
-		if (!empty($morebuttons)) {
-			$buttons[] = $morebuttons;
+		// If MAIN_BUTTON_POSITION_FIRST_OR_LEFT not set, default is to have main action first, then complementary, then cancel at end
+		if (!getDolGlobalInt('MAIN_BUTTON_POSITION_FIRST_OR_LEFT')) {
+			!empty($save_label) ? $buttons[] = $save : '';
+			if (!empty($morebuttons)) {
+				$buttons[] = $morebuttons;
+			}
+			!empty($cancel_label) ? $buttons[] = $cancel : '';
+		} else {
+			if (!empty($morebuttons)) {
+				$buttons[] = $morebuttons;
+			}
+			!empty($cancel_label) ? $buttons[] = $cancel : '';
+			!empty($save_label) ? $buttons[] = $save : '';
 		}
-
-		!empty($cancel_label) ? $buttons[] = $cancel : '';
 
 		$retstring = $withoutdiv ? '' : '<div class="center">';
 

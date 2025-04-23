@@ -337,8 +337,9 @@ class FactureLigne extends CommonInvoiceLine
 
 			$this->packaging      = $objp->packaging;
 
-			$this->array_options = array();
 			if ($doFetchInOneSqlRequest && $extraFieldsCheck) {
+				$this->array_options = array();
+
 				foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
 					$type = !empty($extrafields->attributes[$this->table_element]['type'][$key])
 						? $extrafields->attributes[$this->table_element]['type'][$key]
