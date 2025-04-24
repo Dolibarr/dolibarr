@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2013-2017 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2017	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      	Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024      	Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,6 +93,8 @@ if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
 }
 
+$fieldstosearchall = array();
+
 // Definition of fields for list
 $arrayfields = array();
 // Extra fields
@@ -120,7 +122,7 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$parameters = array();
+$parameters = array('arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -163,7 +165,8 @@ $now = dol_now();
 $help_url = '';
 $title = $langs->trans('OpenSurveyArea');
 
-
+// Build and execute select
+// --------------------------------------------------------------------
 $sql = "SELECT p.id_sondage as rowid, p.fk_user_creat, p.format, p.date_fin, p.status, p.titre as title, p.nom_admin, p.tms,";
 $sql .= " u.login, u.firstname, u.lastname";
 $sql .= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
@@ -219,10 +222,10 @@ if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords) {
 }
 
 // Direct jump if only one record found
-if ($num == 1 && getDolGlobalString('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all) {
+if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/opensurvey/card.php', 1).'?id='.$id);
+	header("Location: ".dol_buildpath('/opensurvey/card.php', 1).'?id='.((int) $id));
 	exit;
 }
 
@@ -241,11 +244,11 @@ if (/* !empty($contextpage) && */ $contextpage != $_SERVER["PHP_SELF"]) { // $co
 if ($limit > 0 && $limit != $conf->liste_limit) {
 	$param .= '&limit='.((int) $limit);
 }
-$fieldtosortuser = !getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 'firstname' : 'lastname';
-
 if ($optioncss != '') {
 	$param .= '&optioncss='.urlencode($optioncss);
 }
+$fieldtosortuser = getDolGlobalString('MAIN_FIRSTNAME_NAME_POSITION') ? 'lastname' : 'firstname';
+
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -254,7 +257,7 @@ $arrayofmassactions = array(
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 );
-if ($permissiontodelete) {
+if (!empty($permissiontodelete)) {
 	$arrayofmassactions['predelete'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predelete'))) {
@@ -262,10 +265,7 @@ if (GETPOSTINT('nomassaction') || in_array($massaction, array('presend', 'predel
 }
 $massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
-
-// List of surveys into database
-
-print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') {
 	print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 }
@@ -274,7 +274,10 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+print '<input type="hidden" name="page_y" value="">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 $newcardbutton = '';
 $newcardbutton .= dolGetButtonTitle($langs->trans('NewSurvey'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/opensurvey/wizard/index.php', '', $user->hasRight('opensurvey', 'write'));
@@ -290,11 +293,13 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 
 if ($search_all) {
-	$fieldstosearchall = array();
+	$setupstring = '';
 	// @phan-suppress-next-line PhanEmptyForeach
 	foreach ($fieldstosearchall as $key => $val) {  // @phpstan-ignore-line
 		$fieldstosearchall[$key] = $langs->trans($val);
+		$setupstring .= $key."=".$val.";";
 	}
+	print '<!-- Search done like if OPENSURVEY_QUICKSEARCH_ON_FIELDS = '.$setupstring.' -->'."\n";
 	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all).implode(', ', $fieldstosearchall).'</div>';
 }
 
@@ -310,6 +315,9 @@ if (empty($reshook)) {
 } else {
 	$moreforfilter = $hookmanager->resPrint;
 }
+$parameters = array(
+	'arrayfields' => &$arrayfields,
+);
 
 if (!empty($moreforfilter)) {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -318,19 +326,19 @@ if (!empty($moreforfilter)) {
 }
 
 $varpage = empty($contextpage) ? $_SERVER["PHP_SELF"] : $contextpage;
-//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-$selectedfields = '';
+$htmlofselectarray = $form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage, $conf->main_checkbox_left_column);  // This also change content of $arrayfields with user setup
+$selectedfields = ($mode != 'kanban' ? $htmlofselectarray : '');
 $selectedfields .= (count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
-print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+print '<table class="tagtable nobottomiftotal liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
 
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre_filter">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons('left');
 	print $searchpicto;
 	print '</td>';
@@ -343,39 +351,50 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 $arraystatus = array('-1' => '&nbsp;', '0' => $langs->trans("Draft"), '1' => $langs->trans("Opened"), '2' => $langs->trans("Closed"));
-print '<td class="liste_titre" align="center">'.$form->selectarray('search_status', $arraystatus, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'onroghtofpage').'</td>';
+print '<td class="liste_titre center parentonrightofpage">'.$form->selectarray('search_status', $arraystatus, $search_status, 0, 0, 0, '', 0, 0, 0, '', 'maxwidth100 onrightofpage').'</td>';
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
-$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object); // Note that $action and $object may have been modified by hook
+$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print '<td class="liste_titre maxwidthsearch">';
+	print '<td class="liste_titre center maxwidthsearch">';
 	$searchpicto = $form->showFilterButtons();
 	print $searchpicto;
 	print '</td>';
 }
 print '</tr>'."\n";
 
+$totalarray = array();
+$totalarray['nbfield'] = 0;
 
 // Fields title label
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
 // Action column
 if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.id_sondage", $param, "", "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Title", $_SERVER["PHP_SELF"], "p.titre", $param, "", "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Type", $_SERVER["PHP_SELF"], "p.format", $param, "", "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Author", $_SERVER["PHP_SELF"], "u.".$fieldtosortuser, $param, "", "", $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("NbOfVoters", $_SERVER["PHP_SELF"], "", $param, "", 'align="right"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("ExpireDate", $_SERVER["PHP_SELF"], "p.date_fin", $param, "", 'align="center"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("DateLastModification", $_SERVER["PHP_SELF"], "p.tms", $param, "", 'align="center"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "p.status", $param, "", 'align="center"', $sortfield, $sortorder);
+$totalarray['nbfield']++;
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
@@ -385,6 +404,7 @@ print $hookmanager->resPrint;
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', 'align="center"', $sortfield, $sortorder, 'maxwidthsearch ')."\n";
+	$totalarray['nbfield']++;
 }
 print '</tr>'."\n";
 
@@ -393,9 +413,11 @@ print '</tr>'."\n";
 // Loop on record
 // --------------------------------------------------------------------
 $i = 0;
+$savnbfield = $totalarray['nbfield'];
 $totalarray = array();
 $totalarray['nbfield'] = 0;
-while ($i < min($num, $limit)) {
+$imaxinloop = ($limit ? min($num, $limit) : $num);
+while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) {
 		break; // Should not happen
@@ -418,7 +440,7 @@ while ($i < min($num, $limit)) {
 	$opensurvey_static->date_fin = $db->jdate($obj->date_fin);
 
 	// Show here line of result
-	print '<tr class="oddeven">';
+	print '<tr data-rowid="'.$opensurvey_static->id.'" class="oddeven">';
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 		print '<td class="nowrap center">';

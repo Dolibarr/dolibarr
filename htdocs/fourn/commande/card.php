@@ -1911,6 +1911,15 @@ if ($action == 'create') {
 		print $hookmanager->resPrint;
 
 		if (empty($reshook)) {
+			if (getDolGlobalString('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_SUPPLIER_ORDER') && !empty($societe->id)) {
+				// copy from thirdparty
+				$tpExtrafields = new ExtraFields($db);
+				$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($societe->table_element);
+				if ($societe->fetch_optionals() > 0) {
+					$object->array_options = array_merge($object->array_options, $societe->array_options);
+				}
+			}
+
 			print $object->showOptionals($extrafields, 'create');
 		}
 

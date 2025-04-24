@@ -9417,6 +9417,16 @@ abstract class CommonObject
 							}
 						}
 
+						// Expected behavior : if THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_XXX is set, when we change company,
+						// Then we use the extrafields of the object (they are filled in the card when constant THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_XXX is set)
+						$force_values_on_change_company = (
+							($this->element == 'facture' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE'))
+							|| ($this->element == 'commande' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER'))
+						);
+						if ($force_values_on_change_company && GETPOSTINT('changecompany')) {
+							$value = $this->array_options['options_'.$key] ?? $value;
+						}
+
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
 							$datenotinstring = null;
