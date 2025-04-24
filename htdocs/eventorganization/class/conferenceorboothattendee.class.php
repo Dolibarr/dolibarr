@@ -54,11 +54,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var int<0,1>
-	 */
-	public $paid = 0;  // why is this here? it is not in the corresponding database table
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
