@@ -744,7 +744,7 @@ while ($i < $imaxinloop) {
 
 		// Payment type
 		if (!empty($arrayfields['c.libelle']['checked'])) {
-			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAtribute($langs->trans("PaymentTypeShort".$objp->paiement_code)).'">'.dolPrintHTML($langs->trans("PaymentTypeShort".$objp->paiement_code)).'</td>';
+			print '<td class="tdoverflowmax100" title="'.dolPrintHTMLForAttribute($langs->trans("PaymentTypeShort".$objp->paiement_code)).'">'.dolPrintHTML($langs->trans("PaymentTypeShort".$objp->paiement_code)).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
