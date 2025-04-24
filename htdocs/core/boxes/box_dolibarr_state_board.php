@@ -257,7 +257,7 @@ class box_dolibarr_state_board extends ModeleBoxes
 						if (method_exists($board, 'load_state_board')) {
 							// @phan-suppress-next-line PhanUndeclaredMethod  (Legacy, not present in core).
 							$board->load_state_board();
-						} elseif (method_exists($board, 'loadStateBoard')) {	// @phpstan-ignore-current-line
+						} elseif (method_exists($board, 'loadStateBoard')) {	// @phpstan-ignore-line
 							$board->loadStateBoard();
 						} else {
 							$board = -1;
