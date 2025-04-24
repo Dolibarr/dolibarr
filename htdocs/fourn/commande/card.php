@@ -2790,7 +2790,7 @@ if ($action == 'create') {
 
 			// Force mandatory order method
 			print '<tr><td class="fieldrequired">'.$langs->trans("OrderMode").'</td><td>';
-			$methodecommande = GETPOSTISSET("methodecommande", "alpha") ? GETPOST('methodecommande', 'alpha') : getDolGlobalString('ORDER_SUPPLIER_METHOD_BY_DEFAULT');
+			$methodecommande = GETPOSTISSET("methodecommande") ? GETPOST('methodecommande', 'alpha') : getDolGlobalString('ORDER_SUPPLIER_METHOD_BY_DEFAULT');
 			$formorder->selectInputMethod($methodecommande, "methodecommande", 1);
 			print '</td></tr>';
 
