@@ -38,22 +38,22 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class WebsitePage extends CommonObject
 {
 	/**
-	 * @var string Id to identify managed objects
+	 * @var string 		Id to identify managed objects
 	 */
 	public $element = 'websitepage';
 
 	/**
-	 * @var string Name of table without prefix where object is stored
+	 * @var string 		Name of table without prefix where object is stored
 	 */
 	public $table_element = 'website_page';
 
 	/**
-	 * @var string String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
+	 * @var string 		String with name of icon for websitepage. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'file-code';
 
 	/**
-	 * @var string 	Field with ID of parent key if this field has a parent or for child tables
+	 * @var string 		Field with ID of parent key if this field has a parent or for child tables
 	 */
 	public $fk_element = 'fk_website_page';
 
@@ -63,72 +63,77 @@ class WebsitePage extends CommonObject
 	protected $childtablesoncascade = array('categorie_website_page');
 
 	/**
-	 * @var int Website ID
+	 * @var int 		Website ID
 	 */
 	public $fk_website;
 
 	/**
-	 * @var ?int Page ID
+	 * @var ?int 		Page ID
 	 */
 	public $fk_page;		// If translation of another page
 
 	/**
-	 * @var string Page url
+	 * @var string 		Page url
 	 */
 	public $pageurl;
 
 	/**
-	 * @var string Alias alt
+	 * @var string 		Alias alt
 	 */
 	public $aliasalt;
 
 	/**
-	 * @var string Container type
+	 * @var string 		Container type
 	 */
 	public $type_container;
 
 	/**
-	 * @var string title
+	 * @var string 		Title
 	 */
 	public $title;
 
 	/**
-	 * @var string description
+	 * @var string 		Description
 	 */
 	public $description;
 
 	/**
-	 * @var string image
+	 * @var string 		Image (deprecated)
 	 */
 	public $image;
 
 	/**
-	 * @var string keywords
+	 * @var string 		Keywords
 	 */
 	public $keywords;
 
 	/**
-	 * @var string language code ('en', 'fr', 'en-gb', ..)
+	 * @var string 		Language code ('en', 'fr', 'en-gb', ..)
 	 */
 	public $lang;
 
 	/**
-	 * @var int allowed in frames
+	 * @var int 		Page allowed in frames
 	 */
 	public $allowed_in_frames;
 
 	/**
-	 * @var string html header
+	 * @var int<0,1>	Disable WAF
+	 */
+	public $disable_waf = 0;
+
+	/**
+	 * @var string 		Page html header
 	 */
 	public $htmlheader;
 
 	/**
-	 * @var string content
+	 * @var string 		Page content
 	 */
 	public $content;
 
 	/**
-	 * @var string grabbed from
+	 * @var string 		Url page was grabbed from
 	 */
 	public $grabbed_from;
 
@@ -138,12 +143,12 @@ class WebsitePage extends CommonObject
 	public $status;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID use of creation
 	 */
 	public $fk_user_creat;
 
 	/**
-	 * @var int ID
+	 * @var int 		ID user of last modification
 	 */
 	public $fk_user_modif;
 
@@ -220,9 +225,9 @@ class WebsitePage extends CommonObject
 		'date_creation'  => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 500),
 		'tms'            => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateValidation',     'enabled'=>1, 'visible'=>-1, 'position'=>502),
-		'fk_user_creat'  => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
+		'fk_user_creat'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 510),
 		'author_alias'   => array('type' => 'varchar(64)', 'label' => 'AuthorAlias', 'enabled' => 1, 'visible' => -1, 'index' => 0, 'position' => 511, 'comment' => 'Author alias'),
-		'fk_user_modif'  => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
+		'fk_user_modif'  => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -1, 'position' => 512),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'import_key'     => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'visible' => -1, 'index' => 1, 'position' => 1000, 'notnull' => -1),
 		'object_type' => array('type' => 'varchar(255)', 'label' => 'ObjectType', 'enabled' => 1, 'visible' => 0, 'position' => 46, 'searchall' => 0, 'help' => ''),

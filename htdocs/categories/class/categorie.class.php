@@ -68,6 +68,7 @@ class Categorie extends CommonObject
 	const TYPE_ORDER				= 'order';
 	const TYPE_INVOICE				= 'invoice';
 	const TYPE_SUPPLIER_ORDER		= 'supplier_order';
+	const TYPE_SUPPLIER_INVOICE		= 'supplier_invoice';
 
 
 	/**
@@ -97,7 +98,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 14,
 		'order'					=> 16,
 		'invoice'				=> 17,
-		'supplier_order'		=> 20
+		'supplier_order'		=> 20,
+		'supplier_invoice'		=> 21
 	);
 
 	/**
@@ -123,7 +125,8 @@ class Categorie extends CommonObject
 		14 => 'fichinter',
 		16 => 'order',
 		17 => 'invoice',
-		20 => 'supplier_order'
+		20 => 'supplier_order',
+		21 => 'supplier_invoice'
 	);
 
 	/**
@@ -172,33 +175,35 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'Fichinter',
 		'order'					=> 'Commande',
 		'invoice'				=> 'Facture',
-		'supplier_order'		=> 'CommandeFournisseur'
+		'supplier_order'		=> 'CommandeFournisseur',
+		'supplier_invoice'		=> 'FactureFournisseur'
 	);
 
 	/**
-	 * @var array<string,string> Title Area mapping from type string
+	 * @var array<string,string> 	Title/Label mapping from type string
 	 *
 	 * @note Move to const array when PHP 5.6 will be our minimum target
 	 */
 	public static $MAP_TYPE_TITLE_AREA = array(
-		'product'				=> 'ProductsCategoriesArea',
-		'customer'				=> 'CustomersCategoriesArea',
-		'supplier'				=> 'SuppliersCategoriesArea',
-		'member'				=> 'MembersCategoriesArea',
-		'contact'				=> 'ContactsCategoriesArea',
-		'user'					=> 'UsersCategoriesArea',
-		'account'				=> 'AccountsCategoriesArea', // old for bank account
-		'bank_account'			=> 'AccountsCategoriesArea',
-		'project'				=> 'ProjectsCategoriesArea',
-		'warehouse'				=> 'StocksCategoriesArea',
-		'actioncomm'			=> 'ActioncommCategoriesArea',
-		'website_page'			=> 'WebsitePagesCategoriesArea',
-		'ticket'				=> 'TicketsCategoriesArea',
-		'knowledgemanagement'	=> 'KnowledgemanagementsCategoriesArea',
-		'fichinter'				=> 'FichintersCategoriesArea',
-		'order'					=> 'OrderCategoriesArea',
-		'invoice'				=> 'InvoicesCategoriesArea',
-		'supplier_order'		=> 'SuppliersOrdersCategoriesArea'
+		'product'				=> 'Products',
+		'customer'				=> 'Customers',
+		'supplier'				=> 'Suppliers',
+		'member'				=> 'Members',
+		'contact'				=> 'Contacts',
+		'user'					=> 'Users',
+		'account'				=> 'Accounts', // old for bank account
+		'bank_account'			=> 'BankAccounts',
+		'project'				=> 'Projects',
+		'warehouse'				=> 'Warehouse',
+		'actioncomm'			=> 'AgendaEvents',
+		'website_page'			=> 'WebsitePages',
+		'ticket'				=> 'Tickets',
+		'knowledgemanagement'	=> 'KnowledgeRecords',
+		'fichinter'				=> 'Fichinters',
+		'order'					=> 'Orders',
+		'invoice'				=> 'Invoices',
+		'supplier_order'		=> 'SuppliersOrders',
+		'supplier_invoice'		=> 'SuppliersInvoices'
 	);
 
 	/**
@@ -217,7 +222,8 @@ class Categorie extends CommonObject
 		'fichinter'				=> 'fichinter',
 		'order'					=> 'commande',
 		'invoice'				=> 'facture',
-		'supplier_order'		=> 'commande_fournisseur'
+		'supplier_order'		=> 'commande_fournisseur',
+		'supplier_invoice'		=> 'facture_fourn'
 	);
 
 	/**
@@ -285,6 +291,7 @@ class Categorie extends CommonObject
 	 * @see Categorie::TYPE_ORDER
 	 * @see Categorie::TYPE_INVOICE
 	 * @see Categorie::TYPE_SUPPLIER_ORDER
+	 * @see Categorie::TYPE_SUPPLIER_INVOICE
 	 */
 	public $type;
 
@@ -343,19 +350,19 @@ class Categorie extends CommonObject
 	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
 	 */
 	public $fields = array(
-		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => 0,),
 		'entity'	=> array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'default' => '1', 'notnull' => 1, 'index' => 1, 'position' => 5),
-		'fk_parent' => array('type' => 'integer', 'label' => 'Fkparent', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => -1, 'css' => 'maxwidth500 widthcentpercentminusxx',),
-		'label' => array('type' => 'varchar(180)', 'label' => 'Label', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 1),
+		'fk_parent' => array('type' => 'integer', 'label' => 'ParentCategory', 'enabled' => 1, 'position' => 20, 'notnull' => 1, 'visible' => 0, 'css' => 'maxwidth500 widthcentpercentminusxx',),
+		'label' => array('type' => 'varchar(180)', 'label' => 'Ref', 'enabled' => 1, 'position' => 25, 'notnull' => 1, 'visible' => 1, 'alwayseditable' => 1, 'css' => 'minwidth300', 'cssview' => 'wordbreak', 'csslist' => 'tdoverflowmax150', 'showoncombobox' => 1),
 		'ref_ext' => array('type' => 'varchar(255)', 'label' => 'RefExt', 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1,),
-		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
-		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'type' => array('type' => 'integer', 'label' => 'Type', 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => 0, 'alwayseditable' => 1,),
+		'description' => array('type' => 'text', 'label' => 'Description', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1,),
+		'color' => array('type' => 'varchar(8)', 'label' => 'Color', 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => 1, 'alwayseditable' => 1,),
 		'position' => array('type' => 'integer', 'label' => 'Position', 'enabled' => 1, 'position' => 50, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
-		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
-		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		'fk_soc' => array('type' => 'integer:Societe:societe/class/societe.class.php', 'label' => 'ThirdParty', 'picto' => 'company', 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => 0, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
+		'visible' => array('type' => 'integer', 'label' => 'Visible', 'enabled' => 1, 'position' => 60, 'notnull' => 1, 'visible' => 0, 'alwayseditable' => 1,),
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 900, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1,),
-		'date_creation' => array('type' => 'datetime', 'label' => 'Datecreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 75, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'position' => 80, 'notnull' => 0, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
 		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'position' => 85, 'notnull' => -1, 'visible' => -2, 'alwayseditable' => 1, 'css' => 'maxwidth500 widthcentpercentminusxx', 'csslist' => 'tdoverflowmax150',),
@@ -945,7 +952,8 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return list of fetched instance of elements having this category
+	 * Return list of fetched instances of elements having the current category.
+	 * WARNING: Do not use this. It can return an array with a very high number of element making an out of memory. Try by using instead getListForItem() or containing().
 	 *
 	 * @param   string     	$type       	Type of category ('customer', 'supplier', 'contact', 'product', 'member', 'knowledge_management', ...)
 	 * @param   int        	$onlyids    	Return only ids of objects (consume less memory)
@@ -964,6 +972,10 @@ class Categorie extends CommonObject
 	public function getObjectsInCateg($type, $onlyids = 0, $limit = 0, $offset = 0, $sortfield = '', $sortorder = 'ASC', $filter = '', $filtermode = 'AND', $filterlang = '')
 	{
 		global $user;
+
+		if (empty($onlyids)) {
+			dol_syslog("getObjectsInCateg: This method used with parameter onlyids=0 is deprecated. Try by using instead getListForItem().", LOG_WARNING);
+		}
 
 		$objs = array();
 
@@ -1031,7 +1043,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Check for the presence of an object in a category
+	 * Check for the presence of a given object in the current category
 	 *
 	 * @param   string $type      		Type of category ('customer', 'supplier', 'contact', 'product', 'member')
 	 * @param   int    $object_id 		Id of the object to search
@@ -1055,7 +1067,7 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return the list of categories of an element id.
+	 * Return the list of the categories of a given element (a product, a customer, ...).
 	 * Warning, this load/fetch all qualified categories.
 	 *
 	 * @param	int		$id			Id of element
@@ -1169,7 +1181,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * Return direct children ids of a category into an array
+	 * Return direct children ids of a category into an array. Only first level of children.
 	 *
 	 * @return	Categorie[]|int   Return integer <0 KO, array ok
 	 */
@@ -1197,7 +1209,8 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...)
+	 * 	Load the array this->motherof that is array(id_son=>id_parent, ...), so array of all child categories and ID of their parent.
+	 *  TODO Add a filter on the type of category.
 	 *
 	 *	@return		int		Return integer <0 if KO, >0 if OK
 	 */
@@ -1209,7 +1222,7 @@ class Categorie extends CommonObject
 		// Load array[child]=parent
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql .= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql .= " WHERE fk_parent != 0";
+		$sql .= " WHERE fk_parent <> 0";
 		$sql .= " AND entity IN (".getEntity('category').")";
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
@@ -1444,7 +1457,7 @@ class Categorie extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *	Returns the top level categories (which are not child)
+	 *	Returns the first level categories (which are not child)
 	 *
 	 *	@param	?int		$type		Type of category (0, 1, ...)
 	 *	@return	array<int,Categorie>|int<-1,-1>	Table of Object Category, -1 on error
@@ -1547,11 +1560,11 @@ class Categorie extends CommonObject
 					$linkend = '</a>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {
-					$link = '<span class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
+					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
 					$linkend = '</span>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
-					$w[] = '<a class="'.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
+					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
 			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));
@@ -1627,13 +1640,13 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * Return list of categories (object instances or labels) linked to element of id $id and type $type
-	 * Should be named getListOfCategForObject
+	 * Return list of categories (object instances or labels) linked to a given object having id $id and type $type.
+	 * Should be named getListOfCategForObject.
+	 * Try to use it only with parameter $mode = 'id' or 'label'.
 	 *
 	 * @param   int    		$id                 Id of element
 	 * @param   string|int	$type               Type of category ('customer', 'supplier', 'contact', 'product', 'member') or (0, 1, 2, ...)
-	 * @param   string 		$mode               'id'=Get array of category ids, 'object'=Get array of fetched category instances, 'label'=Get array of category
-	 *                                          labels, 'id'= Get array of category IDs
+	 * @param   string 		$mode               'id'=Get array of category IDs, 'label'=Get array of category labels, 'object'=Get array of fetched category instances
 	 * @return  Categorie[]|int[]|string[]|int  Array of category objects, labels or IDs or < 0 if KO
 	 */
 	public function containing($id, $type, $mode = 'object')

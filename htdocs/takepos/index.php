@@ -309,7 +309,7 @@ function MoreCategories(moreorless) {
 // LoadProducts
 function LoadProducts(position, issubcat) {
 	console.log("LoadProducts position="+position+" issubcat="+issubcat);
-	var maxproduct = <?php echo($MAXPRODUCT - 2); ?>;
+	var maxproduct = <?php echo (int) ($MAXPRODUCT - 2); ?>;
 
 	if (position=="supplements") {
 		currentcat="supplements";
@@ -346,8 +346,9 @@ function LoadProducts(position, issubcat) {
 			$("#proimg"+ishow).attr("src","genimg/index.php?query=cat&id="+val.rowid);
 			$("#prodiv"+ishow).data("rowid",val.rowid);
 			$("#prodiv"+ishow).attr("data-rowid",val.rowid);
-			$("#prodiv"+ishow).data("iscat",1);
-			$("#prodiv"+ishow).attr("data-iscat",1);
+			$("#prodiv"+ishow).data("iscat", 1);
+			$("#prodiv"+ishow).attr("data-iscat", 1);
+			$("#prodiv"+ishow).removeClass("divempty");
 			$("#prowatermark"+ishow).show();
 			ishow++;
 		}
@@ -356,16 +357,16 @@ function LoadProducts(position, issubcat) {
 	idata=0; //product data counter
 	var limit = 0;
 	if (maxproduct >= 1) {
-		limit = maxproduct-1;
+		limit = maxproduct - 1;
 	}
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&thirdpartyid=' + jQuery('#thirdpartyid').val() + '&category='+currentcat+'&tosell=1&limit='+limit+'&offset=0', function(data) {
 		console.log("Call ajax.php (in LoadProducts) to get Products of category "+currentcat+" then loop on result to fill image thumbs");
-		console.log(data);
+		//console.log(data);
 
 		while (ishow < maxproduct) {
 			console.log("ishow"+ishow+" idata="+idata);
-			//console.log(data[idata]);
+			console.log(data[idata]);
 
 			if (typeof (data[idata]) == "undefined") {
 				<?php if (!getDolGlobalString('TAKEPOS_HIDE_PRODUCT_IMAGES')) {
@@ -382,6 +383,9 @@ function LoadProducts(position, issubcat) {
 
 				$("#prodiv"+ishow).data("rowid","");
 				$("#prodiv"+ishow).attr("data-rowid","");
+
+				$("#prodiv"+ishow).data("iscat","0");
+				$("#prodiv"+ishow).attr("data-iscat","0");
 
 				$("#prodiv"+ishow).attr("class","wrapper2 divempty");
 			} else  {
@@ -475,7 +479,8 @@ function MoreProducts(moreorless) {
 	if (maxproduct >= 1) {
 		limit = maxproduct-1;
 	}
-	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts;
+	var nb_cat_shown = $('.div5 div.wrapper2[data-iscat=1]').length;
+	var offset = <?php echo($MAXPRODUCT - 2); ?> * pageproducts - nb_cat_shown;
 	// Only show products for sale (tosell=1)
 	$.getJSON('<?php echo DOL_URL_ROOT ?>/takepos/ajax/ajax.php?action=getProducts&token=<?php echo newToken();?>&category='+currentcat+'&tosell=1&limit='+limit+'&offset='+offset, function(data) {
 		console.log("Call ajax.php (in MoreProducts) to get Products of category "+currentcat);
@@ -543,7 +548,7 @@ function ClickProduct(position, qty = 1) {
 	}
 	$('#proimg'+position).animate({opacity: '0.5'}, 1);
 	$('#proimg'+position).animate({opacity: '1'}, 100);
-	if ($('#prodiv'+position).data('iscat')==1){
+	if ($('#prodiv'+position).data('iscat') == 1){
 		console.log("Click on a category at position "+position);
 		LoadProducts(position, true);
 	}
@@ -1068,6 +1073,7 @@ $( document ).ready(function() {
 		$sql .= " entity = ".((int) $conf->entity)." AND ";
 		$sql .= " posnumber = ".((int) $_SESSION["takeposterminal"])." AND ";
 		$sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+		$sql .= " AND status = 0 ";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$obj = $db->fetch_object($resql);
@@ -1448,6 +1454,7 @@ $sql = "SELECT rowid, status, entity FROM ".MAIN_DB_PREFIX."pos_cash_fence WHERE
 $sql .= " entity = ".((int) $conf->entity)." AND ";
 $sql .= " posnumber = ".((int) empty($_SESSION["takeposterminal"]) ? 0 : $_SESSION["takeposterminal"])." AND ";
 $sql .= " date_creation > '".$db->idate(dol_get_first_hour(dol_now()))."'";
+$sql .= " AND status = 0";
 
 $resql = $db->query($sql);
 if ($resql) {
@@ -1575,15 +1582,16 @@ if (getDolGlobalString('TAKEPOS_WEIGHING_SCALE')) {
 						} ?>">
 	<?php
 	$count = 0;
+
 	while ($count < $MAXPRODUCT) {
-		print '<div class="wrapper2 arrow" id="prodiv'.$count.'"  '; ?>
+		print '<div class="wrapper2'.(($count >= ($MAXPRODUCT - 2)) ? ' arrow' : '').'" id="prodiv'.$count.'" '; ?>
 												<?php if ($count == ($MAXPRODUCT - 2)) {
 													?> onclick="MoreProducts('less')" <?php
 												}
 												if ($count == ($MAXPRODUCT - 1)) {
 													?> onclick="MoreProducts('more')" <?php
 												} else {
-													echo 'onclick="ClickProduct('.$count.')"';
+													echo 'onclick="ClickProduct('.((int) $count).')"';
 												} ?>>
 					<?php
 					if ($count == ($MAXPRODUCT - 2)) {

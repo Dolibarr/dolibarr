@@ -157,6 +157,8 @@ if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$filter = array();
+
 if (empty($reshook)) {
 	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // All tests are required to be compatible with all browsers
 		$show_subgroup = '';
@@ -166,7 +168,6 @@ if (empty($reshook)) {
 		$search_accountancy_code_end = '';
 		$search_not_reconciled = '';
 		$search_ledger_code = array();
-		$filter = array();
 		unset($_SESSION['DOLDATE_search_date_start_accountancy_day']);
 		unset($_SESSION['DOLDATE_search_date_start_accountancy_month']);
 		unset($_SESSION['DOLDATE_search_date_start_accountancy_year']);
@@ -174,9 +175,6 @@ if (empty($reshook)) {
 		unset($_SESSION['DOLDATE_search_date_end_accountancy_month']);
 		unset($_SESSION['DOLDATE_search_date_end_accountancy_year']);
 	}
-
-	// Must be after the remove filter action, before the export.
-	$filter = array();
 
 	if (!empty($search_date_start)) {
 		$filter['t.doc_date>='] = $search_date_start;
@@ -343,7 +341,7 @@ if ($action != 'export_csv') {
 		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 	}
-	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
+	if ($contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
 	if ($limit > 0 && $limit != $conf->liste_limit) {

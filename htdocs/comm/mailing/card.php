@@ -564,7 +564,7 @@ if (empty($reshook)) {
 		$object->email_replyto  = (string) GETPOST("replyto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->email_errorsto = (string) GETPOST("errorsto", 'alphawithlgt'); // Must allow 'name <email>'
 		$object->title          = (string) GETPOST("title");
-		$object->sujet          = (string) GETPOST("sujet");
+		$object->sujet          = (string) GETPOST("subject");
 		$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 		$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 		$object->bgimage        = (string) GETPOST("bgimage");
@@ -660,7 +660,7 @@ if (empty($reshook)) {
 			$mesgs = array();
 
 			//$object->messtype       = (string) GETPOST("messtype");	// We must not be able to change the messtype
-			$object->sujet          = (string) GETPOST("sujet");
+			$object->sujet          = (string) GETPOST("subject");
 			$object->body           = (string) GETPOST("bodyemail", 'restricthtml');
 			$object->bgcolor        = preg_replace('/^#/', '', (string) GETPOST("bgcolor"));
 			$object->bgimage        = (string) GETPOST("bgimage");
@@ -792,14 +792,14 @@ if ($action == 'create') {	// aaa
 	$htmltext .= '</span></i>';
 
 
-	$availablelink = $form->textwithpicto('<span class="opacitymedium">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
+	$availablelink = $form->textwithpicto('<span class="opacitymedium hideonsmartphone">'.$langs->trans("AvailableVariables").'</span>', $htmltext, 1, 'helpclickable', '', 0, 2, 'availvar');
 	//print '<a href="javascript:document_preview(\''.DOL_URL_ROOT.'/admin/modulehelp.php?id='.$objMod->numero.'\',\'text/html\',\''.dol_escape_js($langs->trans("Module")).'\')">'.img_picto($langs->trans("ClickToShowDescription"), $imginfo).'</a>';
 
 
 	// Print mail form
 	print load_fiche_titre($langs->trans("NewMailing"), $availablelink, 'object_email');
 
-	print dol_get_fiche_head(array(), '', '', 0, '', 0, '', '');
+	print dol_get_fiche_head(array(), '', '', -3, '', 0, '', 'noborderbottom');
 
 	print '<table class="border centpercent">';
 
@@ -860,7 +860,10 @@ if ($action == 'create') {	// aaa
 	print '<br>';
 
 	print '<table class="border centpercent">';
-	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td><td><input id="sujet" class="flat minwidth200 quatrevingtpercent" name="sujet" value="'.dol_escape_htmltag(GETPOST('sujet', 'alphanohtml')).'"></td></tr>';
+
+	print '<tr class="fieldsforemail"><td class="fieldrequired titlefieldcreate">'.$langs->trans("MailTopic").'</td>';
+	print '<td><input id="subject" class="flat minwidth200 quatrevingtpercent" name="subject" id="subject" value="'.dol_escape_htmltag(GETPOST('subject', 'alphanohtml')).'"></td></tr>';
+
 	print '<tr class="fieldsforemail"><td>'.$langs->trans("BackgroundColorByDefault").'</td><td colspan="3">';
 	print $htmlother->selectColor(GETPOST('bgcolor'), 'bgcolor', '', 0);
 	print '</td></tr>';
@@ -872,7 +875,7 @@ if ($action == 'create') {	// aaa
 
 	print '<tr class="fieldsforemail"><td></td><td class="tdtop"></td></tr>';
 
-	print '<tr class="fieldsforemail"><td></td><td class="tdtop">';
+	print '<tr class="fieldsforemail"><td class="tdtop" colspan="2">';
 
 	$out = '';
 	$showlinktolayout = ($formmail->withfckeditor ? $formmail->withlayout : '');
@@ -1010,7 +1013,7 @@ if ($action == 'create') {	// aaa
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
-			if ($object->status == 2 || $object->status == 3) {
+			if ($object->status == $object::STATUS_SENTPARTIALY || $object->status == $object::STATUS_SENTCOMPLETELY) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
@@ -1026,6 +1029,7 @@ if ($action == 'create') {	// aaa
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
+
 			print '<table class="border centpercent tableforfield">'."\n";
 
 			// From
@@ -1134,7 +1138,7 @@ if ($action == 'create') {	// aaa
 				}
 				print $text;
 				if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'default') {
-					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') && getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
+					if (getDolGlobalString('MAIN_MAIL_SENDMODE_EMAILING') != 'mail') {
 						print ' <span class="opacitymedium">('.getDolGlobalString('MAIN_MAIL_SMTP_SERVER_EMAILING', getDolGlobalString('MAIN_MAIL_SMTP_SERVER')).')</span>';
 					}
 				} elseif (getDolGlobalString('MAIN_MAIL_SENDMODE') != 'mail' && getDolGlobalString('MAIN_MAIL_SMTP_SERVER')) {
@@ -1329,7 +1333,7 @@ if ($action == 'create') {	// aaa
 			print '</table>';
 
 			// Message
-			print '<div style="padding-top: 10px; background: '.($object->bgcolor ? (preg_match('/^#/', $object->bgcolor) ? '' : '#').$object->bgcolor : 'white').'">';
+			print '<div class="previewemail" style="padding-top: 10px; background: '.($object->bgcolor ? (preg_match('/^#/', $object->bgcolor) ? '' : '#').$object->bgcolor : 'white').'">';
 			if (empty($object->bgcolor) || strtolower($object->bgcolor) == 'ffffff') {	// CKEditor does not apply the color of the div into its content area
 				$readonly = 1;
 				// wysiwyg editor
@@ -1411,7 +1415,8 @@ if ($action == 'create') {	// aaa
 			$nbemail = ($object->nbemail ? $object->nbemail : 0);
 			if (is_numeric($nbemail)) {
 				$htmltooltip = '';
-				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->status == 1 || $object->status == 2)) {
+				// MAILING_LIMIT_SENDBYWEB can be 'default'
+				if ((getDolGlobalString('MAILING_LIMIT_SENDBYWEB') && getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') < $nbemail) && ($object->status == 1 || $object->status == 2)) {
 					if (getDolGlobalInt('MAILING_LIMIT_SENDBYWEB') > 0) {
 						$htmltooltip .= $langs->trans('LimitSendingEmailing', getDolGlobalString('MAILING_LIMIT_SENDBYWEB'));
 					} else {
@@ -1490,8 +1495,8 @@ if ($action == 'create') {	// aaa
 			// Subject
 			if ($object->messtype != 'sms') {
 				print '<tr><td class="fieldrequired titlefield">';
-				print $langs->trans("MailTopic");
-				print '</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
+				print $form->textwithpicto($langs->trans("MailTopic"), $htmltext, 1, 'help', '', 0, 2, 'emailsubstitionhelp');
+				print '</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" id="subject" name="subject" value="'.$object->sujet.'"></td></tr>';
 			}
 
 			$trackid = ''; // TODO To avoid conflicts with 2 mass emailing, we should set a trackid here, even if we use another one into email header.
@@ -1544,6 +1549,33 @@ if ($action == 'create') {	// aaa
 				print '</td></tr>';
 			}
 
+
+			// Add editor assistants
+			$out = '';
+			$out .= '<tr>';
+			$out .= '<td class="tdtop">';
+			$out .= $form->textwithpicto($langs->trans('MailText'), $htmltext, 1, 'help', '', 0, 2, 'substittooltipfrombody');
+			$out .= '</td>';
+			$out .= '<td class="tdtop">';
+
+			//$formmail = $this;
+			$showlinktolayout = getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT') ? 'emailing' : '';
+			$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
+			$showlinktoai = isModEnabled('ai') ? 'textgenerationemail' : '';
+			$showlinktoailabel = $langs->trans("AIEnhancements");
+			$formatforouput = '';
+			$htmlname = 'bodyemail';
+			//$formai->substit = $this->substit;
+			//$formai->substit_lines = $this->substit_lines;
+
+			// Fill $out
+			include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+
+			$out .= '</td>';
+			$out .= '</tr>';
+
+			print $out;
+
 			print '</table>';
 
 
@@ -1553,6 +1585,11 @@ if ($action == 'create') {	// aaa
 			if ($action == 'edit') {
 				// wysiwyg editor
 				require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				if ($object->bgcolor) {
+					if (!preg_match('/^<div style="background-color: #'.$object->bgcolor.'">/', $object->body)) {
+						$object->body = '<div style="background-color: #'.$object->bgcolor.'; margin-bottom:-20px; margin-left:-10px; margin-right:-10px; margin-top:-10px; padding: 10px;">'.$object->body.'</div>';
+					}
+				}
 				$doleditor = new DolEditor('bodyemail', $object->body, '', 600, 'dolibarr_mailings', '', true, -1, getDolGlobalInt('FCKEDITOR_ENABLE_MAILING'), 20, '100%');
 				$doleditor->Create();
 			}
@@ -1570,7 +1607,6 @@ if ($action == 'create') {	// aaa
 			}
 
 			print '</div>';
-
 
 			print dol_get_fiche_end();
 

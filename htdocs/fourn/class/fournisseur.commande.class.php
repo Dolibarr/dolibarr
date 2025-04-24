@@ -2826,6 +2826,64 @@ class CommandeFournisseur extends CommonOrder
 		}
 	}
 
+	/**
+	 * Reopen supplier order
+	 *
+	 * @param 		User 		$user 		Object user making change
+	 * @return 		int						Return integer <0 if KO, 0 if no change, >0 if OK
+	 */
+	public function setReopen(User $user): int
+	{
+		if (in_array($this->status, [1, 2, 3, 4, 5, 6, 7, 9])) {
+			if ($this->status == 1) {
+				$newStatus = 0; // Validated->Draft
+			} elseif ($this->status == 2) {
+				$newStatus = 0; // Approved->Draft
+			} elseif ($this->status == 3) {
+				$newStatus = 2; // Ordered->Approved
+			} elseif ($this->status == 4) {
+				$newStatus = 3;
+			} elseif ($this->status == 5) {
+				//$newstatus=2;    // Ordered
+				// TODO Can we set it to submitted ?
+				//$newstatus=3;  // Submitted
+				// TODO If there is at least one reception, we can set to Received->Received partially
+				$newStatus = 4; // Received partially
+			} elseif ($this->status == 6) {
+				$newStatus = 2; // Canceled->Approved
+			} elseif ($this->status == 7) {
+				$newStatus = 3; // Canceled->Process running
+			} elseif ($this->status == 9) {
+				$newStatus = 1; // Refused->Validated
+			} else {
+				$newStatus = 2;
+			}
+
+			$this->db->begin();
+
+			$result = $this->setStatus($user, $newStatus);
+			if ($result > 0) {
+				if ($newStatus == 0) {
+					$sql = 'UPDATE '.$this->db->prefix().'commande_fournisseur';
+					$sql .= ' SET fk_user_approve = null, fk_user_approve2 = null, date_approve = null, date_approve2 = null';
+					$sql .= ' WHERE rowid = '.((int) $this->id);
+
+					$this->db->query($sql);
+				}
+
+				$this->db->commit();
+
+				return 1;
+			} else {
+				$this->db->rollback();
+
+				return -1;
+			}
+		}
+
+		return 0;
+	}
+
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
 	 *	Set the id projet
@@ -3407,6 +3465,7 @@ class CommandeFournisseur extends CommonOrder
 				$response->label = $langs->trans("SuppliersOrdersAwaitingReception");
 				$response->labelShort = $langs->trans("AwaitingReception");
 				$response->url = DOL_URL_ROOT.'/fourn/commande/list.php?search_status=3,4&mainmenu=commercial&leftmenu=orders_suppliers';
+				$response->url_late = DOL_URL_ROOT.'/fourn/commande/list.php?mainmenu=commercial&leftmenu=orders_suppliers&search_option=recv_late';
 			}
 
 			while ($obj = $this->db->fetch_object($resql)) {

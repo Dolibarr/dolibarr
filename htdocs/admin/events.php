@@ -148,7 +148,7 @@ print "</form>\n";
 
 
 $s = $langs->trans("SeeReportPage", '{s1}'.$langs->transnoentities("Home").' - '.$langs->transnoentities("AdminTools").' - '.$langs->transnoentities("Audit").'{s2}');
-print str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/tools/listevents.php" target="_blank">', $s));
+print str_replace('{s2}', '</a>', str_replace('{s1}', '<a href="'.DOL_URL_ROOT.'/admin/tools/listevents.php" target="_blank">'.img_picto('', 'url', 'class="pictofixedwidth"'), $s));
 
 
 

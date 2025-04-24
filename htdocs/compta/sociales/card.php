@@ -594,7 +594,7 @@ if ($id > 0) {
 		print '<table class="border centpercent tableforfield">';
 
 		// Type
-		print '<tr><td class="titlefieldmiddle">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans("Type")."</td><td>";
 		if ($action == 'edit' && $object->getSommePaiement() == 0) {
 			$actionPostValue = GETPOSTINT('actioncode');
@@ -639,7 +639,7 @@ if ($id > 0) {
 
 		// Mode of payment
 		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
+		print '<table class="nobordernopadding centpercent"><tr><td class="nowrap">';
 		print $langs->trans('DefaultPaymentMode');
 		print '</td>';
 		if ($action != 'editmode') {

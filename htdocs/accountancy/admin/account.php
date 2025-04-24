@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2016-2018  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2016-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,9 @@ $search_labelshort = GETPOST('search_labelshort', 'alpha');
 $search_accountparent = GETPOST('search_accountparent', 'alpha');
 $search_pcgtype = GETPOST('search_pcgtype', 'alpha');
 $search_import_key = GETPOST('search_import_key', 'alpha');
+$search_reconcilable = GETPOST("search_reconcilable", 'int');
+$search_centralized = GETPOST("search_centralized", 'int');
+$search_active = GETPOST("search_active", 'int');
 $toselect = GETPOST('toselect', 'array');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $confirm = GETPOST('confirm', 'alpha');
@@ -103,6 +106,7 @@ $arrayfields = array(
 	'aa.pcg_type' => array('label' => "Pcgtype", 'checked' => '1', 'help' => 'PcgtypeDesc'),
 	'categories' => array('label' => "AccountingCategories", 'checked' => '-1', 'help' => 'AccountingCategoriesDesc'),
 	'aa.reconcilable' => array('label' => "Reconcilable", 'checked' => '1'),
+	'aa.centralized' => array('label' => "Centralized", 'checked' => '1'),
 	'aa.import_key' => array('label' => "ImportId", 'checked' => '-1', 'help' => ''),
 	'aa.active' => array('label' => "Activated", 'checked' => '1')
 );
@@ -157,6 +161,9 @@ if (empty($reshook)) {
 		$search_accountparent = "";
 		$search_pcgtype = "";
 		$search_import_key = "";
+		$search_reconcilable = "";
+		$search_centralized = "";
+		$search_active = "";
 		$search_array_options = array();
 	}
 	if ((GETPOSTINT('valid_change_chart') && GETPOSTINT('chartofaccounts') > 0)	// explicit click on button 'Change and load' with js on
@@ -251,7 +258,7 @@ if ($action == 'delete') {
 $pcgver = getDolGlobalInt('CHARTOFACCOUNTS');
 
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.account_number, aa.account_parent, aa.label, aa.labelshort, aa.fk_accounting_category,";
-$sql .= " aa.reconcilable, aa.active, aa.import_key,";
+$sql .= " aa.reconcilable, aa.centralized, aa.active, aa.import_key,";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 
 // Add fields from hooks
@@ -316,6 +323,15 @@ if (strlen(trim($search_accountparent)) && $search_accountparent != '-1') {
 }
 if (strlen(trim($search_pcgtype))) {
 	$sql .= natural_search("aa.pcg_type", $search_pcgtype);
+}
+if ($search_reconcilable != '' && $search_reconcilable != '-1') {
+	$sql .= " AND aa.reconcilable = ".((int) $search_reconcilable);
+}
+if ($search_centralized != '' && $search_centralized != '-1') {
+	$sql .= " AND aa.centralized = ".((int) $search_centralized);
+}
+if ($search_active != '' && $search_active != '-1') {
+	$sql .= " AND aa.active = ".((int) $search_active);
 }
 if (strlen(trim($search_import_key))) {
 	$sql .= natural_search("aa.import_key", $search_import_key);
@@ -536,13 +552,28 @@ if ($resql) {
 	if (!empty($arrayfields['aa.import_key']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat width75" name="search_import_key" value="'.$search_import_key.'"></td>';
 	}
+
+	// Reconcilable
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print '<td class="liste_titre">&nbsp;</td>';
+			print '<td class="liste_titre center">';
+			print $form->selectyesno('search_reconcilable', $search_reconcilable, 1, false, 1, 1, 'search_status onrightofpage width75');
+			print '</td>';
 		}
 	}
+
+	// Centralized
+	if (!empty($arrayfields['aa.centralized']['checked'])) {
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_centralized', $search_centralized, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
+	}
+
+	// Active
 	if (!empty($arrayfields['aa.active']['checked'])) {
-		print '<td class="liste_titre">&nbsp;</td>';
+		print '<td class="liste_titre center">';
+		print $form->selectyesno('search_active', $search_active, 1, false, 1, 1, 'search_status onrightofpage width75');
+		print '</td>';
 	}
 	// Action column
 	if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -600,9 +631,13 @@ if ($resql) {
 	}
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (!empty($arrayfields['aa.reconcilable']['checked'])) {
-			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder);
+			print_liste_field_titre($arrayfields['aa.reconcilable']['label'], $_SERVER["PHP_SELF"], 'aa.reconcilable', '', $param, '', $sortfield, $sortorder, 'center ');
 			$totalarray['nbfield']++;
 		}
+	}
+	if (!empty($arrayfields['aa.centralized']['checked'])) {
+		print_liste_field_titre($arrayfields['aa.centralized']['label'], $_SERVER["PHP_SELF"], 'aa.centralized', '', $param, '', $sortfield, $sortorder);
+		$totalarray['nbfield']++;
 	}
 	if (!empty($arrayfields['aa.active']['checked'])) {
 		print_liste_field_titre($arrayfields['aa.active']['label'], $_SERVER["PHP_SELF"], 'aa.active', '', $param, '', $sortfield, $sortorder);
@@ -762,6 +797,24 @@ if ($resql) {
 				if (!$i) {
 					$totalarray['nbfield']++;
 				}
+			}
+		}
+
+		// Centralized or not
+		if (!empty($arrayfields['aa.centralized']['checked'])) {
+			print '<td class="center">';
+			if (empty($obj->centralized)) {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=enable&mode=2&token='.newToken().'">';
+				print img_picto($langs->trans("Disabled"), 'switch_off');
+				print '</a>';
+			} else {
+				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$obj->rowid.'&action=disable&mode=2&token='.newToken().'">';
+				print img_picto($langs->trans("Activated"), 'switch_on');
+				print '</a>';
+			}
+			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
 			}
 		}
 

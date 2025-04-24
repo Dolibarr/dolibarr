@@ -154,7 +154,7 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1);
 		$texte .= "<br>\n";
-		$texte .= '<textarea class="flat" cols="60" name="value5">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value5">';
 		if (getDolGlobalString('COMPANY_DIGITARIA_CLEAN_WORDS')) {
 			$texte .= $conf->global->COMPANY_DIGITARIA_CLEAN_WORDS;
 		}
@@ -293,8 +293,6 @@ class mod_codecompta_digitaria extends ModeleAccountancyCode
 	 */
 	public function checkIfAccountancyCodeIsAlreadyUsed($db, $code, $type = '')
 	{
-		global $conf;
-
 		if ($type == 'supplier') {
 			if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 				$typethirdparty = 'accountancy_code_supplier';

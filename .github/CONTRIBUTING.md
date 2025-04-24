@@ -185,7 +185,7 @@ A so high ratio is very rare on a so popular project and with the increasing pop
 
 Translations
 ------------
-The source language (en_US) is maintained in the repository. See the [Code](#code) section above.
+The source language (en_US) is maintained in the repository.
 
 All other translations are managed online at [Transifex](https://www.transifex.com/dolibarr-association/dolibarr/).
 

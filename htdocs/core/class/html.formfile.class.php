@@ -938,7 +938,7 @@ class FormFile
 
 				// Get list of files stored into database for same relative directory
 				if ($relativedir) {
-					completeFileArrayWithDatabaseInfo($file_list, $relativedir);
+					completeFileArrayWithDatabaseInfo($file_list, $relativedir, $object);
 					'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $file_list';
 
 					//var_dump($sortfield.' - '.$sortorder);
@@ -977,12 +977,14 @@ class FormFile
 
 					// Show file name with link to download
 					$imgpreview = $this->showPreview($file, $modulepart, $relativepath, 0, $param);
-
 					$out .= '<td class="minwidth200 tdoverflowmax300">';
 					if ($imgpreview) {
 						$out .= '<span class="spanoverflow widthcentpercentminusx valignmiddle">';
 					} else {
 						$out .= '<span class="spanoverflow">';
+					}
+					if (getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
+						$out .= $imgpreview;
 					}
 					if (is_object($ecmfile)) {
 						$out .= $ecmfile->getNomUrl(1, $modulepart, 0, 0, ' documentdownload');
@@ -992,7 +994,6 @@ class FormFile
 							$out .= 'target="_blank" ';
 						}
 						$out .= 'href="'.$documenturl.'?modulepart='.$modulepart.'&file='.urlencode($relativepath).($param ? '&'.$param : '').'"';
-
 						$mime = dol_mimetype($relativepath, '', 0);
 						if (preg_match('/text/', $mime)) {
 							$out .= ' target="_blank" rel="noopener noreferrer"';
@@ -1003,9 +1004,13 @@ class FormFile
 						$out .= dol_trunc($file["name"], 150);
 						$out .= '</a>';
 					}
+
 					$out .= '</span>'."\n";
-					$out .= $imgpreview;
+					if (!getDolGlobalInt('PREVIEW_PICTO_ON_LEFT_OF_NAME')) {
+						$out .= $imgpreview;
+					}
 					$out .= '</td>';
+
 
 					// Show file size
 					$size = (!empty($file['size']) ? $file['size'] : dol_filesize($filedir."/".$file["name"]));
@@ -1225,7 +1230,7 @@ class FormFile
 					if ($tmparray && $tmparray['url']) {
 						$tmpout .= '<li><a href="'.$tmparray['url'].'"'.($tmparray['css'] ? ' class="'.$tmparray['css'].'"' : '').($tmparray['mime'] ? ' mime="'.$tmparray['mime'].'"' : '').($tmparray['target'] ? ' target="'.$tmparray['target'].'"' : '').'>';
 						//$tmpout.= img_picto('','detail');
-						$tmpout .= '<i class="fa fa-search-plus paddingright" style="color: gray"></i>';
+						$tmpout .= img_picto('', 'search-plus', 'class="paddingright"');
 						$tmpout .= $langs->trans("Preview").' '.$ext.'</a></li>';
 					}
 				}
@@ -1435,7 +1440,7 @@ class FormFile
 
 			// Get list of files stored into database for same relative directory
 			if ($relativedir) {
-				completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object);
 				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 				//var_dump($sortfield.' - '.$sortorder);
@@ -2222,7 +2227,7 @@ class FormFile
 			$sortfield = '';
 		}
 		$res = $link->fetchAll($links, $object->element, $object->id, $sortfield, $sortorder);
-		$param .= (isset($object->id) ? '&id='.$object->id : '');
+		$param .= (isset($object->id) && !preg_match('/&id='.$object->id.'/i', $param) ? '&id='.$object->id : '');
 
 		$permissiontoedit = $permissiontodelete;
 
@@ -2289,16 +2294,17 @@ class FormFile
 			'',
 			'center '
 		);
+		// Shared or not - Hash of file
 		print_liste_field_titre('', '', '');
 		print '</tr>';
 		$nboflinks = count($links);
 		if ($nboflinks > 0) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 		}
-		foreach ($links as $link) {
+		foreach ($links as $key => $link) {
 			print '<tr class="oddeven">';
 			//edit mode
-			if ($action == 'update' && $selected === (int) $link->id && $permissiontoedit) {
+			if ($action == 'update' && (int) $selected === (int) $link->id && $permissiontoedit) {
 				print '<td>';
 				print '<input type="hidden" name="id" value="'.$object->id.'">';
 				print '<input type="hidden" name="linkid" value="'.$link->id.'">';
@@ -2309,7 +2315,10 @@ class FormFile
 				print $langs->trans('Label').': <input type="text" name="label" value="'.dol_escape_htmltag($link->label).'">';
 				print '</td>';
 				print '<td class="center">'.dol_print_date(dol_now(), "dayhour", "tzuser").'</td>';
-				print '<td class="right"></td>';
+				print '<td class="right">';
+				print '<label for="idshareenabled'.$key.'">'.$langs->trans("LinkSharedViaALink").'</label> ';
+				print '<input class="inline-block" type="checkbox" id="idshareenabled'.$key.'" name="shareenabled"'.($link->share ? ' checked="checked"' : '').' /> ';
+				print '</td>';
 				print '<td class="right">';
 				print '<input type="submit" class="button button-save" name="save" value="'.dol_escape_htmltag($langs->trans("Save")).'">';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
@@ -2323,7 +2332,17 @@ class FormFile
 				print '</td>'."\n";
 				print '<td class="right"></td>';
 				print '<td class="center">'.dol_print_date($link->datea, "dayhour", "tzuser").'</td>';
-				print '<td class="center"></td>';
+				print '<td class="center">';
+				if ($link->share) {
+					global $dolibarr_main_url_root;
+					$urlwithouturlroot = preg_replace('/' . preg_quote(DOL_URL_ROOT, '/') . '$/i', '', trim($dolibarr_main_url_root));
+					$urlwithroot = $urlwithouturlroot . DOL_URL_ROOT; // This is to use external domain name found into config file
+					$fulllink = $urlwithroot.'/document.php?type=link&hashp=' . $link->share;
+
+					print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
+					print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$link->id.'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("LinkSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+				}
+				print '</td>';
 				print '<td class="right">';
 				print '<a href="'.$_SERVER['PHP_SELF'].'?action=update&linkid='.$link->id.$param.'&token='.newToken().'" class="editfilelink editfielda reposition" >'.img_edit().'</a>'; // id= is included into $param
 				if ($permissiontodelete) {
@@ -2369,8 +2388,7 @@ class FormFile
 				$out .= '<a class="pictopreview '.$urladvancedpreview['css'].'" href="'.$urladvancedpreview['url'].'"'.(empty($urladvancedpreview['mime']) ? '' : ' mime="'.$urladvancedpreview['mime'].'"').' '.(empty($urladvancedpreview['target']) ? '' : ' target="'.$urladvancedpreview['target'].'"').'>';
 				//$out.= '<a class="pictopreview">';
 				if (empty($ruleforpicto)) {
-					//$out.= img_picto($langs->trans('Preview').' '.$file['name'], 'detail');
-					$out .= '<span class="fa fa-search-plus pictofixedwidth" style="color: gray"></span>';
+					$out .= img_picto('', 'search-plus', 'class="pictofixedwidth"');
 				} else {
 					$out .= img_mime($relativepath, $langs->trans('Preview').' '.$file['name'], 'pictofixedwidth');
 				}

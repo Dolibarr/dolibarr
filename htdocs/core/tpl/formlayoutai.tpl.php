@@ -19,6 +19,7 @@
 
  /**
  * @var Conf $conf
+ * @var DoliDB $db
  * @var ?FormMail 		$formmail
  * @var ?FormWebsite 	$formwebsite
  * @var ?FormAI 		$formai
@@ -65,7 +66,7 @@ if (!isset($out)) {	// Init to empty string if not defined
 if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 	$out .= '<a href="#" id="linkforlayouttemplates" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktolayoutlabel, 'layout', 'class="paddingrightonly"');
-	$out .= $showlinktolayoutlabel.'...';
+	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktolayoutlabel.'...</span>';
 	$out .= '</a> &nbsp; &nbsp; ';
 
 	$out .= '<script>
@@ -83,9 +84,10 @@ if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 }
 // Add link to add AI content
 if ($showlinktoai) {
+	// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
 	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink marginrightonly">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
-	$out .= $showlinktoailabel.'...';
+	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
 	$out .= '</a>';
 
 	$out .= '<script>
@@ -93,10 +95,10 @@ if ($showlinktoai) {
   							$("#linkforaiprompt'.$showlinktoai.'").click(function() {
 								console.log("formlayoutai.tpl: We click on linkforaiprompt'.$showlinktoai.', we toggle .ai_input'.$showlinktoai.'");
 								event.preventDefault();
-								jQuery(".ai_input'.$htmlname.'").toggle();
+								jQuery(".ai_dropdown'.$htmlname.'").toggle();
 								jQuery(".template-selector").hide();
 								jQuery(".email-layout-container").hide();
-								if (!jQuery("#ai_input'.$htmlname.'").is(":hidden")) {
+								if (!jQuery("#ai_dropdown'.$htmlname.'").is(":hidden")) {
 									console.log("Set focus on input field #ai_instructions'.$htmlname.'");
 									jQuery("#ai_instructions'.$htmlname.'").focus();
 									if (!jQuery("pageContent").is(":hidden")) {		// May exists for website page only
@@ -104,22 +106,45 @@ if ($showlinktoai) {
 									}
 								}
 							});
+							$(document).on("click", function (event) {
+								aidropdown = $(".ai_dropdown'.$htmlname.'");
+								aidropdownbutton = $("#linkforaiprompt'.$showlinktoai.'");
+								if (!aidropdown.is(event.target) && !aidropdownbutton.is(event.target) && $(event.target).closest(aidropdown).length === 0 && $(event.target).closest(aidropdownbutton).length === 0 && aidropdown.is(":visible")) {
+									console.log("You clicked outside of ai_dropdown - we close it");
+									$(".ai_dropdown'.$htmlname.'").hide();
+								}
+							});
 						});
 					</script>
 					';
 }
+
 if ($showlinktolayout) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
 	} else {
+		if (!is_object($formmail)) {
+			// Create form object
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+		}
 		$out .= $formmail->getModelEmailTemplate($htmlname, $showlinktolayout);
 	}
 } else {
 	$out .= '<!-- No link to the layout feature, $formmail->withlayout must be set to a string use case, module WYSIWYG must be enabled and MAIN_EMAIL_USE_LAYOUT must be set -->';
 }
+
 if ($showlinktoai) {
+	if (empty($formai) || $formai instanceof FormAI) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+		$formai = new FormAI($db);
+	}
 	$out .= $formai->getAjaxAICallFunction();
-	$out .= $formai->getSectionForAIPrompt($showlinktoai, $formmail->withaiprompt, $htmlname);
+
+	if (empty($onlyenhancements)) {
+		$onlyenhancements = '';
+	}
+	$out .= $formai->getSectionForAIEnhancement($showlinktoai, $formmail->withaiprompt, $htmlname, $onlyenhancements);
 } else {
 	$out .= '<!-- No link to the AI feature, $formmail->withaiprompt must be set to the ai feature and module ai must be enabled -->';
 }

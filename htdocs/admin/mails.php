@@ -640,9 +640,16 @@ if ($action == 'edit') {
 	print '"></td></tr>';
 
 	// Default from type
-	$liste = array();
-	$liste['user'] = $langs->trans('UserEmail');
-	$liste['company'] = $langs->trans('CompanyEmail').' ('.(!getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') ? $langs->trans("NotDefined") : getDolGlobalString('MAIN_INFO_SOCIETE_MAIL')).')';
+	$liste = array(
+		'user' => array(
+			'label' => $langs->trans('UserEmail'),
+			'data-html' => $langs->trans('UserEmail')
+		),
+		'company' => array(
+			'label' => $langs->trans('CompanyEmail').' ('.getDolGlobalString('MAIN_INFO_SOCIETE_MAIL', $langs->trans("NotDefined")).')',
+			'data-html' => $langs->trans('CompanyEmail').' <span class="opacitymedium">('.getDolGlobalString('MAIN_INFO_SOCIETE_MAIL', $langs->trans("NotDefined")).')</span>'
+		)
+	);
 
 	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, getDolGlobalString('MAIN_MAIL_DEFAULT_FROMTYPE'), 0);
@@ -1026,6 +1033,10 @@ if ($action == 'edit') {
 
 	print '</div>';
 
+
+	print '<br>';
+
+
 	if (getDolGlobalString('MAIN_MAIL_SENDMODE', 'mail') == 'mail' && !getDolGlobalString('MAIN_FIX_FOR_BUGGED_MTA')) {
 		/*
 		 // Warning 1
@@ -1188,6 +1199,7 @@ if ($action == 'edit') {
 		$formmail->withtopicreadonly = 0;
 		$formmail->withfile = 2;
 
+		// Add editor assistants
 		$formmail->withlayout = 'emailing';		// Note: MAIN_EMAIL_USE_LAYOUT must be set
 		$formmail->withaiprompt = ($action == 'testhtml' ? 'html' : 'text');	// Note: Module AI must be enabled
 
@@ -1217,7 +1229,7 @@ if ($action == 'edit') {
 		// References
 		if (!empty($user->admin)) {
 			print '<br><br>';
-			print '<span class="opacitymedium">'.$langs->trans("EMailsWillHaveMessageID").': ';
+			print '<span class="opacitymedium wordwrap small">'.$langs->trans("EMailsWillHaveMessageID").': ';
 			print dol_escape_htmltag('<timestamp.*@'.dol_getprefix('email').'>');
 			print '</span>';
 		}

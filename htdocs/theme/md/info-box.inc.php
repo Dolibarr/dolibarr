@@ -15,6 +15,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 @phan-var-force string $right
 @phan-var-force string $left
 ';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -120,6 +123,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday{
 	<?php echo $prefix; ?>color: #755114  !important;
 }
+.bg-infobox-cubes{
+	<?php echo $prefix; ?>color: #b0a53e  !important;
+}
 
 /* Disable colors on left vmenu */
 a.vmenu span, span.vmenu, span.vmenu span {
@@ -191,6 +197,7 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	border-radius: 2px;
 	margin-bottom: 15px;
 	border: 1px solid #e9e9e9;
+	border-radius: <?php print $borderradius; ?>px;
 }
 .info-box.info-box-sm {
 	min-height: 80px;
@@ -225,7 +232,6 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 		color: #fff;
 		text-align: center;
 		background-color: #337ab7;
-		-webkit-box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 		box-shadow: inset 0 -1px 0 rgba(0,0,0,.15);
 		-webkit-transition: width .6s ease;
 		-o-transition: width .6s ease;
@@ -241,6 +247,8 @@ a.info-box-text-a i.fa.fa-exclamation-triangle {
 	height: 94px;		/* must be same height as min-height of .info-box */
 	width: 86px;
 	background: var(--colorbacktitle1) !important;
+	border-top-left-radius: <?php print $borderradius; ?>px;
+	border-bottom-left-radius: <?php print $borderradius; ?>px;
 	<?php if (getDolGlobalString('THEME_SATURATE_RATIO')) { ?>
 		filter: saturate(<?php echo getDolGlobalString('THEME_SATURATE_RATIO'); ?>);
 	<?php } ?>
@@ -498,6 +506,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 .bg-infobox-holiday i.fa{
 	color: #755114  !important;
 }
+.bg-infobox-cubes i.fa{
+	color: #b0a53e  !important;
+}
 
 
 .fa-dol-action:before {
@@ -535,6 +546,9 @@ if (GETPOSTISSET('THEME_SATURATE_RATIO')) {
 }
 .fa-dol-holiday:before {
 	content: "\f5ca";
+}
+.fa-dol-cubes:before {
+	content: "\f1b3";
 }
 
 

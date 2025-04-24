@@ -100,6 +100,7 @@ AccountAccounting=Accounting account
 AccountAccountingShort=Account
 SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
+LedgerAccount=Ledger account
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 ShowAccountingAccountInLedger=Show accounting account in ledger
@@ -250,6 +251,7 @@ FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Payment of invoice customer
 ThirdPartyAccount=Third-party account
+AccountNotDefined=Account not defined
 NewAccountingMvt=New transaction
 NumMvts=Numero of transaction
 ListeMvts=List of movements
@@ -274,6 +276,7 @@ Pcgtype=Group of account
 PcgtypeDesc=Group of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 AccountingCategoriesDesc=Custom group of accounts can be used to group accounting accounts into one name to ease filter use or building of custom reports.
 Reconcilable=Reconcilable
+Centralized=Centralizing account
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product account from chart of account
@@ -310,11 +313,13 @@ ChangeBinding=Change the binding
 Accounted=Accounted in ledger
 NotYetAccounted=Not yet transferred to accounting
 ShowTutorial=Show Tutorial
-ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advices on how to use it.
+ClickOnUseTutorialForHelp=Welcome on the section to generate your accountancy. Click on the link "%s" to get advice on how to use it.
 NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyjjnnnn where yyyy is the year and jj the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy
 ApplyMassCategories=Apply mass categories
@@ -453,6 +458,10 @@ ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+
+## Warning
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
@@ -473,6 +482,9 @@ ErrorArchiveAddFile=Can't put "%s" file in archive
 ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end date defined) found. You can create one from menu %s - %s - %s.
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
+Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Try to insert a non balanced transaction in book for %s (Payment ID: %s). Canceled. Surely a bug.
+ProductUsage=Product or service usage
 ## Import
 ImportAccountingEntries=Accounting entries
 ImportAccountingEntriesFECFormat=Accounting entries - FEC format
@@ -500,3 +512,7 @@ ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
 NAccounts=%s accounts
+ACCOUNTING_USE_TREASURY_Desc=This is the mode for treasury accountancy. We are using the payments only and their date for doing the accountancy.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the mode for real accountancy. We are using both the invoices and payments for doing the accountancy.
+PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
+BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)

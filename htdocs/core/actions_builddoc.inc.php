@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,11 +55,6 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 		// Reload to get all modified line records and be ready for hooks
 		$ret = $object->fetch($id);
 		$ret = $object->fetch_thirdparty();
-		/*if (empty($object->id) || ! $object->id > 0)
-		{
-			dol_print_error(null, 'Object must have been loaded by a fetch');
-			exit;
-		}*/
 
 		// Save last template used to generate document
 		if (GETPOST('model', 'alpha')) {
@@ -77,8 +72,7 @@ if ($action == 'builddoc' && ($permissiontoadd || !empty($usercangeneretedoc))) 
 
 		$outputlangs = $langs;
 		$newlang = '';
-
-		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+		if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 			$newlang = GETPOST('lang_id', 'aZ09');
 		}
 		if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($object->thirdparty->default_lang)) {

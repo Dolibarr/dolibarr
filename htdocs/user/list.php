@@ -371,8 +371,6 @@ if (empty($reshook)) {
 $formother = new FormOther($db);
 $user2 = new User($db);
 
-$now = dol_now();
-
 $help_url = 'EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios|DE:Modul_Benutzer';
 if ($contextpage == 'employeelist' && $search_employee == 1) {
 	$title = $langs->trans("Employees");
@@ -1031,7 +1029,7 @@ while ($i < $imaxinloop) {
 
 	$object->id = $obj->rowid;
 	$object->admin = $obj->admin;
-	$object->ref = $obj->rowid;
+	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
 	$object->statut = $obj->status;
 	$object->status = $obj->status;
@@ -1103,7 +1101,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($obj->rowid).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

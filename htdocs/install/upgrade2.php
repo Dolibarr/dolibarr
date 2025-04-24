@@ -54,6 +54,7 @@ require_once $dolibarr_main_document_root.'/commande/class/commande.class.php';
 require_once $dolibarr_main_document_root.'/fourn/class/fournisseur.commande.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/price.lib.php';
 require_once $dolibarr_main_document_root.'/core/class/menubase.class.php';
+require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 require_once $dolibarr_main_document_root.'/core/lib/files.lib.php';
 
 global $langs;
@@ -517,16 +518,24 @@ if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ
 			*/
 
 			// Scripts for 20.0
-			/*$afterversionarray = explode('.', '19.0.9');
+			$afterversionarray = explode('.', '19.0.9');
 			$beforeversionarray = explode('.', '20.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
-			}*/
+				migrate_invoice_export_models();
+			}
 
 			// Scripts for 21.0
 			$afterversionarray = explode('.', '20.0.9');
 			$beforeversionarray = explode('.', '21.0.9');
 			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
 				migrate_productlot_path();
+			}
+
+			// Scripts for 22.0
+			$afterversionarray = explode('.', '21.0.9');
+			$beforeversionarray = explode('.', '22.0.9');
+			if (versioncompare($versiontoarray, $afterversionarray) >= 0 && versioncompare($versiontoarray, $beforeversionarray) <= 0) {
+				migrate_accountingbookkeeping($entity);
 			}
 		}
 
@@ -5125,6 +5134,146 @@ function migrate_contractdet_rank()
 		$db->commit();
 	} else {
 		$db->rollback();
+	}
+
+	print '</td></tr>';
+
+	if (!$resultstring) {
+		print '<tr class="trforrunsql" style=""><td class="wordbreak" colspan="4">'.$langs->trans("NothingToDo")."</td></tr>\n";
+	}
+}
+
+/**
+ * Invoice exports been shifted (facture_1 => facture_0, facture_2 => facture_1) in version 20, shift export models accordingly
+ *
+ * @return  void
+ */
+function migrate_invoice_export_models()
+{
+	global $db, $langs;
+
+	$lock = getDolGlobalInt('MIGRATION_FLAG_INVOICE_MODELS_V20');
+
+	$firstInstallVersion = getDolGlobalString('MAIN_VERSION_FIRST_INSTALL', DOL_VERSION);
+	$migrationNeeded = (versioncompare(explode('.', $firstInstallVersion, 3), array(20, 0, -5)) < 0 && !$lock);
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('InvoiceExportModelsMigration')."</b>: \n";
+
+	if (! $migrationNeeded) {
+		print $langs->trans("AlreadyDone");
+		print '</td></tr>';
+		dolibarr_set_const($db, 'MIGRATION_FLAG_INVOICE_MODELS_V20', 1, 'chaine', 0, 'To flag the upgrade of invoice template has been set', 0);
+		return;
+	}
+
+
+	$db->begin();
+
+	$sql1 = "UPDATE ".$db->prefix()."export_model SET type = 'facture_0' WHERE type = 'facture_1'";
+
+	$resql1 = $db->query($sql1);
+
+	if (! $resql1) {
+		dol_print_error($db);
+		$db->rollback();
+		print '</td></tr>';
+		return;
+	}
+
+	$modified1 = $db->affected_rows($resql1);
+
+	print str_repeat('.', $modified1);
+
+	$db->free($resql1);
+
+	$sql2 = "UPDATE ".$db->prefix()."export_model SET type = 'facture_1' WHERE type = 'facture_2'";
+
+	$resql2 = $db->query($sql2);
+
+	if (! $resql2) {
+		dol_print_error($db);
+		$db->rollback();
+		print '</td></tr>';
+		return;
+	}
+
+	$modified2 = $db->affected_rows($resql2);
+
+	print str_repeat('.', $modified2);
+
+	$db->free($resql2);
+
+	if (empty($modified1 + $modified2)) {
+		print $langs->trans('NothingToDo');
+	}
+
+	$db->commit();
+
+	dolibarr_set_const($db, 'MIGRATION_FLAG_INVOICE_MODELS_V20', 1, 'chaine', 0, 'To flag the upgrade of invoice template has been set', 0);
+
+	echo '</td></tr>';
+}
+
+/**
+ * Migrate Ref in bookkeeping lines
+ *
+ * @param int $entity Entity id
+ * @return  void
+ */
+function migrate_accountingbookkeeping(int $entity)
+{
+	global $db, $langs;
+
+	$error = 0;
+	$resultstring = '';
+	$bookKeepingAddon = '';
+
+	// For the moment we set the numbering rule to neon (the rule argon has a lot of critical bugs to fix first).
+	if (getDolGlobalString('BOOKKEEPING_ADDON') == '') {
+		dolibarr_set_const($db, 'BOOKKEEPING_ADDON', 'mod_bookkeeping_neon', 'chaine', 0, '', $entity);
+		$bookKeepingAddon = 'mod_bookkeeping_neon';
+	}
+
+	print '<tr class="trforrunsql"><td colspan="4">';
+	print '<b>'.$langs->trans('MigrationAccountancyBookkeeping')."</b><br>\n";
+
+	// TODO
+	if ($bookKeepingAddon === 'mod_bookkeeping_argon') {
+		$db->begin();
+
+		$sql = "SELECT DISTINCT YEAR(doc_date) as doc_year, MONTH(doc_date) as doc_month, code_journal, piece_num FROM ".$db->prefix()."accounting_bookkeeping";
+		$sql .= " WHERE ref IS NULL AND entity = ".((int) $entity);
+		$sql .= " ORDER BY doc_year, doc_month, code_journal, piece_num";
+
+		$resql = $db->query($sql);
+
+		require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
+		$bookkeeping = new BookKeeping($db);
+		if ($resql) {
+			while ($obj = $db->fetch_object($resql)) {
+				$bookkeeping->doc_date = dol_mktime(0, 0, 0, $obj->doc_month, 1, $obj->doc_year);
+				$bookkeeping->code_journal = $obj->code_journal;
+				$ref = $bookkeeping->getNextNumRef();
+
+				$sqlUpd = "UPDATE ".$db->prefix()."accounting_bookkeeping SET ref = '".$db->escape($ref)."' WHERE piece_num = '".$db->escape($obj->piece_num)."' AND entity = ".((int) $entity);
+				$resultstring = '.';
+				print $resultstring;
+				$resqlUpd = $db->query($sqlUpd);
+				if (!$resqlUpd) {
+					dol_print_error($db);
+					$error++;
+				}
+			}
+		} else {
+			$error++;
+		}
+
+		if (!$error) {
+			$db->commit();
+		} else {
+			$db->rollback();
+		}
 	}
 
 	print '</td></tr>';

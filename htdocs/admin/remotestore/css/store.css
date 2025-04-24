@@ -3,9 +3,9 @@ table#list_of_modules {
 	border-spacing: 0px;
 }
 .imgstore {
-	max-height:150px;
-	max-width: 150px;
-	box-shadow: 5px 5px 20px #ddd;
+	max-height:120px;
+	max-width: 120px;
+	box-shadow: 3px 3px 20px #ddd;
 }
 
 div.divsearchfield {
@@ -86,7 +86,8 @@ div.divsearchfield {
 .newAppParent{
     position: relative;
     overflow: hidden;
-    min-height: 100px;
+    padding: 10px;
+    /* min-height: 100px; */
 }
 .newApp, .updatedApp{
     background-color: orange;
@@ -115,14 +116,7 @@ div.divsearchfield {
     color: orange;
 }
 .compatible {
-    background-image: url("../img/compatible.png");
-    background-position: left center;
-    background-repeat: no-repeat;
     color: green;
-    display: inline-block;
-    height: 32px;
-    line-height: 32px;
-    padding-left: 35px;
 }
 tr.app {
     height: 200px;
