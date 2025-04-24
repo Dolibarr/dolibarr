@@ -86,8 +86,9 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id, t.elementtype, t.code, t.contexts, t.label, t.description, t.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		$sql .= " WHERE 1=1";
 		if (!empty($elementtype)) {
-			$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+			$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -1481,7 +1482,7 @@ class Setup extends DolibarrApi
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];
-		$default_value = $request_data['default_value'];
+		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
 		$required = $request_data['required'];
@@ -1566,7 +1567,7 @@ class Setup extends DolibarrApi
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];
-		$default_value = $request_data['default_value'];
+		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
 		$required = $request_data['required'];

@@ -547,8 +547,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 			$parameters = array(
 				'facid' => $facid,
-				// 'ref' => $ref,
-				// 'objcanvas' => $objcanvas,
+				'ref' => $obj->ref
 			);
 			$reshook = $hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 			$error = $hookmanager->error;
@@ -603,8 +602,8 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						}
 
 						$moreHtmlRight = '';
-						if ($action=='create') {
-							$urlToggleDisplayMod = $_SERVER["PHP_SELF"].'?facid='.$facid.'&action='.$action.'&accountid='.$accountid.'&display-all-invoices=' . (intval(!$displayAllInvoices));
+						if ($action == 'create') {
+							$urlToggleDisplayMod = $_SERVER["PHP_SELF"].'?facid='.((int) $facid).'&action='.urlencode($action).'&accountid='.((int) $accountid).'&display-all-invoices=' . (intval(!$displayAllInvoices));
 
 							if (empty($displayAllInvoices)) {
 								$btnTitle = $langs->trans('DisplayOtherInvoicesToo');
@@ -626,7 +625,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 
 						print '<div class="div-table-responsive-no-min">';
-						print '<table  id="fourn-invoices-paiments-list" data-display-all-invoices="' . (int) $displayAllInvoices . '" class="tagtable liste" >'."\n";
+						print '<table id="fourn-invoices-paiments-list" data-display-all-invoices="' . (int) $displayAllInvoices . '" class="tagtable liste" >'."\n";
 						print '<thead>';
 						print '<tr class="liste_titre">';
 						print '<th>'.$langs->trans('Invoice').'</th>';

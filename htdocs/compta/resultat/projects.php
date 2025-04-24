@@ -185,6 +185,7 @@ $total_ttc = 0;
 $name = $langs->trans("ReportInOut").', '.$langs->trans("ByProjects");
 $period = $form->selectDate($date_start, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end, 'date_end', 0, 0, 0, '', 1, 0);
 $builddate = dol_now();
+$description = '';
 
 // Display report header
 if ($modecompta == "CREANCES-DETTES") {
