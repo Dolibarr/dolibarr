@@ -340,6 +340,92 @@ class EventAttendees extends DolibarrApi
 		return ((int) $this->event_attendees->id);
 	}
 
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	/**
+	 * Clean sensible object datas
+	 *
+	 * @param   Object  $object     	Object to clean
+	 * @phan-param		ConferenceOrBoothAttendee	$object
+	 * @phpstan-param	ConferenceOrBoothAttendee	$object
+	 *
+	 * @return  Object	Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 */
+	protected function _cleanObjectDatas($object)
+	{
+		// phpcs:enable
+		$object = parent::_cleanObjectDatas($object);
+
+		unset($object->array_languages);
+		unset($object->contacts_ids);
+		unset($object->canvas);
+		unset($object->contact_id);
+		unset($object->user);
+		unset($object->origin_type);
+		unset($object->origin_id);
+		unset($object->ref_ext);
+		unset($object->statut);
+		unset($object->civility_code);
+		unset($object->country_id);
+		unset($object->country_code);
+		unset($object->state_id);
+		unset($object->region_id);
+		unset($object->barcode_type);
+		unset($object->barcode_type_coder);
+		unset($object->mode_reglement_id);
+		unset($object->cond_reglement_id);
+		unset($object->demand_reason_id);
+		unset($object->transport_mode_id);
+		unset($object->shipping_method_id);
+		unset($object->shipping_method);
+		unset($object->fk_multicurrency);
+		unset($object->multicurrency_code);
+		unset($object->multicurrency_tx);
+		unset($object->multicurrency_total_ht);
+		unset($object->multicurrency_total_tva);
+		unset($object->multicurrency_total_ttc);
+		unset($object->multicurrency_total_localtax1);
+		unset($object->multicurrency_total_localtax2);
+		unset($object->fk_account);
+		unset($object->total_ht);
+		unset($object->total_tva);
+		unset($object->total_localtax1);
+		unset($object->total_localtax2);
+		unset($object->total_ttc);
+		unset($object->lines);
+		unset($object->actiontypecode);
+		unset($object->name);
+		unset($object->civility_id);
+		unset($object->user_author);
+		unset($object->user_creation);
+		unset($object->user_creation_id);
+		unset($object->user_valid);
+		unset($object->user_validation);
+		unset($object->user_validation_id);
+		unset($object->user_closing_id);
+		unset($object->user_modification);
+		unset($object->user_modification_id);
+		unset($object->totalpaid);
+		unset($object->product);
+		unset($object->cond_reglement_supplier_id);
+		unset($object->deposit_percent);
+		unset($object->retained_warranty_fk_cond_reglement);
+		unset($object->warehouse_id);
+		unset($object->target);
+		unset($object->extraparams);
+		unset($object->specimen);
+		unset($object->date_validation);
+		unset($object->date_modification);
+		unset($object->date_cloture);
+		unset($object->rowid);
+		unset($object->module);
+		unset($object->entity);
+		unset($object->paid);
+
+		return $object;
+	}
+
 	/**
 	 * Update an event attendee
 	 *
