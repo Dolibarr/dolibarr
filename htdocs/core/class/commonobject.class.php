@@ -9422,6 +9422,7 @@ abstract class CommonObject
 						$force_values_on_change_company = (
 							($this->element == 'facture' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE'))
 							|| ($this->element == 'commande' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER'))
+							|| ($this->element == 'order_supplier' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_SUPPLIER_ORDER'))
 						);
 						if ($force_values_on_change_company && GETPOSTINT('changecompany')) {
 							$value = $this->array_options['options_'.$key] ?? $value;

@@ -2559,7 +2559,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 		}
 		if (isModEnabled('import') || isModEnabled('export')) {
 			$langs->load("exports");
-			$newmenu->add("/imports/index.php?leftmenu=import", $langs->trans($title), 0, $user->hasRight('import', 'run') || $user->hasRight('export', 'lire'), '', $mainmenu, 'import', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
+			$newmenu->add("/imports/index.php?leftmenu=import", $langs->trans($title), 0, (int) ($user->hasRight('import', 'run') || $user->hasRight('export', 'lire')), '', $mainmenu, 'import', 0, '', '', '', img_picto('', 'technic', 'class="paddingright pictofixedwidth"'));
 			$newmenu->add("/imports/import.php?leftmenu=import", $langs->trans("NewImport"), 1, $user->hasRight('import', 'run'));
 			$newmenu->add("/exports/export.php?leftmenu=export", $langs->trans("NewExport"), 1, $user->hasRight('export', 'lire'));
 		}
