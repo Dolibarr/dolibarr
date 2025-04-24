@@ -18,12 +18,13 @@
 
 /**
  *       \file       htdocs/imports/index.php
- *       \ingroup    import
- *       \brief      Home page of import wizard
+ *       \ingroup    import export
+ *       \brief      Home page of import and export wizard
  */
 
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
+require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 
 /**
  * @var Conf $conf
@@ -40,8 +41,14 @@ if (!$user->socid == 0) {
 	accessforbidden();
 }
 
+$export = new Export($db);
+$export->load_arrays($user);
+
 $import = new Import($db);
 $import->load_arrays($user);
+
+$usercanimport = restrictedArea($user, 'import');
+$usercanexport = restrictedArea($user, 'export');
 
 
 /*
@@ -50,9 +57,17 @@ $import->load_arrays($user);
 
 $form = new Form($db);
 
-llxHeader('', $langs->trans("ImportArea"), 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+$title = "ImportExportArea";
+if (isModEnabled('import') && !isModEnabled('export')) {
+	$title = "ImportArea";
+}
+if (!isModEnabled('import') && isModEnabled('export')) {
+	$title = "ExportArea";
+}
 
-print load_fiche_titre($langs->trans("ImportArea"));
+llxHeader('', $title, 'EN:Module_Imports_En|FR:Module_Imports|ES:M&oacute;dulo_Importaciones');
+
+print load_fiche_titre($langs->trans($title));
 
 
 // List of available import format
@@ -98,6 +113,57 @@ print '</div>';
 print '<br>';
 
 print '</div>';
+
+
+// List of available export formats
+$out = '';
+$out .= '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
+$out .= '<table class="noborder centpercent nomarginbottom">';
+$out .= '<tr class="liste_titre">';
+$out .= '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
+$out .= '<td>'.$langs->trans("LibraryShort").'</td>';
+$out .= '<td class="right">'.$langs->trans("LibraryVersion").'</td>';
+$out .= '</tr>';
+
+include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
+$model = new ModeleExports($db);
+$liste = $model->listOfAvailableExportFormat($db); // This is not a static method for exports because method load non static properties
+
+foreach ($liste as $key => $val) {
+	if (preg_match('/__\(Disabled\)__/', $liste[$key])) {
+		$liste[$key] = preg_replace('/__\(Disabled\)__/', '('.$langs->transnoentitiesnoconv("Disabled").')', $liste[$key]);
+	}
+
+	$out .= '<tr class="oddeven">';
+	$out .= '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key), $model->getPictoForKey($key)).'</td>';
+	$text = $model->getDriverDescForKey($key);
+	$label = $liste[$key];
+	// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+	$out .= '<td>'.$form->textwithpicto($label, $text).'</td>';
+	$out .= '<td>'.$model->getLibLabelForKey($key).'</td>';
+	$out .= '<td class="nowrap right">'.$model->getLibVersionForKey($key).'</td>';
+	$out .= '</tr>';
+}
+
+$out .= '</table>';
+$out .= '</div>';
+
+
+print '<div class="divsection wordwrap center">';
+print '<br>';
+print $form->textwithpicto($langs->trans("FormatedExportDesc1"), $out, 1, 'help', 'valignmiddle', 1, 3, 'ttexport').'<br>';
+print '<br><br>';
+
+print '<div class="center">';
+if (count($export->array_export_code)) {
+	$params = array('forcenohideoftext' => 1);
+	print dolGetButtonTitle($langs->trans('NewExport'), '', 'fa fa-plus-circle size4x', DOL_URL_ROOT.'/exports/export.php?leftmenu=export', '', 1, $params);
+}
+print '</div>';
+print '<br>';
+
+print '</div>';
+
 
 // End of page
 llxFooter();

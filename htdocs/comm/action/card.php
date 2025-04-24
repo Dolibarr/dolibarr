@@ -615,6 +615,8 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 										$object->error .= '<br> - ' . $langs->trans('ErrorResourceUseInEvent', $obj->r_ref, $obj->ac_label . ' [' . $obj->ac_id . ']');
 									}
 									$object->errors[] = $object->error;
+
+									setEventMessages($object->error, null, 'errors');
 								}
 								$db->free($resql);
 							}
@@ -628,9 +630,12 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 
 				unset($_SESSION['assignedtoresource']);
 
+
 				// Category association
-				$categories = GETPOST('categories', 'array');
-				$object->setCategories($categories);
+				if (!$error) {
+					$categories = GETPOST('categories', 'array');
+					$object->setCategories($categories);
+				}
 
 				unset($_SESSION['assignedtouser']);
 
@@ -639,7 +644,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 				}
 
 				// Create reminders
-				if ($addreminder == 'on') {
+				if (!$error && $addreminder == 'on') {
 					$actionCommReminder = new ActionCommReminder($db);
 
 					$dateremind = dol_time_plus_duree($datep, -1 * $offsetvalue, $offsetunit);
@@ -685,6 +690,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 					$db->commit();
 				}
 
+
 				// if (!empty($backtopage)) {
 				// 	dol_syslog("Back to ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
 				// 	header("Location: ".$backtopage.($moreparam ? (preg_match('/\?/', $backtopage) ? '&'.$moreparam : '?'.$moreparam) : ''));
@@ -710,7 +716,7 @@ if (empty($reshook) && $action == 'add' && $usercancreate) {
 			$donotclearsession = 1;
 		}
 
-		if ($eventisrecurring) {
+		if (!$error && $eventisrecurring) {
 			$dayoffset = 0;
 			$monthoffset = 0;
 			// We set first date of recurrence and offsets
@@ -1906,7 +1912,7 @@ if ($action == 'create') {
 }
 
 // View or edit
-if ($id > 0) {
+if ($id > 0 && $action != 'create') {
 	$result1 = $object->fetch($id);
 	if ($result1 <= 0) {
 		$langs->load("errors");
@@ -1952,18 +1958,6 @@ if ($id > 0) {
 		exit;
 	}
 
-	/*
-	if ($object->authorid > 0) {
-		$tmpuser = new User($db);
-		$res = $tmpuser->fetch($object->authorid);
-		$object->author = $tmpuser;
-	}
-	if ($object->usermodid > 0) {
-		$tmpuser = new User($db);
-		$res = $tmpuser->fetch($object->usermodid);
-		$object->usermod = $tmpuser;
-	}
-	*/
 
 	/*
 	 * Show tabs

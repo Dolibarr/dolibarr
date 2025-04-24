@@ -297,7 +297,7 @@ class Documentation
 	/**
 	 * Output sidebar
 	 *
-	 * @return void
+	 * @return 	void
 	 */
 	public function showSidebar()
 	{
