@@ -566,7 +566,11 @@ class Interventions extends DolibarrApi
 		if (empty($contacts)) {
 			throw new RestException(404, 'No intervention contacts found');
 		} else {
-			return $contacts;
+			$cleanedContacts = [];
+			foreach ($contacts as $contact) {
+				$cleanedContacts[] = $this->_cleanObjectDatas($contact);
+			}
+			return $cleanedContacts;
 		}
 	}
 }
