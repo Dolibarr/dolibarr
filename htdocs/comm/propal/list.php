@@ -272,7 +272,7 @@ $arrayfields = array(
 	'p.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 511, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
 	'has_orders' => array('label' => "Orders", 'checked' => 0, 'position' => 1000, 'enabled' => isModEnabled('order')),
-	'has_invoices' => array('label' => "Invoices", 'checked' => 0, 'position' => 1001, 'enabled' => !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')),
+	'has_invoices' => array('label' => "Invoices", 'checked' => 0, 'position' => 1001, 'enabled' => !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') ? 0 : 1),
 	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1002),
 );
 
@@ -2464,7 +2464,7 @@ while ($i < $imaxinloop) {
 		if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
 			print '<td class="nowrap center">';
 			if ($obj->nb_orders) {
-				$links = $objectstatic->linkedObjects['commande'] ?? [];	// fetchObjectLinked was already called earlier
+				$links = ($objectstatic) ? ($objectstatic->linkedObjects['commande'] ?? []) : [];	// fetchObjectLinked was already called earlier
 				$tooltip = '';
 				foreach ($links as $cmd) {
 					$tooltip .= empty($tooltip) ? '' : '<br>';
@@ -2481,7 +2481,7 @@ while ($i < $imaxinloop) {
 		if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
 			print '<td class="nowrap center">';
 			if ($obj->nb_invoices) {
-				$links = $objectstatic->linkedObjects['facture'] ?? [];		// fetchObjectLinked was already called earlier
+				$links = ($objectstatic) ? ($objectstatic->linkedObjects['facture'] ?? []) : [];		// fetchObjectLinked was already called earlier
 				$tooltip = '';
 				foreach ($links as $cmd) {
 					$tooltip .= empty($tooltip) ? '' : '<br>';
