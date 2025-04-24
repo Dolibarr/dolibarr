@@ -411,7 +411,7 @@ input[type=submit], input[type=submit]:hover {
 }
 input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
-	transform: scale(1.2);
+	transform: scale(1.3);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -471,6 +471,10 @@ section.setupsection {
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
+section.setupsection:hover {
+	box-shadow: 0 0 5px #aaa;
+}
+
 
 .field-error-icon { color: #ea1212 !important; }
 
@@ -833,15 +837,11 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	cursor: pointer;
 	text-decoration: none !important;
 	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border: 1px solid #aaa;
-	border-radius: 1px;
+	border-radius: 4px;
 
 	font-weight: bold;
 	text-transform: uppercase;

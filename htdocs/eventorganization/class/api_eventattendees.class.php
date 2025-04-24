@@ -306,7 +306,6 @@ class EventAttendees extends DolibarrApi
 		unset($object->rowid);
 		unset($object->module);
 		unset($object->entity);
-		unset($object->paid);
 
 		return $object;
 	}

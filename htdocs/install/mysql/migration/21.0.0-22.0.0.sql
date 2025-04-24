@@ -282,3 +282,4 @@ UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_ref;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee(ref);
 
+ALTER TABLE llx_don ADD COLUMN ip varchar(250);
