@@ -155,6 +155,8 @@ $search_date_signature_end = dol_mktime(23, 59, 59, $search_date_signature_endmo
 $search_status = GETPOST('search_status', 'alpha');
 $search_note_public = GETPOST('search_note_public', 'alpha');
 $search_import_key  = trim(GETPOST("search_import_key", "alpha"));
+$search_has_orders = (isModEnabled('order') && GETPOSTISSET('search_has_orders')) ? GETPOST('search_has_orders', 'int') : '';
+$search_has_invoices= (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && GETPOSTISSET('search_has_invoices')) ? GETPOST('search_has_invoices', 'int') : '';
 
 $search_option = GETPOST('search_option', 'alpha');
 if ($search_option == 'late') {
@@ -269,7 +271,9 @@ $arrayfields = array(
 	'p.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 510, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'p.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 511, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
-	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
+	'has_orders' => array('label' => "Orders", 'checked' => 0, 'position' => 1000, 'enabled' => isModEnabled('order')),
+	'has_invoices' => array('label' => "Invoices", 'checked' => 0, 'position' => 1001, 'enabled' => !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')),
+	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1002),
 );
 
 // List of fields to search into when doing a "search in all"
@@ -412,6 +416,8 @@ if (empty($reshook)) {
 		$search_date_signature_start = '';
 		$search_date_signature_end = '';
 		$search_import_key = '';
+		$search_has_orders = '';
+		$search_has_invoices = '';
 		$search_categ_cus = 0;
 
 		$search_all = '';
@@ -607,6 +613,19 @@ $sql .= $hookmanager->resPrint;
 $sql = preg_replace('/, $/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
+
+if (isModEnabled('order')) {
+    $sql .= ", (SELECT COUNT(elt.rowid)";
+    $sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
+    $sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='commande' AND elt.fk_source=p.rowid)";
+    $sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='commande' AND elt.fk_target=p.rowid)) as nb_orders";
+}
+if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
+    $sql .= ", (SELECT COUNT(elt.rowid)";
+    $sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
+    $sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='facture' AND elt.fk_source=p.rowid)";
+    $sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='facture' AND elt.fk_target=p.rowid)) as nb_invoices";
+}
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
@@ -853,10 +872,20 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
+$sql .= " HAVING 1=1";
+
+if (isModEnabled('order') && $search_has_orders != '' && $search_has_orders >= 0) {
+    $sql .= " AND nb_orders ". (($search_has_orders > 0) ? "> 0" : "= 0");
+}
+
+if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && $search_has_invoices != '' && $search_has_invoices >= 0) {
+    $sql .= " AND nb_invoices ". (($search_has_invoices > 0) ? "> 0" : "= 0");
+}
+
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+$sql .= $hookmanager->resPrint;
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1096,6 +1125,12 @@ if ($search_date_signature_endyear) {
 }
 if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
+}
+if (isModEnabled('order') && $search_has_orders != '' && $search_has_orders >= 0) {
+    $param .= '&search_has_orders=' . (((int)$search_has_orders) ? '1' : '0');
+}
+if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && $search_has_invoices != '' && $search_has_invoices >= 0) {
+    $param .= '&search_has_invoices=' . (((int)$search_has_invoices) ? '1' : '0');
 }
 
 // Add $param from extra fields
@@ -1516,6 +1551,18 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
+// Orders
+if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+    print $form->selectyesno('search_has_orders', $search_has_orders, 1, 0, 1, 1);
+	print '</td>';
+}
+// Invoices
+if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+    print $form->selectyesno('search_has_invoices', $search_has_invoices, 1, 0, 1, 1);
+	print '</td>';
+}
 // Status
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
 	print '<td class="liste_titre center parentonrightofpage">';
@@ -1735,6 +1782,14 @@ if (!empty($arrayfields['p.note_private']['checked'])) {
 // Import key
 if (!empty($arrayfields['p.import_key']['checked'])) {
 	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+// Orders
+if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
+	print_liste_field_titre($arrayfields['has_orders']['label'], $_SERVER["PHP_SELF"], "nb_orders", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+// Invoices
+if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
+	print_liste_field_titre($arrayfields['has_invoices']['label'], $_SERVER["PHP_SELF"], "nb_invoices", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 // Status
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
@@ -2401,6 +2456,40 @@ while ($i < $imaxinloop) {
 		// Import key
 		if (!empty($arrayfields['p.import_key']['checked'])) {
 			print '<td class="nowrap center">'.dol_escape_htmltag($obj->import_key).'</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Orders
+		if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
+			print '<td class="nowrap center">';
+            if ($obj->nb_orders) {
+                $links = $objectstatic->linkedObjects['commande'] ?? [];	// fetchObjectLinked was already called earlier
+                $tooltip = '';
+                foreach($links as $cmd) {
+                    $tooltip .= empty($tooltip) ? '' : '<br>';
+                    $tooltip .= $cmd->ref;
+                }
+                print '<div class="classfortooltip">'. yn($obj->nb_orders > 0, $tooltip) .'</div>';
+            }
+            print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+		// Invoices
+		if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
+			print '<td class="nowrap center">';
+            if ($obj->nb_invoices) {
+                $links = $objectstatic->linkedObjects['facture'] ?? [];		// fetchObjectLinked was already called earlier
+                $tooltip = '';
+                foreach($links as $cmd) {
+                    $tooltip .= empty($tooltip) ? '' : '<br>';
+                    $tooltip .= $cmd->ref;
+                }
+                print '<div class="classfortooltip">'. yn($obj->nb_invoices > 0, $tooltip) .'</div>';
+            }
+            print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
