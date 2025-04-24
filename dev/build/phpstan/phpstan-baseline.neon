@@ -7183,18 +7183,6 @@ parameters:
 			path: ../../../htdocs/core/boxes/box_customers_outstanding_bill_reached.php
 
 		-
-			message: '#^Call to function is_array\(\) with array\<''contacts''\|''contracts''\|''customers''\|''dolresource''\|''donations''\|''expensereports''\|''holidays''\|''interventions''\|''invoices''\|''members''\|''orders''\|''products''\|''projects''\|''proposals''\|''prospects''\|''services''\|''supplier_invoices''\|''supplier_orders''\|''supplier_proposals''\|''suppliers''\|''ticket''\|''users'', non\-falsy\-string\> will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/boxes/box_dolibarr_state_board.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Adherent\|Client\|Commande\|CommandeFournisseur\|Contact\|Contrat\|Dolresource\|Don\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Fournisseur\|Holiday\|Product\|Project\|Propal\|SupplierProposal\|Ticket\|User and ''loadStateBoard'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: ../../../htdocs/core/boxes/box_dolibarr_state_board.php
-
-		-
 			message: '#^Constructor of class box_dolibarr_state_board has an unused parameter \$param\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
