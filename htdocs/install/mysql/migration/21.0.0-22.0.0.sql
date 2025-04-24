@@ -278,3 +278,5 @@ ALTER TABLE llx_societe_rib ADD COLUMN cci varchar(100) after iban_prefix;    --
 
 ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_ref;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee(ref);
+
+ALTER TABLE llx_don ADD COLUMN ip varchar(250);
