@@ -2472,7 +2472,7 @@ while ($i < $imaxinloop) {
 				}
 				print '<div class="classfortooltip">'. yn($obj->nb_orders > 0, $tooltip) .'</div>';
 			}
-            print '</td>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -2489,7 +2489,7 @@ while ($i < $imaxinloop) {
 				}
 				print '<div class="classfortooltip">'. yn($obj->nb_invoices > 0, $tooltip) .'</div>';
 			}
-            print '</td>';
+			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
