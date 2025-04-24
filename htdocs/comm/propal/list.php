@@ -2464,7 +2464,7 @@ while ($i < $imaxinloop) {
 		if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
 			print '<td class="nowrap center">';
 			if ($obj->nb_orders) {
-				$links = ($objectstatic) ? ($objectstatic->linkedObjects['commande'] ?? []) : [];	// fetchObjectLinked was already called earlier
+				$links = $object->linkedObjects['commande'] ?? [];	// fetchObjectLinked was already called earlier
 				$tooltip = '';
 				foreach ($links as $cmd) {
 					$tooltip .= empty($tooltip) ? '' : '<br>';
@@ -2481,7 +2481,7 @@ while ($i < $imaxinloop) {
 		if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
 			print '<td class="nowrap center">';
 			if ($obj->nb_invoices) {
-				$links = ($objectstatic) ? ($objectstatic->linkedObjects['facture'] ?? []) : [];		// fetchObjectLinked was already called earlier
+				$links = $object->linkedObjects['facture'] ?? [];		// fetchObjectLinked was already called earlier
 				$tooltip = '';
 				foreach ($links as $cmd) {
 					$tooltip .= empty($tooltip) ? '' : '<br>';
