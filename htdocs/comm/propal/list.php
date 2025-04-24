@@ -615,16 +615,16 @@ $sql = preg_replace('/, $/', '', $sql);
 $sqlfields = $sql; // $sql fields to remove for count total
 
 if (isModEnabled('order')) {
-    $sql .= ", (SELECT COUNT(elt.rowid)";
-    $sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
-    $sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='commande' AND elt.fk_source=p.rowid)";
-    $sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='commande' AND elt.fk_target=p.rowid)) as nb_orders";
+	$sql .= ", (SELECT COUNT(elt.rowid)";
+	$sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
+	$sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='commande' AND elt.fk_source=p.rowid)";
+	$sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='commande' AND elt.fk_target=p.rowid)) as nb_orders";
 }
 if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
-    $sql .= ", (SELECT COUNT(elt.rowid)";
-    $sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
-    $sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='facture' AND elt.fk_source=p.rowid)";
-    $sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='facture' AND elt.fk_target=p.rowid)) as nb_invoices";
+	$sql .= ", (SELECT COUNT(elt.rowid)";
+	$sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
+	$sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='facture' AND elt.fk_source=p.rowid)";
+	$sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='facture' AND elt.fk_target=p.rowid)) as nb_invoices";
 }
 
 $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
@@ -875,11 +875,11 @@ $sql .= $hookmanager->resPrint;
 $sql .= " HAVING 1=1";
 
 if (isModEnabled('order') && $search_has_orders != '' && $search_has_orders >= 0) {
-    $sql .= " AND nb_orders ". (($search_has_orders > 0) ? "> 0" : "= 0");
+	$sql .= " AND nb_orders ". (($search_has_orders > 0) ? "> 0" : "= 0");
 }
 
 if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && $search_has_invoices != '' && $search_has_invoices >= 0) {
-    $sql .= " AND nb_invoices ". (($search_has_invoices > 0) ? "> 0" : "= 0");
+	$sql .= " AND nb_invoices ". (($search_has_invoices > 0) ? "> 0" : "= 0");
 }
 
 // Add HAVING from hooks
@@ -1127,10 +1127,10 @@ if ($search_import_key != '') {
 	$param .= '&search_import_key='.urlencode($search_import_key);
 }
 if (isModEnabled('order') && $search_has_orders != '' && $search_has_orders >= 0) {
-    $param .= '&search_has_orders=' . (((int)$search_has_orders) ? '1' : '0');
+	$param .= '&search_has_orders=' . (((int) $search_has_orders) ? '1' : '0');
 }
 if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && $search_has_invoices != '' && $search_has_invoices >= 0) {
-    $param .= '&search_has_invoices=' . (((int)$search_has_invoices) ? '1' : '0');
+	$param .= '&search_has_invoices=' . (((int) $search_has_invoices) ? '1' : '0');
 }
 
 // Add $param from extra fields
@@ -1554,13 +1554,13 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 // Orders
 if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-    print $form->selectyesno('search_has_orders', $search_has_orders, 1, 0, 1, 1);
+	print $form->selectyesno('search_has_orders', $search_has_orders, 1, 0, 1, 1);
 	print '</td>';
 }
 // Invoices
 if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
-    print $form->selectyesno('search_has_invoices', $search_has_invoices, 1, 0, 1, 1);
+	print $form->selectyesno('search_has_invoices', $search_has_invoices, 1, 0, 1, 1);
 	print '</td>';
 }
 // Status
@@ -2463,15 +2463,15 @@ while ($i < $imaxinloop) {
 		// Orders
 		if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
 			print '<td class="nowrap center">';
-            if ($obj->nb_orders) {
-                $links = $objectstatic->linkedObjects['commande'] ?? [];	// fetchObjectLinked was already called earlier
-                $tooltip = '';
-                foreach($links as $cmd) {
-                    $tooltip .= empty($tooltip) ? '' : '<br>';
-                    $tooltip .= $cmd->ref;
-                }
-                print '<div class="classfortooltip">'. yn($obj->nb_orders > 0, $tooltip) .'</div>';
-            }
+			if ($obj->nb_orders) {
+				$links = $objectstatic->linkedObjects['commande'] ?? [];	// fetchObjectLinked was already called earlier
+				$tooltip = '';
+				foreach ($links as $cmd) {
+					$tooltip .= empty($tooltip) ? '' : '<br>';
+					$tooltip .= $cmd->ref;
+				}
+				print '<div class="classfortooltip">'. yn($obj->nb_orders > 0, $tooltip) .'</div>';
+			}
             print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
@@ -2480,15 +2480,15 @@ while ($i < $imaxinloop) {
 		// Invoices
 		if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
 			print '<td class="nowrap center">';
-            if ($obj->nb_invoices) {
-                $links = $objectstatic->linkedObjects['facture'] ?? [];		// fetchObjectLinked was already called earlier
-                $tooltip = '';
-                foreach($links as $cmd) {
-                    $tooltip .= empty($tooltip) ? '' : '<br>';
-                    $tooltip .= $cmd->ref;
-                }
-                print '<div class="classfortooltip">'. yn($obj->nb_invoices > 0, $tooltip) .'</div>';
-            }
+			if ($obj->nb_invoices) {
+				$links = $objectstatic->linkedObjects['facture'] ?? [];		// fetchObjectLinked was already called earlier
+				$tooltip = '';
+				foreach ($links as $cmd) {
+					$tooltip .= empty($tooltip) ? '' : '<br>';
+					$tooltip .= $cmd->ref;
+				}
+				print '<div class="classfortooltip">'. yn($obj->nb_invoices > 0, $tooltip) .'</div>';
+			}
             print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
