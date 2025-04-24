@@ -2470,7 +2470,7 @@ while ($i < $imaxinloop) {
 					$tooltip .= empty($tooltip) ? '' : '<br>';
 					$tooltip .= $cmd->ref;
 				}
-				print '<div class="classfortooltip">'. yn($obj->nb_orders > 0, $tooltip) .'</div>';
+				print '<div class="classfortooltip">'. yn(($obj->nb_orders > 0) ? 1 : 0, $tooltip) .'</div>';
 			}
 			print '</td>';
 			if (!$i) {
@@ -2487,7 +2487,7 @@ while ($i < $imaxinloop) {
 					$tooltip .= empty($tooltip) ? '' : '<br>';
 					$tooltip .= $cmd->ref;
 				}
-				print '<div class="classfortooltip">'. yn($obj->nb_invoices > 0, $tooltip) .'</div>';
+				print '<div class="classfortooltip">'. yn(($obj->nb_invoices > 0) ? 1 : 0, $tooltip) .'</div>';
 			}
 			print '</td>';
 			if (!$i) {
