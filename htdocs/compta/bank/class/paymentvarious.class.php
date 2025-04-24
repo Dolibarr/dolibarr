@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017-2021  Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ class PaymentVarious extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		// TODO: fill this array
@@ -259,7 +259,7 @@ class PaymentVarious extends CommonObject
 		$sql .= " note='".$this->db->escape($this->note)."',";
 		$sql .= " accountancy_code='".$this->db->escape($this->accountancy_code)."',";
 		$sql .= " subledger_account='".$this->db->escape($this->subledger_account)."',";
-		$sql .= " fk_projet='".$this->db->escape($this->fk_project)."',";
+		$sql .= " fk_projet='".$this->db->escape((string) $this->fk_project)."',";
 		$sql .= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank : "null").",";
 		$sql .= " fk_user_author=".(int) $this->fk_user_author.",";
 		$sql .= " fk_user_modif=".(int) $this->fk_user_modif;
@@ -295,7 +295,7 @@ class PaymentVarious extends CommonObject
 	 *  Load object in memory from database
 	 *
 	 *  @param	int		$id         id object
-	 *  @param  User	$user       User that load
+	 *  @param  ?User	$user       User that load
 	 *  @return int         		Return integer <0 if KO, >0 if OK
 	 */
 	public function fetch($id, $user = null)
@@ -509,9 +509,9 @@ class PaymentVarious extends CommonObject
 		$sql .= " VALUES (";
 		$sql .= "'".$this->db->idate($this->datep)."'";
 		$sql .= ", '".$this->db->idate($this->datev)."'";
-		$sql .= ", '".$this->db->escape($this->sens)."'";
+		$sql .= ", '".$this->db->escape((string) $this->sens)."'";
 		$sql .= ", ".price2num($this->amount);
-		$sql .= ", '".$this->db->escape($this->type_payment)."'";
+		$sql .= ", '".$this->db->escape((string) $this->type_payment)."'";
 		$sql .= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) {
 			$sql .= ", '".$this->db->escape($this->note)."'";
@@ -552,7 +552,7 @@ class PaymentVarious extends CommonObject
 
 					$bank_line_id = $acc->addline(
 						$this->datep,
-						$this->type_payment,
+						(string) $this->type_payment,
 						$this->label,
 						$sign * abs($this->amount),
 						$this->num_payment,
@@ -683,7 +683,7 @@ class PaymentVarious extends CommonObject
 
 
 	/**
-	 *	Send name clicable (with possibly the picto)
+	 *	Send name clickable (with possibly the picto)
 	 *
 	 *	@param  int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param  string	$option						link option
@@ -724,9 +724,9 @@ class PaymentVarious extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowMyObject");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -767,7 +767,7 @@ class PaymentVarious extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author';
+		$sql = 'SELECT v.rowid, v.datec, v.fk_user_author, fk_user_modif, tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'payment_various as v';
 		$sql .= ' WHERE v.rowid = '.((int) $id);
 
@@ -780,6 +780,7 @@ class PaymentVarious extends CommonObject
 
 				$this->id = $obj->rowid;
 				$this->user_creation = $obj->fk_user_author;
+				$this->user_creation_id = $obj->fk_user_author;
 				$this->user_modification_id = $obj->fk_user_modif;
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->tms);
@@ -793,9 +794,10 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Return if a various payment linked to a bank line id was dispatched into bookkeeping
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Return nb of record, 1=return the transaction ID (piece_num)
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$banklineid = $this->fk_bank;
 
@@ -803,7 +805,8 @@ class PaymentVarious extends CommonObject
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $banklineid);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -816,23 +819,25 @@ class PaymentVarious extends CommonObject
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
 		global $langs;
 
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+		$bankline = ((empty($arraydata['bankline']) || empty($arraydata['bankline']->id)) ? 0 : $arraydata['bankline']);
+		$formatedaccountancycode = (empty($arraydata['formatedaccountancycode']) ? '' : $arraydata['formatedaccountancycode']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
 		$return .= '<div class="info-box info-box-sm">';
@@ -844,18 +849,23 @@ class PaymentVarious extends CommonObject
 		if ($selected >= 0) {
 			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
 		}
-		if (property_exists($this, 'fk_bank')) {
-			$return .= ' | <span class="info-box-status ">'.$this->fk_bank.'</span>';
+		if (!empty($bankline) && $bankline instanceof AccountLine) {
+			$return .= ' | <span class="info-box-status ">'.$bankline->getNomUrl(1).'</span>';
 		}
 		if (property_exists($this, 'datep')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Date").'</span> : <span class="info-box-label">'.dol_print_date($this->db->jdate($this->datep), 'day').'</span>';
+			if ($this->type_payment) {
+				$return .= ' - <span class="info-box-label">'.$this->type_payment.'</span>';
+			}
 		}
-		if (property_exists($this, 'type_payment') && !empty($this->type_payment)) {
-			$return .= '<br><span class="opacitymedium">'.$langs->trans("Payment", $this->type_payment).'</span> : <span class="info-box-label">'.$this->type_payment.'</span>';
-		}
-		if (property_exists($this, 'accountancy_code')) {
+		if (!empty($formatedaccountancycode)) {
+			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">';
+			$return .= $formatedaccountancycode;
+			$return .= '</span>';
+		} elseif (property_exists($this, 'accountancy_code')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Account").'</span> : <span class="info-box-label" title="'.$this->accountancy_code.'">'.$this->accountancy_code.'</span>';
 		}
+
 		if (property_exists($this, 'amount')) {
 			$return .= '<br><span class="opacitymedium">'.$langs->trans("Debit").'</span> : <span class="info-box-label amount">'.price($this->amount).'</span>';
 		}
@@ -878,7 +888,7 @@ class PaymentVarious extends CommonObject
 		/*
 		if (isModEnabled('accounting')) {
 			$accountingaccount = new AccountingAccount($db);
-			$accountingaccount->fetch('', $valuetoshow, 1);
+			$accountingaccount->fetch(0, $valuetoshow, 1);
 		}*/
 
 		return length_accountg($account);

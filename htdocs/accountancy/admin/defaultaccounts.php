@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2014-2015  Ari Elbaz (elarifr)     <github@accedinfo.com>
- * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014       Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014	Florian Henry				<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
+ * Copyright (C) 2014		Marcos García				<marcosgdf@gmail.com>
+ * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2024		Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,15 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "bills", "admin", "accountancy", "salaries", "trips", "loan"));
@@ -123,8 +132,9 @@ if (isModEnabled('societe')) {
  * Actions
  */
 
+$error = 0;
+
 if ($action == 'update') {
-	$error = 0;
 	// Process $list_account_main
 	foreach ($list_account_main as $constname) {
 		$constvalue = GETPOST($constname, 'alpha');
@@ -205,7 +215,7 @@ $formaccounting = new FormAccounting($db);
 
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
 
-llxHeader('', $langs->trans('MenuDefaultAccounts'), $help_url);
+llxHeader('', $langs->trans('MenuDefaultAccounts'), $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_defaultaccounts');
 
 $linkback = '';
 print load_fiche_titre($langs->trans('MenuDefaultAccounts'), $linkback, 'title_accountancy');
@@ -244,7 +254,7 @@ foreach ($list_account_main as $key) {
 	// Value
 	print '<td class="right">'; // Do not force class=right, or it align also the content of the select box
 	$key_value = getDolGlobalString($key);
-	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain');
+	print $formaccounting->select_account($key_value, $key, 1, [], 1, 1, 'minwidth100 maxwidth300 maxwidthonsmartphone', 'accountsmain', '1', 2);
 	print '</td>';
 	print '</tr>';
 }
@@ -314,7 +324,7 @@ if (isModEnabled('societe') && getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER_D
 	print '<td>' . img_picto('', 'bill', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnCustomerDeposit") . '</td>';
 	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT')) {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
+		print img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', 'warning');
 		print '</a></td>';
 	} else {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_CUSTOMER_USE_AUXILIARY_ON_DEPOSIT&value=1">';
@@ -341,7 +351,7 @@ if (isModEnabled('societe') && getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER_D
 	print '<td>' . img_picto('', 'supplier_invoice', 'class="pictofixedwidth"') . $langs->trans("UseAuxiliaryAccountOnSupplierDeposit") . '</td>';
 	if (getDolGlobalInt('ACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT')) {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT&value=0">';
-		print img_picto($langs->trans("Activated"), 'switch_on', '', false, 0, 0, '', 'warning');
+		print img_picto($langs->trans("Activated"), 'switch_on', '', 0, 0, 0, '', 'warning');
 		print '</a></td>';
 	} else {
 		print '<td class="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?token=' . newToken() . '&action=setACCOUNTING_ACCOUNT_SUPPLIER_USE_AUXILIARY_ON_DEPOSIT&value=1">';

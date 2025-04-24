@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2014		Alexandre Spangaro   <aspangaro@open-dsi.fr>
--- Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+-- Copyright (C) 2015       Frédéric France      <frederic.france@free.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -40,16 +40,16 @@ create table llx_loan
 
   capital_position				double(24,8) DEFAULT 0,		-- If not a new loan, just have the position of capital
   date_position					date,
-  
+
   paid							smallint default 0 NOT NULL,
 
   accountancy_account_capital	varchar(32),
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),
-  
+
   fk_projet						integer DEFAULT NULL,
-  
+
   fk_user_author				integer DEFAULT NULL,
-  fk_user_modif					integer DEFAULT NULL, 
+  fk_user_modif					integer DEFAULT NULL,
   active						tinyint DEFAULT 1  NOT NULL
 )ENGINE=innodb;

@@ -2,6 +2,7 @@
 /* Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015	   Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,12 +94,12 @@ class FunctionsLibTest extends CommonClassTest
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_UNIT != 5) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT') != 5) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 5 for this test.\n";
 			die(1);
 		}
 
-		if ($conf->global->MAIN_MAX_DECIMALS_TOT != 2) {
+		if (getDolGlobalInt('MAIN_MAX_DECIMALS_TOT') != 2) {
 			print "\n".__METHOD__." bad setup for number of digits for unit amount. Must be 2 for this test.\n";
 			die(1);
 		}
@@ -208,11 +209,11 @@ class FunctionsLibTest extends CommonClassTest
 	}
 
 	/**
-	 * testDolForgeCriteriaCallback
+	 * testDolForgeSQLCriteriaCallback
 	 *
 	 * @return boolean
 	 */
-	public function testDolForgeCriteriaCallback()
+	public function testDolForgeSQLCriteriaCallback()
 	{
 		global $conf, $langs, $db;
 
@@ -372,18 +373,23 @@ class FunctionsLibTest extends CommonClassTest
 
 		$input = "yahoo.com";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(1, $result);
 
 		$input = "yhaoo.com";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
 
 		$input = "dolibarr.fr";
 		$result = isValidMXRecord($input);
-		print __METHOD__." result=".$result."\n";
+		print __METHOD__." ".$input." result=".$result."\n";
 		$this->assertEquals(0, $result);
+
+		$input = "usace.army.mil";
+		$result = isValidMXRecord($input);
+		print __METHOD__." ".$input." result=".$result."\n";
+		$this->assertEquals(1, $result);
 	}
 
 	/**
@@ -477,10 +483,10 @@ class FunctionsLibTest extends CommonClassTest
 
 
 	/**
-	* testGetBrowserInfo
-	*
-	* @return void
-	*/
+	 * testGetBrowserInfo
+	 *
+	 * @return void
+	 */
 	public function testGetBrowserInfo()
 	{
 		// MSIE 5.0
@@ -1133,6 +1139,18 @@ class FunctionsLibTest extends CommonClassTest
 		$result = dol_escape_htmltag($input, 1);
 		$this->assertEquals('x&amp;&lt;b&gt;#&lt;/b&gt;,&quot;', $result);
 
+		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub%20Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
+		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub%20Mark-ea2971cee799.png">', $result);
+
+		$input = '<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1, 1, 'common');
+		$this->assertEquals('<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">', $result);
+
+		$input = '<img src="data:image/png;base64, 123/456+789==" style="height: 123px; width:456px">';    // & and " are converted into html entities, <b> are not removed
+		$result = dol_escape_htmltag($input, 1);
+		$this->assertEquals('&lt;img src=&quot;data:image/png;base64, 123/456+789==&quot; style=&quot;height: 123px; width:456px&quot;&gt;', $result);
+
 		$input = '<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">';    // & and " are converted into html entities, <b> are not removed
 		$result = dol_escape_htmltag($input, 1, 1, 'common', 0, 1);
 		$this->assertEquals('<img alt="" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png">', $result);
@@ -1207,19 +1225,19 @@ class FunctionsLibTest extends CommonClassTest
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code);
-		$this->assertEquals('<span style="margin-right: 10px;">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
+		$this->assertEquals('<span class="paddingright">12&nbsp;34&nbsp;56&nbsp;78&nbsp;90</span>', $phone, 'Phone for FR 1');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, '');
-		$this->assertEquals('<span style="margin-right: 10px;">1234567890</span>', $phone, 'Phone for FR 2');
+		$this->assertEquals('<span class="paddingright">1234567890</span>', $phone, 'Phone for FR 2');
 
 		$object->country_code = 'FR';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
+		$this->assertEquals('<span class="paddingright">12 34 56 78 90</span>', $phone, 'Phone for FR 3');
 
 		$object->country_code = 'CA';
 		$phone = dol_print_phone('1234567890', $object->country_code, 0, 0, 0, ' ');
-		$this->assertEquals('<span style="margin-right: 10px;">(123) 456-7890</span>', $phone, 'Phone for CA 1');
+		$this->assertEquals('<span class="paddingright">(123) 456-7890</span>', $phone, 'Phone for CA 1');
 	}
 
 
@@ -1570,6 +1588,7 @@ class FunctionsLibTest extends CommonClassTest
 
 		$oldlangs = $langs;
 
+		// For US language SeparatorThousand=, and SeparatorDecimal=.
 		$newlangs = new Translate('', $conf);
 		$newlangs->setDefaultLang('en_US');
 		$newlangs->load("main");
@@ -1581,7 +1600,10 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(1000, price2num('1 000', 'MT'));
 		$this->assertEquals(1000, price2num('1 000', 'MU'));
 
-		$this->assertEquals(1000.123456, price2num('1 000.123456'));
+		$this->assertEquals(1000.123456, price2num('1 000.123456'), 'Test 1 000.123456 give 1000.123456 with us language');
+		$this->assertEquals(1000.123456, price2num('1,000.123456'), 'Test 1,000.123456 give 1000.123456 with us language');
+		$this->assertEquals(1000.123, price2num('1 000.123'), 'Test 1 000.123 give 1000.123 with us language');
+		$this->assertEquals(1000.123, price2num('1,000.123'), 'Test 1,000.123 give 1000.123 with us language');
 
 		// Round down
 		$this->assertEquals(1000.12, price2num('1 000.123452', 'MT'), 'Error in round down with MT');
@@ -1597,7 +1619,10 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals('12.4', price2num('12.4$'));
 		$this->assertEquals('12.4', price2num('12r.4$'));
 
-		// For spanish language
+		$this->assertEquals('1.023210.00', price2num('1.023,210.00'), 'Test invalid 1.023,210.00 with en_US');
+		$this->assertEquals('1023.21000', price2num('1,023.210,00'), 'Test invalid 1,023.210,00 with en_US');
+
+		// For spanish language SeparatorThousand=. and SeparatorDecimal=,
 		$newlangs2 = new Translate('', $conf);
 		$newlangs2->setDefaultLang('es_ES');
 		$newlangs2->load("main");
@@ -1606,25 +1631,29 @@ class FunctionsLibTest extends CommonClassTest
 		// Test with 3 chars after . or ,
 		// If a . is used and there is 3 digits after, it is a thousand separator
 		$this->assertEquals(1234, price2num('1.234', '', 2), 'Test 1.234 give 1234 with spanish language if user input');
-		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1234 with spanish language if user input');
+		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1.234 with spanish language if user input');
 		$this->assertEquals(1234, price2num('1 234', '', 2), 'Test 1 234 give 1234 with spanish language if user input');
-		$this->assertEquals(-1.234, price2num('-1.234'), 'Test 1.234 give 1.234 with spanish language');
-		$this->assertEquals(-1.234, price2num('-1,234'), 'Test 1,234 give 1234 with spanish language');
-		$this->assertEquals(-1234, price2num('-1 234'), 'Test 1 234 give 1234 with spanish language');
-		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language');
+		$this->assertEquals(-1.234, price2num('-1.234'), 'Test -1.234 give 1.234 with spanish language and not user input (this differs when user input)');
+		$this->assertEquals(-1.234, price2num('-1,234'), 'Test -1,234 give 1234 with spanish language and not user input');
+		$this->assertEquals(-1234, price2num('-1 234'), 'Test -1 234 give 1234 with spanish language and not user input');
+		$this->assertEquals(1111.234, price2num('1.111,234'), 'Test 1.111,234 give 1111.234 with spanish language and not user input');
+		$this->assertEquals(21500123, price2num('21.500.123'), 'Test 21.500.123 give 21500123 with spanish language and not user input');
 		$this->assertEquals(21500123, price2num('21500.123', 0, 2), 'Test 21500.123 give 21500123 with spanish language if user input');
-		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language');
-		$this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language');
-		// Test with 2 digits
-		$this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language');
-		$this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language');
+		$this->assertEquals(21500123, price2num('21 500.123', 0, 2), 'Test 21 500.123 give 21500123 with spanish language if user input');
+		$this->assertEquals(21500.123, price2num('21500.123'), 'Test 21500.123 give 21500123 with spanish language and not user input');
+		$this->assertEquals(21500.123, price2num('21500,123'), 'Test 21500,123 give 21500.123 with spanish language and not user input');
+		// Test with 2 digits (we can guess that , is not a thousand separator)
+		$this->assertEquals(21500.12, price2num('21500.12'), 'Test 21500.12 give 21500.12 with spanish language and not user input');
+		$this->assertEquals(21500.12, price2num('21500,12'), 'Test 21500,12 give 21500.12 with spanish language and not user input');
 		// Test with 3 digits
 		$this->assertEquals(12123, price2num('12.123', '', 2), 'Test 12.123 give 12123 with spanish language if user input');
 		$this->assertEquals(12.123, price2num('12,123', '', 2), 'Test 12,123 give 12.123 with spanish language if user input');
-		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language');
-		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language');
+		$this->assertEquals(1012.123, price2num('1.012,123', '', 2), 'Test 1.012,123 give 1012.123 with spanish language if user input');
+		$this->assertEquals(1012.123, price2num('1 012,123', '', 2), 'Test 1 012,123 give 1012.123 with spanish language if user input');
+		$this->assertEquals(12.123, price2num('12.123'), 'Test 12.123 give 12.123 with spanish language and not user input');
+		$this->assertEquals(12.123, price2num('12,123'), 'Test 12,123 give 12.123 with spanish language and not user input');
 
-		// For french language
+		// For french language SeparatorThousand=Space and SeparatorDecimal=,
 		$newlangs3 = new Translate('', $conf);
 		$newlangs3->setDefaultLang('fr_FR');
 		$newlangs3->load("main");
@@ -1637,10 +1666,15 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(1.234, price2num('1.234'), 'Test 1.234 give 1.234 with french language');
 		$this->assertEquals(1.234, price2num('1,234', '', 2), 'Test 1,234 give 1.234 with french language if user input');
 		$this->assertEquals(1.234, price2num('1,234'), 'Test 1,234 give 1.234 with french language');
+		$this->assertEquals(1111.234, price2num('1 111,234'), 'Test 1 111,234 give 1111.234 with french language');
 		$this->assertEquals(21500000, price2num('21500 000'), 'Test 21500 000 give 21500000 with french language');
 		$this->assertEquals(21500000, price2num('21 500 000'), 'Test 21 500 000 give 21500000 with french language');
 		$this->assertEquals(21500, price2num('21500.00'), 'Test 21500.00 give 21500 with french language');
 		$this->assertEquals(21500, price2num('21500,00'), 'Test 21500,00 give 21500 with french language');
+
+		$this->assertEquals(21500, price2num('21.500,00'), 'Test 21.500,00 give 21500 with french language');
+		$this->assertEquals('1.023.210.00', price2num('1.023,210.00'), 'Test invalid 1.023,210.00 with french language');
+		$this->assertEquals('1.023.210.00', price2num('1,023.210,00'), 'Test invalid 1,023.210,00 with french language');
 
 		$langs = $oldlangs;
 
@@ -1864,7 +1898,7 @@ class FunctionsLibTest extends CommonClassTest
 	/**
 	 * testFetchObjectByElement
 	 *
-	 * @return boolean;
+	 * @return boolean
 	 */
 	public function testFetchObjectByElement()
 	{
@@ -1877,11 +1911,10 @@ class FunctionsLibTest extends CommonClassTest
 		return true;
 	}
 
-
 	/**
 	 * testRoundUpToNextMultiple
 	 *
-	 * @return void;
+	 * @return void
 	 */
 	public function testRoundUpToNextMultiple()
 	{
@@ -1900,5 +1933,85 @@ class FunctionsLibTest extends CommonClassTest
 		$this->assertEquals(roundUpToNextMultiple(40, 6), 42);
 		$this->assertEquals(roundUpToNextMultiple(40.5, 6), 42);
 		$this->assertEquals(roundUpToNextMultiple(44.5, 6), 48);
+	}
+
+	/**
+	 * testNaturalSearch
+	 *
+	 * @return void
+	 */
+	public function testNaturalSearch()
+	{
+		global $db;
+
+		$s = natural_search("t.field", "abc def");
+		$this->assertEquals(" AND (t.field LIKE '%abc%' AND t.field LIKE '%def%')", $s);
+
+		$s = natural_search("t.field", "'abc def' ghi");
+		$this->assertEquals(" AND (t.field LIKE '%abc def%' AND t.field LIKE '%ghi%')", $s);
+
+		$s = natural_search("t.field", "abc def,ghi", 3);				// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi'))", $s);
+
+		$s = natural_search("t.field", "'ab\'c' def','ghi', 'jkl'", 3);	// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('abc def','ghi','jkl'))", $s);
+
+		$s = natural_search("t.field", "a,b", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('a','b'))", $s);
+
+		$s = natural_search("t.field", "A'@%B", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('AB'))", $s);
+
+		/*
+		$s = $db->sanitize("a,b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a',b", 1);
+		var_dump($s);
+		$s = $db->sanitize("'a'b',c", 1);
+		var_dump($s);
+		*/
+
+		$s = natural_search("t.field", "KØB", 3);						// mode 3 is to provide a list of string separated with coma
+		$this->assertEquals(" AND (t.field IN ('KØB'))", $s);
+	}
+
+	/**
+	 * testDolExplodeKeepIfQuotes
+	 *
+	 * @return void
+	 */
+	public function testDolExplodeKeepIfQuotes()
+	{
+		global $db;
+
+		$result = dolExplodeKeepIfQuotes("a b");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("'a' 'b'");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b' c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+		$this->assertEquals("c", $result[2]);
+
+		$result = dolExplodeKeepIfQuotes("a b'c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b'c", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b'c");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b", $result[1]);
+		$this->assertEquals("c", $result[2]);
+
+		$result = dolExplodeKeepIfQuotes("a 'b c'");
+		$this->assertEquals("a", $result[0]);
+		$this->assertEquals("b c", $result[1]);
+
+		$result = dolExplodeKeepIfQuotes("1 0");
+		$this->assertEquals("1", $result[0]);
+		$this->assertEquals("0", $result[1]);
 	}
 }

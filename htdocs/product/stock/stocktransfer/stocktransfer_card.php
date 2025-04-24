@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2017 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/class/stocktransfer
 require_once DOL_DOCUMENT_ROOT.'/product/stock/stocktransfer/lib/stocktransfer_stocktransfer.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stocktransfer/modules_stocktransfer.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("stocks", "other", "productbatch", "companies"));
 if (isModEnabled('incoterm')) {
@@ -46,6 +54,7 @@ if (isModEnabled('incoterm')) {
 // Get parameters
 $id = GETPOSTINT('id');
 $ref        = GETPOST('ref', 'alpha');
+
 $action = GETPOST('action', 'aZ09');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
@@ -60,8 +69,10 @@ $lineid   = GETPOSTINT('lineid');
 $label = GETPOST('label', 'alpha');
 $batch = GETPOST('batch', 'alpha');
 $code_inv = GETPOST('inventorycode', 'alphanohtml');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new StockTransfer($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->stocktransfer->dir_output.'/temp/massgeneration/'.$user->id;
@@ -86,7 +97,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 
 $permissiontoread = $user->hasRight('stocktransfer', 'stocktransfer', 'read');
@@ -153,7 +164,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
@@ -193,7 +204,7 @@ if (empty($reshook)) {
 			}
 		}
 
-		if ($prod->status_batch==2 && abs($qty)>1) {
+		if ($prod->status_batch == 2 && abs($qty) > 1) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 		}
@@ -251,12 +262,12 @@ if (empty($reshook)) {
 		} else {
 			if (!empty($batch)) {
 				$error++;
-				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), '', 'errors');
+				setEventMessages($langs->transnoentities('StockTransferNoBatchForProduct', $prod->getNomUrl()), null, 'errors');
 				$action = 'editline';
 			}
 		}
 
-		if ($prod->status_batch==2 && abs($qty)>1) {
+		if ($prod->status_batch == 2 && abs($qty) > 1) {
 			$error++;
 			setEventMessages($langs->transnoentities('TooManyQtyForSerialNumber', $prod->ref), null, 'errors');
 			$action = 'editline';
@@ -297,7 +308,7 @@ if (empty($reshook)) {
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_TRANSFERED, $id);
 				$object->status = $object::STATUS_TRANSFERED;
-				$object->date_reelle_depart = date('Y-m-d');
+				$object->date_reelle_depart = dol_now();
 				$object->update($user);
 				setEventMessage('StockStransferDecremented');
 			}
@@ -351,7 +362,7 @@ if (empty($reshook)) {
 			if (empty($error)) {
 				$object->setStatut($object::STATUS_CLOSED, $id);
 				$object->status = $object::STATUS_CLOSED;
-				$object->date_reelle_arrivee = date('Y-m-d');
+				$object->date_reelle_arrivee = dol_now();
 				$object->update($user);
 				setEventMessage('StockStransferIncrementedShort');
 			}
@@ -387,7 +398,7 @@ if (empty($reshook)) {
 
 	// Set incoterm
 	if ($action == 'set_incoterms' && isModEnabled('incoterm') && $permissiontoadd) {
-		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOSTINT('location_incoterms'));
+		$result = $object->setIncoterms(GETPOSTINT('incoterm_id'), GETPOST('location_incoterms'));
 	}
 	// Actions to send emails
 	$triggersendname = 'STOCKTRANSFER_SENTBYMAIL';
@@ -547,10 +558,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'deleteline') {
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_deleteline', '', 0, 1);
 	}
+	$formquestion = array();
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
-		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	} elseif ($action == 'destock') { // Destock confirmation
 		// Create an array for form
@@ -581,23 +592,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		);
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('AddStockAllProductCancel'), '', 'confirm_addstockcancel', $formquestion, 'yes', 1);
 	}
-
-	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
-	if ($action == 'xxx') {
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
-
 
 	if ($action == 'valid' && $permissiontoadd) {
 		$nextref = $object->getNextNumRef();
@@ -630,13 +624,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Project
 	if (isModEnabled('project')) {
 		$langs->load("projects");
-		$morehtmlref .= '<br>';
+		$morehtmlref .= (empty($object->thirdparty) ? '' : '<br>');
 		if ($permissiontoadd) {
 			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -930,9 +924,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$filtertype = '';
 		}
 		if (getDolGlobalInt('PRODUIT_LIMIT_SIZE') <= 0) {
-			$limit = '';
+			$limit = 0;
 		} else {
-			$limit = getDolGlobalString('PRODUIT_LIMIT_SIZE');
+			$limit = getDolGlobalInt('PRODUIT_LIMIT_SIZE');
 		}
 
 		$form->select_produits($fk_product, 'fk_product', $filtertype, $limit, 0, -1, 2, '', 0, array(), 0, 0, 0, 'minwidth200imp maxwidth300', 1);
@@ -1111,7 +1105,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('stocktransfer'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('stocktransfer'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

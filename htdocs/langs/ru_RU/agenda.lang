@@ -21,7 +21,6 @@ MenuDoneMyActions=Мои прекращенные события
 ListOfEvents=Список событий (календарь по умолчанию)
 ActionsAskedBy=События созданы
 ActionsToDoBy=события назначены
-ActionsDoneBy=Действия, проделанную
 ActionAssignedTo=Событие назначено для
 ViewCal=Просмотр календаря
 ViewDay=Обзор дня
@@ -135,12 +134,14 @@ AgendaModelModule=Шаблоны документов для события
 DateActionStart=Начальная дата
 DateActionEnd=Конечная дата
 AgendaUrlOptions1=Можно также добавить следующие параметры для фильтрации вывода:
-AgendaUrlOptions3=<b>logina=%s</b>, чтобы ограничить вывод действий, принадлежащих пользователю <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina =!%s</b> для ограничения вывода действий, не принадлежащих пользователю <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4=<b>logint=%s</b> для ограничения вывода действий, назначенных пользователю <b>%s</b> (владелец и другие).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID __</b>, чтобы ограничить вывод действий, связанных с проектом <b>__ PROJECT_ID __</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b>, чтобы исключить автоматические события.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> для включения событий праздников.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Дни рождения контактов
 AgendaHideBirthdayEvents=Скрыть дни рождения контактов
 Busy=Занят
@@ -202,3 +203,5 @@ BookingSuccessfullyBooked=Ваше бронирование сохранено
 BookingReservationHourAfter=Мы подтверждаем бронирование нашей встречи в дата %s
 BookcalBookingTitle=Онлайн-запись
 Transparency = Transparency
+ReadMore = Read more
+ReadLess = Read less

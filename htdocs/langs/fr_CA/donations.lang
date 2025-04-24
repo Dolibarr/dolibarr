@@ -15,7 +15,6 @@ DonationsModels=Modèles de documents pour les reçus de dons
 LastModifiedDonations=Derniers %s dons modifiés
 DonationRecipient=Destinataire du don
 IConfirmDonationReception=Le destinataire déclare réception, en tant que don, du montant suivant
-MinimumAmount=Le montant minimum est %s
 FreeTextOnDonations=Texte gratuit à afficher en bas de page
 FrenchOptions=Options pour la France
 DONATION_ART200=Afficher l'article 200 de CGI si vous êtes concerné

@@ -39,6 +39,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
 if (isModEnabled('member')) {
@@ -74,12 +82,14 @@ if ($user->socid) {
 	$socid = $user->socid;
 }
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('bankline'));
+
 $result = restrictedArea($user, 'banque', $accountoldid, 'bank_account');
 if (!$user->hasRight('banque', 'lire') && !$user->hasRight('banque', 'consolidate')) {
 	accessforbidden();
 }
 
-$hookmanager->initHooks(array('bankline'));
 $object = new AccountLine($db);
 $extrafields = new ExtraFields($db);
 $extrafields->fetch_name_optionals_label($object->element);
@@ -87,6 +97,7 @@ $extrafields->fetch_name_optionals_label($object->element);
 /*
  * Actions
  */
+$error = 0;
 
 $parameters = array('socid' => $socid);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -118,7 +129,7 @@ if ($user->hasRight('banque', 'consolidate') && $action == 'donext') {
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('banque', 'modifier')) {
 	$cat1 = GETPOSTINT("cat1");
 	if (!empty($rowid) && !empty($cat1)) {
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid)." AND fk_categ = ".((int) $cat1);
 		if (!$db->query($sql)) {
 			dol_print_error($db);
 		}
@@ -128,8 +139,6 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->hasRight('b
 }
 
 if ($user->hasRight('banque', 'modifier') && $action == "update") {
-	$error = 0;
-
 	$result = $object->fetch($rowid);
 	if ($result <= 0) {
 		dol_syslog('Failed to read bank line with id '.$rowid, LOG_WARNING);	// This happens due to old bug that has set fk_account to null.
@@ -159,13 +168,14 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 		$db->begin();
 
 		$amount = price2num(GETPOST('amount'));
-		$dateop = dol_mktime(12, 0, 0, GETPOST("dateomonth"), GETPOST("dateoday"), GETPOST("dateoyear"));
-		$dateval = dol_mktime(12, 0, 0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		$dateop = dol_mktime(12, 0, 0, GETPOSTINT("dateomonth"), GETPOSTINT("dateoday"), GETPOSTINT("dateoyear"));
+		$dateval = dol_mktime(12, 0, 0, GETPOSTINT("datevmonth"), GETPOSTINT("datevday"), GETPOSTINT("datevyear"));
 		$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 		$sql .= " SET ";
 		// Always opened
 		if (GETPOSTISSET('value')) {
-			$sql .= " fk_type='".$db->escape(GETPOST('value'))."',";
+			$type = GETPOST('value');
+			$sql .= " fk_type='".$db->escape(empty($type) && $object->fk_type == 'SOLD' ? 'SOLD' : $type)."',";
 		}
 		if (GETPOSTISSET('num_chq')) {
 			$sql .= " num_chq='".$db->escape(GETPOST("num_chq"))."',";
@@ -201,14 +211,14 @@ if ($user->hasRight('banque', 'modifier') && $action == "update") {
 
 		if (!$error) {
 			$arrayofcategs = GETPOST('custcats', 'array');
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".((int) $rowid);
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."category_bankline WHERE lineid = ".((int) $rowid);
 			if (!$db->query($sql)) {
 				$error++;
 				dol_print_error($db);
 			}
 			if (count($arrayofcategs)) {
 				foreach ($arrayofcategs as $val) {
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline (lineid, fk_categ) VALUES (".((int) $rowid).", ".((int) $val).")";
 					if (!$db->query($sql)) {
 						$error++;
 						dol_print_error($db);
@@ -338,7 +348,7 @@ if ($result) {
 	if ($db->num_rows($result)) {
 		$objp = $db->fetch_object($result);
 
-		$total = $total + $objp->amount;
+		$total += $objp->amount;
 
 		$acct = new Account($db);
 		$acct->fetch($objp->fk_account);
@@ -627,7 +637,7 @@ if ($result) {
 
 			// Bank line
 			print '<tr><td class="toptd">'.$form->editfieldkey('RubriquesTransactions', 'custcats', '', $object, 0).'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+			$cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, '', 'parent', 0, 0, 1);
 
 			$arrayselected = array();
 
@@ -638,7 +648,7 @@ if ($result) {
 					$arrayselected[] = $cat->id;
 				}
 			}
-			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
+			print img_picto('', 'category', 'class="paddingright"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, '', 0, "90%");
 			print "</td></tr>";
 		}
 
@@ -662,10 +672,10 @@ if ($result) {
 					current.click(function()
 					{
 						var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+						console.log("We click on ajaxforbankoperationchange url="+url);
 						$.get(url, function(data)
 						{
-							console.log(url)
-							console.log(data)
+							console.log(data);
 							current.parent().prev().replaceWith(data);
 						});
 						return false;

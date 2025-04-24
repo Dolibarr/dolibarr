@@ -3,8 +3,9 @@
  * Copyright (C) 2005-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2017		Ferran Marcet       	<fmarcet@2byte.es>
- * Copyright (C) 2021		Frédéric France			<frederic.france@netlogic.fr>
+ * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2023       Christian Foellmann  <christian@foellmann.de>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,18 +38,27 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->loadLangs(array("bills", "other", "companies"));
 
-$id		= (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
-$ref	= GETPOST('ref', 'alpha');
+$id = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('facid'));
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
+$socid = GETPOSTINT('socid');
 
 // Security check
 if ($user->socid) {
 	$socid = $user->socid;
 }
-$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 $hookmanager->initHooks(array('invoicesuppliercardcontact','invoicesuppliercontactcard', 'globalcard'));
+$result = restrictedArea($user, 'fournisseur', $id, 'facture_fourn', 'facture');
 
 $object = new FactureFournisseur($db);
 
@@ -59,7 +69,7 @@ $permissiontoadd = $usercancreate;
  * Actions
  */
 
-$parameters = array('id'=>$id);
+$parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -74,8 +84,8 @@ if (empty($reshook)) {
 		$result = $object->fetch($id, $ref);
 
 		if ($result > 0 && $id > 0) {
-			$contactid = (GETPOST('userid') ? GETPOST('userid') : GETPOST('contactid'));
-			$typeid    = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+			$contactid = (GETPOST('userid') ? GETPOSTINT('userid') : GETPOSTINT('contactid'));
+			$typeid    = (GETPOST('typecontact') ? GETPOSTINT('typecontact') : GETPOSTINT('type'));
 			$result    = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 		}
 
@@ -135,7 +145,7 @@ if ($id > 0 || !empty($ref)) {
 
 		$title = $object->ref." - ".$langs->trans('ContactsAddresses');
 		$helpurl = "EN:Module_Suppliers_Invoices|FR:Module_Fournisseurs_Factures|ES:Módulo_Facturas_de_proveedores";
-		llxHeader('', $title, $helpurl);
+		llxHeader('', $title, $helpurl, '', 0, 0, '', '', '', 'mod-fourn-facture page-card_contact');
 
 		$head = facturefourn_prepare_head($object);
 
@@ -161,7 +171,7 @@ if ($id > 0 || !empty($ref)) {
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -202,13 +212,15 @@ if ($id > 0 || !empty($ref)) {
 			print ' '.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1));
 		}
 
-		$facidavoir = $object->getListIdAvoirFromInvoice();
-		if (count($facidavoir) > 0) {
+		// Retrieve credit note ids
+		$object->getListIdAvoirFromInvoice();
+
+		if (!empty($object->creditnote_ids)) {
 			$invoicecredits = array();
-			foreach ($facidavoir as $facid) {
-				$facavoir = new FactureFournisseur($db);
-				$facavoir->fetch($facid);
-				$invoicecredits[] = $facavoir->getNomUrl(1);
+			foreach ($object->creditnote_ids as $invoiceid) {
+				$creditnote = new FactureFournisseur($db);
+				$creditnote->fetch($invoiceid);
+				$invoicecredits[] = $creditnote->getNomUrl(1);
 			}
 			print ' '.$langs->transnoentities("InvoiceHasAvoir") . (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
 		}

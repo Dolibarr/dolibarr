@@ -7,7 +7,7 @@ BrowseBlockedLog=ناقابل تغیر نوشتہ جات
 ShowAllFingerPrintsMightBeTooLong=تمام محفوظ شدہ لاگز دکھائیں (لمبا ہو سکتا ہے)
 ShowAllFingerPrintsErrorsMightBeTooLong=تمام غیر درست آرکائیو لاگز دکھائیں (لمبا ہو سکتا ہے)
 DownloadBlockChain=فنگر پرنٹس ڈاؤن لوڈ کریں۔
-KoCheckFingerprintValidity=محفوظ شدہ لاگ انٹری درست نہیں ہے۔ اس کا مطلب ہے کہ کسی نے (ایک ہیکر؟) اس ریکارڈ کے کچھ ڈیٹا کو ریکارڈ کرنے کے بعد اس میں ترمیم کی ہے، یا پچھلے محفوظ شدہ ریکارڈ کو مٹا دیا ہے (پچھلے # موجود کے ساتھ اس لائن کو چیک کریں) یا پچھلے ریکارڈ کے چیک سم میں ترمیم کی ہے۔
+KoCheckFingerprintValidity=Archived log entry is not valid. It means someone (a hacker?) has modified some data of this record after it was recorded, OR has erased the previous archived record (check that the line with previous # exists) OR has modified the checksum of the previous record.
 OkCheckFingerprintValidity=محفوظ شدہ لاگ ریکارڈ درست ہے۔ اس لائن کے ڈیٹا میں ترمیم نہیں کی گئی تھی اور اندراج پچھلے ایک کی پیروی کرتا ہے۔
 OkCheckFingerprintValidityButChainIsKo=محفوظ شدہ لاگ پچھلے ایک کے مقابلے میں درست معلوم ہوتا ہے لیکن سلسلہ پہلے خراب ہو گیا تھا۔
 AddedByAuthority=ریموٹ اتھارٹی میں محفوظ
@@ -18,7 +18,9 @@ BlockedlogInfoDialog=لاگ تفصیلات
 ListOfTrackedEvents=ٹریک کردہ واقعات کی فہرست
 Fingerprint=فنگر پرنٹ
 DownloadLogCSV=آرکائیو شدہ لاگز (CSV) برآمد کریں
-DataOfArchivedEvent=محفوظ شدہ واقعہ کا مکمل ڈیٹا
+DataOfArchivedEvent=Complementary data of archived event
+DataOfArchivedEventHelp=This field contains the complementary data that was archived on real time. Even if some parent business event could have been purged or modified, the data archived here is the original data, and it can't be modified.
+DataOfArchivedEventHelp2=The integrity of data on each lines is guaranteed if the status of the line is OK
 ImpossibleToReloadObject=اصل آبجیکٹ (قسم %s، id %s) منسلک نہیں (غیر تبدیل شدہ محفوظ کردہ ڈیٹا حاصل کرنے کے لیے 'مکمل ڈیٹا' کالم دیکھیں)
 BlockedLogAreRequiredByYourCountryLegislation=آپ کے ملک کی قانون سازی کے ذریعہ ناقابل تبدیلی لاگس ماڈیول کی ضرورت ہوسکتی ہے۔ اس ماڈیول کو غیر فعال کرنے سے مستقبل کے کسی بھی لین دین کو قانون اور قانونی سافٹ ویئر کے استعمال کے حوالے سے غلط قرار دیا جا سکتا ہے کیونکہ ٹیکس آڈٹ کے ذریعے ان کی توثیق نہیں کی جا سکتی ہے۔
 BlockedLogActivatedBecauseRequiredByYourCountryLegislation=آپ کے ملک کی قانون سازی کی وجہ سے ناقابل تبدیلی لاگز ماڈیول کو چالو کیا گیا تھا۔ اس ماڈیول کو غیر فعال کرنے سے مستقبل کے کسی بھی لین دین کو قانون اور قانونی سافٹ ویئر کے استعمال کے حوالے سے غلط قرار دیا جا سکتا ہے کیونکہ ٹیکس آڈٹ کے ذریعے ان کی توثیق نہیں کی جا سکتی ہے۔
@@ -30,6 +32,7 @@ BlockedLogEnabled=واقعات کو غیر تبدیل شدہ لاگز میں ٹ�
 BlockedLogDisabled=غیر تبدیل شدہ لاگز میں واقعات کو ٹریک کرنے کے نظام کو کچھ ریکارڈنگ کے بعد غیر فعال کر دیا گیا ہے۔ ہم نے ٹوٹی ہوئی زنجیر کو ٹریک کرنے کے لیے ایک خاص فنگر پرنٹ محفوظ کیا۔
 BlockedLogDisabledBis=غیر تبدیل شدہ لاگز میں واقعات کو ٹریک کرنے کا نظام غیر فعال کر دیا گیا ہے۔ یہ ممکن ہے کیونکہ ابھی تک کوئی ریکارڈ نہیں بنایا گیا تھا۔
 LinkHasBeenDisabledForPerformancePurpose=کارکردگی کے مقصد کے لیے، 100ویں لائن کے بعد دستاویز کا براہ راست لنک نہیں دکھایا گیا ہے۔
+SavedOnLine=Saved on line
 
 ## logTypes
 logBILL_DELETE=کسٹمر انوائس کو منطقی طور پر حذف کر دیا گیا۔
@@ -56,3 +59,4 @@ logPAYMENT_CUSTOMER_DELETE=کسٹمر ادائیگی منطقی حذف
 logPAYMENT_VARIOUS_CREATE=ادائیگی (انوائس کو تفویض نہیں کی گئی) بنائی گئی۔
 logPAYMENT_VARIOUS_DELETE=ادائیگی (انوائس کو تفویض نہیں کیا گیا) منطقی حذف
 logPAYMENT_VARIOUS_MODIFY=ادائیگی (انوائس کو تفویض نہیں کی گئی) میں ترمیم کی گئی۔
+logBLOCKEDLOG_EXPORT=Export of unalterable logs into a file

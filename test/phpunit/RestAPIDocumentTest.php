@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+/* Copyright (C) 2010 		Laurent Destailleur  	<eldy@users.sourceforge.net>
+ * Copyright (C) 2023 		Alexandre Janniaux   	<alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,22 +24,9 @@
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php.
  */
-global $conf,$user,$langs,$db;
-//define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
-//require_once 'PHPUnit/Autoload.php';
-require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/date.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/geturl.lib.php';
-require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
-require_once dirname(__FILE__).'/CommonClassTest.class.php';
 
-if (empty($user->id)) {
-	echo "Load permissions for admin user nb 1\n";
-	$user->fetch(1);
-	$user->getrights();
-}
-$conf->global->MAIN_DISABLE_ALL_MAILS = 1;
-$conf->global->MAIN_UMASK = '0666';
+require_once __DIR__."/AbstractRestAPITest.php";
+require_once dirname(__FILE__).'/../../htdocs/core/lib/files.lib.php';
 
 /**
  * Class for PHPUnit tests.
@@ -47,63 +35,10 @@ $conf->global->MAIN_UMASK = '0666';
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class RestAPIDocumentTest extends CommonClassTest
+class RestAPIDocumentTest extends AbstractRestAPITest
 {
 	protected $api_url;
 	protected $api_key;
-
-	/**
-	 * setUpBeforeClass
-	 *
-	 * @return void
-	 */
-	public static function setUpBeforeClass(): void
-	{
-		global $conf,$user,$langs,$db;
-		$db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
-
-		if (!isModEnabled('api')) {
-			print __METHOD__." module api must be enabled.\n";
-			die(1);
-		}
-
-		echo __METHOD__."\n";
-	}
-
-	/**
-	 * Init phpunit tests.
-	 *
-	 * @return void
-	 */
-	protected function setUp(): void
-	{
-		global $conf,$user,$langs,$db;
-		$conf = $this->savconf;
-		$user = $this->savuser;
-		$langs = $this->savlangs;
-		$db = $this->savdb;
-
-		$this->api_url = DOL_MAIN_URL_ROOT.'/api/index.php';
-
-		$login = 'admin';
-		$password = 'admin';
-		$url = $this->api_url.'/login?login='.$login.'&password='.$password;
-		// Call the API login method to save api_key for this test class.
-		// At first call, if token is not defined a random value is generated and returned.
-		$result = getURLContent($url, 'GET', '', 1, array(), array('http', 'https'), 2);
-		print __METHOD__." result = ".var_export($result, true)."\n";
-		print __METHOD__." curl_error_no: ".$result['curl_error_no']."\n";
-		$this->assertEquals($result['curl_error_no'], '');
-		$object = json_decode($result['content'], true);	// If success content is just an id, if not an array
-
-		$this->assertNotNull($object, "Parsing of json result must not be null");
-		$this->assertNotEquals(500, (empty($object['error']['code']) ? 0 : $object['error']['code']), 'Error'.(empty($object['error']['message']) ? '' : ' '.$object['error']['message']));
-		$this->assertEquals('200', $object['success']['code']);
-
-		$this->api_key = $object['success']['token'];
-
-		echo __METHOD__." api_key: $this->api_key \n";
-	}
 
 	/**
 	 * testPushDocument.
@@ -112,8 +47,6 @@ class RestAPIDocumentTest extends CommonClassTest
 	 */
 	public function testPushDocument()
 	{
-		global $conf,$user,$langs,$db;
-
 		$url = $this->api_url.'/documents/upload?api_key='.$this->api_key;
 
 		echo __METHOD__.' Request POST url='.$url."\n";
@@ -131,7 +64,8 @@ class RestAPIDocumentTest extends CommonClassTest
 			'filecontent' => "content text",
 			'fileencoding' => "",
 			'overwriteifexists' => 0,
-			'createdirifnotexists' => 0
+			'createdirifnotexists' => 0,
+			'position' => 0,
 		);
 
 		$param = '';
@@ -144,7 +78,7 @@ class RestAPIDocumentTest extends CommonClassTest
 		echo __METHOD__.' curl_error_no: '.$result['curl_error_no']."\n";
 		$object = json_decode($result['content'], true);
 		$this->assertNotNull($object, 'Parsing of json result must not be null');
-		$this->assertEquals('400', $result['http_code'], 'Test to push a document on a non existing dir does not return 400');
+		$this->assertEquals(400, $result['http_code'], 'Test to push a document on a non existing dir does not return 400');
 		$this->assertEquals('400', (empty($object['error']['code']) ? '' : $object['error']['code']), 'Test to push a document on a non existing dir does not return 400');
 
 
@@ -161,7 +95,8 @@ class RestAPIDocumentTest extends CommonClassTest
 			'filecontent' => "content text",
 			'fileencoding' => "",
 			'overwriteifexists' => 0,
-			'createdirifnotexists' => 0
+			'createdirifnotexists' => 0,
+			'position' => 0,
 		);
 
 		$param = '';
@@ -175,7 +110,7 @@ class RestAPIDocumentTest extends CommonClassTest
 		$object2 = json_decode($result2['content'], true);
 		//$this->assertNotNull($object2, 'Parsing of json result must not be null');
 		$this->assertEquals('200', $result2['http_code'], 'Return code must be 200');
-		$this->assertEquals($result2['curl_error_no'], '');
+		$this->assertEquals(0, $result2['curl_error_no']);
 		$this->assertEquals($object2, 'mynewfile.txt', 'Must contains basename of file');
 
 
@@ -189,7 +124,8 @@ class RestAPIDocumentTest extends CommonClassTest
 			'filecontent' => "content text",
 			'fileencoding' => "",
 			'overwriteifexists' => 0,
-			'createdirifnotexists' => 1
+			'createdirifnotexists' => 1,
+			'position' => 0,
 		);
 
 		$param = '';
@@ -203,7 +139,7 @@ class RestAPIDocumentTest extends CommonClassTest
 		$object3 = json_decode($result3['content'], true);
 		//$this->assertNotNull($object2, 'Parsing of json result must not be null');
 		$this->assertEquals('200', $result3['http_code'], 'Return code must be 200');
-		$this->assertEquals($result3['curl_error_no'], '');
+		$this->assertEquals(0, $result3['curl_error_no']);
 		$this->assertEquals($object3, 'mynewfile.txt', 'Must contains basename of file');
 
 

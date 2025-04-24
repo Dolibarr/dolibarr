@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Ychwanegu tudalen gyfredol at nodau tudalen
-Bookmark=Llyfrnod
-Bookmarks=Llyfrnodau
-ListOfBookmarks=Rhestr o nodau tudalen
-EditBookmarks=Rhestru/golygu nodau tudalen
-NewBookmark=Nod tudalen newydd
-ShowBookmark=Dangos nod tudalen
-OpenANewWindow=Agor tab newydd
-ReplaceWindow=Amnewid y tab cyfredol
-BookmarkTargetNewWindowShort=Tab newydd
-BookmarkTargetReplaceWindowShort=Tab cyfredol
-BookmarkTitle=Enw nod tudalen
-UrlOrLink=URL
-BehaviourOnClick=Ymddygiad pan ddewisir URL nod tudalen
-CreateBookmark=Creu nod tudalen
-SetHereATitleForLink=Gosodwch enw ar gyfer y nod tudalen
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Defnyddiwch ddolen allanol/absoliwt (https://externalurl.com) neu ddolen fewnol/perthynol (/mypage.php). Gallwch hefyd ddefnyddio ffôn fel ffôn: 0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Dewiswch a ddylai'r dudalen gysylltiedig agor yn y tab cyfredol neu dab newydd
-BookmarksManagement=Rheoli nodau tudalen
-BookmarksMenuShortCut=Ctrl + shifft + m
-NoBookmarks=Dim nodau tudalen wedi'u diffinio
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Ychwanegu tudalen gyfredol at nodau tudalen
+BehaviourOnClick = Ymddygiad pan ddewisir URL nod tudalen
+Bookmark = Llyfrnod
+Bookmarks = Llyfrnodau
+BookmarkTargetNewWindowShort = Tab newydd
+BookmarkTargetReplaceWindowShort = Tab cyfredol
+BookmarkTitle = Enw nod tudalen
+BookmarksManagement = Rheoli nodau tudalen
+BookmarksMenuShortCut = Ctrl + shifft + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Dewiswch a ddylai'r dudalen gysylltiedig agor yn y tab cyfredol neu dab newydd
+CreateBookmark = Creu nod tudalen
+EditBookmarks = Rhestru/golygu nodau tudalen
+ListOfBookmarks = Rhestr o nodau tudalen
+NewBookmark = Nod tudalen newydd
+NoBookmarkFound = Heb ganfod nod tudalen
+NoBookmarks = Dim nodau tudalen wedi'u diffinio
+OpenANewWindow = Agor tab newydd
+ReplaceWindow = Amnewid y tab cyfredol
+SetHereATitleForLink = Gosodwch enw ar gyfer y nod tudalen
+ShowBookmark = Dangos nod tudalen
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Defnyddiwch ddolen allanol/absoliwt (https://externalurl.com) neu ddolen fewnol/perthynol (/mypage.php). Gallwch hefyd ddefnyddio ffôn fel ffôn: 0123456.

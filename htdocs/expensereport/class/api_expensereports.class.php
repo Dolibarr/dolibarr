@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,14 +33,14 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 class ExpenseReports extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'fk_user_author'
 	);
 
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDSPAYMENT = array(
 		"fk_typepayment",
@@ -48,7 +49,7 @@ class ExpenseReports extends DolibarrApi
 	);
 
 	/**
-	 * @var ExpenseReport $expensereport {@type ExpenseReport}
+	 * @var ExpenseReport {@type ExpenseReport}
 	 */
 	public $expensereport;
 
@@ -98,16 +99,19 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * Get a list of Expense Reports
 	 *
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @param string	$user_ids   User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @return  array               Array of Expense Report objects
+	 * @param string	$sortfield			Sort field
+	 * @param string	$sortorder			Sort order
+	 * @param int		$limit				Limit for list
+	 * @param int		$page				Page number
+	 * @param string	$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return  array                       Array of order objects
+	 * @phan-return ExpenseReport[]
+	 * @phpstan-return ExpenseReport[]
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('expensereport', 'lire')) {
 			throw new RestException(403);
@@ -133,6 +137,9 @@ class ExpenseReports extends DolibarrApi
 				throw new RestException(400, 'Error when validating parameter sqlfilters -> '.$errormessage);
 			}
 		}
+
+		//this query will return total orders with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
 
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
@@ -162,6 +169,23 @@ class ExpenseReports extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve Expense Report list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -169,6 +193,8 @@ class ExpenseReports extends DolibarrApi
 	 * Create Expense Report object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int                     ID of Expense Report
 	 */
 	public function post($request_data = null)
@@ -241,6 +267,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param int   $id             Id of Expense Report to update
 	 * @param array $request_data   Expense Report data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -309,6 +337,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param int   $id             Id of Expense Report to update
 	 * @param int   $lineid         Id of line to update
 	 * @param array $request_data   Expense Report data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	PUT {id}/lines/{lineid}
 	 *
@@ -409,6 +439,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param 	int   	$id             	Id of Expense Report to update
 	 * @param 	array 	$request_data   	Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
@@ -439,6 +471,13 @@ class ExpenseReports extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->expensereport->array_options[$index] = $this->_checkValForAPI($field, $val, $this->expensereport);
+				}
+				continue;
+			}
+
 			$this->expensereport->$field = $this->_checkValForAPI($field, $value, $this->expensereport);
 		}
 
@@ -455,6 +494,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param   int     $id         Expense Report ID
 	 *
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -536,6 +577,8 @@ class ExpenseReports extends DolibarrApi
 	 * @param int       $limit      Limit for list
 	 * @param int       $page       Page number
 	 * @return array                List of paymentExpenseReport objects
+	 * @phan-return PaymentExpenseReport[]
+	 * @phpstan-return PaymentExpenseReport[]
 	 *
 	 * @url     GET /payments
 	 *
@@ -613,6 +656,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param 	int 	$id   							ID of expense report
 	 * @param 	array 	$request_data   {@from body}  	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return 	int 									ID of paymentExpenseReport
 	 *
 	 * @url     POST {id}/payments
@@ -653,6 +698,8 @@ class ExpenseReports extends DolibarrApi
 	 *
 	 * @param   int     $id              ID of paymentExpenseReport
 	 * @param   array   $request_data    data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  object
 	 *
 	 * @url     PUT {id}/payments
@@ -773,12 +820,15 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$expensereport = array();
 		foreach (ExpenseReports::$FIELDS as $field) {
 			if (!isset($data[$field])) {
@@ -792,12 +842,15 @@ class ExpenseReports extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 * @throws  RestException
 	 */
 	private function _validatepayment($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$expensereport = array();
 		foreach (ExpenseReports::$FIELDSPAYMENT as $field) {
 			if (!isset($data[$field])) {

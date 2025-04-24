@@ -669,3 +669,4 @@ SearchValidatedSupplierInvoicesWithDate=Търсете на неплатени �
 SendEmailsRemindersOnSupplierInvoiceDueDate=Изпратете напомняне по имейл за валидирани и неплатени фактури на доставчик
 PaymentMadeForSeveralInvoices=Плащане е направено за няколко фактури
 SituationInvoiceProgressCurrent=Invoice progress
+INVOICE_ADD_EPC_QR_CODEPay=Scan this QR code to pay with a smartphone supporting payment with EPC QR code.

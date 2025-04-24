@@ -1,6 +1,8 @@
 <?php
-/* Copyright (c) 2012 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (c) 2012		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +28,14 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $graphwidth = 700;
 $mapratio = 0.5;
@@ -55,9 +65,10 @@ $langs->loadLangs(array("companies", "members"));
 
 $memberstatic = new Adherent($db);
 
-llxHeader('', $langs->trans("MembersStatisticsByProperties"), '', '', 0, 0, array('https://www.google.com/jsapi'));
-
 $title = $langs->trans("MembersStatisticsByProperties");
+$help_url = 'EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios|DE:Modul_Mitglieder';
+
+llxHeader('', $title, $help_url, '', 0, 0, array('https://www.google.com/jsapi'), '', '', 'mod-member page-stats_byproperties');
 
 print load_fiche_titre($title, '', $memberstatic->picto);
 
@@ -152,14 +163,15 @@ if (!count($data)) {
 
 // Print array
 print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-print '<table class="liste centpercent">';
+
+print '<table class="liste centpercent noborder">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("MemberNature").'</td>';
-print '<td class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></td>';
-print '<td class="right">'.$langs->trans("NbOfActiveMembers").'</td>';
-print '<td class="center">'.$langs->trans("LastMemberDate").'</td>';
-print '<td class="right">'.$langs->trans("NbOfSubscriptions").'</td>';
-print '<td class="center">'.$langs->trans("LatestSubscriptionDate").'</td>';
+print '<th>'.$langs->trans("MemberNature").'</th>';
+print '<th class="right">'.$langs->trans("NbOfMembers").' <span class="opacitymedium">('.$langs->trans("AllTime").')</span></th>';
+print '<th class="right">'.$langs->trans("NbOfActiveMembers").'</th>';
+print '<th class="center">'.$langs->trans("LastMemberDate").'</th>';
+print '<th class="right">'.$langs->trans("NbOfSubscriptions").'</th>';
+print '<th class="center">'.$langs->trans("LatestSubscriptionDate").'</th>';
 print '</tr>';
 
 if (!$foundphy) {

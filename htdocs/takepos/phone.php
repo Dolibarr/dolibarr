@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2018	Andreu Bisquerra	<jove@bisquerra.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +47,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ * @var User $user
+ */
 if (defined('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE')) {
 	// Decode place if it is an order from a customer phone
 	$place = GETPOSTISSET("key") ? dol_decode(GETPOST('key')) : GETPOST('place', 'aZ09');
@@ -99,7 +106,7 @@ if (empty($mobilepage) && (empty($action) || ((getDolGlobalString('TAKEPOS_PHONE
 }
 
 
-if ($action == "productinfo") {
+if ($action == "productinfo" && $user->hasRight('takepos', 'run')) {
 	$prod = new Product($db);
 	$prod->fetch($idproduct);
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="AddProductConfirm(place, '.$idproduct.')">'.$langs->trans('Add').'</button>';
@@ -108,25 +115,25 @@ if ($action == "productinfo") {
 	print "<br>".$prod->description;
 	print "<br><b>".price($prod->price_ttc, 1, $langs, 1, -1, -1, $conf->currency)."</b>";
 	print '<br>';
-} elseif ($action == "publicpreorder") {
+} elseif ($action == "publicpreorder" && $user->hasRight('takepos', 'run')) {
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="TakeposPrintingOrder();">'.$langs->trans('Confirm').'</button>';
 	print "<br><br>";
 	print '<div class="comment">
             <textarea class="textinput " placeholder="'.$langs->trans('Note').'"></textarea>
 			</div>';
 	print '<br>';
-} elseif ($action == "publicpayment") {
+} elseif ($action == "publicpayment" && $user->hasRight('takepos', 'run')) {
 	$langs->loadLangs(array("orders"));
 	print '<h1>'.$langs->trans('Ordered').'</h1>';
 	print '<button type="button" class="publicphonebutton2 phoneblue total" onclick="CheckPlease();">'.$langs->trans('Payment').'</button>';
 	print '<br>';
-} elseif ($action == "checkplease") {
+} elseif ($action == "checkplease" && $user->hasRight('takepos', 'run')) {
 	if (GETPOSTISSET("payment")) {
 		print '<h1>'.$langs->trans('Ordered').'</h1>';
 		require_once DOL_DOCUMENT_ROOT.'/core/class/dolreceiptprinter.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$printer = new dolReceiptPrinter($db);
-		$printer->initPrinter(getDolGlobalString('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
+		$printer->initPrinter(getDolGlobalInt('TAKEPOS_PRINTER_TO_USE'.$_SESSION["takeposterminal"]));
 		if ($printer->getPrintConnector()) {
 			if (!is_null($printer->printer)) {
 				$printer->printer->feed();
@@ -149,7 +156,7 @@ if ($action == "productinfo") {
 		print '<button type="button" class="publicphonebutton2 phoneblue total marginbottomonly" onclick="CheckPlease(\'CreditCard\')">'.$langs->trans('CreditCard').'</button>';
 		print '<br>';
 	}
-} elseif ($action == "editline") {
+} elseif ($action == "editline" && $user->hasRight('takepos', 'run')) {
 	$placeid = GETPOSTINT('placeid');
 	$selectedline = GETPOSTINT('selectedline');
 	$invoice = new Facture($db);
