@@ -242,7 +242,6 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					print '<td class="right">';
 					print $out;
 					print '</td>';
-					//print '<td class="right"><a class="reposition" href="#">'.img_object($langs->trans("FillExtrafieldWithAi"), "ai").'</a></td>';
 				}
 			}
 			print '</tr></table>';
