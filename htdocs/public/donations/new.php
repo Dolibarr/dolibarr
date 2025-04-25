@@ -494,7 +494,6 @@ if (!$action || $action == 'create') {
 	print '<tr><td>'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 
 	if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE')) {
-
 		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
 
 		// - If a min is set, we take it into account
