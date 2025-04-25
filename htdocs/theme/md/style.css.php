@@ -3267,6 +3267,10 @@ div.mainmenu.menu {
 
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
+.menuhider {
+	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
+}
+
 /* Text hidden by default */
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
 .tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
@@ -8547,84 +8551,6 @@ table.jPicker {
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
-@media only screen and (max-width: 767px)
-{
-	.ai_dropdown{
-		min-width : 280px !important;
-	}
-
-	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
-
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(350, 'width'); ?>px;
-	}
-
-	div.tabBar {
-		padding-left: 8px;
-		padding-right: 8px;
-		border-radius: 0px;
-		border-right: none;
-		border-left: none;
-	}
-
-	td.widthpictotitle { width: 30px; }
-
-	.logopublicpayment #dolpaymentlogo {
-		max-width: 260px;
-	}
-	#tablepublicpayment {
-		width:	auto !important;
-		border: none !important;
-	}
-	.poweredbypublicpayment {
-		float: unset !important;
-		top: unset !important;
-		/* bottom: 8px; */
-		right: -10px !important;
-		position: relative !important;
-	}
-	.poweredbyimg {
-		width: 48px;
-	}
-
-	.survey_borders {
-		margin-left: 10px;
-		margin-right: 10px;
-		text-align: start;
-	}
-
-	.bookcalform.boxtable .minwidth75 {
-		min-width: auto;
-	}
-	.center.bookingtab {
-		margin-left: 6px;
-	}
-	#bookinghoursection {
-		font-size: small;
-		width: 122px;
-	}
-
-	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
-		padding: 10px 3px 10px;
-	}
-}
-
-@media only screen and (max-width: 1024px)
-{
-	div#ecm-layout-west {
-		width: 100%;
-		clear: both;
-	}
-	div#ecm-layout-center {
-		width: 100%;
-	}
-}
-
-.menuhider {
-	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
-}
-
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
 @media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
@@ -8832,6 +8758,86 @@ table.jPicker {
 		margin-top: 30px;
 	}
 }
+
+@media only screen and (max-width: 767px)
+{
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
+
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350, 'width'); ?>px;
+	}
+
+	div.tabBar {
+		padding-left: 8px;
+		padding-right: 8px;
+		border-radius: 0px;
+		border-right: none;
+		border-left: none;
+	}
+
+	td.widthpictotitle { width: 30px; }
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+		border: none !important;
+	}
+	.poweredbypublicpayment {
+		float: unset !important;
+		top: unset !important;
+		/* bottom: 8px; */
+		right: -10px !important;
+		position: relative !important;
+	}
+	.poweredbyimg {
+		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
+	}
+
+	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
+		padding: 10px 3px 10px;
+	}
+}
+
+@media only screen and (max-width: 1024px)
+{
+	div#ecm-layout-west {
+		width: 100%;
+		clear: both;
+	}
+	div#ecm-layout-center {
+		width: 100%;
+	}
+
+	input[type=checkbox], input[type=radio] {
+		margin: 0 5px 0 1px;
+		transform: scale(1.1);
+	}
+}
+
 
 <?php
 if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
