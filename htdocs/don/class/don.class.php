@@ -168,6 +168,11 @@ class Don extends CommonObject
 	 */
 	public $paid;
 
+	/**
+	 * @var string IP address
+	 */
+	public $ip;
+
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_PAID = 2;
@@ -426,6 +431,7 @@ class Don extends CommonObject
 		$sql .= ", email";
 		$sql .= ", phone";
 		$sql .= ", phone_mobile";
+		$sql .= ", ip";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->date ? $this->date : $now)."'";
 		$sql .= ", ".((int) $conf->entity);
@@ -449,6 +455,7 @@ class Don extends CommonObject
 		$sql .= ", '".(!empty($this->email) ? $this->db->escape(trim($this->email)) : "")."'";
 		$sql .= ", '".(!empty($this->phone) ? $this->db->escape(trim($this->phone)) : "")."'";
 		$sql .= ", '".(!empty($this->phone_mobile) ? $this->db->escape(trim($this->phone_mobile)) : "")."'";
+		$sql .= ", '".(!empty($this->ip) ? $this->db->escape($this->ip) : "null")."'";
 		$sql .= ")";
 
 		$resql = $this->db->query($sql);

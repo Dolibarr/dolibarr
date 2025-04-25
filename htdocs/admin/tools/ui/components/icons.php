@@ -57,11 +57,18 @@ $switchDisplayLink = dol_buildpath($documentation->baseUrl . '/components/icons.
 $switchDisplayLinkIcon = $displayMode == 'kanban' ? 'fa fa-th' : 'fa fa-th-list';
 
 // Output sidebar
-$documentation->showSidebar(); ?>
+if (!GETPOST('hidenavmenu')) {
+	$documentation->showSidebar();
+}
+?>
 
 <div class="doc-wrapper">
 
-		<?php $documentation->showBreadCrumb(); ?>
+		<?php
+		if (!GETPOST('hidenavmenu')) {
+			$documentation->showBreadCrumb();
+		}
+		?>
 
 		<div class="doc-content-wrapper">
 

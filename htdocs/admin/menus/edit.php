@@ -396,7 +396,7 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag(GETPOST("picto", 'alphanohtml')).'"></td><td>'.$langs->trans('Example').': fa-globe-americas';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
 	print '</span>';
 	print '</td></tr>';
 
@@ -529,7 +529,7 @@ if ($action == 'create') {
 	print '<td><input type="text" class="minwidth300" name="picto" value="'.dol_escape_htmltag($menu->prefix).'"></td><td>'.$langs->trans('Example').': fa-globe-americas';
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
 	print '</span>';
 	print '</td></tr>';
 

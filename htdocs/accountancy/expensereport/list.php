@@ -279,6 +279,10 @@ $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = er
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON f.accountancy_code = aa.account_number AND aa.fk_pcg_version = '".$db->escape($chartaccountcode)."' AND aa.entity = ".$conf->entity;
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 $sql .= " WHERE er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <= 0";
 // Add search filter like
@@ -395,6 +399,11 @@ if ($result) {
 	if ($search_vat) {
 		$param .= '&search_vat='.urlencode($search_vat);
 	}
+	// Add $param from hooks
+	$parameters = array('param' => &$param);
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
+
 
 	$arrayofmassactions = array(
 		'ventil' => img_picto('', 'check', 'class="pictofixedwidth"').$langs->trans("Ventilate")
@@ -488,6 +497,10 @@ if ($result) {
 	if (!empty($arrayfields['aa.account_number']['checked'])) {
 		print '<td class="liste_titre"></td>';
 	}
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
@@ -561,6 +574,10 @@ if ($result) {
 		print_liste_field_titre($arrayfields['aa.account_number']['label'], '', '', '', '', '', '', '', '');
 		$totalarray['nbfield']++;
 	}
+	// Hook fields
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -678,6 +695,10 @@ if ($result) {
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center actioncolumn">';
@@ -698,6 +719,10 @@ if ($result) {
 	if ($num_lines == 0) {
 		print '<tr><td colspan="13"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
+
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 	print "</div>";
