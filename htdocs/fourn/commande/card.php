@@ -1597,6 +1597,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="remise_percent" value="'.$soc->remise_supplier_percent.'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -1632,6 +1633,7 @@ if ($action == 'create') {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
+						$("input[name=changecompany]").val("1");
 						$("form[name=add]").submit();
 					});
 				});
