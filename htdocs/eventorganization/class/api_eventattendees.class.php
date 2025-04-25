@@ -387,7 +387,7 @@ class EventAttendees extends DolibarrApi
 		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
 			return $this->_fetch($id, '');
 		} else {
-			throw new RestException(500, $this->event_attendees->error);
+			throw new RestException(500, end($this->event_attendees->errors));
 		}
 	}
 
@@ -442,7 +442,7 @@ class EventAttendees extends DolibarrApi
 		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
 			return $this->_fetch(0, $newref);
 		} else {
-			throw new RestException(500, $this->event_attendees->error);
+			throw new RestException(500, end($this->event_attendees->errors));
 		}
 	}
 
