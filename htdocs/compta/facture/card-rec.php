@@ -451,9 +451,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		// Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
+		$object->fetch($object->id);	// Reload all.
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		$object->fetch($object->id);	// Reload all.
 	} elseif ($action == 'setruleforlinesdates' && $usercancreate) {
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("RuleForLinesDates"));
 		$ruleForLinesDates = GETPOSTISSET('rule_for_lines_dates') ? GETPOST('rule_for_lines_dates', 'alpha') : 'prepaid';
@@ -1551,41 +1553,135 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="underbanner clearboth"></div>';
 
+		print '<!-- amounts -->'."\n";
+		print '<div class="underbanner clearboth"></div>'."\n";
 
-		/*
-		 * Recurrence
-		 */
+		// Recurrence
 		$title = $langs->trans("Recurrence");
 
-		print '<table class="border centpercent tableforfield">';
+		print '<table class="border tableforfield centpercent">';
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
 
+		$sign = 1;
+		if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && $object->type == $object::TYPE_CREDIT_NOTE) {
+			$sign = -1; // We invert sign for output
+		}
+
 		// Amount (excl. tax)
-		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-		print '<td class="right">'.price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
+		print '<td class="nowraponall amountcard right">'.price($sign * $object->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			// Multicurrency Amount HT
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
 		// Amount tax
-		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td class="right">'.price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<tr><td>'.$langs->trans("AmountVAT").'</td>';
+		print '<td class="nowrap amountcard right">'.price($sign * $object->total_tva, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			// Multicurrency Amount VAT
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
 		// Amount Local Taxes
 		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-			print '<td class="nowraponall right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-		}
-		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) { 	// Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-			print '<td class=nowraponall right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+			print '<tr>';
+			print '<td class="titlefieldmiddle">'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
+			print '<td class="nowraponall amountcard right">'.price($sign * $object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				$object->multicurrency_total_localtax1 = (float) price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
+
+				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
 		}
 
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td class="nowraponall right">'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) { 	// Localtax2
+			print '<tr>';
+			print '<td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
+			print '<td class=nowraponall amountcard right">'.price($sign * $object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				$object->multicurrency_total_localtax2 = (float) price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
+
+				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+		}
+
+		// Add the revenue stamp
+		/*
+		if ($selleruserevenustamp) {
+			print '<tr><td class="titlefieldmiddle">';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans('RevenueStamp');
+			print '</td>';
+			if ($action != 'editrevenuestamp' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td class="nowrap amountcard right">';
+			if ($action == 'editrevenuestamp') {
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="setrevenuestamp">';
+				print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+				print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
+				print ' &rarr; <span id="revenuestamp_span"></span>';
+				print ' <input type="submit" class="button buttongen button-save small" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+				print " <script>
+					$(document).ready(function(){
+						js_recalculate_revenuestamp();
+						$('select[name=revenuestamp_type]').on('change',function(){
+							js_recalculate_revenuestamp();
+						});
+					});
+					function js_recalculate_revenuestamp(){
+						var valselected = $('select[name=revenuestamp_type]').val();
+						console.log('Calculate revenue stamp from '+valselected);
+						var revenue = 0;
+						if (valselected.indexOf('%') == -1)
+						{
+							revenue = valselected;
+						}
+						else
+						{
+							var revenue_type = parseFloat(valselected);
+							var amount_net = ".round($object->total_ht, 2).";
+							revenue = revenue_type * amount_net / 100;
+							revenue = revenue.toFixed(2);
+						}
+						$('#revenuestamp_val').val(revenue);
+						$('#revenuestamp_span').html(revenue);
+					}
+				</script>";
+			} else {
+				print price($object->revenuestamp, 1, '', 1, -1, -1, $conf->currency);
+			}
+			print '</td></tr>';
+		}
+		*/
+
+		// Amount TTC
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td class="nowraponall amountcard right">'.price($sign * $object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			// Multicurrency Amount TTC
+			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
-		print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.img_picto('', 'recurring', 'class="pictofixedwidth"').$title.'</td></tr>';
+		// Recurring info
+		print '<tr class="liste_titre"><td class="liste_titre">'.img_picto('', 'recurring', 'class="pictofixedwidth"').$title.'</td>';
+		print '<td></td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td></td>';
+		}
+		print '</tr>';
 
 		// if "frequency" is empty or = 0, the recurrence is disabled
 		print '<tr><td style="width: 50%">';
@@ -1615,7 +1711,11 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">'.$langs->trans("NotARecurringInvoiceTemplate").'</span>';
 			}
 		}
-		print '</td></tr>';
+		print '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td></td>';
+		}
+		print '</tr>';
 
 		if ($object->frequency > 0) {
 			// Date when (next invoice generation)
@@ -1638,6 +1738,9 @@ if ($action == 'create') {
 				print img_info($langs->trans("MaxNumberOfGenerationReached"));
 			}
 			print '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				print '<td></td>';
+			}
 			print '</tr>';
 
 			// Max period / Rest period
@@ -1654,6 +1757,9 @@ if ($action == 'create') {
 				print '';
 			}
 			print '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				print '<td></td>';
+			}
 			print '</tr>';
 
 			// Status of auto generated invoices
@@ -1669,6 +1775,10 @@ if ($action == 'create') {
 				print $form->editfieldval($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'), $select);
 			}
 			print '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				print '<td></td>';
+			}
+			print '</tr>';
 			// Auto generate documents
 			if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 				print '<tr>';
@@ -1685,6 +1795,9 @@ if ($action == 'create') {
 					print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->hasRight('facture', 'creer'), $select);
 				}
 				print '</td>';
+				if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+					print '<td></td>';
+				}
 				print '</tr>';
 			} else {
 				print '<input type="hidden" name="generate_pdf" value="1">';

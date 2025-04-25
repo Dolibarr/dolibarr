@@ -54,11 +54,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	 */
 	public $picto = 'contact';
 
-	/**
-	 * @var int<0,1>
-	 */
-	public $paid = 0;  // why is this here? it is not in the corresponding database table
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_ORDERED = 4;				// order has been sent
@@ -72,6 +67,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	// idea with STATUS_BOARDINGPASS is just like a flight, before flight have them get their boarding pass, and at that generation ask them when they arrive and use that to adjust door staffing
 	// idea with STATUS_USED is to make sure only one person can get in, hopefully later linked with some badge id so badge id can be invalidated is lost
 	// idea with STATUS_PAID is to track if it was fully paid or some payment needs to happen at the door
+
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
