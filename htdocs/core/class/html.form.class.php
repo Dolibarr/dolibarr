@@ -11996,6 +11996,8 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$(".search_filter_field").on("change", function() {
+					console.log("We change search_filter_field");
+
 					let maybenull = 0;
 					const selectedField = $(this).find(":selected");
 					let fieldType = selectedField.data("type");
@@ -12051,6 +12053,8 @@ class Form
 				});
 
 				$("#operator-selector").on("change", function() {
+					console.log("We change operator-selector");
+
 					const selectedOperator = $(this).find(":selected").val();
 					if (selectedOperator === "IsDefined" || selectedOperator === "IsNotDefined") {
 						// Disable all value input elements
@@ -12070,6 +12074,8 @@ class Form
 				});
 
 				$(".add-filter-btn").on("click", function(event) {
+					console.log("We click on add-filter-btn");
+
 					event.preventDefault();
 
 					const field = $(".search_filter_field").val();
@@ -12078,13 +12084,11 @@ class Form
 					const fieldType = $(".search_filter_field").find(":selected").data("type");
 
 					if (["date", "datetime", "timestamp"].includes(fieldType)) {
-						const parsedDate = new Date($("#dateone").val());
-						if (!isNaN(parsedDate)) {
-							const year = parsedDate.getFullYear();
-							const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
-							const day = String(parsedDate.getDate()).padStart(2, "0");
-							value = `${year}-${month}-${day}`;
-						}
+						const year = $("#dateoneyear").val().toString().padStart(4, "0");;
+						const month = $("#dateonemonth").val().toString().padStart(2, "0");
+						const day = $("#dateoneday").val().toString().padStart(2, "0");
+						value = `${year}-${month}-${day}`;
+						console.log("value="+value);
 					}
 
 					// If the selected field has an array of values then take the selected value

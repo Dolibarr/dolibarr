@@ -3285,7 +3285,6 @@ if (empty($reshook)) {
  * View
  */
 
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -3552,7 +3551,7 @@ if ($action == 'create') {
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
 			// If thirdparty known and not a predefined invoiced without a recurring rule
-			print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Customer').'</td>';
 			print '<td colspan="2">';
 			print $soc->getNomUrl(1, 'customer');
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
@@ -3679,7 +3678,7 @@ if ($action == 'create') {
 			}
 		}
 
-		print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
+		print '<tr><td class="tdtop fieldrequired titlefieldcreate">'.$langs->trans('Type').'</td><td colspan="2">';
 		print '<div class="listofinvoicetypetable">'."\n";
 
 		// Standard invoice
