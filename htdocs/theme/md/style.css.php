@@ -681,6 +681,9 @@ section.setupsection {
 	background-color: var(--colorbacktitle1);
 	border-radius: 5px;
 }
+section.setupsection:hover {
+	box-shadow: 0 0 5px #aaa;
+}
 
 .field-error-icon { color: #ea1212 !important; }
 
@@ -964,7 +967,7 @@ input:-webkit-autofill {
 
 input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
-	transform: scale(1.2);
+	transform: scale(1.3);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
