@@ -211,7 +211,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 	if (!$error) {
 		$donation = new Don($db);
 
-		$donation->amount 		= GETPOST('amount');
+		$donation->amount 		= (float) GETPOST('amount');
 		$donation->status      	= Don::STATUS_DRAFT;
 		$donation->public      	= $public;
 		$donation->date 		= dol_now();
@@ -280,7 +280,7 @@ if (empty($reshook) && $action == 'add') {	// Test on permission not required he
 				}
 
 				if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE') && getDolGlobalString('DONATION_NEWFORM_PAYONLINE') != '-1') {
-					$urlback = getOnlinePaymentUrl(0, 'donation', $donation->id, '', 0);
+					$urlback = getOnlinePaymentUrl(0, 'donation', (string) $donation->id, 0, '');
 
 					if (GETPOST('email')) {
 						$urlback .= '&email='.urlencode(GETPOST('email'));
@@ -321,7 +321,7 @@ if (empty($reshook) && $action == 'added') {	// Test on permission not required 
 	// If we have not been redirected
 	print '<br><br>';
 	print '<div class="center">';
-	print $langs->trans("NewDonationbyWeb", $donation->ref).'<br>';
+	print $langs->trans("NewDonationbyWeb").'<br>';
 	print '</div>';
 
 	llxFooterVierge();
@@ -335,11 +335,11 @@ if (empty($reshook) && $action == 'added') {	// Test on permission not required 
 
 $form = new Form($db);
 $formcompany = new FormCompany($db);
-$extrafields->fetch_name_optionals_label($donation->table_element); // fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element); // fetch optionals attributes and labels
 
 if (isModEnabled('project') || isModEnabled('eventorganization')) {
 	$project = new Project($db);
-	$result = $project->fetch(GETPOST('project_id', 'int'));
+	$result = $project->fetch(GETPOSTINT('project_id'));
 	if ($result > 0) {
 		$projectId = $project->id;
 		$projectTitle = $project->title;
@@ -494,12 +494,9 @@ if (!$action || $action == 'create') {
 	print '<tr><td>'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 
 	if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE')) {
-		$amount = 0;
 
-		// - If not set, we accept to have amount defined as parameter (for backward compatibility).
-		if (empty($amount)) {
-			$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
-		}
+		$amount = (GETPOST('amount') ? price2num(GETPOST('amount', 'alpha'), 'MT', 2) : '');
+
 		// - If a min is set, we take it into account
 		$amount = max(0, (float) $amount, (float) getDolGlobalInt("DONATION_MIN_AMOUNT"));
 
@@ -532,7 +529,7 @@ if (!$action || $action == 'create') {
 		print '</span>';
 		print '<span class="nowrap inline-block">';
 		print '<img class="inline-block valignmiddle" src="'.DOL_URL_ROOT.'/core/antispamimage.php" border="0" width="80" height="32" id="img_securitycode" />';
-		print '<a class="inline-block valignmiddle" href="'.$php_self.'" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
+		print '<a class="inline-block valignmiddle" href="" tabindex="4" data-role="button">'.img_picto($langs->trans("Refresh"), 'refresh', 'id="captcha_refresh_img"').'</a>';
 		print '</span>';
 		print '</td></tr>';
 	}
