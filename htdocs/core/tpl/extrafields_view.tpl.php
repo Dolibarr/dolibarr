@@ -236,6 +236,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$htmlname = "options_".$tmpkeyextra;
 					$onlyenhancements = "textgenerationextrafield";
 					$morecss = "editfielda";
+					$out = "";
 
 					// Fill $out
 					include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
