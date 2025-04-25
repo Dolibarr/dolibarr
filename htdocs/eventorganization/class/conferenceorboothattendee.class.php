@@ -873,46 +873,6 @@ class ConferenceOrBoothAttendee extends CommonObject
 	}
 
 	/**
-	 *	Set paidFull status
-	 *
-	 *	@param	User	$user			Object user that modify
-	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
-	 */
-	public function paidFull($user, $notrigger = 0)
-	{
-		// Protection
-		if ($this->status == self::STATUS_DRAFT) {
-			return 0;
-		}
-		if ($this->status == self::STATUS_CANCELED) {
-			return 0;
-		}
-
-		return $this->setStatusCommon($user, self::STATUS_PAIDFULL, $notrigger, 'CONFERENCEORBOOTHATTENDEE_PAIDFULL');
-	}
-
-	/**
-	 *	Set paidPartially status - at the door ask for reminder of payment
-	 *
-	 *	@param	User	$user			Object user that modify
-	 *	@param	int		$notrigger		1=Does not execute triggers, 0=Execute triggers
-	 *	@return	int						Return integer <0 if KO, 0=Nothing done, >0 if OK
-	 */
-	public function paidPartially($user, $notrigger = 0)
-	{
-		// Protection
-		if ($this->status == self::STATUS_DRAFT) {
-			return 0;
-		}
-		if ($this->status == self::STATUS_CANCELED) {
-			return 0;
-		}
-
-		return $this->setStatusCommon($user, self::STATUS_PAIDPARTIALLY, $notrigger, 'CONFERENCEORBOOTHATTENDEE_PAIDPARTIALLY');
-	}
-
-	/**
 	 *	Set back to validated status
 	 *
 	 *	@param	User	$user			Object user that modify
