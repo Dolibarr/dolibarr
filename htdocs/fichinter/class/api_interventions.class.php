@@ -498,8 +498,8 @@ class Interventions extends DolibarrApi
 	/**
 	 * Clean sensible object datas
 	 *
-	 * @param   Object|array<string, int|string>  $object		Object to clean
-	 * @return  Object 											Object with cleaned properties
+	 * @param   Object  $object		Object to clean
+	 * @return  Object 				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
@@ -540,11 +540,11 @@ class Interventions extends DolibarrApi
 	 *
 	 * @since 22.0.0 Initial implementation
 	 *
-	 * @param 	int    $id		ID of intervention
-	 * @param 	string $type   	Type of contacts (internal, external, thirdparty)
-	 * @param 	string $code   	Filter on a code (Example: 'BILLING', 'SHIPPING', 'INTERVENING', etc.)
-	 * @param 	int    $status 	Status of contacts (0=closed, 1=open)
-	 * @return 	list<object>	Array of contact IDs
+	 * @param 	int    $id     								ID of intervention
+	 * @param 	string $type   								Type of contacts (internal, external, thirdparty)
+	 * @param 	string $code   								Filter on a code (Example: 'BILLING', 'SHIPPING', 'INTERVENING', etc.)
+	 * @param 	int    $status 								Status of contacts (0=closed, 1=open)
+	 * @return  array<int, array<string, int|string>>    	Array of contact IDs
 	 *
 	 * @url     GET {id}/contacts
 	 *
@@ -568,7 +568,7 @@ class Interventions extends DolibarrApi
 		} else {
 			$cleanedContacts = [];
 			foreach ($contacts as $contact) {
-				$cleanedContacts[] = $this->_cleanObjectDatas($contact);
+				$cleanedContacts[] = $this->_cleanObjectDatas((object)$contact);
 			}
 			return $cleanedContacts;
 		}
