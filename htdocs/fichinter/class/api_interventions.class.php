@@ -397,6 +397,8 @@ class Interventions extends DolibarrApi
 	/**
 	 * Reopen an intervention
 	 *
+	 * @since 	22.0.0 	Initial implementation
+	 *
 	 * @param 	int		$id		Intervention ID
 	 *
 	 * @url		POST	{id}/reopen
