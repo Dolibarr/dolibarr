@@ -490,7 +490,7 @@ if (!$action || $action == 'create') {
 	print '<tr id="trseparator"><td colspan="2"><hr></td></tr>';
 
 	// Public
-	$publiclabel = $langs->trans("Public", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
+	$publiclabel = $langs->trans("publicDonationFieldHelp", getDolGlobalString('MAIN_INFO_SOCIETE_NOM'));
 	print '<tr><td>'.$form->textwithpicto($langs->trans("donationPublic"), $publiclabel).'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
 
 	if (getDolGlobalString('DONATION_NEWFORM_PAYONLINE')) {
@@ -511,7 +511,7 @@ if (!$action || $action == 'create') {
 
 		print '<input type="text" name="amount" id="amount" class="flat amount width50" value="'.$showedamount.'">';
 		print ' '.$langs->trans("Currency".$conf->currency).'<span class="opacitymedium hideifautoturnover"> - ';
-		print $amount > 0 ? $langs->trans("AnyAmountWithAdvisedAmount", price($amount, 0, $langs, 1, -1, -1, $conf->currency)) : $langs->trans("AnyAmountWithoutAdvisedAmount");
+		print $langs->trans("AnyAmountForDonation");
 		print '</span>';
 
 		print '</td></tr>';
