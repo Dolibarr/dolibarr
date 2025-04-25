@@ -780,7 +780,7 @@ class EcmFiles extends CommonObject
 		$sql .= ' acl = '.(isset($this->acl) ? "'".$this->db->escape($this->acl)."'" : "null").',';
 		$sql .= ' src_object_id = '.($this->src_object_id > 0 ? $this->src_object_id : "null").',';
 		$sql .= ' src_object_type = '.(isset($this->src_object_type) ? "'".$this->db->escape($this->src_object_type)."'" : "null").',';
-		$sql .= ' agenda_id = '.($this->agenda_id > 0 ? (int) $this->agenda_id : null);
+		$sql .= ' agenda_id = '.($this->agenda_id > 0 ? (int) $this->agenda_id : "null");
 		$sql .= ' WHERE rowid='.((int) $this->id);
 
 		$this->db->begin();
