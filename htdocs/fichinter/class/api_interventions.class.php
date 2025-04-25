@@ -568,7 +568,7 @@ class Interventions extends DolibarrApi
 		} else {
 			$cleanedContacts = [];
 			foreach ($contacts as $contact) {
-				$cleanedContacts[] = $this->_cleanObjectDatas((object)$contact);
+				$cleanedContacts[] = $this->_cleanObjectDatas((object) $contact);
 			}
 			return $cleanedContacts;
 		}
