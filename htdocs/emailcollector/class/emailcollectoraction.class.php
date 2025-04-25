@@ -73,7 +73,7 @@ class EmailCollectorAction extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
-		'fk_emailcollector' => array('type' => 'integer', 'label' => 'Id of emailcollector', 'enabled' => 0, 'visible' => 0, 'foreignkey' => 'emailcollector.rowid', 'position' => 0,),
+		'fk_emailcollector' => array('type' => 'integer', 'label' => 'Id of emailcollector', 'enabled' => 1, 'visible' => 0, 'foreignkey' => 'emailcollector.rowid', 'position' => 0,),
 		'type' => array('type' => 'varchar(128)', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => 1, 'index' => 1),
 		'actionparam' => array('type' => 'text', 'label' => 'ParamForAction', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'notnull' => -1),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 500, 'notnull' => 1,),
