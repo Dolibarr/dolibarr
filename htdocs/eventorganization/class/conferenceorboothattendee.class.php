@@ -995,8 +995,8 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		if ($status == self::STATUS_USED) {
-			$labelStatus = $langs->transnoentitiesnoconv('StatusOrderDelivered').$billedtext;
-			$labelStatusShort = $langs->transnoentitiesnoconv('StatusOrderDeliveredShort').$billedtext;
+			$labelStatus = $langs->trans('Used');
+			$labelStatusShort = $langs->trans('Used');
 			$statusType = 'status6';
 		}
 
