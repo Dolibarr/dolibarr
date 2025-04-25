@@ -455,7 +455,7 @@ if ($user->hasRight('societe', 'lire')) {
 	print '</div>';
 }
 
-print '<br>';
+print '<br><br>';
 
 if ($producttmp->id > 0) {
 	print $langs->trans("BarCodeDataForProduct", '').' '.$producttmp->getNomUrl(1).'<br>';
