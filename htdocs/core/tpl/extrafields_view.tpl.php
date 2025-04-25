@@ -229,6 +229,22 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
+			if (isModEnabled("ai") && $action == 'edit_extras' && GETPOST('attribute') == $tmpkeyextra && !empty($extrafields->attributes[$object->table_element]["type"][$tmpkeyextra])) {
+				if (in_array($extrafields->attributes[$object->table_element]["type"][$tmpkeyextra], array("varchar", "text", "html", "int", 'double', 'price'))) {
+					$showlinktoai = "extrafieldfiller";		// 'textgenerationemail', 'textgenerationwebpage', 'imagegeneration', ...
+					$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
+					$htmlname = "options_".$tmpkeyextra;
+					$onlyenhancements = "textgenerationextrafield";
+					$morecss = "editfielda";
+
+					// Fill $out
+					include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+					print '<td class="right">';
+					print $out;
+					print '</td>';
+					//print '<td class="right"><a class="reposition" href="#">'.img_object($langs->trans("FillExtrafieldWithAi"), "ai").'</a></td>';
+				}
+			}
 			print '</tr></table>';
 			print '</td>';
 
@@ -274,6 +290,12 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
+
+				if (empty($formai) || $formai instanceof FormAI) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+					$formai = new FormAI($db);
+				}
+				print $formai->getAjaxAICallFunction();
 			} else {
 				// Show the extrafield in view mode
 
