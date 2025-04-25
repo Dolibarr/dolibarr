@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "donation"));
+$langs->loadLangs(array("admin", "donations"));
 
 $action = GETPOST('action', 'aZ09');
 
