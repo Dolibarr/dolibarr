@@ -73,12 +73,12 @@ class InterfaceCouffignalFactureSituation extends DolibarrTriggers
 	 * All functions "runTrigger" are triggered if file
 	 * is inside directory core/triggers
 	 *
-	 * @param string 		$action 	Event action code
-	 * @param CommonObject 	$object 	Object
-	 * @param User 			$user 		Object user
-	 * @param Translate 	$langs 		Object langs
-	 * @param Conf 			$conf 		Object conf
-	 * @return int              		Return integer <0 if KO, 0 if no triggered ran, >0 if OK
+	 * @param string $action Event action code
+	 * @param CommonObject $object Object
+	 * @param User $user Object user
+	 * @param Translate $langs Object langs
+	 * @param Conf $conf Object conf
+	 * @return int                    Return integer <0 if KO, 0 if no triggered ran, >0 if OK
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
@@ -90,11 +90,18 @@ class InterfaceCouffignalFactureSituation extends DolibarrTriggers
 			return 0;
 		}
 
-		if (FactureTools::lastSituationIsNotValid($this->db, $object)) {
-			setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated'), 'warnings');
-			return -1;
+		$difference = abs(round(FactureTools::calculateDifference($this->db, $object), 2));
+
+		if ($difference <= 0.01) {
+			return 1;
 		}
 
-		return 1;
+		if ($difference < 5) {
+			setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'warnings');
+			return 1;
+		}
+
+		setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'errors');
+		return -1;
 	}
 }

@@ -2482,7 +2482,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @return	float
 	 */
-	public function computeCompletedPrice()
+	public function computeCompletedPrice($rounded = true)
 	{
 		global $conf;
 
@@ -2497,7 +2497,11 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		return round($totalIfCompleted, 2);
+		if ($rounded) {
+			return round($totalIfCompleted, 2);
+		}
+
+		return $totalIfCompleted;
 	}
 
 	/**
@@ -2621,7 +2625,7 @@ class Facture extends CommonInvoice
 	 *
 	 * @return	float
 	 */
-	public function getLastSituationCompletePrice()
+	public function getLastSituationCompletePrice($rounded = true)
 	{
 		global $conf;
 
@@ -2635,7 +2639,7 @@ class Facture extends CommonInvoice
 			$last_in_serie = $this;
 		}
 		
-		return $last_in_serie->computeCompletedPrice();
+		return $last_in_serie->computeCompletedPrice($rounded);
 	}
 
 	/**

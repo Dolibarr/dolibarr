@@ -28,19 +28,20 @@ class FactureTools
 		return array_map(static fn ($order) => ['ref_client' => $order->ref_client, 'total_ht' => $order->total_ht], $orders);
 	}
 
+
 	/**
-	 * valid if the amount of project orders corresponds to the amount of the last situation.
+	 * Check the difference between the last situation price and the total orders.
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Facture $facture Invoice object
-	 * @return bool Returns true if the last situation is not valid
+	 * @return float Difference between the last situation price and the total orders
 	 */
-	public static function lastSituationIsNotValid(DoliDB $db, Facture $facture): bool
+	public static function calculateDifference(DoliDB $db, Facture $facture): float
 	{
-		$lastSituationCompletePrice = $facture->getLastSituationCompletePrice();
+		$lastSituationCompletePrice = $facture->getLastSituationCompletePrice(false);
 		$totalHtOrders = self::getTotalHtOrdersLinkedToProjectOfInvoice($db, $facture);
-		$sumTotalHtOrders = round(array_sum(array_column($totalHtOrders, 'total_ht')), 2);
+		$sumTotalHtOrders = array_sum(array_column($totalHtOrders, 'total_ht'));
 
-		return !(abs($lastSituationCompletePrice - $sumTotalHtOrders) <= 0.01);
+		return $lastSituationCompletePrice - $sumTotalHtOrders;
 	}
 }
