@@ -2981,12 +2981,18 @@ function acceptLocalLinktoMedia()
 	// Note that local link to a file into medias are replaced with a real link by email in CMailFile.class.php with value $urlwithroot defined like this:
 	// $urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 	// $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
+
 	$acceptlocallinktomedia = getDolGlobalInt('MAIN_DISALLOW_MEDIAS_IN_EMAIL_TEMPLATES') ? 0 : 1;
+
+	// By default we acceptto add medias from emails templates but this may be refused if later
+	// we detect we are not on a public url that we can access remotely (if we are on a private network, such files can't be reached),
+	// except if MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK is net, in which case we accept also if instance has a local or private network URL.
+
 	if ($acceptlocallinktomedia) {
 		global $dolibarr_main_url_root;
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 
-		// Parse $newUrl
+		// Parse $newUrl to get the IP of the server
 		$newUrlArray = parse_url($urlwithouturlroot);
 		$hosttocheck = $newUrlArray['host'];
 		$hosttocheck = str_replace(array('[', ']'), '', $hosttocheck); // Remove brackets of IPv6
@@ -2998,15 +3004,15 @@ function acceptLocalLinktoMedia()
 		}
 
 		//var_dump($iptocheck.' '.$acceptlocallinktomedia);
-		$allowParamName = 'MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK';
-		$allowPrivateNetworkIP = getDolGlobalInt($allowParamName);
+		$allowPrivateNetworkIP = getDolGlobalInt('MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK');
 		if (!$allowPrivateNetworkIP && !filter_var($iptocheck, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
-			// If ip of public url is a private network IP, we do not allow this.
+			// If ip of public url ($iptocheck) is a private network IP (192.168.0.1; 127.0.0.1...), we do not allow to upload files on media (they are unreachable publicly).
 			$acceptlocallinktomedia = 0;
-			//dol_syslog("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use {$allowParamName} = 1 to allow local URL into WYSIWYG html content");
+			//dol_syslog("WYSIWYG Editor : local media not allowed (checked IP: {$iptocheck}). Use MAIN_ALLOW_WYSIWYG_LOCAL_MEDIAS_ON_PRIVATE_NETWORK = 1 to allow local URL into WYSIWYG html content");
 		}
 
-		if (preg_match('/http:/i', $urlwithouturlroot)) {
+		$allowUrlInHTTP = getDolGlobalInt('MAIN_ALLOW_WYSIWYG_EVEN_ON_UNSECURED_EXTERNAL_HTTP_URL');
+		if (!$allowUrlInHTTP && preg_match('/http:/i', $urlwithouturlroot)) {
 			// If public url is not a https, we do not allow to add medias link. It will generate security alerts when email will be sent.
 			$acceptlocallinktomedia = 0;
 			// TODO Show a warning

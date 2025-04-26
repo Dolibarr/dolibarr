@@ -408,11 +408,6 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
 	}
-	.btnTitle, a.btnTitle {
-		display: inline-block;
-		padding: 4px 4px 4px 4px;
-		min-width: unset;
-	}
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
@@ -428,6 +423,16 @@ div.pagination .btnTitle:hover .btnTitle-label{
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.85em;
+	}
+
+	/* for small screen, we reduce the min with of button */
+	.btnTitle, a.btnTitle {
+		display: inline-block;
+		padding: 4px 4px 4px 4px;
+		min-width: unset;	/* if we unset the min-width here, we must also unset the font-size on .paginationafterarrows a.btnTitlePlus:hover span:before to avoid page content move */
+	}
+	.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+		font-size: unset !important;
 	}
 }
 

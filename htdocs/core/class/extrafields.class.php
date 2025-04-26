@@ -2433,7 +2433,7 @@ class ExtraFields
 								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 							});
 							$.ajax({
-								url: "'.DOL_URL_ROOT.'/core/ajax/editextrafield.php",
+								url: "'.DOL_URL_ROOT.'/core/ajax/updateextrafield.php",
 								method: "POST",
 								data: {
 									objectType: \''.dol_escape_js($extrafieldsobjectkey).'\',
