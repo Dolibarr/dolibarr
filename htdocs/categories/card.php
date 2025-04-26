@@ -154,7 +154,7 @@ if (empty($reshook)) {
 				header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$idProjectOrigin.'&type='.$type);
 				exit;
 			} else {
-				header("Location: ".DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type);
+				header("Location: ".DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=cat&type='.$type);
 				exit;
 			}
 		}
