@@ -411,7 +411,7 @@ input[type=submit], input[type=submit]:hover {
 }
 input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
-	transform: scale(1.3);
+	transform: scale(1.25);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
