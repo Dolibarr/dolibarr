@@ -180,7 +180,6 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
-
 	 * Create an event attendee
 	 *
 	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
@@ -223,6 +222,42 @@ class EventAttendees extends DolibarrApi
 		}
 
 		return ((int) $this->event_attendees->id);
+	}
+
+	/**
+	 * Get properties of an event attendee
+	 *
+	 * Return an array with Event attendees
+	 *
+	 * @param   int         $id             ID of event_attendees
+	 * @param	string		$ref			Ref of event_attendees
+	 * @return  Object						Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 */
+	private function _fetch($id, $ref = '')
+	{
+		// we first need to fetch the object so we can get the fk_project id and then check for access
+		$result = $this->event_attendees->fetch($id, $ref);
+		if (!$result) {
+			if ($id) {
+				throw new RestException(404, 'Event attendee with id '.((string) $id).' not found');
+			}
+			if ($ref) {
+				throw new RestException(404, 'Event attendee with ref '.$ref.' not found');
+			}
+			throw new RestException(404, 'Event attendee not found');
+		}
+		$project_id = $this->event_attendees->fk_project;
+		$allowaccess = $this->_checkAccessRights('read', $project_id);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied read access to Event attendees');
+		}
+
+		return $this->_cleanObjectDatas($this->event_attendees);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -306,6 +341,7 @@ class EventAttendees extends DolibarrApi
 		unset($object->rowid);
 		unset($object->module);
 		unset($object->entity);
+		unset($object->paid);
 
 		return $object;
 	}
