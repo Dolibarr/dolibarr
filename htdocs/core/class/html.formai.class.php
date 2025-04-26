@@ -151,6 +151,14 @@ class FormAI extends Form
 			$out .= '</div>';
 		}
 
+		if (in_array($onlyenhancements, array('textgenerationextrafield'))) {
+			$out .= '<div id="ai_textgenerationextrafield'.$htmlContent.'" class="ai_textgenerationextrafield'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			//$out .= '<span>'.$langs->trans("FillMessageWithAIContent").'</span>';
+			$out .= '<textarea class="centpercent textarea-ai_feature" data-functionai="extrafieldfiller" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." /></textarea>';
+			$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp" disabled data-functionai="'.$function.'" value="'.$langs->trans('Generate').'"/>';
+			$out .= '</div>';
+		}
+
 		$out = '<!-- getSectionForAIEnhancement -->'.$out;
 		$out = '<div id="ai_dropdown'.$htmlContent.'" class="dropdown-menu ai_dropdown ai_dropdown'.$htmlContent.' paddingtop paddingbottom">'.$out;
 

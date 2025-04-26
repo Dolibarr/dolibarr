@@ -1081,7 +1081,7 @@ if ($object->id > 0) {
 
 	// Past requests
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount, pfd.fk_societe_rib, pfd.ext_payment_id, pfd.ext_payment_site,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
 	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
@@ -1096,6 +1096,7 @@ if ($object->id > 0) {
 	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " AND pfd.type = 'ban'";
+	//$sql .= " AND pfd.entity IN (".getEntity('prelevement_demande').")";	// Disabled because the filter on fk_facture... should be enough.
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$resql = $db->query($sql);
@@ -1171,7 +1172,7 @@ if ($object->id > 0) {
 				// Show the bank account
 				$fk_bank_account = $withdrawreceipt->fk_bank_account;
 				if (empty($fk_bank_account)) {
-					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+					$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 				if ($fk_bank_account > 0) {
 					$bankaccount = new Account($db);
@@ -1180,6 +1181,11 @@ if ($object->id > 0) {
 						print ' - ';
 						print $bankaccount->getNomUrl(1);
 					}
+				}
+				if (!empty($obj->ext_payment_id) || !empty($obj->ext_payment_site)) {
+					print ' - <span class="small opacitymedium">';
+					print $obj->ext_payment_id.'/'.$obj->ext_payment_site;
+					print '</span>';
 				}
 			}
 			print "</td>\n";
