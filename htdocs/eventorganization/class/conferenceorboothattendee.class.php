@@ -57,6 +57,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
+	const STATUS_USED = 35;					// no more entrances can be done using this ticket
 
 	/**
 	 *  'type' field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'sellist:TableName:LabelFieldName[:KeyFieldName[:KeyFieldParent[:Filter]]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
@@ -111,7 +112,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		'import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => 1, 'position' => 1000, 'notnull' => -1, 'visible' => -2,),
 		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'Model pdf', 'enabled' => 1, 'position' => 1010, 'notnull' => -1, 'visible' => 0,),
 		'ip' => array('type' => 'varchar(250)', 'label' => 'IPAddress', 'enabled' => 1, 'position' => 900, 'notnull' => -1, 'visible' => -2,),
-		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Canceled'),),
+		'status' => array('type' => 'smallint', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'default' => '0', 'notnull' => 1, 'visible' => 1, 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Canceled', '35' => 'Used'),),
 	);
 	/**
 	 * @var int
@@ -955,9 +956,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatus[self::STATUS_USED] = $langs->trans('Used');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
+			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('Used');
 		}
 
 		$statusType = 'status'.$status;
@@ -969,6 +972,12 @@ class ConferenceOrBoothAttendee extends CommonObject
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
 			$statusType = 'status4';
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated').' - '.$langs->trans("Paid");
+		}
+
+		if ($status == self::STATUS_USED) {
+			$labelStatus = $langs->trans('Used');
+			$labelStatusShort = $langs->trans('Used');
+			$statusType = 'status8';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
