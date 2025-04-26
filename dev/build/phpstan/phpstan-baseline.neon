@@ -7885,6 +7885,12 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
+			message: '#^PHPDoc tag @var with type FactureRec is not subtype of native type \$this\(CommonObject\)\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: ../../../htdocs/core/class/commonobject.class.php
+
+		-
 			message: '#^PHPDoc tag @var with type FactureFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
 			identifier: varTag.nativeType
 			count: 1
