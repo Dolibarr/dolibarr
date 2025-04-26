@@ -144,7 +144,7 @@ function websiteGetContentPolicySources()
 		// Fetch directives
 		"fetch" => array(
 			"*" => array("label" => "*", "data-sourcetype" => "select"),
-			"data" => array("label" => "data", "data-sourcetype" => "data"),
+			"data" => array("label" => "data:", "data-sourcetype" => "data"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"unsafe-eval" => array("label" => "unsafe-eval", "data-sourcetype" => "quoted"),
 			"wasm-unsafe-eval" => array("label" => "wasm-unsafe-eval", "data-sourcetype" => "quoted"),
@@ -153,21 +153,21 @@ function websiteGetContentPolicySources()
 			"inline-speculation-rules" => array("label" => "inline-speculation-rules", "data-sourcetype" => "quoted"),
 			"strict-dynamic" => array("label" => "strict-dynamic", "data-sourcetype" => "quoted"),
 			"report-sample" => array("label" => "report-sample", "data-sourcetype" => "quoted"),
-			"host-source" => array("label" => "host-source", "data-sourcetype" => "input"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Document directives
 		"document" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"host-source" => array("label" => "host-source", "data-sourcetype" => "input"),
-			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
+			"scheme-source" => array("label" => "scheme-source (*.mydomain.com)", "data-sourcetype" => "input"),
 		),
 		// Navigation directives
 		"navigation" => array(
 			"none" => array("label" => "self", "data-sourcetype" => "quoted"),
 			"self" => array("label" => "self", "data-sourcetype" => "quoted"),
-			"host-source" => array("label" => "host-source", "data-sourcetype" => "input"),
+			"host-source" => array("label" => "host-source (*.mydomain.com)", "data-sourcetype" => "input"),
 			"scheme-source" => array("label" => "scheme-source", "data-sourcetype" => "input"),
 		),
 		// Reporting directives
@@ -202,6 +202,8 @@ function websiteGetContentPolicyToArray($forceCSP)
 	foreach ($sourceCSPArr as $key => $arr) {
 		$sourceCSPArrflatten = array_merge($sourceCSPArrflatten, array_keys($arr));
 	}
+	// Gerer le problème avec data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D qui est split + problème avec button ajouter
+	$forceCSP = preg_replace('/;base64,/', "__semicolumnbase64__", $forceCSP);
 	$securitypolicies = explode(";", $forceCSP);
 
 	// Loop on each security policy to create an array
@@ -209,6 +211,7 @@ function websiteGetContentPolicyToArray($forceCSP)
 		if ($securitypolicy == "") {
 			continue;
 		}
+		$securitypolicy = preg_replace('/__semicolumnbase64__/', ";base64,", $securitypolicy);
 		$securitypolicyarr = explode(" ", $securitypolicy);
 		$directive = array_shift($securitypolicyarr);
 		// Remove unwanted spaces
@@ -219,37 +222,19 @@ function websiteGetContentPolicyToArray($forceCSP)
 			continue;
 		}
 		$sources = $securitypolicyarr;
-		$issourcedata = 0;
 		if (empty($sources)) {
 			$forceCSPArr[$directive] = array();
 		} else {
 			//Loop on each sources to add to the right directive array key
 			foreach ($sources as $key2 => $source) {
-				$source = str_replace(":", "", $source);
 				$source = str_replace("'", "", $source);
-
 				if (empty($source)) {
-					$forceCSPArr[$directive] = array();
 					continue;
 				}
-				if ($source == "data") {
-					$issourcedata = 1;
-					if (empty($forceCSPArr[$directive])) {
-						$forceCSPArr[$directive] = array($source => array());
-					} else {
-						$forceCSPArr[$directive][$source] = array();
-					}
-					continue;
-				}
-				if ($issourcedata && !in_array($source, $sourceCSPArrflatten)) {
-					$forceCSPArr[$directive]["data"][] = $source;
+				if (empty($forceCSPArr[$directive])) {
+					$forceCSPArr[$directive] = array($source);
 				} else {
-					$issourcedata = 0;
-					if (empty($forceCSPArr[$directive])) {
-						$forceCSPArr[$directive] = array($source);
-					} else {
-						$forceCSPArr[$directive][] = $source;
-					}
+					$forceCSPArr[$directive][] = $source;
 				}
 			}
 		}

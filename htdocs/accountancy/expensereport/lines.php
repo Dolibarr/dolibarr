@@ -128,59 +128,67 @@ $arrayfields = dol_sort_array($arrayfields, 'position');
  * Actions
  */
 
-// Selection of new fields
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-
-// Purge search criteria
-if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
-	$search_lineid = '';
-	$search_login = '';
-	$search_expensereport = '';
-	$search_label = '';
-	$search_desc = '';
-	$search_amount = '';
-	$search_account = '';
-	$search_vat = '';
-	$search_date_startday = '';
-	$search_date_startmonth = '';
-	$search_date_startyear = '';
-	$search_date_endday = '';
-	$search_date_endmonth = '';
-	$search_date_endyear = '';
-	$search_date_start = '';
-	$search_date_end = '';
+$parameters = array('arrayfields' => &$arrayfields);
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) {
+	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
-if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('accounting', 'bind', 'write')) {
-	$error = 0;
+if (empty($reshook)) {
+	// Selection of new fields
+	include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
-	if (!(GETPOSTINT('account_parent') >= 0)) {
-		$error++;
-		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+	// Purge search criteria
+	if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x', 'alpha') || GETPOST('button_removefilter', 'alpha')) { // Both test are required to be compatible with all browsers
+		$search_lineid = '';
+		$search_login = '';
+		$search_expensereport = '';
+		$search_label = '';
+		$search_desc = '';
+		$search_amount = '';
+		$search_account = '';
+		$search_vat = '';
+		$search_date_startday = '';
+		$search_date_startmonth = '';
+		$search_date_startyear = '';
+		$search_date_endday = '';
+		$search_date_endmonth = '';
+		$search_date_endyear = '';
+		$search_date_start = '';
+		$search_date_end = '';
 	}
 
-	if (!$error) {
-		$db->begin();
+	if (is_array($changeaccount) && count($changeaccount) > 0 && $user->hasRight('accounting', 'bind', 'write')) {
+		$error = 0;
 
-		$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
-		$sql1 .= " SET erd.fk_code_ventilation=".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : '0');
-		$sql1 .= ' WHERE erd.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
-
-		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= '.$sql1);
-		$resql1 = $db->query($sql1);
-		if (!$resql1) {
+		if (!(GETPOSTINT('account_parent') >= 0)) {
 			$error++;
-			setEventMessages($db->lasterror(), null, 'errors');
-		}
-		if (!$error) {
-			$db->commit();
-			setEventMessages($langs->trans("Save"), null, 'mesgs');
-		} else {
-			$db->rollback();
-			setEventMessages($db->lasterror(), null, 'errors');
+			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 		}
 
-		$account_parent = ''; // Protection to avoid to mass apply it a second time
+		if (!$error) {
+			$db->begin();
+
+			$sql1 = "UPDATE ".MAIN_DB_PREFIX."expensereport_det as erd";
+			$sql1 .= " SET erd.fk_code_ventilation=".(GETPOSTINT('account_parent') > 0 ? GETPOSTINT('account_parent') : '0');
+			$sql1 .= ' WHERE erd.rowid IN ('.$db->sanitize(implode(',', $changeaccount)).')';
+
+			dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= '.$sql1);
+			$resql1 = $db->query($sql1);
+			if (!$resql1) {
+				$error++;
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+			if (!$error) {
+				$db->commit();
+				setEventMessages($langs->trans("Save"), null, 'mesgs');
+			} else {
+				$db->rollback();
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+
+			$account_parent = ''; // Protection to avoid to mass apply it a second time
+		}
 	}
 }
 
@@ -227,11 +235,18 @@ $sql .= " erd.rowid, erd.fk_c_type_fees, erd.comments, erd.total_ht, erd.fk_code
 $sql .= " f.id as type_fees_id, f.code as type_fees_code, f.label as type_fees_label,";
 $sql .= " u.rowid as userid, u.login, u.lastname, u.firstname, u.email, u.gender, u.employee, u.photo, u.statut,";
 $sql .= " aa.label, aa.labelshort, aa.account_number";
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListSelect', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " FROM ".MAIN_DB_PREFIX."expensereport as er";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."expensereport_det as erd ON er.rowid = erd.fk_expensereport";
 $sql .= " INNER JOIN ".MAIN_DB_PREFIX."accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_type_fees as f ON f.id = erd.fk_c_type_fees";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid = er.fk_user_author";
+// Add table from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 $sql .= " WHERE erd.fk_code_ventilation > 0";
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
 $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
@@ -267,6 +282,10 @@ if ($search_date_end) {
 	$sql .= " AND erd.date <= '".$db->idate($search_date_end)."'";
 }
 $sql .= " AND er.entity IN (".getEntity('expensereport', 0).")"; // We don't share object for accountancy
+// Add where from hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters); // Note that $action and $object may have been modified by hook
+$sql .= $hookmanager->resPrint;
 
 $sql .= $db->order($sortfield, $sortorder);
 
@@ -332,6 +351,10 @@ if ($result) {
 	if ($search_date_endyear) {
 		$param .= '&search_date_endyear='.urlencode((string) ($search_date_endyear));
 	}
+	// Add $param from hooks
+	$parameters = array('param' => &$param);
+	$reshook = $hookmanager->executeHooks('printFieldListSearchParam', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	$param .= $hookmanager->resPrint;
 
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">'."\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -413,6 +436,10 @@ if ($result) {
 	if (!empty($arrayfields['aa.account_number']['checked'])) {
 		print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_account" value="'.dol_escape_htmltag($search_account).'"></td>';
 	}
+	// Fields from hook
+	$parameters = array('arrayfields' => $arrayfields);
+	$reshook = $hookmanager->executeHooks('printFieldListOption', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print '<td class="liste_titre center maxwidthsearch actioncolumn">';
@@ -482,6 +509,10 @@ if ($result) {
 		print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"], "aa.account_number", "", $param, '', $sortfield, $sortorder);
 		$totalarray['nbfield']++;
 	}
+	// Hook fields
+	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
+	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -591,6 +622,10 @@ if ($result) {
 			print '</td>';
 			$totalarray['nbfield']++;
 		}
+		// Fields from hook
+		$parameters = array('arrayfields' => $arrayfields, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);
+		$reshook = $hookmanager->executeHooks('printFieldListValue', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+		print $hookmanager->resPrint;
 		// Action column
 		if (!$conf->main_checkbox_left_column) {
 			print '<td class="nowrap center actioncolumn">';
@@ -608,6 +643,10 @@ if ($result) {
 	if ($num_lines == 0) {
 		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
+
+	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
+	$reshook = $hookmanager->executeHooks('printFieldListFooter', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print "</table>";
 	print "</div>";

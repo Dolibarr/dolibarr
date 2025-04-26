@@ -412,11 +412,12 @@ function encodedecode_dbpassconf($level = 0)
 					$passwd = $val;
 				} else {
 					$passwd = $val;
+					/* old method
 					$mode = 'crypted:';
 					$val = dol_encode($val);
-					$passwd_crypted = $val;
-					// TODO replace with dolEncrypt()
-					// ...
+					*/
+					$mode = 'dolcrypt:';
+					$passwd_crypted = dolEncrypt($val);
 				}
 				$lineofpass = 1;
 			}

@@ -66,7 +66,8 @@ create table llx_facture_rec
   multicurrency_total_ttc   double(24,8) DEFAULT 0,
 
   usenewprice        	integer DEFAULT 0,			-- update invoice with current price of product instead of recorded price
-  frequency          	integer,						-- frequency (for example: 3 for every 3 month)
+  usenewcurrencyrate   	integer DEFAULT 0,			-- update invoice with last currency rate instead of recorded rate
+  frequency          	integer,					-- frequency (for example: 3 for every 3 month)
   unit_frequency     	varchar(2) DEFAULT 'm',		-- 'm' for month (date_when must be a day <= 28), 'y' for year, ...
   rule_for_lines_dates	varchar(255) DEFAULT 'prepaid',
 

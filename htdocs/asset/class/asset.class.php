@@ -1251,7 +1251,7 @@ class Asset extends CommonObject
 		global $conf, $langs;
 
 		// Protection
-		if ($this->status != self::STATUS_DRAFT || $this->status == self::STATUS_DISPOSED) {
+		if ($this->status == self::STATUS_DISPOSED) {
 			return 0;
 		}
 

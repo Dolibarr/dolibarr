@@ -1201,6 +1201,36 @@ class KnowledgeRecord extends CommonObject
 		$return .= '</div>';
 		return $return;
 	}
+
+	/**
+	 *  Load indicators into this->nb for board
+	 *
+	 *  @return     int         Return integer <0 if KO, >0 if OK
+	 */
+	public function loadStateBoard()
+	{
+		global $user;
+
+		$this->nb = array();
+		$clause = "WHERE";
+
+		$sql = "SELECT count(t.rowid) as nb";
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["knowledgebase"] = $obj->nb;
+			}
+
+			$this->db->free($resql);
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
+	}
 }
 
 

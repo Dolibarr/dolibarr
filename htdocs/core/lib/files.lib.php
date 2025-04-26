@@ -2596,7 +2596,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 /**
  * Uncompress a file
  *
- * @param 	string 	$inputfile		File to uncompress
+ * @param 	string 	$inputfile		File (.zip, .gz, .bz2, .zst, ...) to uncompress
  * @param 	string	$outputdir		Target dir name
  * @return 	array{error?:string}	array('error'=>'Error code') or array() if no error
  * @see dol_compress_file(), dol_compress_dir()
@@ -3011,7 +3011,12 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'memberphoto' && !empty($conf->member->dir_output)) {
 		// Wrapping for members photos
 		$accessallowed = 0;
+		// Simple chosen for automatic generation of member codes
 		if (preg_match('/^\d+\/photos\//', $original_file)) {
+			$accessallowed = 1;
+		}
+		// Advanced chosen for automatic generation of member codes
+		if (preg_match('/^MEM\d\d\d\d-\d\d\d\d\/photos\//', $original_file)) {
 			$accessallowed = 1;
 		}
 		$original_file = $conf->member->dir_output.'/'.$original_file;

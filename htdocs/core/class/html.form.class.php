@@ -5723,10 +5723,9 @@ class Form
 	}
 
 	/**
-	 *     Show a confirmation HTML form or AJAX popup.
-	 *     Easiest way to use this is with useajax=1.
-	 *     If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters)
-	 *     just after calling this method. For example:
+	 * Show a confirmation HTML form or AJAX popup.
+	 * Easiest way to use this is with useajax=1.
+	 * If you use useajax='xxx', you must also add jquery code to trigger opening of box (with correct parameters) just after calling this method. For example:
 	 *       print '<script nonce="'.getNonce().'" type="text/javascript">'."\n";
 	 *       print 'jQuery(document).ready(function() {'."\n";
 	 *       print 'jQuery(".xxxlink").click(function(e) { jQuery("#aparamid").val(jQuery(this).attr("rel")); jQuery("#dialog-confirm-xxx").dialog("open"); return false; });'."\n";
@@ -6883,7 +6882,7 @@ class Form
 	 * @param 	string 	$morecss 				More css
 	 * @return  string							HTML component
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = '')
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = 'maxwidth200 widthcentpercentminusx')
 	{
 		global $conf, $langs;
 
@@ -6892,7 +6891,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = "SELECT code FROM " . $this->db->prefix() . "multicurrency";
-		$sql .= " WHERE entity IN ('" . getEntity('mutlicurrency') . "')";
+		$sql .= " WHERE entity IN ('" . getEntity('multicurrency') . "')";
 		if ($filter) {
 			$sql .= " AND " . $filter;
 		}
@@ -7483,9 +7482,9 @@ class Form
 						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons"';
 						$base = DOL_URL_ROOT . '/core/';
 						$retstringbuttom .= ' onClick="showDP(\'' . dol_escape_js($base) . '\',\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\',\'' . dol_escape_js($langs->defaultlang) . '\');"';
-						$retstringbuttom .= '>' . img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink"') . '</button>';
+						$retstringbuttom .= '>' . img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink paddingright"') . '</button>';
 					} else {
-						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
+						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink paddingright"') . '</button>';
 					}
 					$retstring = $retstringbuttom . $retstring;
 
@@ -9637,7 +9636,7 @@ class Form
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" />';
-				$listoffieldsforselection .= '<label for="checkbox' . $key . '">';
+				$listoffieldsforselection .= '<label for="checkbox' . $key . '" class="paddingleft">';
 				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
 				$listoffieldsforselection .= '</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
@@ -10913,12 +10912,12 @@ class Form
 	}
 
 	/**
-	 *    Return HTML to show the search and clear search button
+	 * Return HTML to show the search and clear search button
 	 *
-	 * @param string $cssclass CSS class
-	 * @param int $calljsfunction 0=default. 1=call function initCheckForSelect() after changing status of checkboxes
-	 * @param string $massactionname Mass action button name that will launch an action on the selected items
-	 * @return    string
+	 * @param 	string 	$cssclass 			CSS class
+	 * @param 	int 	$calljsfunction 	0=default. 1=call function initCheckForSelect() after changing status of checkboxes
+	 * @param 	string 	$massactionname 	Mass action button name that will launch an action on the selected items
+	 * @return	string						HTML code with checkbox button
 	 */
 	public function showCheckAddButtons($cssclass = 'checkforaction', $calljsfunction = 0, $massactionname = "massaction")
 	{
@@ -11953,6 +11952,8 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$(".search_filter_field").on("change", function() {
+					console.log("We change search_filter_field");
+
 					let maybenull = 0;
 					const selectedField = $(this).find(":selected");
 					let fieldType = selectedField.data("type");
@@ -12008,6 +12009,8 @@ class Form
 				});
 
 				$("#operator-selector").on("change", function() {
+					console.log("We change operator-selector");
+
 					const selectedOperator = $(this).find(":selected").val();
 					if (selectedOperator === "IsDefined" || selectedOperator === "IsNotDefined") {
 						// Disable all value input elements
@@ -12027,6 +12030,8 @@ class Form
 				});
 
 				$(".add-filter-btn").on("click", function(event) {
+					console.log("We click on add-filter-btn");
+
 					event.preventDefault();
 
 					const field = $(".search_filter_field").val();
@@ -12035,13 +12040,11 @@ class Form
 					const fieldType = $(".search_filter_field").find(":selected").data("type");
 
 					if (["date", "datetime", "timestamp"].includes(fieldType)) {
-						const parsedDate = new Date($("#dateone").val());
-						if (!isNaN(parsedDate)) {
-							const year = parsedDate.getFullYear();
-							const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
-							const day = String(parsedDate.getDate()).padStart(2, "0");
-							value = `${year}-${month}-${day}`;
-						}
+						const year = $("#dateoneyear").val().toString().padStart(4, "0");;
+						const month = $("#dateonemonth").val().toString().padStart(2, "0");
+						const day = $("#dateoneday").val().toString().padStart(2, "0");
+						value = `${year}-${month}-${day}`;
+						console.log("value="+value);
 					}
 
 					// If the selected field has an array of values then take the selected value
@@ -12152,13 +12155,20 @@ class Form
 			'label_key' => 'Cancel',
 		);
 
-		!empty($save_label) ? $buttons[] = $save : '';
-
-		if (!empty($morebuttons)) {
-			$buttons[] = $morebuttons;
+		// If MAIN_BUTTON_POSITION_FIRST_OR_LEFT not set, default is to have main action first, then complementary, then cancel at end
+		if (!getDolGlobalInt('MAIN_BUTTON_POSITION_FIRST_OR_LEFT')) {
+			!empty($save_label) ? $buttons[] = $save : '';
+			if (!empty($morebuttons)) {
+				$buttons[] = $morebuttons;
+			}
+			!empty($cancel_label) ? $buttons[] = $cancel : '';
+		} else {
+			if (!empty($morebuttons)) {
+				$buttons[] = $morebuttons;
+			}
+			!empty($cancel_label) ? $buttons[] = $cancel : '';
+			!empty($save_label) ? $buttons[] = $save : '';
 		}
-
-		!empty($cancel_label) ? $buttons[] = $cancel : '';
 
 		$retstring = $withoutdiv ? '' : '<div class="center">';
 

@@ -11,8 +11,8 @@ return [
     // # Issue statistics:
     // PhanUndeclaredProperty : 460+ occurrences
     // PhanTypeMismatchProperty : 100+ occurrences
-    // PhanUndeclaredGlobalVariable : 95+ occurrences
     // PhanTypeMismatchArgument : 90+ occurrences
+    // PhanUndeclaredGlobalVariable : 90+ occurrences
     // PhanTypeMismatchArgumentNullable : 30+ occurrences
     // PhanTypeExpectedObjectPropAccess : 20+ occurrences
     // PhanTypeInvalidDimOffset : 20+ occurrences
@@ -69,7 +69,6 @@ return [
         'htdocs/comm/propal/card.php' => ['PhanTypeMismatchProperty'],
         'htdocs/comm/propal/list.php' => ['PhanUndeclaredProperty'],
         'htdocs/comm/propal/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
-        'htdocs/commande/card.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/api_orders.class.php' => ['PhanTypeMismatchArgument'],
         'htdocs/commande/class/commande.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/commande/customer.php' => ['PhanUndeclaredGlobalVariable'],
@@ -119,7 +118,6 @@ return [
         'htdocs/core/class/cgenericdic.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/commonobject.class.php' => ['PhanParamTooMany', 'PhanTypeMismatchArgument', 'PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredProperty'],
         'htdocs/core/class/commonpeople.class.php' => ['PhanUndeclaredProperty'],
-        'htdocs/core/class/commonsocialnetworks.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/conf.class.php' => ['PhanTypeMismatchArgumentNullableInternal', 'PhanTypeMismatchProperty'],
         'htdocs/core/class/ctyperesource.class.php' => ['PhanUndeclaredProperty'],
         'htdocs/core/class/dolgraph.class.php' => ['PhanUndeclaredProperty'],
@@ -225,7 +223,6 @@ return [
         'htdocs/fourn/commande/card.php' => ['PhanTypeMismatchDimAssignment', 'PhanTypeSuspiciousStringExpression', 'PhanUndeclaredProperty'],
         'htdocs/fourn/facture/card-rec.php' => ['PhanTypeMismatchArgument', 'PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/fourn/facture/card.php' => ['PhanTypeMismatchArgument', 'PhanTypeMismatchProperty'],
-        'htdocs/fourn/facture/paiement.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/fourn/facture/rapport.php' => ['PhanTypeMismatchArgument'],
         'htdocs/fourn/facture/tpl/linkedobjectblock.tpl.php' => ['PhanUndeclaredProperty'],
         'htdocs/holiday/card_group.php' => ['PhanTypeMismatchArgument'],
@@ -285,7 +282,6 @@ return [
         'htdocs/public/members/new.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/payment/newpayment.php' => ['PhanUndeclaredProperty'],
         'htdocs/public/payment/paymentok.php' => ['PhanTypeMismatchArgumentProbablyReal', 'PhanUndeclaredGlobalVariable'],
-        'htdocs/public/project/index.php' => ['PhanUndeclaredGlobalVariable'],
         'htdocs/public/project/suggestbooth.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/suggestconference.php' => ['PhanUndeclaredGlobalVariable', 'PhanUndeclaredProperty'],
         'htdocs/public/project/viewandvote.php' => ['PhanUndeclaredGlobalVariable'],

@@ -326,6 +326,27 @@ class SMTPs
 	}
 
 	/**
+	 * Set socket timeout. May be increase when email sent after a long time and with a large file for the wake up of SMTP server.
+	 *
+	 * @param	int		$timeout	Delay in second for socket timeout (default is 10s)
+	 * @return	void
+	 */
+	public function setSMTPTimeout($timeout)
+	{
+		$this->_smtpTimeout = $timeout;
+	}
+
+	/**
+	 * Get socket timeout
+	 *
+	 * @return	int		Delay in second for socket timeout
+	 */
+	public function getSMTPTimeout()
+	{
+		return $this->_smtpTimeout;
+	}
+
+	/**
 	 * Set trackid
 	 *
 	 * @param	string		$_val		Value
@@ -489,7 +510,7 @@ class SMTPs
 				// This connection attempt failed.
 				// @CHANGE LDR
 				if (empty($this->errstr)) {
-					$this->errstr = 'Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
+					$this->errstr = 'Failed to connect with stream_context_create or fsockopen host='.$this->getHost().' port='.$this->getPort();
 				}
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;

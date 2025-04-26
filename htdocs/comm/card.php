@@ -7,7 +7,7 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2010-2020	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2020		Open-Dsi					<support@open-dsi.fr>
  * Copyright (C) 2022		Anthony Berton				<anthony.berton@bb2a.fr>
@@ -1220,7 +1220,7 @@ if ($object->id > 0) {
 				$contrat->ref_customer = $objp->refcus;
 				$contrat->ref_supplier = $objp->refsup;
 				$contrat->fk_project = $objp->fk_projet;
-				$contrat->statut = $objp->contract_status;
+				$contrat->statut = $objp->contract_status;	// deprecated
 				$contrat->status = $objp->contract_status;
 				$contrat->last_main_doc = $objp->last_main_doc;
 				$contrat->model_pdf = $objp->model_pdf;
@@ -1229,7 +1229,7 @@ if ($object->id > 0) {
 				$late = '';
 				foreach ($contrat->lines as $line) {
 					if ($contrat->status == Contrat::STATUS_VALIDATED && $line->statut == ContratLigne::STATUS_OPEN) {
-						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contrat->services->expires->warning_delay) < $now) {
+						if (((!empty($line->date_end) ? $line->date_end : 0) + $conf->contract->services->expires->warning_delay) < $now) {
 							$late = img_warning($langs->trans("Late"));
 						}
 					}
@@ -1240,7 +1240,7 @@ if ($object->id > 0) {
 				print $contrat->getNomUrl(1, 12);
 				if (!empty($contrat->model_pdf)) {
 					// Preview
-					$filedir = $conf->contrat->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+					$filedir = $conf->contract->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 					$file_list = null;
 					if (!empty($filedir)) {
 						$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);
@@ -1333,7 +1333,8 @@ if ($object->id > 0) {
 
 				$fichinter_static->id = $objp->id;
 				$fichinter_static->ref = $objp->ref;
-				$fichinter_static->statut = $objp->fk_statut;
+				$fichinter_static->statut = $objp->fk_statut;	// deprecated
+				$fichinter_static->status = $objp->fk_statut;
 				$fichinter_static->fk_project = $objp->fk_projet;
 
 				print '<tr class="oddeven">';
@@ -1557,7 +1558,7 @@ if ($object->id > 0) {
 				$facturestatic->total_ht = $objp->total_ht;
 				$facturestatic->total_tva = $objp->total_tva;
 				$facturestatic->total_ttc = $objp->total_ttc;
-				$facturestatic->statut = $objp->status;
+				$facturestatic->statut = $objp->status;	// deprecated
 				$facturestatic->status = $objp->status;
 				$facturestatic->paye = $objp->paye;
 				$facturestatic->alreadypaid = $objp->am;
@@ -1569,7 +1570,7 @@ if ($object->id > 0) {
 				print '<td class="nowraponall">';
 				print $facturestatic->getNomUrl(1);
 				// Preview
-				$filedir = $conf->facture->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
+				$filedir = $conf->invoice->multidir_output[$objp->entity].'/'.dol_sanitizeFileName($objp->ref);
 				$file_list = null;
 				if (!empty($filedir)) {
 					$file_list = dol_dir_list($filedir, 'files', 0, dol_sanitizeFileName($objp->ref).'.pdf', '(\.meta|_preview.*.*\.png)$', 'date', SORT_DESC);

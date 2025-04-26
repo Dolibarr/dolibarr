@@ -345,6 +345,12 @@ foreach ($search as $key => $val) {
 			}
 			$mode_search = 2;
 		}
+		if ($field_spec['type'] === 'boolean') {
+			$mode_search = 1;
+			if ($search[$key] == '-1') {
+				$search[$key] = '';
+			}
+		}
 		if (empty($field_spec['searchmulti'])) {
 			if (!is_array($search[$key]) && $search[$key] != '') {
 				$sql .= natural_search("t.".$db->escape($key), $search[$key], (($key == 'status') ? 2 : $mode_search));
@@ -658,6 +664,8 @@ foreach ($object->fields as $key => $val) {
 		} elseif ($key == 'lang') {
 			$formadmin = new FormAdmin($db);
 			print $formadmin->select_language((isset($search[$key]) ? $search[$key] : ''), 'search_lang', 0, array(), 1, 0, 0, 'minwidth100imp maxwidth125', 2);
+		} elseif ($val['type'] === 'boolean') {
+			print $form->selectyesno('search_' . $key, $search[$key] ?? '', 1, false, 1);
 		} else {
 			print '<input type="text" class="flat maxwidth'.(in_array($val['type'], array('integer', 'price')) ? '50' : '75').'" name="search_'.$key.'" value="'.dol_escape_htmltag(isset($search[$key]) ? $search[$key] : '').'">';
 		}

@@ -814,7 +814,7 @@ if (empty($reshook)) {
 					}
 				} else {
 					$object->status = $oldstatus;
-					$object->statut = $oldstatus;
+					$object->statut = $oldstatus;	// deprecated
 
 					$db->rollback();
 					$action = '';
@@ -833,7 +833,7 @@ if (empty($reshook)) {
 				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			} else {
-				$object->statut = $newstatus;
+				$object->statut = $newstatus;	// deprecated
 				$object->status = $newstatus;
 			}
 
@@ -2259,7 +2259,7 @@ if ($action == 'create') {
 			print '<tr class="field_currency">';
 			print '<td class="titlefieldcreate">'.$form->editfieldkey('Currency', 'multicurrency_code', '', $object, 0).'</td>';
 			print '<td class="valuefieldcreate maxwidthonsmartphone">';
-			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0);
+			print img_picto('', 'currency', 'class="pictofixedwidth"').$form->selectMultiCurrency(((GETPOSTISSET('multicurrency_code') && !GETPOST('changecompany')) ? GETPOST('multicurrency_code') : $currency_code), 'multicurrency_code', 0, '', false, 'maxwidth200 widthcentpercentminusx');
 			print '</td></tr>';
 		}
 

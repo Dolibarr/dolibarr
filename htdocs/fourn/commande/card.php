@@ -1687,6 +1687,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="remise_percent" value="'.(empty($soc->remise_supplier_percent) ? '' : $soc->remise_supplier_percent).'">';
 	print '<input type="hidden" name="origin" value="'.$origin.'">';
 	print '<input type="hidden" name="originid" value="'.$originid.'">';
+	print '<input type="hidden" name="changecompany" value="0">';	// will be set to 1 by javascript so we know post is done after a company change
 	if ($backtopage) {
 		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	}
@@ -1728,6 +1729,7 @@ if ($action == 'create') {
 						console.log("We have changed the company - Reload page");
 						// reload page
 						$("input[name=action]").val("create");
+						$("input[name=changecompany]").val("1");
 						$("form[name=add]").submit();
 					});
 				});
@@ -1885,6 +1887,15 @@ if ($action == 'create') {
 		print $hookmanager->resPrint;
 
 		if (empty($reshook)) {
+			if (getDolGlobalString('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_SUPPLIER_ORDER') && !empty($societe->id)) {
+				// copy from thirdparty
+				$tpExtrafields = new ExtraFields($db);
+				$tpExtrafieldLabels = $tpExtrafields->fetch_name_optionals_label($societe->table_element);
+				if ($societe->fetch_optionals() > 0) {
+					$object->array_options = array_merge($object->array_options, $societe->array_options);
+				}
+			}
+
 			print $object->showOptionals($extrafields, 'create');
 		}
 

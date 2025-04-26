@@ -85,6 +85,7 @@ $originid = (GETPOSTINT('originid') ? GETPOSTINT('originid') : GETPOSTINT('origi
 $fac_rec = GETPOSTINT('fac_rec');
 $facid = GETPOSTINT('facid');
 $ref_client = GETPOSTINT('ref_client');
+$inputReasonId = GETPOSTINT('input_reason_id');
 $rank = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $projectid = (GETPOSTINT('projectid') ? GETPOSTINT('projectid') : 0);
 $selectedLines = GETPOST('toselect', 'array');
@@ -668,6 +669,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
 		$object->set_ref_client(GETPOST('ref_client'));
+	} elseif ($action == 'setdemandreason' && $usercancreate) {
+		$result = $object->setInputReason($inputReasonId);
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOSTINT('idwarehouse');
@@ -1065,6 +1071,7 @@ if (empty($reshook)) {
 		$db->begin();
 
 		$originentity = GETPOSTINT('originentity');
+		$object->demand_reason_id = $inputReasonId;
 		// Fill array 'array_options' with data from add form
 		$ret = $extrafields->setOptionalsFromPost(null, $object);
 		if ($ret < 0) {
@@ -1354,7 +1361,7 @@ if (empty($reshook)) {
 							$tva_tx = 0;
 						}
 
-						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), $remain_to_pay, 1, $tva_tx, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC');
+						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'), 0, 1, $tva_tx, 0, 0, 0, 0, '', '', 0, 0, 0, 'TTC', $remain_to_pay);
 					}
 				}
 
@@ -3251,7 +3258,6 @@ if (empty($reshook)) {
  * View
  */
 
-
 $form = new Form($db);
 $formother = new FormOther($db);
 $formfile = new FormFile($db);
@@ -3386,6 +3392,9 @@ if ($action == 'create') {
 					$currency_tx 	= (!empty($expesrc->multicurrency_tx) ? $expesrc->multicurrency_tx : (!empty($soc->multicurrency_tx) ? $soc->multicurrency_tx : $objectsrc->multicurrency_tx));
 				}
 
+				// replicate input reason
+				$inputReasonId = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
+
 				//Replicate extrafields
 				$expesrc->fetch_optionals();
 				$object->array_options = $expesrc->array_options;
@@ -3403,6 +3412,9 @@ if ($action == 'create') {
 					}
 				}
 
+				// replicate input reason
+				$inputReasonId = (!empty($objectsrc->demand_reason_id) ? $objectsrc->demand_reason_id : (!empty($soc->demand_reason_id) ? $soc->demand_reason_id : 0));
+
 				// Replicate extrafields
 				$objectsrc->fetch_optionals();
 				$object->array_options = $objectsrc->array_options;
@@ -3412,6 +3424,7 @@ if ($action == 'create') {
 		$cond_reglement_id 	= empty($soc->cond_reglement_id) ? $cond_reglement_id : $soc->cond_reglement_id;
 		$mode_reglement_id  = empty($soc->mode_reglement_id) ? $mode_reglement_id : $soc->mode_reglement_id;
 		$fk_account         = empty($soc->fk_account) ? $fk_account : $soc->fk_account;
+		$inputReasonId = empty($soc->demand_reason_id) ? $inputReasonId : $soc->demand_reason_id;
 
 		$dateinvoice = (empty($dateinvoice) ? (!getDolGlobalString('MAIN_AUTOFILL_DATE') ? -1 : '') : $dateinvoice); // Do not set 0 here (0 for a date is 1970)
 
@@ -3511,7 +3524,7 @@ if ($action == 'create') {
 		// Thirdparty
 		if ($soc->id > 0 && (!GETPOSTINT('fac_rec') || !empty($invoice_predefined->frequency))) {
 			// If thirdparty known and not a predefined invoiced without a recurring rule
-			print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td>';
+			print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans('Customer').'</td>';
 			print '<td colspan="2">';
 			print $soc->getNomUrl(1, 'customer');
 			print '<input type="hidden" name="socid" value="'.$soc->id.'">';
@@ -3638,7 +3651,7 @@ if ($action == 'create') {
 			}
 		}
 
-		print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
+		print '<tr><td class="tdtop fieldrequired titlefieldcreate">'.$langs->trans('Type').'</td><td colspan="2">';
 		print '<div class="listofinvoicetypetable">'."\n";
 
 		// Standard invoice
@@ -3872,6 +3885,7 @@ if ($action == 'create') {
 						$newinvoice_static->status = $valarray ['status'];
 						$newinvoice_static->type = $valarray ['type'];
 						$newinvoice_static->paye = $valarray ['paye'];
+						$newinvoice_static->paid = $valarray ['paye'];
 
 						$optionsav .= '<option value="'.$key.'"';
 						if ($key == GETPOST('fac_avoir')) {
@@ -4108,6 +4122,12 @@ if ($action == 'create') {
 			//print ' <a href="'.DOL_URL_ROOT.'/compta/bank/card.php?socid='.$soc->id.'&action=create&status=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create&socid='.$soc->id.($fac_rec ? '&fac_rec='.$fac_rec : '')).'"><span class="fa fa-plus-circle valignmiddle" title="'.$langs->trans("NewBankAccount").'"></span></a>';
 			print '</td></tr>';
 		}
+
+		// Source / Channel - What trigger creation
+		print '<tr><td>'.$langs->trans('Source').'</td><td>';
+		print img_picto('', 'question', 'class="pictofixedwidth"');
+		$form->selectInputReason((string) $inputReasonId, 'input_reason_id', '', 1, 'maxwidth200 widthcentpercentminusx');
+		print '</td></tr>';
 
 		// Project
 		if (isModEnabled('project') && is_object($formproject)) {
@@ -4926,6 +4946,17 @@ if ($action == 'create') {
 			print '</td></tr>';
 		}
 
+		// Source reason (why we have an invoice)
+		print '<tr><td>';
+		print $form->editfieldkey('Source', 'input_reason', '', $object, (int) $usercancreate);
+		print '</td><td class="valuefield">';
+		if ($action == 'editinput_reason') {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'input_reason_id', 1);
+		} else {
+			$form->formInputReason($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->demand_reason_id, 'none');
+		}
+		print '</td></tr>';
+
 		// Payment term
 		print '<tr><td>';
 		print '<table class="nobordernopadding centpercent"><tr><td>';
@@ -5189,20 +5220,20 @@ if ($action == 'create') {
 		print '<tr>';
 		// Amount HT
 		print '<td class="titlefieldmiddle">' . $langs->trans('AmountHT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowraponall amountcard right">' . price($sign * $object->total_ht, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount HT
-			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
 		print '<tr>';
 		// Amount VAT
 		print '<td>' . $langs->trans('AmountVAT') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowraponall amountcard right">' . price($sign * $object->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount VAT
-			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 		}
 		print '</tr>';
 
@@ -5210,11 +5241,11 @@ if ($action == 'create') {
 		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) {
 			print '<tr>';
 			print '<td class="titlefieldmiddle">' . $langs->transcountry("AmountLT1", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($sign * $object->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->total_localtax1, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 				$object->multicurrency_total_localtax1 = (float) price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
 
-				print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 		}
@@ -5222,11 +5253,11 @@ if ($action == 'create') {
 		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) {
 			print '<tr>';
 			print '<td>' . $langs->transcountry("AmountLT2", $mysoc->country_code) . '</td>';
-			print '<td class="nowrap amountcard right">' . price($sign * $object->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->total_localtax2, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 				$object->multicurrency_total_localtax2 = (float) price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
 
-				print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
 			}
 			print '</tr>';
 		}
@@ -5287,7 +5318,7 @@ if ($action == 'create') {
 		print '<tr>';
 		// Amount TTC
 		print '<td>' . $langs->trans('AmountTTC') . '</td>';
-		print '<td class="nowrap amountcard right">' . price($sign * $object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
+		print '<td class="nowraponall amountcard right">' . price($sign * $object->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . '</td>';
 		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
 			// Multicurrency Amount TTC
 			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
@@ -5782,7 +5813,7 @@ if ($action == 'create') {
 		print '</div>';
 		print '</div>';
 
-		print '<div class="clearboth"></div><br><br>';
+		print '<div class="clearboth"></div><br>';
 
 		if (getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 			$blocname = 'contacts';
@@ -5862,7 +5893,7 @@ if ($action == 'create') {
 		}
 
 		print '<div class="div-table-responsive-no-min">';
-		print '<table id="tablelines" class="noborder noshadow centpercent">';
+		print '<table id="tablelines" class="noborder noshadow centpercent nomarginbottom">';
 
 		// Show object lines
 		if (!empty($object->lines)) {

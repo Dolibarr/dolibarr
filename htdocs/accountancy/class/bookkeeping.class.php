@@ -301,7 +301,7 @@ class BookKeeping extends CommonObject
 			$this->credit = 0.0;
 		}
 
-		$result = $this->validBookkeepingDate($this->doc_date);
+		$result = $this->validBookkeepingDate($this->doc_date);	// Check date according to ACCOUNTANCY_FISCAL_PERIOD_MODE.
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {

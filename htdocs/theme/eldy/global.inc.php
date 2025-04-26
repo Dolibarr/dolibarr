@@ -411,7 +411,7 @@ input[type=submit], input[type=submit]:hover {
 }
 input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
-	transform: scale(1.2);
+	transform: scale(1.25);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -471,11 +471,15 @@ section.setupsection {
 	background-color: var(--colorbackgrey);
 	border-radius: 5px;
 }
+section.setupsection:hover {
+	box-shadow: 0 0 5px #aaa;
+}
+
 
 .field-error-icon { color: #ea1212 !important; }
 
 /* Focus definitions must be after standard definition */
-div.tabBar textarea:focus:not(.textarea-ai_feature) {
+div.tabBar textarea:focus:not(.textarea-ai_feature):not(.cke_source) {
 	border: 1px solid #aaa !important;
 }
 input:focus:not(.button):not(.buttonwebsite):not(.buttonreset):not(.select2-search__field):not(#top-bookmark-search-input):not(.search_component_input):not(.input-nobottom),
@@ -589,6 +593,7 @@ input.buttonpaymentstripe {
 	max-height: 80px;
 	max-width: 300px;
 	image-rendering: -webkit-optimize-contrast;		/* better rendering on public page header */
+	border-radius: 4px;
 }
 
 a.butStatus {
@@ -832,15 +837,11 @@ table.tableforfield .buttonDelete:not(.bordertransp):not(.buttonpayment) {
 	cursor: pointer;
 	text-decoration: none !important;
 	background-color: #f5f5f5;
-	background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
-	background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
-	background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
 	background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
 	background-repeat: repeat-x;
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border: 1px solid #aaa;
-	border-radius: 1px;
+	border-radius: 4px;
 
 	font-weight: bold;
 	text-transform: uppercase;
@@ -1020,6 +1021,11 @@ textarea.centpercent {
 }
 .centerimp {
 	text-align: center !important;
+}
+.centergrid {
+	display: grid;
+	text-align: center;
+	place-items: center;
 }
 .alignstart {
 	text-align: start;
@@ -1298,11 +1304,11 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye, .editfielda span.fa-magic,
 .editfieldlang {
 	color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover, .editfielda span.fa-magic:hover,
 .editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
@@ -1325,7 +1331,9 @@ span.fa.fa-plus-circle.paddingleft {
 
 .size12x { font-size: 1.2em !important; }
 .size15x { font-size: 1.5em !important; }
-.fa-toggle-on, .fa-toggle-off, .size2x { font-size: 2em; }
+.size2x { font-size: 2em; }
+.size4x { font-size: 4em !important; }
+.fa-toggle-on, .fa-toggle-off { font-size: 2em; }
 .websiteselectionsection .fa-toggle-on, .websiteselectionsection .fa-toggle-off,
 .asetresetmodule .fa-toggle-on, .asetresetmodule .fa-toggle-off,
 .tdwebsitesearchresult .fa-toggle-on, .tdwebsitesearchresult .fa-toggle-off {
@@ -1899,7 +1907,7 @@ div.ticketpublicarealist>form>div.div-table-responsive {
 	margin: 20px 20px 20px 20px;
 }
 .flexcontainer {
-	<?php if (in_array($conf->browser->name, array('chrome', 'firefox'))) {
+	<?php if (in_array($conf->browser->name, array('chrome', 'firefox', 'safari'))) {
 		echo 'display: inline-flex;'."\n";
 	} ?>
 	flex-flow: row wrap;
@@ -2227,7 +2235,7 @@ datalist {
 
 
 	div.tabs div.tab a.tab  {
-		max-width: 200px;
+		max-width: 180px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -3937,7 +3945,7 @@ div.tabs {
 	/*padding-left: 6px;
 	padding-right: 6px;*/
 	clear:both;
-	height:100%;
+	/* height: 100%; Disabled for fix #33965 */
 }
 div.tabsElem {
 	margin-top: 1px;
@@ -4746,7 +4754,7 @@ table.hidepaginationnext .paginationnext {
 .paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
 	/* text-shadow: 0px 0px 5px #ccc; */
 	/* filter: invert(0.3); */
-	font-size: 1.07em;
+	font-size: 1.1em;
 }
 
 
@@ -5162,7 +5170,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 	}
 
 	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
-		padding: 12px 12px 13px;
+		padding: 12px 3px 13px;
 	}
 	a.tmenu:link, a.tmenu:visited, a.tmenu:hover, a.tmenu:active {
 		padding: 0px 0px 0px 0px;
@@ -6554,10 +6562,15 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 /*  CKEditor                                                                      */
 /* ============================================================================== */
 
-body.cke_show_borders {
+textarea.dolibarr_mailings > div.cke body.cke_show_borders {
+	margin: 0 !important;
+}
+/*body.cke_show_borders {
+	margin: 5px !important;
+}*/
+.cke_source {
 	margin: 5px !important;
 }
-
 .cke_dialog {
 	border: 1px #bbb solid ! important;
 }
@@ -7449,6 +7462,9 @@ span#select2-boxbookmark-container {
   background-image: -moz-linear-gradient(top, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
   background-image: linear-gradient(to bottom, #f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
 }
+.mytooltip .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr {
+  padding: 1px 3px 1px 3px;
+}
 .select2-container-multi-dolibarr .select2-choices-dolibarr .select2-search-choice-dolibarr a {
 	font-weight: normal;
 }
@@ -7970,16 +7986,19 @@ div.tabsElem a.tab {
 {
 	padding-left: 44px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 .lilevel4
 {
 	padding-left: 66px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 .lilevel5
 {
 	padding-left: 88px;
 	background: #fff ! important;
+	font-size: 0.9em;
 }
 
 
@@ -8640,89 +8659,6 @@ table.jPicker {
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
-@media only screen and (max-width: 768px)
-{
-	.ai_dropdown{
-		min-width : 280px !important;
-		width: calc(100% - 50px);
-	}
-
-	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
-
-	.fiche > .listactionsfilter .table-fiche-title .col-title .titre {
-		display: none;
-	}
-
-	.navselectiondate {
-		width: 220px;
-	}
-
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(350, 'width'); ?>px;
-	}
-
-	div.tabBar {
-		padding-left: 0px;
-		padding-right: 0px;
-		border-radius: 0px;
-		border-right: none;
-		border-left: none;
-	}
-
-	td.widthpictotitle { width: 30px; }
-
-	.logopublicpayment #dolpaymentlogo {
-		max-width: 260px;
-	}
-	#tablepublicpayment {
-		width:	auto !important;
-		border: none !important;
-	}
-	.poweredbypublicpayment {
-		float: unset !important;
-		top: unset !important;
-		/* bottom: 8px; */
-		right: -10px !important;
-		position: relative !important;
-	}
-	.poweredbyimg {
-		width: 48px;
-	}
-
-	.survey_borders {
-		margin-left: 10px;
-		margin-right: 10px;
-		text-align: start;
-	}
-
-	.bookcalform.boxtable .minwidth75 {
-		min-width: auto;
-	}
-	.center.bookingtab {
-		margin-left: 6px;
-	}
-	#bookinghoursection {
-		font-size: small;
-		width: 122px;
-	}
-
-	#dolpublictable {
-		padding: 10px;
-	}
-}
-
-@media only screen and (max-width: 1024px)
-{
-	div#ecm-layout-west {
-		width: calc(100% - 4px);
-		clear: both;
-	}
-	div#ecm-layout-center {
-		width: 100%;
-	}
-}
-
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
 @media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
@@ -8988,6 +8924,93 @@ table.jPicker {
 }
 <?php } ?>
 
+@media only screen and (max-width: 1024px)
+{
+	div#ecm-layout-west {
+		width: calc(100% - 4px);
+		clear: both;
+	}
+	div#ecm-layout-center {
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 768px)
+{
+	.ai_dropdown{
+		min-width : 280px !important;
+		width: calc(100% - 50px);
+	}
+
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
+
+	.fiche > .listactionsfilter .table-fiche-title .col-title .titre {
+		display: none;
+	}
+
+	.navselectiondate {
+		width: 220px;
+	}
+
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350, 'width'); ?>px;
+	}
+
+	div.tabBar {
+		padding-left: 0px;
+		padding-right: 0px;
+		border-radius: 0px;
+		border-right: none;
+		border-left: none;
+	}
+
+	td.widthpictotitle { width: 30px; }
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+		border: none !important;
+	}
+	.poweredbypublicpayment {
+		float: unset !important;
+		top: unset !important;
+		/* bottom: 8px; */
+		right: -10px !important;
+		position: relative !important;
+	}
+	.poweredbyimg {
+		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
+	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
+
+	input[type=checkbox], input[type=radio] {
+		margin: 0 5px 0 1px;
+		transform: scale(1.1);
+	}
+}
 
 @media only screen and (max-width: 320px)
 {

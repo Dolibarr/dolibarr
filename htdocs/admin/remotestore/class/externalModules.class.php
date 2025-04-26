@@ -351,7 +351,7 @@ class ExternalModules
 			}
 		}
 
-		// fetch from github repo
+		// Fetch the products from the github repo
 		$fileProducts = array();
 		$fileProductsTotal = 0;
 		if (!empty($this->githubFileStatus) && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
@@ -372,22 +372,7 @@ class ExternalModules
 		$this->numberTotalOfPages = (int) ceil(max($fileProductsTotal / $this->per_page, $dolistoreProductsTotal / $this->per_page));
 
 		// merge both sources
-		$this->products = array_values(array_merge($dolistoreProducts, $fileProducts));
-
-		// Sort products list by datec
-		usort(
-			$this->products,
-			/**
-			 * Compare creation dates
-			 *
-			 * @param array<string, mixed> $a First product for comparison.
-			 * @param array<string, mixed> $b Second product for comparison.
-			 * @return int
-			 */
-			static function ($a, $b) {
-				return strtotime($b['datec'] ?? '0') - strtotime($a['datec'] ?? '0');
-			}
-		);
+		$this->products = array_values(array_merge($fileProducts, $dolistoreProducts));
 
 		$i = 0;
 		foreach ($this->products as $product) {
@@ -628,6 +613,9 @@ class ExternalModules
 		} else {
 			$sub = 0;
 		}
+		if (!empty($this->search)) {
+			$param_array['search_keyword'] = $this->search;
+		}
 		$param_array['no_page'] = $this->no_page - $sub;
 		if ($this->categorie != 0) {
 			$param_array['categorie'] = $this->categorie;
@@ -650,6 +638,9 @@ class ExternalModules
 			$add = 0;
 		} else {
 			$add = 1;
+		}
+		if (!empty($this->search)) {
+			$param_array['search_keyword'] = $this->search;
 		}
 		$param_array['no_page'] = $this->no_page + $add;
 		if ($this->categorie != 0) {
@@ -810,11 +801,14 @@ class ExternalModules
 				continue;
 			}
 
-			// Match a new package entry (e.g., "- modulename: 'helloasso'")
+			// Match a new package entry (e.g., "- modulename: 'helloasso'") - Found a break in file.
 			$matches = array();
 			if (preg_match('/^\s*-\s*modulename:\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
 				if ($currentPackage !== null) {
-					$data[] = $currentPackage;
+					// Add the package to $data
+					if (!empty($currentPackage['status']) && $currentPackage['status'] == 'enabled') {
+						$data[] = $currentPackage;
+					}
 				}
 				$currentPackage = ['modulename' => $matches[1]];
 				$currentSection = null;
@@ -830,7 +824,7 @@ class ExternalModules
 			if (preg_match('/^(\w[\w-]*):\s*["\']?(.*?)["\']?$/', $trimmedLine, $matches)) {
 				if ($currentPackage !== null) {
 					if ($currentSection) {
-						// Store in the nested section
+						// Store in the sub section (language into label or description for example)
 						$currentPackage[$currentSection][$matches[1]] = $matches[2] === '' ? null : $matches[2];
 					} else {
 						// Store as a normal key-value pair
@@ -850,7 +844,9 @@ class ExternalModules
 
 		// Add the last package if available
 		if ($currentPackage !== null) {
-			$data[] = $currentPackage;
+			if (!empty($currentPackage['status']) && $currentPackage['status'] == 'enabled') {
+				$data[] = $currentPackage;
+			}
 		}
 
 		return $data;
