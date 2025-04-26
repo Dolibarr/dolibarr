@@ -225,6 +225,112 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
+	 * Update an event attendee
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"ref":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param	int		$id             Id of order to update
+	 * @param	array	$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url PUT {id}
+	 *
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 * @throws	RestException 500
+	 */
+	public function putById($id, $request_data = null)
+	{
+		$allowaccess = $this->_checkAccessRights('write', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied update access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch($id, '');
+		if (!$result) {
+			throw new RestException(404, 'event attendee not found');
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->event_attendees->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
+			return $this->_fetch($id, '');
+		} else {
+			throw new RestException(500, end($this->event_attendees->errors));
+		}
+	}
+
+	/**
+	 * Update an event attendee
+	 *
+	 * Example: {"module":"adherent","type_template":"member","active": 1,"ref":"(SendingEmailOnAutoSubscription)","fk_user":0,"joinfiles": "0", ... }
+	 * Required: {"ref":"myBestTemplate","topic":"myBestOffer","type_template":"propal_send"}
+	 *
+	 * @param	string	$ref			Ref of order to update
+	 * @param	array	$request_data	Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url PUT ref/{ref}
+	 *
+	 * @return	Object					Object with cleaned properties
+	 *
+	 * @throws	RestException 403
+	 * @throws	RestException 404
+	 * @throws	RestException 500
+	 */
+	public function putByRef($ref, $request_data = null)
+	{
+		$allowaccess = $this->_checkAccessRights('write', 0);
+		if (!$allowaccess) {
+			throw new RestException(403, 'denied update access to Event attendees');
+		}
+
+		$result = $this->event_attendees->fetch(0, $ref);
+		if (!$result) {
+			throw new RestException(404, 'event attendee not found');
+		}
+
+		$newref = $ref;
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field == 'ref') {
+				$newref = $this->_checkValForAPI($field, $value, $this->event_attendees);
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->event_attendees->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			$this->event_attendees->$field = $this->_checkValForAPI($field, $value, $this->event_attendees);
+		}
+
+		if ($this->event_attendees->update(DolibarrApiAccess::$user) > 0) {
+			return $this->_fetch(0, $newref);
+		} else {
+			throw new RestException(500, end($this->event_attendees->errors));
+		}
+	}
+
+	/**
 	 * Get properties of an event attendee
 	 *
 	 * Return an array with Event attendees
