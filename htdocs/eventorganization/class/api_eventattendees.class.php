@@ -69,6 +69,46 @@ class EventAttendees extends DolibarrApi
 	}
 
 	/**
+	 * Get properties of a event attendee by id
+	 *
+	 * Return an array with event attendee information
+	 *
+	 * @param   int         $id		ID of event attendee
+	 * @return  Object				Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @url	GET {id}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
+	public function getById($id)
+	{
+		return $this->_fetch($id, '');
+	}
+
+	/**
+	 * Get properties of an event attendee by ref
+	 *
+	 * Return an array with order information
+	 *
+	 * @param       string		$ref		Ref of object
+	 * @return      Object				    Object with cleaned properties
+	 * @phan-return		ConferenceOrBoothAttendee
+	 * @phpstan-return	ConferenceOrBoothAttendee
+	 *
+	 * @url GET    ref/{ref}
+	 *
+	 * @throws RestException 403
+	 * @throws RestException 404
+	 */
+	public function getByRef($ref)
+	{
+		return $this->_fetch(0, $ref);
+	}
+
+	/**
 	 * List Event attendees
 	 *
 	 * Get a list of Event attendees
