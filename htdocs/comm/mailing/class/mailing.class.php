@@ -472,8 +472,8 @@ class Mailing extends CommonObject
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
 			$object->evenunsubscribe    = 0;
-			$object->note_public        = '';
-			$object->note_private       = '';
+			$object->note_public        = null;
+			$object->note_private       = null;
 
 			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';
