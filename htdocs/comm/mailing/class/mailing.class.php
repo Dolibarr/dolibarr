@@ -71,12 +71,12 @@ class Mailing extends CommonObject
 	 * @var	int		1=Email will be sent even to email that has opt-out
 	 */
 	public $evenunsubscribe;
-	
+
 	/**
 	 * @var	html
 	 */
 	public $note_public;
-    public $note_private;
+	public $note_private;
 
 	/**
 	 * @var int number of email
