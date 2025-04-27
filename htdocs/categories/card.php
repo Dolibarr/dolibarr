@@ -62,7 +62,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $label = (string) GETPOST('label', 'alphanohtml');
 $description = (string) GETPOST('description', 'restricthtml');
 $color = preg_replace('/[^0-9a-f#]/i', '', (string) GETPOST('color', 'alphanohtml'));
-$position = GETPOSTINT('position');
+$position = GETPOSTISSET('position') ? GETPOSTINT('position') : 1;
 $visible = GETPOSTINT('visible');
 $parent = GETPOSTINT('parent');
 
@@ -255,7 +255,7 @@ if ($user->hasRight('categorie', 'creer')) {
 			print '<input type="hidden" name="catorigin" value="'.$catorigin.'">';
 		}
 
-		print load_fiche_titre($langs->trans("CreateCat"));
+		print load_fiche_titre($langs->trans("CreateCat"), '', 'category');
 
 		print dol_get_fiche_head();
 
@@ -263,7 +263,8 @@ if ($user->hasRight('categorie', 'creer')) {
 
 		// Ref
 		print '<tr>';
-		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td><td><input id="label" class="minwidth100" name="label" value="'.dol_escape_htmltag($label).'">';
+		print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("Ref").'</td>';
+		print '<td><input id="label" class="minwidth100" name="label" value="'.dol_escape_htmltag($label).'" placeholder="'.$langs->trans("MyTag").'">';
 		print'</td></tr>';
 
 		// Description
@@ -283,12 +284,16 @@ if ($user->hasRight('categorie', 'creer')) {
 		print '<td class="titlefieldcreate">'.$langs->trans("Position").'</td><td><input id="position" type="number" class="minwidth50 maxwidth50" name="position" value="'.$position.'">';
 		print'</td></tr>';
 
+		$htmlselect = $form->select_all_categories($type, $parent, 'parent');
+
 		// Parent category
-		print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-		print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
-		print $form->select_all_categories($type, $parent, 'parent');
-		print ajax_combobox('parent');
-		print '</td></tr>';
+		if ($form->num > 0) {
+			print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+			print img_picto($langs->trans("ParentCategory"), 'category', 'class="pictofixedwidth"');
+			print $htmlselect;
+			print ajax_combobox('parent');
+			print '</td></tr>';
+		}
 
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
