@@ -124,7 +124,7 @@ class ExpeditionStats extends Stats
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
-		$sql .= " WHERE c.date_valid BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " WHERE c.date_creation BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -143,7 +143,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_creation,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -166,7 +166,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, SUM(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_creation,'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -190,7 +190,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, AVG(c.".$this->field.")";
+		$sql = "SELECT date_format(c.date_creation,'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -212,7 +212,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
+		$sql = "SELECT date_format(c.date_creation,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
