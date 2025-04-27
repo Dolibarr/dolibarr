@@ -73,12 +73,12 @@ class Mailing extends CommonObject
 	public $evenunsubscribe;
 
 	/**
-	 * @var	string Text content for public notes
+	 * @var	string|null Text content for public notes
 	 */
 	public $note_public;
 
 	/**
-	 * @var	string Text content for private notes
+	 * @var	string|null Text content for private notes
 	 */
 	public $note_private;
 
