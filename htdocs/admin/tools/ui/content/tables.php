@@ -69,6 +69,7 @@ $documentation->showSidebar(); ?>
 
 			<h1 class="documentation-title"><?php echo $langs->trans('DocTableTitle'); ?></h1>
 			<p class="documentation-text"><?php echo $langs->trans('DocTableMainDescription'); ?></p>
+			<p class="documentation-text"><?php echo $langs->trans('DocTableMainDescriptionNote'); ?></p>
 
 			<!-- Summary -->
 			<?php $documentation->showSummary(); ?>
@@ -81,7 +82,7 @@ $documentation->showSidebar(); ?>
 				<p class="documentation-text"><?php echo $langs->trans('DocTableBasicDescription'); ?></p>
 				<div class="documentation-example">
 					<div class="div-table-responsive">
-						<table class="tagtable liste">
+						<table class="tagtable liste" id="we-recommend-always-adding-a-unique-identifier">
 							<tr class="liste_titre">
 								<th class="wrapcolumntitle left liste_titre" title="<?php echo $langs->trans('ProductRef'); ?>"><?php echo $langs->trans('ProductRef'); ?></th>
 								<th class="wrapcolumntitle center liste_titre" title="<?php echo $langs->trans('Qty'); ?>"><?php echo $langs->trans('Qty'); ?></th>
@@ -117,7 +118,7 @@ $documentation->showSidebar(); ?>
 				</div>
 				<?php
 				$lines = array(
-					'<table class="tagtable liste">',
+					'<table class="tagtable liste" id="we-recommend-always-adding-a-unique-identifier" >',
 					'',
 					'	<!-- Table header -->',
 					'	<tr class="liste_titre">',
@@ -235,7 +236,7 @@ $documentation->showSidebar(); ?>
 					'	<input type="hidden" name="action" value="ACTION_VALUE">',
 					'	<!-- other hidden fields like sortfield, sortorder, page, ... -->',
 					'	',
-					'	<table class="tagtable liste">',
+					'	<table class="tagtable liste" id="we-recommend-always-adding-a-unique-identifier">',
 					'	',
 					'		<!-- Filters row -->',
 					'		<tr class="liste_titre_filter">',
@@ -366,7 +367,7 @@ $documentation->showSidebar(); ?>
 					'		</select>',
 					'	</div>',
 					'</div>',
-					'<table class="tagtable liste listwithfilterbefore">',
+					'<table class="tagtable liste listwithfilterbefore" id="we-recommend-always-adding-a-unique-identifier">',
 					'	<!-- Filters row -->',
 					'	<!-- Table header -->',
 					'	<!-- Data lines -->',

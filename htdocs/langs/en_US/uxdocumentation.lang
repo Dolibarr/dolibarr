@@ -50,6 +50,7 @@ DocButtonSubmenuDescription=Fill the $url parameter with an array of url in orde
 #Tables
 DocTableTitle=Tables
 DocTableMainDescription=Documentation and examples for tables.
+DocTableMainDescriptionNote=<b>Note:</b> we recommend always adding a unique “id” identifier to the table, which will enable integrators to easily interact with css and/or js.
 DocTableBasic=Basic usage
 DocTableBasicDescription=Here is a template for creating a basic data table.
 DocTableWithFilters=Filters row
