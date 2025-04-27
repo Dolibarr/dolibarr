@@ -333,9 +333,8 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_ACTIONCOMM,
 			Categorie::TYPE_USER,
 			Categorie::TYPE_WAREHOUSE,
-			Categorie::TYPE_TICKET,	
+			Categorie::TYPE_TICKET,
 			Categorie::TYPE_FICHINTER
-					  
 		])) {
 			throw new RestException(403);
 		}
