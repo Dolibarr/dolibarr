@@ -73,12 +73,12 @@ class Mailing extends CommonObject
 	public $evenunsubscribe;
 
 	/**
-	 * @var	string|null Text content for public notes
+	 * @var	string Text content for public notes
 	 */
 	public $note_public;
 
 	/**
-	 * @var	string|null Text content for private notes
+	 * @var	string Text content for private notes
 	 */
 	public $note_private;
 
@@ -476,8 +476,8 @@ class Mailing extends CommonObject
 			$object->bgcolor            = '';
 			$object->bgimage            = '';
 			$object->evenunsubscribe    = 0;
-			$object->note_public        = null;
-			$object->note_private       = null;
+			$object->note_public        = '';
+			$object->note_private       = '';
 
 			//$object->email_from         = '';		// We do not reset from email because it is a mandatory value
 			$object->email_replyto      = '';
