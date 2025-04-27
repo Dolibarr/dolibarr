@@ -119,7 +119,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_valid,'%m') as dm, COUNT(*) as nb";
+		$sql = "SELECT date_format(c.date_creation,'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
