@@ -83,36 +83,42 @@ $documentation->showSidebar(); ?>
 				<div class="documentation-example">
 					<div class="div-table-responsive">
 						<table class="tagtable liste" id="we-recommend-always-adding-a-unique-identifier">
-							<tr class="liste_titre">
-								<th class="wrapcolumntitle left liste_titre" data-col="ProductRef" title="<?php echo dol_escape_htmltag($langs->trans('ProductRef')); ?>"><?php echo $langs->trans('ProductRef'); ?></th>
-								<th class="wrapcolumntitle center liste_titre" data-col="qty" title="<?php echo dol_escape_htmltag($langs->trans('Qty')); ?>"><?php echo $langs->trans('Qty'); ?></th>
-								<th class="wrapcolumntitle right liste_titre" data-col="amount-no-tax" title="<?php echo dol_escape_htmltag($langs->trans('AmountHT')); ?>"><?php echo $langs->trans('AmountHT'); ?></th>
-								<th class="wrapcolumntitle right liste_titre" data-col="total-no-tax" title="<?php echo dol_escape_htmltag($langs->trans('TotalHT')); ?>"><?php echo $langs->trans('TotalHT'); ?></th>
-							</tr>
-							<tr class="oddeven">
-								<td class="left" data-col="ProductRef" >My Product A</td>
-								<td class="center" data-col="qty" >13</td>
-								<td class="right amount" data-col="amount-no-tax" ><?php echo price(9.99, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right amount" data-col="total-no-tax" ><?php echo price(129.87, 0, '', 1, -1, -1, 'auto'); ?></td>
-							</tr>
-							<tr class="oddeven">
-								<td class="left" data-col="ProductRef" >My Product B</td>
-								<td class="center" data-col="qty" >21</td>
-								<td class="right amount" data-col="amount-no-tax" ><?php echo price(13.37, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right amount" data-col="total-no-tax" ><?php echo price(280.77, 0, '', 1, -1, -1, 'auto'); ?></td>
-							</tr>
-							<tr class="oddeven">
-								<td class="left" data-col="ProductRef" >My Product C</td>
-								<td class="center" data-col="qty" >7</td>
-								<td class="right amount" data-col="amount-no-tax" ><?php echo price(16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
-								<td class="right amount" data-col="total-no-tax" ><?php echo price(116.62, 0, '', 1, -1, -1, 'auto'); ?></td>
-							</tr>
-							<tr class="liste_total">
-								<td class="left" data-col="ProductRef" >Total</td>
-								<td class="center" data-col="qty" >41</td>
-								<td class="right amount" data-col="amount-no-tax" >--</td>
-								<td class="right amount" data-col="total-no-tax" ><?php echo price(527.26, 0, '', 1, -1, -1, 'auto'); ?></td>
-							</tr>
+							<thead>
+								<tr class="liste_titre">
+									<th class="wrapcolumntitle left liste_titre" data-col="ProductRef" title="<?php echo dol_escape_htmltag($langs->trans('ProductRef')); ?>"><?php echo $langs->trans('ProductRef'); ?></th>
+									<th class="wrapcolumntitle center liste_titre" data-col="qty" title="<?php echo dol_escape_htmltag($langs->trans('Qty')); ?>"><?php echo $langs->trans('Qty'); ?></th>
+									<th class="wrapcolumntitle right liste_titre" data-col="amount-no-tax" title="<?php echo dol_escape_htmltag($langs->trans('AmountHT')); ?>"><?php echo $langs->trans('AmountHT'); ?></th>
+									<th class="wrapcolumntitle right liste_titre" data-col="total-no-tax" title="<?php echo dol_escape_htmltag($langs->trans('TotalHT')); ?>"><?php echo $langs->trans('TotalHT'); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="oddeven">
+									<td class="left" data-col="ProductRef" >My Product A</td>
+									<td class="center" data-col="qty" >13</td>
+									<td class="right amount" data-col="amount-no-tax" ><?php echo price(9.99, 0, '', 1, -1, -1, 'auto'); ?></td>
+									<td class="right amount" data-col="total-no-tax" ><?php echo price(129.87, 0, '', 1, -1, -1, 'auto'); ?></td>
+								</tr>
+								<tr class="oddeven">
+									<td class="left" data-col="ProductRef" >My Product B</td>
+									<td class="center" data-col="qty" >21</td>
+									<td class="right amount" data-col="amount-no-tax" ><?php echo price(13.37, 0, '', 1, -1, -1, 'auto'); ?></td>
+									<td class="right amount" data-col="total-no-tax" ><?php echo price(280.77, 0, '', 1, -1, -1, 'auto'); ?></td>
+								</tr>
+								<tr class="oddeven">
+									<td class="left" data-col="ProductRef" >My Product C</td>
+									<td class="center" data-col="qty" >7</td>
+									<td class="right amount" data-col="amount-no-tax" ><?php echo price(16.66, 0, '', 1, -1, -1, 'auto'); ?></td>
+									<td class="right amount" data-col="total-no-tax" ><?php echo price(116.62, 0, '', 1, -1, -1, 'auto'); ?></td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr class="liste_total">
+									<td class="left" data-col="ProductRef" >Total</td>
+									<td class="center" data-col="qty" >41</td>
+									<td class="right amount" data-col="amount-no-tax" >--</td>
+									<td class="right amount" data-col="total-no-tax" ><?php echo price(527.26, 0, '', 1, -1, -1, 'auto'); ?></td>
+								</tr>
+							</tfoot>
 						</table>
 					</div>
 				</div>
