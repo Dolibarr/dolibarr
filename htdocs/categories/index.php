@@ -75,14 +75,33 @@ if (!$permissiontoread) {
 
 $title = $langs->trans("Categories");
 
-
 llxHeader('', $title, '', '', 0, 0, '', '');
 
+// Get list of category type
+$arrayofcateg = array();
+foreach ($categstatic->MAP_ID as $key => $idtype) {
+	$arrayofcateg[$idtype] = array();
+	$arrayofcateg[$idtype]['key'] = $key;
+	$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
+}
+$arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
+
+// Get number of tags per category type
+$sql = "SELECT type as idtype, COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."categorie GROUP BY type";
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$arrayofcateg[$obj->idtype]['nb'] = $obj->nb;
+	}
+} else {
+	dol_print_error($db);
+}
 
 print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, 0, $categstatic->picto, 0, '', '', -1, 0, 1, 1);
 
 print '<span class="opacitymedium">';
-print $langs->trans("CategorieListOfType").'<br>';
+print $langs->trans("CategorieListOfType").'...<br>';
 print '</span>';
 
 print '<br>';
@@ -92,20 +111,13 @@ print '<div class="aaa">';
 print '<table class="liste nohover centpercent noborder">';
 
 print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td>';
-print '<td>'.$langs->trans("NumberOfCategories").'</td>';
+print '<td class="center">'.$langs->trans("NumberOfCategories").'</td>';
 print '<td></td>';
 print '</tr>';
 
-$arrayofcateg = array();
-foreach ($categstatic->MAP_ID as $key => $id) {
-	$arrayofcateg[$key]['key'] = $key;
-	$arrayofcateg[$key]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
-	$arrayofcateg[$key]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
-}
 
-$arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1);
-
-foreach ($arrayofcateg as $key => $val) {
+foreach ($arrayofcateg as $idtype => $val) {
+	$key = $val['key'];
 	$tmparray = getElementProperties($key);
 
 	$classname = $tmparray['classname'];
@@ -133,13 +145,12 @@ foreach ($arrayofcateg as $key => $val) {
 	} else {
 		print img_picto('', 'generic', 'class="pictofixedwidth"');
 	}
-	print dolPrintHTML($arrayofcateg[$key]['label']);
+	print dolPrintHTML($arrayofcateg[$idtype]['label']);
 	print '</td>';
-	print '<td>';
-	$nb = 'todo';
-	print $nb;
+	print '<td class="center">';
+	print $arrayofcateg[$idtype]['nb'];
 	print '</td>';
-	print '<td><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
+	print '<td class="center"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';
 }
 

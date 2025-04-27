@@ -276,6 +276,9 @@ CREATE TABLE llx_webhook_history(
 
 ALTER TABLE llx_societe_rib ADD COLUMN cci varchar(100) after iban_prefix;    -- Interbank code for some countries like Chile
 
+-- Move permission thirdparty_paymentinformation out of advanced rights
+UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 'thirdparty_paymentinformation_advance';
+
 ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_ref;
 ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee(ref);
 
