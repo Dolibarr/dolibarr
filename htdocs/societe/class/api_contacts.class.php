@@ -465,7 +465,7 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
+		if (!DolibarrApi::_checkAccessToResource('categorie', $category->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
@@ -505,7 +505,7 @@ class Contacts extends DolibarrApi
 		if (!DolibarrApi::_checkAccessToResource('contact', $this->contact->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-		if (!DolibarrApi::_checkAccessToResource('category', $category->id)) {
+		if (!DolibarrApi::_checkAccessToResource('categorie', $category->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
