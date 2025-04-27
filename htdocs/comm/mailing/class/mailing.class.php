@@ -76,6 +76,10 @@ class Mailing extends CommonObject
 	 * @var	string Text content for public notes
 	 */
 	public $note_public;
+
+	/**
+	 * @var	string Text content for private notes
+	 */	
 	public $note_private;
 
 	/**
