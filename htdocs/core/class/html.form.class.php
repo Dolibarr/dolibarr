@@ -74,7 +74,8 @@ class Form
 	// Some properties used to return data by some methods
 	/** @var array<string,int> */
 	public $result;
-	/** @var int */
+
+	/** @var int 	Number of line returned by method to generate combo select */
 	public $num;
 
 	// Cache arrays
@@ -5708,6 +5709,8 @@ class Form
 		}
 		$output .= '</select>';
 		$output .= "\n";
+
+		$this->num = count($cate_arbo);
 
 		if ($outputmode == 2) {
 			// TODO: handle error when $cate_arbo is not an array

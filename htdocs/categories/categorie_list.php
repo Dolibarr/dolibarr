@@ -419,6 +419,8 @@ if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $sear
 // --------------------------------------------------------------------
 
 if (empty($mode) || $mode == 'hierarchy') {
+	// Mode tree
+
 	$param = ($nosearch ? '&nosearch=1' : '');
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
@@ -550,7 +552,7 @@ if (empty($mode) || $mode == 'hierarchy') {
 		print '<tr class="oddeven">';
 		print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 		print '<td class="valignmiddle">';
-		print $langs->trans("NoCategoryYet");
+		print '<span class="opacitymedium">'.$langs->trans("NoCategoryYet").'</span>';
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '</table></td>';
@@ -561,22 +563,9 @@ if (empty($mode) || $mode == 'hierarchy') {
 
 	print '</div>';
 } else {
-	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
+	// Mode list
 
-	// Example : Adding jquery code
-	// print '<script type="text/javascript">
-	// jQuery(document).ready(function() {
-	// 	function init_myfunc()
-	// 	{
-	// 		jQuery("#myid").removeAttr(\'disabled\');
-	// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	// 	}
-	// 	init_myfunc();
-	// 	jQuery("#mybutton").click(function() {
-	// 		init_myfunc();
-	// 	});
-	// });
-	// </script>';
+	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
@@ -811,10 +800,6 @@ if (empty($mode) || $mode == 'hierarchy') {
 	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	/*if (!empty($arrayfields['anotherfield']['checked'])) {
-		print '<th class="liste_titre right">'.$langs->trans("AnotherField").'</th>';
-		$totalarray['nbfield']++;
-	}*/
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -848,20 +833,6 @@ if (empty($mode) || $mode == 'hierarchy') {
 
 		// Store properties in $object
 		$object->setVarsFromFetchObj($obj);
-
-		/*
-		$object->thirdparty = null;
-		if ($obj->fk_soc > 0) {
-			if (!empty($conf->cache['thirdparty'][$obj->fk_soc])) {
-				$companyobj = $conf->cache['thirdparty'][$obj->fk_soc];
-			} else {
-				$companyobj = new Societe($db);
-				$companyobj->fetch($obj->fk_soc);
-				$conf->cache['thirdparty'][$obj->fk_soc] = $companyobj;
-			}
-
-			$object->thirdparty = $companyobj;
-		}*/
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -920,7 +891,6 @@ if (empty($mode) || $mode == 'hierarchy') {
 				if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 					$cssforfield .= ($cssforfield ? ' ' : '').'right';
 				}
-				//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 				if (!empty($arrayfields['t.'.$key]['checked'])) {
 					print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');
