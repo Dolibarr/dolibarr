@@ -232,6 +232,7 @@ if ($result || !($id > 0)) {
 	} else {
 		print '<input type="hidden" name="id" value="'.$id.'">';
 	}
+	print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 	// Year
 	print '<tr class="nooddeven"><td class="titlefield">'.$langs->trans("Year").'</td><td>';
@@ -266,6 +267,9 @@ if ($result || !($id > 0)) {
 	$param .= (GETPOSTISSET('id') ? '&id='.GETPOSTINT('id') : '&id='.$object->id).(($type != '' && $type != '-1') ? '&type='.((int) $type) : '').'&search_year='.((int) $search_year).($notab ? '&notab='.$notab : '');
 	if ($socid > 0) {
 		$param .= '&socid='.((int) $socid);
+	}
+	if (!empty($search_categ)) {
+		$param .= '&search_categ='.((int) $search_categ);
 	}
 
 	// Choice of stats mode (byunit or bynumber)
