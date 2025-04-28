@@ -71,7 +71,7 @@ class ExpeditionStats extends Stats
 	public $where;
 
 	/**
-	 * @var string sql part where
+	 * @var string selected date for stats
 	 */
 	public $dateSelect;
 
@@ -82,6 +82,7 @@ class ExpeditionStats extends Stats
 	 * @param 	int		$socid	   	Id third party for filter
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
+     * @param 	string	$dateSelect	selected date for stats
 	 */
 	public function __construct($db, $socid, $mode, $userid = 0, $dateSelect = "date_creation")
 	{
