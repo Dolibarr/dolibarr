@@ -63,7 +63,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * Return an array with contact information
 	 *
-	 * @since	3.8.0
+	 * @since	3.8.0	Initial implementation
 	 *
 	 * @param	int		$id					ID of contact
 	 * @param	int		$includecount		Include count of elements the contact is used as a link for
