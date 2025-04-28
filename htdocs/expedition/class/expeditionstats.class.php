@@ -70,6 +70,10 @@ class ExpeditionStats extends Stats
 	 */
 	public $where;
 
+	/**
+	 * @var string sql part where
+	 */
+	public $dateSelect;
 
 	/**
 	 * Constructor
@@ -79,7 +83,7 @@ class ExpeditionStats extends Stats
 	 * @param 	string	$mode	   	Option (not used)
 	 * @param   int		$userid    	Id user for filter (creation user)
 	 */
-	public function __construct($db, $socid, $mode, $userid = 0)
+	public function __construct($db, $socid, $mode, $userid = 0, $dateSelect = "date_creation")
 	{
 		global $user, $conf;
 
@@ -94,7 +98,7 @@ class ExpeditionStats extends Stats
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
 		$this->field = 'weight'; // Warning, unit of weight is NOT USED AND MUST BE
 		$this->where .= " c.fk_statut > 0"; // Not draft and not cancelled
-
+		$this->dateSelect = $dateSelect;
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
@@ -119,12 +123,12 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_creation,'%m') as dm, COUNT(*) as nb";
+		$sql = "SELECT date_format(c.".$this->dateSelect.",'%m') as dm, COUNT(*) as nb";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		}
-		$sql .= " WHERE c.date_creation BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
+		$sql .= " WHERE c.".$this->dateSelect." BETWEEN '".$this->db->idate(dol_get_first_day($year))."' AND '".$this->db->idate(dol_get_last_day($year))."'";
 		$sql .= " AND ".$this->where;
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
@@ -143,7 +147,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_creation,'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
+		$sql = "SELECT date_format(c.".$this->dateSelect.",'%Y') as dm, COUNT(*) as nb, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -166,7 +170,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_creation,'%m') as dm, SUM(c.".$this->field.")";
+		$sql = "SELECT date_format(c.".$this->dateSelect.",'%m') as dm, SUM(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -190,7 +194,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_creation,'%m') as dm, AVG(c.".$this->field.")";
+		$sql = "SELECT date_format(c.".$this->dateSelect.",'%m') as dm, AVG(c.".$this->field.")";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -212,7 +216,7 @@ class ExpeditionStats extends Stats
 	{
 		global $user;
 
-		$sql = "SELECT date_format(c.date_creation,'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
+		$sql = "SELECT date_format(c.".$this->dateSelect.",'%Y') as year, COUNT(*) as nb, SUM(c.".$this->field.") as total, AVG(".$this->field.") as avg";
 		$sql .= " FROM ".$this->from;
 		if (!$user->hasRight('societe', 'client', 'voir')) {
 			$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
