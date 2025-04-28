@@ -203,7 +203,7 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][0] = 130;
 		$this->rights[$r][1] = 'Modify thirdparty information payment';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'thirdparty_paymentinformation_advance';      // Visible if option MAIN_USE_ADVANCED_PERMS is on
+		$this->rights[$r][4] = 'thirdparty_paymentinformation';
 		$this->rights[$r][5] = 'write';
 
 		// 262 : Restrict access to sales representative
@@ -456,11 +456,7 @@ class modSociete extends DolibarrModules
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
 		$this->export_label[$r] = 'ExportDataset_company_3';
 		$this->export_icon[$r] = 'account';
-		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
-			$this->export_permission[$r] = array(array("societe", "export"), array("societe", "thirdparty_paymentinformation_advance", "write"));
-		} else {
-			$this->export_permission[$r] = array(array("societe", "export"));
-		}
+		$this->export_permission[$r] = array(array("societe", "export"));
 		$this->export_fields_array[$r] = array(
 			'b.rowid' => "IdPaymentMode",
 			'b.fk_soc' => "ThirdPartyName",

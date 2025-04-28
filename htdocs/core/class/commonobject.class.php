@@ -2783,7 +2783,7 @@ abstract class CommonObject
 			$fieldname = 'multicurrency_tx';
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = ".((float) $rate);
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((float) $rate);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2892,6 +2892,39 @@ abstract class CommonObject
 									$line->situation_percent,
 									$line->fk_unit,
 									$line->multicurrency_subprice
+								);
+								break;
+							case 'facturerec':
+								/** @var FactureRec $this */
+								/** @var FactureLigneRec $line */
+								'@phan-var-force FactureRec $this';
+								'@phan-var-force FactureLigneRec $line';
+								$this->updateline(
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									$line->fk_product,
+									$line->remise_percent,
+									'HT',
+									$line->info_bits,
+									0,
+									0,
+									$line->product_type,
+									$line->rang,
+									$line->special_code,
+									$line->label,
+									$line->fk_unit,
+									$line->multicurrency_subprice,
+									0,
+									$line->date_start,
+									$line->date_end,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->fk_parent_line
 								);
 								break;
 							case 'supplier_proposal':
@@ -5354,8 +5387,8 @@ abstract class CommonObject
 
 			print "<!-- begin printObjectLines() -->\n";
 			foreach ($this->lines as $line) {
-				//Line extrafield
-				$line->fetch_optionals();
+				// Line extrafield. TODO Remove this. extrafields should be already loaded.
+				//$line->fetch_optionals();
 
 				if (is_object($hookmanager)) {
 					if (empty($line->fk_parent_line)) {
@@ -5366,7 +5399,7 @@ abstract class CommonObject
 						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
 				}
-				if (empty($reshook) && $buyer !== null) {
+				if (empty($reshook)) {
 					$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 				}
 
@@ -5387,7 +5420,7 @@ abstract class CommonObject
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
 	 *	@param  Societe	    		$seller            	Object of seller third party
-	 *	@param  Societe	    		$buyer             	Object of buyer third party
+	 *	@param  ?Societe	    	$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	ID line selected
 	 *  @param  ?ExtraFields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
@@ -6348,7 +6381,6 @@ abstract class CommonObject
 		$sql .= " WHERE type_object = '".$this->db->escape($element)."'";
 		$sql .= " AND fk_object = ".((int) $this->id);
 
-		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
@@ -9418,6 +9450,17 @@ abstract class CommonObject
 							}
 						}
 
+						// Expected behavior : if THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_XXX is set, when we change company,
+						// Then we use the extrafields of the object (they are filled in the card when constant THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_XXX is set)
+						$force_values_on_change_company = (
+							($this->element == 'facture' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE'))
+							|| ($this->element == 'commande' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER'))
+							|| ($this->element == 'order_supplier' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_SUPPLIER_ORDER'))
+						);
+						if ($force_values_on_change_company && GETPOSTINT('changecompany')) {
+							$value = $this->array_options['options_'.$key] ?? $value;
+						}
+
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
 							$datenotinstring = null;
@@ -10716,11 +10759,10 @@ abstract class CommonObject
 					'@phan-var-force CommonObjectLine $newline';
 					$newline->setVarsFromFetchObj($obj);
 
-					// Note: extrafields load of line not yet supported
-					/*
-					 if (empty($noextrafields)) {
-					 // Load extrafields of line
-					 }*/
+					// Load also extrafields for the line
+					if (empty($noextrafields)) {
+						$newline->fetch_optionals();
+					}
 
 					$this->lines[] = $newline;
 				}

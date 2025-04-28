@@ -126,7 +126,7 @@ if (!$sortfield) {
  */
 
 if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
-	httponly_accessforbidden('Public access of list of members is not enabled');
+	httponly_accessforbidden('Public access of list of members is not enabled. See setup of module membership to enable it.');
 }
 
 $form = new Form($db);

@@ -432,7 +432,6 @@ class BOM extends CommonObject
 	 * Load object lines in memory from the database by type of product
 	 *
 	 * @param int<0,1>	$typeproduct	0 type product, 1 type service
-	 *
 	 * @return int<-1,1>				Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLinesbytypeproduct($typeproduct = 0)
@@ -468,6 +467,11 @@ class BOM extends CommonObject
 					$newline = new $objectlineclassname($this->db);
 					'@phan-var-force BOMLine $newline';
 					$newline->setVarsFromFetchObj($obj);
+
+					// Load also extrafields for the line
+					//if (empty($noextrafields)) {
+					$newline->fetch_optionals();
+					//}
 
 					$this->lines[] = $newline;
 				}
