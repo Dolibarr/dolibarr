@@ -1217,7 +1217,7 @@ class CMailFile
 					$result = $this->smtps->sendMsg();
 
 					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
-						$this->dump_mail();
+						$this->dump_mail();	// Create file dolibarr_mail.log or dolibarr_mail.log.vXXX if option for archive is on
 					}
 
 					$smtperrorcode = 0;
@@ -1238,9 +1238,12 @@ class CMailFile
 							}
 							*/
 						}
+					} else {
+						dol_syslog("CMailFile::sendfile: mail SMTP sendMsg is success", LOG_DEBUG);
 					}
 
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
+
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;

@@ -1013,7 +1013,7 @@ if ($action == 'create') {	// aaa
 
 			$morehtmlstatus = '';
 			$nbtry = $nbok = 0;
-			if ($object->status == 2 || $object->status == 3) {
+			if ($object->status == $object::STATUS_SENTPARTIALY || $object->status == $object::STATUS_SENTCOMPLETELY) {
 				$nbtry = $object->countNbOfTargets('alreadysent');
 				$nbko  = $object->countNbOfTargets('alreadysentko');
 
@@ -1029,6 +1029,7 @@ if ($action == 'create') {	// aaa
 			print '<div class="fichecenter">';
 			print '<div class="fichehalfleft">';
 			print '<div class="underbanner clearboth"></div>';
+
 			print '<table class="border centpercent tableforfield">'."\n";
 
 			// From

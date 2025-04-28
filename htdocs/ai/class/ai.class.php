@@ -59,6 +59,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original to rephrase.';
+	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
 
 	/**
 	 * Constructor

@@ -376,3 +376,5 @@ TextRephraser=Text style rephraser
 AIEnhancements=AI Enhancements
 TLSv1=TLSv1
 TLSv1.2=TLSv1.2
+FillExtrafieldWithAi=Fill extrafield with AI content
+ExtrafieldFiller=Extrafield filler

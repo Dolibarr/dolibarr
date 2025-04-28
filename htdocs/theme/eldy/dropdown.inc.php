@@ -439,6 +439,7 @@ li.liinputsearch {
 	display: block;
 	top: 0;
 	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -518,7 +519,7 @@ div.quickaddblock:focus {
 .dropdown-content {
 	display: none;
 	position: absolute;
-	z-index: 2;
+	z-index: 5;
 	width: 300px;
 	right:0;	/* will be set with js */
 	bottom: 0;

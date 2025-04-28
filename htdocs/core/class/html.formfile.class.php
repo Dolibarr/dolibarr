@@ -253,7 +253,7 @@ class FormFile
 		if ($sectionid) {	// Show overwrite if exists for ECM module only
 			$langs->load('link');
 			$out .= '<span class="nowraponsmartphone"><input style="margin-right: 2px;" type="checkbox" id="overwritefile" name="overwritefile" value="1">';
-			$out .= '<label for="overwritefile" class="opacitylow paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
+			$out .= '<label for="overwritefile" class="opacitylow paddingleft paddingright">'.$langs->trans("OverwriteIfExists").'</label>';
 			$out .= '</span>';
 		}
 		$out .= '<input type="submit" class="button small reposition" name="sendit" value="'.$langs->trans("Upload").'"';

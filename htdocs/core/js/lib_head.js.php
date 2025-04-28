@@ -1199,6 +1199,8 @@ function getOperatorsForFieldType(type, maybenull = 0) {
 function generateFilterString(column, operator, context, fieldType) {
 	let filter = "";
 
+	console.log("generateFilterString column="+column+" operator="+operator+" context="+context+" fieldType="+fieldType);
+
 	switch (operator) {
 		case "Contains":
 			filter = column + " like \'%" + context + "%\'";
