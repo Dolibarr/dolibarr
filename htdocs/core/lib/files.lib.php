@@ -3637,7 +3637,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					$accessallowed = 1;
 				}
 			}
-			if ($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) {
+			if (($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) || ($fuser->hasRight($modulepart, 'all', $lire) || $fuser->hasRight($modulepart, 'all', $read))) {
 				$accessallowed = 1;
 			}
 

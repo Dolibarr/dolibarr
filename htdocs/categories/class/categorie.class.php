@@ -78,7 +78,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> 	Table of mapping between type string and type ID used for field 'type' in table llx_categories
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
@@ -193,13 +193,14 @@ class Categorie extends CommonObject
 		'user'					=> 'Users',
 		'account'				=> 'Accounts', // old for bank account
 		'bank_account'			=> 'BankAccounts',
+		'bank_line'				=> 'BankTransactions',
 		'project'				=> 'Projects',
 		'warehouse'				=> 'Warehouse',
 		'actioncomm'			=> 'AgendaEvents',
 		'website_page'			=> 'WebsitePages',
 		'ticket'				=> 'Tickets',
 		'knowledgemanagement'	=> 'KnowledgeRecords',
-		'fichinter'				=> 'Fichinters',
+		'fichinter'				=> 'Interventions',
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
