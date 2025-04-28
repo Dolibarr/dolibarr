@@ -141,6 +141,10 @@ class Proposals extends DolibarrApi
 		if (is_array($tmparray)) {
 			$this->propal->contacts_ids = $tmparray;
 		}
+		$tmparray = $this->propal->liste_contact(-1, 'internal', $contact_list);
+		if (is_array($tmparray)) {
+			$this->propal->contacts_ids_internal = $tmparray;
+		}
 
 		$this->propal->fetchObjectLinked();
 
