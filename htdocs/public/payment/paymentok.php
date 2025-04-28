@@ -1264,7 +1264,15 @@ if ($ispaymentok) {
 						$ispostactionok = 1;
 
 						if ($totalpaid >= $don->getRemainToPay()) {
-							$don->setPaid($don->id);
+							if ($don->valid_promesse($don->id, $user->id) >= 0) {
+								$don->setPaid($don->id);
+								$postactionmessages[] = 'Donation '.$don->id.' was marked as paid';
+								$ispostactionok = 1;
+							} else {
+								$postactionmessages[] = 'Failed to valid promesse and set donation as paid';
+								$ispostactionok = -1;
+								$error++;
+							}
 						}
 					}
 				}
