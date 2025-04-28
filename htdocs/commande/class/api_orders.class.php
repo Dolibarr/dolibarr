@@ -139,6 +139,10 @@ class Orders extends DolibarrApi
 		if (is_array($tmparray)) {
 			$this->commande->contacts_ids = $tmparray;
 		}
+		$tmparray = $this->commande->liste_contact(-1, 'internal', $contact_list);
+		if (is_array($tmparray)) {
+			$this->commande->contacts_ids_internal = $tmparray;
+		}
 		$this->commande->fetchObjectLinked();
 
 		// Add online_payment_url, cf #20477
