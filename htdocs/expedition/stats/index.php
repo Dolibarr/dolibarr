@@ -51,6 +51,10 @@ if ($user->socid > 0) {
 	$action = '';
 	$socid = $user->socid;
 }
+$dateSelect = GETPOST('datetype', 'alpha');
+if (empty($dateSelect)) {
+	$dateSelect = 'date_creation';
+}
 
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -86,7 +90,7 @@ print load_fiche_titre($langs->trans("StatisticsOfSendings"), '', 'dolly');
 $dir = (!empty($conf->expedition->multidir_temp[$conf->entity]) ? $conf->expedition->multidir_temp[$conf->entity] : $conf->service->multidir_temp[$conf->entity]);
 dol_mkdir($dir);
 
-$stats = new ExpeditionStats($db, $socid, '', ($userid > 0 ? $userid : 0));
+$stats = new ExpeditionStats($db, $socid, '', ($userid > 0 ? $userid : 0), $dateSelect);
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear, $startyear);
@@ -261,6 +265,16 @@ if (!in_array($nowyear, $arrayyears)) {
 arsort($arrayyears);
 print $form->selectarray('year', $arrayyears, $year, 0, 0, 0, '', 0, 0, 0, '', 'width75');
 print '</td></tr>';
+
+// Selected Date
+print '<tr><td class="left">'.$langs->trans("DateSelected").'</td><td class="left">';
+$arrayDates['date_creation'] = $langs->trans("DateCreate");
+$arrayDates['date_valid'] = $langs->trans("DateValidation");
+$arrayDates['date_delivery'] = $langs->trans("DateDelivery");
+$arrayDates['date_expedition'] = $langs->trans("DateShipping");
+
+print $form->selectarray('datetype', $arrayDates, $dateSelect, 0, 0, 0, '', 0, 0, 0, '', 'width250');
+print '</td></tr>';
 print '<tr><td class="center" colspan="2"><input type="submit" name="submit" class="button small" value="'.$langs->trans("Refresh").'"></td></tr>';
 print '</table>';
 print '</form>';
@@ -368,8 +382,8 @@ $db->free($resql);
 print '</table>';
 */
 
-print '<br>';
-print '<i class="opacitymedium">'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
+//print '<br>';
+//print '<i class="opacitymedium">'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
 // End of page
 llxFooter();
