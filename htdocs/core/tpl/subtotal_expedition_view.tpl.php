@@ -19,7 +19,7 @@ if (!empty($line->origin_line_id)) {
 	$element = $line->element;
 	$desc = $line->desc;
 	$line_options = $line->extraparams["subtotal"] ?? array();
-	$buttons = true;
+	$buttons = $object->status == Expedition::STATUS_DRAFT;
 } else {
 	print '<!-- subtotal commande line id = ' . $line->rowid . ' -->'; // id of order line
 	$id = $line->rowid;
@@ -73,7 +73,7 @@ if ($line->qty > 0) { ?>
 </td>
 <?php }
 
-if (isset($buttons)) {
+if (isset($buttons) && $buttons) {
 	// Delete picto
 	echo '<td class="linecoldelete center">';
 	echo '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=ask_subtotal_deleteline&token=' . newToken() . '&lineid=' . $id;
