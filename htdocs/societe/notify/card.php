@@ -522,7 +522,7 @@ if ($result > 0) {
 
 	print '</form>';
 } else {
-	recordNotFound('', 0, 0);
+	recordNotFound('', 0);
 }
 
 // End of page
