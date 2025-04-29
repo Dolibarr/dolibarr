@@ -99,7 +99,6 @@ AccountingCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
-AddSite
 AddSupplier
 Adherent
 AdherentNotLinkedToThirdParty
@@ -677,7 +676,6 @@ RSS
 RateIndirect
 Re-Open
 ReconciledBy
-RecordNotFound
 RecruitmentJobPosition
 Recurrence
 RefAlreadyExists

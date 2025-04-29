@@ -8,7 +8,7 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
@@ -129,9 +129,7 @@ if ($id > 0 || !empty($ref)) {
 	$search_account = $object->id; // Force the search field on id of account
 
 	if (!($object->id > 0)) {
-		$langs->load("errors");
-		print($langs->trans('ErrorRecordNotFound'));
-		exit;
+		recordNotFound('', 0);
 	}
 }
 
