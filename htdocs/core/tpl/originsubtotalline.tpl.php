@@ -43,7 +43,7 @@ print '<td class="linecoldescription"></td>';
 print '<td class="linecolvat right"></td>';
 print '<td class="linecoluht right"></td>';
 if (isModEnabled("multicurrency")) {
-	print '<td class="linecoluht_currency right">'.$this->getSubtotalLineMulticurrencyAmount($line).'</td>';
+	print '<td class="linecoluht_currency right"></td>';
 }
 
 print '<td class="linecolqty right"></td>';
