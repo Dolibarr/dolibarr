@@ -9284,14 +9284,19 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 		if (is_array($s) || $s === 'Array') {
 			return 'Bad string syntax to evaluate (value is Array) '.var_export($s, true);
 		}
-		if (strpos($s, '::') !== false) {
-			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
-			} else {
-				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
-				return '';
+
+		// Disallow double colon
+		if (getDolGlobalString('MAIN_DISALLOW_DOUBLE_COLON_IN_DOL_EVAL')) {
+			if (strpos($s, '::') !== false) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s);
+					return '';
+				}
 			}
 		}
+
 		if (strpos($s, '`') !== false) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
@@ -9300,12 +9305,16 @@ function dol_eval($s, $returnvalue = 0, $hideerrors = 1, $onlysimplestring = '1'
 				return '';
 			}
 		}
-		if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
-			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
-			} else {
-				dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
-				return '';
+
+		// Disallow also concat
+		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {
+			if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {    // We refuse . if not between 2 numbers
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s);
+					return '';
+				}
 			}
 		}
 
