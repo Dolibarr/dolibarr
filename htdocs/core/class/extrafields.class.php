@@ -106,6 +106,8 @@ class ExtraFields
 		'separate' => 'ExtrafieldSeparator',
 		'stars' => 'ExtrafieldStars',
 	);
+
+	/** @var array<string,array<string,string>> $geoDataTypes */
 	public static $geoDataTypes = array(
 		'point' => array(
 			'ST_Function' => 'ST_PointFromText',

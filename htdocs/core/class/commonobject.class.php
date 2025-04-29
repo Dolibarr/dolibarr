@@ -6974,9 +6974,16 @@ abstract class CommonObject
 		// if the extrafields row already exists for the object, we update it
 		if ($this->db->getRow("SELECT 1 FROM {$extrafieldsTable} WHERE fk_object = ".((int) $this->id))) {
 			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
-			$sqlColumnValueString = implode(',', array_map(function ($key) use ($sqlColumnValues) {
-				return "{$key} = {$sqlColumnValues[$key]}";
-			}, array_keys($sqlColumnValues)));
+			$sqlColumnValueString = implode(
+				',',
+				/**
+				 * @param string $key
+				 * @return string
+				 */
+				array_map(function ($key) use ($sqlColumnValues) {
+					return "{$key} = {$sqlColumnValues[$key]}";
+				}, array_keys($sqlColumnValues))
+			);
 			$sql = "UPDATE {$extrafieldsTable} SET {$sqlColumnValueString} WHERE fk_object = ".((int) $this->id);
 		} else {
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
