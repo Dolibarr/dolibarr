@@ -833,7 +833,7 @@ class BlockedLog
 
 				return 1;
 			} else {
-				$langs->load("error");
+				$langs->load("errors");
 				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
