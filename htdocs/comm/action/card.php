@@ -1915,11 +1915,7 @@ if ($action == 'create') {
 if ($id > 0 && $action != 'create') {
 	$result1 = $object->fetch($id);
 	if ($result1 <= 0) {
-		$langs->load("errors");
-		print $langs->trans("ErrorRecordNotFound");
-
-		llxFooter();
-		exit;
+		recordNotFound('', 0);
 	}
 
 	$result2 = $object->fetch_thirdparty();
