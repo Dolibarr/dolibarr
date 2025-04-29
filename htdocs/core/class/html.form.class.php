@@ -6535,7 +6535,7 @@ class Form
 		$TCurrency = array();
 
 		$sql = "SELECT code FROM " . $this->db->prefix() . "multicurrency";
-		$sql .= " WHERE entity IN ('" . getEntity('mutlicurrency') . "')";
+		$sql .= " WHERE entity IN ('" . getEntity('multicurrency') . "')";
 		if ($filter) {
 			$sql .= " AND " . $filter;
 		}

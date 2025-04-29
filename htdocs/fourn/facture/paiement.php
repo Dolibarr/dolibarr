@@ -538,7 +538,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 			print dol_get_fiche_end();
 
 
-			$parameters = array('facid' => $facid, 'ref' => $ref, 'objcanvas' => $objcanvas);
+			$parameters = array('facid' => $facid, 'ref' => $obj->ref);
 			$reshook = $hookmanager->executeHooks('paymentsupplierinvoices', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 			$error = $hookmanager->error;
 			$errors = $hookmanager->errors;
@@ -587,7 +587,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						}
 
 						print '<div class="div-table-responsive-no-min">';
-						print '<table class="tagtable liste'.($moreforfilter ? " listwithfilterbefore" : "").'">'."\n";
+						print '<table class="tagtable liste">'."\n";
 
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Invoice').'</td>';

@@ -332,6 +332,7 @@ ErrorGeneratingBarcode=Error while generating the barcode (probably invalid code
 ErrorObjectNotFound = The object <b>%s</b> is not found, please check your url
 ErrorCountryCodeMustBe2Char=Country code must be a 2 character string
 ErrorABatchShouldNotContainsSpaces=A lot or serial number should not contains spaces
+
 ErrorTableExist=Table <b>%s</b> already exist
 ErrorDictionaryNotFound=Dictionary <b>%s</b> not found
 ErrorFailedToCreateSymLinkToMedias=Failed to create the symbolic link %s to point to %s
@@ -429,3 +430,4 @@ OperNotDefined=Payment method not defined
 ErrorThisContactXIsAlreadyDefinedAsThisType=%s is already defined as contact for this type.
 ErrorThisGroupIsAlreadyDefinedAsThisType=The contacts with this group are already defined as contact for this type.
 EmptyMessageNotAllowedError=Empty message is not allowed
+SomeShipmentExists=Error, there is some shipment linked to the order. Deletion refused.
