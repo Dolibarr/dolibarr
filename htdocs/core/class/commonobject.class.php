@@ -6961,57 +6961,30 @@ abstract class CommonObject
 					$sql .= ",null";
 				}
 			}
+			if (empty($newValue)) {
+				$sql .= ",null";
+				continue;
+			}
+			if (preg_match('/error/i', $newValue)) {
+				dol_syslog("Bad syntax string for ".$attributeType." ".$newValue." to generate SQL request", LOG_WARNING);
+				$sql .= ",null";
+				continue;
+			}
 			if ($attributeType == 'point') { // for point type
-				if (!empty($newValue)) {
-					if (!preg_match('/error/i', $newValue)) {
-						// Text must be a WKT string, so "POINT(15 20)"
-						$sql .= ",ST_PointFromText('".$this->db->escape($newValue)."')";
-					} else {
-						dol_syslog("Bad syntax string for point ".$newValue." to generate SQL request", LOG_WARNING);
-						$sql .= ",null";
-					}
-				} else {
-					$sql .= ",null";
-				}
+				// Text must be a WKT string, so "POINT(15 20)"
+				$sql .= ",ST_PointFromText('".$this->db->escape($newValue)."')";
 			}
 			if ($attributeType == 'multipts') { // for point type
-				if (!empty($newValue)) {
-					if (!preg_match('/error/i', $newValue)) {
-						// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
-						$sql .= ",ST_MultiPointFromText('".$this->db->escape($newValue)."')";
-					} else {
-						dol_syslog("Bad syntax string for multipoint ".$newValue." to generate SQL request", LOG_WARNING);
-						$sql .= ",null";
-					}
-				} else {
-					$sql .= ",null";
-				}
+				// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
+				$sql .= ",ST_MultiPointFromText('".$this->db->escape($newValue)."')";
 			}
 			if ($attributeType == 'linestrg') { // for linestring type
-				if (!empty($newValue)) {
-					if (!preg_match('/error/i', $newValue)) {
-						// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
-						$sql .= ",ST_LineFromText('".$this->db->escape($newValue)."')";
-					} else {
-						dol_syslog("Bad syntax string for line ".$newValue." to generate SQL request", LOG_WARNING);
-						$sql .= ",null";
-					}
-				} else {
-					$sql .= ",null";
-				}
+				// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+				$sql .= ",ST_LineFromText('".$this->db->escape($newValue)."')";
 			}
 			if ($attributeType == 'polygon') { // for polygon type
-				if (!empty($newValue)) {
-					if (!preg_match('/error/i', $newValue)) {
-						// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-						$sql .= ",ST_PolyFromText('".$this->db->escape($newValue)."')";
-					} else {
-						dol_syslog("Bad syntax string for polygon ".$newValue." to generate SQL request", LOG_WARNING);
-						$sql .= ",null";
-					}
-				} else {
-					$sql .= ",null";
-				}
+				// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+				$sql .= ",ST_PolyFromText('".$this->db->escape($newValue)."')";
 			}
 		}
 		// We must insert a default value for fields for other entities that are mandatory to avoid not null error
