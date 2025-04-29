@@ -194,6 +194,7 @@ class BlockedLogAuthority
 
 				return 1;
 			} else {
+				$langs->load("error");
 				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
