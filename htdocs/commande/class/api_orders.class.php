@@ -134,21 +134,24 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add external contacts ids
-		$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
-		if (is_array($tmparray)) {
-			$this->commande->contacts_ids = $tmparray;
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->commande->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->commande->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->commande->contacts_ids_internal = $tmparray;
+			}
 		}
-		$tmparray = $this->commande->liste_contact(-1, 'internal', $contact_list);
-		if (is_array($tmparray)) {
-			$this->commande->contacts_ids_internal = $tmparray;
-		}
+		
 		$this->commande->fetchObjectLinked();
-
+		
 		// Add online_payment_url, cf #20477
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
-
+		
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
