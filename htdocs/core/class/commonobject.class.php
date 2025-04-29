@@ -6920,57 +6920,36 @@ abstract class CommonObject
 			}
 		}
 
-		$this->db->begin();
-
-		$table_element = $this->table_element;
-		if ($table_element == 'categorie') {
-			$table_element = 'categories'; // For compatibility
-		}
-
-		dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
-
-		$sql_del = "DELETE FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
-		$this->db->query($sql_del);
-
-		$sql = "INSERT INTO ".$this->db->prefix().$table_element."_extrafields (fk_object";
-		foreach ($new_array_options as $key => $value) {
-			$attributeKey = substr($key, 8); // Remove 'options_' prefix
-			// Add field of attribute
-			if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator
-				$sql .= ",".$attributeKey;
-			}
-		}
-		// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-		if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
-			foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
-				if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {    // If field not already added previously
-					$sql .= ",".$tmpkey;
-				}
-			}
-		}
-		$sql .= ") VALUES (".$this->id;
+		$sqlColumnValues = ['fk_object' => (int) $this->id]; // key-value pairs for the SQL INSERT or UPDATE query
 
 		foreach ($new_array_options as $key => $newValue) {
 			$attributeKey = substr($key, 8); // Remove 'options_' prefix
 			$attributeType = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			if ($attributeType === 'separate') {
+				// separator extrafields don't have data per object so they don't have a comlumn in the database
+				continue;
+			}
 			$geoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
 			// Add field of attribute
-			if (!$geoDataType) {
+			if (! $geoDataType) {
 				// not a geodata type
 				if ($newValue != '') {
-					$sql .= ",'".$this->db->escape($newValue)."'";
+					$sqlColumnValues[$attributeKey] = "'".$this->db->escape($newValue)."'";
 				} else {
-					$sql .= ",null";
+					$sqlColumnValues[$attributeKey] = 'null';
 				}
 				continue;
 			}
 			if (empty($newValue)) {
-				$sql .= ",null";
+				$sqlColumnValues[$attributeKey] = 'null';
 				continue;
 			}
 			if (preg_match('/error/i', $newValue)) {
-				dol_syslog("Bad syntax string for ".$geoDataType['shortname']." ".$newValue." to generate SQL request", LOG_WARNING);
-				$sql .= ",null";
+				dol_syslog(
+					'Bad syntax string for '.$geoDataType['shortname'].' '.$newValue.' to generate SQL request',
+					LOG_WARNING
+				);
+				$sqlColumnValues[$attributeKey] = 'null';
 				continue;
 			}
 
@@ -6979,22 +6958,44 @@ abstract class CommonObject
 			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
 			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
 			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-			$sql .= ','.$geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
-		}
-		// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-		if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
-			foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
-				if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {   // If field not already added previously
-					if (in_array($tmpval, array('int', 'double', 'price'))) {
-						$sql .= ", 0";
-					} else {
-						$sql .= ", ''";
-					}
-				}
-			}
+			$sqlColumnValues[$key] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
 		}
 
-		$sql .= ")";
+		$this->db->begin();
+
+		$table_element = $this->table_element;
+		if ($table_element == 'categorie') {
+			$table_element = 'categories'; // For compatibility
+		}
+		$extrafieldsTable = $this->db->prefix() . $table_element . '_extrafields';
+
+		dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
+
+		// if the extrafields row already exists for the object, we update it
+		if ($this->db->getRow("SELECT 1 FROM {$extrafieldsTable} WHERE fk_object = ".((int) $this->id))) {
+			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
+			$sqlColumnValueString = implode(',', array_map(function ($key) use ($sqlColumnValues) {
+				return "{$key} = {$sqlColumnValues[$key]}";
+			}, array_keys($sqlColumnValues)));
+			$sql = "UPDATE {$extrafieldsTable} SET {$sqlColumnValueString} WHERE fk_object = ".((int) $this->id);
+		} else {
+			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
+			$extrafieldsRequiredOnOtherEntities = $extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] ?? array();
+			foreach ($extrafieldsRequiredOnOtherEntities as $key => $extrafieldType) {
+				if (isset($sqlColumnValues[$key])) {
+					// extrafield value already provided: no need to add it
+					continue;
+				}
+				// default value: empty string, except for 'int', 'double' and 'price'
+				$sqlColumnValues[$key] = "''";
+				if (in_array($extrafieldType, array('int', 'double', 'price'))) {
+					$sqlColumnValues[$key] = 0;
+				}
+			}
+			$sqlColumns = implode(',', array_keys($sqlColumnValues));
+			$sqlValues = implode(',', array_values($sqlColumnValues));
+			$sql = "INSERT INTO {$extrafieldsTable} ({$sqlColumns}) VALUES ({$sqlValues})";
+		}
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
