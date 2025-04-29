@@ -481,7 +481,7 @@ if ($sql_select && $documentstatic !== null) {
 		$documentstatic->fk_statut = $objp->status;
 		$documentstatic->statut = $objp->status;
 		$documentstatic->status = $objp->status;
-		if ($type_element == 'invoice') {
+		if ($type_element == 'invoice' || $type_element == 'supplier_invoice') {
 			$documentstatic->paye = $objp->paid;
 			$documentstatic->paid = $objp->paid;
 		}
