@@ -4537,14 +4537,14 @@ if ($action == 'createsite') {
 	$head = array();
 
 	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AddSite");
+	$head[$h][1] = $langs->trans("AddWebsite");
 	   $head[$h][2] = 'card';
 	$h++;
 
 	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
 	*/
 	if ($action == 'createcontainer') {
-		print load_fiche_titre($langs->trans("AddSite"));
+		print load_fiche_titre($langs->trans("AddWebsite"));
 	}
 
 	print '<!-- Add site -->'."\n";
