@@ -7885,13 +7885,13 @@ parameters:
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type FactureRec is not subtype of native type \$this\(CommonObject\)\.$#'
+			message: '#^PHPDoc tag @var with type FactureFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: ../../../htdocs/core/class/commonobject.class.php
 
 		-
-			message: '#^PHPDoc tag @var with type FactureFournisseur is not subtype of native type \$this\(CommonObject\)\.$#'
+			message: '#^PHPDoc tag @var with type FactureRec is not subtype of native type \$this\(CommonObject\)\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: ../../../htdocs/core/class/commonobject.class.php
@@ -20686,12 +20686,6 @@ parameters:
 			message: '#^Variable \$service might not be defined\.$#'
 			identifier: variable.undefined
 			count: 7
-			path: ../../../htdocs/public/payment/paymentok.php
-
-		-
-			message: '#^Variable \$user might not be defined\.$#'
-			identifier: variable.undefined
-			count: 39
 			path: ../../../htdocs/public/payment/paymentok.php
 
 		-
