@@ -1264,6 +1264,7 @@ if ($ispaymentok) {
 						$ispostactionok = 1;
 
 						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->valid_promesse($don->id, $user->id);
 							$don->setPaid($don->id);
 						}
 					}
