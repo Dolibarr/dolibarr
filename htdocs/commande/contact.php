@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2022 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2021-2024  Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -192,7 +192,7 @@ if ($id > 0 || !empty($ref)) {
 		}
 	} else {
 		// Contact not found
-		print "ErrorRecordNotFound";
+		recordNotFound('', 0);
 	}
 }
 

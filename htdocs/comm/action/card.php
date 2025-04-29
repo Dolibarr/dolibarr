@@ -1915,11 +1915,7 @@ if ($action == 'create') {
 if ($id > 0 && $action != 'create') {
 	$result1 = $object->fetch($id);
 	if ($result1 <= 0) {
-		$langs->load("errors");
-		print $langs->trans("ErrorRecordNotFound");
-
-		llxFooter();
-		exit;
+		recordNotFound('', 0);
 	}
 
 	$result2 = $object->fetch_thirdparty();
@@ -1947,8 +1943,8 @@ if ($id > 0 && $action != 'create') {
 		foreach ($socpeopleassigned as $tmpid) {
 			$object->socpeopleassigned[$id] = array('id' => $tmpid);
 		}
-		$object->contact_id   = GETPOSTINT("contactid");
-		$object->fk_project  = GETPOSTINT("projectid");
+		$object->contact_id = GETPOSTINT("contactid");
+		$object->fk_project = GETPOSTINT("projectid");
 
 		$object->note_private = GETPOST("note", 'restricthtml');
 	}
