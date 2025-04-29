@@ -1943,8 +1943,8 @@ if ($id > 0 && $action != 'create') {
 		foreach ($socpeopleassigned as $tmpid) {
 			$object->socpeopleassigned[$id] = array('id' => $tmpid);
 		}
-		$object->contact_id   = GETPOSTINT("contactid");
-		$object->fk_project  = GETPOSTINT("projectid");
+		$object->contact_id = GETPOSTINT("contactid");
+		$object->fk_project = GETPOSTINT("projectid");
 
 		$object->note_private = GETPOST("note", 'restricthtml');
 	}
