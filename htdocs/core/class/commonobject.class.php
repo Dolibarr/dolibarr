@@ -6953,39 +6953,33 @@ abstract class CommonObject
 		foreach ($new_array_options as $key => $newValue) {
 			$attributeKey = substr($key, 8); // Remove 'options_' prefix
 			$attributeType = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			$geoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
 			// Add field of attribute
-			if (!in_array($attributeType, ['separate', 'point', 'multipts', 'linestrg', 'polygon'])) { // Only for other type than separator)
-				if ($newValue != '' || $newValue == '0') {
+			if (!$geoDataType) {
+				// not a geodata type
+				if ($newValue != '') {
 					$sql .= ",'".$this->db->escape($newValue)."'";
 				} else {
 					$sql .= ",null";
 				}
+				continue;
 			}
 			if (empty($newValue)) {
 				$sql .= ",null";
 				continue;
 			}
 			if (preg_match('/error/i', $newValue)) {
-				dol_syslog("Bad syntax string for ".$attributeType." ".$newValue." to generate SQL request", LOG_WARNING);
+				dol_syslog("Bad syntax string for ".$geoDataType['shortname']." ".$newValue." to generate SQL request", LOG_WARNING);
 				$sql .= ",null";
 				continue;
 			}
-			if ($attributeType == 'point') { // for point type
-				// Text must be a WKT string, so "POINT(15 20)"
-				$sql .= ",ST_PointFromText('".$this->db->escape($newValue)."')";
-			}
-			if ($attributeType == 'multipts') { // for point type
-				// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
-				$sql .= ",ST_MultiPointFromText('".$this->db->escape($newValue)."')";
-			}
-			if ($attributeType == 'linestrg') { // for linestring type
-				// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
-				$sql .= ",ST_LineFromText('".$this->db->escape($newValue)."')";
-			}
-			if ($attributeType == 'polygon') { // for polygon type
-				// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-				$sql .= ",ST_PolyFromText('".$this->db->escape($newValue)."')";
-			}
+
+			// Geodata type: Text must be a WKT string. Examples:
+			// - point    => "POINT(15 20)"
+			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
+			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+			$sql .= ','.$geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
 		}
 		// We must insert a default value for fields for other entities that are mandatory to avoid not null error
 		if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {

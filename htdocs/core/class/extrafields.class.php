@@ -106,6 +106,24 @@ class ExtraFields
 		'separate' => 'ExtrafieldSeparator',
 		'stars' => 'ExtrafieldStars',
 	);
+	public static $geoDataTypes = array(
+		'point' => array(
+			'ST_Function' => 'ST_PointFromText',
+			'shortname' => 'point'
+		),
+		'multipts' => array(
+			'ST_Function' => 'ST_MultiPointFromText',
+			'shortname' => 'multipoint'
+		),
+		'linestrg' => array(
+			'ST_Function' => 'ST_LineFromText',
+			'shortname' => 'line'
+		),
+		'polygon' => array(
+			'ST_Function' => 'ST_PolyFromText',
+			'shortname' => 'polygon'
+		)
+	);
 
 	/**
 	 *	Constructor
