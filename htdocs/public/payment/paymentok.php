@@ -72,6 +72,7 @@ if (isModEnabled('paypal')) {
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */
@@ -1264,7 +1265,7 @@ if ($ispaymentok) {
 						$ispostactionok = 1;
 
 						if ($totalpaid >= $don->getRemainToPay()) {
-							$don->valid_promesse($don->id, $user->id);
+							$don->valid_promesse($don->id, $user->id); /** @phan-suppress-current-line PhanSuspiciousParamOrder */
 							$don->setPaid($don->id);
 						}
 					}
