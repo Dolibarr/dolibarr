@@ -1265,7 +1265,7 @@ if ($ispaymentok) {
 						$ispostactionok = 1;
 
 						if ($totalpaid >= $don->getRemainToPay()) {
-							$don->valid_promesse($don->id, $user->id); /** @phan-suppress-current-line PhanSuspiciousParamOrder */
+							$don->valid_promesse($don->id, $user->id); /** @phan-suppress-current-line PhanPluginSuspiciousParamPosition */
 							$don->setPaid($don->id);
 						}
 					}
