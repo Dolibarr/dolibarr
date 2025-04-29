@@ -371,7 +371,6 @@ if ($mesg) {
 	print $px1->show();
 	print "<br>\n";
 	print $px2->show();
-
 }
 print '</td></tr></table>';
 
