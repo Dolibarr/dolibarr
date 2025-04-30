@@ -246,7 +246,7 @@ if (isModEnabled('invoice') && $user->hasRight('facture', 'lire')) {
 				}
 				print '<td width="16" class="nobordernopadding hideonsmartphone right">';
 				$filename = dol_sanitizeFileName($obj->ref);
-				$filedir = $conf->facture->dir_output.'/'.dol_sanitizeFileName($obj->ref);
+				$filedir = $conf->invoice->dir_output.'/'.dol_sanitizeFileName($obj->ref);
 				$urlsource = $_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
 				print $formfile->getDocumentsLink($tmpinvoice->element, $filename, $filedir);
 				print '</td></tr></table>';
@@ -482,7 +482,6 @@ if (isModEnabled('don') && $user->hasRight('don', 'lire')) {
 				$donationstatic->lastname = $obj->lastname;
 				$donationstatic->firstname = $obj->firstname;
 				$donationstatic->date = $db->jdate($obj->date);
-				$donationstatic->statut = $obj->status;	// deprecated
 				$donationstatic->status = $obj->status;
 
 				$label = '';
