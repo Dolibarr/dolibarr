@@ -59,7 +59,7 @@ abstract class AbstractClient implements ClientInterface
     /**
      * @param array $headers
      */
-    public function normalizeHeaders($headers): void
+    public function normalizeHeaders($headers): array
     {
         $normalizeHeaders = [];
         foreach ($headers as $key => $val) {
