@@ -2826,7 +2826,7 @@ class Setup extends DolibarrApi
 		return $this->_cleanObjectDatas($conf->modules);
 	}
 
-		/**
+	/**
 	 * Get list of modules with status and origin
 	 *
 	 * @url	GET /modules/status/{origin}
