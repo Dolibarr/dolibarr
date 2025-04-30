@@ -2,6 +2,7 @@
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 /**
  * API class for Interventions
  *
- * @access protected
- * @class  DolibarrApiAccess {@requires user,external}
+ * @since	7.0.0	Initial implementation
+ *
+ * @access	protected
+ * @class	DolibarrApiAccess {@requires user,external}
  */
 class Interventions extends DolibarrApi
 {
@@ -69,12 +72,15 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of intervention object
+	 * Get an intervention
+	 *
 	 * Return an array with intervention information
 	 *
-	 * @param       int         $id         		ID of intervention
-	 * @param		string		$contact_type		Type of contact to return: 'external', 'thirdparty' or 'internal'
-	 * @return		Object							Object with cleaned properties
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of intervention
+	 * @param	string	$contact_type		{@choice '',thirdparty,internal,external} Type of contacts
+	 * @return	Object						Cleaned intervention object
 	 *
 	 * @throws	RestException
 	 */
@@ -101,18 +107,21 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * List of interventions
-	 * Return a list of interventions
+	 * List interventions
 	 *
-	 * @param string	$sortfield				Sort field
-	 * @param string	$sortorder				Sort order
-	 * @param int		$limit					Limit for list
-	 * @param int		$page					Page number
-	 * @param string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters             Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param string	$contact_type			Type of contact to return: 'external', 'thirdparty' or 'internal'
-	 * @return  array                           Array of order objects
+	 * Get a list of interventions
+	 *
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	string	$sortfield				Sort field
+	 * @param	string	$sortorder				Sort order
+	 * @param	int		$limit					Limit for list
+	 * @param	int		$page					Page number
+	 * @param	string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
+	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
+	 * @param	string	$contact_type			{@choice '',thirdparty,internal,external} Type of contacts
+	 * @return	array							Array of order objects
 	 * @phan-return array<object>
 	 * @phpstan-return array<object>
 	 *
@@ -194,12 +203,16 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Create intervention object
+	 * Create an intervention
 	 *
-	 * @param   array   $request_data   Request data
-	 * @phan-param ?array<string,string>    $request_data
-	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  int     ID of intervention
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
+	 * @return			int						ID of created intervention
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -226,13 +239,17 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Update intervention general fields (won't touch lines of ficinter)
+	 * Update intervention general fields (won't touch lines of fichinter)
 	 *
-	 * @param 	int   	$id             	Id of fichinter to update
-	 * @param 	array 	$request_data   	Datas
-	 * @phan-param ?array<string,string>	$request_data
-	 * @phpstan-param ?array<string,string>	$request_data
-	 * @return 	Object						Updated object
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param			int		$id				ID of fichinter to update
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
+	 * @return			Object					Updated object
+	 *
+	 * @throws RestException
 	 */
 	public function put($id, $request_data = null)
 	{
@@ -308,16 +325,20 @@ class Interventions extends DolibarrApi
 	*/
 
 	/**
-	 * Add a line to a given intervention
+	 * Add a line to an intervention
 	 *
-	 * @param	int		$id             Id of intervention to update
-	 * @param   array   $request_data   Request data
-	 * @phan-param ?array<string,string>    $request_data
-	 * @phpstan-param ?array<string,string> $request_data
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     POST {id}/lines
+	 * @param			int		$id				ID of intervention to update
+	 * @param			array	$request_data	Request data
+	 * @phan-param		?array<string,string>	$request_data
+	 * @phpstan-param	?array<string,string>	$request_data
 	 *
-	 * @return  int
+	 * @url		POST	{id}/lines
+	 *
+	 * @return	int		0 if ok, <0 if ko
+	 *
+	 * @throws RestException
 	 */
 	public function postLine($id, $request_data = null)
 	{
@@ -361,12 +382,16 @@ class Interventions extends DolibarrApi
 	}
 
 	/**
-	 * Delete intervention
+	 * Delete an intervention
 	 *
-	 * @param   int     $id         Intervention ID
-	 * @return  array
+	 * @since	8.0.0	Initial implementation
+	 *
+	 * @param	int		$id		Intervention ID
+	 * @return	array
 	 * @phan-return array<string,array{code:int,message:string}>
 	 * @phpstan-return array<string,array{code:int,message:string}>
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -397,15 +422,15 @@ class Interventions extends DolibarrApi
 	/**
 	 * Reopen an intervention
 	 *
-	 * @since 	22.0.0 	Initial implementation
+	 * @since	22.0.0	Initial implementation
 	 *
-	 * @param 	int		$id		Intervention ID
+	 * @param	int		$id		Intervention ID
 	 *
 	 * @url		POST	{id}/reopen
 	 *
-	 * @return 	Object
+	 * @return	Object
 	 *
-	 * @throws 	RestException
+	 * @throws	RestException
 	 */
 	public function reopen($id)
 	{
@@ -439,12 +464,16 @@ class Interventions extends DolibarrApi
 	 *   "notrigger": 0
 	 * }
 	 *
-	 * @param   int		$id             Intervention ID
-	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url POST    {id}/validate
+	 * @param	int		$id				Intervention ID
+	 * @param	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *
-	 * @return  Object
+	 * @url		POST	{id}/validate
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
 	 */
 	public function validate($id, $notrigger = 0)
 	{
@@ -476,11 +505,15 @@ class Interventions extends DolibarrApi
 	/**
 	 * Close an intervention
 	 *
-	 * @param		int		$id             Intervention ID
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url POST    {id}/close
+	 * @param	int		$id		Intervention ID
 	 *
-	 * @return  Object
+	 * @url		POST	{id}/close
+	 *
+	 * @return	Object
+	 *
+	 * @throws RestException
 	 */
 	public function closeFichinter($id)
 	{
@@ -533,10 +566,10 @@ class Interventions extends DolibarrApi
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 * Clean sensible object datas
+	 * Clean sensible object data
 	 *
-	 * @param   Object  $object     Object to clean
-	 * @return  Object              Object with cleaned properties
+	 * @param	Object	$object		Object to clean
+	 * @return	Object				Object with cleaned properties
 	 */
 	protected function _cleanObjectDatas($object)
 	{
