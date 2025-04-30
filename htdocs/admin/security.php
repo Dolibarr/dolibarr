@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2004-2022 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013-2015 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2022  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2013-2015  Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $action = GETPOST('action', 'aZ09');
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_pass
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("users", "admin", "other"));
 
@@ -39,7 +50,7 @@ if (!$user->admin) {
 }
 
 // Allow/Disallow change to clear passwords once passwords are encrypted
-$allow_disable_encryption = true;
+$allow_disable_encryption = false;
 
 
 /*
@@ -102,10 +113,11 @@ if ($action == 'activate_encrypt') {
 		dol_print_error($db, '');
 	}
 } elseif ($action == 'disable_encrypt') {
-	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
-	//Do not allow "disable encryption" as passwords cannot be decrypted
+	// By default, $allow_disable_encryption is false we do not allow to disable encryption because passwords can't be decoded once encrypted.
+	// We set entity=0 (all) because DATABASE_PWD_ENCRYPTED is a setup into conf file, so always shared for everybody
 	if ($allow_disable_encryption) {
 		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", $conf->entity);
+		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED", 0);
 	}
 }
 
@@ -115,7 +127,7 @@ if ($action == 'activate_encryptdbpassconf') {
 		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
-		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
+		// dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
 		exit;
 	} else {
@@ -127,11 +139,11 @@ if ($action == 'activate_encryptdbpassconf') {
 		sleep(3); // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
 
 		// database value not required
-		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
+		// dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		header("Location: security.php");
 		exit;
 	} else {
-		//setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
+		// setEventMessages($langs->trans('InstrucToClearPass', $dolibarr_main_db_pass), null, 'warnings');
 		setEventMessages($langs->trans('InstrucToClearPass', $langs->transnoentitiesnoconv("DatabasePassword")), null, 'warnings');
 	}
 }
@@ -172,7 +184,7 @@ if ($action == 'updatepattern') {
 $form = new Form($db);
 
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
-llxHeader('', $langs->trans("Passwords"), $wikihelp);
+llxHeader('', $langs->trans("Passwords"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-security');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -193,7 +205,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="constname" value="USER_PASSWORD_GENERATED">';
 print '<input type="hidden" name="consttype" value="yesno">';
 
-// Charge tableau des modules generation
+// Load array with all password generation modules
 $dir = "../core/modules/security/generate";
 clearstatcache();
 $handle = opendir($dir);
@@ -201,6 +213,7 @@ $i = 1;
 $arrayhandler = array();
 if (is_resource($handle)) {
 	while (($file = readdir($handle)) !== false) {
+		$reg = array();
 		if (preg_match('/(modGeneratePass[a-z]+)\.class\.php$/i', $file, $reg)) {
 			// Charging the numbering class
 			$classname = $reg[1];
@@ -237,7 +250,7 @@ foreach ($arrayhandler as $key => $module) {
 
 	if ($module->isEnabled()) {
 		print '<tr class="oddeven"><td>';
-		print img_picto('', $module->picto, 'class="width25 size15x"').' ';
+		print img_picto('', $module->picto, 'class="width25 size15x marginrightonly"').' ';
 		print ucfirst($key);
 		print "</td><td>\n";
 		print $module->getDescription().'<br>';
@@ -289,31 +302,31 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MinLength")."</td>";
-	print '<td><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[0].'" id="minlength" min="1"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbMajMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbNumMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbSpeMin")."</td>";
-	print '<td><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
 	print '</tr>';
 
 
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NbIteConsecutive")."</td>";
-	print '<td><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
+	print '<td><input type="number" class="width50 right" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
 
@@ -333,7 +346,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '<script type="text/javascript">';
 	print '	function getStringArg(){';
 	print '		var pattern = "";';
-	print '		pattern += $("#minlenght").val() + ";";';
+	print '		pattern += $("#minlength").val() + ";";';
 	print '		pattern += $("#NbMajMin").val() + ";";';
 	print '		pattern += $("#NbNumMin").val() + ";";';
 	print '		pattern += $("#NbSpeMin").val() + ";";';
@@ -343,14 +356,14 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '	}';
 
 	print '	function valuePossible(){';
-	print '		var fields = ["#minlenght", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
+	print '		var fields = ["#minlength", "#NbMajMin", "#NbNumMin", "#NbSpeMin", "#NbIteConsecutive"];';
 	print '		for(var i = 0 ; i < fields.length ; i++){';
 	print '		    if($(fields[i]).val() < $(fields[i]).attr("min")){';
 	print '		        return false;';
 	print '		    }';
 	print '		}';
 	print '		';
-	print '		var length = parseInt($("#minlenght").val());';
+	print '		var length = parseInt($("#minlength").val());';
 	print '		var length_mini = parseInt($("#NbMajMin").val()) + parseInt($("#NbNumMin").val()) + parseInt($("#NbSpeMin").val());';
 	print '		return length >= length_mini;';
 	print '	}';
@@ -374,7 +387,7 @@ if (getDolGlobalString('USER_PASSWORD_GENERATED') == "Perso") {
 	print '		}';
 	print '	}';
 
-	print '	$("#minlenght").change(function(){valuePatternChange();});';
+	print '	$("#minlength").change(function(){valuePatternChange();});';
 	print '	$("#NbMajMin").change(function(){valuePatternChange();});';
 	print '	$("#NbNumMin").change(function(){valuePatternChange();});';
 	print '	$("#NbSpeMin").change(function(){valuePatternChange();});';
@@ -411,17 +424,14 @@ if (!getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
 	print '<td class="center" width="100">';
 	print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=activate_encrypt&token='.newToken().'">'.$langs->trans("Activate").'</a>';
 	print "</td>";
-}
-
-// Database conf file encryption
-if (getDolGlobalString('DATABASE_PWD_ENCRYPTED')) {
+} else {
 	print '<td class="center" width="100">';
 	if ($allow_disable_encryption) {
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas etre decodes
 		//Do not allow "disable encryption" as passwords cannot be decrypted
 		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=disable_encrypt&token='.newToken().'">'.$langs->trans("Disable").'</a>';
 	} else {
-		print '-';
+		print '<span class="opacitymedium">'.$langs->trans("Always").'</span>';
 	}
 	print "</td>";
 }

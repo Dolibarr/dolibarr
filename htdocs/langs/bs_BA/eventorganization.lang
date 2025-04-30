@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organizacija događaja
 EventOrganizationDescription = Organizacija događaja kroz modul projekat
 EventOrganizationDescriptionLong= Upravljajte organizacijom događaja (emisije, konferencije, sudionici ili govornici, s javnim stranicama za prijedloge, glasanje ili registraciju)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Organizirani događaji
 EventOrganizationConferenceOrBoothMenuLeft = Konferencija ili štand
-
 PaymentEvent=Plaćanje događaja
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Registracija
 EventOrganizationSetup=Podešavanje organizacije događaja
 EventOrganization=Organizacija događaja
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Predložak e-pošte za korišten
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Šablon e-pošte za korištenje prilikom slanja e-pošte iz masovne grupe "Pošalji e-poštu" na listi učesnika
 EVENTORGANIZATION_FILTERATTENDEES_CAT = U obrascu za kreiranje/dodavanje učesnika, ograničava listu trećih strana na treće strane u kategoriji
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = U obrascu za kreiranje/dodavanje učesnika, ograničava listu trećih strana na treće strane sa prirodom
-
-#
 # Object
-#
 OrganizedEvent=Organizirani događaj
 EventOrganizationConfOrBooth= Konferencija ili štand
-EventOrganizationConfOrBoothes=Konferencije ili štandovi
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Upravljajte organizacijom događaja
 ConferenceOrBooth = Konferencija ili štand
 ConferenceOrBoothTab = Konferencija ili štand
@@ -63,10 +50,7 @@ DateOfRegistration = Datum registracije
 ConferenceOrBoothAttendee = Učesnik konferencije ili štanda
 ApplicantOrVisitor=Kandidat ili posjetitelj
 Speaker=Zvučnik
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Vaš zahtjev za konferenciju je primljen
 YourOrganizationEventBoothRequestWasReceived = Vaš zahtjev za štand je primljen
 EventOrganizationEmailAskConf = Zahtjev za konferenciju
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Registracija za događaj
 EventOrganizationMassEmailAttendees = Komunikacija sa polaznicima
 EventOrganizationMassEmailSpeakers = Komunikacija sa govornicima
 ToSpeakers=Za zvučnike
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Dozvolite ljudima da predlažu konferencije
 AllowUnknownPeopleSuggestConfHelp=Dozvolite nepoznatim osobama da predlože konferenciju koju žele održati
 AllowUnknownPeopleSuggestBooth=Dozvolite ljudima da se prijave za štand
@@ -91,27 +72,26 @@ PriceOfBoothHelp=Cijena pretplate za štand
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Link ICS za konferencije
 ConferenceOrBoothInformation=Informacije o konferenciji ili štandu
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Polaznici
-ListOfAttendeesOfEvent=Spisak učesnika projekta događaja
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Preuzmite ICS link
 EVENTORGANIZATION_SECUREKEY = Seed za osiguranje ključa za javnu registracijsku stranicu za predlaganje konferencije
 SERVICE_BOOTH_LOCATION = Usluga koja se koristi za red računa oko lokacije štanda
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Usluga koja se koristi za red fakture o pretplati učesnika na događaj
 NbVotes=Broj glasova
-
-#
 # Status
-#
 EvntOrgDraft = Nacrt
 EvntOrgSuggested = Predloženo
 EvntOrgConfirmed = Potvrđeno
 EvntOrgNotQualified = Nije kvalifikovan
 EvntOrgDone = Završeno
 EvntOrgCancelled = Otkazan
-
-#
 # Other
-#
 SuggestForm = Stranica sa sugestijama
 SuggestOrVoteForConfOrBooth = Stranica za prijedlog ili glasanje
 EvntOrgRegistrationHelpMessage = Ovdje možete glasati za konferenciju ili predložiti novu za događaj. Takođe se možete prijaviti da imate štand tokom događaja.
@@ -134,6 +114,7 @@ EventType = Vrsta događaja
 LabelOfBooth=Oznaka štanda
 LabelOfconference=Oznaka konferencije
 ConferenceIsNotConfirmed=Registracija nije dostupna, konferencija još nije potvrđena
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s mora biti prije %s
 DateMustBeAfterThan=%s mora biti nakon %s
 MaxNbOfAttendeesReached=Dostignut je maksimalan broj učesnika
@@ -175,6 +156,7 @@ DateEndEvent=Datum završetka događaja
 ModifyStatus=Izmijenite status
 ConfirmModifyStatus=Potvrdite promjenu statusa
 ConfirmModifyStatusQuestion=Jeste li sigurni da želite izmijeniti %s odabrane zapise?
-RecordsUpdated = %s Zapisi ažurirani
-RecordUpdated = Zapis je ažuriran
-NoRecordUpdated = Zapis nije ažuriran
+RecordsUpdated=%s Zapisi ažurirani
+RecordUpdated=Zapis je ažuriran
+NoRecordUpdated=Zapis nije ažuriran
+ProfitPerValidatedAttendee=Profit per attendee

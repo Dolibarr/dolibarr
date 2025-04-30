@@ -203,7 +203,7 @@ class modUser extends DolibarrModules
 
 		$r++;
 		$this->export_code[$r] = $this->rights_class.'_'.$r;
-		$this->export_label[$r] = 'List of users and attributes';
+		$this->export_label[$r] = 'List of users and attributes'; // Translation key (used only if key ExportDataset_user_1 not found)
 		$this->export_permission[$r] = array(array("user", "user", "export"));
 		$this->export_fields_array[$r] = array(
 			'u.rowid'=>"Id", 'u.login'=>"Login", 'u.lastname'=>"Lastname", 'u.firstname'=>"Firstname", 'u.employee'=>"Employee", 'u.job'=>"PostOrFunction", 'u.gender'=>"Gender",
@@ -271,6 +271,41 @@ class modUser extends DolibarrModules
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'usergroup as g ON ug.fk_usergroup = g.rowid';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'adherent as a ON u.fk_member = a.rowid';
 		$this->export_sql_end[$r] .= ' WHERE u.entity IN ('.getEntity('user').')';
+
+
+		$r++;
+		$this->export_code[$r] = $this->rights_class.'_'.$r;
+		$this->export_label[$r] = 'List of security events'; // Translation key (used only if key ExportDataset_user_2 not found)
+		$this->export_permission[$r] = array(array("user"));	// Only admin
+		$this->export_fields_array[$r] = array(
+			'e.rowid'=>"Id", 'e.type'=>"Type",
+			'e.dateevent'=>"Date",
+			'e.description'=>'Description',
+			'e.ip'=>'IPAddress', 'e.user_agent'=>'UserAgent',
+			'e.authentication_method' => 'AuthenticationMode',
+			'e.fk_user'=>"UserID", 'u.login'=>"Login",
+		);
+		$this->export_TypeFields_array[$r] = array(
+			'e.rowid'=>'Numeric', 'e.type'=>"Text",
+			'e.dateevent'=>"Date",
+			'e.description'=>'Text',
+			'e.ip'=>'Text', 'e.user_agent'=>'Text',
+			'e.authentication_method' => 'Text',
+			'e.fk_user'=>"Numeric", 'u.login'=>"Text",
+		);
+		$this->export_entities_array[$r] = array(
+			'e.rowid'=>'securityevent', 'e.type'=>"securityevent",
+			'e.dateevent'=>"securityevent",
+			'e.description'=>'securityevent',
+			'e.ip'=>'securityevent', 'e.user_agent'=>'securityevent',
+			'e.authentication_method' => 'securityevent',
+			'e.fk_user'=>"user", 'u.login'=>"user",
+		);
+		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
+		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'events as e';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON e.fk_user = u.rowid';
+		$this->export_sql_end[$r] .= ' WHERE e.entity IN ('.getEntity('event').')';
+
 
 		// Imports
 		$r = 0;
@@ -341,8 +376,6 @@ class modUser extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Permissions
 		$this->remove($options);
 

@@ -46,10 +46,16 @@ LineLabel=تسمية الخط
 LineDescription=وصف خط
 LineUnitPrice=سعر الوحدة من خط
 LineVATRate=ضريبة القيمة المضافة من سعر الخط
+LineLT1Rate=Tax 2 rate for line
+LineLT2Rate=Tax 3 rate for line
+LineLT1Type=Tax 2 type for line
+LineLT2Type=Tax 3 type for line
 LineQty=خط للكمية
 LineTotalHT=المبلغ غير شامل. ضريبة للخط
 LineTotalTTC=المبلغ تمشيا مع ضريبة
 LineTotalVAT=مبلغ الضريبة على القيمة المضافة لخط
+LineTotalLT1=Amount of tax 2 for line
+LineTotalLT2=Amount of tax 3 for line
 TypeOfLineServiceOrProduct=Type of line (0=product, 1=نوع الخط (0= منتج الخدمة= 1)
 FileWithDataToImport=ملف استيراد البيانات
 FileToImport=مصدر لاستيراد ملف
@@ -61,7 +67,7 @@ ChooseFormatOfFileToImport=اختر تنسيق الملف لاستخدامه ك�
 ChooseFileToImport=قم بتحميل الملف ثم انقر فوق أيقونة %s لتحديد الملف كملف استيراد المصدر ...
 SourceFileFormat=مصدر تنسيق ملف
 FieldsInSourceFile=الحقول في ملف المصدر
-FieldsInTargetDatabase=الحقول المستهدفة في قاعدة بيانات Dolibarr (جريئة = إلزامي)
+FieldsInTargetDatabase=Target fields in Dolibarr database
 NoFields=لا الحقول
 MoveField=تحرك %s حقل رقم العمود
 ExampleOfImportFile=Example_of_import_file
@@ -76,8 +82,8 @@ NowClickToTestTheImport=تحقق من أن تنسيق الملف (محددات �
 RunSimulateImportFile=قم بتشغيل محاكاة الاستيراد
 FieldNeedSource=يتطلب هذا المجال البيانات من الملف المصدر
 SomeMandatoryFieldHaveNoSource=بعض الحقول إلزامية ليس لديها مصدر من ملف البيانات
-InformationOnSourceFile=معلومات عن الملف المصدر
-InformationOnTargetTables=معلومات عن الهدف الحقول
+InformationOnSourceFile=ملف المصدر
+InformationOnTargetTables=Target fields
 SelectAtLeastOneField=التبديل حقل واحد على الأقل مصدر في عمود من الحقول لتصدير
 SelectFormat=اختيار تنسيق الملف هذا الاستيراد
 RunImportFile=بيانات الاستيراد

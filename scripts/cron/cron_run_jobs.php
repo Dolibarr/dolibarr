@@ -4,6 +4,8 @@
  * Copyright (C) 2012 Nicolas Villa aka Boyquotes http://informetic.fr
  * Copyright (C) 2013 Florian Henry <forian.henry@open-concept.pro
  * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,18 +62,27 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functionscli.lib.php';
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
+
 // Check parameters
 if (!isset($argv[1]) || !$argv[1]) {
-	usage($path, $script_file);
+	usageCron($path, $script_file);
 	exit(1);
 }
 $key = $argv[1];
 
 if (!isset($argv[2]) || !$argv[2]) {
-	usage($path, $script_file);
+	usageCron($path, $script_file);
 	exit(1);
 }
 
@@ -92,7 +103,11 @@ $hookmanager->initHooks(array('cli'));
 $now = dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc')." - ".gethostname()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." - userlogin=".$userlogin." - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
+// Show TZ of the serveur when ran from command line.
+$ini_path = php_ini_loaded_file();
+print 'TZ server = '.getServerTimeZoneString()." - set in PHP ini ".$ini_path."\n";
 
 // Check module cron is activated
 if (!isModEnabled('cron')) {
@@ -102,7 +117,7 @@ if (!isModEnabled('cron')) {
 
 // Check security key
 if ($key != getDolGlobalString('CRON_KEY')) {
-	print "Error: securitykey is wrong\n";
+	print "Error: securitykey provided ".substr($key, 0, 5)."... does not match securitykey in setup.\n";
 	exit(1);
 }
 
@@ -128,7 +143,7 @@ if ($userlogin == 'firstadmin') {
 
 // Check user login
 $user = new User($db);
-$result = $user->fetch('', $userlogin, '', 1);
+$result = $user->fetch(0, $userlogin, '', 1);
 if ($result < 0) {
 	echo "User Error: ".$user->error;
 	dol_syslog("cron_run_jobs.php:: User Error:".$user->error, LOG_ERR);
@@ -143,8 +158,8 @@ if ($result < 0) {
 
 // Reload langs
 $langcode = getDolGlobalString('MAIN_LANG_DEFAULT', 'auto');
-if (!empty($user->conf->MAIN_LANG_DEFAULT)) {
-	$langcode = $user->conf->MAIN_LANG_DEFAULT;
+if (getDolUserString('MAIN_LANG_DEFAULT')) {
+	$langcode = getDolUserString('MAIN_LANG_DEFAULT');
 }
 if ($langs->getDefaultLang() != $langcode) {
 	$langs->setDefaultLang($langcode);
@@ -153,7 +168,7 @@ if ($langs->getDefaultLang() != $langcode) {
 // Language Management
 $langs->loadLangs(array('main', 'admin', 'cron', 'dict'));
 
-$user->getrights();
+$user->loadRights();
 
 if (isset($argv[3]) && $argv[3]) {
 	$id = $argv[3];
@@ -163,7 +178,7 @@ if (isset($argv[4]) && $argv[4] == '--force') {
 	$forcequalified = 1;
 }
 
-// create a jobs object
+// Create a jobs object
 $object = new Cronjob($db);
 
 $filter = array();
@@ -176,7 +191,18 @@ if (!empty($id)) {
 	$filter['t.rowid'] = $id;
 }
 
-$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
+
+// Update old jobs that were not closed correctly so processing is moved from 1 to 0 (otherwise task stopped with fatal error are always in status "in progress")
+$sql = "UPDATE ".MAIN_DB_PREFIX."cronjob set processing = 0";
+$sql .= " WHERE processing = 1";
+$sql .= " AND datelastrun <= '".$db->idate(dol_now() - getDolGlobalInt('CRON_MAX_DELAY_FOR_JOBS', 24) * 3600, 'gmt')."'";
+$sql .= " AND datelastresult IS NULL";
+$db->query($sql);
+
+dol_syslog("cron_run_jobs.php search qualified job using filter: ".json_encode($filter), LOG_DEBUG);
+echo "cron_run_jobs.php search qualified job using filter: ".json_encode($filter)."\n";
+
+$result = $object->fetchAll('ASC,ASC,ASC', 't.priority,t.entity,t.rowid', 0, 0, 1, $filter, ($forcequalified ? -1 : 0));
 if ($result < 0) {
 	echo "Error: ".$object->error;
 	dol_syslog("cron_run_jobs.php fetch Error ".$object->error, LOG_ERR);
@@ -194,6 +220,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 	// Loop over job
 	foreach ($object->lines as $line) {
+		'@phan-var-force CronJob $line';
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
 		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
@@ -208,7 +235,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 			// Force recheck that user is ok for the entity to process and reload permission for entity
 			if ($conf->entity != $user->entity) {
-				$result = $user->fetch('', $userlogin, '', 1);
+				$result = $user->fetch(0, $userlogin, '', 1);
 				if ($result < 0) {
 					echo "\nUser Error: ".$user->error."\n";
 					dol_syslog("cron_run_jobs.php: User Error:".$user->error, LOG_ERR);
@@ -220,7 +247,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 						exit(1);
 					}
 				}
-				$user->getrights();
+				$user->loadRights('', 1); // We force rights reload to have the correct permissions for user in the entity we just switched in
 			}
 
 			// Reload langs
@@ -240,7 +267,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 		}
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-		if ($forcequalified || (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))) {
+		$datenextrunok = (empty($line->datenextrun) || (int) $line->datenextrun < $now);
+		$datestartok = (empty($line->datestart) || $line->datestart <= $now);
+		$dateendok = (empty($line->dateend) || $line->dateend >= $now);
+		if ($forcequalified || ($datenextrunok && $datestartok && $dateendok)) {
 			echo " - qualified";
 
 			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
@@ -253,6 +283,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
 				exit(1);
 			}
+
+			$parameters = array('cronjob' => $cronjob, 'line' => $line);
+			$reshook    = $hookmanager->executeHooks('beforeRunCronJob', $parameters, $object);
+
 			// Execute job
 			$result = $cronjob->run_jobs($userlogin);
 			if ($result < 0) {
@@ -265,9 +299,10 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			} else {
 				$nbofjobslaunchedok++;
 				$resultstring = 'OK';
+				echo " - ";
 			}
 
-			echo " - run_jobs ".$resultstring." result = ".$result;
+			echo "Result of run_jobs ".$resultstring." result = ".$result;
 
 			// We re-program the next execution and stores the last execution time for this job
 			$result = $cronjob->reprogram_jobs($userlogin, $now);
@@ -278,11 +313,14 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 				exit(1);
 			}
 
-			echo " - reprogrammed\n";
-		} else {
-			echo " - not qualified\n";
+			echo " - Job re-scheduled\n";
 
-			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
+			$parameters = array('cronjob' => $cronjob, 'line' => $line);
+			$reshook    = $hookmanager->executeHooks('afterRunCronJob', $parameters, $object);
+		} else {
+			echo " - not qualified (datenextrunok=".($datenextrunok ?: 0).", datestartok=".($datestartok ?: 0).", dateendok=".($dateendok ?: 0).")\n";
+
+			dol_syslog("cron_run_jobs.php job ".$line->id." not qualified line->datenextrun:".dol_print_date($line->datenextrun, 'dayhourrfc')." line->datestart:".dol_print_date($line->datestart, 'dayhourrfc')." line->dateend:".dol_print_date($line->dateend, 'dayhourrfc')." now:".dol_print_date($now, 'dayhourrfc'));
 		}
 	}
 
@@ -293,19 +331,22 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 
 $db->close();
 
+print "***** ".$script_file." end - ".dol_print_date($now, 'dayhourrfc', 'gmt')." - ".gethostname()." *****\n";
+
 if ($nbofjobslaunchedko) {
 	exit(1);
 }
 exit(0);
 
+
 /**
- * script cron usage
+ * script cron usageCron
  *
  * @param string $path				Path
  * @param string $script_file		Filename
  * @return void
  */
-function usage($path, $script_file)
+function usageCron($path, $script_file)
 {
 	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid] [--force]\n";
 	print "The script return 0 when everything worked successfully.\n";

@@ -4,7 +4,7 @@
  * Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,13 +39,19 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+	/**
+	 * @var ?string
+	 */
 	public $searchcode; // Search string
 
-	public $numbitcounter; // Number of digits the counter
+	/**
+	 * @var ?int
+	 */
+	public $numbitcounter; // Number of digits in the counter
 
 	/**
 	 *	Constructor
@@ -89,12 +95,13 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$tooltip .= '04{0000000000}? (for internal use)<br>';
 		$tooltip .= '9771234{00000}? (example of ISSN code with prefix 1234)<br>';
 		$tooltip .= '9791234{00000}? (example of ISMN code with prefix 1234)<br>';
-		//$tooltip.=$langs->trans("GenericMaskCodes5");
+		//$tooltip .= $langs->trans("GenericMaskCodes5");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Mask parameter
 		//$texte.= '<tr><td>'.$langs->trans("Mask").' ('.$langs->trans("BarCodeModel").'):</td>';
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.(getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK') ? $conf->global->BARCODE_STANDARD_PRODUCT_MASK : '').'"'.$disabled.'>', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="value1" value="'.getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK').'"'.$disabled.'>', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="modify" value="'.$langs->trans("Modify").'"'.$disabled.'></td>';
 		$texte .= '</tr>';
 
@@ -108,12 +115,16 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	/**
 	 * Return an example of result returned by getNextValue
 	 *
-	 * @param	Translate	$langs			Object langs
-	 * @param	?Product	$objproduct		Object product
-	 * @return	string						Return string example
+	 * @param	?Translate		$langs			Object langs
+	 * @param	?CommonObject	$objproduct		Object
+	 * @return	string							Return string example
 	 */
-	public function getExample($langs, $objproduct = null)
+	public function getExample($langs = null, $objproduct = null)
 	{
+		if (!$langs instanceof Translate) {
+			$langs = $GLOBALS['langs'];
+			'@phan-var-force Translate $langs';
+		}
 		$examplebarcode = $this->getNextValue($objproduct, '');
 		if (!$examplebarcode) {
 			$examplebarcode = $langs->trans('NotConfigured');
@@ -175,9 +186,10 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php'; // to be able to call function barcode_gen_ean_sum($ean)
 
+		// Get barcode type configuration for products if $type not set
 		if (empty($type)) {
 			$type = getDolGlobalString('PRODUIT_DEFAULT_BARCODE_TYPE');
-		} //get barcode type configuration for products if $type not set
+		}
 
 		// Get Mask value
 		$mask = getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK');
@@ -222,18 +234,22 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	 *
 	 *	@param	DoliDB		$db					Database handler
 	 *	@param	string		$code				Code to check/correct
-	 *	@param	Product		$product			Object product
-	 *  @param  int		  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
+	 *	@param	Product|Societe	$product			Object product
+	 *  @param  int<0,1>  	$thirdparty_type   	0 = customer/prospect , 1 = supplier
 	 *  @param	string		$type       	    type of barcode (EAN, ISBN, ...)
-	 *  @return int								0 if OK
+	 *  @return int<-7,0>						0 if OK
 	 * 											-1 ErrorBadCustomerCodeSyntax
 	 * 											-2 ErrorCustomerCodeRequired
 	 * 											-3 ErrorCustomerCodeAlreadyUsed
 	 * 											-4 ErrorPrefixRequired
+	 * 											-7 ErrorBadClass
 	 */
 	public function verif($db, &$code, $product, $thirdparty_type, $type)
 	{
-		global $conf;
+		if (!$product instanceof Product) {
+			dol_syslog(get_class($this)."::verif called with ".get_class($product)." Expected Product", LOG_ERR);
+			return -7;
+		}
 
 		//var_dump($code.' '.$product->ref.' '.$thirdparty_type);exit;
 
@@ -243,7 +259,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		$code = strtoupper(trim($code));
 
 		if (empty($code) && $this->code_null && !getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK')) {
-			$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+			$result = 0;
 		} elseif (empty($code) && (!$this->code_null || getDolGlobalString('BARCODE_STANDARD_PRODUCT_MASK'))) {
 			$result = -2;
 		} else {
@@ -252,7 +268,7 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 				if ($is_dispo != 0) {
 					$result = -3;
 				} else {
-					$result = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+					$result = 0;
 				}
 			} else {
 				if (dol_strlen($code) == 0) {

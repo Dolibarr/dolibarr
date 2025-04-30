@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2017-2023  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2019       Frédéric France         <frederic.france@netlogic.fr>
+ * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023       Charlene Benke          <charlene@patas-monkey.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,15 @@ require_once DOL_DOCUMENT_ROOT.'/bom/lib/bom.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/mrp/lib/mrp.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('mrp', 'other'));
 
@@ -52,7 +61,7 @@ $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolG
 $hidedesc = (GETPOSTINT('hidedesc') ? GETPOSTINT('hidedesc') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DESC') ? 1 : 0));
 $hideref = (GETPOSTINT('hideref') ? GETPOSTINT('hideref') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_REF') ? 1 : 0));
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new BOM($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->bom->dir_output.'/temp/massgeneration/'.$user->id;
@@ -76,7 +85,7 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 if ($object->id > 0) {
 	$object->calculateCosts();
 }
@@ -170,15 +179,20 @@ if (empty($reshook)) {
 		$qty = price2num(GETPOST('qty', 'alpha'), 'MS');
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
+		$fk_workstation = GETPOSTINT('idworkstations');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+		$fk_unit = GETPOSTINT('fk_unit');
 
 		$fk_default_workstation = 0;
 		if (!empty($idprod) && isModEnabled('workstation')) {
 			$product = new Product($db);
 			$res = $product->fetch($idprod);
 			if ($res > 0 && $product->type == Product::TYPE_SERVICE) {
-				$fk_default_workstation = $product->fk_default_workstation;
+				if ($fk_workstation > 0) {
+					$fk_default_workstation = $fk_workstation;
+				} else {
+					$fk_default_workstation = $product->fk_default_workstation;
+				}
 			}
 			if (empty($fk_unit)) {
 				$fk_unit = $product->fk_unit;
@@ -202,7 +216,7 @@ if (empty($reshook)) {
 		// We check if we're allowed to add this bom
 		$TParentBom = array();
 		$object->getParentBomTreeRecursive($TParentBom);
-		if ($bom_child_id > 0 && !empty($TParentBom) && in_array($bom_child_id, $TParentBom)) {
+		if ($bom_child_id > 0 && in_array($bom_child_id, $TParentBom)) {
 			$n_child = new BOM($db);
 			$n_child->fetch($bom_child_id);
 			setEventMessages($langs->transnoentities('BomCantAddChildBom', $n_child->getNomUrl(1), $object->getNomUrl(1)), null, 'errors');
@@ -221,7 +235,7 @@ if (empty($reshook)) {
 				}
 			}
 
-			$result = $object->addLine($idprod, $qty, $qty_frozen, $disable_stock_change, $efficiency, -1, $bom_child_id, null, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->addLine((int) $idprod, (float) $qty, $qty_frozen, $disable_stock_change, (float) $efficiency, -1, $bom_child_id, null, (int) $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -250,7 +264,7 @@ if (empty($reshook)) {
 		$qty_frozen = price2num(GETPOST('qty_frozen', 'alpha'), 'MS');
 		$disable_stock_change = GETPOSTINT('disable_stock_change');
 		$efficiency = price2num(GETPOST('efficiency', 'alpha'));
-		$fk_unit = GETPOST('fk_unit', 'alphanohtml');
+		$fk_unit = GETPOSTINT('fk_unit');
 
 		if ($qty == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
@@ -277,7 +291,7 @@ if (empty($reshook)) {
 				$fk_default_workstation = GETPOSTINT('idworkstations');
 			}
 
-			$result = $object->updateLine($lineid, $qty, (int) $qty_frozen, (int) $disable_stock_change, $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
+			$result = $object->updateLine($lineid, (float) $qty, (int) $qty_frozen, (int) $disable_stock_change, (float) $efficiency, $bomline->position, $bomline->import_key, $fk_unit, $array_options, $fk_default_workstation);
 
 			if ($result <= 0) {
 				setEventMessages($object->error, $object->errors, 'errors');
@@ -305,10 +319,13 @@ if (empty($reshook)) {
 $form = new Form($db);
 $formfile = new FormFile($db);
 
-
-$title = $langs->trans('BOM');
+if ($object->id > 0) {
+	$title = $object->ref;
+} else {
+	$title = $langs->trans('BOM');
+}
 $help_url = 'EN:Module_BOM';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-bom page-card');
 
 // Part to create
 if ($action == 'create') {
@@ -364,7 +381,7 @@ if (($id || $ref) && $action == 'edit') {
 
 	print dol_get_fiche_end();
 
-	print $form->buttonsSaveCancel("Create");
+	print $form->buttonsSaveCancel("Update");
 
 	print '</form>';
 }
@@ -408,10 +425,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		if (isModEnabled('bom')) {
 			$langs->load("mrp");
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') {
-				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			}
 			$formquestion = array(
 				// 'text' => $langs->trans("ConfirmClone"),
 				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
@@ -436,10 +449,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		if (isModEnabled('bom')) {
 			$langs->load("mrp");
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') {
-				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			}
 			$formquestion = array(
 				// 'text' => $langs->trans("ConfirmClone"),
 				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
@@ -465,10 +474,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (isModEnabled('bom')) {
 			$langs->load("mrp");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
-			$forcecombo = 0;
-			if ($conf->browser->name == 'ie') {
-				$forcecombo = 1; // There is a bug in IE10 that make combo inside popup crazy
-			}
 			$formquestion = array(
 				// 'text' => $langs->trans("ConfirmClone"),
 				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
@@ -563,9 +568,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Common attributes
 	$keyforbreak = 'duration';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
-	$object->calculateCosts();
-	print '<tr><td>'.$form->textwithpicto($langs->trans("TotalCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">'.price($object->total_cost).'</span></td></tr>';
-	print '<tr><td>'.$langs->trans("UnitCost").'</td><td>'.price($object->unit_cost).'</td></tr>';
+
+	// Manufacturing cost
+	print '<tr><td>'.$form->textwithpicto($langs->trans("ManufacturingCost"), $langs->trans("BOMTotalCost")).'</td><td><span class="amount">';
+	print price($object->total_cost);
+	print '</span>';
+	if ($object->total_cost != $object->unit_cost) {
+		print '&nbsp; &nbsp; <span class="opacitymedium">('.$form->textwithpicto(price($object->unit_cost), $langs->trans("ManufacturingUnitCost"), 1, 'help', '').')</span>';
+	}
+	print '</td></tr>';
+
+	// Find sell price of generated product. We suppose we sell it to a company like ours (same country...).
+	$object->fetch_product();
+	$manufacturedvalued = '';
+	if (!empty($object->product)) {
+		$tmparray = $object->product->getSellPrice($mysoc, $mysoc);
+		$manufacturedvalued = $tmparray['pu_ht'] * $object->qty;
+	}
+	print '<tr><td>'.$langs->trans("ManufacturingGeneratedValue").'</td><td><span class="amount">'.price($manufacturedvalued).'</span></td></tr>';
 
 	// Other attributes
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -586,6 +606,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	if (!empty($object->table_element_line)) {
 		// Products
+
 		$res = $object->fetchLinesbytypeproduct(0);		// Load all lines products into ->lines
 		$object->calculateCosts();
 
@@ -636,9 +657,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		print "</form>\n";
 
+
 		// Services
+
 		$filtertype = 1;
-		$res = $object->fetchLinesbytypeproduct(1);		// Load all lines services into ->lines
+		$res = $object->fetchLinesbytypeproduct($filtertype);		// Load all lines services into ->lines
 		$object->calculateCosts();
 
 		print ($res == 0 && $object->status >= $object::STATUS_VALIDATED) ? '' : load_fiche_titre($langs->trans('BOMServicesList'), '', 'service');
@@ -792,10 +815,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 		$genallowed = $user->hasRight('bom', 'read'); // If you can read, you can build the PDF to read content
 		$delallowed = $user->hasRight('bom', 'write'); // If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+		print $formfile->showdocuments('bom', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object);
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('bom'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('bom'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 

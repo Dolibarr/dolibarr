@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,16 +31,24 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'users', 'other'));
 
 $action = GETPOST('action', 'aZ09');
 
+$entity = $conf->entity;
+
 if (!$user->admin) {
 	accessforbidden();
 }
-
-$entity = $conf->entity;
 
 
 /*
@@ -65,9 +74,11 @@ if ($action == 'remove') {
  * View
  */
 
+$form = new Form($db);
+
 $wikihelp = 'EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
 
-llxHeader('', $langs->trans("DefaultRights"), $wikihelp);
+llxHeader('', $langs->trans("DefaultRights"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-perms');
 
 print load_fiche_titre($langs->trans("SecuritySetup"), '', 'title_setup');
 
@@ -88,6 +99,8 @@ foreach ($modulesdir as $dir) {
 				if ($modName) {
 					include_once $dir.$file;
 					$objMod = new $modName($db);
+
+					'@phan-var-force DolibarrModules $objMod';
 
 					// Load all lang files of module
 					if (isset($objMod->langfiles) && is_array($objMod->langfiles)) {
@@ -253,6 +266,12 @@ if ($result) {
 		$permlabel = (getDolGlobalString('MAIN_USE_ADVANCED_PERMS') && ($langs->trans("PermissionAdvanced".$obj->id) != "PermissionAdvanced".$obj->id) ? $langs->trans("PermissionAdvanced".$obj->id) : (($langs->trans("Permission".$obj->id) != "Permission".$obj->id) ? $langs->trans("Permission".$obj->id) : $langs->trans($obj->label)));
 		print '<td>';
 		print $permlabel;
+		if ($langs->trans("Permission".$obj->id.'b') != "Permission".$obj->id.'b') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'b').'</span>';
+		}
+		if ($langs->trans("Permission".$obj->id.'c') != "Permission".$obj->id.'c') {
+			print '<br><span class="opacitymedium">'.$langs->trans("Permission".$obj->id.'c').'</span>';
+		}
 		if (getDolGlobalString('MAIN_USE_ADVANCED_PERMS')) {
 			if (preg_match('/_advance$/', $obj->perms)) {
 				print ' <span class="opacitymedium">('.$langs->trans("AdvancedModeOnly").')</span>';

@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2022       Quatadah Nasdami     <quatadah.nasdami@gmail.com>
  * Copyright (C) 2022       Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
- use Luracast\Restler\RestException;
+use Luracast\Restler\RestException;
 
- require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/reception.class.php';
+require_once DOL_DOCUMENT_ROOT.'/reception/class/receptionlinebatch.class.php';
 
 /**
  * API class for receptions
@@ -29,7 +31,7 @@
 class Receptions extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid',
@@ -38,12 +40,12 @@ class Receptions extends DolibarrApi
 	);
 
 	/**
-	 * @var Reception $reception {@type Reception}
+	 * @var Reception {@type Reception}
 	 */
 	public $reception;
 
 	/**
-		* Constructor
+	 * Constructor
 	 */
 	public function __construct()
 	{
@@ -93,12 +95,15 @@ class Receptions extends DolibarrApi
 	 * @param int			   $page				Page number
 	 * @param string		   $thirdparty_ids		Thirdparty ids to filter receptions of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string           $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool             $pagination_data     If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return  array                               Array of reception objects
+	 * @phan-return Reception[]|array{data:Reception[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Reception[]|array{data:Reception[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 *
 	 * @throws RestException
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'lire')) {
 			throw new RestException(403);
@@ -139,6 +144,9 @@ class Receptions extends DolibarrApi
 			}
 		}
 
+		//this query will return total receptions with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -168,6 +176,23 @@ class Receptions extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve commande list : '.$this->db->lasterror());
 		}
 
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
+		}
+
 		return $obj_ret;
 	}
 
@@ -175,7 +200,9 @@ class Receptions extends DolibarrApi
 	 * Create reception object
 	 *
 	 * @param   array   $request_data   Request data
-	 * @return  int     ID of reception
+	 * @phan-param ?array<string,string|mixed[]> $request_data
+	 * @phpstan-param ?array<string,string|mixed[]> $request_data
+	 * @return  int     				ID of reception created
 	 */
 	public function post($request_data = null)
 	{
@@ -194,10 +221,28 @@ class Receptions extends DolibarrApi
 
 			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
-		if (isset($request_data["lines"])) {
+		if (isset($request_data["lines"]) && is_array($request_data['lines'])) {
 			$lines = array();
 			foreach ($request_data["lines"] as $line) {
-				array_push($lines, (object) $line);
+				$receptionline = new ReceptionLineBatch($this->db);
+
+				$receptionline->fk_product = $line['fk_product'];
+				$receptionline->fk_entrepot = $line['fk_entrepot'];
+				$receptionline->fk_element = $line['fk_element'] ?? $line['origin_id'];				// example: purchase order id.  this->origin is 'supplier_order'
+				$receptionline->origin_line_id = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order id
+				$receptionline->fk_elementdet = $line['fk_elementdet'] ?? $line['origin_line_id'];	// example: purchase order line id
+				$receptionline->origin_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
+				$receptionline->element_type = $line['element_type'] ?? $line['origin_type'];		// example 'supplier_order'
+				$receptionline->qty = $line['qty'];
+				//$receptionline->rang = $line['rang'];
+				$receptionline->array_options = $line['array_options'];
+				$receptionline->batch = $line['batch'];
+				$receptionline->eatby = $line['eatby'];
+				$receptionline->sellby = $line['sellby'];
+				$receptionline->cost_price = $line['cost_price'];
+				$receptionline->status = $line['status'];
+
+				$lines[] = $receptionline;
 			}
 			$this->reception->lines = $lines;
 		}
@@ -247,6 +292,8 @@ class Receptions extends DolibarrApi
 	//  *
 	//  * @param int   $id             Id of reception to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	POST {id}/lines
 	//  *
@@ -315,6 +362,8 @@ class Receptions extends DolibarrApi
 	//  * @param int   $id             Id of reception to update
 	//  * @param int   $lineid         Id of line to update
 	//  * @param array $request_data   ShipmentLine data
+	//  * @phan-param ?array<string,string> $request_data
+	//  * @phpstan-param ?array<string,string> $request_data
 	//  *
 	//  * @url	PUT {id}/lines/{lineid}
 	//  *
@@ -380,6 +429,8 @@ class Receptions extends DolibarrApi
 	 * @param int   $id             Id of reception to update
 	 * @param int   $lineid         Id of line to delete
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	DELETE {id}/lines/{lineid}
 	 *
@@ -421,6 +472,8 @@ class Receptions extends DolibarrApi
 	 *
 	 * @param int   $id						Id of reception to update
 	 * @param array $request_data			Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return		Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -447,6 +500,13 @@ class Receptions extends DolibarrApi
 				continue;
 			}
 
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->reception->array_options[$index] = $this->_checkValForAPI($field, $val, $this->reception);
+				}
+				continue;
+			}
+
 			$this->reception->$field = $this->_checkValForAPI($field, $value, $this->reception);
 		}
 
@@ -462,6 +522,8 @@ class Receptions extends DolibarrApi
 	 *
 	 * @param   int     $id         Reception ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -621,15 +683,15 @@ class Receptions extends DolibarrApi
 	*/
 
 	/**
-	* Close a reception (Classify it as "Delivered")
-	*
-	* @param	int     $id             Reception ID
-	* @param	int     $notrigger      Disabled triggers
-	*
-	* @url POST    {id}/close
-	*
-	* @return  Object
-	*/
+	 * Close a reception (Classify it as "Delivered")
+	 *
+	 * @param	int     $id             Reception ID
+	 * @param	int     $notrigger      Disabled triggers
+	 *
+	 * @url POST    {id}/close
+	 *
+	 * @return  Object
+	 */
 	public function close($id, $notrigger = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('reception', 'creer')) {
@@ -684,6 +746,8 @@ class Receptions extends DolibarrApi
 
 		if (!empty($object->lines) && is_array($object->lines)) {
 			foreach ($object->lines as $line) {
+				unset($line->canvas);
+
 				unset($line->tva_tx);
 				unset($line->vat_src_code);
 				unset($line->total_ht);
@@ -701,12 +765,15 @@ class Receptions extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param   ?array<string,mixed|mixed[]>	$data   Array with data to verify
+	 * @return  array<string,mixed|mixed[]>
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$reception = array();
 		foreach (Receptions::$FIELDS as $field) {
 			if (!isset($data[$field])) {

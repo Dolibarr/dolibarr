@@ -10,7 +10,7 @@
 -- Copyright (C) 2012 	   Tommaso Basilici     <t.basilici@19.coop>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
 -- Copyright (C) 2013	   Cedric GROSS		    <c.gross@kreiz-it.fr>
--- Copyright (C) 2020-2021 Udo Tamm       	    <dev@dolibit.de>
+-- Copyright (C) 2020-2025 Udo Tamm       	    <dev@dolibit.de>
 -- Copyright (C) 2022      Miro Sertić       	<miro.sertic0606@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -83,6 +83,7 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4112', 'GesbR - Gesellschaft nach bürgerlichem Recht', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4113', 'GesnbR - Gesellschaft nach bürgerlichem Recht', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4114', 'e.U. - eingetragener Einzelunternehmer', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4115', 'FlexKapG - Flexible Kapitalgesellschaft', 1);
 
 
 -- Belgium

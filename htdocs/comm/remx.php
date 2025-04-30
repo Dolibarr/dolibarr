@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2019 Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2008      Raphael Bertrand (Resultic) <raphael.bertrand@resultic.fr>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('orders', 'bills', 'companies'));
@@ -144,6 +153,7 @@ if ($action == 'confirm_split' && GETPOST("confirm", "alpha") == 'yes' && $permi
 		$newdiscount2->multicurrency_amount_tva = price2num($newdiscount2->multicurrency_amount_ttc - $newdiscount2->multicurrency_amount_ht);
 
 		$db->begin();
+
 		$discount->fk_facture_source = 0; // This is to delete only the require record (that we will recreate with two records) and not all family with same fk_facture_source
 		// This is to delete only the require record (that we will recreate with two records) and not all family with same fk_invoice_supplier_source
 		$discount->fk_invoice_supplier_source = 0;
@@ -177,7 +187,7 @@ if ($action == 'setremise' && $permissiontocreate) {
 		if (!$error) {
 			$soc = new Societe($db);
 			$soc->fetch($id);
-			$discountid = $soc->set_remise_except($amount, $user, $desc, $tva_tx, $discount_type, $price_base_type);
+			$discountid = $soc->set_remise_except((float) $amount, $user, $desc, $tva_tx, $discount_type, $price_base_type);
 
 			if ($discountid > 0) {
 				if (!empty($backtopage)) {
@@ -288,7 +298,7 @@ if ($socid > 0) {
 			dol_print_error($db);
 		}
 
-		print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("CustomerAbsoluteDiscountAllUsers").'</td>';
 		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT");
 		if (empty($user->fk_soc)) {    // No need to show this for external users
 			print $form->textwithpicto('', $langs->trans("CustomerAbsoluteDiscountMy").': '.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT"));
@@ -317,7 +327,7 @@ if ($socid > 0) {
 			dol_print_error($db);
 		}
 
-		print '<tr><td>'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("SupplierAbsoluteDiscountAllUsers").'</td>';
 		print '<td class="amount">'.price($remise_all, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT");
 		if (empty($user->fk_soc)) {    // No need to show this for external users
 			print $form->textwithpicto('', $langs->trans("SupplierAbsoluteDiscountMy").' : '.price($remise_user, 1, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT"));
@@ -378,7 +388,7 @@ if ($socid > 0) {
 			// VAT
 			print '<tr><td>'.$langs->trans("VAT").'</td>';
 			print '<td>';
-			print $form->load_tva('tva_tx', (GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS', 0)), $mysoc, $object, 0, 0, '', 0, 1);
+			print $form->load_tva('tva_tx', (GETPOSTISSET('tva_tx') ? GETPOST('tva_tx', 'alpha') : getDolGlobalString('MAIN_VAT_DEFAULT_IF_AUTODETECT_FAILS', 0)), $mysoc, $object, 0, 0, '', false, 1);
 			print '</td></tr>';
 			print '<tr><td class="fieldrequired" >'.$langs->trans("NoteReason").'</td>';
 			print '<td><input type="text" class="quatrevingtpercent" name="desc" value="'.GETPOST('desc', 'alphanohtml').'"></td></tr>';
@@ -393,10 +403,11 @@ if ($socid > 0) {
 			print '<div class="center">';
 			print '<input type="submit" class="button" name="submit" value="'.$langs->trans("AddGlobalDiscount").'">';
 			if (!empty($backtopage)) {
-				print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+				print ' &nbsp; ';
 				print '<input type="submit" class="button button-cancel" name="cancel" value="'.$langs->trans("Cancel").'">';
 			}
 			print '</div>';
+			print '<br>';
 		}
 	}
 
@@ -532,7 +543,7 @@ if ($socid > 0) {
 					print '</td>';
 
 					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
-						print '<td class="center nowrap">';
+						print '<td class="center nowraponall">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';
@@ -679,7 +690,7 @@ if ($socid > 0) {
 					print '</td>';
 
 					if ($user->hasRight('societe', 'creer') || $user->hasRight('facture', 'creer')) {
-						print '<td class="center nowrap">';
+						print '<td class="center nowraponall">';
 						print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=split&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_split($langs->trans("SplitDiscount")).'</a>';
 						print '<a class="reposition marginleftonly" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=remove&token='.newToken().'&remid='.$obj->rowid.($backtopage ? '&backtopage='.urlencode($backtopage) : '').'">'.img_delete($langs->trans("RemoveDiscount")).'</a>';
 						print '</td>';

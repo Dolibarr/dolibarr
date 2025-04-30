@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2019       Thibault FOUCART        <support@ptibogxiv.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +34,21 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'donations'));
 
 $action     = GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view'; // The action 'create'/'add', 'edit'/'update', 'view', ...
 $massaction = GETPOST('massaction', 'alpha'); // The bulk action (combo box choice into lists)
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'sclist';
+$mode = GETPOST('mode', 'alpha');
 
 $paiementid				= GETPOSTINT('paiementid');
 
@@ -52,19 +62,16 @@ $search_date_endyear = GETPOSTINT('search_date_endyear');
 $search_date_start = dol_mktime(0, 0, 0, $search_date_startmonth, $search_date_startday, $search_date_startyear);
 $search_date_end = dol_mktime(23, 59, 59, $search_date_endmonth, $search_date_endday, $search_date_endyear);
 $search_company = GETPOST("search_company", 'alpha');
-$search_paymenttype = GETPOST("search_paymenttype");
-$search_account = GETPOSTINT("search_account");
+$search_paymenttype = GETPOST("search_paymenttype", "intcomma");
+$search_account = GETPOST("search_account", 'alpha');
 $search_payment_num = GETPOST('search_payment_num', 'alpha');
 $search_amount = GETPOST("search_amount", 'alpha');
 $search_status = GETPOST('search_status', 'intcomma');
-$search_sale = GETPOSTINT('search_sale');
 
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-$type = GETPOST('type', 'aZ');
-$mode = GETPOST('mode', 'alpha');
 if (empty($page) || $page == -1) {
 	$page = 0;
 }     // If $page is not defined, or '' or -1
@@ -78,7 +85,10 @@ if (!$sortfield) {
 	$sortfield = "pd.rowid";
 }
 
-$search_all = trim(GETPOSTISSET("search_all") ? GETPOST("search_all", 'alpha') : GETPOST('sall'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
+
+$morejs = array();
+$morecss = array();
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -89,22 +99,21 @@ $fieldstosearchall = array(
 );
 
 $arrayfields = array(
-	'pd.rowid'				=> array('label' => "RefPayment", 'checked' => 1, 'position' => 10),
-	'pd.datep'			=> array('label' => "Date", 'checked' => 1, 'position' => 20),
-	's.nom'				=> array('label' => "ThirdParty", 'checked' => 1, 'position' => 30),
-	'c.code'			=> array('label' => "Type", 'checked' => 1, 'position' => 40),
-	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => 1, 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
-	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled("bank"))),
-	'ba.label'			=> array('label' => "BankAccount", 'checked' => 1, 'position' => 70, 'enabled' => (isModEnabled("bank"))),
-	'pd.amount'			=> array('label' => "Amount", 'checked' => 1, 'position' => 80),
+	'pd.rowid'			=> array('label' => "RefPayment", 'checked' => '1', 'position' => 10),
+	'pd.datep'			=> array('label' => "Date", 'checked' => '1', 'position' => 20),
+	's.nom'				=> array('label' => "ThirdParty", 'checked' => '1', 'position' => 30),
+	'c.code'			=> array('label' => "Type", 'checked' => '1', 'position' => 40),
+	'pd.num_paiement'	=> array('label' => "Numero", 'checked' => '1', 'position' => 50, 'tooltip' => "ChequeOrTransferNumber"),
+	'transaction'		=> array('label' => "BankTransactionLine", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'ba.label'			=> array('label' => "BankAccount", 'checked' => '1', 'position' => 70, 'enabled' => (string) (int) (isModEnabled("bank"))),
+	'pd.amount'			=> array('label' => "Amount", 'checked' => '1', 'position' => 80),
 );
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 $optioncss = GETPOST('optioncss', 'alpha');
 $moreforfilter = GETPOST('moreforfilter', 'alpha');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('donationlist'));
 
 // Security check
@@ -409,7 +418,7 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 
 // Filter: Amount
 if (!empty($arrayfields['pd.amount']['checked'])) {
-	print '<td class="liste_titre">';
+	print '<td class="liste_titre right">';
 	print '<input class="flat" type="text" size="6" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
 }
@@ -445,6 +454,7 @@ if (getDolGlobalString('MAIN_VIEW_LINE_NUMBER_IN_LIST')) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.rowid']['checked'])) {
+	// False positive @phan-suppress-next-line PhanTypeInvalidDimOffset
 	print_liste_field_titre($arrayfields['pd.rowid']['label'], $_SERVER["PHP_SELF"], "pd.rowid", '', $param, '', $sortfield, $sortorder);
 	$totalarray['nbfield']++;
 }
@@ -473,7 +483,7 @@ if (!empty($arrayfields['ba.label']['checked'])) {
 	$totalarray['nbfield']++;
 }
 if (!empty($arrayfields['pd.amount']['checked'])) {
-	print_liste_field_titre($arrayfields['pd.amount']['label'], $_SERVER["PHP_SELF"], "pd.amount", '', $param, '', $sortfield, $sortorder);
+	print_liste_field_titre($arrayfields['pd.amount']['label'], $_SERVER["PHP_SELF"], "pd.amount", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
 }
 
@@ -615,7 +625,7 @@ while ($i < $imaxinloop) {
 
 	// Amount
 	if (!empty($arrayfields['pd.amount']['checked'])) {
-		print '<td ><span class="amount">' . price($obj->amount) . '</span></td>';
+		print '<td class="right"><span class="amount">' . price($obj->amount) . '</span></td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 			$totalarray['pos'][$totalarray['nbfield']] = 'amount';

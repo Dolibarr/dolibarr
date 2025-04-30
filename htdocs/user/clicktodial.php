@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +27,20 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by page
 $langs->loadLangs(array('users', 'admin'));
 
 $action = (string) GETPOST('action', 'aZ09');
+$cancel = GETPOST('cancel', 'aZ09');
+
 $id = GETPOSTINT('id');
 
 // Security check
@@ -39,10 +50,17 @@ if ($user->socid > 0) {
 }
 $feature2 = (($socid && $user->hasRight('user', 'self', 'creer')) ? '' : 'user');
 
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+$hookmanager->initHooks(array('usercard', 'globalcard'));
+
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard', 'globalcard'));
+// Define value to know what current user can do on properties of edited user
+$canedituser = 0;
+if ($id > 0) {
+	// $user is the current logged user, $id is the user we want to edit
+	$canedituser = (($user->id == $id) && $user->hasRight("user", "self", "write")) || (($user->id != $id) && $user->hasRight("user", "user", "write"));
+}
 
 
 /*
@@ -56,7 +74,7 @@ if ($reshook < 0) {
 }
 
 if (empty($reshook)) {
-	if ($action == 'update' && !GETPOST('cancel', 'alpha')) {
+	if ($action == 'update' && !$cancel && $canedituser) {
 		$edituser = new User($db);
 		$edituser->fetch($id);
 
@@ -76,18 +94,19 @@ if (empty($reshook)) {
 /*
  * View
  */
+
 $form = new Form($db);
 
 if ($id > 0) {
 	$object = new User($db);
 	$object->fetch($id, '', '', 1);
-	$object->getrights();
+	$object->loadRights();
 	$object->fetch_clicktodial();
 
 	$person_name = !empty($object->firstname) ? $object->lastname.", ".$object->firstname : $object->lastname;
 	$title = $person_name." - ".$langs->trans('ClickToDial');
 	$help_url = '';
-	llxHeader('', $title, $help_url);
+	llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-clicktodial');
 
 	$head = user_prepare_head($object);
 

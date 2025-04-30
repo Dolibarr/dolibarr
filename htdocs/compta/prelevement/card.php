@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'withdrawals'));
@@ -66,7 +75,7 @@ if (!$sortorder) {
 $object = new BonPrelevement($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 
 $hookmanager->initHooks(array('directdebitprevcard', 'globalcard', 'directdebitprevlist'));
 
@@ -76,14 +85,14 @@ $salaryBonPl = $object->checkIfSalaryBonPrelevement();
 if ($type == 'bank-transfer') {
 	$result = restrictedArea($user, 'paymentbybanktransfer', '', '', '');
 
-	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'read');
+	$permissiontoadd = $user->hasRight('paymentbybanktransfer', 'create');
 	$permissiontosend = $user->hasRight('paymentbybanktransfer', 'send');
 	$permissiontocreditdebit = $user->hasRight('paymentbybanktransfer', 'debit');
 	$permissiontodelete = $user->hasRight('paymentbybanktransfer', 'read');
 } else {
 	$result = restrictedArea($user, 'prelevement', '', '', 'bons');
 
-	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'read');
+	$permissiontoadd = $user->hasRight('prelevement', 'bons', 'creer');
 	$permissiontosend = $user->hasRight('prelevement', 'bons', 'send');
 	$permissiontocreditdebit = $user->hasRight('prelevement', 'bons', 'credit');
 	$permissiontodelete = $user->hasRight('prelevement', 'bons', 'read');
@@ -103,13 +112,14 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
+
 		$object->update($user);
 	}
 
 	// date of upload
-	if ($action == 'setdate_trans' && $permissiontoadd) {
+	if ($action == 'setdate_trans' && $permissiontosend) {
 		$result = $object->setValueFrom('date_trans', $date_trans, '', null, 'date');
 		if ($result < 0) {
 			setEventMessages($object->error, $object->errors, 'errors');
@@ -140,7 +150,7 @@ if (empty($reshook)) {
 			$mesg='BadFile';
 		}*/
 
-		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
+		$error = $object->set_infotrans($user, $dt, GETPOSTINT('methode'));
 
 		if ($error) {
 			header("Location: card.php?id=".$id."&error=$error");
@@ -227,16 +237,16 @@ if ($id > 0 || $ref) {
 		print '<table class="nobordernopadding centpercent"><tr><td>';
 		print $langs->trans('TransData');
 		print '</td>';
-		if ($action != 'editdate_trans') {
+		if ($action != 'editdate_trans' && $permissiontosend) {
 			print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editdate_trans&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->trans('SetTransDate'), 1).'</a></td>';
 		}
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editdate_trans') {
+		if ($action == 'editdate_trans' && $permissiontosend) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
-			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, "setdate_trans");
+			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, 0, "setdate_trans");
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -305,9 +315,9 @@ if ($id > 0 || $ref) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editfkbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'fk_bank_account', 0);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $fk_bank_account, 'fk_bank_account', 0);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $fk_bank_account, 'none');
 	}
 	print "</td>";
 	print '</tr>';
@@ -403,7 +413,7 @@ if ($id > 0 || $ref) {
 		print '<tr class="liste_titre">';
 		print '<td colspan="3">'.$langs->trans("NotifyCredit").'</td></tr>';
 		print '<tr class="oddeven"><td>'.$langs->trans('CreditDate').'</td><td>';
-		print $form->selectDate(-1, '', 0, 0, 0, "infocredit", 1, 1);
+		print $form->selectDate(-1, '', 0, 0, 0, "infocredit", 1, 1, 0, '', '', array(array('adddateof' => $object->date_trans, 'labeladddateof' => $langs->transnoentitiesnoconv('TransData'))));
 		print '</td></tr>';
 		print '</table>';
 		print '<br><div class="center"><span class="opacitymedium">'.$langs->trans("ThisWillAlsoAddPaymentOnInvoice").'</span></div>';
@@ -555,12 +565,14 @@ if ($id > 0 || $ref) {
 			if (!$salaryBonPl) {
 				$thirdparty = new Societe($db);
 				$thirdparty->fetch($obj->socid);
+				$name = $thirdparty->getNomUrl(1);
 			} else {
 				$userSalary = new User($db);
 				$userSalary->fetch($obj->fk_user);
+				$name = $userSalary->getNomUrl(-1);
 			}
-			print '<td>';
-			print(!$salaryBonPl ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
+			print '<td class="tdoverflowmax150">';
+			print($name);
 			print "</td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";

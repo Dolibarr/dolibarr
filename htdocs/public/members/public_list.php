@@ -3,6 +3,8 @@
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2009	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,12 +43,17 @@ if (!defined('NOBROWSERNOTIF')) {
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
 $entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
-if (is_numeric($entity)) {
-	define("DOLENTITY", $entity);
-}
+// if (is_numeric($entity)) { // $entity is casted to int
+define("DOLENTITY", $entity);
+// }
 
 // Load Dolibarr environment
 require '../../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // Security check
 if (!isModEnabled('member')) {
@@ -59,11 +66,17 @@ $langs->loadLangs(array("main", "members", "companies", "other"));
 /**
  * Show header for member list
  *
- * @param 	string		$title		Title
- * @param 	string		$head		More info into header
+ * Note: also called by functions.lib:recordNotFound
+ *
+ * @param 	string		$title				Title
+ * @param 	string		$head				Head array
+ * @param 	int    		$disablejs			More content into html header
+ * @param 	int    		$disablehead		More content into html header
+ * @param 	string[]|string	$arrayofjs			Array of complementary js files
+ * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "")
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	top_htmlhead($head, $title);
 
@@ -73,9 +86,11 @@ function llxHeaderVierge($title, $head = "")
 /**
  * Show footer for member list
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @return	void
  */
-function llxFooterVierge()
+function llxFooterVierge()  // @phan-suppress-current-line PhanRedefineFunction
 {
 	printCommonFooter('public');
 
@@ -111,7 +126,7 @@ if (!$sortfield) {
  */
 
 if (!getDolGlobalString('MEMBER_PUBLIC_ENABLED')) {
-	httponly_accessforbidden('Public access of list of members is not enabled');
+	httponly_accessforbidden('Public access of list of members is not enabled. See setup of module membership to enable it.');
 }
 
 $form = new Form($db);
@@ -126,16 +141,39 @@ if (getDolGlobalString('MEMBER_PUBLIC_CSS')) {
 llxHeaderVierge($langs->trans("ListOfValidatedPublicMembers"), $morehead);
 
 $sql = "SELECT rowid, firstname, lastname, societe, zip, town, email, birth, photo";
+
+$sqlfields = $sql;
+
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent";
 $sql .= " WHERE entity = ".((int) $entity);
 $sql .= " AND statut = 1";
 $sql .= " AND public = 1";
+
+// Count total nb of records
+$nbtotalofrecords = '';
+if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
+	/* The fast and low memory method to get and count full list converts the sql into a sql count */
+	$sqlforcount = preg_replace('/^'.preg_quote($sqlfields, '/').'/', 'SELECT COUNT(*) as nbtotalofrecords', $sql);
+	$sqlforcount = preg_replace('/GROUP BY .*$/', '', $sqlforcount);
+
+	$resql = $db->query($sqlforcount);
+	if ($resql) {
+		$objforcount = $db->fetch_object($resql);
+		$nbtotalofrecords = $objforcount->nbtotalofrecords;
+	} else {
+		dol_print_error($db);
+	}
+
+	if (($page * $limit) > $nbtotalofrecords) {	// if total resultset is smaller than the paging size (filtering), goto and load page 0
+		$page = 0;
+		$offset = 0;
+	}
+	$db->free($resql);
+}
+
 $sql .= $db->order($sortfield, $sortorder);
 $sql .= $db->plimit($conf->liste_limit + 1, $offset);
-//$sql = "SELECT d.rowid, d.firstname, d.lastname, d.societe, zip, town, d.email, t.libelle as type, d.morphy, d.statut, t.subscription";
-//$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-//$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
-//$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+
 
 $result = $db->query($sql);
 if ($result) {
@@ -143,7 +181,8 @@ if ($result) {
 	$i = 0;
 
 	$param = "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfValidatedPublicMembers"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, 0, '');
+	$title = $langs->trans("ListOfValidatedPublicMembers");
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '');
 	print '<table class="public_border centpercent">';
 
 	print '<tr class="public_liste_titre">';

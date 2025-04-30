@@ -40,7 +40,7 @@ class modHRM extends DolibarrModules
 	 */
 	public function __construct($db)
 	{
-		global $langs, $conf;
+		global $conf;
 
 		$this->db = $db;
 
@@ -191,7 +191,7 @@ class modHRM extends DolibarrModules
 
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
-		$r = 0;  // @phan-suppress-current-line PhanPluginRedundantAssignment
+		$r = 0;
 
 		// Skill / Job / Position
 		$this->rights[$r][0] = 4001; // Permission id (must not be already used)
@@ -297,8 +297,8 @@ class modHRM extends DolibarrModules
 		}
 
 		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard' AND type='evaluation' AND entity = ".((int) $conf->entity),
-			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard','evaluation',".((int) $conf->entity).")"
+			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'standard_evaluation' AND type='evaluation' AND entity = ".((int) $conf->entity),
+			"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('standard_evaluation','evaluation',".((int) $conf->entity).")"
 		);
 
 		return $this->_init($sql, $options);

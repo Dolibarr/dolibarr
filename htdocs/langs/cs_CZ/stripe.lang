@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL, která nabízí online platební
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL, která nabízí online platební stránku %s jakékoli částky bez existujícího objektu
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL, která nabízí online platební stránku %s pro předplatné člena
 ToOfferALinkForOnlinePaymentOnDonation=URL, která nabízí online platební stránku %s pro výplatu daru
-YouCanAddTagOnUrl=Můžete také přidat parametr url <b> & tag = <i> </i> </b> do kterékoli z těchto adres URL (povinné pouze pro platby, které nejsou propojeny s objektem), a přidat vlastní značku platebních komentářů. <br> Pro URL plateb bez existujícího objektu můžete také přidat parametr <strong> & noidempotency = 1 </strong>, takže stejný odkaz se stejnou značkou může být použit několikrát (některý platební režim může omezit platbu na 1 pro každý jiný odkaz bez tohoto parametr)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Nastavte Stripe pomocí url <b> %s </b>, aby se platba automaticky vytvořila při ověření Stripe.
 AccountParameter=Parametry účtu
 UsageParameter=Použité parametry
@@ -41,7 +42,7 @@ STRIPE_LIVE_WEBHOOK_KEY=Webhook live klíč
 ONLINE_PAYMENT_WAREHOUSE=Sklad, který se má použít k poklesu akcií, když je hotovo on-line platba <br> (TODO Pokud se volba k poklesu zásob uskuteční na akci na faktuře a on-line platba vygeneruje fakturu?)
 StripeLiveEnabled=Stripe live povoleno (jinak testovací režim / režim sandbox)
 StripeImportPayment=Platby importu Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
+ExampleOfTestCreditCard=Example of credit card for a test payment: %s => valid, %s => error CVC, %s => expired, %s => charge fails
 ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
 StripeGateways=Brána Stripe
 OAUTH_STRIPE_TEST_ID=Připojení klienta Stripe Connect (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe účet
 StripeChargeList=Seznam Stripe poplatků
 StripeTransactionList=Seznam transakcí Stripe
 StripeCustomerId=Stripe ID zákazníka
+StripePaymentId=Stripe payment id
 StripePaymentModes=Stripe režimy platby
 LocalID=Místní identifikační číslo
 StripeID=ID Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (
 ToOfferALinkForLiveWebhook=Odkaz na nastavení Stripe WebHook pro volání IPN (provozní režim)
 PaymentWillBeRecordedForNextPeriod=Platba bude zaznamenána pro další období.
 ClickHereToTryAgain= <a href="%s"> Klikněte zde a zkuste to znovu ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Vzhledem k přísným pravidlům pro ověřování zákazníků musí být karta vytvořena z backoffice Stripe. Klepnutím sem zapnete záznam zákazníka Stripe: %s
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe back office. You can click here to switch on Stripe customer record: %s
 STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
 TERMINAL_LOCATION=Location (address) for Stripe Terminals
 RequestDirectDebitWithStripe=Request Direct Debit with Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
 STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Stripe Connect mode
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

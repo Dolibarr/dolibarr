@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +40,6 @@ class Bookmark extends CommonObject
 	public $table_element = 'bookmark';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string  String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'bookmark';
@@ -76,7 +71,10 @@ class Bookmark extends CommonObject
 	 */
 	public $url;
 
-	public $target; // 0=replace, 1=new window
+	/**
+	 * @var string  '0'=replace, '1'=new window
+	 */
+	public $target;
 
 	/**
 	 * @var string title
@@ -102,6 +100,8 @@ class Bookmark extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 	}
 
 	/**
@@ -319,9 +319,9 @@ class Bookmark extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowBookmark");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');

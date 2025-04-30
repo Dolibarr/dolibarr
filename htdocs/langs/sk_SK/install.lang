@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Použili ste sprievodcu nastavením Dolibarr z balíka Linu
 KeepDefaultValuesMamp=Použili ste sprievodcu nastavením Dolibarr od DoliMamp, takže tu navrhnuté hodnoty sú už optimalizované. Zmeňte ich iba vtedy, ak viete, čo robíte.
 KeepDefaultValuesProxmox=Použili ste sprievodcu nastavením Dolibarr z virtuálneho zariadenia Proxmox, takže tu navrhnuté hodnoty sú už optimalizované. Zmeňte ich iba vtedy, ak viete, čo robíte.
 UpgradeExternalModule=Spustite vyhradený proces aktualizácie externého modulu
-SetAtLeastOneOptionAsUrlParameter=Nastavte aspoň jednu možnosť ako parameter v adrese URL. Napríklad: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Nie je čo čistiť/vymazávať
 NothingToDo=Nič na práci
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Aplikácia sa pokúsila o samoinováciu, ale str
 YouTryUpgradeDisabledByMissingFileUnLock=Aplikácia sa pokúsila o samoinováciu, ale proces inovácie momentálne nie je povolený.<br>
 ClickHereToGoToApp=Kliknutím sem prejdete na svoju aplikáciu
 ClickOnLinkOrRemoveManualy=Ak prebieha inovácia, počkajte. Ak nie, kliknite na nasledujúci odkaz. Ak sa vždy zobrazuje rovnaká stránka, musíte odstrániť/premenovať súbor install.lock v adresári dokumentov.
-ClickOnLinkOrCreateUnlockFileManualy=Ak prebieha aktualizácia, počkajte... Ak nie, musíte odstrániť súbor install.lock alebo vytvoriť súbor upgrade.unlock v adresári dokumentov Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=Naložený
 FunctionTest=Funkčný test
 NodoUpgradeAfterDB=Po aktualizácii databázy nie je vyžadovaná žiadna akcia externými modulmi

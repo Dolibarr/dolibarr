@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017-2024  Alexandre Spangaro   <aspangaro@easya.solutions>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "compta", "accountancy"));
 
@@ -64,10 +73,11 @@ $active = 1;
 
 $sortfield = GETPOST('sortfield', 'aZ09comma');
 $sortorder = GETPOST('sortorder', 'aZ09comma');
-$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
-if (empty($page) || $page == -1) {
+$page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT('page');
+if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
+	// If $page is not defined, or '' or -1 or if we click on clear filters
 	$page = 0;
-}     // If $page is not defined, or '' or -1
+}
 $offset = $listlimit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -80,9 +90,9 @@ if (empty($sortorder)) {
 
 $error = 0;
 
-$search_country_id = GETPOSTINT('search_country_id');
+$search_country_id = GETPOST('search_country_id', 'int');
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('admin'));
 
 // This page is a generic page to edit dictionaries
@@ -300,6 +310,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes') {       // delete
 
 // activate
 if ($action == $acts[0]) {
+	$sql = '';
 	if ($tabrowid[$id]) {
 		$rowidcol = $tabrowid[$id];
 	} else {
@@ -321,6 +332,7 @@ if ($action == $acts[0]) {
 
 // disable
 if ($action == $acts[1]) {
+	$sql = '';
 	if ($tabrowid[$id]) {
 		$rowidcol = $tabrowid[$id];
 	} else {
@@ -350,7 +362,7 @@ $formadmin = new FormAdmin($db);
 
 $title = $langs->trans('AccountingJournals');
 $help_url = 'EN:Module_Double_Entry_Accounting#Setup|FR:Module_Comptabilit&eacute;_en_Partie_Double#Configuration';
-llxHeader('', $title, $help_url);
+llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-accountancy page-admin_journals_list');
 
 $titre = $langs->trans("DictionarySetup");
 $linkback = '';
@@ -437,7 +449,7 @@ if ($id) {
 		print '</tr>';
 
 		// Line to enter new values
-		print '<tr class="oddeven nodrag nodrap nohover">';
+		print '<tr class="oddeven nodrag nodrop nohover">';
 
 		$obj = new stdClass();
 		// If data was already input, we define them in obj to populate input fields.
@@ -494,7 +506,7 @@ if ($id) {
 		// There is several pages
 		if ($num > $listlimit) {
 			print '<tr class="none"><td class="right" colspan="'.(3 + count($fieldlist)).'">';
-			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
+			print_fleche_navigation($page, $_SERVER["PHP_SELF"], $paramwithsearch, ($num > $listlimit ? 1 : 0), '<li class="pagination"><span>'.$langs->trans("Page").' '.($page + 1).'</span></li>');
 			print '</td></tr>';
 		}
 
@@ -685,8 +697,8 @@ $db->close();
 /**
  *	Show fields in insert/edit mode
  *
- *  @param	string[]	$fieldlist      Array of fields
- *  @param	Object		$obj            If we show a particular record, obj is filled with record fields
+ * 	@param	string[]	$fieldlist		Array of fields
+ *  @param	?Object		$obj            If we show a particular record, obj is filled with record fields
  *  @param	string		$tabname        Name of SQL table
  *  @param	string		$context        'add'=Output field for the "add form", 'edit'=Output field for the "edit form", 'hide'=Output field for the "add form" but we don't want it to be rendered
  *  @return	void

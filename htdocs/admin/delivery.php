@@ -8,7 +8,8 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +36,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
@@ -54,6 +64,7 @@ $type = 'delivery';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
@@ -93,6 +104,9 @@ if ($action == 'activate_delivery') {
 if ($action == 'updateMask') {
 	$maskconstdelivery = GETPOST('maskconstdelivery', 'aZ09');
 	$maskdelivery = GETPOST('maskdelivery', 'alpha');
+
+	$res = 0;
+
 	if ($maskconstdelivery && preg_match('/_MASK$/', $maskconstdelivery)) {
 		$res = dolibarr_set_const($db, $maskconstdelivery, $maskdelivery, 'chaine', 0, '', $conf->entity);
 	}
@@ -202,7 +216,7 @@ if ($action == 'setmod') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", "");
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-delivery');
 
 $form = new Form($db);
 
@@ -222,8 +236,8 @@ if (!getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print ' <a class="inline-block valignmiddle" href="'.$_SERVER["PHP_SELF"].'?action=disable_delivery&token='.newToken().'">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
 }
 
-print '<br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
-print '<br>';
+print '<br><br><span class="opacitymedium">'.info_admin($langs->trans("NoNeedForDeliveryReceipts"), 0, 1).'</span>';
+print '<br><br>';
 print '<br>';
 
 
@@ -257,6 +271,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 						require_once $dir.$file.'.php';
 
 						$module = new $file();
+
+						'@phan-var-force ModeleNumRefDeliveryOrder $module';
 
 						if ($module->isEnabled()) {
 							// Show modules according to features level
@@ -312,7 +328,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							}
 
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, 1, 0);
+							print $form->textwithpicto('', $htmltooltip, 1, 'info');
 							print '</td>';
 
 							print '</tr>';
@@ -348,7 +364,9 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 		$num_rows = $db->num_rows($resql);
 		while ($i < $num_rows) {
 			$array = $db->fetch_array($resql);
-			array_push($def, $array[0]);
+			if (is_array($array)) {
+				array_push($def, $array[0]);
+			}
 			$i++;
 		}
 	} else {
@@ -389,6 +407,8 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModelePDFDeliveryOrder $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -402,7 +422,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -436,7 +456,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								$htmltooltip .= '<br><br><u>'.$langs->trans("FeaturesSupported").'</u>:';
 								$htmltooltip .= '<br>'.$langs->trans("Logo").': '.yn($module->option_logo, 1, 1);
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -444,7 +464,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -470,7 +490,7 @@ if (getDolGlobalString('MAIN_SUBMODULE_DELIVERY')) {
 	print '<table class="noborder centpercent">';
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Parameter").'</td>';
-	print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+	print '<td align="center" width="60"></td>';
 	print '<td width="80">&nbsp;</td>';
 	print "</tr>\n";
 

@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = ইভেন্ট অর্গানাইজেশন
 EventOrganizationDescription = মডিউল প্রকল্পের মাধ্যমে ইভেন্ট সংগঠন
 EventOrganizationDescriptionLong= একটি ইভেন্টের সংগঠন পরিচালনা করুন (শো, সম্মেলন, অংশগ্রহণকারী বা বক্তা, পরামর্শ, ভোট বা নিবন্ধনের জন্য সর্বজনীন পৃষ্ঠা সহ)
-#
-# Menu
-#
 EventOrganizationMenuLeft = সংগঠিত অনুষ্ঠান
 EventOrganizationConferenceOrBoothMenuLeft = সম্মেলন বা বুথ
-
 PaymentEvent=ইভেন্ট পেমেন্ট
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=নিবন্ধন
 EventOrganizationSetup=ইভেন্ট অর্গানাইজেশন সেটআপ
 EventOrganization=ইভেন্ট সংগঠন
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = স্পিকারের ক�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = অংশগ্রহণকারীদের তালিকায় ম্যাসাকশন "ইমেল পাঠান" থেকে ইমেল পাঠানোর সময় ব্যবহার করার জন্য ইমেলের টেমপ্লেট
 EVENTORGANIZATION_FILTERATTENDEES_CAT = একজন অংশগ্রহণকারী তৈরি/যোগ করার ফর্মে, তৃতীয় পক্ষের তালিকাকে তৃতীয় পক্ষের বিভাগে সীমাবদ্ধ করে
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = একজন অংশগ্রহণকারী তৈরি/যোগ করার ফর্মে, প্রকৃতির সাথে তৃতীয় পক্ষের তালিকাকে তৃতীয় পক্ষের কাছে সীমাবদ্ধ করে
-
-#
 # Object
-#
 OrganizedEvent=সংগঠিত অনুষ্ঠান
 EventOrganizationConfOrBooth= সম্মেলন বা বুথ
-EventOrganizationConfOrBoothes=সম্মেলন বা বুথ
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = একটি ইভেন্টের সংগঠন পরিচালনা করুন
 ConferenceOrBooth = সম্মেলন বা বুথ
 ConferenceOrBoothTab = সম্মেলন বা বুথ
@@ -63,10 +50,7 @@ DateOfRegistration = নিবন্ধনের তারিখ
 ConferenceOrBoothAttendee = সম্মেলন বা বুথ অংশগ্রহণকারী
 ApplicantOrVisitor=আবেদনকারী বা দর্শনার্থী
 Speaker=স্পিকার
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = সম্মেলনের জন্য আপনার অনুরোধ গৃহীত হয়েছে
 YourOrganizationEventBoothRequestWasReceived = বুথ জন্য আপনার অনুরোধ গৃহীত হয়েছে
 EventOrganizationEmailAskConf = সম্মেলনের জন্য অনুরোধ
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = একটি ইভেন্টে�
 EventOrganizationMassEmailAttendees = অংশগ্রহণকারীদের সাথে যোগাযোগ
 EventOrganizationMassEmailSpeakers = বক্তাদের সাথে যোগাযোগ
 ToSpeakers=বক্তাদের কাছে
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=লোকেদের সম্মেলন প্রস্তাব করার অনুমতি দিন
 AllowUnknownPeopleSuggestConfHelp=অজানা লোকেদেরকে তারা করতে চান এমন একটি সম্মেলন প্রস্তাব করার অনুমতি দিন
 AllowUnknownPeopleSuggestBooth=লোকেদের একটি বুথের জন্য আবেদন করার অনুমতি দিন
@@ -91,27 +72,26 @@ PriceOfBoothHelp=সাবস্ক্রিপশন মূল্য একট�
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=সম্মেলনের জন্য আইসিএস লিঙ্ক করুন
 ConferenceOrBoothInformation=সম্মেলন বা বুথ তথ্য
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=উপস্থিতরা
-ListOfAttendeesOfEvent=ইভেন্ট প্রকল্পের অংশগ্রহণকারীদের তালিকা
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = ICS লিঙ্ক ডাউনলোড করুন
 EVENTORGANIZATION_SECUREKEY = একটি কনফারেন্সের পরামর্শ দেওয়ার জন্য পাবলিক রেজিস্ট্রেশন পৃষ্ঠার কী সুরক্ষিত করার জন্য বীজ
 SERVICE_BOOTH_LOCATION = একটি বুথ অবস্থান সম্পর্কে চালান সারির জন্য ব্যবহৃত পরিষেবা
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = একটি ইভেন্টে অংশগ্রহণকারী সদস্যতা সম্পর্কে চালান সারির জন্য ব্যবহৃত পরিষেবা
 NbVotes=ভোটের সংখ্যা
-
-#
 # Status
-#
 EvntOrgDraft = Draft
 EvntOrgSuggested = প্রস্তাবিত
 EvntOrgConfirmed = নিশ্চিত করা হয়েছে
 EvntOrgNotQualified = অনুত্তীর্ন
 EvntOrgDone = সম্পন্ন
 EvntOrgCancelled = বাতিল
-
-#
 # Other
-#
 SuggestForm = সাজেশন পেজ
 SuggestOrVoteForConfOrBooth = পরামর্শ বা ভোটের জন্য পৃষ্ঠা
 EvntOrgRegistrationHelpMessage = এখানে, আপনি একটি সম্মেলনের জন্য ভোট দিতে পারেন বা ইভেন্টের জন্য একটি নতুন প্রস্তাব দিতে পারেন৷ আপনি ইভেন্ট চলাকালীন একটি বুথ থাকার জন্য আবেদন করতে পারেন।
@@ -134,6 +114,7 @@ EventType = ইভেন্টের ধরণ
 LabelOfBooth=বুথ লেবেল
 LabelOfconference=সম্মেলন লেবেল
 ConferenceIsNotConfirmed=নিবন্ধন উপলব্ধ নেই, সম্মেলন এখনও নিশ্চিত করা হয়নি
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s অবশ্যই %s আগে হতে হবে
 DateMustBeAfterThan=%s অবশ্যই %s এর পরে হতে হবে
 MaxNbOfAttendeesReached=অংশগ্রহণকারীদের সর্বোচ্চ সংখ্যা পৌঁছেছে
@@ -175,6 +156,7 @@ DateEndEvent=ইভেন্ট শেষ তারিখ
 ModifyStatus=স্থিতি পরিবর্তন করুন
 ConfirmModifyStatus=স্থিতি পরিবর্তন নিশ্চিত করুন
 ConfirmModifyStatusQuestion=আপনি কি %s নির্বাচিত রেকর্ড(গুলি) সংশোধন করার বিষয়ে নিশ্চিত?
-RecordsUpdated = %s রেকর্ড আপডেট করা হয়েছে
-RecordUpdated = রেকর্ড আপডেট করা হয়েছে
-NoRecordUpdated = কোনো রেকর্ড আপডেট করা হয়নি
+RecordsUpdated=%s রেকর্ড আপডেট করা হয়েছে
+RecordUpdated=রেকর্ড আপডেট করা হয়েছে
+NoRecordUpdated=কোনো রেকর্ড আপডেট করা হয়নি
+ProfitPerValidatedAttendee=Profit per attendee

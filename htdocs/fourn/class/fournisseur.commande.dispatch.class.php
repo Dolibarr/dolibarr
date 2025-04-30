@@ -59,8 +59,12 @@ class CommandeFournisseurDispatch extends ReceptionLineBatch
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		$this->fk_element = $this->fk_commande;
-		$this->fk_elementdet = $this->fk_commandefourndet;
+		if (empty($this->fk_element) && !empty($this->fk_commande)) {
+			$this->fk_element = $this->fk_commande;
+		}
+		if (empty($this->fk_elementdet) && !empty($this->fk_commandefourndet)) {
+			$this->fk_elementdet = $this->fk_commandefourndet;
+		}
 
 		return parent::create($user, $notrigger);
 	}

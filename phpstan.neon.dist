@@ -1,3 +1,5 @@
+includes:
+	- dev/build/phpstan/phpstan-baseline.neon
 parameters:
 	tmpDir: ./.github/tmp
 	parallel:
@@ -9,7 +11,7 @@ parameters:
 		# minimumNumberOfJobsPerProcess: 2  # default is 2
 		# buffer: 134217728 # 128 MB  # Not documented
 	customRulesetUsed: true
-	level: 2
+	level: 10
 	fileExtensions:
 		- php
 	paths:
@@ -19,24 +21,46 @@ parameters:
 		analyseAndScan:
 		- htdocs/custom/*
 		- htdocs/documents/*
+		- htdocs/install/*		# We must exclude this dir to avoid to have DOL_DOCUMENT_ROOT defined to .. by inc.php before the bootstrap*.php file can load it.
 		- htdocs/install/doctemplates/*
 		- htdocs/langs/*
 		- htdocs/modulebuilder/template/test/*
 		- htdocs/support/*
 		analyse:
-		- htdocs/includes/*
-	checkAlwaysTrueCheckTypeFunctionCall: false
-	checkAlwaysTrueInstanceof: false
-	checkAlwaysTrueStrictComparison: false
-	checkClassCaseSensitivity: false
-	checkFunctionArgumentTypes: false
+		- htdocs/includes/geoPHP/*
+		- htdocs/includes/markrogoyski/*
+		- htdocs/includes/maximebf/*
+		- htdocs/includes/mike42/*
+		- htdocs/includes/mobiledetect/*
+		- htdocs/includes/nusoap/*
+		- htdocs/includes/OAuth/*
+		- htdocs/includes/odtphp/zip/*
+		- htdocs/includes/parsedown/*
+		- htdocs/includes/php-iban/*
+		- htdocs/includes/phpoffice/*
+		- htdocs/includes/printipp/*
+		- htdocs/includes/Psr/*
+		- htdocs/includes/restler/*
+		- htdocs/includes/sabre/*
+		- htdocs/includes/stripe/*
+		- htdocs/includes/swiftmailer/*
+		- htdocs/includes/symfony/*
+		- htdocs/includes/tcpdi/*
+		- htdocs/includes/tecnickcom/*
+		- htdocs/includes/webklex/*
+		- htdocs/core/class/lessc.class.php
+	# checkAlwaysTrueCheckTypeFunctionCall: false
+	# checkAlwaysTrueInstanceof: false
+	# checkAlwaysTrueStrictComparison: false
+	checkClassCaseSensitivity: true
+	checkFunctionArgumentTypes: true
 	checkFunctionNameCase: true
-	checkArgumentsPassedByReference: false
-	checkMaybeUndefinedVariables: false
+	checkArgumentsPassedByReference: true
+	checkMaybeUndefinedVariables: true
 	checkNullables: false
 	checkThisOnly: true
 	checkUnionTypes: false
-	checkExplicitMixedMissingReturn: false
+	checkExplicitMixedMissingReturn: true
 	reportMaybes: false
 	reportMaybesInMethodSignatures: false
 	reportStaticMethodSignatures: false
@@ -44,19 +68,15 @@ parameters:
 	polluteScopeWithAlwaysIterableForeach: true
 	reportMagicMethods: false
 	reportMagicProperties: false
+	treatPhpDocTypesAsCertain: false
+	# if you want to exclude something, generate the baseline to do that, adding here give the opportunity to add new errors
 	ignoreErrors:
-		- '#Result of function fieldList#'
-		- '#Caught class Stripe#'
-		- '#Function llx.* invoked with#'
-		- '#always exists and is not falsy#'
-		- '#is always fal#'
-		- '#always exists and is not nullable#'
-		- '#(\$force_dolibarr_lib|\$dolibarr_main_db).*in empty\(\) is never defined.#'
-		- '#Sprain\\SwissQrBill\\#'
-		- '#Constructor of class .* has an unused parameter #'
+		- '#.*phan-var#'
+		- '#^Expression "''…" on a separate line does not do anything\.$#'
+		- '#Empty array passed to foreach#'
 	internalErrorsCountLimit: 50
 	cache:
-		nodesByFileCountMax: 512
+		# nodesByFileCountMax: 512
 		nodesByStringCountMax: 512
 	reportUnmatchedIgnoredErrors: false
 	universalObjectCratesClasses:

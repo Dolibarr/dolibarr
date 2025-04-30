@@ -7,7 +7,8 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2011-2013 Juanjo Menent			    <jmenent@2byte.es>
  * Copyright (C) 2011-2022 Philippe Grand			    <philippe.grand@atoo-net.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'trips', 'other'));
 
@@ -55,12 +64,16 @@ $type = 'expensereport';
 /*
  * Actions
  */
+$error = 0;
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 if ($action == 'updateMask') {
 	$maskconst = GETPOST('maskconst', 'aZ09');
 	$maskvalue = GETPOST('maskvalue', 'alpha');
+
+	$res = 0;
+
 	if ($maskconst && preg_match('/_MASK$/', $maskconst)) {
 		$res = dolibarr_set_const($db, $maskconst, $maskvalue, 'chaine', 0, '', $conf->entity);
 	}
@@ -161,7 +174,10 @@ if ($action == 'updateMask') {
 	$amounts = GETPOSTINT('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY');
 	$res5 = dolibarr_set_const($db, 'EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', intval($amounts), 'chaine', 0, '', $conf->entity);
 
-	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0)) {
+	$linesblocked = GETPOSTINT('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES');
+	$res6 = dolibarr_set_const($db, 'EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', intval($linesblocked), 'chaine', 0, '', $conf->entity);
+
+	if (!($res1 > 0) || !($res2 > 0) || !($res3 >= 0) || !($res4 > 0) || !($res5 > 0) || !($res6 > 0)) {
 		$error++;
 	}
 
@@ -181,7 +197,7 @@ if ($action == 'updateMask') {
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader('', $langs->trans("ExpenseReportsSetup"));
+llxHeader('', $langs->trans("ExpenseReportsSetup"), '', '', 0, 0, '', '', '', 'mod-admin page-expensereport');
 
 $form = new Form($db);
 
@@ -224,6 +240,8 @@ foreach ($dirmodels as $reldir) {
 
 					$module = new $file($db);
 
+					'@phan-var-force ModeleNumRefExpenseReport $module';
+
 					// Show modules according to features level
 					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
@@ -233,7 +251,7 @@ foreach ($dirmodels as $reldir) {
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
 						print $module->info($langs);
 						print '</td>';
 
@@ -280,7 +298,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td class="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -312,7 +330,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -353,6 +373,8 @@ foreach ($dirmodels as $reldir) {
 						require_once $dir.'/'.$file;
 						$module = new $classname($db);
 
+						'@phan-var-force ModeleExpenseReport $module';
+
 						$modulequalified = 1;
 						if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 							$modulequalified = 0;
@@ -366,7 +388,7 @@ foreach ($dirmodels as $reldir) {
 							print(empty($module->name) ? $name : $module->name);
 							print "</td><td>\n";
 							if (method_exists($module, 'info')) {
-								print $module->info($langs);
+								print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 							} else {
 								print $module->description;
 							}
@@ -405,7 +427,7 @@ foreach ($dirmodels as $reldir) {
 							$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 							$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraftOrders").': '.yn($module->option_draft_watermark, 1, 1);
 							print '<td class="center">';
-							print $form->textwithpicto('', $htmltooltip, -1, 0);
+							print $form->textwithpicto('', $htmltooltip, -1, 'info');
 							print '</td>';
 
 							// Preview
@@ -413,7 +435,7 @@ foreach ($dirmodels as $reldir) {
 							if ($module->type == 'pdf') {
 								print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 							} else {
-								print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+								print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 							}
 							print '</td>';
 
@@ -479,20 +501,26 @@ if (isModEnabled('project')) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans('ProjectIsRequiredOnExpenseReports');
 	print '</td><td class="right">';
-	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', !getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 0 : 1, 1);
+	print $form->selectyesno('EXPENSEREPORT_PROJECT_IS_REQUIRED', getDolGlobalString('EXPENSEREPORT_PROJECT_IS_REQUIRED') ? 1 : 0, 1);
 	print '</td></tr>';
 }
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('PrefillExpenseReportDatesWithCurrentMonth');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', !getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH', getDolGlobalString('EXPENSEREPORT_PREFILL_DATES_WITH_CURRENT_MONTH') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('ForceExpenseReportsLineAmountsIncludingTaxesOnly');
 print '</td><td class="right">';
-print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', !getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 0 : 1, 1);
+print $form->selectyesno('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY', getDolGlobalString('EXPENSEREPORT_FORCE_LINE_AMOUNTS_INCLUDING_TAXES_ONLY') ? 1 : 0, 1);
+print '</td></tr>';
+
+print '<tr class="oddeven"><td>';
+print $langs->trans('BlockExpenseReportLineCreationIfNotBetweenDates');
+print '</td><td class="right">';
+print $form->selectyesno('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES', getDolGlobalString('EXPENSEREPORT_BLOCK_LINE_CREATION_IF_NOT_BETWEEN_DATES') ? 1 : 0, 1);
 print '</td></tr>';
 
 print '</table>';

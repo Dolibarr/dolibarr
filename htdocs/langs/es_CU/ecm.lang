@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMNbOfDocs=No. de documentos en directorio
 ECMSectionManual=directorio manual
-ECMSectionsManual=árbol manual
 ECMSections=directorios
 ECMRoot=Raíz de ECM
 ECMAddSection=Agregar directorio
@@ -9,7 +8,6 @@ ECMCreationDate=Fecha de creación
 ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
 ECMArea=Área DMS/ECM
 ECMAreaDesc=El área DMS/ECM (Document Management System / Electronic Content Management) le permite guardar, compartir y buscar rápidamente todo tipo de documentos en Dolibarr.
-ECMAreaDesc3=* Los directorios de medios son archivos en el subdirectorio <b> /medias </b> del directorio de documentos, que todos pueden leer sin necesidad de iniciar sesión y sin necesidad de compartir el archivo explícitamente. Se utiliza para almacenar archivos de imagen para el módulo de correo electrónico o sitio web, por ejemplo.
 ECMSectionWasRemoved=Se eliminó el directorio <b> %s </b>.
 ECMSectionWasCreated=Se ha creado el directorio <b> %s </b>.
 ECMSectionOfDocuments=directorios de documentos
@@ -26,7 +24,6 @@ HashOfFileContent=Hash del contenido del archivo
 ExtraFieldsEcmFiles=Archivos Ecm de campos extra
 ExtraFieldsEcmDirectories=Extrafields Ecm Directorios
 ECMSetup=Configuración de ECM
-ConfirmGenerateImgWebp=Si confirma, generará una imagen en formato .webp para todas las imágenes actualmente en esta carpeta (las subcarpetas no están incluidas)...
 SucessConvertImgWebp=Imágenes duplicadas con éxito
 ECMDirName=nombre de directorio
 ECMParentDirectory=Directorio de padres

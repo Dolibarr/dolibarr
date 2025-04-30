@@ -21,7 +21,6 @@ MenuDoneMyActions=Moji prekinuti događaji
 ListOfEvents=Popis događaja (zadani kalendar)
 ActionsAskedBy=Događaje izvijestio/la
 ActionsToDoBy=Događaj dodjeljen
-ActionsDoneBy=Događaji završeni od strane korisnika
 ActionAssignedTo=Događaj dodjeljen
 ViewCal=Mjesečni pregled
 ViewDay=Dnevni pregled
@@ -45,6 +44,7 @@ PropalClosedRefusedInDolibarr=Prijedlog %s odbijen
 PropalValidatedInDolibarr=Ponuda %s ovjerena
 PropalBackToDraftInDolibarr=Prijedlog %s vrati se u status nacrta
 PropalClassifiedBilledInDolibarr=Prijedlog %s klasificiran naplaćen
+InvoiceCreatedInDolibarr=Izrađena faktura %s
 InvoiceValidatedInDolibarr=Račun %s ovjeren
 InvoiceValidatedInDolibarrFromPos=Račun %s ovjeren na POS-u
 InvoiceBackToDraftInDolibarr=Račun %s  vraćen u status skice
@@ -88,7 +88,7 @@ ShippingValidated= Isporuka %s ovjerena
 InterventionSentByEMail=Intervenciju %s poslao e-pošta
 ProjectSentByEMail=Projekt %s poslao e-pošta
 ProjectDeletedInDolibarr=Projekt %s je izbrisan
-ProjectClosedInDolibarr=Project %s closed
+ProjectClosedInDolibarr=Projekt %s zatvoren
 ProposalDeleted=Ponuda obrisana
 OrderDeleted=Narudžba obrisana
 InvoiceDeleted=Račun obrisan
@@ -134,13 +134,15 @@ CANCELInDolibarr=Poništeno
 AgendaModelModule=Predlošci dokumenata za događaj
 DateActionStart=Datum početka
 DateActionEnd=Datum završetka
-AgendaUrlOptions1=Možete isto dodati sljedeće paramete za filtriranje prikazanog: 
-AgendaUrlOptions3=<b>logina=%s</b> da se ograniči prikaz na akcije u vlasništvu korisnika <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> za ograničavanje izlaza na radnje koje nisu u vlasništvu korisnik <b>%s</b>.
+AgendaUrlOptions1=Možete isto dodati sljedeće paramete za filtriranje prikazanog:
+AgendaUrlOptions3=<b>logina=%s</b> za ograničavanje izlaza na radnje u vlasništvu korisnika <b>%s</b> (upotrijebite <b>logina=!%s</b> za događaje koji nisu u vlasništvu korisnika).
 AgendaUrlOptions4=<b>logint=%s</b> za ograničavanje izlaza na radnje dodijeljene korisniku <b>%s</b> (vlasnik i ostali).
 AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> za ograničavanje izlaza na radnje povezane s projektom <b> __PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> za izuzimanje automatskih događaja.
+AgendaUrlOptionsType=<b>actiontype=%s</b> za dobivanje automatskih ili ručnih događaja
+AgendaUrlOptionsCode=<b>actioncode=%s</b> da biste dobili samo događaje s danim kodom
 AgendaUrlOptionsIncludeHolidays=<b>includeholidays=1</b> za uključivanje blagdanskih događaja.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> za ograničenje na događaje u posljednjem %s dana (zadano je %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> za ograničenje na posljednjih 50 događaja (zadano i maksimalno je %s).
 AgendaShowBirthdayEvents=Rođendani kontakata
 AgendaHideBirthdayEvents=Sakrij rođendane kontakata
 Busy=Zauzet
@@ -201,4 +203,6 @@ AppointmentDuration = Trajanje termina: %s
 BookingSuccessfullyBooked=Vaša rezervacija je spremljena
 BookingReservationHourAfter=Potvrđujemo rezervaciju našeg sastanka na datum %s
 BookcalBookingTitle=Online termin
-Transparency = Transparency
+Transparency = Transparentnost
+ReadMore = Pročitaj više
+ReadLess = Čitaj manje

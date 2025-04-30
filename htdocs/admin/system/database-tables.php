@@ -4,6 +4,8 @@
  * Copyright (C) 2004		Sebastien Di Cintio		<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +35,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 $langs->load("admin");
 
 if (!$user->admin) {
@@ -52,12 +62,40 @@ if ($action == 'convert') {	// Convert engine into innodb
 	$db->query($sql);
 }
 if ($action == 'convertutf8') {
-	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE utf8_unicode_ci";
-	$db->query($sql);
+	$collation = 'utf8_unicode_ci';
+	$defaultcollation = $db->getDefaultCollationDatabase();
+	if (preg_match('/general/', $defaultcollation)) {
+		$collation = 'utf8_general_ci';
+	}
+	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Set the default value on table
+	$resql1 = $db->query($sql);
+	if (!$resql1) {
+		setEventMessages($db->lasterror(), null, 'warnings');
+	} else {
+		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
+		$resql2 = $db->query($sql);
+		if (!$resql2) {
+			setEventMessages($db->lasterror(), null, 'warnings');
+		}
+	}
 }
 if ($action == 'convertutf8mb4') {
-	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci";
-	$db->query($sql);
+	$collation = 'utf8mb4_unicode_ci';
+	$defaultcollation = $db->getDefaultCollationDatabase();
+	if (preg_match('/general/', $defaultcollation)) {
+		$collation = 'utf8mb4_general_ci';
+	}
+	$sql = "ALTER TABLE ".$db->sanitize($table)." CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Set the default value on table
+	$resql1 = $db->query($sql);
+	if (!$resql1) {
+		setEventMessages($db->lasterror(), null, 'warnings');
+	} else {
+		$sql = "ALTER TABLE ".$db->sanitize($table)." CONVERT TO CHARACTER SET utf8mb4 COLLATE ".$db->sanitize($collation);	// Switch fields (may fails due to foreign key)
+		$resql2 = $db->query($sql);
+		if (!$resql2) {
+			setEventMessages($db->lasterror(), null, 'warnings');
+		}
+	}
 }
 if ($action == 'convertdynamic') {
 	$sql = "ALTER TABLE ".$db->sanitize($table)." ROW_FORMAT=DYNAMIC;";
@@ -69,7 +107,7 @@ if ($action == 'convertdynamic') {
  * View
  */
 
-llxHeader();
+llxHeader('', '', '', '', 0, 0, '', '', '', 'mod-admin page-database_tables');
 
 print load_fiche_titre($langs->trans("Tables")." ".ucfirst($conf->db->type), '', 'title_setup');
 
@@ -94,6 +132,7 @@ if (preg_match('/mysql/i', $conf->db->type)) {
 if (!$base) {
 	print $langs->trans("FeatureNotAvailableWithThisDatabaseDriver");
 } else {
+	$i = 0;
 	if ($base == 1) {
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder">';
@@ -137,8 +176,8 @@ if (!$base) {
 
 				print '<tr class="oddeven">';
 
-				print '<td>'.($i+1).'</td>';
-				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a>';
+				print '<td>'.($i + 1).'</td>';
+				print '<td class="tdoverflowmax300" title="'.dol_escape_htmltag($obj->Name).'"><a href="dbtable.php?table='.urlencode($obj->Name).'">'.$obj->Name.'</a>';
 				$tablename = preg_replace('/^'.MAIN_DB_PREFIX.'/', 'llx_', $obj->Name);
 
 				if (in_array($tablename.'.sql', $arrayoffiles)) {
@@ -217,7 +256,7 @@ if (!$base) {
 			while ($i < $num) {
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
-				print '<td>'.($i+1).'</td>';
+				print '<td>'.($i + 1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td class="right">'.$row[1].'</td>';
 				print '<td class="right">'.$row[2].'</td>';
@@ -256,7 +295,7 @@ if (!$base) {
 				}
 
 				print '<tr class="oddeven">';
-				print '<td>'.($i+1).'</td>';
+				print '<td>'.($i + 1).'</td>';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';

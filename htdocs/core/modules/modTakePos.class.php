@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018 SuperAdmin
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,6 +269,7 @@ class modTakePos extends DolibarrModules
 	public function init($options = '')
 	{
 		global $conf, $langs, $user, $mysoc;
+
 		$langs->load("cashdesk");
 
 		dolibarr_set_const($this->db, "TAKEPOS_PRINT_METHOD", "browser", 'chaine', 0, '', $conf->entity);
@@ -283,6 +285,7 @@ class modTakePos extends DolibarrModules
 				$societe->client = 1;
 				$societe->code_client = '-1';
 				$societe->code_fournisseur = '-1';
+				$societe->country_id = $mysoc->country_id ? $mysoc->country_id : 1; // By default we consider the default customer is in the same country than the company
 				$societe->note_private = "Default customer automatically created by Point Of Sale module activation. Can be used as the default generic customer in the Point Of Sale setup. Can also be edited or removed if you don't need a generic customer.";
 
 				$searchcompanyid = $societe->create($user);
@@ -299,7 +302,7 @@ class modTakePos extends DolibarrModules
 		$categories = new Categorie($this->db);
 		$cate_arbo = $categories->get_full_arbo('product', 0, 1);
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo) || !getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID')) {
+			if (!count($cate_arbo) || (!getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') || getDolGlobalString('TAKEPOS_ROOT_CATEGORY_ID') == '-1')) {
 				$category = new Categorie($this->db);
 
 				$category->label = $langs->trans("DefaultPOSCatLabel");
@@ -333,9 +336,12 @@ class modTakePos extends DolibarrModules
 			if ($searchaccountid == 0) {
 				$cashaccount->ref = "CASH-POS";
 				$cashaccount->label = $langs->trans("DefaultCashPOSLabel");
-				$cashaccount->courant = 2;
+				$cashaccount->courant = Account::TYPE_CASH; // deprecated
+				$cashaccount->type = Account::TYPE_CASH;
 				$cashaccount->country_id = $mysoc->country_id ? $mysoc->country_id : 1;
 				$cashaccount->date_solde = dol_now();
+				$idjournal = dol_getIdFromCode($this->db, 'BQ', 'accounting_journal', 'code', 'rowid');
+				$cashaccount->fk_accountancy_journal = (int) $idjournal;
 				$searchaccountid = $cashaccount->create($user);
 			}
 			if ($searchaccountid > 0) {

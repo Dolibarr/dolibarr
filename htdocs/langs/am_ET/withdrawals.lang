@@ -39,7 +39,6 @@ WithdrawalsSetup=የቀጥታ ዴቢት ክፍያ ማዋቀር
 CreditTransferSetup=የብድር ማስተላለፍ ማዋቀር
 WithdrawStatistics=ቀጥተኛ የዴቢት ክፍያ ስታቲስቲክስ
 CreditTransferStatistics=የብድር ማስተላለፍ ስታቲስቲክስ
-Rejects=ውድቅ ያደርጋል
 LastWithdrawalReceipt=የቅርብ ጊዜ %s ቀጥተኛ የዴቢት ደረሰኞች
 MakeWithdrawRequest=ቀጥታ የዴቢት ክፍያ ጥያቄ ያቅርቡ
 MakeWithdrawRequestStripe=በ Stripe በኩል የቀጥታ የዴቢት ክፍያ ጥያቄ ያቅርቡ
@@ -152,7 +151,7 @@ ADDDAYS=ወደ አፈፃፀም ቀን ቀናትን ይጨምሩ
 NoDefaultIBANFound=ለዚህ ሶስተኛ ወገን ምንም ነባሪ IBAN አልተገኘም።
 ### Notifications
 InfoCreditSubject=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s በባንኩ መክፈል
-InfoCreditMessage=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s በባንኩ ተከፍሏል<br>የክፍያ ውሂብ፡ b0ecb2ecz807fe49
+InfoCreditMessage=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s በባንኩ ተከፍሏል<br>የክፍያ ውሂብ፡ b0ecb2ecz807fe49 
 InfoTransSubject=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s ወደ ባንክ ማስተላለፍ
 InfoTransMessage=የቀጥታ ዴቢት ክፍያ ትዕዛዝ %s ወደ ባንክ በ%s b0ecb2ec87f49fez0 ተልኳል. .<br><br>
 InfoTransData=መጠን፡ %s<br>ዘዴ፡ %s='span><span' ><br>ቀን፡ %s
@@ -165,7 +164,7 @@ TotalAmountOfdirectDebitOrderDiffersFromSumOfLines=አጠቃላይ የቀጥታ 
 WarningSomeDirectDebitOrdersAlreadyExists=ማስጠንቀቂያ፡ ለ%s መጠን የተጠየቁ ቀጥተኛ የዴቢት ትዕዛዞች (%s) ቀድሞውኑ አሉ።
 WarningSomeCreditTransferAlreadyExists=ማስጠንቀቂያ፡ አስቀድሞ የተወሰነ የተወሰነ የብድር ማስተላለፍ (%s) የተጠየቀ የ%s
 UsedFor=ለ%s ጥቅም ላይ ይውላል
-Societe_ribSigned=SEPA ሥልጣን ተፈርሟል
+Societe_ribSigned=SEPA mandate signed
 NbOfInvoiceToPayByBankTransferForSalaries=በክሬዲት ማስተላለፍ ክፍያ የሚጠብቀው የደመወዝ ቁጥር
 SalaryWaitingWithdraw=በዱቤ ማስተላለፍ ክፍያ በመጠባበቅ ላይ ያሉ ደሞዞች
 RefSalary=ደሞዝ

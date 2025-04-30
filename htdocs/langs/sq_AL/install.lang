@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Ju keni përdorur magjistarin e konfigurimit të Dolibarr n
 KeepDefaultValuesMamp=Ju keni përdorur magjistarin e konfigurimit të Dolibarr nga DoliMamp, kështu që vlerat e propozuara këtu janë optimizuar tashmë. Ndryshoni ato vetëm nëse e dini se çfarë po bëni.
 KeepDefaultValuesProxmox=Ju keni përdorur magjistarin e konfigurimit të Dolibarr nga një pajisje virtuale Proxmox, kështu që vlerat e propozuara këtu janë tashmë të optimizuara. Ndryshoni ato vetëm nëse e dini se çfarë po bëni.
 UpgradeExternalModule=Drejtoni procesin e dedikuar të përmirësimit të modulit të jashtëm
-SetAtLeastOneOptionAsUrlParameter=Vendosni të paktën një opsion si parametër në URL. Për shembull: '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL with value 'test' or 'confirmed'. For example:  '...repair.php?standard=confirmed'
 NothingToDelete=Asgjë për të pastruar/fshirë
 NothingToDo=Asgje per te bere
 #########
@@ -211,7 +211,7 @@ YouTryInstallDisabledByFileLock=Aplikacioni u përpoq të përmirësohej vetë, 
 YouTryUpgradeDisabledByMissingFileUnLock=Aplikacioni u përpoq të përmirësohej vetë, por procesi i përmirësimit aktualisht nuk lejohet.<br>
 ClickHereToGoToApp=Klikoni këtu për të shkuar te aplikacioni juaj
 ClickOnLinkOrRemoveManualy=Nëse një përmirësim është në proces, ju lutemi prisni. Nëse jo, klikoni në lidhjen e mëposhtme. Nëse e shihni gjithmonë të njëjtën faqe, duhet të hiqni/riemërtoni skedarin install.lock në drejtorinë e dokumenteve.
-ClickOnLinkOrCreateUnlockFileManualy=Nëse një përmirësim është në progres, ju lutemi prisni... Nëse jo, duhet të hiqni skedarin install.lock ose të krijoni një skedar upgrade.unlock në direktorinë e dokumenteve Dolibarr.
+ClickOnLinkOrCreateUnlockFileManualy=If an upgrade is in progress, please wait... If not, you must remove the file install.lock (or create a file upgrade.unlock for upgrade) into the Dolibarr documents directory.
 Loaded=I ngarkuar
 FunctionTest=Testi i funksionit
 NodoUpgradeAfterDB=Asnjë veprim nuk kërkohet nga modulet e jashtme pas përmirësimit të bazës së të dhënave

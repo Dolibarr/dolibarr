@@ -4,38 +4,25 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 # Module label 'ModuleRecruitmentName'
 ModuleRecruitmentName = নিয়োগ
 # Module description 'ModuleRecruitmentDesc'
 ModuleRecruitmentDesc = নতুন চাকরির পদের জন্য নিয়োগ প্রচারাভিযান পরিচালনা এবং অনুসরণ করুন
-
-#
 # Admin page
-#
 RecruitmentSetup = নিয়োগ সেটআপ
 RecruitmentSetupPage = এখানে নিয়োগ মডিউলের জন্য প্রধান বিকল্পগুলির সেটআপ লিখুন
 RecruitmentArea=নিয়োগের এলাকা
 PublicInterfaceRecruitmentDesc=চাকরির সর্বজনীন পৃষ্ঠাগুলি হল সর্বজনীন ইউআরএল যা দেখাতে এবং চাকরি খোলার জন্য উত্তর দেয়। প্রতিটি কাজের রেকর্ডে পাওয়া প্রতিটি খোলা কাজের জন্য একটি আলাদা লিঙ্ক রয়েছে।
 EnablePublicRecruitmentPages=খোলা চাকরির পাবলিক পৃষ্ঠাগুলি সক্ষম করুন
 
-#
-# About page
-#
-RecruitmentAbout = নিয়োগ সম্পর্কে
-RecruitmentAboutPage = পেজ সম্পর্কে নিয়োগ
 NbOfEmployeesExpected=কর্মীদের প্রত্যাশিত nb
 JobLabel=কাজের অবস্থানের লেবেল
 WorkPlace=কাজের জায়গা
@@ -47,7 +34,6 @@ PositionToBeFilled=চাকুরী পদমর্যাদা
 PositionsToBeFilled=চাকরির পদ
 ListOfPositionsToBeFilled=চাকরির পদের তালিকা
 NewPositionToBeFilled=নতুন চাকরির পদ
-
 JobOfferToBeFilled=চাকরির পদ পূরণ করতে হবে
 ThisIsInformationOnJobPosition=চাকরির পদের তথ্য পূরণ করতে হবে
 ContactForRecruitment=নিয়োগের জন্য যোগাযোগ করুন
@@ -77,4 +63,4 @@ WeAreRecruiting=আমরা নিয়োগ করছি। এটি পূ
 NoPositionOpen=এই মুহূর্তে কোনো পজিশন খোলা নেই
 ConfirmClose=বাতিল নিশ্চিত করুন
 ConfirmCloseAsk=আপনি কি নিশ্চিত যে আপনি এই নিয়োগের প্রার্থীতা বাতিল করতে চান?
-recruitment=নিয়োগ
+Recruitment=নিয়োগ

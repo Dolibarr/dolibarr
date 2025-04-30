@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Organisation d'événements
 EventOrganizationDescription = Organisation d’événements par le biais du module Projet
 EventOrganizationDescriptionLong= Gérer l'organisation d'un événement (spectacle, conférences, participants ou intervenants, avec des pages publiques pour suggestion, vote ou inscription)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Événements organisés
 EventOrganizationConferenceOrBoothMenuLeft = Conférence ou stand
-
 PaymentEvent=Paiement de l'événement
-
-#
+EventFee=Frais d'événement
 # Admin page
-#
 NewRegistration=Inscription
 EventOrganizationSetup=Configuration de l’Organisation d’événements
 EventOrganization=Organisation d'événements
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Modèle d'e-mail à utiliser lor
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Modèle d'e-mail à utiliser lors de l'envoi d'e-mails depuis la massaction "Envoyer des e-mails" sur la liste des participants
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Dans le formulaire pour créer/ajouter un participant, limite la liste des tiers aux tiers de la catégorie
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Dans le formulaire pour créer/ajouter un participant, limite la liste des tiers aux tiers ayant la nature
-
-#
 # Object
-#
 OrganizedEvent=Événement organisé
 EventOrganizationConfOrBooth= Conférence ou stand
-EventOrganizationConfOrBoothes=Conférences ou Stands
+EventOrganizationConfOrBoothes=Conférences ou stands
 ManageOrganizeEvent = Gestion d'organisation d'événements
 ConferenceOrBooth = Conférence ou stand
 ConferenceOrBoothTab = Conférence ou stand
@@ -63,10 +50,7 @@ DateOfRegistration = Date d'inscription
 ConferenceOrBoothAttendee = Participant à la conférence ou au stand
 ApplicantOrVisitor=Demandeur ou visiteur
 Speaker=Conférencier
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Votre demande de conférence a été transmise.
 YourOrganizationEventBoothRequestWasReceived = Votre demande de stand a été transmise
 EventOrganizationEmailAskConf = Demande de conférence
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Inscription à un événement
 EventOrganizationMassEmailAttendees = Communication aux participants
 EventOrganizationMassEmailSpeakers = Communication aux conférenciers
 ToSpeakers=Aux conférenciers
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Autoriser les visiteurs à suggérer des conférences
 AllowUnknownPeopleSuggestConfHelp=Autoriser des inconnus à suggérer une conférence qu'ils souhaitent faire
 AllowUnknownPeopleSuggestBooth=Autoriser des personnes à postuler pour un stand
@@ -91,27 +72,26 @@ PriceOfBoothHelp=Prix d’inscription pour un stand
 EventOrganizationICSLinkProject=Lien ICS pour l'événement
 EventOrganizationICSLink=Lien ICS pour les conférences
 ConferenceOrBoothInformation=Informations sur la conférence ou sur le stand
+ConferenceOrBoothFormat=Format conférence ou stand
+ConferenceOrBoothFormatID=ID du format de conférence ou stand
+ConferenceOrBoothFormatCode=Code du format de conférence ou stand
+ConferenceOrBoothFormatLabel=Libellé du format de conférence ou stand
 Attendees=Participants
-ListOfAttendeesOfEvent=Liste des participant à l'événement
+ListOfAttendeesOfEvent=Liste des participants aux projets événements
+ListOfConfOrBoothOfEvent=Liste des conférences ou stands de projets événements
 DownloadICSLink = Télécharger le lien ICS
 EVENTORGANIZATION_SECUREKEY = Graine pour sécuriser la clé de la page d'inscription publique pour suggérer une conférence
 SERVICE_BOOTH_LOCATION = Service utilisé pour la ligne de facture concernant l'emplacement d'un stand
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service utilisé pour la ligne de facture relative à l'abonnement d'un participant à un événement
 NbVotes=Nombre de votes
-
-#
 # Status
-#
 EvntOrgDraft = Brouillon
 EvntOrgSuggested = Suggéré
 EvntOrgConfirmed = Confirmé
 EvntOrgNotQualified = Non qualifié
 EvntOrgDone = Effectuées
 EvntOrgCancelled = Annulé
-
-#
 # Other
-#
 SuggestForm = Page de suggestions
 SuggestOrVoteForConfOrBooth = Page de suggestion ou de vote
 EvntOrgRegistrationHelpMessage = Ici, vous pouvez voter pour une conférence ou en proposer une nouvelle pour l'événement. Vous pouvez également demander à avoir un stand pendant l'événement.
@@ -134,6 +114,7 @@ EventType = Type événement
 LabelOfBooth=Libellé du stand
 LabelOfconference=Libellé de la conférence
 ConferenceIsNotConfirmed=L'inscription n'est pas autorisée, l'événement n'est pas confirmé
+EventRegistrationAreClosed=Les inscriptions aux événements sont fermées
 DateMustBeBeforeThan=%s doit être avant %s
 DateMustBeAfterThan=%s doit être après %s
 MaxNbOfAttendeesReached=Le nombre maximum de participants a été atteint
@@ -175,6 +156,7 @@ DateEndEvent=Date de fin de l'événement
 ModifyStatus=Modifier le statut
 ConfirmModifyStatus=Confirmer la modification du statut
 ConfirmModifyStatusQuestion=Êtes-vous sûr de vouloir modifier le %s enregistrement(s) sélectionné(s) ?
-RecordsUpdated = %s enregistrement(s) mis à jour
-RecordUpdated = Enregistrement mis à jour
-NoRecordUpdated = Aucun enregistrement mis à jour
+RecordsUpdated=%s enregistrement(s) mis à jour
+RecordUpdated=Enregistrement mis à jour
+NoRecordUpdated=Aucun enregistrement mis à jour
+ProfitPerValidatedAttendee=Bénéfice par participant

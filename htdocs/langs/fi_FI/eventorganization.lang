@@ -5,32 +5,22 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
 ModuleEventOrganizationName = Tapahtuman järjestäminen
 EventOrganizationDescription = Tapahtuman järjestäminen moduuliprojektin kautta
 EventOrganizationDescriptionLong= Hallinnoi tapahtuman järjestämistä (esitys, konferenssit, osallistujat tai puhujat, julkisilla sivuilla ehdotuksia, äänestystä tai rekisteröintiä varten)
-#
-# Menu
-#
 EventOrganizationMenuLeft = Järjestettiin tapahtumia
 EventOrganizationConferenceOrBoothMenuLeft = Konferenssi tai osasto
-
 PaymentEvent=maksu tapahtumasta
-
-#
+EventFee=Event fee
 # Admin page
-#
 NewRegistration=Rekisteröinti
 EventOrganizationSetup=Tapahtuman järjestämisen asetukset
 EventOrganization=Tapahtuman järjestäminen
@@ -48,13 +38,10 @@ EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER = Sähköpostimalli, jota käytet�
 EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES = Sähköpostimalli, jota käytetään lähetettäessä sähköposteja osallistujaluettelon "Lähetä sähköpostit" -toiminnosta
 EVENTORGANIZATION_FILTERATTENDEES_CAT = Lomakkeessa luo/lisää osallistuja rajoittaa kolmansien osapuolten luettelon luokan kolmansiin osapuoliin.
 EVENTORGANIZATION_FILTERATTENDEES_TYPE = Lomakkeessa luo/lisää osallistuja rajoittaa kolmansien osapuolien luettelon kolmansiin osapuoliin luonteeltaan
-
-#
 # Object
-#
 OrganizedEvent=Järjestetty tapahtuma
 EventOrganizationConfOrBooth= Konferenssi tai osasto
-EventOrganizationConfOrBoothes=Konferenssit tai osastot
+EventOrganizationConfOrBoothes=Conferences or Booths
 ManageOrganizeEvent = Hallitse tapahtuman järjestämistä
 ConferenceOrBooth = Konferenssi tai osasto
 ConferenceOrBoothTab = Konferenssi tai osasto
@@ -63,10 +50,7 @@ DateOfRegistration = päiväys rekisteröinnistä
 ConferenceOrBoothAttendee = Konferenssin tai osaston osallistuja
 ApplicantOrVisitor=Hakija tai vierailija
 Speaker=Kaiutin
-
-#
 # Template Mail
-#
 YourOrganizationEventConfRequestWasReceived = Kokouspyyntösi vastaanotettiin
 YourOrganizationEventBoothRequestWasReceived = Pyyntösi osastolle vastaanotettiin
 EventOrganizationEmailAskConf = Pyyntö konferenssiin
@@ -76,10 +60,7 @@ EventOrganizationEmailRegistrationPayment = Ilmoittautuminen tapahtumaan
 EventOrganizationMassEmailAttendees = Viestintä osallistujille
 EventOrganizationMassEmailSpeakers = Viestintä kaiuttimille
 ToSpeakers=Kaiuttimille
-
-#
 # Event
-#
 AllowUnknownPeopleSuggestConf=Salli ihmisten ehdottaa konferensseja
 AllowUnknownPeopleSuggestConfHelp=Anna tuntemattomien ehdottaa konferenssia, jonka he haluavat järjestää
 AllowUnknownPeopleSuggestBooth=Salli ihmisten hakea osastolle
@@ -91,27 +72,26 @@ PriceOfBoothHelp=Tilaushinta kestämään koppi
 EventOrganizationICSLinkProject=Link ICS for the event
 EventOrganizationICSLink=Linkitä ICS konferensseihin
 ConferenceOrBoothInformation=Tiedot konferenssista tai osastosta
+ConferenceOrBoothFormat=Conference or booth mode
+ConferenceOrBoothFormatID=ID of conference or booth mode
+ConferenceOrBoothFormatCode=Code of conference or booth mode
+ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Osallistujat
-ListOfAttendeesOfEvent=Luettelo tapahtumaprojektin osallistujista
+ListOfAttendeesOfEvent=List of attendees of event projects
+ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
 DownloadICSLink = Lataa ICS-linkki
 EVENTORGANIZATION_SECUREKEY = Siemenet julkisen rekisteröintisivun avaimen suojaamiseen konferenssin ehdottamiseen
 SERVICE_BOOTH_LOCATION = Palvelua käytetään laskurivillä koskien sijainnista
 SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Palvelu, jota käytetään tapahtuman osallistujatilauksen laskuriville
 NbVotes=Äänten määrä
-
-#
 # Status
-#
 EvntOrgDraft = Luonnos
 EvntOrgSuggested = Ehdotettu
 EvntOrgConfirmed = Vahvistettu
 EvntOrgNotQualified = Epäpätevä
 EvntOrgDone = Valmis
 EvntOrgCancelled = Peruttu
-
-#
 # Other
-#
 SuggestForm = Ehdotussivu
 SuggestOrVoteForConfOrBooth = Sivu ehdotusta tai äänestämistä varten
 EvntOrgRegistrationHelpMessage = Täällä voit äänestää konferenssia tai ehdottaa uutta tapahtumaan. Voit myös hakea osastolle tilaisuuden aikana.
@@ -134,6 +114,7 @@ EventType = Tapahtumatyyppi
 LabelOfBooth=Booth etiketti
 LabelOfconference=Konferenssimerkki
 ConferenceIsNotConfirmed=Ilmoittautuminen ei ole mahdollista, konferenssia ei ole vielä vahvistettu
+EventRegistrationAreClosed=Event registrations are closed
 DateMustBeBeforeThan=%s on oltava ennen %s
 DateMustBeAfterThan=%s on oltava %s jälkeen.
 MaxNbOfAttendeesReached=Osallistujien enimmäismäärä on saavutettu
@@ -175,6 +156,7 @@ DateEndEvent=Tapahtuman loppu päiväys
 ModifyStatus=Muokkaa tilaa
 ConfirmModifyStatus=Vahvista tilan muutos
 ConfirmModifyStatusQuestion=Haluatko varmasti muokata %s valittua tietuetta?
-RecordsUpdated = %s Tietueet päivitetty
-RecordUpdated = Levy päivitetty
-NoRecordUpdated = Ei tietuetta päivitetty
+RecordsUpdated=%s Tietueet päivitetty
+RecordUpdated=Levy päivitetty
+NoRecordUpdated=Tietuetta ei päivitetty
+ProfitPerValidatedAttendee=Voitto osallistujaa kohti

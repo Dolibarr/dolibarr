@@ -6,6 +6,7 @@ TotalMargin=Total Margin
 MarginOnProducts=Margin / Produk
 MarginOnServices=Margin / Layanan
 MarginRate=Tingkat margin
+ModifyMarginRates=Ubah tingkat margin
 MarkRate=Nilai tanda
 DisplayMarginRates=Tingkat tampilan margin
 DisplayMarkRates=Tingkat tanda tampilan
@@ -22,7 +23,7 @@ ProductService=Produk atau Layanan
 AllProducts=Semua produk dan layanan
 ChooseProduct/Service=Pilih produk atau layanan
 ForceBuyingPriceIfNull=Harga beli / biaya paksa untuk harga jual jika tidak ditentukan
-ForceBuyingPriceIfNullDetails=If buying/cost price not provided when we add a new line, and this option is "ON", the margin will be 0%% on the new line (buying/cost price = selling price). If this option is "OFF" (recommended), margin will be equal to the value suggested by default (and may be 100%% if no default value can be found).
+ForceBuyingPriceIfNullDetails=Jika harga beli/biaya tidak diberikan saat kami menambahkan baris baru, dan opsi ini "ON", marginnya akan menjadi 0%% pada baris baru (harga beli/biaya = harga penjualan). Jika opsi ini "OFF" (disarankan), margin akan sama dengan nilai yang disarankan secara default (dan mungkin 100%% jika tidak ada nilai default yang ditemukan).
 MARGIN_METHODE_FOR_DISCOUNT=Metode margin untuk diskon global
 UseDiscountAsProduct=Sebagai produk
 UseDiscountAsService=Sebagai layanan
@@ -37,7 +38,7 @@ CostPrice=Harga biaya
 UnitCharges=Biaya unit
 Charges=Biaya
 AgentContactType=Jenis kontak agen komersial
-AgentContactTypeDetails=Tentukan jenis kontak apa (yang tertaut pada faktur) yang akan digunakan untuk laporan margin per kontak / alamat. Perhatikan bahwa membaca statistik pada kontak tidak dapat diandalkan karena dalam kebanyakan kasus kontak tersebut mungkin tidak didefinisikan secara jelas pada faktur.
+AgentContactTypeDetails=Tentukan jenis kontak apa (tertaut pada faktur) yang akan digunakan untuk laporan margin per kontak/alamat. Perhatikan bahwa membaca statistik pada kontak tidak dapat diandalkan karena dalam banyak kasus, kontak tersebut mungkin tidak ditentukan secara eksplisit pada faktur.
 rateMustBeNumeric=Nilai harus berupa nilai numerik
 markRateShouldBeLesserThan100=Nilai tanda harus lebih rendah dari 100
 ShowMarginInfos=Tampilkan info margin

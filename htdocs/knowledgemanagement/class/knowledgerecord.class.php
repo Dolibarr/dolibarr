@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,17 +49,6 @@ class KnowledgeRecord extends CommonObject
 	public $table_element = 'knowledgemanagement_knowledgerecord';
 
 	/**
-	 * @var int<0,1>|string  	Does this object support multicompany module ?
-	 * 							0=No test on entity, 1=Test with field entity, 'field@table'=Test with link by field@table (example 'fk_soc@societe')
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 1;
-
-	/**
 	 * @var string String with name of icon for knowledgerecord. Must be the part after the 'object_' into object_knowledgerecord.png
 	 */
 	public $picto = 'knowledgemanagement';
@@ -99,15 +88,15 @@ class KnowledgeRecord extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int,noteditable?:int,default?:string,index?:int,foreignkey?:string,searchall?:int,isameasure?:int,css?:string,csslist?:string,help?:string,showoncombobox?:int,disabled?:int,arrayofkeyval?:array<int,string>,comment?:string}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'position' => 1, 'notnull' => 1, 'visible' => 0, 'noteditable' => 1, 'index' => 1, 'css' => 'left', 'comment' => "Id"),
 		'ref' => array('type' => 'varchar(128)', 'label' => 'Ref', 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'default' => '(PROV)', 'visible' => 5, 'index' => 1, 'searchall' => 1, 'comment' => "Reference of object", "csslist" => "nowraponall", "showoncombobox" => 1),
 		'entity' => array('type' => 'integer', 'label' => 'Entity', 'default' => '1', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'position' => 20, 'index' => 1),
-		'question' => array('type' => 'text', 'label' => 'Question', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax300', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
-		'lang' => array('type' => 'varchar(6)', 'label' => 'Language', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'tdcss' => 'titlefieldcreate nowraponall', "csslist" => "tdoverflowmax100"),
-		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2,),
+		'question' => array('type' => 'text', 'label' => 'Question', 'enabled' => 1, 'position' => 30, 'notnull' => 1, 'visible' => 1, 'searchall' => 1, 'csslist' => 'tdoverflowmax300 small', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
+		'lang' => array('type' => 'varchar(6)', 'label' => 'Language', 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => 1, 'tdcss' => 'titlefieldcreate nowraponall', "csslist" => "minwidth100 maxwidth200"),
+		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'position' => 500, 'notnull' => 1, 'visible' => -2, 'csslist' => 'nowraponall'),
 		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'position' => 501, 'notnull' => 0, 'visible' => 2,),
 		'last_main_doc' => array('type' => 'varchar(255)', 'label' => 'LastMainDoc', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 0,),
 		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserCreation', 'enabled' => 1, 'position' => 510, 'notnull' => 1, 'visible' => -2, 'foreignkey' => 'user.rowid',),
@@ -118,17 +107,43 @@ class KnowledgeRecord extends CommonObject
 		//'url' => array('type'=>'varchar(255)', 'label'=>'URL', 'enabled'=>'1', 'position'=>55, 'notnull'=>0, 'visible'=>-1, 'csslist'=>'tdoverflow200', 'help'=>'UrlForInfoPage'),
 		'fk_c_ticket_category' => array('type' => 'integer:CTicketCategory:ticket/class/cticketcategory.class.php:0:(t.active:=:1):pos', 'label' => 'SuggestedForTicketsInGroup', 'enabled' => 'isModEnabled("ticket")', 'position' => 520, 'notnull' => 0, 'visible' => -1, 'help' => 'YouCanLinkArticleToATicketCategory', 'csslist' => 'minwidth200 tdoverflowmax250'),
 		'answer' => array('type' => 'html', 'label' => 'Solution', 'enabled' => 1, 'position' => 600, 'notnull' => 0, 'visible' => 3, 'searchall' => 1, 'csslist' => 'tdoverflowmax300', 'copytoclipboard' => 1, 'tdcss' => 'titlefieldcreate nowraponall'),
-		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array('0' => 'Draft', '1' => 'Validated', '9' => 'Obsolete'),),
+		'status' => array('type' => 'integer', 'label' => 'Status', 'enabled' => 1, 'position' => 1000, 'notnull' => 1, 'visible' => 5, 'default' => '0', 'index' => 1, 'arrayofkeyval' => array(0 => 'Draft', 1 => 'Validated', 9 => 'Obsolete'),),
 	);
+	/**
+	 * @var int
+	 */
 	public $rowid;
+	/**
+	 * @var string
+	 */
 	public $ref;
+	/**
+	 * @var int
+	 */
 	public $entity;
-	public $date_creation;
+	/**
+	 * @var string
+	 */
 	public $last_main_doc;
+	/**
+	 * @var int
+	 */
 	public $fk_user_creat;
+	/**
+	 * @var int
+	 */
 	public $fk_user_modif;
+	/**
+	 * @var int
+	 */
 	public $fk_user_valid;
+	/**
+	 * @var string
+	 */
 	public $import_key;
+	/**
+	 * @var string
+	 */
 	public $model_pdf;
 
 	/**
@@ -140,8 +155,17 @@ class KnowledgeRecord extends CommonObject
 	 * @var string answer to question
 	 */
 	public $answer;
+	/**
+	 * @var string
+	 */
 	public $url;
+	/**
+	 * @var int
+	 */
 	public $status;
+	/**
+	 * @var string
+	 */
 	public $lang;
 	// END MODULEBUILDER PROPERTIES
 
@@ -193,18 +217,15 @@ class KnowledgeRecord extends CommonObject
 
 		$this->db = $db;
 
+		$this->ismultientitymanaged = 1;
+		$this->isextrafieldmanaged = 1;
+
 		if (!getDolGlobalString('MAIN_SHOW_TECHNICAL_ID') && isset($this->fields['rowid'])) {
 			$this->fields['rowid']['visible'] = 0;
 		}
 		if (!isModEnabled('multicompany') && isset($this->fields['entity'])) {
 			$this->fields['entity']['enabled'] = 0;
 		}
-
-		// Example to show how to set values of fields definition dynamically
-		/*if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
-			$this->fields['myfield']['visible'] = 1;
-			$this->fields['myfield']['noteditable'] = 0;
-		}*/
 
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val) {
@@ -272,9 +293,11 @@ class KnowledgeRecord extends CommonObject
 
 		// Clear fields
 		if (property_exists($object, 'ref')) {
+			// @phan-suppress-next-line PhanTypeMismatchProperty
 			$object->ref = empty($this->fields['ref']['default']) ? "Copy_Of_".$object->ref : $this->fields['ref']['default'];
 		}
 		if (property_exists($object, 'question')) {
+			// @phan-suppress-next-line PhanTypeInvalidDimOffset
 			$object->question = empty($this->fields['question']['default']) ? $langs->trans("CopyOf")." ".$object->question : $this->fields['question']['default'];
 		}
 		if (property_exists($object, 'status')) {
@@ -374,9 +397,9 @@ class KnowledgeRecord extends CommonObject
 	 * @param  string      		$sortfield    	Sort field
 	 * @param  int        		$limit        	Limit
 	 * @param  int         		$offset       	Offset
-	 * @param  string|array     $filter       	Filter USF.
-	 * @param  string      		$filtermode   	Filter mode (AND or OR)
-	 * @return array|int                 		int <0 if KO, array of pages if OK
+	 * @param  string|array<string,string>     $filter       	Filter USF.
+	 * @param  'AND'|'OR'  		$filtermode   	Filter mode (AND or OR)
+	 * @return self[]|int                 		int <0 if KO, array of pages if OK
 	 */
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = '', $filtermode = 'AND')
 	{
@@ -401,7 +424,7 @@ class KnowledgeRecord extends CommonObject
 					if ($key == 't.rowid') {
 						$sqlwhere[] = $this->db->sanitize($key)." = ".((int) $value);
 					} elseif (array_key_exists($key, $this->fields) && in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate($value)."'";
+						$sqlwhere[] = $this->db->sanitize($key)." = '".$this->db->idate((int) $value)."'";
 					} elseif (strpos($value, '%') === false) {
 						$sqlwhere[] = $this->db->sanitize($key).' IN ('.$this->db->sanitize($this->db->escape($value)).')';
 					} else {
@@ -577,7 +600,7 @@ class KnowledgeRecord extends CommonObject
 			if (!empty($this->fields['date_validation'])) {
 				$sql .= ", date_validation = '".$this->db->idate($now)."'";
 			}
-			if (!empty($this->fields['fk_user_valid'])) {
+			if (!empty($this->fields['fk_user_valid'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 				$sql .= ", fk_user_valid = ".((int) $user->id);
 			}
 			$sql .= " WHERE rowid = ".((int) $this->id);
@@ -735,10 +758,9 @@ class KnowledgeRecord extends CommonObject
 
 	/**
 	 * getTooltipContentArray
-	 *
-	 * @param array $params ex option, infologin
+	 * @param array<string,mixed> $params params to construct tooltip data
 	 * @since v18
-	 * @return array
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
 	 */
 	public function getTooltipContentArray($params)
 	{
@@ -820,9 +842,9 @@ class KnowledgeRecord extends CommonObject
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("ShowKnowledgeRecord");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ($label ? ' title="'.dol_escape_htmltag($label, 1).'"' : ' title="tocomplete"');
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
 			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -982,7 +1004,7 @@ class KnowledgeRecord extends CommonObject
 	/**
 	 * 	Create an array of lines
 	 *
-	 * 	@return array|int		array of lines if OK, <0 if KO
+	 * 	@return KnowledgeRecordLine[]|int	array of lines if OK, <0 if KO
 	 */
 	public function getLinesArray()
 	{
@@ -997,7 +1019,8 @@ class KnowledgeRecord extends CommonObject
 			return $result;
 		} else {
 			$this->lines = $result;
-			return $this->lines;
+			// @phpstan-ignore-next-line
+			return $result;  // @phan-suppress-current-line PhanTypeMismatchReturn
 		}
 	}
 
@@ -1030,13 +1053,14 @@ class KnowledgeRecord extends CommonObject
 				$mybool = ((bool) @include_once $dir.$file) || $mybool;
 			}
 
-			if ($mybool === false) {
+			if (!$mybool) {
 				dol_print_error(null, "Failed to include file ".$file);
 				return '';
 			}
 
 			if (class_exists($classname)) {
 				$obj = new $classname();
+				'@phan-var-force ModeleNumRefKnowledgeRecord $obj';
 				$numref = $obj->getNextValue($this);
 
 				if ($numref != '' && $numref != '-1') {
@@ -1061,10 +1085,10 @@ class KnowledgeRecord extends CommonObject
 	 *
 	 *  @param	    string		$modele			Force template to use ('' to not force)
 	 *  @param		Translate	$outputlangs	object lang a utiliser pour traduction
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>	$moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -1142,11 +1166,11 @@ class KnowledgeRecord extends CommonObject
 	}
 
 	/**
-	 *	Return clicable link of object (with eventually picto)
+	 *	Return clickable link of object (with eventually picto)
 	 *
-	 *	@param      string	    $option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
-	 *  @param		array		$arraydata				Array of data
-	 *  @return		string								HTML Code for Kanban thumb.
+	 *	@param      string	    			$option                 Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param		?array<string,mixed>	$arraydata				Array of data
+	 *  @return		string											HTML Code for Kanban thumb.
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
@@ -1167,15 +1191,45 @@ class KnowledgeRecord extends CommonObject
 			$return .= '<br>'.picto_from_langcode($this->lang, 'class="paddingrightonly saturatemedium opacitylow paddingrightonly"');
 		}
 		if (property_exists($this, 'question')) {
-			$return .= '<span class="info-box-label">'.dolGetFirstLineOfText($this->question).'</span>';
+			$return .= '<div class="info-box-label tdoverflowmax150 classfortooltip" title="'.dolPrintHTMLForAttribute($this->question).'">'.dolGetFirstLineOfText($this->question).'</div>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
-			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';
+			$return .= '<div class="info-box-status">'.$this->getLibStatut(3).'</div>';
 		}
 		$return .= '</div>';
 		$return .= '</div>';
 		$return .= '</div>';
 		return $return;
+	}
+
+	/**
+	 *  Load indicators into this->nb for board
+	 *
+	 *  @return     int         Return integer <0 if KO, >0 if OK
+	 */
+	public function loadStateBoard()
+	{
+		global $user;
+
+		$this->nb = array();
+		$clause = "WHERE";
+
+		$sql = "SELECT count(t.rowid) as nb";
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			while ($obj = $this->db->fetch_object($resql)) {
+				$this->nb["knowledgebase"] = $obj->nb;
+			}
+
+			$this->db->free($resql);
+			return 1;
+		} else {
+			dol_print_error($this->db);
+			$this->error = $this->db->error();
+			return -1;
+		}
 	}
 }
 
@@ -1191,11 +1245,6 @@ class KnowledgeRecordLine extends CommonObjectLine
 	// We should have a field rowid, fk_knowledgerecord and position
 
 	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db Database handler
@@ -1203,5 +1252,7 @@ class KnowledgeRecordLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+
+		$this->isextrafieldmanaged = 0;
 	}
 }

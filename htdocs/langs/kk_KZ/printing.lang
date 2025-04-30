@@ -32,6 +32,7 @@ PRINTIPP_HOST=Басып шығару сервері
 PRINTIPP_PORT=Порт
 PRINTIPP_USER=Кіру
 PRINTIPP_PASSWORD=Құпия сөз
+PRINTIPP_SSL=SSL пайдаланыңыз
 NoDefaultPrinterDefined=Әдепкі принтер анықталмаған
 DefaultPrinter=Әдепкі принтер
 Printer=Принтер
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Google Cloud Print драйверін басып шы
 PrintingDriverDescprintipp=Драйвер шыныаяқтарын басып шығаруға арналған конфигурация айнымалысы.
 PrintTestDescprintgcp=Google Cloud Print принтерлерінің тізімі.
 PrintTestDescprintipp=Шыныаяқтарға арналған принтерлер тізімі.
+Testbbbb

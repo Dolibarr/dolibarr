@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +56,7 @@ class CActionComm
 
 	/**
 	 * @var string label
-	 * @deprecated
+	 * @deprecated Use $label
 	 * @see $label
 	 */
 	public $libelle;
@@ -81,13 +82,7 @@ class CActionComm
 	public $picto;
 
 	/**
-	 * @var array array of type_actions
-	 */
-	public $type_actions = array();
-
-
-	/**
-	 * @var array	Used to return value by some methods
+	 * @var array{id:array<int,string>,code:array<string,string>,all:array<string,array{id:string,label:string,type:string,color:mixed,picto:string}>}	Used to return value by some methods
 	 */
 	public $liste_array;
 
@@ -148,13 +143,13 @@ class CActionComm
 	/**
 	 *  Return list of event types: array(id=>label) or array(code=>label)
 	 *
-	 *  @param  string|int  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
-	 *  @param  string      $idorcode       'id' or 'code' or 'all'
-	 *  @param  string      $excludetype    Type to exclude ('system' or 'systemauto')
-	 *  @param  int         $onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
+	 *  @param  ''|int<0,1>  $active         1 or 0 to filter on event state active or not ('' by default = no filter)
+	 *  @param  'id'|'code'|'all'      $idorcode       'id' or 'code' or 'all'
+	 *  @param  string		$excludetype    Type to exclude ('system' or 'systemauto')
+	 *  @param  int<-2,1>	$onlyautoornot  1=Group all type AC_XXX into 1 line AC_MANUAL. 0=Keep details of type, -1 or -2=Keep details and add a combined line per calendar (Default, Auto, BoothConf, ...)
 	 *  @param  string      $morefilter     Add more SQL filter
-	 *  @param  int         $shortlabel     1=Get short label instead of long label
-	 *  @return array|int                   Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
+	 *  @param  int<0,1>	$shortlabel     1=Get short label instead of long label
+	 *	@return	int<-1,-1>|array{id:array<int,string>,code:array<string,string>,all:array<string,array{id:string,label:string,type:string,color:mixed,picto:string}>,AC_OTH_AUTO?:mixed}	Array of all event types if OK, <0 if KO. Key of array is id or code depending on parameter $idorcode.
 	 */
 	public function liste_array($active = '', $idorcode = 'id', $excludetype = '', $onlyautoornot = 0, $morefilter = '', $shortlabel = 0)
 	{
@@ -162,9 +157,13 @@ class CActionComm
 		global $langs, $conf, $user;
 		$langs->load("commercial");
 
+		/*
+		$actionstatic = new ActionComm($this->db);
+
 		$rep_id = array();
 		$rep_code = array();
 		$rep_all = array();
+		*/
 
 		$sql = "SELECT id, code, libelle as label, module, type, color, picto";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
@@ -213,7 +212,7 @@ class CActionComm
 
 					$qualified = 1;
 
-					// $obj->type can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
+					// $obj->type into c_actioncomm can be 'system', 'systemauto', 'module', 'moduleauto', 'xxx', 'xxxauto'
 					// Note: type = system... than type of event is added among other standard events.
 					//       type = module... then type of event is grouped into module defined into module = myobject@mymodule. Example: Event organization or external modules
 					//       type = xxx... then type of event is added into list as a new flat value (not grouped). Example: Agefod external module
@@ -292,34 +291,40 @@ class CActionComm
 							$keyfortrans = "Action".$code;
 							$transcode = $langs->trans($keyfortrans);
 						}
+
 						$label = (($transcode != $keyfortrans) ? $transcode : $langs->trans($obj->label));
+						/*
+						$actionstatic->type_color = $obj->type_color;
+						$actionstatic->type_picto = $obj->type_picto;
+						$actionstatic->type = $obj->type;
+						$picto = $actionstatic->getTypePicto();
+						$label = $picto.$label;
+						*/
+
 						if (($onlyautoornot == -1 || $onlyautoornot == -2) && getDolGlobalString('AGENDA_USE_EVENT_TYPE')) {
+							// Add a group of elements
 							if ($typecalendar == 'system' || $typecalendar == 'user') {
-								$label = '&nbsp;&nbsp; '.$label;
+								//$label = '&nbsp;&nbsp; '.$label;
 								$TSystem['id'][-99] = $langs->trans("ActionAC_MANUAL");
-								$TSystem['code']['AC_NON_AUTO'] = '-- '.$langs->trans("ActionAC_MANUAL");
+								$TSystem['code']['AC_NON_AUTO'] = '<span class="smallincombo">-- '.$langs->trans("ActionAC_MANUAL").'</span>';
 							}
 							if ($typecalendar == 'systemauto') {
-								$label = '&nbsp;&nbsp; '.$label;
+								//$label = '&nbsp;&nbsp; '.$label;
 								$TSystemAuto['id'][-98] = $langs->trans("ActionAC_AUTO");
-								$TSystemAuto['code']['AC_ALL_AUTO'] = '-- '.$langs->trans("ActionAC_AUTO");
+								$TSystemAuto['code']['AC_ALL_AUTO'] = '<span class="smallincombo">-- '.$langs->trans("ActionAC_AUTO").'</span>';
 							}
 
 							if ($typecalendar == 'module') {
-								//TODO check if possible to push it between system and systemauto
-								if (preg_match('/@/', $obj->module)) {
-									$module = explode('@', $obj->module)[1];
-								} else {
-									$module = $obj->module;
-								}
-								$label = '&nbsp;&nbsp; '.$label;
-								if (!isset($rep_code['AC_ALL_'.strtoupper($module)])) {	// If first time for this module
+								$module = preg_replace('/^[^@]+@/', '', $obj->module);
+								//$label = '&nbsp;&nbsp; '.$label;
+								if (!isset($TModule['id'][-1 * $idforallfornewmodule])) {	// If first time for this module
 									$idforallfornewmodule--;
 								}
-								$TModule['id'][$idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
-								$TModule['code']['AC_ALL_'.strtoupper($module)] = '-- '.$langs->trans("Module").' '.ucfirst($module);
+								$TModule['id'][-1 * $idforallfornewmodule] = $langs->trans("ActionAC_ALL_".strtoupper($module));
+								$TModule['code']['AC_ALL_'.strtoupper($module)] = '<span class="smallincombo">-- '.$langs->trans("Module").' '.ucfirst($module).'</span>';
 							}
 						}
+						// Add element
 						if ($typecalendar == 'system' || $typecalendar == 'user') {
 							$TSystem['id'][$obj->id] = $label;
 							$TSystem['code'][$obj->code] = $label;
@@ -328,23 +333,36 @@ class CActionComm
 							$TSystemAuto['id'][$obj->id] = $label;
 							$TSystemAuto['code'][$obj->code] = $label;
 							$TSystemAuto['all'][$obj->code] = array('id' => $label, 'label' => $label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
+						} elseif ($typecalendar == 'module') {	// Can be automatic or manual
+							$module = preg_replace('/^[^@]+@/', '', $obj->module);
+							$TModule['id'][$obj->id] = $label;
+							$TModule['code'][$obj->code] = $label;
+							$TModule['all'][$obj->code] = array('id' => $label, 'label' => $langs->trans("Module").' '.ucfirst($module).' - '.$label, 'type' => $typecalendar, 'color' => $obj->color, 'picto' => $obj->picto);
 						}
 
 						if ($onlyautoornot > 0 && preg_match('/^module/', $obj->type) && $obj->module) {
-							array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['code'][$obj->code] = ' ('.$langs->trans("Module").': '.$obj->module.')');
-							array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= ' ('.$langs->trans("Module").': '.$obj->module.')') : ($TModule['all'][$obj->code]['label'] = ' ('.$langs->trans("Module").': '.$obj->module.')');
+							$moduletoshow = ucfirst(preg_replace('/^[^@]+@/', '', $obj->module));
+							//array_key_exists($obj->code, $TModule['code']) ? ($TModule['code'][$obj->code] .= $langs->trans("Module").': '.$moduletoshow.' - '.$label) : ($TModule['code'][$obj->code] = $langs->trans("Module").': '.$moduletoshow.' - '.$label);
+							//array_key_exists($obj->code, $TModule['all']) ? ($TModule['all'][$obj->code]['label'] .= $langs->trans("Module").': '.$moduletoshow.' - '.$label) : ($TModule['all'][$obj->code]['label'] = $langs->trans("Module").': '.$moduletoshow.' - '.$label);
+							$TModule['code'][$obj->code] = $moduletoshow.' - '.$label;
+							$TModule['all'][$obj->code]['label'] = $moduletoshow.' - '.$label;
 						}
 					}
 					$i++;
 				}
 			}
 
-			if (empty($idorcode)) $idorcode = 'all';
+			if (empty($idorcode)) {
+				$idorcode = 'all';
+			}
 			$TType = $TSystem[$idorcode];
-			if (! empty($TSystemAuto[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TSystemAuto[$idorcode]);
-			if (! empty($TModule[$idorcode])) $TType = array_merge($TSystem[$idorcode], $TModule[$idorcode]);
+			if (! empty($TSystemAuto[$idorcode])) {
+				$TType = array_merge($TType, $TSystemAuto[$idorcode]);
+			}
+			if (! empty($TModule[$idorcode])) {
+				$TType = array_merge($TType, $TModule[$idorcode]);
+			}
 			$this->liste_array = $TType;
-
 
 			return $this->liste_array;
 		} else {

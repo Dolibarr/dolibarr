@@ -1,26 +1,31 @@
 # Security Policy
 
-This file contains some policies about the security reports on Dolibarr ERP CRM project, one of the most popular Open Source ERP and CRM in the world.
+This file contains some policies about the security reports on Dolibarr ERP CRM project, a popular Open Source ERP and CRM used by millions of users.
+
 
 ## Supported Versions for security reports
 
 Security report are valid only on current stable version (see https://dolibarr.org web site to get current stable version) or on development version (branch "develop" on https://github.com/Dolibarr/dolibarr).
 
+
 ## Reporting a Vulnerability
 
 To report a vulnerability, for a private report, you can:
 
-- Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
+- Send your report on Vulnerability Disclosure Program (VDP): Link will be updated soon (recommended for everybody)
 <!--
+- Send your report on Vulnerability Disclosure Program (VDP) [https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US](https://app.yogosha.com/cvd/dolibarr/10VxeNx6Ui3rSEhAgX63US) (recommended for everybody)
 - Or if you have permissions, use GitHub security advisory at [https://github.com/Dolibarr/dolibarr/security/advisories/new](https://github.com/Dolibarr/dolibarr/security/advisories/new)
 -->
 - Or send an email to security@dolibarr.org with clear textual description of the report along with steps to reproduce the issue, include attachments such as screenshots or proof of concept code as necessary.
+
 
 ## Hunting vulnerabilities on Dolibarr
 
 We believe that the future of software is online SaaS. This means software are more and more critical and no technology is perfect. Working with skilled security researchers is crucial in identifying weaknesses in our technology.
 
-If you believe you've found a security bug in our service, we are happy to work with you to resolve the issue promptly and ensure you are fairly rewarded for your discovery.
+If you believe you've found a security bug in our service, we are happy to work with you to resolve the issue promptly.
+We plan to re-open our bug bounty program (closed in end of 2024) in the future, but this is not yet available.
 
 Any type of denial-of-service attack is strictly forbidden, as well as any interference with network equipment and Dolibarr infrastructure.
 
@@ -34,6 +39,7 @@ If you try to find bug on Dolibarr, we recommend to append to your user-agent he
 
 You can install the web application yourself on your own platform/server so you get full access to application and sources. Download the zip of the files to put in your own web server virtual host from [https://www.dolibarr.org/download](https://www.dolibarr.org/download)
 
+
 ## Eligibility and Responsible Disclosure
 
 We are happy to thank everyone who submits valid reports which help us improve the security of Dolibarr, however only those that meet the following eligibility requirements will be "validated reports" (if not, we may close the report without any answer):
@@ -45,6 +51,7 @@ You must avoid tests that could cause degradation or interruption of our service
 You must not leak, manipulate, or destroy any user data of third parties to find your vulnerability.
 
 Reports are processed around once a month.
+
 
 ## Scope for qualified vulnerabilities
 
@@ -69,6 +76,7 @@ ONLY vulnerabilities discovered, when the following setup on test platform is us
 
 Scope is the web application (backoffice) and the APIs.
 
+
 ## Examples of vulnerabilities that are Qualified for reporting.
 
 * Remote code execution (RCE)
@@ -88,6 +96,7 @@ Scope is the web application (backoffice) and the APIs.
 * Ability for a high-level user to edit web site pages in the CMS by including HTML or JavaScript is an expected feature. Vulnerabilities in the website module are validated only 
   if HTML or JavaScript injection can be done by a non-allowed user.
 
+
 ## Examples of vulnerabilities that are Non-qualified for reporting.
 
 * Any vulnerabilities due to a configuration different than the one defined in chapter "Scope for qualified vulnerabilities".
@@ -101,8 +110,7 @@ Scope is the web application (backoffice) and the APIs.
 * Software or libraries versions, private IP disclosure, Stack traces or path disclosure when logged-in user is admin.
 * Vulnerabilities affecting outdated browsers or platforms, or vulnerabilities inside browsers themself.
 * Brute force attacks on login page, password forgotten page or any public pages (/public/*) are not qualified if the recommended fail2ban rules were not installed.  
-* SSL/TLS best practices
+* SSL/TLS practices (cypher enabled or not)
 * Invalid or missing SPF (Sender Policy Framework) records (Incomplete or missing SPF/DKIM/DMARC)
 * Physical or social engineering attempts or issues that require physical access to a victim’s computer/device
-* Vulnerabilities of type XSS exploited by using javascript into a website page (with permission to edit website pages) or by using php code into a website page
-  using the permission to edit php code are not qualified, except if this allow to get higher privileges (being able to set javascript or php code is the expected behaviour).
+* Vulnerabilities of type XSS exploited by using javascript into a website page of the website module or by using php code into a website page (being able to set javascript or php code is the expected behaviour in the website module), except if the user does not have the permission to edit page or php code.

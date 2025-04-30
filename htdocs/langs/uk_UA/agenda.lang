@@ -21,7 +21,6 @@ MenuDoneMyActions=Мої припинені події
 ListOfEvents=Список подій (календар за замовчуванням)
 ActionsAskedBy=Про події повідомляє
 ActionsToDoBy=Призначені події
-ActionsDoneBy=Події, здійснені
 ActionAssignedTo=Подія призначена
 ViewCal=Перегляд місяця
 ViewDay=Денний вид
@@ -135,12 +134,14 @@ AgendaModelModule=Шаблони документів для події
 DateActionStart=Дата початку
 DateActionEnd=Дата закінчення
 AgendaUrlOptions1=Ви також можете додати такі параметри до виводу фільтра:
-AgendaUrlOptions3= <b> logina=%s </b>, щоб обмежити вихід до дій, що належать користувачу <b> %s a09a17b7.
-AgendaUrlOptionsNotAdmin= <b> logina=!%s </b>, щоб обмежити вихід до дій, що не належать користувачу <b> %s a09f14f8.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint=%s </b>, щоб обмежити виведення діями, призначеними для користувача <b> %s a09a17b7 та інші.
 AgendaUrlOptionsProject= <b> project=__PROJECT_ID__ </b>, щоб обмежити вихід до дій, пов'язаних з проектом <b> __PROJECT_ID__ </b> .
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype=systemauto </b>, щоб виключити автоматичні події.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b>, щоб включити події свят.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Дні народження контактів
 AgendaHideBirthdayEvents=Приховати дні народження контактів
 Busy=Зайнятий
@@ -201,4 +202,6 @@ AppointmentDuration = Тривалість зустрічі: %s
 BookingSuccessfullyBooked=Ваше бронювання збережено
 BookingReservationHourAfter=Підтверджуємо бронювання нашої зустрічі на дату %s
 BookcalBookingTitle=Онлайн-запис
-Transparency = Transparency
+Transparency = Прозорість
+ReadMore = Read more
+ReadLess = Read less

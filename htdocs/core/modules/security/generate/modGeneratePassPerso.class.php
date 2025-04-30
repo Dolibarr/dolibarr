@@ -3,6 +3,7 @@
  * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
  * Copyright (C) 2017		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +41,21 @@ class modGeneratePassPerso extends ModeleGenPassword
 
 	public $picto = 'fa-shield-alt';
 
+	/**
+	 * @var string
+	 */
 	public $NbMaj;
+	/**
+	 * @var string
+	 */
 	public $NbNum;
+	/**
+	 * @var string
+	 */
 	public $NbSpe;
+	/**
+	 * @var string
+	 */
 	public $NbRepeat;
 
 	/**
@@ -52,11 +65,29 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 */
 	public $WithoutAmbi = 0;
 
+	/**
+	 * @var string
+	 */
 	public $Maj;
+	/**
+	 * @var string
+	 */
 	public $Min;
+	/**
+	 * @var string
+	 */
 	public $Nb;
+	/**
+	 * @var string
+	 */
 	public $Spe;
+	/**
+	 * @var array<int,string>
+	 */
 	public $Ambi;
+	/**
+	 * @var string
+	 */
 	public $All;
 
 	/**
@@ -189,6 +220,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 		global $langs;
 
 		$this->initAll();	// For the case this method is called alone
+
+		dol_syslog("modGeneratePassPerso::validatePassword");
 
 		$password_a = preg_split('//u', $password, 0, PREG_SPLIT_NO_EMPTY);
 		$maj = preg_split('//u', $this->Maj, 0, PREG_SPLIT_NO_EMPTY);

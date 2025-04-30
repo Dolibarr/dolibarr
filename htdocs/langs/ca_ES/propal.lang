@@ -77,13 +77,11 @@ AvailabilityTypeAV_1W=1 setmana
 AvailabilityTypeAV_2W=2 setmanes
 AvailabilityTypeAV_3W=3 setmanes
 AvailabilityTypeAV_1M=1 mes
-
 ##### Types ofe contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Agent comercial del seguiment del pressupost
 TypeContact_propal_external_BILLING=Contacte client de facturació pressupost
 TypeContact_propal_external_CUSTOMER=Contacte client seguiment pressupost
 TypeContact_propal_external_SHIPPING=Contacte del client pel lliurament
-
 # Document models
 CantBeNoSign=no es pot configurar sense signar
 CaseFollowedBy=Cas seguit per
@@ -122,3 +120,5 @@ SignSociete_rib=Signar el mandat
 SignPropal=Acceptar la proposta
 Signed=signat
 SignedOnly=Només signat
+ExpeditionSigned=Enviament signat
+SignExpedition=Signar l'enviament

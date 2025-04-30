@@ -19,7 +19,7 @@ class mod_syslog_syslog extends LogHandler
 	 */
 	public function getName()
 	{
-		return 'Syslogd';
+		return 'Syslog';
 	}
 
 	/**
@@ -47,7 +47,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * Is the logger active ?
 	 *
-	 * @return int		1 if logger enabled
+	 * @return int<0,1>		1 if logger enabled
 	 */
 	public function isActive()
 	{
@@ -62,7 +62,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * 	Return array of configuration data
 	 *
-	 * 	@return	array		Return array of configuration data
+	 * 	@return	array<array{name:string,constant:string,default:string,css?:string}>	Return array of configuration data
 	 */
 	public function configure()
 	{
@@ -97,7 +97,7 @@ class mod_syslog_syslog extends LogHandler
 			dol_syslog("admin/syslog: facility ".$facility);
 			return true;
 		} else {
-			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", $facility);
+			$this->errors[] = $langs->trans("ErrorUnknownSyslogConstant", getDolGlobalString('SYSLOG_FACILITY'));
 			return false;
 		}
 	}
@@ -105,7 +105,7 @@ class mod_syslog_syslog extends LogHandler
 	/**
 	 * Export the message
 	 *
-	 * @param   array   $content            Array containing the info about the message
+	 * @param	array{level:int,ip:string,ospid:string,osuser:string,message:string}	$content 	Array containing the info about the message
 	 * @param   string  $suffixinfilename   When output is a file, append this suffix into default log filename.
 	 * @return  void
 	 */
@@ -125,7 +125,11 @@ class mod_syslog_syslog extends LogHandler
 
 		// (int) is required to avoid error parameter 3 expected to be long
 		openlog('dolibarr', LOG_PID | LOG_PERROR, (int) $facility);
-		syslog($content['level'], $content['message']);
+
+		$message = sprintf("%6s", dol_trunc($content['osuser'], 6, 'right', 'UTF-8', 1));
+		$message .= " ".$content['message'];
+
+		syslog($content['level'], $message);
 		closelog();
 	}
 }

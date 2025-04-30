@@ -173,6 +173,7 @@ PermissionAddedSuccesfuly=El permís s'ha afegit correctament
 MenuDeletedSuccessfuly=El menú s'ha suprimit correctament
 MenuAddedSuccessfuly=El menú s'ha afegit correctament
 MenuUpdatedSuccessfuly=El menú s'ha actualitzat correctament
+AddAPIsForThisObject=Afegiu API per a aquest objecte
 ApiObjectDeleted=API per a l'objecte %s s'ha suprimit correctament
 CRUDRead=Llegit
 CRUDCreateWrite=Crea o Actualitza

@@ -6,6 +6,8 @@
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
  * Copyright (C) 2012-2013  Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2014		Teddy Andreotti				<125155@supinfo.com>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +25,7 @@
 
 /**
  *      \file       htdocs/admin/invoice_situation.php
- *		\ingroup    facture
+ *		\ingroup    invoice
  *		\brief      Page to setup invoice module
  */
 
@@ -36,10 +38,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsetup.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('situationinvoicesetup', 'globalsetup'));
 
 // Access control
@@ -72,33 +82,27 @@ $item = $formSetup->newItem('INVOICE_USE_SITUATION_CREDIT_NOTE')
 
 //$item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY')
 //	->setAsYesNo()
-//	->nameText = $langs->trans('Retainedwarranty');
+//	->nameText = $langs->trans('RetainedWarranty');
 
 
 $item = $formSetup->newItem('INVOICE_USE_RETAINED_WARRANTY');
 $item->nameText = $langs->trans('AllowedInvoiceForRetainedWarranty');
-
 $arrayAvailableType = array(
 	Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation"),
 	Facture::TYPE_STANDARD.'+'.Facture::TYPE_SITUATION => $langs->trans("InvoiceSituation").' + '.$langs->trans("InvoiceStandard"),
 );
-
-if ($action == 'edit') {
-	$item->fieldInputOverride = $form->selectarray('INVOICE_USE_RETAINED_WARRANTY', $arrayAvailableType, $conf->global->INVOICE_USE_RETAINED_WARRANTY, 1);
-} else {
-	$item->fieldOutputOverride= isset($arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')]) ? $arrayAvailableType[getDolGlobalString('INVOICE_USE_RETAINED_WARRANTY')] : '';
-}
+$item->setAsSelect($arrayAvailableType);
 
 //$item = $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_SITUATION')->setAsYesNo();
-//$item->nameText = $langs->trans('RetainedwarrantyOnlyForSituation');
+//$item->nameText = $langs->trans('RetainedWarrantyOnlyForSituation');
 
 $formSetup->newItem('INVOICE_RETAINED_WARRANTY_LIMITED_TO_FINAL_SITUATION')
 	->setAsYesNo()
-	->nameText = $langs->trans('RetainedwarrantyOnlyForSituationFinal');
+	->nameText = $langs->trans('RetainedWarrantyOnlyForSituationFinal');
 
 
 $item = $formSetup->newItem('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT');
-$item->nameText = $langs->trans('RetainedwarrantyDefaultPercent');
+$item->nameText = $langs->trans('RetainedWarrantyDefaultPercent');
 $item->fieldAttr = array(
 	'type' => 'number',
 	'step' => '0.01',
@@ -131,9 +135,9 @@ include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-$help_yrl = 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura';
+$help_url = 'EN:Invoice_Configuration|FR:Configuration_module_facture|ES:ConfiguracionFactura';
 
-llxHeader("", $langs->trans("BillsSetup"), $help_url);
+llxHeader("", $langs->trans("BillsSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-invoice_situation');
 
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';

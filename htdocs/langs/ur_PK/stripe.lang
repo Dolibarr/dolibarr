@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=کنٹریکٹ لائن کے لیے %
 ToOfferALinkForOnlinePaymentOnFreeAmount=کسی بھی رقم کا %s آن لائن ادائیگی کا صفحہ پیش کرنے کے لیے URL
 ToOfferALinkForOnlinePaymentOnMemberSubscription=ممبر کی رکنیت کے لیے %s آن لائن ادائیگی کا صفحہ پیش کرنے کے لیے URL
 ToOfferALinkForOnlinePaymentOnDonation=عطیہ کی ادائیگی کے لیے %s آن لائن ادائیگی کا صفحہ پیش کرنے کے لیے URL
-YouCanAddTagOnUrl=آپ ان میں سے کسی یو آر ایل میں url پیرامیٹر <b> &tag=<i> ویلیو </i> </b> کو بھی شامل کر سکتے ہیں (صرف ادائیگی کے لیے لازمی ہے جو کسی چیز سے منسلک نہیں ہے) اپنا پیمنٹ ٹیگ شامل کرنے کے لیے۔ <br> ادائیگیوں کے URL کے لیے جس میں کوئی شے موجود نہیں ہے، آپ <strong> &noidempotency=1 </strong> پیرامیٹر بھی شامل کر سکتے ہیں تاکہ ایک ہی ٹیگ کے ساتھ ایک ہی لنک کو کئی بار استعمال کیا جا سکے (کچھ ادائیگی کا موڈ ہر ایک لنک کے بغیر ادائیگی کو محدود کر سکتا ہے۔ پیرامیٹر)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=اپنی اسٹرائپ کو url <b> %s </b> کے ساتھ سیٹ اپ کریں تاکہ اسٹرائپ کی توثیق ہونے پر ادائیگی خود بخود بن جائے۔
 AccountParameter=اکاؤنٹ کے پیرامیٹرز
 UsageParameter=استعمال کے پیرامیٹرز
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=ویب ہُک لائیو کلید
 ONLINE_PAYMENT_WAREHOUSE=جب آن لائن ادائیگی کی جاتی ہے تو اسٹاک کو کم کرنے کے لیے استعمال کیا جائے گا
 StripeLiveEnabled=اسٹرائپ لائیو فعال (بصورت دیگر ٹیسٹ/سینڈ باکس موڈ)
 StripeImportPayment=پٹی کی ادائیگی درآمد کریں۔
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=جانچ کی ادائیگی کے لیے کریڈٹ کارڈ کی مثال: %s => درست، %s => غلطی CVC، %s => میعاد ختم، %s => چارج ناکام
+ExampleOfTestBankAcountForSEPA=براہ راست ڈیبٹ ٹیسٹ کے لیے بینک اکاؤنٹ BAN کی مثال: %s
 StripeGateways=پٹی والے دروازے
 OAUTH_STRIPE_TEST_ID=اسٹرائپ کنیکٹ کلائنٹ آئی ڈی (ca_...)
 OAUTH_STRIPE_LIVE_ID=اسٹرائپ کنیکٹ کلائنٹ آئی ڈی (ca_...)
@@ -51,6 +52,7 @@ StripeAccount=پٹی کھاتہ
 StripeChargeList=اسٹرائپ چارجز کی فہرست
 StripeTransactionList=پٹی کے لین دین کی فہرست
 StripeCustomerId=پٹی کسٹمر آئی ڈی
+StripePaymentId=پٹی ادائیگی کی شناخت
 StripePaymentModes=پٹی ادائیگی کے طریقوں
 LocalID=لوکل آئی ڈی
 StripeID=پٹی کی شناخت
@@ -62,7 +64,7 @@ DeleteACard=کارڈ حذف کریں۔
 ConfirmDeleteCard=کیا آپ واقعی اس کریڈٹ یا ڈیبٹ کارڈ کو حذف کرنا چاہتے ہیں؟
 CreateCustomerOnStripe=پٹی پر گاہک بنائیں
 CreateCardOnStripe=پٹی پر کارڈ بنائیں
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=پٹی پر بینک بنائیں
 ShowInStripe=پٹی میں دکھائیں۔
 StripeUserAccountForActions=کچھ اسٹرائپ ایونٹس کی ای میل اطلاع کے لیے استعمال کرنے والا صارف اکاؤنٹ (سٹرائپ ادائیگی)
 StripePayoutList=پٹی کی ادائیگیوں کی فہرست
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=IPN (ٹیسٹ موڈ) کو کال کرنے کے لی�
 ToOfferALinkForLiveWebhook=IPN (لائیو موڈ) کو کال کرنے کے لیے اسٹرائپ ویب ہُک کو سیٹ اپ کرنے کا لنک
 PaymentWillBeRecordedForNextPeriod=ادائیگی اگلی مدت کے لیے ریکارڈ کی جائے گی۔
 ClickHereToTryAgain= <a href="%s"> دوبارہ کوشش کرنے کے لیے یہاں کلک کریں... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=مضبوط کسٹمر تصدیقی اصولوں کی وجہ سے، کارڈ کی تخلیق اسٹرائپ بیک آفس سے ہونی چاہیے۔ آپ اسٹرائپ کسٹمر ریکارڈ پر سوئچ کرنے کے لیے یہاں کلک کر سکتے ہیں: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=مضبوط کسٹمر تصدیقی اصولوں کی وجہ سے، کارڈ کی تخلیق سٹرائپ بیک آفس سے کی جانی چاہیے۔ آپ اسٹرائپ کسٹمر ریکارڈ پر سوئچ کرنے کے لیے یہاں کلک کر سکتے ہیں: %s
+STRIPE_CARD_PRESENT=پٹی والے ٹرمینلز کے لیے کارڈ پیش کیا گیا۔
+TERMINAL_LOCATION=پٹی والے ٹرمینلز کے لیے مقام (پتہ)
+RequestDirectDebitWithStripe=پٹی کے ساتھ براہ راست ڈیبٹ کی درخواست کریں۔
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=اسٹرائپ کے ذریعے ڈائریکٹ ڈیبٹ ادائیگیوں کو فعال کریں۔
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=پٹی کنیکٹ موڈ
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

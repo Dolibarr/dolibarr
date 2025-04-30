@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2021 Laurent Destailleur  <eldy@users.sourceforge.org>
  * Copyright (C) 2011-2013 Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,17 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Load translation files required by the page
 $langs->load("admin");
 
@@ -45,7 +57,7 @@ if (!isModEnabled('clicktodial')) {
  *	Actions
  */
 
-if ($action == 'setvalue' && $user->admin) {
+if ($action == 'setvalue'/*  && $user->admin */) {
 	$result1 = dolibarr_set_const($db, "CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", GETPOST("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS"), 'chaine', 0, '', $conf->entity);
 	$result2 = dolibarr_set_const($db, "CLICKTODIAL_URL", GETPOST("CLICKTODIAL_URL"), 'chaine', 0, '', $conf->entity);
 	$result3 = dolibarr_set_const($db, "CLICKTODIAL_KEY_FOR_CIDLOOKUP", GETPOST("CLICKTODIAL_KEY_FOR_CIDLOOKUP"), 'chaine', 0, '', $conf->entity);
@@ -67,7 +79,7 @@ $form = new Form($db);
 $user->fetch_clicktodial();
 
 $wikihelp = 'EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
-llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp);
+llxHeader('', $langs->trans("ClickToDialSetup"), $wikihelp, '', 0, 0, '', '', '', 'mod-admin page-clicktodial');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ClickToDialSetup"), $linkback, 'title_setup');
@@ -82,14 +94,14 @@ print '<input type="hidden" name="action" value="setvalue">';
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
-print '<td class="minwidth200">'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
+print '<td class="minwidth200">'.$langs->trans("Parameter").'</td>';
+print '<td></td>';
 print "</tr>\n";
 
 
 print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
-print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
+print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", getDolGlobalString('CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS'), 1).'<br>';
 print '<br>';
 print '<span class="opacitymedium small">'.$langs->trans("ClickToDialUseTelLinkDesc").'</span>';
 print '</td></tr>';
@@ -157,7 +169,7 @@ print '</form><br><br>';
 if (getDolGlobalString('CLICKTODIAL_URL')) {
 	$user->fetch_clicktodial();
 
-	$phonefortest = $mysoc->phone;
+	$phonefortest = $mysoc->phone ?? '';
 	if (GETPOST('phonefortest')) {
 		$phonefortest = GETPOST('phonefortest');
 	}

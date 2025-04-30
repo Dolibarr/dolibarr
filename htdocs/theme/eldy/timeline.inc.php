@@ -11,7 +11,8 @@
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 } ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 
 /*
@@ -49,7 +50,6 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 	clear: both;
 }
 .timeline > li > .timeline-item {
-	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 	box-shadow:  0 1px 3px rgba(0, 0, 0, 0.1);
 	border:1px solid #d2d2d2;
 	border-radius: 3px;
@@ -170,7 +170,6 @@ a.timeline-btn:hover
 .timeline-inverse > li > .timeline-item {
 	background: #f0f0f0;
 	border: 1px solid #ddd;
-	-webkit-box-shadow: none;
 	box-shadow: none;
 }
 .timeline-inverse > li > .timeline-item > .timeline-header {
@@ -205,6 +204,10 @@ a.timeline-btn:hover
 	color: #fff !important;
 }
 
+.timeline-item .messaging-title {
+	word-break: break-all;
+}
+
 .timeline-documents-container{
 
 }
@@ -217,6 +220,23 @@ a.timeline-btn:hover
 	width: 100px;
 }
 
+.readmore-block.--closed .readmore-block__full-text, .readmore-block.--open .readmore-block__excerpt{
+	display: none;
+}
+
+.read-less-link, .read-more-link{
+	font-weight: bold;
+}
+
+.read-less-link{
+	display: block;
+	text-align: center;
+}
+
+
+	.read-less-link .fa, .read-more-link .fa{
+	color: inherit;
+}
 
 /* Force values for small screen 767 */
 @media only screen and (max-width: 767px)

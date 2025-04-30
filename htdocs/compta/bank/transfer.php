@@ -5,10 +5,10 @@
  * Copyright (C) 2012	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018-2021 Frédéric France      <frederic.france@netlogic.fr>
+ * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2023      Maxime Nicolas          <maxime@oarces.com>
  * Copyright (C) 2023      Benjamin GREMBI         <benjamin@oarces.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,14 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('banks', 'categories', 'multicurrency'));
 
@@ -50,7 +58,7 @@ if (!$user->hasRight('banque', 'transfer')) {
 	accessforbidden();
 }
 
-$MAXLINES = 10;
+$MAXLINESFORTRANSFERT = 20;
 
 $error = 0;
 
@@ -78,7 +86,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$tabnum = array();
 	$maxtab = 1;
 
-	while ($i < $MAXLINES) {
+	while ($i < $MAXLINESFORTRANSFERT) {
 		$dateo[$i] = dol_mktime(12, 0, 0, GETPOSTINT($i.'_month'), GETPOSTINT($i.'_day'), GETPOSTINT($i.'_year'));
 		$label[$i] = GETPOST($i.'_label', 'alpha');
 		$amount[$i] = price2num(GETPOST($i.'_amount', 'alpha'), 'MT', 2);
@@ -98,7 +106,7 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 	$db->begin();
 
 	$n = 1;
-	while ($n < $MAXLINES) {
+	while ($n < $MAXLINESFORTRANSFERT) {
 		if ($tabnum[$n] === 1) {
 			if ($accountfrom[$n] < 0) {
 				$error++;
@@ -158,20 +166,20 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				// By default, electronic transfer from bank to bank
 				$typefrom = $type[$n];
 				$typeto = $type[$n];
-				if ($tmpaccountto->courant == Account::TYPE_CASH || $tmpaccountfrom->courant == Account::TYPE_CASH) {
+				if ($tmpaccountto->type == Account::TYPE_CASH || $tmpaccountfrom->type == Account::TYPE_CASH) {
 					// This is transfer of change
 					$typefrom = 'LIQ';
 					$typeto = 'LIQ';
 				}
 
 				if (!$error) {
-					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], price2num(-1 * (float) $amount[$n]), '', '', $user);
+					$bank_line_id_from = $tmpaccountfrom->addline($dateo[$n], $typefrom, $label[$n], (float) price2num(-1 * (float) $amount[$n]), '', 0, $user);
 				}
 				if (!($bank_line_id_from > 0)) {
 					$error++;
 				}
 				if (!$error) {
-					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], $amountto[$n], '', '', $user);
+					$bank_line_id_to = $tmpaccountto->addline($dateo[$n], $typeto, $label[$n], (float) $amountto[$n], '', 0, $user);
 				}
 				if (!($bank_line_id_to > 0)) {
 					$error++;
@@ -189,10 +197,11 @@ if ($action == 'add' && $user->hasRight('banque', 'transfer')) {
 				if (!($result > 0)) {
 					$error++;
 				}
+
 				if (!$error) {
 					$mesg = $langs->trans("TransferFromToDone", '{s1}', '{s2}', $amount[$n], $langs->transnoentitiesnoconv("Currency".$conf->currency));
-					$mesg = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesgs);
-					$mesg = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesgs);
+					$mesg = str_replace('{s1}', '<a href="bankentries_list.php?id='.$tmpaccountfrom->id.'&sortfield=b.datev,b.dateo,b.rowid&sortorder=desc">'.$tmpaccountfrom->label.'</a>', $mesg);
+					$mesg = str_replace('{s2}', '<a href="bankentries_list.php?id='.$tmpaccountto->id.'">'.$tmpaccountto->label.'</a>', $mesg);
 					setEventMessages($mesg, null, 'mesgs');
 				} else {
 					$error++;
@@ -299,7 +308,7 @@ print '<th class="right">'.$langs->trans("Amount").'</th>';
 print '<td class="hideobject multicurrency right">'.$langs->trans("AmountToOthercurrency").'</td>';
 print '</tr>';
 
-for ($i = 1 ; $i < $MAXLINES; $i++) {
+for ($i = 1 ; $i < $MAXLINESFORTRANSFERT; $i++) {
 	$label = '';
 	$amount = '';
 	$amountto = '';

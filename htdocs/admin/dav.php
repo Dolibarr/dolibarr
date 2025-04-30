@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2008-2019 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,17 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "agenda"));
@@ -71,7 +83,7 @@ if ($action == 'update') {
 
 $help_url = 'EN:Module_DAV';
 
-llxHeader('', $langs->trans("DAVSetup"), $help_url);
+llxHeader('', $langs->trans("DAVSetup"), $help_url, '', 0, 0, '', '', '', 'mod-admin page-dav');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("DAVSetup"), $linkback, 'title_setup');
@@ -90,7 +102,7 @@ if ($action == 'edit') {
 	print '<input type="hidden" name="action" value="update">';
 
 	print '<table class="noborder centpercent nomarginbottom">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
 		if (isset($val['enabled']) && empty($val['enabled'])) {
@@ -126,7 +138,7 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent nomarginbottom">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	foreach ($arrayofparameters as $key => $val) {
 		if (isset($val['enabled']) && empty($val['enabled'])) {

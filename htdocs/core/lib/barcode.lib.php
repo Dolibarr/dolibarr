@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2016 Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2004-2010 Folke Ashberg: Some lines of code were inspired from work
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *                         of Folke Ashberg into PHP-Barcode 0.3pl2, available as GPL
  *                         source code at http://www.ashberg.de/bar.
  *
@@ -73,13 +73,14 @@ if (defined('PHP-BARCODE_PATH_COMMAND')) {
 /**
  * Print barcode
  *
- * @param	string	       $code		Code
- * @param	string	       $encoding	Encoding ('EAN13', 'ISBN', 'C128', 'UPC', 'CBR', 'QRCODE', 'DATAMATRIX', 'ANY'...)
- * @param	int<1,max>     $scale		Scale
- * @param	string	       $mode		'png' or 'jpg' ...
+ * @param	string	       	$code			Code
+ * @param	string	       	$encoding		Encoding ('EAN13', 'ISBN', 'C128', 'UPC', 'CBR', 'QRCODE', 'DATAMATRIX', 'ANY'...)
+ * @param	int<1,max>     	$scale			Scale
+ * @param	string	       	$mode			'png', 'gif', 'jpg', 'jpeg' ...
+ * @param	string			$filebarcode	Filename to store barcode image file if defined
  * @return	array{encoding:string,bars:string,text:string}|string   $bars		array('encoding': the encoding which has been used, 'bars': the bars, 'text': text-positioning info) or string with error message
  */
-function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
+function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png", $filebarcode = '')
 {
 	dol_syslog("barcode.lib.php::barcode_print $code $encoding $scale $mode");
 
@@ -100,7 +101,9 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
 	//if (preg_match("/^(text|txt|plain)$/i",$mode)) print barcode_outtext($bars['text'],$bars['bars']);
 	//elseif (preg_match("/^(html|htm)$/i",$mode)) print barcode_outhtml($bars['text'],$bars['bars'], $scale,0, 0);
 	//else
-	barcode_outimage($bars['text'], $bars['bars'], $scale, $mode);
+
+	barcode_outimage($bars['text'], $bars['bars'], $scale, $mode, 0, [], $filebarcode);
+
 	return $bars;
 }
 
@@ -111,7 +114,7 @@ function barcode_print($code, $encoding = "ANY", $scale = 2, $mode = "png")
  *   ANY    choose best-fit (default)
  *   EAN    8 or 13 EAN-Code
  *   UPC    12-digit EAN
- *   ISBN   isbn numbers (still EAN-13)
+ *   ISBN   ISBN number (still EAN-13)
  *   39     code 39
  *   128    code 128 (a,b,c: autoselection)
  *   128C   code 128 (compact form for digits)
@@ -148,13 +151,13 @@ function barcode_encode($code, $encoding)
 	) {
 		/* use built-in EAN-Encoder */
 		dol_syslog("barcode.lib.php::barcode_encode Use barcode_encode_ean");
-		$bars = barcode_encode_ean($code, $encoding);
+		$bars = barcode_encode_ean($code, (string) $encoding);
 	} elseif (file_exists($genbarcode_loc)) {	// For example C39
 		/* use genbarcode */
 		dol_syslog("barcode.lib.php::barcode_encode Use genbarcode ".$genbarcode_loc." code=".$code." encoding=".$encoding);
-		$bars = barcode_encode_genbarcode($code, $encoding);
+		$bars = barcode_encode_genbarcode($code, (string) $encoding);
 	} else {
-		print "barcode_encode needs an external program for encodings other then EAN/ISBN (code=".dol_escape_htmltag($code).", encoding=".dol_escape_htmltag($encoding).")<BR>\n";
+		print "barcode_encode needs an external program for encodings other then EAN/ISBN (code=".dol_escape_htmltag($code).", encoding=".dol_escape_htmltag((string) $encoding).")<BR>\n";
 		print "<UL>\n";
 		print "<LI>download gnu-barcode from <A href=\"https://www.gnu.org/software/barcode/\">www.gnu.org/software/barcode/</A>\n";
 		print "<LI>compile and install them\n";
@@ -244,7 +247,7 @@ function barcode_encode_ean($ean, $encoding = "EAN-13")
 		$encoding = "ISBN";
 	}
 	if (strlen($ean) < 12 || strlen($ean) > 13) {
-		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 numbers)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 digits)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$ean." (must have 12/13 digits)");
 	}
 
 	$ean = substr($ean, 0, 12);
@@ -292,7 +295,7 @@ function barcode_encode_upc($upc, $encoding = "UPC")
 	}
 	$encoding = strtoupper($encoding);
 	if (strlen($upc) < 11 || strlen($upc) > 12) {
-		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 numbers)");
+		return array("error" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 digits)", "text" => "Invalid encoding/code. encoding=".$encoding." code=".$upc." (must have 11/12 digits)");
 	}
 
 	$upc = substr("0".$upc, 0, 12);
@@ -399,20 +402,20 @@ function barcode_encode_genbarcode($code, $encoding)
 }
 
 /**
- * Output image onto standard output, or onto disk if global filebarcode is defined
+ * Output image onto standard output, or onto disk if $filebarcode is defined
  *
- * @param	string	$text		the text-line (<position>:<font-size>:<character> ...)
- * @param	string	$bars   	where to place the bars  (<space-width><bar-width><space-width><bar-width>...)
- * @param	int<1,max>	$scale		scale factor ( 1 < scale < unlimited (scale 50 will produce 5400x300 pixels when using EAN-13!!!))
- * @param	string	$mode   	png,gif,jpg (default='png')
- * @param	int		$total_y	the total height of the image ( default: scale * 60 )
+ * @param	string		$text			the text-line (<position>:<font-size>:<character> ...)
+ * @param	string		$bars   		where to place the bars  (<space-width><bar-width><space-width><bar-width>...)
+ * @param	int<1,max>	$scale			scale factor ( 1 < scale < unlimited (scale 50 will produce 5400x300 pixels when using EAN-13!!!))
+ * @param	string		$mode   		Mime 'png', 'gif', 'jpg', 'jpeg' (default='png') or file disk if empty.
+ * @param	int			$total_y		the total height of the image ( default: scale * 60 )
  * @param	array{}|array{top:int,bottom:int,left:int,right:int}	$space		default:  $space[top]   = 2 * $scale; $space[bottom]= 2 * $scale;  $space[left]  = 2 * $scale;  $space[right] = 2 * $scale;
- * @return	string|void
+ * @param	string		$filebarcode	Filename to store barcode image file
+ * @return	void
  */
-function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = [])
+function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0, $space = [], $filebarcode = '')
 {
-	global $bar_color, $bg_color, $text_color;
-	global $font_loc, $filebarcode;
+	global $bar_color, $bg_color, $text_color, $font_loc;
 
 	//print "$text, $bars, $scale, $mode, $total_y, $space, $font_loc, $filebarcode<br>";
 
@@ -452,7 +455,7 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 	$xpos = $space['left'];
 	if (!function_exists("imagecreate")) {
 		print "You don't have the gd2 extension enabled<br>\n";
-		return "";
+		return;
 	}
 	$im = imagecreate($total_x, $total_y);
 	/* create two images */
@@ -496,17 +499,17 @@ function barcode_outimage($text, $bars, $scale = 1, $mode = "png", $total_y = 0,
 
 	/* output the image */
 	$mode = strtolower($mode);
-	if ($mode == 'jpg' || $mode == 'jpeg') {
-		header("Content-Type: image/jpeg; name=\"barcode.jpg\"");
-		imagejpeg($im);
-	} elseif ($mode == 'gif') {
-		header("Content-Type: image/gif; name=\"barcode.gif\"");
-		imagegif($im);
-	} elseif (!empty($filebarcode)) {
+	if (!empty($filebarcode) && (empty($mode) || $mode == 'png')) {
 		// To write into a file onto disk
 		imagepng($im, $filebarcode);
-	} else {
-		header("Content-Type: image/png; name=\"barcode.png\"");
+	} elseif ($mode == 'jpg' || $mode == 'jpeg') {
+		top_httphead('image/jpeg; name="barcode.jpg"');
+		imagejpeg($im);
+	} elseif ($mode == 'gif') {
+		top_httphead('image/gif; name="barcode.gif"');
+		imagegif($im);
+	} elseif ($mode == 'png') {
+		top_httphead('image/png; name="barcode.png"');
 		imagepng($im);
 	}
 

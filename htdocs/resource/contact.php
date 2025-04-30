@@ -3,6 +3,7 @@
  * Copyright (C) 2007-2009  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2016		Gilles Poirier		 <glgpoirier@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  */
 
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('companies', 'resource', 'sendings'));
 
@@ -44,7 +53,7 @@ $action = GETPOST('action', 'aZ09');
 $object = new Dolresource($db);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';     // Must be 'include', not 'include_once'
 
 // Security check
 if ($user->socid) {
@@ -109,7 +118,8 @@ $formcompany = new FormCompany($db);
 $contactstatic = new Contact($db);
 $userstatic = new User($db);
 
-llxHeader('', $langs->trans("Resource"));
+$help_url = '';
+llxHeader('', $langs->trans("Resource"), $help_url, '', 0, 0, '', '', '', 'mod-resource page-card_contact');
 
 // View and edit mode
 

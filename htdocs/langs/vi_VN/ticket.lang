@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=Vé
 Module56000Desc=Hệ thống vé cho sự cố hoặc quản lý yêu cầu
-
 Permission56001=Xem vé
 Permission56002=Sửa đổi vé
 Permission56003=Xóa vé
 Permission56004=Quản lý vé
 Permission56005=Xem vé của tất cả các bên thứ ba (không hiệu quả đối với người dùng bên ngoài, luôn bị giới hạn ở bên thứ ba mà họ phụ thuộc)
 Permission56006=Xuất vé
-
 Tickets=Vé
 TicketDictType=Vé - Các loại
 TicketDictCategory=Vé - Nhóm
 TicketDictSeverity=Vé - Mức độ nghiêm trọng
 TicketDictResolution=Vé - Nghị quyết
-
 TicketTypeShortCOM=Câu hỏi thương mại
 TicketTypeShortHELP=Yêu cầu trợ giúp chức năng
 TicketTypeShortISSUE=Sự cố hoặc lỗi
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=Vấn đề
 TicketTypeShortREQUEST=Yêu cầu thay đổi hoặc nâng cao
 TicketTypeShortPROJET=Dự án
 TicketTypeShortOTHER=Khác
-
 TicketSeverityShortLOW=Thấp
 TicketSeverityShortNORMAL=Bình thường
 TicketSeverityShortHIGH=Cao
 TicketSeverityShortBLOCKING=Quan trọng, Chặn
-
 TicketCategoryShortOTHER=Khác
-
 ErrorBadEmailAddress=Trường '%s' không chính xác
 MenuTicketMyAssign=Vé của tôi
 MenuTicketMyAssignNonClosed=Vé mở của tôi
 MenuListNonClosed=Mở vé
-
 TypeContact_ticket_internal_CONTRIBUTOR=Cộng tác viên
 TypeContact_ticket_internal_SUPPORTTEC=Người dùng được chỉ định
 TypeContact_ticket_external_SUPPORTCLI=Theo dõi liên lạc / sự cố khách hàng 
 TypeContact_ticket_external_CONTRIBUTOR=Người cộng tác bên ngoài
-
 OriginEmail=Email phóng viên
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=Gửi tin nhắn vé qua email
-
 ExportDataset_ticket_1=Vé
-
 # Status
 Read=Đọc
 Assigned=Phân công
 NeedMoreInformation=Chờ phản hồi của phóng viên
 NeedMoreInformationShort=Chờ phản hồi
-TicketAnswered=Đã trả lời
 Waiting=Đang chờ
 SolvedClosed=Đã giải quyết
 Deleted=Đã xóa
-
 # Dict
-Type=Loại
 Severity=Mức độ nghiêm trọng
 TicketGroupIsPublic=Nhóm là công khai
 TicketGroupIsPublicDesc=Nếu một nhóm yêu cầu được công khai, nó sẽ hiển thị dưới dạng khi tạo yêu cầu từ giao diện chung
-
 # Email templates
 MailToSendTicketMessage=Để gửi email từ tin nhắn vé
-
-#
 # Admin page
-#
 TicketSetup=Thiết lập mô-đun vé
 TicketSettings=Cài đặt
 TicketPublicAccess=Giao diện công cộng không yêu cầu nhận dạng có sẵn tại url sau
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Sử dụng mã đồ họa (CAPTCHA) khi tạo vé
 TicketUseCaptchaCodeHelp=Thêm xác minh CAPTCHA khi tạo vé mới.
 TicketsAllowClassificationModificationIfClosed=Cho phép sửa đổi phân loại vé đã đóng
 TicketsAllowClassificationModificationIfClosedHelp=Cho phép sửa đổi phân loại (loại, nhóm vé, mức độ nghiêm trọng) ngay cả khi vé bị đóng.
-
-#
 # Index & list page
-#
 TicketsIndex=Khu vực bán vé
 TicketList=Danh sách vé
 TicketAssignedToMeInfos=Trang này hiển thị danh sách vé được tạo bởi hoặc gán cho người dùng hiện tại
@@ -175,10 +152,7 @@ ShowAsConversation=Hiển thị dưới dạng danh sách cuộc hội thoại
 MessageListViewType=Hiển thị dưới dạng danh sách bảng
 ConfirmMassTicketClosingSendEmail=Tự động gửi email khi đóng yêu cầu
 ConfirmMassTicketClosingSendEmailQuestion=Bạn có muốn thông báo cho bên thứ ba khi đóng các vé này không?
-
-#
 # Ticket card
-#
 Ticket=Vé
 TicketCard=Thẻ vé
 CreateTicket=Tạo vé
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Đã quá nhiều thời gian trôi qua kể
 TicketNoContractFoundToLink=Không có hợp đồng nào được tìm thấy được tự động liên kết với phiếu này. Vui lòng liên kết hợp đồng theo cách thủ công.
 TicketManyContractsLinked=Nhiều hợp đồng đã được tự động liên kết với vé này. Hãy chắc chắn để xác minh cái nào nên được chọn.
 TicketRefAlreadyUsed=Tham chiếu [%s] đã được sử dụng, tham chiếu mới của bạn là [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=Vé %s được đọc bởi %s
 NoLogForThisTicket=Chưa có log cho vé này
 TicketLogAssignedTo=Vé %s được giao cho %s
 TicketLogPropertyChanged=Vé %s được sửa đổi: phân loại từ %s đến %s
 TicketLogClosedBy=Vé %s được đóng bởi %s
 TicketLogReopen=Vé %s mở lại
-
-#
 # Public pages
-#
 TicketSystem=Hệ thống vé
 ShowListTicketWithTrackId=Hiển thị danh sách vé từ ID theo dõi
 ShowTicketWithTrackId=Hiển thị vé từ ID theo dõi
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=Đây là một email tự động để xác nhận 
 TicketNewEmailBodyInfosTicket=Thông tin để giám sát vé
 TicketNewEmailBodyInfosTrackId=Số theo dõi vé: %s
 TicketNewEmailBodyInfosTrackUrl=Bạn có thể xem tiến trình của vé bằng cách nhấp vào liên kết sau
-TicketNewEmailBodyInfosTrackUrlCustomer=Bạn có thể xem tiến trình của vé trong giao diện cụ thể bằng cách nhấp vào liên kết sau
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=Bạn có thể tham khảo lịch sử của vé này bằng cách nhấp vào liên kết sau
 TicketEmailPleaseDoNotReplyToThisEmail=Xin đừng trả lời trực tiếp email này! Sử dụng liên kết để trả lời trong giao diện.
 TicketPublicInfoCreateTicket=Biểu mẫu này cho phép bạn ghi lại một vé hỗ trợ trong hệ thống quản lý của chúng tôi.
 TicketPublicPleaseBeAccuratelyDescribe=Hãy mô tả chính xác yêu cầu của bạn. Cung cấp nhiều thông tin nhất có thể để cho phép chúng tôi xác định chính xác yêu cầu của bạn.
 TicketPublicMsgViewLogIn=Vui lòng nhập ID theo dõi vé
-TicketTrackId=ID theo dõi công khai
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=Một trong những ID theo dõi của bạn
 ErrorTicketNotFound=Không tìm thấy vé có ID theo dõi %s!
 Subject=Chủ đề
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=Số lượng vé mỗi tháng
 NbOfTickets=Số lượng vé
 ExternalContributors=Cộng tác viên bên ngoài
 AddContributor=Thêm cộng tác viên bên ngoài
-
 # notifications
 TicketCloseEmailSubjectCustomer=Đã đóng vé
 TicketCloseEmailBodyCustomer=Đây là thông báo tự động để thông báo cho bạn rằng vé %s vừa bị đóng.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=Người nhận thông báo
 TicketNotificationLogMessage=Log tin nhắn
 TicketNotificationEmailBodyInfosTrackUrlinternal=Xem vé trong giao diện
 TicketNotificationNumberEmailSent=Email thông báo đã gửi: %s
-
 ActionsOnTicket=Sự kiện trên vé
-
-#
 # Boxes
-#
 BoxLastTicket=Vé được tạo mới nhất
 BoxLastTicketDescription=Đã tạo vé mới nhất %s
 BoxLastTicketContent=

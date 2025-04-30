@@ -3,7 +3,8 @@
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
  * Copyright (C) 2013-2018  Philippe Grand         <philippe.grand@atoo-net.com>
  * Copyright (C) 2015       Jean-François Ferry    <jfefe@aternatik.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,12 +34,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("admin", "companies", "bills", "other", "banks"));
-
-if (!$user->admin) {
-	accessforbidden();
-}
 
 $action = GETPOST('action', 'aZ09');
 $actionsave = GETPOST('save', 'alpha');
@@ -47,10 +52,31 @@ $label = GETPOST('label', 'alpha');
 $scandir = GETPOST('scan_dir', 'alpha');
 $type = 'bankaccount';
 
+if (!$user->admin) {
+	accessforbidden();
+}
+
+$error = 0;
+
 
 /*
  * Actions
  */
+
+if (in_array($action, array('setBANK_DISABLE_DIRECT_INPUT'))) {
+	$constname = preg_replace('/^set/', '', $action);
+	$constvalue = GETPOSTINT('value');
+	$res = dolibarr_set_const($db, $constname, $constvalue, 'yesno', 0, '', $conf->entity);
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	if (!$error) {
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	} else {
+		setEventMessages($langs->trans("Error"), null, 'mesgs');
+	}
+}
 
 // Order display of bank account
 if ($action == 'setbankorder') {
@@ -196,7 +222,7 @@ $formother = new FormOther($db);
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
-llxHeader("", $langs->trans("BankSetupModule"));
+llxHeader("", $langs->trans("BankSetupModule"), '', '', 0, 0, '', '', '', 'mod-admin page-bank');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BankSetupModule"), $linkback, 'title_setup');
@@ -283,7 +309,9 @@ if ($resql) {
 	$num_rows = $db->num_rows($resql);
 	while ($i < $num_rows) {
 		$array = $db->fetch_array($resql);
-		array_push($def, $array[0]);
+		if (is_array($array)) {
+			array_push($def, $array[0]);
+		}
 		$i++;
 	}
 } else {
@@ -326,6 +354,8 @@ foreach ($dirmodels as $reldir) {
 							require_once $dir.'/'.$file;
 							$module = new $classname($db);
 
+							'@phan-var-force ModeleBankAccountDoc $module';
+
 							$modulequalified = 1;
 							if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 								$modulequalified = 0;
@@ -339,7 +369,7 @@ foreach ($dirmodels as $reldir) {
 								print(empty($module->name) ? $name : $module->name);
 								print "</td><td>\n";
 								if (method_exists($module, 'info')) {
-									print $module->info($langs);
+									print $module->info($langs);  // @phan-suppress-current-line PhanUndeclaredMethod
 								} else {
 									print $module->description;
 								}
@@ -354,13 +384,13 @@ foreach ($dirmodels as $reldir) {
 									print '</td>';
 								} else {
 									print '<td class="center">'."\n";
-									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&can_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=set&value='.$name.'&token='.newToken().'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
 									print "</td>";
 								}
 
 								// Default
 								print '<td class="center">';
-								if ($conf->global->BANKADDON_PDF == $name) {
+								if (getDolGlobalString('BANKADDON_PDF') == $name) {
 									print img_picto($langs->trans("Default"), 'on');
 								} else {
 									print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=setdoc&token='.newToken().'&value='.$name.'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"), 'off').'</a>';
@@ -383,7 +413,7 @@ foreach ($dirmodels as $reldir) {
 								//$htmltooltip .= '<br>' . $langs->trans("WatermarkOnDraftOrders") . ': ' . yn($module->option_draft_watermark, 1, 1);
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								// Preview
@@ -391,7 +421,7 @@ foreach ($dirmodels as $reldir) {
 								if ($module->type == 'pdf') {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 								} else {
-									print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+									print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 								}
 								print '</td>';
 
@@ -414,8 +444,8 @@ print load_fiche_titre($langs->trans("BankColorizeMovement"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
-print '<td colspan="4">'.$langs->trans("Name").'</td>';
-print '<td align="center" width="75">'.$langs->trans("Value").'</td>'."\n";
+print '<td colspan="4">'.$langs->trans("Parameter").'</td>';
+print '<td align="center" width="75"></td>'."\n";
 print "</tr>\n";
 
 print '<tr class="oddeven"><td colspan="4">';
@@ -448,7 +478,7 @@ if (getDolGlobalInt('BANK_COLORIZE_MOVEMENT')) {
 		print '<td colspan="4" width="180" class="nowrap">'.$langs->trans("BankColorizeMovementName".$key)."</td>";
 		// Color
 		print '<td class="nowrap right">';
-		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : $conf->global->$color), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, '', 'right hideifnotset');
+		print $formother->selectColor((GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) ? GETPOST("BANK_COLORIZE_MOVEMENT_COLOR".$key) : getDolGlobalString($color)), "BANK_COLORIZE_MOVEMENT_COLOR".$key, 'bankmovementcolorconfig', 1, array(), 'right hideifnotset');
 		print '</td>';
 		print "</tr>";
 		$i++;
@@ -469,14 +499,26 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">'."\n";
 print '<tr class="liste_titre">'."\n";
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td class="center width75">'.$langs->trans("Status")."</td>\n";
+print '<td>'.$langs->trans("Parameter").'</td>';
+print "<td></td>\n";
 print "</tr>\n";
 
-print '<tr class="oddeven"><td>';
-print $langs->trans('AccountStatement');
-print "</td><td>\n";
+// Disable direct input
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("BANK_DISABLE_DIRECT_INPUT").'</td>';
+if (getDolGlobalString('BANK_DISABLE_DIRECT_INPUT')) {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setBANK_DISABLE_DIRECT_INPUT&value=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on');
+	print '</a></td>';
+} else {
+	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?token='.newToken().'&action=setBANK_DISABLE_DIRECT_INPUT&value=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print '</a></td>';
+}
+print '</tr>';
+
+// Autofill bank statement
+print '<tr class="oddeven"><td>'."\n";
 print $langs->trans('AutoReportLastAccountStatement');
 print '</td>';
 // Active
@@ -496,10 +538,9 @@ print "</tr>\n";
 // Allow SEPA Mandate OnLine Sign
 if (!getDolGlobalInt('SOCIETE_DISABLE_BANKACCOUNT')) {
 	print '<tr class="oddeven">';
-	print '<td>'.$langs->trans("AllowOnLineSign").'</td>';
-	print '<td>'.$langs->trans("BankAccountModelModule").'</td>';
+	print '<td>'.$form->textwithpicto($langs->trans("AllowOnLineSign"), $langs->trans("AllowOnLineSignDesc")).'</td>';
 	print '<td class="center">';
-	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1);
+	print ajax_constantonoff('SOCIETE_RIB_ALLOW_ONLINESIGN', array(), null, 0, 0, 0, 2, 0, 1, '', '', 'inline-block', 0, $langs->transnoentitiesnoconv("WarningOnlineSignature", "https://www.dolistore.com"));
 	print '</td></tr>';
 }
 
