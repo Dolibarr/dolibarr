@@ -406,10 +406,11 @@ class ExtraFields
 	 *  @param	int<0,1>		$totalizable	Is a measure. Must show a total on lists
 	 *  @param  int<0,1>        $printable      Is extrafield displayed on PDF
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
+	 *  @param  string          $aiprompt     	Ai prompt value
 	 *  @return	int								Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
-	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt)
+	private function create_label($attrname, $label = '', $type = '', $pos = 0, $size = '', $elementtype = '', $unique = 0, $required = 0, $param = '', $alwayseditable = 0, $perms = '', $list = '-1', $help = '', $default = '', $computed = '', $entity = '', $langfile = '', $enabled = '1', $totalizable = 0, $printable = 0, $moreparams = array(), $aiprompt = "")
 	{
 		// phpcs:enable
 		global $conf, $user;
@@ -826,6 +827,7 @@ class ExtraFields
 	 *  @param  int<0,1>     $totalizable   Is extrafield totalizable on list
 	 *  @param  int<0,1>     $printable    	Is extrafield displayed on PDF
 	 *  @param	array<string,mixed>	$moreparams		More parameters. Example: array('css'=>, 'csslist'=>, 'cssview'=>...)
+	 *  @param	string	$aiprompt			Ai prompt value
 	 *  @return	int							Return integer <=0 if KO, >0 if OK
 	 *  @throws Exception
 	 */
