@@ -5,7 +5,7 @@
  * Copyright (C) 2023       Charlene Benke          <charlene@patas_monkey.com>
  * Copyright (C) 2023       Christian Foellmann     <christian@foellmann.de>
  * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024       Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2025		Benjamin Falière		<benjamin@faliere.com>
  *
@@ -1847,7 +1847,7 @@ if ($action == 'create' && $user->hasRight('projet', 'creer')) {
 	$parameters = array();
 	$reshook = $hookmanager->executeHooks('mainCardTabAddMore', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 } else {
-	print $langs->trans("RecordNotFound");
+	recordNotFound('', 0);
 }
 
 // End of page

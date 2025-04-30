@@ -3,6 +3,7 @@
  * Copyright (C) 2024       Jose MARTINEZ			<jose.martinez@pichinov.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -419,6 +420,11 @@ class Categories extends DolibarrApi
 				throw new RestException(403);
 			}
 			$object = new ActionComm($this->db);
+		} elseif ($type === Categorie::TYPE_PROJECT) {
+			if (!DolibarrApiAccess:: $user->hasRight('projet', 'creer')) {
+				throw new RestException(403);
+			}
+			$object = new Project($this->db);
 		} else {
 			throw new RestException(400, "this type is not recognized yet.");
 		}

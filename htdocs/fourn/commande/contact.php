@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  * Copyright (C) 2023      Christian Foellmann  <christian@foellmann.de>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -193,7 +193,7 @@ if ($id > 0 || !empty($ref)) {
 		include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 	} else {
 		// Contact not found
-		print "ErrorRecordNotFound";
+		recordNotFound('', 0);
 	}
 }
 
