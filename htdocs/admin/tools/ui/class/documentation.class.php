@@ -237,6 +237,13 @@ class Documentation
 					'submenu' => array(),
 					'summary' => array(),
 				),
+
+				'ExperimentalUxIntuitiveSelect' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/intuitive-select/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
 			)
 		);
 
