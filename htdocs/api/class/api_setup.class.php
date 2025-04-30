@@ -2860,7 +2860,6 @@ class Setup extends DolibarrApi
 						$modName = substr($file, 0, dol_strlen($file) - 10);
 						include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
 						if (class_exists($modName)) {
-							
 							$objMod = new $modName($db);
 							$moduleName = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
 							$publisher = dol_escape_htmltag($objMod->getPublisher());
@@ -2869,9 +2868,9 @@ class Setup extends DolibarrApi
 							$version = $objMod->version;
 							if ($statut != 'all') {
 								if ($statut == 'active' && $active == "") {
-								  	continue;
+									continue;
 								} elseif ($statut == 'disabled' && $active == 1) {
-								 	continue;
+									continue;
 								}
 							}
 							if ($origin != 'all') {
@@ -2950,7 +2949,6 @@ class Setup extends DolibarrApi
 	 *
 	 * @throws RestException 403 Forbidden
 	 */
-
 	public function disableModules($modulename)
 	{
 		global $db;
