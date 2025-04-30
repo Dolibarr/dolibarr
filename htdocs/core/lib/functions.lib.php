@@ -403,38 +403,38 @@ function isModEnabled($module)
  */
 function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 {
-		global $conf;
+	global $conf;
 
-		// For compatibility with bad naming on module
-		$moduletomoduletouse = array(
-			'invoice' => 'facture',
-		);
-		$moduleParmsMapping = array(
-			'product' => 'produit',
-		);
+	// For compatibility with bad naming on module
+	$moduletomoduletouse = array(
+		'invoice' => 'facture',
+	);
+	$moduleParmsMapping = array(
+		'product' => 'produit',
+	);
 
-		if (!empty($moduletomoduletouse[$module])) {
-			$module = $moduletomoduletouse[$module];
-		}
+	if (!empty($moduletomoduletouse[$module])) {
+		$module = $moduletomoduletouse[$module];
+	}
 
-		$warningDelayPath = $parmlevel1;
-		if (!empty($moduleParmsMapping[$warningDelayPath])) {
-			$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
-		}
+	$warningDelayPath = $parmlevel1;
+	if (!empty($moduleParmsMapping[$warningDelayPath])) {
+		$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
+	}
 
-		if ($parmlevel2) {
-			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-				if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
-					return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
-				}
-			}
-		} else {
-			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-				return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+	if ($parmlevel2) {
+		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+			if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+				return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
 			}
 		}
+	} else {
+		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+		}
+	}
 
-		return 0;
+	return 0;
 }
 
 /**
@@ -1262,12 +1262,12 @@ function GETPOSTDATE($prefix, $hourTime = '', $gm = 'auto', $saverestore = '')
 /**
  *  Return a sanitized or empty value after checking value against a rule.
  *
- *  @deprecated
  *  @param  string|array<mixed>	$out	Value to check/clear.
  *  @param  string  		$check		Type of check/sanitizing
  *  @param  ?int     		$filter		Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  ?mixed   		$options	Options to pass to filter_var when $check is set to 'custom'
  *  @return string|array<mixed>			Value sanitized (string or array). It may be '' if format check fails.
+ *  @deprecated
  */
 function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = null)
 {
@@ -1279,7 +1279,7 @@ function checkVal($out = '', $check = 'alphanohtml', $filter = null, $options = 
  *
  *  @param  string|mixed[]|null	$out	 Value to check/clear.
  *  @param  string  		$check	     Type of check/sanitizing
- *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
+ *  @param  ?int     		$filter      Filter to apply when $check is set to 'custom' (deprecated). (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  ?mixed   		$options     Options to pass to filter_var when $check is set to 'custom'
  *  @return string|array<mixed>		     Value sanitized (string or array). It may be '' if format check fails.
  */
@@ -1870,7 +1870,7 @@ function dol_sanitizeKeyCode($str)
 /**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
- *	@param	string	$str			String to clean
+ *	@param	string	$str			String to clean. Must be an ascii or utf8 string without any htmlentities.
  *	@return string   	       		Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_nospecial()
@@ -2132,6 +2132,7 @@ function dol_escape_xml($stringtoescape)
  * @param	string	$s						String to print
  * @param	int		$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
  * @return	string							String ready for HTML output
+ * @see dolPrintText()
  */
 function dolPrintLabel($s, $escapeonlyhtmltags = 0)
 {
@@ -2144,6 +2145,7 @@ function dolPrintLabel($s, $escapeonlyhtmltags = 0)
  *
  * @param	string	$s		String to print
  * @return	string			String ready for HTML output
+ * @see dolPrintLabel(), dolPrintHTML()
  */
 function dolPrintText($s)
 {
@@ -2158,7 +2160,7 @@ function dolPrintText($s)
  * @param	string	$s				String to print
  * @param	int		$allowiframe	Allow iframe tags
  * @return	string					String ready for HTML output (sanitized and escape)
- * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea()
+ * @see dolPrintHTMLForAttribute(), dolPrintHTMLFortextArea(), dolPrintText()
  */
 function dolPrintHTML($s, $allowiframe = 0)
 {
@@ -2245,7 +2247,7 @@ function dolPrintPassword($s)
  *  @param		int			$keepb					1=Replace b tags with escaped value (except if in $noescapetags), 0=Remove them completely
  *  @param      int         $keepn              	1=Preserve \r\n strings, 0=Replace them with escaped value, -1=Remove them. Set to 1 when escaping for a <textarea>.
  *  @param		string		$noescapetags			'' (escape all html tags) or 'common' (do not escape some common tags) or list of tags to not escape.
- *  @param		int			$escapeonlyhtmltags		1=Escape only html tags, not the special chars like accents.
+ *  @param		int			$escapeonlyhtmltags		1=Escape only html tags and double quotes, not the special chars like accents.
  *  @param		int			$cleanalsojavascript	Clean also javascript. @TODO switch this option to 1 by default.
  *  @return     string     				 			Escaped string
  *  @see		dol_string_nohtmltag(), dol_string_onlythesehtmltags(), dol_string_nospecial(), dol_string_unaccent(), dol_htmlentitiesbr()
@@ -2564,14 +2566,57 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 			'ospid' => (string) getmypid()	// on linux, max value is defined into cat /proc/sys/kernel/pid_max
 		);
 
-		$remoteip = getUserRemoteIP(); // Get ip when page run on a web server
+		// For log, we want the reliable IP first.
+		$remoteip = getUserRemoteIP(1); // Get ip when page run on a web server
 		if (!empty($remoteip)) {
 			$data['ip'] = $remoteip;
 			// This is when server run behind a reverse proxy
-			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'] != $remoteip) {
-				$data['ip'] = $_SERVER['HTTP_X_FORWARDED_FOR'].' -> '.$data['ip'];
-			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'] != $remoteip) {
-				$data['ip'] = $_SERVER['HTTP_CLIENT_IP'].' -> '.$data['ip'];
+			// A HTTP_X_FORWARDED_FOR as format "ip real of user, ip of proxy1, ip of proxy2, ..."
+			// $data['ip'] is last
+			if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				$tmpips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+				$data['ip'] = '';
+				$foundremoteip = 0;
+				$j = 0;
+				foreach ($tmpips as $tmpip) {
+					$tmpip = trim($tmpip);
+					if (strtolower($tmpip) == strtolower($remoteip)) {
+						$foundremoteip = 1;
+					}
+					if (empty($data['ip'])) {
+						$data['ip'] = $tmpip;
+					} else {
+						$j++;
+						$data['ip'] .= (($j == 1) ? ' [via ' : ',').$tmpip;
+					}
+				}
+				if (!$foundremoteip) {
+					$j++;
+					$data['ip'] .= (($j == 1) ? ' [via ' : ',').$remoteip;
+				}
+				$data['ip'] .= (($j > 0) ? ']' : '');
+			} elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+				$tmpips = explode(',', $_SERVER['HTTP_CLIENT_IP']);
+				$data['ip'] = '';
+				$foundremoteip = 0;
+				$j = 0;
+				foreach ($tmpips as $tmpip) {
+					$tmpip = trim($tmpip);
+					if (strtolower($tmpip) == strtolower($remoteip)) {
+						$foundremoteip = 1;
+					}
+					if (empty($data['ip'])) {
+						$data['ip'] = $tmpip;
+					} else {
+						$j++;
+						$data['ip'] .= (($j == 1) ? ' [via ' : ',').$tmpip;
+					}
+				}
+				if (!$foundremoteip) {
+					$j++;
+					$data['ip'] .= (($j == 1) ? ' [via ' : ',').$remoteip;
+				}
+				$data['ip'] .= (($j > 0) ? ']' : '');
 			}
 		} elseif (!empty($_SERVER['SERVER_ADDR'])) {
 			// This is when PHP session is ran inside a web server but not inside a client request (example: init code of apache)
@@ -3353,13 +3398,13 @@ function dol_banner_tab($object, $paramid, $morehtml = '', $shownav = 1, $fieldi
 		$morehtmlstatus .= $tmptxt;
 	}
 
-	// Add if object was dispatched "into accountancy"
+	// Say if object was dispatched/transferred "into accountancy"
 	if (isModEnabled('accounting') && in_array($object->element, array('bank', 'paiementcharge', 'facture', 'invoice', 'invoice_supplier', 'expensereport', 'payment_various'))) {
 		// Note: For 'chargesociales', 'salaries'... this is the payments that are dispatched (so element = 'bank')
 		if (method_exists($object, 'getVentilExportCompta')) {
-			$accounted = $object->getVentilExportCompta();
+			$accounted = $object->getVentilExportCompta(1);
 			$langs->load("accountancy");
-			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? $langs->trans("Accounted") : $langs->trans("NotYetAccounted")).'</span>';
+			$morehtmlstatus .= '</div><div class="statusref statusrefbis"><span class="opacitymedium">'.($accounted > 0 ? '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?search_mvt_num='.((int) $accounted).'">'.$langs->trans("Accounted").'</a>' : $langs->trans("NotYetAccounted")).'</span>';
 		}
 	}
 
@@ -4255,10 +4300,13 @@ function dol_print_socialnetworks($value, $cid, $socid, $type, $dictsocialnetwor
 			$networkconstname = 'MAIN_INFO_SOCIETE_'.strtoupper($type).'_URL';
 			if (getDolGlobalString($networkconstname)) {
 				$link = str_replace('{socialid}', $value, getDolGlobalString($networkconstname));
+				$valuetoshow = $value;
 				if (preg_match('/^https?:\/\//i', $link)) {
-					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$valuetoshow = preg_replace('/https:\/\/www\.linkedin\./', 'linkedin.', $valuetoshow);
+					//$valuetoshow = preg_replace('/www\.twitter\./', 'twitter.', $valuetoshow);
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 0).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($valuetoshow).'</a>';
 				} elseif ($link) {
-					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($value).'</a>';
+					$htmllink .= '<a href="'.dol_sanitizeUrl($link, 1).'" target="_blank" rel="noopener noreferrer">'.dol_escape_htmltag($valuetoshow).'</a>';
 				}
 			} elseif (!empty($dictsocialnetworks[$type]['url'])) {
 				$tmpvirginurl = preg_replace('/\/?{socialid}/', '', $dictsocialnetworks[$type]['url']);
@@ -4721,24 +4769,39 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  */
 function dol_print_ip($ip, $mode = 0)
 {
-	global $langs;
+	global $conf, $langs;
 
 	$ret = '';
-
-	if (empty($mode)) {
-		$ret .= $ip;
+	if (!isset($conf->cache['resolveips'])) {
+		$conf->cache['resolveips'] = [];
 	}
 
 	if ($mode != 2) {
 		$countrycode = dolGetCountryCodeFromIp($ip);
 		if ($countrycode) {	// If success, countrycode is us, fr, ...
 			if (file_exists(DOL_DOCUMENT_ROOT.'/theme/common/flags/'.$countrycode.'.png')) {
-				$ret .= ' '.img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"), DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png', '', 1);
+				$ret .= picto_from_langcode($countrycode);
+				// $ret .= img_picto($countrycode.' '.$langs->trans("AccordingToGeoIPDatabase"), DOL_URL_ROOT.'/theme/common/flags/'.$countrycode.'.png', '', 1);
 			} else {
-				$ret .= ' ('.$countrycode.')';
+				$ret .= '('.$countrycode.')';
 			}
+			$ret .= '&nbsp;';
 		} else {
 			// Nothing
+		}
+	}
+
+	if (in_array($mode, [0, 2])) {
+		if (empty($conf->cache['resolveips'][$ip])) {
+			$domain = gethostbyaddr($ip);
+			$conf->cache['resolveips'][$ip] = $domain; // false or domain
+		} else {
+			$domain = $conf->cache['resolveips'][$ip];
+		}
+		if ($domain) {
+			$ret .= $domain;
+		} else {
+			$ret .= $ip;
 		}
 	}
 
@@ -4746,27 +4809,39 @@ function dol_print_ip($ip, $mode = 0)
 }
 
 /**
- * Return the IP of remote user.
+ * Return the real IP of remote user.
  * Take HTTP_X_FORWARDED_FOR (defined when using proxy)
  * Then HTTP_CLIENT_IP if defined (rare)
- * Then REMOTE_ADDR (no way to be modified by user but may be wrong if user is using a proxy)
+ * Then REMOTE_ADDR (the last seerver ip in proxy chain).
+ * 			REMOTE_ADDR can't be modified by client and may be the IP of a proxy.
+ * 			Note: that if Apache module "remoteip" module is on, $_SERVER["REMOTE_ADDR"] may be replaced y HTTP_X_FORWARDED_FOR directly
+ * 					from CF-Connecting-IP, but only if remote is in trusted cloudflare list.
  *
- * @return	string		Ip of remote user.
+ * @param	int		$trusted	0=Default, 1=Trusted value (the last IP that was not altered by client)
+ * @return	string				Real IP of remote user.
  */
-function getUserRemoteIP()
+function getUserRemoteIP($trusted = 0)
 {
-	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
-		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]]/', $_SERVER['HTTP_CLIENT_IP'])) {
+	if ($trusted) {	// Return only IP we can rely on (not spoofable by the client)
+		$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may be the IP of a proxy
+		// Note that if apache module remoteip has been enabled, REMOTE_ADDR can contain the real client (the value from cloudFlare HTTP_CF_CONNECTING_IP for example)
+		// if the proxy were added in the list of trusted proxy.
+		return $ip;
+	}
+
+	// Try to guess the real IP of client (but this may not be reliable)
+	if (empty($_SERVER['HTTP_X_FORWARDED_FOR']) || preg_match('/[^0-9\.\:,\[\]\s]/', $_SERVER['HTTP_X_FORWARDED_FOR'])) {
+		if (empty($_SERVER['HTTP_CLIENT_IP']) || preg_match('/[^0-9\.\:,\[\]\s]/', $_SERVER['HTTP_CLIENT_IP'])) {
 			if (empty($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may have been the IP of the proxy and not the client
+				$ip = (empty($_SERVER['REMOTE_ADDR']) ? '' : $_SERVER['REMOTE_ADDR']);	// value may be the IP of the proxy and not the client
 			} else {
 				$ip = $_SERVER["HTTP_CF_CONNECTING_IP"];	// value here may have been forged by client
 			}
 		} else {
-			$ip = $_SERVER['HTTP_CLIENT_IP']; // value is clean here but may have been forged by proxy
+			$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_CLIENT_IP']); // value is clean here but may have been forged by proxy
 		}
 	} else {
-		$ip = $_SERVER['HTTP_X_FORWARDED_FOR']; // value is clean here but may have been forged by proxy
+		$ip = preg_replace('/,.*$/', '', $_SERVER['HTTP_X_FORWARDED_FOR']); // value is clean here but may have been forged by proxy
 	}
 	return $ip;
 }
@@ -4855,7 +4930,7 @@ function dol_user_country()
  */
 function dol_print_address($address, $htmlid, $element, $id, $noprint = 0, $charfornl = '')
 {
-	global $conf, $user, $langs, $hookmanager;
+	global $hookmanager;
 
 	$out = '';
 
@@ -6605,7 +6680,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show (HTML sanitized content)
+ *	@param	string	$title				Title to show (HTML sanitized content). Can be a string with a <br> as a substring.
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int<0,1>	$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -6775,7 +6850,7 @@ function print_barre_liste($title, $page, $file, $options = '', $sortfield = '',
 			do {
 				if ($pagenavastextinput) {
 					if ($cpt == $page) {
-						$pagelist .= '<li class="pagination pageplusone valignmiddle"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone" name="pageplusone" value="'.($page + 1).'"></li>';
+						$pagelist .= '<li class="pagination pageplusone valignmiddle"><input type="text" class="'.($totalnboflines > 100 ? 'width40' : 'width25').' center pageplusone heightofcombo" name="pageplusone" value="'.($page + 1).'"></li>';
 						$pagelist .= '/';
 					}
 				} else {
@@ -7067,13 +7142,13 @@ function price($amount, $form = 0, $outlangs = '', $trunc = 1, $rounding = -1, $
 	}
 
 	// If force rounding
-	if ((string) $forcerounding != '-1') {
+	if ((string) $forcerounding != '-1' && (string) $forcerounding != '') {
 		if ($forcerounding === 'MU') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_UNIT');
 		} elseif ($forcerounding === 'MT') {
 			$nbdecimal = getDolGlobalInt('MAIN_MAX_DECIMALS_TOT');
 		} elseif ($forcerounding >= 0) {
-			$nbdecimal = $forcerounding;
+			$nbdecimal = (int) $forcerounding;
 		}
 	}
 
@@ -7183,9 +7258,30 @@ function price2num($amount, $rounding = '', $option = 0)
 		}
 		//print "QQ".$amount."<br>\n";
 
-		// Now make replace (the main goal of function)
+		// Now make replaceents (the main goal of function)
+
 		if ($thousand != ',' && $thousand != '.') {
-			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+			// Accept the two types of decimal points french users (i.e., using ' ' for thousands)
+
+			// REGEX: Find the integral and decimal parts.
+			//
+			// We require that the decimal point only appears once in $amount.
+			// The regex `/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u` can be broken down as follows:
+			// - `(?<int>[^,]*,|[^.]*\.)` is any accepted sequence up to the last potential decimal point '.' or ',' and named `int`.
+			//   It covers two cases:
+			//   - `[^,]*,`: Any sequence of characters that is not ',' with ',' accepted as the decimal point (from start of string because of earlier `^`);
+			//   - `[^.]*\.`: Any sequence of characters that is not a '.' with '.' accepted as the decimal point (from start of string.
+			// - `(?<dec>[^.,]*)`: The sequence after the character accepted as the decimal point, not including it.
+			if (preg_match('/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u', $amount, $matches)) {
+				$intPart = $matches['int'];
+				$decPart = $matches['dec'];
+
+				// Remove all commas and dots from intPart
+				$intPart = str_replace(['.', ','], '', $intPart);
+
+				// Combine intPart and decPart with a dot
+				$amount = $intPart . $dec . $decPart;
+			}
 		}
 
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
@@ -8333,6 +8429,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 
 /**
  *	Clean a string to keep only desirable HTML tags.
+ *  Complementary of dol_string_onlythesehtmlattributes().
  *  WARNING: This also clean HTML comments (because they can be used to obfuscate tag name).
  *
  *	@param	string		$stringtoclean			String to clean
@@ -8437,7 +8534,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  @param	string[]	$allowed_attributes	Array of tags not allowed
  *	@return string	    					String cleaned
  *
- * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
+ * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  * 	@phan-suppress PhanUndeclaredProperty
  */
 function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null)
@@ -10789,6 +10886,33 @@ function verifCond($strToEvaluate, $onlysimplestring = '1')
  * This function is called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string		$s					String to evaluate
+ * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
+ * @param   int<0,1>	$hideerrors     	1=Hide errors
+ * @param	string		$onlysimplestring	'0' (deprecated, do not use it anymore)=Accept all chars,
+ *                                          '1' (most common use)=Accept only simple string with char 'a-z0-9\s^$_+-.*>&|=!?():"\',/@';',
+ *                                          '2' (used for example for the compute property of extrafields)=Accept also '<[]'
+ * @return	string							Return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
+ * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
+ * @phan-suppress PhanPluginUnsafeEval
+ */
+function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
+{
+	if ($returnvalue != 1) {
+		dol_syslog("Use of dol_eval with parameter returnvalue = 0 is now forbidden. Please fix this", LOG_ERR);
+	}
+
+	if (getDolGlobalString("MAIN_USE_DOL_EVAL_NEW")) {
+		return dol_eval_new($s);
+	} else {
+		return dol_eval_standard($s, $returnvalue, $hideerrors, $onlysimplestring);
+	}
+}
+
+/**
+ * Replace eval function to add more security.
+ * This function is called by dol_eval(), itself called by verifCond() or trans() and transnoentitiesnoconv().
+ *
+ * @param 	string		$s					String to evaluate
  * @return	void|string						Nothing or return result of eval (even if type can be int, it is safer to assume string and find all potential typing issues as abs(dol_eval(...)).
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
@@ -10894,7 +11018,7 @@ function dol_eval_new($s)
 		'override_function', 'session_id', 'session_create_id', 'session_regenerate_id',
 		'call_user_func', 'call_user_func_array',  // PREVENT calling forbidden functions
 		'exec', 'passthru', 'shell_exec', 'system', 'proc_open', 'popen',
-		'dol_eval', 'executeCLI', 'verifCond', // Native Dolibarr functions
+		'dol_eval', 'dol_eval_new', 'dol_eval_standard', 'dol_contctdesc', 'executeCLI', 'verifCond', 'GETPOST', // Native Dolibarr functions
 		'create_function', 'assert', 'mb_ereg_replace', 'mb_eregi_replace', // function with eval capabilities
 		'dol_compress_dir', 'dol_decode', 'dol_delete_file', 'dol_delete_dir', 'dol_delete_dir_recursive', 'dol_copy', 'archiveOrBackupFile', // more dolibarr functions
 		'fopen', 'file_put_contents', 'fputs', 'fputscsv', 'fwrite', 'fpassthru', 'mkdir', 'rmdir', 'symlink', 'touch', 'unlink', 'umask', // PHP functions related to file operations
@@ -10965,13 +11089,13 @@ function dol_eval_new($s)
 	try {
 		return @eval("return {$s};") ?? '';
 	} catch (Throwable $ex) {
-		return "Evaluation Error: {$ex->getMessage()} in {$s}";
+		return "Exception during evaluation: ".$s." - ".$ex->getMessage();
 	}
 }
 
 /**
  * Replace eval function to add more security.
- * This function is called by verifCond() or trans() and transnoentitiesnoconv().
+ * This function is called by dol_eval(), itself called by verifCond() or trans() and transnoentitiesnoconv().
  *
  * @param 	string		$s					String to evaluate
  * @param	int<0,1>	$returnvalue		0=No return (deprecated, used to execute eval($a=something)). 1=Value of eval is returned (used to eval($something)).
@@ -10983,7 +11107,7 @@ function dol_eval_new($s)
  * @see verifCond(), checkPHPCode() to see sanitizing rules that should be very close.
  * @phan-suppress PhanPluginUnsafeEval
  */
-function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
+function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1')
 {
 	// Only this global variables can be read by eval function and returned to caller
 	global $conf;	// Read of const is done with getDolGlobalString() but we need $conf->currency for example
@@ -11025,6 +11149,17 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				}
 			}
 
+			// Check if we found a ? without a space before and after
+			$tmps = str_replace(' ? ', '__XXX__', $s);
+			if (strpos($tmps, '?') !== false) {
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (The char ? can be used only with a space before and after): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (The char ? can be used only with a space before and after): '.$s, LOG_WARNING);
+					return '';
+				}
+			}
+
 			// Check if there is a < or <= without spaces before/after
 			if (preg_match('/<=?[^\s]/', $s)) {
 				if ($returnvalue) {
@@ -11054,8 +11189,8 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				$scheck = preg_replace('/->[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...->method(...'
 				$scheck = preg_replace('/::[a-zA-Z0-9_]+\(/', '->__METHOD__', $scheck);	// accept parenthesis in '...::method(...'
 				$scheck = preg_replace('/^\(+/', '__PARENTHESIS__ ', $scheck);	// accept parenthesis in '(...'. Must replace with "__PARENTHESIS__ with a space after "to allow following substitutions
-				$scheck = preg_replace('/\&\&\s+\(/', '__ANDPARENTHESIS__ ', $scheck);	// accept parenthesis in '... (' like in '&& (...'. Must replace with "__PARENTHESIS__ with a space after" to allow following substitutions
-				$scheck = preg_replace('/\|\|\s+\(/', '__ORPARENTHESIS__ ', $scheck);	// accept parenthesis in '... (' like in '|| (...'. Must replace with "__PARENTHESIS__ with a space after" to allow following substitutions
+				$scheck = preg_replace('/\&\&\s+\(/', '__ANDPARENTHESIS__ ', $scheck);	// accept parenthesis in '&& ('. Must replace with "__PARENTHESIS__ with a space after" to allow following substitutions
+				$scheck = preg_replace('/\|\|\s+\(/', '__ORPARENTHESIS__ ', $scheck);	// accept parenthesis in '|| ('. Must replace with "__PARENTHESIS__ with a space after" to allow following substitutions
 				$scheck = preg_replace('/^!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in 'function(' and '!function('
 				$scheck = preg_replace('/\s!?[a-zA-Z0-9_]+\(/', '__FUNCTION__', $scheck); // accept parenthesis in '... function(' and '... !function('
 				$scheck = preg_replace('/^!\(/', '__NOTANDPARENTHESIS__', $scheck); // accept parenthesis in '!('
@@ -11064,7 +11199,7 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 			}
 			//print 'scheck='.$scheck." : ".strpos($scheck, '(')."<br>\n";
 
-			// Now test if it remains 1 one parenthesis.
+			// Now test if it remains 1 open parenthesis.
 			if (strpos($scheck, '(') !== false) {
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (mode '.$onlysimplestring.', found call of a function or method without using the direct name of the function): '.$s;
@@ -11102,33 +11237,40 @@ function dol_eval($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestring = '1'
 				return '';
 			}
 		}
-		if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
-			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
-			} else {
-				dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s, LOG_WARNING);
-				return '';
+
+		// Disallow also concat
+		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {
+			if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
+				if ($returnvalue) {
+					return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
+				} else {
+					dol_syslog('Bad string syntax to evaluate (dot char is forbidden): '.$s, LOG_WARNING);
+					return '';
+				}
 			}
 		}
 
 		// We block use of php exec or php file functions
-		$forbiddenphpstrings = array('$$', '$_', '}[');
-		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_POST', '_REQUEST', 'ReflectionFunction'));
+		$forbiddenphpstrings = array('$$', '$_', '}[', ')(');
+		$forbiddenphpstrings = array_merge($forbiddenphpstrings, array('_ENV', '_SESSION', '_COOKIE', '_GET', '_GLOBAL', '_POST', '_REQUEST', 'ReflectionFunction'));
 
 		// We list all forbidden function as keywords we don't want to see (we don't mind it if is "kewyord(" or just "keyword", we don't want "keyword" at all)
 		$forbiddenphpfunctions = array();
-		// @phpcs:ignore
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64"."_"."decode", "rawurl"."decode", "url"."decode", "str"."_rot13", "hex"."2bin")); // name of forbidden functions are split to avoid false positive
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("override_function", "session_id", "session_create_id", "session_regenerate_id"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("get_defined_functions", "get_defined_vars", "get_defined_constants", "get_declared_classes"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("function", "call_user_func", "call_user_func_array"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include", "require_once", "include_once"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("exec", "passthru", "shell_exec", "system", "proc_open", "popen"));
-		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "executeCLI", "verifCond", "GETPOST"));	// native dolibarr functions
+		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_eval", "dol_eval_new", "dol_eval_standard", "dol_concatdesc", "executeCLI", "verifCond", "GETPOST"));	// native dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("eval", "create_function", "assert", "mb_ereg_replace")); // function with eval capabilities
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_compress_dir", "dol_decode", "dol_delete_file", "dol_delete_dir", "dol_delete_dir_recursive", "dol_copy", "archiveOrBackupFile")); // more dolibarr functions
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("fopen", "file_put_contents", "fputs", "fputscsv", "fwrite", "fpassthru", "mkdir", "rmdir", "symlink", "touch", "unlink", "umask"));
 		$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("require", "include"));
+		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {	// We disabllow all function that allow to obfuscate the real name of a function
+			// @phpcs:ignore
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("base64"."_"."decode", "rawurl"."decode", "url"."decode", "str"."_rot13", "hex"."2bin")); // name of forbidden functions are split to avoid false positive
+			$forbiddenphpfunctions = array_merge($forbiddenphpfunctions, array("dol_concatdesc"));	// native dolibarr functions
+		}
 
 		$forbiddenphpmethods = array('invoke', 'invokeArgs');	// Method of ReflectionFunction to execute a function
 
@@ -12002,16 +12144,23 @@ function dolExplodeKeepIfQuotes($input)
 		 * @return string
 		 */
 		static function ($a, $b, $c) {
-			if ($a !== '') return $a;
-			if ($b !== '') return $b;
-			if ($c !== '') return $c;
+			if ($a !== '') {
+				return $a;
+			}
+			if ($b !== '') {
+				return $b;
+			}
+			if ($c !== '') {
+				return $c;
+			}
 			return '';
 		},
 		$matches[1],
 		$matches[2],
 		$matches[3]
 	);
-	return array_values(array_filter($result,
+	return array_values(array_filter(
+		$result,
 		/**
 		 * Filter out empty strings from the result array.
 		 *
@@ -12020,7 +12169,8 @@ function dolExplodeKeepIfQuotes($input)
 		 */
 		static function ($val) {
 			return $val !== '';
-		}));
+		}
+	));
 }
 
 
@@ -12084,7 +12234,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 		$value = preg_replace('/\*/', '%', $value); // Replace * with %
 	}
 	if ($mode == 1) {
-		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("DecimalSeparator"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
+		$value = preg_replace('/([!<>=]+)\s+([0-9'.preg_quote($langs->trans("SeparatorDecimal"), '/').'\-])/', '\1\2', $value); // Clean string '< 10' into '<10' so we can then explode on space to get all tests to do
 	}
 
 	$value = preg_replace('/\s*\|\s*/', '|', $value);
@@ -12101,7 +12251,6 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 	if (!is_array($fields)) {
 		$fields = array($fields);
 	}
-
 	$i1 = 0;	// count the nb of "and" criteria added (all fields / criteria)
 	foreach ($crits as $crit) {		// Loop on each AND criteria
 		$crit = trim($crit);
@@ -12239,7 +12388,6 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$i2++; // a criteria for 1 more field was added to string
 			}
 		}
-
 		if ($newres) {
 			$res = $res.($res ? ' AND ' : '').($i2 > 1 ? '(' : '').$newres.($i2 > 1 ? ')' : '');
 		}
@@ -13563,6 +13711,11 @@ function getElementProperties($elementType)
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+	} elseif ($elementType == 'bank_line') {
+		$classpath = 'compta/bank/class';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$classfile = 'account';
+		$classname = 'AccountLine';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -13582,7 +13735,7 @@ function getElementProperties($elementType)
 		$classpath = 'product/inventory/class';
 		$table_element = 'inventorydet';
 		$parent_element = 'inventory';
-	} elseif ($elementType == 'stock' || $elementType == 'entrepot') {
+	} elseif ($elementType == 'stock' || $elementType == 'entrepot' || $elementType == 'warehouse') {
 		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -13668,6 +13821,7 @@ function getElementProperties($elementType)
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
+		$classname = 'SupplierProposalLine';
 		$table_element = 'supplier_proposaldet';
 		$parent_element = 'supplier_proposal';
 	} elseif ($elementType == 'contract') {
@@ -13691,6 +13845,13 @@ function getElementProperties($elementType)
 		$module = 'adherent';
 		$subelement = 'adherent';
 		$table_element = 'adherent';
+	} elseif ($elementType == 'subscription') {
+		$classpath = 'adherents/class';
+		$classfile = 'subscription';
+		$module = 'adherent';
+		$subelement = 'subscription';
+		$classname = 'Subscription';
+		$table_element = 'subscription';
 	} elseif ($elementType == 'usergroup') {
 		$classpath = 'user/class';
 		$module = 'user';
@@ -13728,7 +13889,7 @@ function getElementProperties($elementType)
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
+	} elseif ($elementType == 'order_supplier' || $elementType == 'supplier_order' ||$elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -13745,7 +13906,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -13787,7 +13948,7 @@ function getElementProperties($elementType)
 		$classfile = 'societeaccount';
 		$classname = 'SocieteAccount';
 		$module = 'societe';
-	} elseif ($elementType == 'websitepage') {
+	} elseif ($elementType == 'websitepage' || $elementType == 'website_page') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
@@ -13838,14 +13999,29 @@ function getElementProperties($elementType)
 		$classname = 'Ecmfiles';
 		$table_element = 'ecmfiles';
 		$subelement = '';
-	} elseif ($elementType == 'knowledgerecord') {
+	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
 		$module = '';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
+	} elseif ($elementType == 'customer') {
+		$module = 'thirdparty';
+		$classpath = 'societe/class';
+		$classfile = 'client';
+		$classname = 'Client';
+		$table_element = 'societe';
+		$subelement = '';
+	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
+		$module = 'thirdparty';
+		$classpath = 'fourn/class';
+		$classfile = 'fournisseur';
+		$classname = 'Fournisseur';
+		$table_element = 'societe';
+		$subelement = '';
 	}
+
 
 	if (empty($classfile)) {
 		$classfile = strtolower($subelement);
@@ -14017,15 +14193,34 @@ function fetchObjectByElement($element_id, $element_type, $element_ref = '', $us
 }
 
 /**
+ * Return array of extension for executable files of text files that can contains executable code.
+ *
+ * @return  string[]			Array of extensions
+ */
+function getExecutableContent()
+{
+	$arrayofregexextension = array(
+		'htm', 'html', 'shtml', 'js', 'phar', 'php', 'php3', 'php4', 'php5', 'phtml', 'pht', 'pl', 'py', 'cgi', 'ksh', 'sh', 'shtml',
+		'bash', 'bat', 'cmd', 'wpk', 'exe', 'dmg', 'appimage'
+	);
+
+	return $arrayofregexextension;
+}
+
+/**
  * Return if a file can contains executable content
  *
- * @param   string  $filename       File name to test
- * @return  boolean                 True if yes, False if no
+ * @param   string  		$filename       File name to test
+ * @return  boolean			   				True if yes, False if no
  */
 function isAFileWithExecutableContent($filename)
 {
-	if (preg_match('/\.(htm|html|js|phar|php|php\d+|phtml|pht|pl|py|cgi|ksh|sh|shtml|bash|bat|cmd|wpk|exe|dmg)$/i', $filename)) {
-		return true;
+	$arrayofregexextension = getExecutableContent();
+
+	foreach ($arrayofregexextension as $fileextension) {
+		if (preg_match('/\.'.preg_quote($fileextension, '/').'$/i', $filename)) {
+			return true;
+		}
 	}
 
 	return false;
@@ -14682,10 +14877,11 @@ function getActionCommEcmList($object)
 
 	$documents = array();
 
-	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename';
+	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename, ecm.agenda_id';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
 	$sql .= " WHERE ecm.filepath = 'agenda/".((int) $object->id)."'";
 	//$sql.= " ecm.src_object_type = '".$db->escape($object->element)."' AND ecm.src_object_id = ".((int) $object->id); // Old version didn't add object_type during upload
+	$sql.= ' OR ecm.agenda_id = '.(int) $object->id;
 	$sql .= ' ORDER BY ecm.position ASC';
 
 	$resql = $db->query($sql);
@@ -15405,10 +15601,21 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 					$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
 					$mime = dol_mimetype($filePath);
-					$file = $actionstatic->id.'/'.$doc->filename;
-					$thumb = $actionstatic->id.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-					$doclink = dol_buildpath('document.php', 1).'?modulepart=actions&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
-					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart=actions&file='.urlencode($thumb).'&entity='.$conf->entity;
+					if (empty($doc->agenda_id)) {
+						$dir_ref = $actionstatic->id;
+						$modulepart = 'actions';
+					} else {
+						$split_dir = explode('/', $doc->filepath);
+						$modulepart = array_shift($split_dir);
+						$dir_ref = implode('/', $split_dir);
+					}
+
+					$file = $dir_ref.'/'.$doc->filename;
+					$thumb = $dir_ref.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
+					$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
+					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart='.$modulepart.'&file='.urlencode($thumb).'&entity='.$conf->entity;
+
+
 
 					$mimeAttr = ' mime="'.$mime.'" ';
 					$class = '';
@@ -15565,6 +15772,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
+		if (is_object($db)) {
+			$db->close();
+		}
 	}
 	exit(0);
 }

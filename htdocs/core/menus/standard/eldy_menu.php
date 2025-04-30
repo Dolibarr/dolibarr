@@ -57,16 +57,16 @@ class MenuManager
 	public $menu;
 
 	/**
-	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level:int,prefix:string}>
 	 */
 	public $menu_array;
 	/**
-	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level:int,prefix:string}>
 	 */
 	public $menu_array_after;
 
 	/**
-	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level:int,prefix:string}>
+	 * @var array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level:int,prefix:string}>
 	 */
 	public $tabMenu;
 
@@ -217,8 +217,9 @@ class MenuManager
 
 					// Add font-awesome
 					if ($val['level'] == 0 && !empty($val['prefix'])) {
-						if (preg_match('/^fa\-[a-zA-Z0-9\-_]+$/', $val['prefix'])) {
-							print '<span class="fas '.$val['prefix'].' paddingright pictofixedwidth"></span>';
+						$reg = array();
+						if (preg_match('/^(fa[rsb]? )?fa-/', $val['prefix'], $reg)) {
+							print '<span class="'.(empty($reg[1]) ? 'fa ' : '').$val['prefix'].' paddingright pictofixedwidth"></span>';
 						} else {
 							print str_replace('<span class="', '<span class="paddingright pictofixedwidth ', $val['prefix']);
 						}
@@ -323,7 +324,7 @@ class MenuManager
 							}
 
 							// @phan-suppress-next-line PhanParamSuspiciousOrder
-							print str_pad('', $val2['level'] + 1);
+							print str_pad('', ($val2['level'] + 1));
 							print '<li class="lilevel'.($val2['level'] + 1);
 							if ($val2['level'] == 0) {
 								print ' ui-btn-icon-right ui-btn'; // ui-btn to highlight on clic
@@ -347,11 +348,11 @@ class MenuManager
 								}
 							}
 
-							// Add font-awesome (if $val2['level'] == 0, we are on level2
+							// Add font-awesome for level 0 and 1 (if $val2['level'] == 1, we are on level2, if $val2['level'] == 2, we are on level 3...)
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];	// the picto must have class="pictofixedwidth paddingright"
 							} else {
-								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth"></i>';
+								print '<i class="fa fa-does-not-exists fa-fw paddingright pictofixedwidth level'.($val2['level']+1).'"></i>';
 							}
 
 							print $val2['titre'];

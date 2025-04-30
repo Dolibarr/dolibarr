@@ -99,9 +99,7 @@ AccountingCode
 AccountingJournalType
 ActionAC_
 ActionAC_ALL_
-AddSite
 AddSupplier
-AddTicketIntoCategory
 Adherent
 AdherentNotLinkedToThirdParty
 AdvTgtUse
@@ -216,7 +214,6 @@ ContactDefault_
 ContactSuperAdminForChange
 ContactUs
 Container
-Contrats
 Control
 Convert
 Core
@@ -236,7 +233,6 @@ Datee
 Dateo
 Dates
 Datet
-DecimalSeparator
 Declared
 Decline
 DefaultCashPOSLabel
@@ -508,7 +504,6 @@ Millisecond
 Minimum
 Mo
 Mode
-Modifier
 Module/Application
 ModuleCompanyCode
 ModuleCompanyCodeCustomer
@@ -680,9 +675,7 @@ RECUR
 RSS
 RateIndirect
 Re-Open
-Rechercher
 ReconciledBy
-RecordNotFound
 RecruitmentJobPosition
 Recurrence
 RefAlreadyExists
@@ -809,11 +802,8 @@ Success
 Supervisor
 SupplierDepositsAreNotIncluded
 SupplierMissingRef
-Synchronize
 Syslog
 TLS/STARTTLS
-TLSv1
-TLSv1.2
 TYPE_
 Tabs
 Tag
@@ -926,7 +916,6 @@ period_interval
 period_recurrences
 period_start_date
 point
-productlot
 refunded
 save
 seconds
@@ -1004,16 +993,12 @@ INVOICE_USE_SITUATION
 INVOICE_USE_SITUATION_CREDIT_NOTE
 ImpossibleToContactAuthority
 InterDate
-Inventory Code
-InvoiceReplace
 ItemID
 JobApplications
 JobPosition
 Journal
-Label Movement
 Labels
 Last
-LedgerAccount
 LocalTax1IsNotUsedExample
 LocalTax1IsUsedExample
 LocalTax2IsNotUsedExample

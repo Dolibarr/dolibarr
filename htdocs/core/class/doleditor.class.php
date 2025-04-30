@@ -133,7 +133,7 @@ class DolEditor
 
 		// Name of extended editor to use (FCKEDITOR_EDITORNAME can be 'ckeditor' or 'fckeditor')
 		$defaulteditor = 'ckeditor';
-		$this->tool = !getDolGlobalString('FCKEDITOR_EDITORNAME') ? $defaulteditor : $conf->global->FCKEDITOR_EDITORNAME;
+		$this->tool = getDolGlobalString('FCKEDITOR_EDITORNAME', $defaulteditor);
 		$this->uselocalbrowser = $uselocalbrowser;
 		$this->readonly = $readonly;
 
@@ -207,7 +207,7 @@ class DolEditor
 
 		$fullpage = false;
 
-		$extraAllowedContent = 'a[target];section[contenteditable,id];div{float,display}';
+		$extraAllowedContent = 'a[target];section[contenteditable,id];div{background-color,color,display,float,height,margin,margin-top,margin-bottom,padding,width,border-top-left-radius,border-top-right-radius,box-shadow}';
 		if (is_string($restrictContent)) {
 			$extraAllowedContent = $restrictContent;
 		}
@@ -222,13 +222,16 @@ class DolEditor
 
 		if (in_array($this->tool, array('textarea', 'ckeditor'))) {
 			$found = 1;
+
+			$out .= "\n".'<!-- Output CKeditor '.dol_string_nohtmltag($this->htmlname).' toolbarname = '.dol_string_nohtmltag($this->toolbarname).' -->'."\n";
+
 			// Note: We do not put the attribute 'disabled' tag because on a read form, it change style with grey.
 			$out .= '<textarea id="'.$this->htmlname.'" name="'.$this->htmlname.'"';
 			$out .= ' rows="'.$this->rows.'"';
 			//$out .= ' style="height: 700px; min-height: 700px;"';
 			$out .= (preg_match('/%/', $this->cols) ? ' style="margin-top: 5px; width: '.$this->cols.'"' : ' cols="'.$this->cols.'"');
 			$out .= ' '.($moreparam ? $moreparam : '');
-			$out .= ' class="flat '.$morecss.'">';
+			$out .= ' class="flat '.dol_string_nohtmltag($this->toolbarname).' '.$morecss.'">';
 			$out .= htmlspecialchars($this->content);
 			$out .= '</textarea>';
 

@@ -1029,7 +1029,7 @@ while ($i < $imaxinloop) {
 
 	$object->id = $obj->rowid;
 	$object->admin = $obj->admin;
-	$object->ref = $obj->rowid;
+	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
 	$object->statut = $obj->status;
 	$object->status = $obj->status;
@@ -1101,7 +1101,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($obj->rowid).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

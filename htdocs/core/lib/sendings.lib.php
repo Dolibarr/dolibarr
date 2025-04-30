@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($object->statut == Expedition::STATUS_DRAFT) {
+	if ($object->status == Expedition::STATUS_DRAFT) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("ShipmentDistribution");
 		$head[$h][2] = 'dispatch';
@@ -71,7 +72,7 @@ function shipping_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $object;
-		if ($object->origin == 'commande' && $object->origin_id > 0) {
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->origin_type == 'commande' && $object->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->origin_id);
 		}
@@ -128,7 +129,7 @@ function shipping_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Delivery	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function delivery_prepare_head($object)
@@ -163,7 +164,7 @@ function delivery_prepare_head($object)
 
 	// Get parent object
 	$tmpobject = null;
-	if ($object->origin) {
+	if ($object->origin_type) {
 		$tmpobject = new Expedition($db);
 		$tmpobject->fetch($object->origin_id);
 	} else {
@@ -172,7 +173,7 @@ function delivery_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $tmpobject;
-		if ($tmpobject->origin == 'commande' && $tmpobject->origin_id > 0) {
+		if ($tmpobject->origin_type == 'commande' && $tmpobject->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($tmpobject->origin_id);
 		}
@@ -454,6 +455,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($receiving)) {
+						/** @var Delivery $receiving */
 						'@phan-var-force Delivery $receiving';
 						// $expedition->fk_elementdet = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order

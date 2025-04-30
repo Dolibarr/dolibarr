@@ -870,8 +870,8 @@ class Product extends CommonObject
 		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
 		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_author' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_user.rowid'),
-		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_user.rowid'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'localtax1_tx' => array('type' => 'double(6,3)', 'label' => 'Localtax1tx', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1,),
 		'localtax1_type' => array('type' => 'varchar(10)', 'label' => 'Localtax1type', 'enabled' => 1, 'position' => 155, 'notnull' => 1, 'visible' => -1,),
@@ -6443,6 +6443,88 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 * Load stock for components of virtual product (first level only)
+	 *
+	 * @param  	string 		$option					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
+	 * @param 	int|float 	$qtyWish				[=1] Default quantity wish for the virtual product (1 by default or put qty ordered)
+	 * @return 	int                  				Return integer < 0 if KO, > 0 if OK
+	 */
+	public function loadStockForVirtualProduct($option = '', $qtyWish = 1)
+	{
+		$this->stock_warehouse = array();
+		$error = 0;
+
+		$this->get_sousproduits_arbo();
+		$prods_arbo = $this->get_arbo_each_prod($qtyWish, 1);
+		if (count($prods_arbo) > 0) {
+			$productCachedList = array();
+			$stockByComponentList = array();
+
+			foreach ($prods_arbo as $componentArr) {
+				$componentId = $componentArr['id'];
+				// only component whose manage stock
+				if ($componentArr['incdec'] == 1) {
+					if (!isset($productCachedList[$componentId])) {
+						$componentStatic = new self($this->db);
+						$componentStatic->fetch($componentId);
+						// check if it's a sub-kit
+						$childrenNb = $componentStatic->hasFatherOrChild(1);
+						if ($childrenNb == 0) {
+							$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+							if (!isset($stockByComponentList[$componentId])) {
+								$stockByComponentList[$componentId] = array(
+									'qty_need' => 0
+								);
+							}
+							$stockByComponentList[$componentId]['qty_need'] += $componentArr['nb_total'];
+						}
+						$productCachedList[$componentId] = $componentStatic;
+					}
+				}
+			}
+
+			if (!empty($stockByComponentList)) {
+				foreach ($stockByComponentList as $componentId => $stockByComponentArr) {
+					if (!isset($productCachedList[$componentId])) {
+						$componentStatic = new self($this->db);
+						$componentStatic->fetch($componentId);
+						$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+						$productCachedList[$componentId] = $componentStatic;
+					}
+					$component = $productCachedList[$componentId];
+
+
+					if ($component->stock_reel < $stockByComponentArr['qty_need']) {
+						// not enough stock for this component to assemble this virtual product
+						$error++;
+						$this->error = 'Not enough component [id='.$componentId.'] in stock, real='.$component->stock_reel.' and need='.$stockByComponentArr['qty_need'];
+						$this->errors[] = $this->error;
+						dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
+					} else {
+						if (!empty($component->stock_warehouse)) {
+							foreach ($component->stock_warehouse as $warehouseId => $warehouseObj) {
+								$kitWarehouseAvailable = new stdClass();
+								$kitWarehouseAvailable->id = $warehouseObj->id;
+								$kitWarehouseAvailable->real = $qtyWish;
+								$this->stock_warehouse[$warehouseId] = $kitWarehouseAvailable;
+							}
+						}
+					}
+
+					if ($error) {
+						break;
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
 
 	/**
 	 *  Load existing information about a serial

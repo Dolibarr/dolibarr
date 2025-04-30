@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
  *
@@ -176,6 +176,11 @@ class BookKeeping extends CommonObject
 	public $piece_num;
 
 	/**
+	 * @var string accounting transaction dolibarr ref
+	 */
+	public $ref;
+
+	/**
 	 * @var BookKeepingLine[] Movement line array
 	 */
 	public $linesmvt = array();
@@ -199,6 +204,11 @@ class BookKeeping extends CommonObject
 	 * @var string[]	SQL filter used for check if the bookkeeping record can be created/inserted/modified/deleted (cached)
 	 */
 	public static $can_modify_bookkeeping_sql_cached;
+
+	/**
+	 * @var string[]	Array of warnings
+	 */
+	public $warnings = array();
 
 
 	/**
@@ -291,7 +301,7 @@ class BookKeeping extends CommonObject
 			$this->credit = 0.0;
 		}
 
-		$result = $this->validBookkeepingDate($this->doc_date);
+		$result = $this->validBookkeepingDate($this->doc_date);	// Check date according to ACCOUNTANCY_FISCAL_PERIOD_MODE.
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -323,6 +333,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$this->piece_num = 0;
+		$this->ref = '';
 
 		// First check if line not yet already in bookkeeping.
 		// Note that we must include 'doc_type - fk_doc - numero_compte - label - subledger_account (if not empty)' to be sure to have unicity of line (because we may have several lines
@@ -350,7 +361,7 @@ class BookKeeping extends CommonObject
 			$row = $this->db->fetch_object($resql);
 			if ($row->nb == 0) {	// Not already into bookkeeping
 				// Check to know if piece_num already exists for data we try to insert to reuse the same value
-				$sqlnum = "SELECT piece_num";
+				$sqlnum = "SELECT piece_num, ref";
 				$sqlnum .= " FROM ".$this->db->prefix().$this->table_element;
 				$sqlnum .= " WHERE doc_type = '".$this->db->escape($this->doc_type)."'"; // For example doc_type = 'bank'
 				$sqlnum .= " AND fk_doc = ".((int) $this->fk_doc);
@@ -368,8 +379,10 @@ class BookKeeping extends CommonObject
 					if ($num > 0) {
 						$objnum = $this->db->fetch_object($resqlnum);
 						$this->piece_num = $objnum->piece_num;
+						$this->ref = $objnum->ref;
 					} else {
 						$this->piece_num = 0;
+						$this->ref = '';
 					}
 				}
 
@@ -384,7 +397,9 @@ class BookKeeping extends CommonObject
 						$objnum = $this->db->fetch_object($resqlnum);
 						$this->piece_num = $objnum->maxpiecenum;
 					}
-					dol_syslog(get_class($this).":: create now this->piece_num=".$this->piece_num, LOG_DEBUG);
+
+					$this->ref = $this->getNextNumRef();
+					dol_syslog(get_class($this).":: create now this->piece_num={$this->piece_num}, this->ref={$this->ref}", LOG_DEBUG);
 				}
 				if (empty($this->piece_num)) {
 					$this->piece_num = 1;
@@ -414,6 +429,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", code_journal";
 				$sql .= ", journal_label";
 				$sql .= ", piece_num";
+				$sql .= ", ref";
 				$sql .= ', entity';
 				$sql .= ") VALUES (";
 				$sql .= "'".$this->db->idate($this->doc_date)."'";
@@ -437,6 +453,7 @@ class BookKeeping extends CommonObject
 				$sql .= ", '".$this->db->escape($this->code_journal)."'";
 				$sql .= ", ".(!empty($this->journal_label) ? ("'".$this->db->escape($this->journal_label)."'") : "NULL");
 				$sql .= ", ".((int) $this->piece_num);
+				$sql .= ", '".$this->db->escape($this->ref)."'";
 				$sql .= ", ".(!isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
@@ -491,6 +508,68 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
+	 *	Create a line in database from values as parameters
+	 *
+	 * 	@param		int 			$doc_date				Date of source document, in db date NOT NULL
+	 * 	@param		string 			$doc_ref				Doc ref
+	 * 	@param 		string 			$doc_type				Doc type
+	 * 	@param 		int 			$fk_doc					Doc id
+	 * 	@param 		int 			$fk_docdet				Doc line id
+	 * 	@param 		string 			$numero_compte			Account number
+	 * 	@param 		string 			$label_compte			Account label
+	 * 	@param 		string 			$label_operation		Operation label
+	 * 	@param 		double 			$amount					Amount
+	 * 	@param 		string 			$code_journal			Journal code
+	 * 	@param 		string 			$journal_label			Journal label
+	 * 	@param 		string 			$subledger_account		Sub ledger account
+	 * 	@return		int				Return integer <0 if KO, O nothing done, created object id if OK
+	 */
+	public function createFromValues($doc_date, $doc_ref, $doc_type, $fk_doc, $fk_docdet, $numero_compte, $label_compte, $label_operation, $amount, $code_journal, $journal_label, $subledger_account)
+	{
+		global $conf, $langs, $user;
+
+		$result = 0;
+
+		if (!empty($amount)) {
+			$this->doc_date = $doc_date;
+			$this->doc_ref = $doc_ref;
+			$this->doc_type = $doc_type;
+			$this->fk_doc = $fk_doc;
+			$this->fk_docdet = $fk_docdet;
+
+			$this->numero_compte = $numero_compte;
+			$this->label_compte = $label_compte;
+
+			$this->label_operation = $label_operation;
+			$this->subledger_account = $subledger_account;
+
+			$this->montant = $amount;
+			$this->sens = ($amount >= 0) ? 'D' : 'C';
+			$this->debit = ($amount >= 0 ? $amount : 0);
+			$this->credit = ($amount < 0 ? -$amount : 0);
+
+			$this->code_journal = $code_journal;
+			$this->journal_label = $journal_label;
+
+			$this->fk_user_author = $user->id;
+			$this->entity = $conf->entity;
+
+			$result = $this->create($user);
+			if ($result < 0) {
+				if ($this->error == 'BookkeepingRecordAlreadyExists') {
+					$warning = $langs->trans('WarningBookkeepingRecordAlreadyExists', $this->doc_type, $this->fk_doc, $this->fk_docdet);
+					$this->warnings[] = $warning;
+					dol_syslog(__METHOD__.' '.$warning, LOG_WARNING);
+				} else {
+					dol_syslog(__METHOD__.' '.$this->errorsToString(), LOG_ERR);
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 *  Return a link to the object card (with optionally the picto)
 	 *
 	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
@@ -515,7 +594,9 @@ class BookKeeping extends CommonObject
 
 		$label = '<u>'.$langs->trans("Transaction").'</u>';
 		$label .= '<br>';
-		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->piece_num;
+		$label .= '<b>'.$langs->trans('NumberingShort').':</b> '.$this->piece_num;
+		$label .= '<br>';
+		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
 
 		$url = DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num='.$this->piece_num;
 
@@ -686,6 +767,7 @@ class BookKeeping extends CommonObject
 		$sql .= 'code_journal,';
 		$sql .= 'journal_label,';
 		$sql .= 'piece_num,';
+		$sql .= 'ref,';
 		$sql .= 'entity';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(isDolTms($this->doc_date) ? "'".$this->db->idate($this->doc_date)."'" : 'NULL').',';
@@ -709,6 +791,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
+		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
@@ -781,9 +864,10 @@ class BookKeeping extends CommonObject
 		$sql .= " t.code_journal,";
 		$sql .= " t.journal_label,";
 		$sql .= " t.piece_num,";
+		$sql .= " t.ref,";
 		$sql .= " t.date_creation,";
-		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
-		if ($mode != "_tmp") {
+		// In llx_accounting_bookkeeping_tmp, date_export
+		if (!$mode) {
 			$sql .= " t.date_export,";
 		}
 		$sql .= " t.date_validated as date_validation";
@@ -827,7 +911,10 @@ class BookKeeping extends CommonObject
 				$this->journal_label = $obj->journal_label;
 				$this->piece_num = $obj->piece_num;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
-				$this->date_export = $this->db->jdate($obj->date_export);
+				if (!$mode) {
+					$this->date_export = $this->db->jdate($obj->date_export);
+				}
+				$this->ref = $obj->ref;
 				$this->date_validation = isset($obj->date_validation) ? $this->db->jdate($obj->date_validation) : '';
 			}
 			$this->db->free($resql);
@@ -897,6 +984,7 @@ class BookKeeping extends CommonObject
 			$sql .= " t.code_journal,";
 			$sql .= " t.journal_label,";
 			$sql .= " t.piece_num,";
+			$sql .= " t.ref,";
 			$sql .= " t.date_creation,";
 			$sql .= " t.date_export,";
 			$sql .= " t.date_validated as date_validation,";
@@ -1024,6 +1112,7 @@ class BookKeeping extends CommonObject
 					$line->code_journal = $obj->code_journal;
 					$line->journal_label = $obj->journal_label;
 					$line->piece_num = $obj->piece_num;
+					$line->ref = $obj->ref;
 					$line->date_creation = $this->db->jdate($obj->date_creation);
 					$line->date_export = $this->db->jdate($obj->date_export);
 					$line->date_validation = $this->db->jdate($obj->date_validation);
@@ -1875,7 +1964,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT piece_num, doc_date, code_journal, journal_label, doc_ref, doc_type,";
+		$sql = "SELECT piece_num, ref, doc_date, code_journal, journal_label, doc_ref, doc_type,";
 		$sql .= " date_creation, tms as date_modification, date_validated as date_validation, date_lim_reglement, import_key";
 		// In llx_accounting_bookkeeping_tmp, field date_export doesn't exist
 		if ($mode != "_tmp") {
@@ -1891,6 +1980,7 @@ class BookKeeping extends CommonObject
 			$obj = $this->db->fetch_object($result);
 
 			$this->piece_num = $obj->piece_num;
+			$this->ref = $obj->ref;
 			$this->code_journal = $obj->code_journal;
 			$this->journal_label = $obj->journal_label;
 			$this->doc_date = $this->db->jdate($obj->doc_date);
@@ -1945,6 +2035,58 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *  Returns the reference to the following non used Bookkeeping depending on the active numbering module
+	 *  defined into BOOKKEEPING_ADDON
+	 *
+	 *  @return string      		Bookkeeping next reference
+	 */
+	public function getNextNumRef()
+	{
+		global $langs, $conf;
+		$langs->load("accountancy");
+
+		if (getDolGlobalString('BOOKKEEPING_ADDON')) {
+			$mybool = false;
+
+			$file = getDolGlobalString('BOOKKEEPING_ADDON') . ".php";
+			$classname = getDolGlobalString('BOOKKEEPING_ADDON');
+
+			// Include file with class
+			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
+			foreach ($dirmodels as $reldir) {
+				$dir = dol_buildpath($reldir."core/modules/accountancy/");
+
+				// Load file with numbering class (if found)
+				$mybool = ((bool) @include_once $dir.$file) || $mybool;
+			}
+
+			if (!$mybool) {
+				dol_print_error(null, "Failed to include file ".$file);
+				return '';
+			}
+
+			$obj = new $classname();
+			/** @var ModeleNumRefBookkeeping $obj */
+			'@phan-var-force ModeleNumRefBookkeeping $obj';
+
+			$numref = $obj->getNextValue($this);
+
+			if ($numref != "") {
+				return $numref;
+			} else {
+				$this->error = $obj->error;
+				//dol_print_error($this->db,get_class($this)."::getNextNumRef ".$obj->error);
+				return "";
+			}
+		} else {
+			print $langs->trans("Error")." ".$langs->trans("Error_BOOKKEEPING_ADDON_NotDefined");
+			return "";
+		}
+	}
+
+
 
 	/**
 	 * Load all accounting lines related to a given transaction ID $piecenum
@@ -2101,6 +2243,13 @@ class BookKeeping extends CommonObject
 
 		$this->db->begin();
 
+		$tmpBookkeeping = new self($this->db);
+		$tmpData = $this->db->getRow("SELECT doc_date, code_journal, ref FROM {$this->db->prefix()}accounting_bookkeeping_tmp WHERE piece_num = '{$this->db->escape($piece_num)}' AND entity = {$conf->entity}");
+		$tmpBookkeeping->doc_date = $this->db->jdate($tmpData->doc_date);
+		$tmpBookkeeping->code_journal = $tmpData->code_journal;
+
+		// Ref is copied from tmp only if defined => free num ref model has been used
+		$ref = $tmpData->ref ?: $tmpBookkeeping->getNextNumRef();
 		if ($direction == 0) {
 			$next_piecenum = $this->getNextNumMvt();
 			$now = dol_now();
@@ -2121,11 +2270,11 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.' (doc_date, doc_type,';
+				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.' (doc_date, doc_type, ref,';
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num, date_creation)';
-				$sql .= ' SELECT doc_date, doc_type,';
+				$sql .= ' SELECT doc_date, doc_type,' . "'{$ref}',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, entity, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, '.((int) $next_piecenum).", '".$this->db->idate($now)."'";
@@ -2160,11 +2309,11 @@ class BookKeeping extends CommonObject
 			}
 
 			if (!$error) {
-				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'_tmp (doc_date, doc_type,';
+				$sql = 'INSERT INTO '.$this->db->prefix().$this->table_element.'_tmp (doc_date, doc_type, ref,';
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num)';
-				$sql .= ' SELECT doc_date, doc_type,';
+				$sql .= ' SELECT doc_date, doc_type,' . "'{$ref}',";
 				$sql .= ' doc_ref, fk_doc, fk_docdet, thirdparty_code, subledger_account, subledger_label,';
 				$sql .= ' numero_compte, label_compte, label_operation, debit, credit,';
 				$sql .= ' montant, sens, fk_user_author, import_key, code_journal, journal_label, piece_num';
@@ -2460,42 +2609,55 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Generate label operation when operation is transferred into accounting
+	 * Generate label operation when operation is transferred into accounting according to ACCOUNTING_LABEL_OPERATION_ON_TRANSFER
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 0, we concat thirdparty name, ref and label.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
 	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
-	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
 	{
-		global $conf;
-
 		$accountingLabelOperation = '';
 
-		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+		if (!getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER')) {
 			$truncThirdpartyName = 16;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
 			if (!empty($labelaccount)) {
 				$accountingLabelOperation .= ' - '. $labelaccount;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
 			$truncThirdpartyName = 32;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
 			$truncThirdpartyName = 64;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 		}
-		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
 
 		return $accountingLabelOperation;
 	}

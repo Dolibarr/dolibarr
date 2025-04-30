@@ -2065,45 +2065,52 @@ if ($placeid > 0) {
 				}
 				$htmlforlines .= '<td class="right">'.vatrate(price2num($line->remise_percent), true).'</td>';
 				$htmlforlines .= '<td class="right">';
+				$htmlforlines .= $line->qty;
 				if (isModEnabled('stock') && $user->hasRight('stock', 'mouvement', 'lire')) {
 					$constantforkey = 'CASHDESK_ID_WAREHOUSE'.$_SESSION["takeposterminal"];
 					if (getDolGlobalString($constantforkey) && $line->fk_product > 0 && !getDolGlobalString('TAKEPOS_HIDE_STOCK_ON_LINE')) {
-						$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
-						$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
-						$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
-						$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
-						$sql .= " WHERE ps.reel != 0";
-						$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalString($constantforkey));
-						$sql .= " AND e.entity IN (".getEntity('stock').")";
-						$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
-						$resql = $db->query($sql);
-						if ($resql) {
-							$stock_real = 0;
-							$obj = $db->fetch_object($resql);
-							if ($obj) {
-								$stock_real = price2num($obj->reel, 'MS');
+						$productChildrenNb = 0;
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+							if (empty($line->product) || !($line->product->id > 0)) {
+								$line->fetch_product();
 							}
-							$htmlforlines .= $line->qty;
-							$htmlforlines .= '&nbsp; ';
-							$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
-							$htmlforlines .= '(';
-							if ($line->qty && $line->qty > $stock_real) {
-								$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
+							if (!empty($line->product)) {
+								$productChildrenNb = $line->product->hasFatherOrChild(1);
 							}
-							$htmlforlines .= img_picto('', 'stock', 'class="pictofixedwidth"').price($stock_real, 1, '', 1, 0);
-							if ($line->qty && $line->qty > $stock_real) {
-								$htmlforlines .= "</span>";
-							}
-							$htmlforlines .= ')';
-							$htmlforlines .= '</span>';
-						} else {
-							dol_print_error($db);
 						}
-					} else {
-						$htmlforlines .= $line->qty;
+						if ($productChildrenNb == 0) {
+							$sql = "SELECT e.rowid, e.ref, e.lieu, e.fk_parent, e.statut, ps.reel, ps.rowid as product_stock_id, p.pmp";
+							$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,";
+							$sql .= " ".MAIN_DB_PREFIX."product_stock as ps";
+							$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = ps.fk_product";
+							$sql .= " WHERE ps.reel != 0";
+							$sql .= " AND ps.fk_entrepot = ".((int) getDolGlobalString($constantforkey));
+							$sql .= " AND e.entity IN (".getEntity('stock').")";
+							$sql .= " AND ps.fk_product = ".((int) $line->fk_product);
+							$resql = $db->query($sql);
+							if ($resql) {
+								$stock_real = 0;
+								$obj = $db->fetch_object($resql);
+								if ($obj) {
+									$stock_real = price2num($obj->reel, 'MS');
+								}
+								$htmlforlines .= '&nbsp; ';
+								$htmlforlines .= '<span class="opacitylow" title="'.$langs->trans("Stock").' '.price($stock_real, 1, '', 1, 0).'">';
+								$htmlforlines .= '(';
+								if ($line->qty && $line->qty > $stock_real) {
+									$htmlforlines .= '<span style="color: var(--amountremaintopaycolor)">';
+								}
+								$htmlforlines .= img_picto('', 'stock', 'class="pictofixedwidth"').price($stock_real, 1, '', 1, 0);
+								if ($line->qty && $line->qty > $stock_real) {
+									$htmlforlines .= "</span>";
+								}
+								$htmlforlines .= ')';
+								$htmlforlines .= '</span>';
+							} else {
+								dol_print_error($db);
+							}
+						}
 					}
-				} else {
-					$htmlforlines .= $line->qty;
 				}
 
 				$htmlforlines .= '</td>';

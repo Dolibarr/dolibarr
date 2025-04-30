@@ -197,7 +197,16 @@ ALTER TABLE llx_product_customer_price ADD CONSTRAINT fk_product_customer_price_
 UPDATE llx_product_customer_price SET date_begin = datec WHERE date_begin IS NULL;
 UPDATE llx_product_customer_price_log SET date_begin = datec WHERE date_begin IS NULL;
 
-ALTER TABLE llx_session ADD COLUMN date_creation datetime NOT NULL AFTER session_variable;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN ref VARCHAR(30) AFTER rowid;
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD COLUMN ref VARCHAR(30) AFTER rowid;
+
+ALTER TABLE llx_accounting_bookkeeping ADD INDEX idx_accounting_bookkeeping_ref (ref);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_ref (ref);
+
+ALTER TABLE llx_session ADD COLUMN date_creation datetime AFTER session_variable;
+UPDATE llx_session SET date_creation = NOW() WHERE date_creation IS NULL;
+-- VMYSQL4.3 ALTER TABLE llx_session MODIFY COLUMN date_creation datetime NOT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_session ALTER COLUMN date_creation SET NOT NULL;
 
 ALTER TABLE llx_accounting_account ADD COLUMN centralized tinyint DEFAULT 0 NOT NULL AFTER active;
 UPDATE llx_accounting_account as acc SET acc.centralized = 1 WHERE acc.account_number in (SELECT value  FROM llx_const WHERE name IN (__ENCRYPT('ACCOUNTING_ACCOUNT_CUSTOMER')__,__ENCRYPT('ACCOUNTING_ACCOUNT_SUPPLIER')__,__ENCRYPT('SALARIES_ACCOUNTING_ACCOUNT_PAYMENT')__,__ENCRYPT('ACCOUNTING_ACCOUNT_EXPENSEREPORT')__));
@@ -233,3 +242,47 @@ ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_input_reason FOREIGN KEY (f
 ALTER TABLE llx_website ADD COLUMN paymentframemode integer DEFAULT 0;
 ALTER TABLE llx_contratdet DROP COLUMN price_ht;
 ALTER TABLE llx_contratdet DROP COLUMN remise;
+
+ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
+
+ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
+
+ALTER TABLE llx_entrepot MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_entrepot MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_establishment MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_resource MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone_mobile varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_phone varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN user_mobile varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN personal_mobile varchar(30);
+ALTER TABLE llx_asset ADD COLUMN fk_user_valid integer;
+ALTER TABLE llx_asset ADD COLUMN date_valid datetime;
+
+CREATE TABLE llx_webhook_history(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	trigger_data text NOT NULL,
+	fk_target integer NOT NULL,
+	url integer NOT NULL,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	import_key varchar(14),
+	status integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_societe_rib ADD COLUMN cci varchar(100) after iban_prefix;    -- Interbank code for some countries like Chile
+
+-- Move permission thirdparty_paymentinformation out of advanced rights
+UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 'thirdparty_paymentinformation_advance';
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_ref;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee(ref);
+
+ALTER TABLE llx_facture_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
+
+ALTER TABLE llx_don ADD COLUMN ip varchar(250);

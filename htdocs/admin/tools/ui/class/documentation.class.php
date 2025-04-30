@@ -206,6 +206,47 @@ class Documentation
 			)
 		);
 
+
+
+		// Elements
+		$this->menu['ExperimentalUx'] = array(
+			'url' => dol_buildpath($this->baseUrl.'/experimental/index.php', 1),
+			'icon' => 'fas fa-flask',
+			'submenu' => array(
+				'ExperimentalUxIntroductionMenu' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(
+						'Index' => '#top',
+						'ExperimentalUxIntroductionTitle' => '#experimental-ux-introduction',
+						'ExperimentalUxContributionTitle' => '#experimental-ux-contribution',
+					),
+				),
+
+				'ExperimentalUxFreezeTooltip' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/freeze-tooltip/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+
+				'ExperimentalUxInputAjaxFeedback' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/input-feedback/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+
+				'ExperimentalUxIntuitiveSelect' => array(
+					'url' => dol_buildpath($this->baseUrl.'/experimental/experiments/intuitive-select/index.php', 1),
+					'icon' => 'fas fa-flask',
+					'submenu' => array(),
+					'summary' => array(),
+				),
+			)
+		);
+
 		$parameters = array(
 			'baseUrl' => $this->baseUrl,
 		);
@@ -263,7 +304,7 @@ class Documentation
 	/**
 	 * Output sidebar
 	 *
-	 * @return void
+	 * @return 	void
 	 */
 	public function showSidebar()
 	{
@@ -412,7 +453,7 @@ class Documentation
 		if ($showsubmenu && !empty($menu['submenu'])) {
 			foreach ($menu['submenu'] as $key => $item) {
 				print '<li class="summary-title ">';
-					print '<h3 class="level-'.$level.'">'.$key.'</h3>';
+					print '<h3 class="level-'.$level.'">'.$langs->trans($key).'</h3>';
 				if ($showsubmenu_summary) {
 					$this->displaySummary($item, $level);
 				}
