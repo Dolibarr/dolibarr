@@ -7,6 +7,7 @@
  * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Charlene Benke          <charlene@patas-monkey.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -2823,5 +2824,164 @@ class Setup extends DolibarrApi
 		sort($conf->modules);
 
 		return $this->_cleanObjectDatas($conf->modules);
+	}
+
+		/**
+	 * Get list of modules with status and origin
+	 *
+	 * @url	GET /modules/status/{origin}
+	 *
+	 * @param	string			$statut	"all", "active", "disabled"
+	 * @param	string			$origin	Origin of the module (all, core, external)
+	 * @return  array|mixed Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 */
+	public function getModulesList($statut = "active", $origin = 'all')
+	{
+		global $db;
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
+		}
+
+		$filename = array();
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			// Load modules attributes in arrays (name, numero, orders) from dir directory
+			//print $dir."\n<br>";
+			dol_syslog("Scan directory ".$dir." for module descriptor files (modXXX.class.php)");
+			$handle = @opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					//print "$i ".$file."\n<br>";
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						$modName = substr($file, 0, dol_strlen($file) - 10);
+						include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+						if (class_exists($modName)) {
+							
+							$objMod = new $modName($db);
+							$moduleName = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+							$publisher = dol_escape_htmltag($objMod->getPublisher());
+							$external = ($objMod->isCoreOrExternalModule() == 'external');
+							$active = getDolGlobalString('MAIN_MODULE_'.$moduleName);
+							$version = $objMod->version;
+							if ($statut != 'all') {
+								if ($statut == 'active' && $active == "") {
+								  	continue;
+								} elseif ($statut == 'disabled' && $active == 1) {
+								 	continue;
+								}
+							}
+							if ($origin != 'all') {
+								if ($origin == 'external' && !$external) {
+									continue;
+								} elseif ($origin == 'core' && $external) {
+									continue;
+								}
+							}
+
+							$filename[$moduleName] = array(
+								'modName' => $modName,
+								'origin' => $external ? 'external' : 'core',
+								'active' => $active,
+								'publisher' => $publisher,
+								'version' => $version
+							);
+						}
+					}
+				}
+			}
+		}
+		return $this->_cleanObjectDatas($filename);
+	}
+
+	/**
+	 * Post enable module
+	 *
+	 * @url	POST /modules/{modulename}/enable
+	 *
+	 * @param	string			$modulename name of the module
+	 * @return  array|mixed Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 */
+	public function enableModules($modulename)
+	{
+		global $db;
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
+		}
+
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			$handle = @opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						// print $modulename. "==".substr($file, 0, dol_strlen($file) - 10)."\n";
+						if ($modulename == substr($file, 0, dol_strlen($file) - 10)) {
+							$modName = substr($file, 0, dol_strlen($file) - 10);
+							include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+							if (class_exists($modName)) {
+								$objMod = new $modName($db);
+								//$name = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+								activateModule($modulename);
+								return array('result' => 'success', 'message' => 'Module activated');
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return array('result' => 'error', 'message' => 'Module not found');
+	}
+	/**
+	 * Post enable module
+	 *
+	 * @url	POST /modules/{modulename}/disable
+	 *
+	 * @param	string			$modulename name of the module
+	 * @return  array|mixed Data without useless information
+	 *
+	 * @throws RestException 403 Forbidden
+	 */
+
+	public function disableModules($modulename)
+	{
+		global $db;
+
+		if (!DolibarrApiAccess::$user->admin
+			&& (!getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES') || DolibarrApiAccess::$user->login != getDolGlobalString('API_LOGINS_ALLOWED_FOR_GET_MODULES'))) {
+			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_GET_MODULES');
+		}
+
+		$modulesdir = dolGetModulesDirs();
+		foreach ($modulesdir as $dir) {
+			$handle = @opendir($dir);
+			if (is_resource($handle)) {
+				while (($file = readdir($handle)) !== false) {
+					if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, dol_strlen($file) - 10) == '.class.php') {
+						// print $modulename. "==".substr($file, 0, dol_strlen($file) - 10)."\n";
+						if ($modulename == substr($file, 0, dol_strlen($file) - 10)) {
+							$modName = substr($file, 0, dol_strlen($file) - 10);
+							include_once $dir.$file; // A class already exists in a different file will send a non catchable fatal error.
+							if (class_exists($modName)) {
+								$objMod = new $modName($db);
+								//$name = strtoupper(preg_replace('/^mod/i', '', get_class($objMod)));
+								unActivateModule($modulename);
+								return array('result' => 'success', 'message' => 'Module desactivated');
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return array('result' => 'error', 'message' => 'Module not found');
 	}
 }
