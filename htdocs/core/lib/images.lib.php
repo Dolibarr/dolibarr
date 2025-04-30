@@ -80,7 +80,7 @@ function getListOfPossibleImageExt($acceptsvg = 0)
  *
  *      @param	string	$file       Filename
  *      @param	int		$acceptsvg	0=Default (depends on setup), 1=Always accept SVG as image files
- *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported by this PHP
+ *      @return int         		-1=Not image filename, 0=Image filename but format not supported for conversion by PHP, 1=Image filename with format supported in conversion by this PHP
  */
 function image_format_supported($file, $acceptsvg = 0)
 {

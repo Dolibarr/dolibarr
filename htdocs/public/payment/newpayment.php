@@ -52,7 +52,7 @@ if (!defined('NOBROWSERNOTIF')) {
 }
 
 if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
-		define('XFRAMEOPTIONS_ALLOWALL', '1');
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
 }
 
 // For MultiCompany module.
@@ -68,6 +68,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorboothattendee.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
@@ -132,7 +133,7 @@ if (!$action) {
 
 
 $thirdparty = null; // Init for static analysis
-$istrpecu = null; // Init for static analysis
+$stripecu = null; // Init for static analysis
 $paymentintent = null; // Init for static analysis
 
 // Load data required later for actions and view
@@ -221,6 +222,22 @@ foreach ($_POST as $key => $val) {
 	}
 }
 
+// Complete urls for post treatment
+$ref = $REF = GETPOST('ref', 'alpha');
+$TAG = GETPOST("tag", 'alpha');
+$FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more information
+$SECUREKEY = GETPOST("securekey"); // Secure key
+$PAYPAL_API_OK = "";
+$PAYPAL_API_KO = "";
+$PAYPAL_API_SANDBOX = "";
+$PAYPAL_API_USER = "";
+$PAYPAL_API_PASSWORD = "";
+$PAYPAL_API_SIGNATURE = "";
+
+$reg = array();
+if (empty($ws) && preg_match('/WS=([^=&]+)/', $FULLTAG, $reg)) {
+	$ws = $reg[1];
+}
 
 // Define $urlwithroot
 //$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
@@ -238,23 +255,11 @@ if ($ws && !defined('USEDOLIBARRSERVER') && !defined('USEDOLIBARREDITOR')) {	// 
 	$urlko = $tmpwebsite->virtualhost.'/public/payment/paymentko.php?';
 }
 
-// Complete urls for post treatment
-$ref = $REF = GETPOST('ref', 'alpha');
-$TAG = GETPOST("tag", 'alpha');
-$FULLTAG = GETPOST("fulltag", 'alpha'); // fulltag is tag with more information
-$SECUREKEY = GETPOST("securekey"); // Secure key
-$PAYPAL_API_OK = "";
-$PAYPAL_API_KO = "";
-$PAYPAL_API_SANDBOX = "";
-$PAYPAL_API_USER = "";
-$PAYPAL_API_PASSWORD = "";
-$PAYPAL_API_SIGNATURE = "";
-
 if ($paymentmethod && !preg_match('/'.preg_quote('PM='.$paymentmethod, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'PM='.$paymentmethod;
 }
 
-if ($ws) {
+if ($ws && !preg_match('/'.preg_quote('WS='.$ws, '/').'/', $FULLTAG)) {
 	$FULLTAG .= ($FULLTAG ? '.' : '').'WS='.$ws;
 }
 
@@ -359,10 +364,10 @@ if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 				$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN') . $source.$REF, $SECUREKEY, '2');
 			}
 		} else {
-			$tokenisok = dol_verifyHash($conf->global->PAYMENT_SECURITY_TOKEN, $SECUREKEY, '2');
+			$tokenisok = dol_verifyHash(getDolGlobalString('PAYMENT_SECURITY_TOKEN'), $SECUREKEY, '2');
 		}
 	} else {
-		$tokenisok = ($conf->global->PAYMENT_SECURITY_TOKEN == $SECUREKEY);
+		$tokenisok = (getDolGlobalString('PAYMENT_SECURITY_TOKEN') == $SECUREKEY);
 	}
 
 	if (! $tokenisok) {
@@ -370,6 +375,7 @@ if (getDolGlobalString('PAYMENT_SECURITY_TOKEN')) {
 			$valid = false; // PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is for backward compatibility
 		} else {
 			dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING);
+			dol_syslog("Warning: PAYMENT_SECURITY_ACCEPT_ANY_TOKEN is on", LOG_WARNING, 0, '_payment');
 		}
 	}
 
@@ -407,7 +413,9 @@ $mesg = '';
  */
 
 // First log into the dolibarr_payment.log file
-dol_syslog("--- newpayment.php action = ".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
+dol_syslog("--- newpayment.php action=".$action." paymentmethod=".$paymentmethod.' amount='.$amount.' newamount='.GETPOST("newamount", 'alpha'), LOG_DEBUG, 0, '_payment');
+
+dol_syslog("fulltag=".GETPOST("fulltag", 'alpha')." ws=".$ws." urlok=".$urlok, LOG_DEBUG, 0, '_payment');
 
 // Action dopayment is called after clicking/choosing the payment mode
 if ($action == 'dopayment') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
@@ -446,6 +454,7 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 
 		if (empty($mesg)) {
 			dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG);
+			dol_syslog("newpayment.php call paypal api and do redirect", LOG_DEBUG, 0, '_payment');
 
 			// Other
 			$PAYPAL_API_DEVISE = "USD";
@@ -455,27 +464,29 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 
 			// Show var initialized by inclusion of paypal lib at start of this file
 			dol_syslog("Submit Paypal form", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_PASSWORD: ".preg_replace('/./', '*', $PAYPAL_API_PASSWORD), LOG_DEBUG); // No password into log files
-			dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG);
-			dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG);
-			// All those fields may be empty when making a payment for a free amount for example
-			dol_syslog("shipToName: $shipToName", LOG_DEBUG);
-			dol_syslog("shipToStreet: $shipToStreet", LOG_DEBUG);
-			dol_syslog("shipToCity: $shipToCity", LOG_DEBUG);
-			dol_syslog("shipToState: $shipToState", LOG_DEBUG);
-			dol_syslog("shipToCountryCode: $shipToCountryCode", LOG_DEBUG);
-			dol_syslog("shipToZip: $shipToZip", LOG_DEBUG);
-			dol_syslog("shipToStreet2: $shipToStreet2", LOG_DEBUG);
-			dol_syslog("phoneNum: $phoneNum", LOG_DEBUG);
-			dol_syslog("email: $email", LOG_DEBUG);
-			dol_syslog("desc: $desc", LOG_DEBUG);
+			dol_syslog("Submit Paypal form", LOG_DEBUG, 0, '_payment');
 
-			dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG); // If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
+			dol_syslog("PAYPAL_API_USER: $PAYPAL_API_USER", LOG_DEBUG, 0, '_payment');
+			dol_syslog("PAYPAL_API_PASSWORD: ".preg_replace('/./', '*', $PAYPAL_API_PASSWORD), LOG_DEBUG, 0, '_payment'); // No password into log files
+			dol_syslog("PAYPAL_API_SIGNATURE: $PAYPAL_API_SIGNATURE", LOG_DEBUG, 0, '_payment');
+			dol_syslog("PAYPAL_API_SANDBOX: $PAYPAL_API_SANDBOX", LOG_DEBUG, 0, '_payment');
+			dol_syslog("PAYPAL_API_OK: $PAYPAL_API_OK", LOG_DEBUG, 0, '_payment');
+			dol_syslog("PAYPAL_API_KO: $PAYPAL_API_KO", LOG_DEBUG, 0, '_payment');
+			dol_syslog("PAYPAL_API_PRICE: $PAYPAL_API_PRICE", LOG_DEBUG, 0, '_payment');
+			dol_syslog("PAYPAL_API_DEVISE: $PAYPAL_API_DEVISE", LOG_DEBUG, 0, '_payment');
+			// All those fields may be empty when making a payment for a free amount for example
+			dol_syslog("shipToName: $shipToName", LOG_DEBUG, 0, '_payment');
+			dol_syslog("shipToStreet: $shipToStreet", LOG_DEBUG, 0, '_payment');
+			dol_syslog("shipToCity: $shipToCity", LOG_DEBUG, 0, '_payment');
+			dol_syslog("shipToState: $shipToState", LOG_DEBUG, 0, '_payment');
+			dol_syslog("shipToCountryCode: $shipToCountryCode", LOG_DEBUG, 0, '_payment');
+			dol_syslog("shipToZip: $shipToZip", LOG_DEBUG, 0, '_payment');
+			dol_syslog("shipToStreet2: $shipToStreet2", LOG_DEBUG, 0, '_payment');
+			dol_syslog("phoneNum: $phoneNum", LOG_DEBUG, 0, '_payment');
+			dol_syslog("email: $email", LOG_DEBUG, 0, '_payment');
+			dol_syslog("desc: $desc", LOG_DEBUG, 0, '_payment');
+
+			dol_syslog("SCRIPT_URI: ".(empty($_SERVER["SCRIPT_URI"]) ? '' : $_SERVER["SCRIPT_URI"]), LOG_DEBUG, 0, '_payment'); // If defined script uri must match domain of PAYPAL_API_OK and PAYPAL_API_KO
 
 			// A redirect is added if API call successful
 			$mesg = print_paypal_redirect($PAYPAL_API_PRICE, $PAYPAL_API_DEVISE, $PAYPAL_PAYMENT_TYPE, $PAYPAL_API_OK, $PAYPAL_API_KO, $FULLTAG);
@@ -511,7 +522,7 @@ if ($action == 'dopayment') {	// Test on permission not required here (anonymous
 		}
 
 		if (empty($mesg)) {
-			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG);
+			dol_syslog("newpayment.php call paybox api and do redirect", LOG_DEBUG, 0, '_payment');
 
 			include_once DOL_DOCUMENT_ROOT.'/paybox/lib/paybox.lib.php';
 			print_paybox_redirect((float) $PRICE, $conf->currency, $email, $urlok, $urlko, $FULLTAG);
@@ -545,7 +556,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		$amountstripe *= 100;
 	}
 
-	dol_syslog("--- newpayment.php Execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
+	dol_syslog("newpayment.php execute action = ".$action." STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION'), LOG_DEBUG, 0, '_payment');
 	dol_syslog("GET=".var_export($_GET, true), LOG_DEBUG, 0, '_payment');
 	dol_syslog("POST=".var_export($_POST, true), LOG_DEBUG, 0, '_payment');
 
@@ -778,6 +789,18 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			setEventMessages($e->getMessage(), null, 'errors');
 			$action = '';
 		}
+
+		if ($error) {
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
+			$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between newpayment.php to paymentko.php
+
+			$urlko .= '&paymentkosessioncode='.urlencode($randomseckey);
+		} else {
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
+			$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between newpayment.php to paymentok.php
+
+			$urlok .= '&paymentoksessioncode='.urlencode($randomseckey);
+		}
 	}
 
 	// When using the PaymentIntent API architecture (mode set on by default into conf.class.php)
@@ -792,7 +815,7 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 		$stripe = new Stripe($db);
 		$stripeacc = $stripe->getStripeAccount($service);
 
-		// We go here if $conf->global->STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION is set.
+		// We go here if getDolGlobalString('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION') is set.
 		// In such a case, payment is always ok when we call the "charge" action.
 		$paymentintent_id = GETPOST("paymentintent_id", "alpha");
 
@@ -820,16 +843,23 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 			dol_syslog($errormessage, LOG_WARNING, 0, '_payment');
 			setEventMessages($paymentintent->status, null, 'errors');
 			$action = '';
+
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
+			$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between newpayment.php to paymentko.php
+
+			$urlko .= '&paymentkosessioncode='.urlencode($randomseckey);
 		} else {
-			// TODO We can also record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
+			// We can also record the payment mode into llx_societe_rib with stripe $paymentintent->payment_method
 			// Note that with other old Stripe architecture (using Charge API), the payment mode was not recorded, so it is not mandatory to do it here.
-			//dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_payment');
+			// dol_syslog("Create payment_method for ".$paymentintent->payment_method, LOG_DEBUG, 0, '_payment');
 
 			// Get here amount and currency used for payment and force value into $amount and $currency so the real amount is saved into session instead
 			// of the amount and currency retrieved from the POST.
-			if (!empty($paymentintent->currency) && !empty($paymentintent->amount)) {
+			$amount = $paymentintent->amount;
+			$currency = '';
+
+			if (!empty($paymentintent->currency)) {
 				$currency = strtoupper($paymentintent->currency);
-				$amount = $paymentintent->amount;
 
 				// Correct the amount according to unit of currency
 				// See https://support.stripe.com/questions/which-zero-decimal-currencies-does-stripe-support
@@ -838,6 +868,13 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 					$amount /= 100;
 				}
 			}
+
+			dol_syslog("StatusOfRetrievedIntent is succeeded for amount = ".$amount." currency = ".$currency, LOG_DEBUG, 0, '_payment');
+
+			$randomseckey = getRandomPassword(true, null, 20);		// TODO Generate a key including fulltag to avoid forging URL.
+			$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between newpayment.php to paymentok.php
+
+			$urlok .= '&paymentoksessioncode='.urlencode($randomseckey);
 		}
 	}
 
@@ -854,7 +891,8 @@ if ($action == 'charge' && isModEnabled('stripe')) {	// Test on permission not r
 	$_SESSION['errormessage'] = $errormessage;
 
 	dol_syslog("Action charge stripe STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION=".getDolGlobalInt('STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION')." ip=".$remoteip, LOG_DEBUG, 0, '_payment');
-	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_payment');
+	dol_syslog("onlinetoken=".$_SESSION["onlinetoken"]." paymentoksessioncode=".$_SESSION["paymentoksessioncode"]." paymentkosessioncode=".$_SESSION["paymentkosessioncode"], LOG_DEBUG, 0, '_payment');
+	dol_syslog("FinalPaymentAmt=".$_SESSION["FinalPaymentAmt"]." currencyCodeType=".$_SESSION["currencyCodeType"]." payerID=".$_SESSION['payerID']." TRANSACTIONID=".$_SESSION['TRANSACTIONID'], LOG_DEBUG, 0, '_payment');
 	dol_syslog("FULLTAG=".$FULLTAG, LOG_DEBUG, 0, '_payment');
 	dol_syslog("error=".$error." errormessage=".$errormessage, LOG_DEBUG, 0, '_payment');
 	dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
@@ -1014,7 +1052,8 @@ print '<table id="dolpublictable" summary="Payment form" class="center">'."\n";
 $text = '';
 if (getDolGlobalString('PAYMENT_NEWFORM_TEXT')) {
 	$langs->load("members");
-	if (preg_match('/^\((.*)\)$/', $conf->global->PAYMENT_NEWFORM_TEXT, $reg)) {
+	$reg = array();
+	if (preg_match('/^\((.*)\)$/', getDolGlobalString('PAYMENT_NEWFORM_TEXT'), $reg)) {
 		$text .= $langs->trans($reg[1])."<br>\n";
 	} else {
 		$text .= getDolGlobalString('PAYMENT_NEWFORM_TEXT') . "<br>\n";

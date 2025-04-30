@@ -201,7 +201,7 @@ if (isModEnabled('category')) {
 if (GETPOSTISARRAY('search_status') || GETPOST('search_status_multiselect')) {
 	$search_status = implode(',', GETPOST('search_status', 'array:intcomma'));
 } else {
-	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : '0,1');
+	$search_status = (GETPOST('search_status', 'intcomma') != '' ? GETPOST('search_status', 'intcomma') : (GETPOSTISSET('search_all') ? '' : '0,1'));
 }
 
 $search_option = GETPOST('search_option', 'alpha');
