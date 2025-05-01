@@ -1191,7 +1191,8 @@ class Contact extends CommonObject
 
 				return $this->id;
 			} else {
-				$this->error = $langs->trans("RecordNotFound");
+				$langs->load('errors');
+				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
 		} else {
