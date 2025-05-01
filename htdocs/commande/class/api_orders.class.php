@@ -372,7 +372,7 @@ class Orders extends DolibarrApi
 	 *
 	 * @url    GET {id}/lines/{lineid}
 	 *
-	 * @return array
+	 * @return Object
 	 */
 	public function getLine($id, $lineid, $properties = '')
 	{
