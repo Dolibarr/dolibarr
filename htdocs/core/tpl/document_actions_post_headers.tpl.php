@@ -198,7 +198,7 @@ $formfile->list_of_documents(
 );
 
 
-print "<br><br>";
+print "<br>";
 
 
 //List of links

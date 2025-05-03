@@ -1811,7 +1811,11 @@ class ActionComm extends CommonObject
 			$labelshort = '';
 		} else {
 			if (getDolGlobalString('AGENDA_USE_EVENT_TYPE') && empty($label)) {
-				$label = $labeltype;
+				if (empty($this->label)) {
+					$label = $labeltype;
+				} else {
+					$label = $this->label;
+				}
 			}
 			if ($maxlength < 0) {
 				$labelshort = $this->ref;

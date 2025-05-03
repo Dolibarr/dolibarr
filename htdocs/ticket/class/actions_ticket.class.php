@@ -346,7 +346,8 @@ class ActionsTicket extends CommonHookActions
 					$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id';
 					$sql .= ', ecm.filepath, ecm.filename, ecm.share';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
-					$sql .= " WHERE ecm.filepath = 'agenda/".$arraymsgs['id']."'";
+					$sql .= " WHERE ecm.filepath = 'agenda/".(int) $arraymsgs['id']."'";
+					$sql .= " OR (ecm.agenda_id = ".(int) $arraymsgs['id']." AND ecm.src_object_type = 'ticket' AND ecm.src_object_id = ".(int) $this->dao->id.")";
 					$sql .= ' ORDER BY ecm.position ASC';
 
 					$resql = $this->db->query($sql);

@@ -2609,7 +2609,7 @@ function dol_compress_file($inputfile, $outputfile, $mode = "gz", &$errorstring 
 /**
  * Uncompress a file
  *
- * @param 	string 	$inputfile		File to uncompress
+ * @param 	string 	$inputfile		File (.zip, .gz, .bz2, .zst, ...) to uncompress
  * @param 	string	$outputdir		Target dir name
  * @return 	array{error?:string}	array('error'=>'Error code') or array() if no error
  * @see dol_compress_file(), dol_compress_dir()
@@ -3637,7 +3637,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					$accessallowed = 1;
 				}
 			}
-			if ($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) {
+			if (($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) || ($fuser->hasRight($modulepart, 'all', $lire) || $fuser->hasRight($modulepart, 'all', $read))) {
 				$accessallowed = 1;
 			}
 

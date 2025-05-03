@@ -403,38 +403,38 @@ function isModEnabled($module)
  */
 function getWarningDelay($module, $parmlevel1, $parmlevel2 = '')
 {
-		global $conf;
+	global $conf;
 
-		// For compatibility with bad naming on module
-		$moduletomoduletouse = array(
-			'invoice' => 'facture',
-		);
-		$moduleParmsMapping = array(
-			'product' => 'produit',
-		);
+	// For compatibility with bad naming on module
+	$moduletomoduletouse = array(
+		'invoice' => 'facture',
+	);
+	$moduleParmsMapping = array(
+		'product' => 'produit',
+	);
 
-		if (!empty($moduletomoduletouse[$module])) {
-			$module = $moduletomoduletouse[$module];
-		}
+	if (!empty($moduletomoduletouse[$module])) {
+		$module = $moduletomoduletouse[$module];
+	}
 
-		$warningDelayPath = $parmlevel1;
-		if (!empty($moduleParmsMapping[$warningDelayPath])) {
-			$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
-		}
+	$warningDelayPath = $parmlevel1;
+	if (!empty($moduleParmsMapping[$warningDelayPath])) {
+		$warningDelayPath = $moduleParmsMapping[$warningDelayPath];
+	}
 
-		if ($parmlevel2) {
-			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-				if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
-					return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
-				}
-			}
-		} else {
-			if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
-				return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+	if ($parmlevel2) {
+		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+			if (!empty($conf->$module->$warningDelayPath->$parmlevel2->warning_delay)) {
+				return (int) $conf->$module->$warningDelayPath->$parmlevel2->warning_delay;
 			}
 		}
+	} else {
+		if (!empty($conf->$module->$warningDelayPath->warning_delay)) {
+			return (int) $conf->$module->$warningDelayPath->$parmlevel1->warning_delay;
+		}
+	}
 
-		return 0;
+	return 0;
 }
 
 /**
@@ -1870,7 +1870,7 @@ function dol_sanitizeKeyCode($str)
 /**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
- *	@param	string	$str			String to clean
+ *	@param	string	$str			String to clean. Must be an ascii or utf8 string without any htmlentities.
  *	@return string   	       		Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_nospecial()
@@ -2595,7 +2595,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename =
 					$data['ip'] .= (($j == 1) ? ' [via ' : ',').$remoteip;
 				}
 				$data['ip'] .= (($j > 0) ? ']' : '');
-			} elseif (!empty($_SERVER['HTTP_CLIENT_IP']) ) {
+			} elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
 				$tmpips = explode(',', $_SERVER['HTTP_CLIENT_IP']);
 				$data['ip'] = '';
 				$foundremoteip = 0;
@@ -6680,7 +6680,7 @@ function print_fiche_titre($title, $mesg = '', $picto = 'generic', $pictoisfullp
 /**
  *	Load a title with picto
  *
- *	@param	string	$title				Title to show (HTML sanitized content)
+ *	@param	string	$title				Title to show (HTML sanitized content). Can be a string with a <br> as a substring.
  *	@param	string	$morehtmlright		Added message to show on right
  *	@param	string	$picto				Icon to use before title (should be a 32x32 transparent png file)
  *	@param	int<0,1>	$pictoisfullpath	1=Icon name is a full absolute url of image
@@ -7258,9 +7258,30 @@ function price2num($amount, $rounding = '', $option = 0)
 		}
 		//print "QQ".$amount."<br>\n";
 
-		// Now make replace (the main goal of function)
+		// Now make replaceents (the main goal of function)
+
 		if ($thousand != ',' && $thousand != '.') {
-			$amount = str_replace(',', '.', $amount); // To accept 2 notations for french users
+			// Accept the two types of decimal points french users (i.e., using ' ' for thousands)
+
+			// REGEX: Find the integral and decimal parts.
+			//
+			// We require that the decimal point only appears once in $amount.
+			// The regex `/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u` can be broken down as follows:
+			// - `(?<int>[^,]*,|[^.]*\.)` is any accepted sequence up to the last potential decimal point '.' or ',' and named `int`.
+			//   It covers two cases:
+			//   - `[^,]*,`: Any sequence of characters that is not ',' with ',' accepted as the decimal point (from start of string because of earlier `^`);
+			//   - `[^.]*\.`: Any sequence of characters that is not a '.' with '.' accepted as the decimal point (from start of string.
+			// - `(?<dec>[^.,]*)`: The sequence after the character accepted as the decimal point, not including it.
+			if (preg_match('/^(?<int>[^,]*,|[^.]*\.)(?<dec>[^.,]*)$/u', $amount, $matches)) {
+				$intPart = $matches['int'];
+				$decPart = $matches['dec'];
+
+				// Remove all commas and dots from intPart
+				$intPart = str_replace(['.', ','], '', $intPart);
+
+				// Combine intPart and decPart with a dot
+				$amount = $intPart . $dec . $decPart;
+			}
 		}
 
 		$amount = str_replace(' ', '', $amount); // To avoid spaces
@@ -8408,6 +8429,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed = 1, $pagecodeto =
 
 /**
  *	Clean a string to keep only desirable HTML tags.
+ *  Complementary of dol_string_onlythesehtmlattributes().
  *  WARNING: This also clean HTML comments (because they can be used to obfuscate tag name).
  *
  *	@param	string		$stringtoclean			String to clean
@@ -8512,7 +8534,7 @@ function dol_string_onlythesehtmltags($stringtoclean, $cleanalsosomestyles = 1, 
  *  @param	string[]	$allowed_attributes	Array of tags not allowed
  *	@return string	    					String cleaned
  *
- * 	@see	dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
+ * 	@see	dol_htmlwithnojs() dol_escape_htmltag() strip_tags() dol_string_nohtmltag() dol_string_onlythesehtmltags() dol_string_neverthesehtmltags()
  * 	@phan-suppress PhanUndeclaredProperty
  */
 function dol_string_onlythesehtmlattributes($stringtoclean, $allowed_attributes = null)
@@ -12122,16 +12144,23 @@ function dolExplodeKeepIfQuotes($input)
 		 * @return string
 		 */
 		static function ($a, $b, $c) {
-			if ($a !== '') return $a;
-			if ($b !== '') return $b;
-			if ($c !== '') return $c;
+			if ($a !== '') {
+				return $a;
+			}
+			if ($b !== '') {
+				return $b;
+			}
+			if ($c !== '') {
+				return $c;
+			}
 			return '';
 		},
 		$matches[1],
 		$matches[2],
 		$matches[3]
 	);
-	return array_values(array_filter($result,
+	return array_values(array_filter(
+		$result,
 		/**
 		 * Filter out empty strings from the result array.
 		 *
@@ -12140,7 +12169,8 @@ function dolExplodeKeepIfQuotes($input)
 		 */
 		static function ($val) {
 			return $val !== '';
-		}));
+		}
+	));
 }
 
 
@@ -13681,6 +13711,11 @@ function getElementProperties($elementType)
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+	} elseif ($elementType == 'bank_line') {
+		$classpath = 'compta/bank/class';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$classfile = 'account';
+		$classname = 'AccountLine';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -13700,7 +13735,7 @@ function getElementProperties($elementType)
 		$classpath = 'product/inventory/class';
 		$table_element = 'inventorydet';
 		$parent_element = 'inventory';
-	} elseif ($elementType == 'stock' || $elementType == 'entrepot') {
+	} elseif ($elementType == 'stock' || $elementType == 'entrepot' || $elementType == 'warehouse') {
 		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -13786,6 +13821,7 @@ function getElementProperties($elementType)
 		$classpath = 'supplier_proposal/class';
 		$module = 'supplier_proposal';
 		$classfile = 'supplier_proposal';
+		$classname = 'SupplierProposalLine';
 		$table_element = 'supplier_proposaldet';
 		$parent_element = 'supplier_proposal';
 	} elseif ($elementType == 'contract') {
@@ -13853,7 +13889,7 @@ function getElementProperties($elementType)
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
+	} elseif ($elementType == 'order_supplier' || $elementType == 'supplier_order' ||$elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -13870,7 +13906,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -13912,7 +13948,7 @@ function getElementProperties($elementType)
 		$classfile = 'societeaccount';
 		$classname = 'SocieteAccount';
 		$module = 'societe';
-	} elseif ($elementType == 'websitepage') {
+	} elseif ($elementType == 'websitepage' || $elementType == 'website_page') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
@@ -13963,14 +13999,29 @@ function getElementProperties($elementType)
 		$classname = 'Ecmfiles';
 		$table_element = 'ecmfiles';
 		$subelement = '';
-	} elseif ($elementType == 'knowledgerecord') {
+	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
 		$module = '';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
+	} elseif ($elementType == 'customer') {
+		$module = 'thirdparty';
+		$classpath = 'societe/class';
+		$classfile = 'client';
+		$classname = 'Client';
+		$table_element = 'societe';
+		$subelement = '';
+	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
+		$module = 'thirdparty';
+		$classpath = 'fourn/class';
+		$classfile = 'fournisseur';
+		$classname = 'Fournisseur';
+		$table_element = 'societe';
+		$subelement = '';
 	}
+
 
 	if (empty($classfile)) {
 		$classfile = strtolower($subelement);
@@ -14826,10 +14877,11 @@ function getActionCommEcmList($object)
 
 	$documents = array();
 
-	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename';
+	$sql = 'SELECT ecm.rowid as id, ecm.src_object_type, ecm.src_object_id, ecm.filepath, ecm.filename, ecm.agenda_id';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'ecm_files ecm';
 	$sql .= " WHERE ecm.filepath = 'agenda/".((int) $object->id)."'";
 	//$sql.= " ecm.src_object_type = '".$db->escape($object->element)."' AND ecm.src_object_id = ".((int) $object->id); // Old version didn't add object_type during upload
+	$sql.= ' OR ecm.agenda_id = '.(int) $object->id;
 	$sql .= ' ORDER BY ecm.position ASC';
 
 	$resql = $db->query($sql);
@@ -15549,10 +15601,21 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 					$filePath = DOL_DATA_ROOT.'/'.$doc->filepath.'/'.$doc->filename;
 					$mime = dol_mimetype($filePath);
-					$file = $actionstatic->id.'/'.$doc->filename;
-					$thumb = $actionstatic->id.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
-					$doclink = dol_buildpath('document.php', 1).'?modulepart=actions&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
-					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart=actions&file='.urlencode($thumb).'&entity='.$conf->entity;
+					if (empty($doc->agenda_id)) {
+						$dir_ref = $actionstatic->id;
+						$modulepart = 'actions';
+					} else {
+						$split_dir = explode('/', $doc->filepath);
+						$modulepart = array_shift($split_dir);
+						$dir_ref = implode('/', $split_dir);
+					}
+
+					$file = $dir_ref.'/'.$doc->filename;
+					$thumb = $dir_ref.'/thumbs/'.substr($doc->filename, 0, strrpos($doc->filename, '.')).'_mini'.substr($doc->filename, strrpos($doc->filename, '.'));
+					$doclink = dol_buildpath('document.php', 1).'?modulepart='.$modulepart.'&attachment=0&file='.urlencode($file).'&entity='.$conf->entity;
+					$viewlink = dol_buildpath('viewimage.php', 1).'?modulepart='.$modulepart.'&file='.urlencode($thumb).'&entity='.$conf->entity;
+
+
 
 					$mimeAttr = ' mime="'.$mime.'" ';
 					$class = '';
@@ -15709,6 +15772,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
+		if (is_object($db)) {
+			$db->close();
+		}
 	}
 	exit(0);
 }

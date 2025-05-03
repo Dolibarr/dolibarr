@@ -56,10 +56,14 @@ if (empty($htmlname)) {
 @phan-var-force string          $showlinktoai
 @phan-var-force string          $showlinktoailabel
 @phan-var-force ?string         $out
+@phan-var-force ?string         $morecss
 ';
 
 if (!isset($out)) {	// Init to empty string if not defined
 	$out = '';
+}
+if (!isset($morecss)) {	// Init to empty string if not defined
+	$morecss = '';
 }
 
 // Add link to add layout
@@ -85,7 +89,7 @@ if ($showlinktolayout) {	// May be set only if MAIN_EMAIL_USE_LAYOUT is set
 // Add link to add AI content
 if ($showlinktoai) {
 	// TODO Diff between showlinktoai and htmlname ? Why not using one key only ?
-	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink marginrightonly">';
+	$out .= '<a href="#" id="linkforaiprompt'.$showlinktoai.'" class="notasortlink inline-block alink '.$morecss.'">';
 	$out .= img_picto($showlinktoailabel, 'ai', 'class="paddingrightonly"');
 	$out .= '<span class="hideobject hideonsmartphone">'.$showlinktoailabel.'...</span>';
 	$out .= '</a>';
@@ -123,6 +127,11 @@ if ($showlinktolayout) {
 	if (!empty($formwebsite) && is_object($formwebsite)) {
 		$out .= $formwebsite->getContentPageTemplate($htmlname);
 	} else {
+		if (!is_object($formmail)) {
+			// Create form object
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$formmail = new FormMail($db);
+		}
 		$out .= $formmail->getModelEmailTemplate($htmlname, $showlinktolayout);
 	}
 } else {
