@@ -1117,7 +1117,7 @@ class Don extends CommonObject
 
 			$classname = $modele;
 			$obj = new $classname($this->db);
-
+			/** @var ModeleDon $obj */
 			'@phan-var-force ModeleDon $obj';
 
 			// We save charset_output to restore it because write_file can change it if needed for

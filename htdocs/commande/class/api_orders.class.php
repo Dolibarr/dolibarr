@@ -364,6 +364,41 @@ class Orders extends DolibarrApi
 	}
 
 	/**
+	 * Get properties of a line of an order object by id
+	 *
+	 * @param int   $id             Id of order
+	 * @param int   $lineid         Id of line
+	 * @param string                $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 *
+	 * @url    GET {id}/lines/{lineid}
+	 *
+	 * @return Object
+	 */
+	public function getLine($id, $lineid, $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->commande->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->commande->fetch_lines();
+		foreach ($this->commande->lines as $line) {
+			if ($line->id == $lineid) {
+				return $this->_filterObjectProperties($this->_cleanObjectDatas($line), $properties);
+			}
+		}
+		throw new RestException(404, 'Line not found');
+	}
+
+	/**
 	 * Add a line to given order
 	 *
 	 * @param int   $id             Id of order to update

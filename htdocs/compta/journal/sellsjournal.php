@@ -194,9 +194,9 @@ if ($result) {
 		$cpttva = (getDolGlobalString('ACCOUNTING_VAT_SOLD_ACCOUNT') ? $conf->global->ACCOUNTING_VAT_SOLD_ACCOUNT : $langs->trans("CodeNotDef"));
 		$compta_tva = (!empty($obj->account_tva) ? $obj->account_tva : $cpttva);
 
-		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->thirdparty, $mysoc);
+		$account_localtax1 = getLocalTaxesFromRate($obj->tva_tx, 1, $obj->socid, $mysoc);
 		$compta_localtax1 = (!empty($account_localtax1[3]) ? $account_localtax1[3] : $langs->trans("CodeNotDef"));
-		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $obj->thirdparty, $mysoc);
+		$account_localtax2 = getLocalTaxesFromRate($obj->tva_tx, 2, $obj->socid, $mysoc);
 		$compta_localtax2 = (!empty($account_localtax2[3]) ? $account_localtax2[3] : $langs->trans("CodeNotDef"));
 
 		// Situation invoices handling
