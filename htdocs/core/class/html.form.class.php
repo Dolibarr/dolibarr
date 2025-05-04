@@ -5919,7 +5919,9 @@ class Form
 						if (!empty($input['label'])) {
 							$more .= $input['label'] . '</div><div class="tagtd">';
 						}
-						$more .= $input['value'];
+						if (!empty($input['value'])) {
+							$more .= $input['value'];
+						}
 						$more .= '</div></div>' . "\n";
 					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
