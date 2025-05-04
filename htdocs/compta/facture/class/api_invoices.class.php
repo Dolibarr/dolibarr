@@ -157,7 +157,7 @@ class Invoices extends DolibarrApi
 			if (is_array($tmparray)) {
 				$this->invoice->contacts_ids = $tmparray;
 			}
-			$tmparray = $this->invoice->liste_contact(-1, 'external', $contact_list);
+			$tmparray = $this->invoice->liste_contact(-1, 'internal', $contact_list);
 			if (is_array($tmparray)) {
 				$this->invoice->contacts_ids = $tmparray;
 			}
