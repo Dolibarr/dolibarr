@@ -4333,12 +4333,6 @@ parameters:
 			path: ../../../htdocs/compta/bank/list.php
 
 		-
-			message: '#^Variable \$buttonreconcile might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/compta/bank/releve.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
