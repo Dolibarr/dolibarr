@@ -55,7 +55,7 @@ if (!empty($search_array_options) && is_array($search_array_options)) {	// $extr
 			$param .= '&'.$search_options_pattern.$tmpkey.'_endmin='.dol_print_date($val['end'], '%M');
 			$val = '';
 		}
-		if ($val !== '') {
+		if ($val !== '' && $val !== null && $val !== []) {
 			if (is_array($val)) {
 				foreach ($val as $val2) {
 					$param .= '&'.$search_options_pattern.$tmpkey.'[]='.urlencode($val2);
