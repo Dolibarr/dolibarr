@@ -145,13 +145,13 @@ class Orders extends DolibarrApi
 				$this->commande->contacts_ids_internal = $tmparray;
 			}
 		}
-		
+
 		$this->commande->fetchObjectLinked();
-		
+
 		// Add online_payment_url, cf #20477
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 		$this->commande->online_payment_url = getOnlinePaymentUrl(0, 'order', $this->commande->ref);
-		
+
 		return $this->_cleanObjectDatas($this->commande);
 	}
 
