@@ -330,7 +330,11 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_MEMBER,
 			Categorie::TYPE_PROJECT,
 			Categorie::TYPE_KNOWLEDGEMANAGEMENT,
-			Categorie::TYPE_ACTIONCOMM
+			Categorie::TYPE_ACTIONCOMM,
+			Categorie::TYPE_USER,
+			Categorie::TYPE_WAREHOUSE,
+			Categorie::TYPE_TICKET,
+			Categorie::TYPE_FICHINTER
 		])) {
 			throw new RestException(403);
 		}
@@ -350,6 +354,14 @@ class Categories extends DolibarrApi
 		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_ACTIONCOMM && !DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_FICHINTER && !DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_TICKET && !DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'lire')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_WAREHOUSE && !DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
 

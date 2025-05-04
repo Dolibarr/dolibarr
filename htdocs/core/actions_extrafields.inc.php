@@ -238,7 +238,8 @@ if ($action == 'add') {
 					'1',
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt")
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -422,7 +423,8 @@ if ($action == 'update') {
 					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
 					GETPOSTINT('printable'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt")
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');

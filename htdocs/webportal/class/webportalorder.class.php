@@ -176,7 +176,7 @@ class WebPortalOrder extends Commande
 		$datas['picto'] = img_picto('', $this->picto) . ' <u>' . $langs->trans("WebPortalOrder") . '</u>';
 		$datas['picto'] .= ' ' . $this->getLibStatut(5);
 
-		$datas['ref'] .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+		$datas['ref'] = '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 
 		return $datas;
 	}
