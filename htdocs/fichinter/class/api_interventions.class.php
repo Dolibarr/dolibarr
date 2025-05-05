@@ -1,7 +1,6 @@
 <?php
-/* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+/* Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,31 +65,32 @@ class Interventions extends DolibarrApi
 	 */
 	public function __construct()
 	{
-		global $db, $conf;
+		global $db;
 		$this->db = $db;
 		$this->fichinter = new Fichinter($this->db);
 	}
 
 	/**
 	 * Get an intervention
-	 *
 	 * Return an array with intervention information
 	 *
 	 * @since	7.0.0	Initial implementation
 	 *
-	 * @param	int		$id					ID of intervention
-	 * @param	string	$contact_type		{@choice '',thirdparty,internal,external} Type of contacts
+	 * @param	int			$id				ID of intervention
+	 * @param	string		$ref			Ref of object
+	 * @param	string		$ref_ext		External reference of object
+	 * @param   int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	Object						Cleaned intervention object
 	 *
-	 * @throws	RestException
+	 * @throws		RestException
 	 */
-	public function get($id, $contact_type = '')
+	public function get($id, $ref = '', $ref_ext = '', $contact_list = 1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
 			throw new RestException(403);
 		}
 
-		$result = $this->fichinter->fetch($id);
+		$result = $this->fichinter->fetch($id, $ref, $ref_ext);
 		if (!$result) {
 			throw new RestException(404, 'Intervention not found');
 		}
@@ -99,10 +99,20 @@ class Interventions extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$this->fichinter->fetchObjectLinked();
-		if ($contact_type) {
-			$this->fichinter->contacts_ids = $this->fichinter->liste_contact(-1, $contact_type, 1);
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->fichinter->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->fichinter->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->fichinter->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->fichinter->contacts_ids_internal = $tmparray;
+			}
 		}
+
+		$this->fichinter->fetchObjectLinked();
+
 		return $this->_cleanObjectDatas($this->fichinter);
 	}
 
