@@ -284,8 +284,8 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$fromYear = date('Y', $this->fromDate);
 		$fromMonth = date('m', $this->fromDate);
 		$toYear = date('Y', $this->toDate);
-		$toMmonth = date('m', $this->toDate);
-		$nbMonths = (($toYear - $fromYear) * 12) + ($toMmonth - $fromMonth) + 1;
+		$toMonth = date('m', $this->toDate);
+		$nbMonths = (((int) $toYear - (int)$fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
 		$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
 		$dates = [];
 		for ($i = 0; $i  < $nbMonths; $i++) {
