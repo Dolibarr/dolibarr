@@ -2494,7 +2494,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = '';
+			$obj = (object) array('label' => '');
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 			}
