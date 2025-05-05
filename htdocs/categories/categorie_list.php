@@ -482,7 +482,7 @@ if ($mode == 'hierarchy') {
 
 	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
 
-	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', $morehtmlcenter, 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1, $morehtmlrightbeforebutton);
+	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1, $morehtmlrightbeforebutton);
 
 
 	print '<div class="fichecenter">';
