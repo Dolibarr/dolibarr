@@ -220,7 +220,7 @@ if ($action == 'create') {
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
-	
+
 	// Check transmitter
 	print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
 	print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
