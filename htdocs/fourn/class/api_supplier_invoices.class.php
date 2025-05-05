@@ -425,7 +425,6 @@ class SupplierInvoices extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight("fournisseur", "facture", "creer")) {
 			throw new RestException(403);
 		}
-		
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
@@ -455,7 +454,6 @@ class SupplierInvoices extends DolibarrApi
 		return $this->_cleanObjectDatas($this->invoice);
 	}
 
-	
 	/**
 	 * Get list of payments of a given supplier invoice
 	 *
