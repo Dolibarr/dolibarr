@@ -256,13 +256,13 @@ if ($action == 'export' && $user->hasRight('accounting', 'mouvements', 'lire')) 
 	} else {
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_balance.modules.php';
 		$pdf = new pdf_balance($db);
-		$pdf->fromDate = dol_mktime(12,0,0, $_POST['search_date_startmonth'], $_POST['search_date_startday'], $_POST['search_date_startyear']);
+		$pdf->fromDate = dol_mktime(12, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
 		if (empty($pdf->fromDate)) {
-			$pdf->fromDate = dol_mktime(12,0,0, $_POST['date_startmonth'], $_POST['date_startday'], $_POST['date_startyear']);
+			$pdf->fromDate = dol_mktime(12, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
 		}
-		$pdf->toDate = dol_mktime(12,0,0, $_POST['search_date_endmonth'], $_POST['search_date_endday'], $_POST['search_date_endyear']);
+		$pdf->toDate = dol_mktime(12, 0, 0, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'));
 		if (empty($pdf->toDate)) {
-			$pdf->toDate = dol_mktime(12,0,0, $_POST['date_endmonth'], $_POST['date_endday'], $_POST['date_endyear']);
+			$pdf->toDate = dol_mktime(12, 0, 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
 		}
 		$pdf->balanceType = $type;
 

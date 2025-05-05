@@ -78,21 +78,23 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build pdf onto disk
+	 * Function to build pdf onto disk
 	 *
-	 *	@param		BookKeeping	$object				Object source to build document
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		string		$srctemplatepath	Full path of source filename for generator using a template file
-	 *  @param		bool		$directDownload		Send the generated pdf to the browser
-	 *  @return		int<-1,1>						1 if OK, <=0 if KO
+	 * @param		BookKeeping	$object				Object source to build document
+	 * @param		Translate	$outputlangs		Lang output object
+	 * @param		string		$srctemplatepath	Full path of source filename for generator using a template file
+	 * @param		bool		$directDownload		Send the generated pdf to the browser
+	 * @return		int<-1,1>						1 if OK, <=0 if KO
 	 */
 	abstract public function write_file(BookKeeping $object, Translate $outputlangs, string $srctemplatepath = '', bool $directDownload = true);
 	// phpcs:enable
 
 	/**
-	 * @param TCPDF $pdf
-	 * @param int $page
-	 * @param int|float $y
+	 * Add dash line
+	 *
+	 * @param TCPDF 	$pdf 	TCPDF object
+	 * @param int 		$page 	Page number
+	 * @param int|float $y		Y position
 	 * @return void
 	 */
 	protected function addDashLine(TCPDF $pdf, int $page, $y)
@@ -107,29 +109,31 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 
 	/**
 	 * Add a total line to pdf
-	 * @param TCPDF $pdf TCPDF object
-	 * @param int|float $curY Current line Y
-	 * @param int|float $nexY Next line Y
-	 * @param int|float $default_font_size Default font size
-	 * @param string $label Line label
-	 * @param int|float $tab_top_newpage
-	 * @param int|float|string $debit
-	 * @param int|float|string $credit
-	 * @param bool $uppercase
+	 *
+	 * @param TCPDF 			$pdf 				TCPDF object
+	 * @param int|float 		$curY 				Current line Y
+	 * @param int|float 		$nexY 				Next line Y
+	 * @param int|float 		$default_font_size 	Default font size
+	 * @param string 			$label 				Line label
+	 * @param int|float 		$tab_top_newpage	Table top
+	 * @param int|float|string 	$debit				Debit
+	 * @param int|float|string 	$credit				Credit
+	 * @param bool 				$uppercase			Apply uppercase ?
 	 * @return void
 	 */
 	abstract protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true);
 
 	/**
 	 * Add the total accountancy group line to pdf
-	 * @param TCPDF $pdf TCPDF object
-	 * @param int|float $curY Current line Y
-	 * @param int|float $nexY Next line Y
-	 * @param int|float $default_font_size Default font size
-	 * @param string $columnKey Column where to place title
-	 * @param string $label Line label
-	 * @param int|float $tab_top_newpage
-	 * @param bool $uppercase
+	 *
+	 * @param TCPDF 	$pdf 				TCPDF object
+	 * @param int|float $curY 				Current line Y
+	 * @param int|float $nexY				Next line Y
+	 * @param int|float $default_font_size	Default font size
+	 * @param string 	$columnKey 			Column where to place title
+	 * @param string 	$label 				Line label
+	 * @param int|float $tab_top_newpage 	Table top
+	 * @param bool 		$uppercase 			Apply uppercase ?
 	 * @return void
 	 */
 	protected function addTitleLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $columnKey, string $label, $tab_top_newpage, bool $uppercase = true)
@@ -164,13 +168,15 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 
 	/**
 	 * Print a title using the colKey start position, and the end of table as end position
-	 * @param $pdf
-	 * @param $colKey
-	 * @param $curY
-	 * @param $columnText
+	 *
+	 * @param TCPDF 		$pdf			TCPDF object
+	 * @param string 		$colKey			Column key name
+	 * @param int|float 	$curY			Current line Y
+	 * @param string 		$columnText		Title text
 	 * @return void
 	 */
-	protected function printTitleContent($pdf, $curY, $colKey, $columnText) {
+	protected function printTitleContent($pdf, $curY, $colKey, $columnText)
+	{
 		$pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set current position
 		$colDef = $this->cols[$colKey];
 		// save current cell padding
@@ -233,7 +239,6 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 							}
 							$pdf->line($colDef['xStartPos'], $coordinates[$key-1]['end'], $colDef['xStartPos'], $yCoordinates['start']);
 						}
-
 					} else {
 						$pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 					}
@@ -279,8 +284,6 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 
 		return $this->tabTitleHeight;
 	}
-
-
 }
 
 /**

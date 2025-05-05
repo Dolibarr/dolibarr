@@ -25,9 +25,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/expedition/doc/pdf_espadon.modules.php
- *	\ingroup    expedition
- *	\brief      Class file allowing Espadon shipping template generation
+ *	\file       htdocs/core/modules/accountancy/doc/pdf_bookkeeping.modules.php
+ *	\ingroup    accountancy
+ *	\brief      Class file allowing accountancy bookkeeping template generation
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/accountancy/modules_accountancy.php';
@@ -128,12 +128,13 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Function to build pdf onto disk
+	 * Function to build pdf onto disk
 	 *
-	 *	@param		BookKeeping	$object			    Object shipping to generate (or id if old method)
-	 *  @param		Translate	$outputlangs		Lang output object
-	 *  @param		bool		$directDownload		Send generated file to browser
-	 *  @return		int<-1,1>						1 if OK, <=0 if KO
+	 * @param		BookKeeping	$object			    Object shipping to generate (or id if old method)
+	 * @param		Translate	$outputlangs		Lang output object
+	 * @param 		string 		$srctemplatepath 	Source template path
+	 * @param		bool		$directDownload		Send generated file to browser
+	 * @return		int<-1,1>						1 if OK, <=0 if KO
 	 */
 	public function write_file(BookKeeping $object, Translate $outputlangs, string $srctemplatepath = '', bool $directDownload = true)
 	{
@@ -178,7 +179,6 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			$expref = dol_sanitizeFileName($object->ref);
 			$date = date('YmdHis', dol_now());
 			$file = "{$dir}/{$this->name}_{$date}.pdf";
-
 		}
 
 		if (!file_exists($dir)) {
@@ -231,10 +231,10 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		}
 
 		$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-		$pdf->SetSubject($outputlangs->transnoentities("AccountancyLedger"));
+		$pdf->SetSubject($outputlangs->transnoentities("AccountancyBookkeeping"));
 		$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 		$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyLedger"));
+		$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("AccountancyBookkeeping"));
 		if (getDolGlobalString('MAIN_DISABLE_PDF_COMPRESSION')) {
 			$pdf->SetCompression(false);
 		}
@@ -281,11 +281,11 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pagenb = $pageposbeforeprintlines;
 
 		// Knowing how many month our period covers
-		$fromY = date('Y', $this->fromDate);
-		$fromM = date('m', $this->fromDate);
-		$toY = date('Y', $this->toDate);
-		$toM = date('m', $this->toDate);
-		$nbMonths = (($toY - $fromY) * 12) + ($toM - $fromM) + 1;
+		$fromYear = date('Y', $this->fromDate);
+		$fromMonth = date('m', $this->fromDate);
+		$toYear = date('Y', $this->toDate);
+		$toMmonth = date('m', $this->toDate);
+		$nbMonths = (($toYear - $fromYear) * 12) + ($toMmonth - $fromMonth) + 1;
 		$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
 		$dates = [];
 		for ($i = 0; $i  < $nbMonths; $i++) {
@@ -296,7 +296,6 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$journal = '';
 		$journalDebit = $journalCredit = $totalDebit = $totalCredit = 0;
 		for ($i = 0; $i < $nblines; $i++) {
-
 			// Show total line / title line when account has changed
 			if (empty($journal) || $journal != $object->lines[$i]->code_journal) {
 				// Add the subtotal line
@@ -616,7 +615,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	 *  Show top header of page.
 	 *
 	 *  @param	TCPDF		$pdf     		Object PDF
-	 *  @param  Expedition	$object     	Object to show
+	 *  @param  BookKeeping	$object     	Object to show
 	 *  @param  int<0,1>  	$showaddress    0=no, 1=yes
 	 *  @param  Translate	$outputlangs	Object lang for output
 	 *  @return	float|int                   Return topshift value
@@ -660,7 +659,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->SetXY($this->marge_gauche + 2, $nexY);
 		$pdf->SetTextColor(0, 0, 60);
 		$textDateNow = $outputlangs->transnoentities("PrintDate");
-		$pdf->MultiCell($w / 3, 3, $textDateNow." : ". date('d/m/Y',dol_now()), '', 'L');
+		$pdf->MultiCell($w / 3, 3, $textDateNow . " : " . date('d/m/Y', dol_now()), '', 'L');
 		$nexY = max($pdf->GetY(), $nexY);
 
 		// Page title
@@ -691,7 +690,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	 *   	Show footer of page. Need this->emetteur object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
-	 * 		@param	Expedition	$object				Object to show
+	 * 		@param	BookKeeping	$object				Object to show
 	 *      @param	Translate	$outputlangs		Object lang for output
 	 *      @param	int			$hidefreetext		1=Hide free text
 	 *      @return	int								Return height of bottom margin including footer text
@@ -705,7 +704,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 	/**
 	 *   	Define Array Column Field
 	 *
-	 *   	@param	Expedition	   $object    	    common object
+	 *   	@param	BookKeeping	   $object    	    common object
 	 *   	@param	Translate	   $outputlangs     langs
 	 *      @param	int			   $hidedetails		Do not show line details
 	 *      @param	int			   $hidedesc		Do not show desc
@@ -905,15 +904,16 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 	/**
 	 * Add the total accountancy group line to pdf
-	 * @param TCPDF $pdf TCPDF object
-	 * @param int|float $curY Current line Y
-	 * @param int|float $nexY Next line Y
-	 * @param int|float $default_font_size Default font size
-	 * @param string $label Line label
-	 * @param int|float $tab_top_newpage
-	 * @param int|float|string $debit
-	 * @param int|float|string $credit
-	 * @param bool $uppercase
+	 *
+	 * @param TCPDF 			$pdf 				TCPDF object
+	 * @param int|float 		$curY 				Current line Y
+	 * @param int|float 		$nexY 				Next line Y
+	 * @param int|float 		$default_font_size 	Default font size
+	 * @param string 			$label 				Line label
+	 * @param int|float 		$tab_top_newpage	Table top
+	 * @param int|float|string 	$debit				Debit
+	 * @param int|float|string 	$credit				Credit
+	 * @param bool 				$uppercase			Apply uppercase ?
 	 * @return void
 	 */
 	protected function addTotalLine(TCPDF $pdf, &$curY, &$nexY, $default_font_size, string $label, $tab_top_newpage, $debit, $credit, bool $uppercase = true)
