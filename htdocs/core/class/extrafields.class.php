@@ -1973,7 +1973,7 @@ class ExtraFields
 			}
 			$out .= '</div>';
 			$out .= '<script>
-				jQuery(function($) {
+				jQuery(function($) {	/* extrafields.class.php 1 */
 					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
 					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
 					container.find(".star").each(function() {
@@ -2434,7 +2434,7 @@ class ExtraFields
 			}
 			$value .= '</div>';
 			$value .= '<script>
-				$(document).ready(function() {
+				$(document).ready(function() {	/* extrafields.class.php 2 */
 					let container = $("#'.$key.$objectid.'_selection");
 					let selectedStars = parseInt($("#'.$key.$objectid.'").val() || $("#'.$key.$objectid.'").text()) || 0;
 					';

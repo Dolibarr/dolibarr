@@ -7798,7 +7798,7 @@ abstract class CommonObject
 			}
 			$out .= '</div>';
 			$out .= '<script>
-				jQuery(function($) {
+				jQuery(function($) {	/* commonobject.class.php 1 */
 					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
 					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
 					container.find(".star").each(function() {
@@ -8615,7 +8615,7 @@ abstract class CommonObject
 			}
 			$value .= '</div>';
 			$value .= '<script>
-				$(document).ready(function() {
+				$(document).ready(function() {	/* commonobject.class.php 2 */
 						let container = $("#'.$keyprefix.$key.$keysuffix.$this->id.'_selection");
 						let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.$this->id.'").val()) || 0;
 						container.find(".star").each(function() {
