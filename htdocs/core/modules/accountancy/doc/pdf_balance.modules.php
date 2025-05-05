@@ -721,7 +721,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$this->cols['position'] = [
 			'rank' => $rank,
 			'width' => 10,
-			'status' => getDolGlobalInt('PDF_ACCOUNTANCY_BALANCE_ADD_POSITION'),
+			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_BALANCE_ADD_POSITION'),
 			'title' => [
 				'textkey' => '#', // use lang key is useful in somme case with module
 				'align' => 'C',
@@ -859,8 +859,8 @@ class pdf_balance extends ModelePdfAccountancy
 	 * Add the total accountancy group line to pdf
 	 *
 	 * @param TCPDF 			$pdf 				TCPDF object
-	 * @param int|float 		$curY 				Current line Y
-	 * @param int|float 		$nexY 				Next line Y
+	 * @param float 			$curY 				Current line Y
+	 * @param float 			$nexY 				Next line Y
 	 * @param int|float 		$default_font_size	Default font size
 	 * @param string 			$label 				Line label
 	 * @param int|float 		$tab_top_newpage 	Table top

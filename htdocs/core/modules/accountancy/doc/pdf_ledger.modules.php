@@ -410,7 +410,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			}
 
 			if ($this->getColumnStatus('lettering_code')) {
-				$this->printStdColumnContent($pdf, $curY, 'lettering_code', $object->lines[$i]->lettering_code);
+				$this->printStdColumnContent($pdf, $curY, 'lettering_code', $object->lines[$i]->lettering_code ?? '');
 				$nexY = max($pdf->GetY(), $nexY);
 			}
 
@@ -729,7 +729,7 @@ class pdf_ledger extends ModelePdfAccountancy
 		$this->cols['position'] = [
 			'rank' => $rank,
 			'width' => 10,
-			'status' => getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
+			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
 			'title' => [
 				'textkey' => '#', // use lang key is useful in somme case with module
 				'align' => 'C',
@@ -780,6 +780,7 @@ class pdf_ledger extends ModelePdfAccountancy
 			'border-left' => true, // add left line separator
 		];
 
+		$rank += 10;
 		$this->cols['piece_num'] = [
 			'rank' => $rank,
 			'width' => 15,

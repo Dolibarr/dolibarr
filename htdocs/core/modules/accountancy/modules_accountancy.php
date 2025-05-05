@@ -51,9 +51,9 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	public $toDate;
 
 	/**
-	 * @var array $verticalLinesSpacesCoordinates Array to store vertical coordinates where vertical column lines should be avoid
+	 * @var array[] $verticalLinesSpacesCoordinates Array to store vertical coordinates where vertical column lines should be avoid
 	 */
-	public array $verticalLinesSpacesCoordinates = [];
+	public $verticalLinesSpacesCoordinates = [];
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
@@ -127,8 +127,8 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	 * Add the total accountancy group line to pdf
 	 *
 	 * @param TCPDF 	$pdf 				TCPDF object
-	 * @param int|float $curY 				Current line Y
-	 * @param int|float $nexY				Next line Y
+	 * @param float $curY 				Current line Y
+	 * @param float $nexY				Next line Y
 	 * @param int|float $default_font_size	Default font size
 	 * @param string 	$columnKey 			Column where to place title
 	 * @param string 	$label 				Line label

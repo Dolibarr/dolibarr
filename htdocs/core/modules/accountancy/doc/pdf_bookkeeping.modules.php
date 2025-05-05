@@ -728,7 +728,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$this->cols['position'] = [
 			'rank' => $rank,
 			'width' => 10,
-			'status' => getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
+			'status' => (bool) getDolGlobalInt('PDF_ACCOUNTANCY_LEDGER_ADD_POSITION'),
 			'title' => [
 				'textkey' => '#', // use lang key is useful in somme case with module
 				'align' => 'C',
