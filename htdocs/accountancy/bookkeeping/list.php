@@ -461,14 +461,8 @@ if (empty($reshook)) {
 		$object->fetchAll('ASC,ASC,ASC', 'code_journal,doc_date,piece_num', 0, 0, $filter);
 		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_bookkeeping.modules.php';
 		$pdf = new pdf_bookkeeping($db);
-		$pdf->fromDate = dol_mktime(12,0,0, $_GET['search_date_startmonth'], $_GET['search_date_startday'], $_GET['search_date_startyear']);
-		if (empty($pdf->fromDate)) {
-			$pdf->fromDate = dol_mktime(12,0,0, $_GET['date_startmonth'], $_GET['date_startday'], $_GET['date_startyear']);
-		}
-		$pdf->toDate = dol_mktime(12,0,0, $_GET['search_date_endmonth'], $_GET['search_date_endday'], $_GET['search_date_endyear']);
-		if (empty($pdf->toDate)) {
-			$pdf->toDate = dol_mktime(12,0,0, $_GET['date_endmonth'], $_GET['date_endday'], $_GET['date_endyear']);
-		}
+		$pdf->fromDate = $search_date_start;
+		$pdf->toDate = $search_date_end;
 
 		$result = $pdf->write_file($object, $langs);
 
