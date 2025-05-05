@@ -170,8 +170,8 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	 * Print a title using the colKey start position, and the end of table as end position
 	 *
 	 * @param TCPDF 		$pdf			TCPDF object
-	 * @param string 		$colKey			Column key name
 	 * @param int|float 	$curY			Current line Y
+	 * @param string 		$colKey 		Column key name
 	 * @param string 		$columnText		Title text
 	 * @return void
 	 */
