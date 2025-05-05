@@ -7655,7 +7655,7 @@ class Form
 				$retstring .= '</option>';
 			}
 			$retstring .= '</select>';
-			//if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+
 			if ($m) {
 				$retstring .= ":";
 			}
