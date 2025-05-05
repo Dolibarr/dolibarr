@@ -150,9 +150,6 @@ class pdf_balance extends ModelePdfAccountancy
 
 		$object->fetch_thirdparty();
 
-		if (!is_object($outputlangs)) {
-			$outputlangs = $langs;
-		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
@@ -278,8 +275,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$pdf->SetFont('', '', $default_font_size - 1);
 		$pdf->rollbackTransaction(true);
 
-
-		$nexY = $tab_top + $this->tabTitleHeight;
+		$curY = $nexY = $tab_top + $this->tabTitleHeight;
 
 		// Loop on each lines
 		$pageposbeforeprintlines = $pdf->getPage();

@@ -145,9 +145,6 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 
 		$object->fetch_thirdparty();
 
-		if (!is_object($outputlangs)) {
-			$outputlangs = $langs;
-		}
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (getDolGlobalString('MAIN_USE_FPDF')) {
 			$outputlangs->charset_output = 'ISO-8859-1';
@@ -274,7 +271,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 		$pdf->rollbackTransaction(true);
 
 
-		$nexY = $tab_top + $this->tabTitleHeight;
+		$curY = $nexY = $tab_top + $this->tabTitleHeight;
 
 		// Loop on each lines
 		$pageposbeforeprintlines = $pdf->getPage();
@@ -410,7 +407,7 @@ class pdf_bookkeeping extends ModelePdfAccountancy
 			}
 
 			if ($this->getColumnStatus('piece_num')) {
-				$this->printStdColumnContent($pdf, $curY, 'piece_num', $object->lines[$i]->piece_num);
+				$this->printStdColumnContent($pdf, $curY, 'piece_num', (string) $object->lines[$i]->piece_num);
 				$nexY = max($pdf->GetY(), $nexY);
 			}
 

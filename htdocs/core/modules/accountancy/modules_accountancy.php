@@ -53,7 +53,7 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	/**
 	 * @var array $verticalLinesSpacesCoordinates Array to store vertical coordinates where vertical column lines should be avoid
 	 */
-	public $verticalLinesSpacesCoordinates = [];
+	public array $verticalLinesSpacesCoordinates = [];
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
