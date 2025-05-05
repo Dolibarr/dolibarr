@@ -4,7 +4,7 @@
  * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2016   Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2023   Romain Neil             <contact@romain-neil.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software you can redistribute it and/or modify
@@ -324,6 +324,7 @@ class Documents extends DolibarrApi
 	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
 	{
 		global $conf;
+		/** @var Conf $conf */
 
 		if (empty($modulepart)) {
 			throw new RestException(400, 'bad value for parameter modulepart');
@@ -580,7 +581,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Contract not found');
 			}
 
-			$upload_dir = $conf->contrat->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
+			$upload_dir = $conf->contract->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'contract');
 		} elseif ($modulepart == 'projet' || $modulepart == 'project') {
 			$modulepart = 'project';
 			require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
@@ -591,7 +592,7 @@ class Documents extends DolibarrApi
 				throw new RestException(404, 'Project not found');
 			}
 
-			$upload_dir = $conf->projet->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
+			$upload_dir = $conf->project->dir_output . "/" . get_exdir(0, 0, 0, 1, $object, 'project');
 		} elseif ($modulepart == 'mrp') {
 			$modulepart = 'mrp';
 			require_once DOL_DOCUMENT_ROOT . '/mrp/class/mo.class.php';

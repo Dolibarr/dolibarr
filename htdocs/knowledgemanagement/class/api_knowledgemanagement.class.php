@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2021 SuperAdmin <test@dolibarr.com>
- * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021 	SuperAdmin 				<test@dolibarr.com>
+ * Copyright (C) 2025 	Charlene Benke 			<charlent@patas-monkey.com>
+ * Copyright (C) 2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -438,6 +439,79 @@ class KnowledgeManagement extends DolibarrApi
 
 		return $object;
 	}
+	/**
+	 * Validate a knowledge
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @param   int		$id             knowledge ID
+	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url POST    {id}/validate
+	 *
+	 * @return  Object
+	 */
+	public function validate($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		$result = $this->knowledgerecord->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'knowledgerecord not found');
+		}
+
+
+		$result = $this->knowledgerecord->validate(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+		}
+
+		return $this->_cleanObjectDatas($this->knowledgerecord);
+	}
+
+	/**
+	 * Cancel a knowledge
+	 *
+	 * If you get a bad value for param notrigger check, provide this in body
+	 * {
+	 *   "notrigger": 0
+	 * }
+	 *
+	 * @param   int		$id             knowledge ID
+	 * @param   int		$notrigger      1=Does not execute triggers, 0= execute triggers
+	 *
+	 * @url POST    {id}/cancel
+	 *
+	 * @return  Object
+	 */
+	public function cancel($id, $notrigger = 0)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'write')) {
+			throw new RestException(403, "Insuffisant rights");
+		}
+		$result = $this->knowledgerecord->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'knowledgerecord not found');
+		}
+
+
+		$result = $this->knowledgerecord->cancel(DolibarrApiAccess::$user, $notrigger);
+		if ($result == 0) {
+			throw new RestException(304, 'Error nothing done. May be object is already validated');
+		}
+		if ($result < 0) {
+			throw new RestException(500, 'Error when validating knowledgerecord: '.$this->knowledgerecord->error);
+		}
+
+		return $this->_cleanObjectDatas($this->knowledgerecord);
+	}
 
 	/**
 	 * Validate fields before create or update object
@@ -454,7 +528,7 @@ class KnowledgeManagement extends DolibarrApi
 		}
 		$knowledgerecord = array();
 		foreach ($this->knowledgerecord->fields as $field => $propfield) {
-			if (in_array($field, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
+			if (in_array($field, array('rowid', 'entity', 'ref', 'date_creation', 'tms', 'fk_user_creat')) || empty($propfield['notnull']) || $propfield['notnull'] != 1) {
 				continue; // Not a mandatory field
 			}
 			if (!isset($data[$field])) {

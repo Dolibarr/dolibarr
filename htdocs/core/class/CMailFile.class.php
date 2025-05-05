@@ -6,7 +6,7 @@
  * Copyright (C) 2003       Jean-Louis Bergamo          <jlb@j1b.org>
  * Copyright (C) 2004-2015  Laurent Destailleur         <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin               <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2019-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -198,6 +198,7 @@ class CMailFile
 		'png'  => 'image/png',
 		'tif'  => 'image/tiff',
 		'tiff' => 'image/tiff',
+		'webp' => 'image/webp',
 	);
 
 
@@ -1216,7 +1217,7 @@ class CMailFile
 					$result = $this->smtps->sendMsg();
 
 					if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
-						$this->dump_mail();
+						$this->dump_mail();	// Create file dolibarr_mail.log or dolibarr_mail.log.vXXX if option for archive is on
 					}
 
 					$smtperrorcode = 0;
@@ -1237,9 +1238,12 @@ class CMailFile
 							}
 							*/
 						}
+					} else {
+						dol_syslog("CMailFile::sendfile: mail SMTP sendMsg is success", LOG_DEBUG);
 					}
 
 					$result = $this->smtps->getErrors();	// applicative error code (not SMTP error code)
+
 					if (empty($this->error) && empty($result)) {
 						dol_syslog("CMailFile::sendfile: mail end success", LOG_DEBUG);
 						$res = true;

@@ -333,7 +333,7 @@ class MenuManager
 								}
 							}
 
-							// Add font-awesome (if $val2['level'] == 0, we are on level2
+							// Add font-awesome for level 0 and 1 (if $val2['level'] == 1, we are on level2, if $val2['level'] == 2, we are on level 3...)
 							if ($val2['level'] == 0 && !empty($val2['prefix'])) {
 								print $val2['prefix'];
 							} else {

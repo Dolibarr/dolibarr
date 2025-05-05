@@ -638,7 +638,7 @@ class Propal extends CommonObject
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
 
-		if ($this->statut == self::STATUS_DRAFT) {
+		if ($this->status == self::STATUS_DRAFT) {
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 			// Clean parameters
@@ -1575,6 +1575,7 @@ class Propal extends CommonObject
 		$object->ref = '';
 		$object->entity = (!empty($forceentity) ? $forceentity : $object->entity);
 		$object->statut = self::STATUS_DRAFT;
+		$object->status = self::STATUS_DRAFT;
 
 		// Clear fields
 		$object->user_creation_id = $user->id;
@@ -1851,33 +1852,34 @@ class Propal extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
-		$sql .= " ref=".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
-		$sql .= " ref_client=".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
-		$sql .= " ref_ext=".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
-		$sql .= " fk_soc=".(isset($this->socid) ? $this->socid : "null").",";
-		$sql .= " datep=".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
+		$sql .= " ref = ".(isset($this->ref) ? "'".$this->db->escape($this->ref)."'" : "null").",";
+		$sql .= " ref_client = ".(isset($this->ref_client) ? "'".$this->db->escape($this->ref_client)."'" : "null").",";
+		$sql .= " ref_ext = ".(isset($this->ref_ext) ? "'".$this->db->escape($this->ref_ext)."'" : "null").",";
+		$sql .= " fk_soc = ".(!empty($this->socid) ? (int) $this->socid : "null").",";
+		$sql .= " datep = ".(strval($this->date) != '' ? "'".$this->db->idate($this->date)."'" : 'null').",";
 		if (!empty($this->fin_validite)) {
-			$sql .= " fin_validite=".(strval($this->fin_validite) != '' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
+			$sql .= " fin_validite = ".(strval($this->fin_validite) != '' ? "'".$this->db->idate($this->fin_validite)."'" : 'null').",";
 		}
-		$sql .= " date_valid=".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
-		$sql .= " total_tva=".(isset($this->total_tva) ? $this->total_tva : "null").",";
-		$sql .= " localtax1=".(isset($this->total_localtax1) ? $this->total_localtax1 : "null").",";
-		$sql .= " localtax2=".(isset($this->total_localtax2) ? $this->total_localtax2 : "null").",";
-		$sql .= " total_ht=".(isset($this->total_ht) ? $this->total_ht : "null").",";
-		$sql .= " total_ttc=".(isset($this->total_ttc) ? $this->total_ttc : "null").",";
-		$sql .= " fk_statut=".(isset($this->status) ? $this->status : "null").",";
-		$sql .= " fk_user_author=".(isset($this->user_author_id) ? $this->user_author_id : "null").",";
-		$sql .= " fk_user_valid=".(isset($this->user_validation_id) ? $this->user_validation_id : "null").",";
-		$sql .= " fk_projet=".(isset($this->fk_project) ? $this->fk_project : "null").",";
-		$sql .= " fk_cond_reglement=".(isset($this->cond_reglement_id) ? $this->cond_reglement_id : "null").",";
-		$sql .= " deposit_percent=".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
-		$sql .= " fk_mode_reglement=".(isset($this->mode_reglement_id) ? $this->mode_reglement_id : "null").",";
-		$sql .= " fk_input_reason=".(isset($this->demand_reason_id) ? $this->demand_reason_id : "null").",";
-		$sql .= " note_private=".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
-		$sql .= " note_public=".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
-		$sql .= " model_pdf=".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
-		$sql .= " import_key=".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
-		$sql .= " WHERE rowid=".((int) $this->id);
+		$sql .= " date_valid = ".(strval($this->date_validation) != '' ? "'".$this->db->idate($this->date_validation)."'" : 'null').",";
+		$sql .= " total_tva = ".(isset($this->total_tva) ? (float) $this->total_tva : "null").",";
+		$sql .= " localtax1 = ".(isset($this->total_localtax1) ? (float) $this->total_localtax1 : "null").",";
+		$sql .= " localtax2 = ".(isset($this->total_localtax2) ? (float) $this->total_localtax2 : "null").",";
+		$sql .= " total_ht = ".(isset($this->total_ht) ? (float) $this->total_ht : "null").",";
+		$sql .= " total_ttc = ".(isset($this->total_ttc) ? (float) $this->total_ttc : "null").",";
+		$sql .= " fk_statut = ".(isset($this->status) ? (int) $this->status : "null").",";
+		$sql .= " fk_user_author = ".(!empty($this->user_author_id) ? (int) $this->user_author_id : "null").",";
+		$sql .= " fk_user_valid = ".(!empty($this->user_validation_id) ? (int) $this->user_validation_id : "null").",";
+		$sql .= " fk_projet = ".(!empty($this->fk_project) ? (int) $this->fk_project : "null").",";
+		$sql .= " fk_cond_reglement = ".(!empty($this->cond_reglement_id) ? (int) $this->cond_reglement_id : "null").",";
+		$sql .= " deposit_percent = ".(!empty($this->deposit_percent) ? "'".$this->db->escape($this->deposit_percent)."'" : "null").",";
+		$sql .= " fk_mode_reglement = ".(!empty($this->mode_reglement_id) ? (int) $this->mode_reglement_id : "null").",";
+		$sql .= " fk_input_reason = ".(!empty($this->demand_reason_id) ? (int) $this->demand_reason_id : "null").",";
+		$sql .= " note_private = ".(isset($this->note_private) ? "'".$this->db->escape($this->note_private)."'" : "null").",";
+		$sql .= " note_public = ".(isset($this->note_public) ? "'".$this->db->escape($this->note_public)."'" : "null").",";
+		$sql .= " model_pdf = ".(isset($this->model_pdf) ? "'".$this->db->escape($this->model_pdf)."'" : "null").",";
+		$sql .= " import_key = ".(isset($this->import_key) ? "'".$this->db->escape($this->import_key)."'" : "null");
+		$sql .= " WHERE rowid = ".((int) $this->id);
 
 		$this->db->begin();
 
@@ -2707,7 +2709,7 @@ class Propal extends CommonObject
 
 			if (!$error) {
 				$this->oldcopy = clone $this;
-				$this->statut = $status;
+				$this->statut = $status;	// deprecated
 				$this->status = $status;
 				$this->date_signature = $date_signature;
 				$this->note_private = $newprivatenote;
@@ -2726,7 +2728,7 @@ class Propal extends CommonObject
 				$this->db->commit();
 				return 1;
 			} else {
-				$this->statut = $this->oldcopy->status;
+				$this->statut = $this->oldcopy->status;	// deprecated
 				$this->status = $this->oldcopy->status;
 				$this->date_signature = $this->oldcopy->date_signature;
 				$this->note_private = $this->oldcopy->note_private;
@@ -2857,7 +2859,7 @@ class Propal extends CommonObject
 			}
 
 			if (!$error) {
-				$this->statut = self::STATUS_CANCELED;
+				$this->statut = self::STATUS_CANCELED;	// deprecated
 				$this->status = self::STATUS_CANCELED;
 				$this->db->commit();
 				return 1;
@@ -2923,7 +2925,7 @@ class Propal extends CommonObject
 		}
 
 		if (!$error) {
-			$this->statut = self::STATUS_DRAFT;
+			$this->statut = self::STATUS_DRAFT;	// deprecated
 			$this->status = self::STATUS_DRAFT;
 
 			$this->db->commit();
@@ -3503,6 +3505,9 @@ class Propal extends CommonObject
 			} elseif ($search_sale > 0) {
 				$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc WHERE sc.fk_soc = p.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
 			}
+		}
+		if ($user->socid) {
+			$sql .= " AND p.fk_soc = ".((int) $user->socid);
 		}
 
 		$resql = $this->db->query($sql);

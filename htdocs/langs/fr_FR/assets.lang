@@ -49,7 +49,7 @@ AssetDepreciationOptions=Options d'amortissement
 AssetAccountancyCodes=Comptes comptables
 AssetDepreciation=Dépréciation
 # Asset
-Asset=Immobilisations
+Asset=Immobilisation
 Assets=Immobilisations
 AssetReversalAmountHT=Montant de l'annulation (hors taxes)
 AssetAcquisitionValueHT=Montant de l'acquisition (hors taxes)

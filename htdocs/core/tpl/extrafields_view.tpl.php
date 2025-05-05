@@ -30,6 +30,8 @@
  * @var string	$action
  * @var	array<string,mixed>	$parameters		Array of parameters
  * @var int 	$cols
+ * @var string	$forcefieldid
+ * @var string	$forceobjectid
  */
 
 // Protection to avoid direct call of template
@@ -229,6 +231,22 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 
 				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
 			}
+			if (isModEnabled("ai") && $action == 'edit_extras' && GETPOST('attribute') == $tmpkeyextra && !empty($extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra])) {
+				$showlinktoai = "extrafieldfiller";
+				$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
+				$htmlname = "options_".$tmpkeyextra;
+				$onlyenhancements = "textgenerationextrafield";
+				$morecss = "editfielda";
+				$aiprompt = $extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra];
+				$out = "";
+
+				// Fill $out
+				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+				print '<td class="right">';
+				print '<!-- TODO Step 3 Then a next step will be to use the ajax call core/aja/updateextrafield.php to update field in database directly with no need to pass by edit_extras step -->';
+				print $out;
+				print '</td>';
+			}
 			print '</tr></table>';
 			print '</td>';
 
@@ -274,6 +292,12 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 				print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans('Modify')).'">';
 
 				print '</form>';
+
+				if (empty($formai) || $formai instanceof FormAI) {
+					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+					$formai = new FormAI($db);
+				}
+				print $formai->getAjaxAICallFunction();
 			} else {
 				// Show the extrafield in view mode
 

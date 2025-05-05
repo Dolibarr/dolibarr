@@ -1265,7 +1265,7 @@ if ($mode == 'marketplace') {
 	// Marketplace
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
-	print '<td class="hideonsmartphone center"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 	print '<td>';
@@ -1279,7 +1279,7 @@ if ($mode == 'marketplace') {
 		}
 
 		$messagetoadd .= '<br>Using Shop address MAIN_MODULE_DOLISTORE_SHOP_URL = '.$remotestore->shop_url;
-		$messagetoadd .= '<br>Using Remote API addtess MAIN_MODULE_DOLISTORE_API_URL = '.$remotestore->dolistore_api_url;
+		$messagetoadd .= '<br>Using Remote API address MAIN_MODULE_DOLISTORE_API_URL = '.$remotestore->dolistore_api_url;
 		$messagetoadd .= '<br>Using API public key MAIN_MODULE_DOLISTORE_API_KEY = '.$remotestore->dolistore_api_key;
 		// Add basic auth if needed
 		$basicAuthLogin = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_LOGIN');
@@ -1297,7 +1297,7 @@ if ($mode == 'marketplace') {
 	// Community
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
-	print '<td class="hideonsmartphone center"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
 	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
 	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
 	print '<td>';

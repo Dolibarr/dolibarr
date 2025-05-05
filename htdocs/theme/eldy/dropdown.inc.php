@@ -23,6 +23,9 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 @phan-var-force string $left
 @phan-var-force string $right
 ';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -252,7 +255,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu .dropdown-header{
-	padding: 8px 8px 8px 8px;
+	padding: 8px 12px 8px 16px;
 }
 
 .dropdown-menu > .user-footer {
@@ -356,12 +359,11 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: 3px;
 }
 
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
-	border-radius: 0;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -437,6 +439,7 @@ li.liinputsearch {
 	display: block;
 	top: 0;
 	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -516,7 +519,7 @@ div.quickaddblock:focus {
 .dropdown-content {
 	display: none;
 	position: absolute;
-	z-index: 2;
+	z-index: 5;
 	width: 300px;
 	right:0;	/* will be set with js */
 	bottom: 0;
@@ -612,6 +615,9 @@ div.quickaddblock:focus {
 	left: 12px;
 }
 
+.dropdown-search-input {
+	border-radius: <?php print $borderradius; ?>px;
+}
 
 /* smartphone */
 @media only screen and (max-width: 767px)

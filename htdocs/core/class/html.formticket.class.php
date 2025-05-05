@@ -1813,7 +1813,7 @@ class FormTicket
 
 		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
-			$defaultmessage = $arraydefaultmessage->content;
+			$defaultmessage = (string) $arraydefaultmessage->content;
 		}
 		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 

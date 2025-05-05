@@ -3641,7 +3641,7 @@ class FactureFournisseur extends CommonInvoice
 						// Sender
 						$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 						if (!empty($arraymessage->email_from)) {	// If a sender is defined into template, we use it in priority
-							$from = $arraymessage->email_from;
+							$from = (string) $arraymessage->email_from;
 						}
 						if (empty($from)) {
 							$errormesg = "Failed to get sender into global setup MAIN_MAIL_EMAIL_FROM";
@@ -3664,12 +3664,12 @@ class FactureFournisseur extends CommonInvoice
 
 							$email_tocc = '';
 							if (!empty($arraymessage->email_tocc)) {	// If a CC is defined into template, we use it
-								$email_tocc = $arraymessage->email_tocc;
+								$email_tocc = (string) $arraymessage->email_tocc;
 							}
 
 							$email_tobcc = '';
 							if (!empty($arraymessage->email_tobcc)) {	// If a BCC is defined into template, we use it
-								$email_tobcc = $arraymessage->email_tobcc;
+								$email_tobcc = (string) $arraymessage->email_tobcc;
 							}
 
 							// Mail Creation

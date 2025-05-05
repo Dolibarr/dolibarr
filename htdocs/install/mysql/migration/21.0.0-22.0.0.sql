@@ -246,3 +246,43 @@ ALTER TABLE llx_contratdet DROP COLUMN remise;
 ALTER TABLE llx_extrafields ADD COLUMN aiprompt text;
 
 ALTER TABLE llx_menu ADD COLUMN showtopmenuinframe integer DEFAULT 0;
+
+ALTER TABLE llx_entrepot MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_entrepot MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_establishment MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_resource MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN phone_mobile varchar(30);
+ALTER TABLE llx_societe MODIFY COLUMN fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_phone varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN office_fax varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN user_mobile varchar(30);
+ALTER TABLE llx_user MODIFY COLUMN personal_mobile varchar(30);
+ALTER TABLE llx_asset ADD COLUMN fk_user_valid integer;
+ALTER TABLE llx_asset ADD COLUMN date_valid datetime;
+
+CREATE TABLE llx_webhook_history(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	trigger_data text NOT NULL,
+	fk_target integer NOT NULL,
+	url integer NOT NULL,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+	fk_user_creat integer NOT NULL,
+	import_key varchar(14),
+	status integer DEFAULT 1 NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_societe_rib ADD COLUMN cci varchar(100) after iban_prefix;    -- Interbank code for some countries like Chile
+
+-- Move permission thirdparty_paymentinformation out of advanced rights
+UPDATE llx_rights_def SET perms = 'thirdparty_paymentinformation' WHERE perms = 'thirdparty_paymentinformation_advance';
+
+ALTER TABLE llx_eventorganization_conferenceorboothattendee DROP INDEX idx_eventorganization_conferenceorboothattendee_ref;
+ALTER TABLE llx_eventorganization_conferenceorboothattendee ADD UNIQUE INDEX uk_eventorganization_confboothattendee(ref);
+
+ALTER TABLE llx_facture_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
+ALTER TABLE llx_facture_fourn_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
+
+ALTER TABLE llx_don ADD COLUMN ip varchar(250);

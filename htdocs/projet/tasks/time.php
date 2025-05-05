@@ -1627,7 +1627,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$sql .= " AND pt.fk_projet IN (" . $db->sanitize((string) $projectidforalltimes) . ")";
 		} elseif (!empty($allprojectforuser)) {
 			// Limit on on user
-			if (empty($search_user)) {
+			if (empty($search_user) && !empty($arrayfields['author']['checked'])) {
 				$search_user = $user->id;
 			}
 			if ($search_user > 0) {
