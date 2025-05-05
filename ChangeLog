@@ -17,14 +17,15 @@ WARNING:
 --------
 
 The following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* The directory /build has been moved into /dev/build.
 * The use of GETPOST function is not allowed inside extrafields conditions or any strings that contains dynamic code evaluated with dol_eval().
 * The deprecated variable $trigger_name (duplicate of variable $triggersendname) has been removed. You must use $triggersendname everywhere now.
-* The behavior of constant STOCK_ALLOW_NEGATIVE_TRANSFER has been reversed. It has been renamed to STOCK_DISALLOW_NEGATIVE_TRANSFER.
-* Method Categoie->getObjectsInCateg() is deprecated. Try by using instead getListForItem() or containing().
+* The behavior of constant STOCK_ALLOW_NEGATIVE_TRANSFER has been reversed. It has been renamed into STOCK_DISALLOW_NEGATIVE_TRANSFER.
+* Method Categoie->getObjectsInCateg() is deprecated. Try by using instead: getListForItem() or containing().
 * Global variables $bctag, $conffiletoshowshort, $type2label has been removed.
 * Deprecatedproperty ->fk_departement that was replaced by ->state_id has been completely removed.
 * If you setup the API to update multicurrency rate from internet, you may need to re-enter your API key (so API key will be crypted in database).
+* The signature of API get for intervention has been modified to match other get api on other objects.
+* The directory /build has been moved into /dev/build.
 
 
 ***** ChangeLog for 21.0.1 compared to 21.0.0 *****
