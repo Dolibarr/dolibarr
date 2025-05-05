@@ -51,7 +51,7 @@ abstract class ModelePdfAccountancy extends CommonDocGenerator
 	public $toDate;
 
 	/**
-	 * @var array<int,array{start:int|float,end:int|float}> $verticalLinesSpacesCoordinates Array to store vertical coordinates where vertical column lines should be avoid
+	 * @var array<int,array> $verticalLinesSpacesCoordinates Array to store vertical coordinates where vertical column lines should be avoid
 	 */
 	public $verticalLinesSpacesCoordinates = [];
 
