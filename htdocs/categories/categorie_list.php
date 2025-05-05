@@ -316,57 +316,12 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-/*
-// If the internal user must only see his customers, force searching by him
-$search_sale = 0;
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
-}
-// Search on sale representative
-if ($search_sale && $search_sale != '-1') {
-	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
-	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
-	}
-}
-// Search on socid
-if ($socid) {
-	$sql .= " AND t.fk_soc = ".((int) $socid);
-}
-*/
-//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-/* If a group by is required
-$sql .= " GROUP BY ";
-foreach($object->fields as $key => $val) {
-	$sql .= "t.".$db->sanitize($key).", ";
-}
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-	}
-}
-// Add groupby from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql = preg_replace('/,\s*$/', '', $sql);
-*/
-
-// Add HAVING from hooks
-/*
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-*/
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -404,16 +359,6 @@ if (!$resql) {
 
 $num = $db->num_rows($resql);
 
-
-// Direct jump if only one record found
-/*
-if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
-	$obj = $db->fetch_object($resql);
-	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/aaa/categorie_card.php', 1).'?id='.((int) $id));
-	exit;
-}
-*/
 
 // Output page
 // --------------------------------------------------------------------
@@ -535,7 +480,9 @@ if ($mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
+	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+
+	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', $morehtmlcenter, 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1, $morehtmlrightbeforebutton);
 
 
 	print '<div class="fichecenter">';
@@ -654,7 +601,9 @@ if ($mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlrightbeforebutton);
 
 	// Add code for pre mass action (confirmation or email presend form)
 	$topicmail = "SendCategorieRef";

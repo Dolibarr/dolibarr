@@ -434,7 +434,6 @@ class Documentation
 	 */
 	public function displaySummary($menu, $level = 0, $showsubmenu = 1, $showsubmenu_summary = 1)
 	{
-
 		global $langs;
 
 		$level++;
@@ -442,16 +441,18 @@ class Documentation
 
 		if (!empty($menu['summary'])) {
 			foreach ($menu['summary'] as $summary_label => $summary_link) {
+				/*
 				if ($summary_link[0] == '#') {
 					$tmp_summary_link = $menu['url'];
 					if (GETPOSTINT('hidenavmenu')) {
-						$tmp_summary_link .= '&hidenavmenu=1';
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'hidenavmenu=1';
 					}
 					if (GETPOSTINT('displayMode')) {
-						$tmp_summary_link .= '&displayMode=1';
+						$tmp_summary_link .= (strpos($tmp_summary_link, '?') === false ? '?' : '&').'displayMode=1';
 					}
-					$tmp_summary_link;
+					$summary_link = $tmp_summary_link;
 				}
+				*/
 
 				print '<li><a href="'.$summary_link.'">'.$langs->trans($summary_label).'</a></li>';
 			}

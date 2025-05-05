@@ -963,8 +963,8 @@ Collation
 Config
 Creation
 CronLib
-CronModuleNotEnabledInThisEntity
 DateInitialBalance
+CronModuleNotEnabledInThisEntity
 Dimension
 Don
 ECM
@@ -974,7 +974,6 @@ ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
-FailedToLogin
 First
 GroupCreate
 GroupUpdate
