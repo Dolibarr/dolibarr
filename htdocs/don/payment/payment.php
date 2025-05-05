@@ -124,7 +124,7 @@ if ($action == 'add_payment' && $permissiontoadd) {
 			}
 
 			if (!$error) {
-				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOSTINT('accountid'), '', '');
+				$result = $payment->addPaymentToBank($user, 'payment_donation', '(DonationPayment)', GETPOSTINT('accountid'), GETPOST('chqemetteur'), GETPOST('chqbank'));
 				if (!($result > 0)) {
 					$errmsg = $payment->error;
 					setEventMessages($errmsg, null, 'errors');
@@ -215,12 +215,25 @@ if ($action == 'create') {
 	$form->select_comptes(GETPOSTISSET("accountid") ? GETPOST("accountid") : "0", "accountid", 0, '', 2); // Show open bank account list
 	print '</td></tr>';
 
-	// Number
+	// Bank check or transfer number
 	print '<tr><td>'.$langs->trans('Numero');
 	print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
 	print '</td>';
 	print '<td colspan="2"><input name="num_payment" type="text" value="'.GETPOST('num_payment').'"></td></tr>'."\n";
 
+	// Check transmitter
+	print '<tr><td class="'.(GETPOST('paiementcode') == 'CHQ' ? 'fieldrequired ' : '').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
+	print ' <em class="opacitymedium">('.$langs->trans("ChequeMaker").')</em>';
+	print '</td>';
+	print '<td colspan="2"><input id="fieldchqemetteur" class="maxwidth300" name="chqemetteur" type="text" value="'.GETPOST('chqemetteur', 'alphanohtml').'"></td></tr>';
+
+	// Bank name
+	print '<tr><td>'.$langs->trans('Bank');
+	print ' <em class="opacitymedium">('.$langs->trans("ChequeBank").')</em>';
+	print '</td>';
+	print '<td colspan="2"><input name="chqbank" class="maxwidth300" type="text" value="'.GETPOST('chqbank', 'alphanohtml').'"></td></tr>';
+
+	// Comments
 	print '<tr>';
 	print '<td class="tdtop">'.$langs->trans("Comments").'</td>';
 	print '<td class="tdtop" colspan="2"><textarea name="note_public" wrap="soft" cols="60" rows="'.ROWS_3.'"></textarea></td>';
