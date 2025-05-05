@@ -466,9 +466,7 @@ if ($mode == 'hierarchy') {
 		$counter = '';
 		if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
-			$elements = ($type == Categorie::TYPE_ACCOUNT)
-				? $object->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
-				: $object->getObjectsInCateg($type, 1);
+			$elements = $object->getObjectsInCateg($type, 1);
 
 			$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 		}
@@ -479,28 +477,37 @@ if ($mode == 'hierarchy') {
 		$entry = '<table class="nobordernopadding centpercent">';
 		$entry .= '<tr>';
 
+		// Force tools on right
+		$conf->main_checkbox_left_column = 0;
+
 		$entry .= '<td>';
 		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
+		if (!empty($conf->main_checkbox_left_column)) {
+			if ($user->hasRight('categorie', 'creer')) {
+				$entry .= ' &nbsp; <a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+			}
+			if ($user->hasRight('categorie', 'supprimer')) {
+				$entry .= ' &nbsp; <a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
+			}
+		}
 		$entry .= '</td>';
 
 		// Add column counter
 		$entry .= $counter;
 
-		/*
-		$entry .= '<td class="right" width="30px;">';
-		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].$param.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type)).'">'.img_view().'</a>';
-		$entry .= '</td>';
-		*/
-		$entry .= '<td class="right" width="30px;">';
-		if ($user->hasRight('categorie', 'creer')) {
-			$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+		if (empty($conf->main_checkbox_left_column)) {
+			$entry .= '<td class="right" width="30px;">';
+			if ($user->hasRight('categorie', 'creer')) {
+				$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+			}
+			$entry .= '</td>';
+
+			$entry .= '<td class="center" width="30px;">';
+			if ($user->hasRight('categorie', 'supprimer')) {
+				$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
+			}
+			$entry .= '</td>';
 		}
-		$entry .= '</td>';
-		$entry .= '<td class="right" width="30px;">';
-		if ($user->hasRight('categorie', 'supprimer')) {
-			$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
-		}
-		$entry .= '</td>';
 
 		$entry .= '</tr>';
 		$entry .= '</table>';

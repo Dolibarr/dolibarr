@@ -150,7 +150,7 @@ foreach ($arrayofcateg as $idtype => $val) {
 	print '<td class="center">';
 	print $arrayofcateg[$idtype]['nb'];
 	print '</td>';
-	print '<td class="center"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
+	print '<td class="center"><a class="editfielda" href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';
 }
 
