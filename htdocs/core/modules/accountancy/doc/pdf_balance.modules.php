@@ -290,7 +290,7 @@ class pdf_balance extends ModelePdfAccountancy
 		$fromMonth = date('m', $this->fromDate);
 		$toYear = date('Y', $this->toDate);
 		$toMonth = date('m', $this->toDate);
-		$nbMonths = (((int) $toYear - (int)$fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
+		$nbMonths = (((int) $toYear - (int) $fromYear) * 12) + ((int) $toMonth - (int) $fromMonth) + 1;
 		$datePlusOneMonth = strtotime("-1 month", $this->fromDate);
 		$dates = [];
 		for ($i = 0; $i  < $nbMonths; $i++) {
