@@ -1029,7 +1029,6 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage
 ErrorLoginDisabled
 ErrorLoginDoesNotExists
 ErrorLoginHasNoEmail
-ErrorMandatoryParametersNotProvided
 ErrorMaxNumberReachForThisMask
 ErrorNewRefIsAlreadyUsed
 ErrorNoImagickReadimage

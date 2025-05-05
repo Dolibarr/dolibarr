@@ -15469,7 +15469,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 			// Title
 			$out .= ' <div class="messaging-title inline-block">';
-			//$out .= $actionstatic->getTypePicto();
+			//$out .= $actionstatic->getTypePicto();	// The type of event is already into the timeline on left.
 			if (empty($conf->dol_optimize_smallscreen) && $actionstatic->type_code != 'AC_OTH_AUTO') {
 				$out .= $labeltype.' - ';
 			}
@@ -15485,7 +15485,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 					$libelle = $histo[$key]['note'];
 					$actionstatic->id = $histo[$key]['id'];
-					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					if ($libelle != $labeltype) {
+						$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					}
 				} elseif ($histo[$key]['type'] == 'mailing') {
 					$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
@@ -15496,6 +15498,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
 				}
 			}
+			$out = preg_replace('/ - $/', '', $out);	// Remove ending ' - '
 
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']]) && isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {

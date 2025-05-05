@@ -4036,7 +4036,14 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="idpicto" value="fa-file" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+
 				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+				print '<span class="opacitymedium small">';
+				print ' &nbsp; &nbsp; ';
+				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+				print '</span>';
+
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';
