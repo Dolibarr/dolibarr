@@ -142,6 +142,9 @@ class EventAttendees extends DolibarrApi
 				'message' => 'event attendee deleted'
 			)
 		);
+	}
+
+	/**
 	 * Get properties of a event attendee by id
 	 *
 	 * Return an array with event attendee information
