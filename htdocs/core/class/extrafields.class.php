@@ -2419,6 +2419,7 @@ class ExtraFields
 			$value = dol_trunc(preg_replace('/./i', '*', $value), 8, 'right', 'UTF-8', 1);
 		} elseif ($type == 'stars') {
 			$objectid = (int) $object->id;
+			$nbstars = (int) $value;
 			if ($showValueInsteadOfInputField == 1) {
 				$value = '<span style="display:none;" id="'.$key.$object->id.'">'.dol_escape_htmltag($value).'</span>';
 			} else {
@@ -2428,7 +2429,7 @@ class ExtraFields
 			$value .= '<div class="star-selection" id="'.$key.$objectid.'_selection">';
 			$i = 1;
 			while ($i <= $size) {
-				$value .= '<span class="star" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
+				$value .= '<span class="star'.($i <= $nbstars ? ' active' : '').'" data-value="'.$i.'">'.img_picto('', 'fontawesome_star_fas').'</span>';
 				$i++;
 			}
 			$value .= '</div>';
@@ -2436,23 +2437,24 @@ class ExtraFields
 				$(document).ready(function() {
 					let container = $("#'.$key.$objectid.'_selection");
 					let selectedStars = parseInt($("#'.$key.$objectid.'").val() || $("#'.$key.$objectid.'").text()) || 0;
-					container.find(".star").each(function() {
-						$(this).toggleClass("active", $(this).data("value") <= selectedStars);
-					});';
+					';
 			if ($showValueInsteadOfInputField == 0) {
 				$value .= '
 						container.find(".star").on("mouseover", function() {
+							console.log("Mouse over a star");
 							let selectedStar = $(this).data("value");
 							container.find(".star").each(function() {
 								$(this).toggleClass("active", $(this).data("value") <= selectedStar);
 							});
 						});
 						container.on("mouseout", function() {
+							console.log("Mouse out of star");
 							container.find(".star").each(function() {
 								$(this).toggleClass("active", $(this).data("value") <= selectedStars);
 							});
 						});
 						container.find(".star").off("click").on("click", function() {
+							console.log("We click on star, we call the ajax core/ajax/updateextrafield.php");
 							selectedStars = $(this).data("value");
 							if (selectedStars == 1 && $("#'.$key.$objectid.'").val() == 1) {
 								selectedStars = 0;
@@ -2469,7 +2471,7 @@ class ExtraFields
 									objectId: '.((int) $objectid).',
 									field: \''.dol_escape_js($key).'\',
 									value: selectedStars,
-									token: "'.newToken().'"
+									token: \''.newToken().'\'
 								},
 								success: function(response) {
 									var res = JSON.parse(response);
