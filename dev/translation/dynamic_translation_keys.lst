@@ -2993,7 +2993,6 @@ UserHideExternal
 UserHideNonEmployee
 UserID
 UserLogged
-UserLoginFailed
 UserLogoff
 UserMargins
 UserModif

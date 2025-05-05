@@ -974,7 +974,6 @@ ErrorLDAPFunctionsAreDisabledOnThisPHP
 ErrorUpdating
 Extra
 FailedToConnectToSFTPAfterSSHAuthentication
-FailedToLogin
 First
 GroupCreate
 GroupUpdate
