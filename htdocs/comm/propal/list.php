@@ -2454,7 +2454,7 @@ while ($i < $imaxinloop) {
 		}
 
 		// Orders
-		if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
+		if (!empty($arrayfields['has_orders']['checked'])) {
 			print '<td class="nowrap center">';
 			if ($obj->nb_orders) {
 				$links = $object->linkedObjects['commande'] ?? [];	// fetchObjectLinked was already called earlier
@@ -2471,7 +2471,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		// Invoices
-		if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
+		if (!empty($arrayfields['has_invoices']['checked'])) {
 			print '<td class="nowrap center">';
 			if ($obj->nb_invoices) {
 				$links = $object->linkedObjects['facture'] ?? [];		// fetchObjectLinked was already called earlier
