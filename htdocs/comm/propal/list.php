@@ -1545,12 +1545,6 @@ if (!empty($arrayfields['p.note_private']['checked'])) {
 	print '<td class="liste_titre">';
 	print '</td>';
 }
-// Import key
-if (!empty($arrayfields['p.import_key']['checked'])) {
-	print '<td class="liste_titre maxwidthonsmartphone center">';
-	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
-	print '</td>';
-}
 // Orders
 if (!empty($arrayfields['has_orders']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
@@ -1561,6 +1555,12 @@ if (!empty($arrayfields['has_orders']['checked'])) {
 if (!empty($arrayfields['has_invoices']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectyesno('search_has_invoices', $search_has_invoices, 1, 0, 1, 1);
+	print '</td>';
+}
+// Import key
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	print '<td class="liste_titre maxwidthonsmartphone center">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_import_key" value="'.dol_escape_htmltag($search_import_key).'">';
 	print '</td>';
 }
 // Status
@@ -1779,17 +1779,17 @@ if (!empty($arrayfields['p.note_private']['checked'])) {
 	print_liste_field_titre($arrayfields['p.note_private']['label'], $_SERVER["PHP_SELF"], "p.note_private", "", $param, '', $sortfield, $sortorder, 'center nowrap ');
 	$totalarray['nbfield']++;
 }
-// Import key
-if (!empty($arrayfields['p.import_key']['checked'])) {
-	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
-}
 // Orders
-if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
+if (!empty($arrayfields['has_orders']['checked'])) {
 	print_liste_field_titre($arrayfields['has_orders']['label'], $_SERVER["PHP_SELF"], "nb_orders", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 // Invoices
-if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
+if (!empty($arrayfields['has_invoices']['checked'])) {
 	print_liste_field_titre($arrayfields['has_invoices']['label'], $_SERVER["PHP_SELF"], "nb_invoices", "", $param, '', $sortfield, $sortorder, 'center ');
+}
+// Import key
+if (!empty($arrayfields['p.import_key']['checked'])) {
+	print_liste_field_titre($arrayfields['p.import_key']['label'], $_SERVER["PHP_SELF"], "p.import_key", "", $param, '', $sortfield, $sortorder, 'center ');
 }
 // Status
 if (!empty($arrayfields['p.fk_statut']['checked'])) {
@@ -2453,13 +2453,6 @@ while ($i < $imaxinloop) {
 			}
 		}
 
-		// Import key
-		if (!empty($arrayfields['p.import_key']['checked'])) {
-			print '<td class="nowrap center">'.dol_escape_htmltag($obj->import_key).'</td>';
-			if (!$i) {
-				$totalarray['nbfield']++;
-			}
-		}
 		// Orders
 		if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
 			print '<td class="nowrap center">';
@@ -2490,6 +2483,14 @@ while ($i < $imaxinloop) {
 				print '<div class="classfortooltip">'. yn(($obj->nb_invoices > 0) ? 1 : 0, $tooltip) .'</div>';
 			}
 			print '</td>';
+			if (!$i) {
+				$totalarray['nbfield']++;
+			}
+		}
+
+		// Import key
+		if (!empty($arrayfields['p.import_key']['checked'])) {
+			print '<td class="nowrap center">'.dol_escape_htmltag($obj->import_key).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
