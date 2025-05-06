@@ -270,10 +270,10 @@ $arrayfields = array(
 	'p.date_cloture' => array('label' => "DateClosing", 'checked' => '0', 'position' => 500),
 	'p.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 510, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'p.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 511, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
+	'has_orders' => array('label' => "Orders", 'checked' => '0', 'position' => 900, 'enabled' => ((getDolGlobalInt('PROPOSAL_COLUMN_HAS_ORDERS') && isModEnabled('order')) ? '1' : '0')),
+	'has_invoices' => array('label' => "Invoices", 'checked' => '0', 'position' => 901, 'enabled' => ((getDolGlobalInt('PROPOSAL_COLUMN_HAS_INVOICES') && isModEnabled('invoice') && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) ? '1' : '0')),
 	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
-	'has_orders' => array('label' => "Orders", 'checked' => '0', 'position' => 1000, 'enabled' => ((getDolGlobalInt('PROPOSAL_COLUMN_HAS_ORDERS') && isModEnabled('order')) ? '1' : '0')),
-	'has_invoices' => array('label' => "Invoices", 'checked' => '0', 'position' => 1001, 'enabled' => ((getDolGlobalInt('PROPOSAL_COLUMN_HAS_INVOICES') && isModEnabled('invoice') && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) ? '1' : '0')),
-	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1002),
+	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1000),
 );
 
 // List of fields to search into when doing a "search in all"
