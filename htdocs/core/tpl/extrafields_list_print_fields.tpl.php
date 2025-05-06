@@ -81,7 +81,7 @@ if (!empty($extrafieldsobjectkey) && !empty($extrafields->attributes[$extrafield
 
 				print '<td'.($cssclasstd ? ' class="'.$cssclasstd.'"' : '');
 				print ' data-key="'.$extrafieldsobjectkey.'.'.$key.'"';
-				print($title ? ' title="'.dol_escape_htmltag($title).'"' : '');
+				print ($title && !in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('stars')) ? ' title="'.dol_escape_htmltag($title).'"' : '');
 				print '>';
 				print $cssclassview ? '<span class="'.$cssclassview.'">' : '';
 				print $valuetoshow;

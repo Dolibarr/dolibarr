@@ -52,15 +52,17 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 $langs->loadLangs(array("eventorganization", "other", "projects", "companies"));
 
 // Get parameters
-$id = GETPOSTINT('id');
-$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $confirm = GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ? GETPOST('contextpage', 'aZ') : 'conferenceorboothattendeecard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-$mode = GETPOST('mode', 'alpha');
+$optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
+$mode = GETPOST('mode', 'aZ');
+
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
 
 $lineid   = GETPOSTINT('lineid');
 
@@ -73,13 +75,13 @@ $object = new ConferenceOrBoothAttendee($db);
 $extrafields = new ExtraFields($db);
 $projectstatic = new Project($db);
 $diroutputmassaction = $conf->eventorganization->dir_output.'/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('conferenceorboothattendeecard', 'globalcard')); // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array($contextpage, 'globalcard')); // Note that conf->hooks_modules contains array
 
 
 $confOrBooth = null;
-if ($conf_or_booth_id > 0 || $fk_project > 0) {
-	$confOrBooth = new ConferenceOrBooth($db);
-	$result = $confOrBooth->fetch($fk_project > 0 ? $fk_project : $conf_or_booth_id);
+if ($conf_or_booth_id > 0) {
+	$confOrBooth = new ConferenceOrBooth($db);	// Actioncomm
+	$result = $confOrBooth->fetch($conf_or_booth_id);
 	if ($result < 0) {
 		setEventMessages(null, $confOrBooth->errors, 'errors');
 	} else {
@@ -232,7 +234,11 @@ $help_url = 'EN:Module_Event_Organization';
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-eventorganization page-attendee-card');
 
-$result = $projectstatic->fetch(($confOrBooth === null || empty($confOrBooth->fk_project)) ? $fk_project : $confOrBooth->fk_project);
+if ($action == 'create') {
+	$result = $projectstatic->fetch(GETPOSTINT('fk_project'));
+} else {
+	$result = $projectstatic->fetch(($confOrBooth === null || empty($confOrBooth->fk_project)) ? $fk_project : $confOrBooth->fk_project);
+}
 if (getDolGlobalString('PROJECT_ALLOW_COMMENT_ON_PROJECT') && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) {
 	$projectstatic->fetchComments();
 }
@@ -262,7 +268,7 @@ if (!empty($withproject)) {
 	// Title
 	$morehtmlref .= $projectstatic->title;
 	// Thirdparty
-	if (!empty($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
+	if (isset($projectstatic->thirdparty->id) && $projectstatic->thirdparty->id > 0) {
 		$morehtmlref .= '<br>'.$projectstatic->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref .= '</div>';
@@ -362,7 +368,10 @@ if (!empty($withproject)) {
 
 	// Other attributes
 	$cols = 2;
-	//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
+	$objectconf = $object;
+	$object = $projectstatic;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	$object = $objectconf;
 
 	print '</table>';
 
@@ -382,10 +391,10 @@ if (!empty($withproject)) {
 
 	// Description
 	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-	print nl2br($projectstatic->description);
+	print dol_htmlentitiesbr($projectstatic->description);
 	print '</td></tr>';
 
-	print '<tr><td class="nowrap">';
+	print '<tr><td class="ntitlefield owrap">';
 	$typeofdata = 'checkbox:'.($projectstatic->accept_conference_suggestions ? ' checked="checked"' : '');
 	$htmltext = $langs->trans("AllowUnknownPeopleSuggestConfHelp");
 	print $form->editfieldkey('AllowUnknownPeopleSuggestConf', 'accept_conference_suggestions', '', $projectstatic, 0, $typeofdata, '', 0, 0, 'projectid', $htmltext);
@@ -468,8 +477,8 @@ if (!empty($withproject)) {
 	print $langs->trans("PublicAttendeeSubscriptionGlobalPage");
 	//print '</span>';
 	print '</td><td>';
-	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.$projectstatic->id.'&type=global';
-	$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.$projectstatic->id, 'md5');
+	$link_subscription = $dolibarr_main_url_root.'/public/eventorganization/attendee_new.php?id='.((int) $projectstatic->id).'&type=global';
+	$encodedsecurekey = dol_hash(getDolGlobalString("EVENTORGANIZATION_SECUREKEY").'conferenceorbooth'.((int) $projectstatic->id), 'md5');
 	$link_subscription .= '&securekey='.urlencode($encodedsecurekey);
 	//print '<div class="urllink">';
 	//print '<input type="text" value="'.$linkregister.'" id="linkregister" class="quatrevingtpercent paddingrightonly">';
@@ -635,9 +644,12 @@ if ($confOrBooth !== null && $object->id > 0 && (empty($action) || ($action != '
 	print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent tableforfield">'."\n";
 
-	$keyforbreak = 'note_public';
-
 	// Common attributes
+	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
+	//unset($object->fields['fk_project']);				// Hide field already shown in banner
+	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	$keyforbreak = 'num_vote';
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.

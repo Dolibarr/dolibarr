@@ -5372,7 +5372,8 @@ img.boxhandle, img.boxclose {
 .star-selection {
 	font-size: 1rem;
 	cursor: pointer;
-	display: flex;
+	display: inline-block;
+	white-space: nowrap;
 }
 .star {
 	color: #ccc;

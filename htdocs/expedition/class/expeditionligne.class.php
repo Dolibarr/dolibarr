@@ -11,7 +11,7 @@
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016-2024	Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Lenin Rivas         	<lenin@leninrivas.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -369,6 +369,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function insert($user, $notrigger = 0)
 	{
+		global $langs;
 		$error = 0;
 
 		$skip_check_parameters = false;
@@ -388,7 +389,8 @@ class ExpeditionLigne extends CommonObjectLine
 			|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
 			|| !is_numeric($this->qty))
 			&& !$skip_check_parameters) {
-			$this->error = 'ErrorMandatoryParametersNotProvided';
+			$langs->load('errors');
+			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 			return -1;
 		}
 
@@ -641,6 +643,7 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
+		global $langs;
 		$error = 0;
 
 		dol_syslog(get_class($this)."::update id=$this->id, entrepot_id=$this->entrepot_id, product_id=$this->fk_product, qty=$this->qty");
@@ -687,7 +690,8 @@ class ExpeditionLigne extends CommonObjectLine
 		// check parameters
 		if (!isset($this->id) || !isset($this->entrepot_id)) {
 			dol_syslog(get_class($this).'::update missing line id and/or warehouse id', LOG_ERR);
-			$this->errors[] = 'ErrorMandatoryParametersNotProvided';
+			$langs->load('errors');
+			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 			$error++;
 			return -1;
 		}
@@ -700,7 +704,8 @@ class ExpeditionLigne extends CommonObjectLine
 
 			if (empty($batch_id) || empty($this->fk_product)) {
 				dol_syslog(get_class($this).'::update missing fk_origin_stock (batch_id) and/or fk_product', LOG_ERR);
-				$this->errors[] = 'ErrorMandatoryParametersNotProvided';
+				$langs->load('errors');
+				$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 				$error++;
 			}
 

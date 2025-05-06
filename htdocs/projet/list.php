@@ -2065,9 +2065,9 @@ while ($i < $imaxinloop) {
 		}
 		// Usage opportunity
 		if (!empty($arrayfields['p.usage_opportunity']['checked'])) {
-			print '<td class="">';
+			print '<td class="center">';
 			if ($obj->usage_opportunity) {
-				print yn($obj->usage_opportunity);
+				print yn($obj->usage_opportunity, 4);
 			}
 			print '</td>';
 			if (!$i) {
@@ -2076,31 +2076,31 @@ while ($i < $imaxinloop) {
 		}
 		// Usage task
 		if (!empty($arrayfields['p.usage_task']['checked'])) {
-			print '<td class="">';
+			print '<td class="center">';
 			if ($obj->usage_task) {
-				print yn($obj->usage_task);
+				print yn($obj->usage_task, 4);
 			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Bill time
+		// Usage bill time
 		if (!empty($arrayfields['p.usage_bill_time']['checked'])) {
-			print '<td class="">';
+			print '<td class="center">';
 			if ($obj->usage_bill_time) {
-				print yn($obj->usage_bill_time);
+				print yn($obj->usage_bill_time, 4);
 			}
 			print '</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
-		// Event Organization
+		// Usage event organization
 		if (!empty($arrayfields['p.usage_organize_event']['checked'])) {
-			print '<td class="">';
+			print '<td class="center">';
 			if ($obj->usage_organize_event) {
-				print yn($obj->usage_organize_event);
+				print yn($obj->usage_organize_event, 4);
 			}
 			print '</td>';
 			if (!$i) {
@@ -2109,7 +2109,7 @@ while ($i < $imaxinloop) {
 		}
 		// Allow unknown people to suggest conferences
 		if (!empty($arrayfields['p.accept_conference_suggestions']['checked'])) {
-			print '<td class="">';
+			print '<td class="center">';
 			if ($obj->accept_conference_suggestions) {
 				print yn($obj->accept_conference_suggestions);
 			}
