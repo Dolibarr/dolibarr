@@ -8345,6 +8345,32 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
+/* For dolUIBlock() feature                                                       */
+/* ============================================================================== */
+
+#dol-block-ui {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#dol-block-ui .message {
+	padding: 15px 20px 15px 50px;
+	color: #fff;
+	background: #000 no-repeat 10px center;
+	border-radius: 10px;
+	font-family: sans-serif;
+}
+
+
+/* ============================================================================== */
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 

@@ -148,6 +148,24 @@ if ($thousand == 'Space') {
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
+
+// To start/stop Block UI
+function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
+	const block = document.getElementById('dol-block-ui');
+	if (block != null) {
+		const msgDiv = block.querySelector('.message');
+		if (msgDiv != null) {
+			msgDiv.innerText = message;
+			msgDiv.style.backgroundImage = `url('${indicatorUrl}')`;
+			block.style.display = 'flex';
+		}
+	}
+}
+function dolUnblockUI() {
+	document.getElementById('dol-block-ui').style.display = 'none';
+}
+
+
 // For jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;

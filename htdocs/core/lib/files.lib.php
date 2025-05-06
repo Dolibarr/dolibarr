@@ -279,7 +279,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$object = new stdClass();
 	}
 
-	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
+	$sql = "SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
 		$sql .= ", description";
@@ -374,7 +374,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		$object = new stdClass();
 	}
 
-	$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC, 0, '', $object);
+	$filearrayindatabase = dol_dir_list_in_database(preg_replace('/[\\/]$/', '', $relativedir), '', null, 'name', SORT_ASC, 0, '', $object);
 
 	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;

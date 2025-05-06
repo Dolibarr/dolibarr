@@ -3069,20 +3069,11 @@ $arrayofjs = array(
 );
 $arrayofcss = array();
 
-$moreheadcss = '';
-$moreheadjs = '';
-
-$arrayofjs[] = 'includes/jquery/plugins/blockUI/jquery.blockUI.js';
-$arrayofjs[] = 'core/js/blockUI.js'; // Used by ecm/tpl/enabledfiletreeajax.tpl.php
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$arrayofjs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
-
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";

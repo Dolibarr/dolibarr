@@ -51,6 +51,8 @@ if (!defined('NOREQUIREAJAX')) {
  *
  * @var string $module
  * @var string $mode
+ * @var string $websitekey
+ * @var int $pageid
  */
 
 if (!isset($mode) || $mode != 'noajax') {    // For ajax call
@@ -198,7 +200,7 @@ if (!dol_is_dir($upload_dir)) {
 	exit;*/
 }
 
-print '<!-- ajaxdirpreview type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
+print '<!-- ajaxdirpreview mode='.$mode.' type='.$type.' module='.$module.' modulepart='.$modulepart.'-->'."\n";
 //print '<!-- Page called with mode='.dol_escape_htmltag(isset($mode)?$mode:'').' type='.dol_escape_htmltag($type).' module='.dol_escape_htmltag($module).' url='.dol_escape_htmltag($url).' '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 $param = ($sortfield ? '&sortfield='.urlencode($sortfield) : '').($sortorder ? '&sortorder='.urlencode($sortorder) : '');
@@ -256,7 +258,7 @@ if ($type == 'directory') {
 		$upload_dir = $conf->societe->dir_output;
 		$excludefiles[] = '^contact$'; // The subdir 'contact' contains files of contacts.
 	} elseif ($module == 'invoice') {
-		$upload_dir = $conf->facture->dir_output;
+		$upload_dir = $conf->invoice->dir_output;
 	} elseif ($module == 'invoice_supplier') {
 		$upload_dir = $conf->fournisseur->facture->dir_output;
 	} elseif ($module == 'propal') {
@@ -264,11 +266,11 @@ if ($type == 'directory') {
 	} elseif ($module == 'supplier_proposal') {
 		$upload_dir = $conf->supplier_proposal->dir_output;
 	} elseif ($module == 'order') {
-		$upload_dir = $conf->commande->dir_output;
+		$upload_dir = $conf->order->dir_output;
 	} elseif ($module == 'order_supplier') {
 		$upload_dir = $conf->fournisseur->commande->dir_output;
 	} elseif ($module == 'contract') {
-		$upload_dir = $conf->contrat->dir_output;
+		$upload_dir = $conf->contract->dir_output;
 	} elseif ($module == 'product') {
 		$upload_dir = $conf->product->dir_output;
 	} elseif ($module == 'tax') {
@@ -339,6 +341,7 @@ if ($type == 'directory') {
 
 		$perm = $user->hasRight('ecm', 'upload');
 
+		// Print list of files
 		$formfile->list_of_autoecmfiles($upload_dir, $filearray, $module, $param, 1, '', $perm, 1, $textifempty, $maxlengthname, $url, 1);
 	} else {
 		// Manual list
@@ -432,8 +435,9 @@ if ($type == 'directory') {
 
 		// When we show list of files for ECM files, $filearray contains file list, and directory is defined with modulepart + section into $param
 		// When we show list of files for a directory, $filearray ciontains file list, and directory is defined with modulepart + $relativepath
-		// var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." param=".$param." url=".$url);
-		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, '', $sortfield, $sortorder);
+		//var_dump("section=".$section." title=".$title." modulepart=".$modulepart." useinecm=".$useinecm." perm(permtoeditline)=".$perm." relativepath=".$relativepath." upload_dir=".$upload_dir." param=".$param." url=".$url);
+
+		$formfile->list_of_documents($filearray, null, $modulepart, $param, 1, $relativepath, $perm, $useinecm, $textifempty, $maxlengthname, $title, $url, 0, $perm, $upload_dir, $sortfield, $sortorder);
 	}
 }
 
