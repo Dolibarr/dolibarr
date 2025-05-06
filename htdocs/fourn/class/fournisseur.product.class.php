@@ -785,12 +785,26 @@ class ProductFournisseur extends Product
 		$sql .= " pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.fk_availability, pfp.charges, pfp.info_bits, pfp.delivery_time_days, pfp.supplier_reputation,";
 		$sql .= " pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code, pfp.datec, pfp.tms,";
 		$sql .= " pfp.barcode, pfp.fk_barcode_type, pfp.packaging, pfp.status as pfstatus";
-		$sql .= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."societe as s";
+		$sql .= " FROM ".$this->db->prefix()."product_fournisseur_price as pfp";
+		$sql .= " INNER JOIN ".$this->db->prefix()."product as p ON p.rowid = pfp.fk_product";
+		$sql .= " INNER JOIN ".$this->db->prefix()."societe as s ON s.rowid = pfp.fk_soc";
 		$sql .= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
-		$sql .= " AND pfp.fk_soc = s.rowid AND pfp.fk_product = p.rowid";
-		$sql .= ($socid > 0 ? ' AND pfp.fk_soc = '.((int) $socid) : '');
+
+		if (isModEnabled('multicompany') && getDolGlobalInt('MULTICOMPANY_THIRDPARTY_SHARING_BYELEMENT_ENABLED')) {
+			$daoMulticompany = new DaoMulticompany($this->db);
+			$granularity = $daoMulticompany->getListOfSharingsByElement('thirdparty', null, $conf->entity);
+			if (is_array($granularity) && !empty($granularity)) {
+				$method = 'IN';
+				if (isSharingAllByDefault('thirdparty')) {
+					$method = 'NOT IN';
+				}
+				$sql .= " AND (s.rowid ".$method." (" . implode(",", array_keys($granularity)) . ") OR s.entity = " . $conf->entity . ")";
+			}
+		}
+
 		$sql .= " AND s.status = 1"; // only enabled company selected
 		$sql .= " AND pfp.fk_product = ".((int) $prodid);
+		$sql .= ($socid > 0 ? ' AND pfp.fk_soc = '.((int) $socid) : '');
 		if (empty($sortfield)) {
 			$sql .= " ORDER BY s.nom, pfp.quantity, pfp.price";
 		} else {
