@@ -976,12 +976,10 @@ class ConferenceOrBoothAttendee extends CommonObject
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatus[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatus[self::STATUS_USED] = $langs->trans('Used');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Registered');
 			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('ShowedUp');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
-			$this->labelStatusShort[self::STATUS_USED] = $langs->trans('Used');
 		}
 
 		$statusType = 'status'.$status;
