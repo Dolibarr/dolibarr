@@ -654,6 +654,8 @@ if ($object->id > 0) {
 	}
 
 	if (isModEnabled('intracommreport')) {
+		$langs->load("intracommreport");
+
 		// Transport mode by default
 		print '<tr><td class="nowrap">';
 		print '<table class="centpercent nobordernopadding"><tr><td class="nowrap">';

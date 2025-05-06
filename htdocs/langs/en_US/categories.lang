@@ -103,3 +103,4 @@ AddTicketIntoCategory=Assign the category to the ticket
 CategorieListOfType=Select the type of the categories/tags you want to view or edit
 NumberOfCategories=Number of tags/categories
 MyTag=My tag
+BackToCategoryTypes=Back to types of category

@@ -631,7 +631,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						print '<th>'.$langs->trans('Invoice').'</th>';
 						print '<th>'.$langs->trans('RefSupplier').'</th>';
 						if ($displayAllInvoices) {
-							print '<td>' . $langs->trans('Type') . '</td>';
+							print '<th>' . $langs->trans('Type') . '</th>';
 						}
 						print '<th class="center">'.$langs->trans('Date').'</th>';
 						print '<th class="center">'.$langs->trans('DateMaxPayment').'</th>';
@@ -780,9 +780,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 											print '<button class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $multicurrency_remaintopay).'">'.img_picto("Auto fill", 'rightarrow');
 										}
 										print '<input type=hidden class="multicurrency_remain" name="'.$nameRemain.'" value="'.$multicurrency_remaintopay.'">';
-										print '<input '.$min.' '.$max.' type="number" step="any" size="8" class="multicurrency_amount" name="'.$namef.'" value="'.GETPOST($namef).'">';
+										print '<input '.$min.' '.$max.' type="text" class="multicurrency_amount width100" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									} else {
-										print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
+										print '<input type="text" class="width100" name="'.$namef.'_disabled" value="'.GETPOST($namef).'" disabled>';
 										print '<input type="hidden" name="'.$namef.'" value="'.GETPOST($namef).'">';
 									}
 								}
@@ -846,9 +846,9 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 									print '<button  class="btn-low-emphasis --btn-icon AutoFillAmount" data-rowname="'.$namef.'" data-value="'.($sign * (float) $remaintopay).'">'.img_picto("Auto fill", 'rightarrow').'</button>';
 								}
 								print '<input type="hidden" class="remain" name="'.$nameRemain.'" value="'.$remaintopay.'">';
-								print '<input '.$max.' '.$min.' type="number" step="any" size="8" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
+								print '<input '.$max.' '.$min.' type="text" class="amount width100" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 							} else {
-								print '<input type="text" size="8" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
+								print '<input type="text" class="width100" name="'.$namef.'_disabled" value="'.dol_escape_htmltag(GETPOST($namef)).'" disabled>';
 								print '<input type="hidden" class="amount" name="'.$namef.'" value="'.dol_escape_htmltag(GETPOST($namef)).'">'; // class is required to be used by javascript callForResult();
 							}
 							print "</td>";

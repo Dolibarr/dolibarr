@@ -1591,30 +1591,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		$head = user_prepare_head($object);
 
-		/*
-		 * Confirmation reinitialisation password
-		 */
+		// Confirmation reinitialisation password
 		if ($action == 'password') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
 		}
 
-		/*
-		 * Confirmation envoi password
-		 */
+		// Confirmation envoi password
 		if ($action == 'passwordsend') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
 		}
 
-		/*
-		 * Confirm deactivation
-		 */
+		// Confirm deactivation
 		if ($action == 'disable') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DisableAUser"), $langs->trans("ConfirmDisableUser", $object->login), "confirm_disable", '', 0, 1);
 		}
 
-		/*
-		 * Confirm activation
-		 */
+		// Confirm activation
 		if ($action == 'enable') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
 		}
@@ -1624,17 +1616,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
 		}
 
-		/**
-		 * Confirmation clone
-		 */
+		// Confirmation clone
 		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
 			// Define confirmation messages
 			$formquestionclone = array(
-			'text' => $langs->trans("ConfirmClone"),
-			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'morecss' => 'width200'),
-			1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
-			2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
+				'text' => $langs->trans("ConfirmClone"),
+				0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'morecss' => 'width200'),
+				1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
+				2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
 			);
 			if (getDolGlobalString('USER_MAIL_REQUIRED')) {
 				$newElement = array('type' => 'text', 'name' => 'new_email', 'label' => $langs->trans("NewEmailUserClone"), 'morecss' => 'width200');
@@ -2498,7 +2488,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 				print '<td>';
 				if ($permissiontoedit) {
-					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 1, array($object->id), 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 					$huser = new User($db);

@@ -112,7 +112,11 @@ if (!GETPOST('hidenavmenu')) {
 				); ?>
 
 				<div class="right">
-					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+					<?php
+					if ($displayMode != 'icon-only') {
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#img-picto-section-list', '', 1, ['forcenohideoftext'=>1]);
+					}
+					?>
 				</div>
 
 				<div class="documentation-example">
@@ -142,7 +146,7 @@ if (!GETPOST('hidenavmenu')) {
 								</div>';
 							} else {
 								$tooltip = '<u>'.$langs->trans("DocCodeForMenuOrModuleBuilder").':</u><br>'.$iconName;
-								$tooltip .= '<br><u>'.$langs->trans("DocExampleForPHPCode").':</u><br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
+								$tooltip .= '<br><br><u>'.$langs->trans("DocExampleForPHPCode").':</u><br>img_picto(\''.$labelAlt.'\', \''.$iconName.'\')';
 								$iconCode = img_picto($tooltip, $iconName, '', 0, 0, 0, '', 'classfortooltip');
 								print '<span class="doc-icon-list-item">'.$iconCode;
 								print '<span class="doc-icon-hidden-name-for-search">'.$iconName.'</span></span>';
@@ -189,7 +193,11 @@ if (!GETPOST('hidenavmenu')) {
 				); ?>
 
 				<div class="right">
-					<?php print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]); ?>
+					<?php
+					if ($displayMode != 'icon-only') {
+						print dolGetButtonTitle($revertDisplayName, '', $switchDisplayLinkIcon, $switchDisplayLink.'#icon-section-list', '', 1, ['forcenohideoftext'=>1]);
+					}
+					?>
 				</div>
 
 				<div class="documentation-example">

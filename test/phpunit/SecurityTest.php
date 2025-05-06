@@ -612,6 +612,8 @@ class SecurityTest extends CommonClassTest
 
 		$conf->global->MAIN_USE_DOL_EVAL_NEW = 0;
 		//$conf->global->MAIN_USE_DOL_EVAL_NEW = 1;
+		$conf->global->MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL = 0;
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 0;
 
 		$result = dol_eval('1==1', 1, 0);
 		print "result1 = ".$result."\n";
@@ -633,7 +635,7 @@ class SecurityTest extends CommonClassTest
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : "Parent project not found"';
 		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result3 = ".$result."\n";
+		print "result3c = ".$result."\n";
 		$this->assertEquals('Parent project not found', $result);
 
 		$s = '(($reloadedobj = new Task($db)) && ($reloadedobj->fetchNoCompute($object->id) > 0) && ($secondloadedobj = new Project($db)) && ($secondloadedobj->fetchNoCompute($reloadedobj->fk_project) > 0)) ? $secondloadedobj->ref : \'Parent project not found\'';
@@ -642,13 +644,19 @@ class SecurityTest extends CommonClassTest
 		$this->assertEquals('Parent project not found', $result, 'Test 4');
 
 		$result = dol_eval('1==\x01', 1, 0);	// Check that we can't make dol_eval on string containing \ char.
-		print "result0 = ".$result."\n";
+		print "result5 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate (found chars that are not chars for a simple one line clean eval string)', $result);
 
 		$s = '4 < 5';
 		$result = (string) dol_eval($s, 1, 1, '2');
-		print "result5 = ".$result."\n";
+		print "result6 = ".$result."\n";
 		$this->assertEquals('1', $result, 'Test 5');
+
+		$s = 'MyClass::MyMethod()';
+		$result = dol_eval($s, 1, 1, '2');
+		print "result7 = ".$result."\n";
+		$this->assertStringContainsString('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL)', $result);
+
 
 
 		/* not allowed. Not a one line eval string

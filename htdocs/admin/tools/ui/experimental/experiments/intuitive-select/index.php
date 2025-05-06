@@ -177,10 +177,10 @@ $form = new Form($db);
 										</script>
 									</div>
 								</th>
-								<th class="wrapcolumntitle left liste_titre" title="First Name">First Name</th>
-								<th class="wrapcolumntitle left liste_titre" title="Last Name">Last Name</th>
-								<th class="wrapcolumntitle center liste_titre" title="Age">Age</th>
-								<th class="wrapcolumntitle right liste_titre" title="Country">Country</th>
+								<th class="wrapcolumntitle left" title="First Name">First Name</th>
+								<th class="wrapcolumntitle left" title="Last Name">Last Name</th>
+								<th class="wrapcolumntitle center" title="Age">Age</th>
+								<th class="wrapcolumntitle right" title="Country">Country</th>
 							</tr>
 						</thead>
 						<tbody>
