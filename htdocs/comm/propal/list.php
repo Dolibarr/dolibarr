@@ -614,13 +614,13 @@ $sql = preg_replace('/, $/', '', $sql);
 
 $sqlfields = $sql; // $sql fields to remove for count total
 
-if (isModEnabled('order')) {
+if (!empty($arrayfields['has_orders']['checked'])) {
 	$sql .= ", (SELECT COUNT(elt.rowid)";
 	$sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
 	$sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='commande' AND elt.fk_source=p.rowid)";
 	$sql .= " OR (elt.targettype = 'propal' AND elt.sourcetype='commande' AND elt.fk_target=p.rowid)) as nb_orders";
 }
-if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) {
+if (!empty($arrayfields['has_invoices']['checked'])) {
 	$sql .= ", (SELECT COUNT(elt.rowid)";
 	$sql .= " FROM ".MAIN_DB_PREFIX.'element_element as elt';
 	$sql .= " WHERE (elt.sourcetype = 'propal' AND elt.targettype='facture' AND elt.fk_source=p.rowid)";
@@ -872,20 +872,20 @@ $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
 
-$sql .= " HAVING 1=1";
-
-if (isModEnabled('order') && $search_has_orders != '' && $search_has_orders >= 0) {
-	$sql .= " AND nb_orders ". (($search_has_orders > 0) ? "> 0" : "= 0");
-}
-
-if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && $search_has_invoices != '' && $search_has_invoices >= 0) {
-	$sql .= " AND nb_invoices ". (($search_has_invoices > 0) ? "> 0" : "= 0");
-}
-
 // Add HAVING from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
+$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
+
+if (!empty($arrayfields['has_orders']['checked']) || !empty($arrayfields['has_invoices']['checked'])) {
+	$sql .= " HAVING 1=1";
+	if ($search_has_orders != '' && $search_has_orders >= 0) {
+		$sql .= " AND nb_orders ". (($search_has_orders > 0) ? "> 0" : "= 0");
+	}
+	if ($search_has_invoices != '' && $search_has_invoices >= 0) {
+		$sql .= " AND nb_invoices ". (($search_has_invoices > 0) ? "> 0" : "= 0");
+	}
+}
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -1552,13 +1552,13 @@ if (!empty($arrayfields['p.import_key']['checked'])) {
 	print '</td>';
 }
 // Orders
-if (isModEnabled('order') && !empty($arrayfields['has_orders']['checked'])) {
+if (!empty($arrayfields['has_orders']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectyesno('search_has_orders', $search_has_orders, 1, 0, 1, 1);
 	print '</td>';
 }
 // Invoices
-if (!getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') && !empty($arrayfields['has_invoices']['checked'])) {
+if (!empty($arrayfields['has_invoices']['checked'])) {
 	print '<td class="liste_titre maxwidthonsmartphone center">';
 	print $form->selectyesno('search_has_invoices', $search_has_invoices, 1, 0, 1, 1);
 	print '</td>';
