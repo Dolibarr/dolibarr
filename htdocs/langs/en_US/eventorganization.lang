@@ -79,10 +79,10 @@ ConferenceOrBoothFormatLabel=Label of conference or booth mode
 Attendees=Attendees
 ListOfAttendeesOfEvent=List of attendees of event projects
 ListOfConfOrBoothOfEvent=List of conferences or booths of event projects
-DownloadICSLink = Download ICS link
-EVENTORGANIZATION_SECUREKEY = Seed to secure the key for the public registration page to suggest a conference
-SERVICE_BOOTH_LOCATION = Service used for the invoice row about a booth location
-SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION = Service used for the invoice row about an attendee subscription to an event
+DownloadICSLink=Download ICS file
+EVENTORGANIZATION_SECUREKEY=Seed to secure the key for the public registration page to suggest a conference
+SERVICE_BOOTH_LOCATION=Service used for the invoice row about a booth location
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=Service used for the invoice row about an attendee subscription to an event
 NbVotes=Number of votes
 # Status
 EvntOrgDraft = Draft

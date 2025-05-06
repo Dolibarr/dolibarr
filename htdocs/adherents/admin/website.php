@@ -32,6 +32,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 /**
@@ -48,6 +49,10 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 $langs->loadLangs(array("admin", "members"));
 
 $action = GETPOST('action', 'aZ09');
+
+// Hook to be used by external payment modules (ie Payzen, ...)
+$hookmanager = new HookManager($db);
+$hookmanager->initHooks(array('newpayment'));
 
 if (!$user->admin) {
 	accessforbidden();
@@ -143,23 +148,18 @@ if ($conf->use_javascript_ajax) {
 	print 'jQuery(document).ready(function () {
                 function initemail()
                 {
-                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\')
-                    {
+                    if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') {
                         jQuery("#tremail").hide();
-					}
-					else
-					{
+					} else {
                         jQuery("#tremail").show();
 					}
 				}
                 function initfields()
                 {
-					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
-                    {
+					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\') {
                         jQuery("#trforcetype, #tramount, #tredit, #trpayment, #tremail").hide();
                     }
-                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\')
-                    {
+                    if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\') {
                         jQuery("#trforcetype, #tramount, #tredit, #trpayment").show();
                         if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') jQuery("#tremail").hide();
                         else jQuery("#tremail").show();
@@ -197,7 +197,6 @@ print '<br><br>';
 
 if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<br>';
-	//print $langs->trans('FollowingLinksArePublic').'<br>';
 	print img_picto('', 'globe').' <span class="opacitymedium">'.$langs->trans('BlankSubscriptionForm').'</span><br>';
 	if (isModEnabled('multicompany')) {
 		$entity_qr = '?entity='.((int) $conf->entity);
@@ -289,18 +288,23 @@ if (getDolGlobalString('MEMBER_ENABLE_PUBLIC')) {
 	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
 	print '</td><td>';
+
+	// Initialize $validpaymentmethod
+	// The list can be complete by the hook 'doValidatePayment' executed inside getValidOnlinePaymentMethods()
+	$validpaymentmethod = getValidOnlinePaymentMethods('', 1);
+
+	// Define $listofval using the $validpaymentmethod
 	$listofval = array();
-	$listofval['-1'] = $langs->trans('No');
-	$listofval['all'] = $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')';
-	if (isModEnabled('paybox')) {
-		$listofval['paybox'] = 'Paybox';
+	$listofval['-1'] = array('label' => $langs->trans('No'));
+	$listofval['all'] = array('label' => $langs->trans('Yes').' ('.$langs->trans("VisitorCanChooseItsPaymentMode").')', 'data-html' => $langs->trans('Yes').' &nbsp; <span class="opacitymedium">('.$langs->trans("VisitorCanChooseItsPaymentMode").')</span>');
+	foreach ($validpaymentmethod as $key => $val) {
+		if (is_array($val)) {
+			$listofval[$key] = $val;
+		} else {
+			$listofval[$key] = array('label' => $key, 'status' => 'valid');
+		}
 	}
-	if (isModEnabled('paypal')) {
-		$listofval['paypal'] = 'PayPal';
-	}
-	if (isModEnabled('stripe')) {
-		$listofval['stripe'] = 'Stripe';
-	}
+
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE", $listofval, getDolGlobalString('MEMBER_NEWFORM_PAYONLINE'), 0);
 	print "</td></tr>\n";
 

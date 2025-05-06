@@ -963,9 +963,11 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		$statusType = 'status'.$status;
-		//if ($status == self::STATUS_VALIDATED) $statusType = 'status1';
+		if ($status == self::STATUS_VALIDATED) {
+			$statusType = 'status2';
+		}
 		if ($status == self::STATUS_CANCELED) {
-			$statusType = 'status6';
+			$statusType = 'status9';
 		}
 
 		if ($status == self::STATUS_VALIDATED && $this->date_subscription && $this->amount) {
@@ -974,7 +976,7 @@ class ConferenceOrBoothAttendee extends CommonObject
 		}
 
 		if ($status == self::STATUS_USED) {
-			$statusType = 'status8';
+			$statusType = 'status6';
 		}
 
 		return dolGetStatus($this->labelStatus[$status], $this->labelStatusShort[$status], '', $statusType, $mode);
