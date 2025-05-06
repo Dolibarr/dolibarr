@@ -2,12 +2,12 @@
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009	Regis Houssin				<regis.houssin@inodbox.com>
- * Copyright (C) 2016		Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2016-2024  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2020		Pierre Ardoin				<mapiolca@me.com>
  * Copyright (C) 2020		Tobias Sekan				<tobias.sekan@startmail.com>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2021-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +37,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('compta', 'banks', 'bills', 'hrm', 'projects'));
@@ -72,7 +80,7 @@ $search_date_limit_endyear = GETPOSTINT('search_date_limit_endyear');
 $search_date_limit_start = dol_mktime(0, 0, 0, $search_date_limit_startmonth, $search_date_limit_startday, $search_date_limit_startyear);
 $search_date_limit_end = dol_mktime(23, 59, 59, $search_date_limit_endmonth, $search_date_limit_endday, $search_date_limit_endyear);
 $search_project_ref = GETPOST('search_project_ref', 'alpha');
-$search_users = GETPOST('search_users', 'intcomma');
+$search_users = GETPOST('search_users', 'array:int');
 $search_type = GETPOST('search_type', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 
@@ -98,16 +106,16 @@ if (!$sortorder) {
 $filtre = GETPOSTINT("filtre");
 
 $arrayfields = array(
-	'cs.rowid'		=> array('label' => "Ref", 'checked' => 1, 'position' => 10),
-	'cs.libelle'	=> array('label' => "Label", 'checked' => 1, 'position' => 20),
-	'cs.fk_type'	=> array('label' => "Type", 'checked' => 1, 'position' => 30),
-	'cs.date_ech'	=> array('label' => "Date", 'checked' => 1, 'position' => 40),
-	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => 1, 'position' => 50),
-	'p.ref'			=> array('label' => "ProjectRef", 'checked' => 1, 'position' => 60, 'enabled' => (isModEnabled('project'))),
-	'cs.fk_user'	=> array('label' => "Employee", 'checked' => 1, 'position' => 70),
-	'cs.fk_mode_reglement'	=> array('checked' => -1, 'position' => 80, 'label' => "DefaultPaymentMode"),
-	'cs.amount'		=> array('label' => "Amount", 'checked' => 1, 'position' => 100),
-	'cs.paye'		=> array('label' => "Status", 'checked' => 1, 'position' => 110),
+	'cs.rowid'		=> array('label' => "Ref", 'checked' => '1', 'position' => 10),
+	'cs.libelle'	=> array('label' => "Label", 'checked' => '1', 'position' => 20),
+	'cs.fk_type'	=> array('label' => "Type", 'checked' => '1', 'position' => 30),
+	'cs.date_ech'	=> array('label' => "Date", 'checked' => '1', 'position' => 40),
+	'cs.periode'	=> array('label' => "PeriodEndDate", 'checked' => '1', 'position' => 50),
+	'p.ref'			=> array('label' => "ProjectRef", 'checked' => '1', 'position' => 60, 'enabled' => (string) (int) (isModEnabled('project'))),
+	'cs.fk_user'	=> array('label' => "Employee", 'checked' => '1', 'position' => 70),
+	'cs.fk_mode_reglement'	=> array('checked' => '-1', 'position' => 80, 'label' => "DefaultPaymentMode"),
+	'cs.amount'		=> array('label' => "Amount", 'checked' => '1', 'position' => 100),
+	'cs.paye'		=> array('label' => "Status", 'checked' => '1', 'position' => 110),
 );
 
 if (isModEnabled("bank")) {
@@ -115,7 +123,6 @@ if (isModEnabled("bank")) {
 }
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('sclist'));
@@ -202,7 +209,7 @@ llxHeader('', $title, '', '', 0, 0, '', '', '', 'bodyforlist');
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $sql = "SELECT cs.rowid, cs.fk_type as type, cs.fk_user,";
-$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode, cs.fk_account,";
+$sql .= " cs.amount, cs.date_ech, cs.libelle as label, cs.paye, cs.periode as period, cs.fk_account,";
 if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
@@ -476,7 +483,7 @@ if (!empty($arrayfields['cs.rowid']['checked'])) {
 // Filter: Type
 if (!empty($arrayfields['cs.fk_type']['checked'])) {
 	print '<td class="liste_titre">';
-	$formsocialcontrib->select_type_socialcontrib($search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
+	$formsocialcontrib->select_type_socialcontrib((int) $search_typeid, 'search_typeid', 1, 0, 0, 'maxwidth150', 1);
 	print '</td>';
 }
 
@@ -643,10 +650,8 @@ $totalarray = array();
 $totalarray['nbfield'] = 0;
 $totalarray['val'] = array('totalttcfield' => 0);
 $imaxinloop = ($limit ? min($num, $limit) : $num);
-if (!isset($TLoadedUsers) || !is_array($TLoadedUsers)) {
-	// Ensure array is initialised
-	$TLoadedUsers = array();
-}
+$TLoadedUsers = array();
+
 while ($i < $imaxinloop) {
 	$obj = $db->fetch_object($resql);
 
@@ -656,7 +661,8 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->type_label = $obj->type_label;
 	$chargesociale_static->amount = $obj->amount;
 	$chargesociale_static->paye = $obj->paye;
-	$chargesociale_static->date_ech = $obj->date_ech;
+	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
+	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
@@ -742,7 +748,7 @@ while ($i < $imaxinloop) {
 
 		// Date end period
 		if (!empty($arrayfields['cs.periode']['checked'])) {
-			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->periode), 'day').'</td>';
+			print '<td class="center nowraponall">'.dol_print_date($db->jdate($obj->period), 'day').'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

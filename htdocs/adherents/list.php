@@ -5,8 +5,8 @@
  * Copyright (C) 2013-2015	Raphaël Doursenaud			<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014-2016	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2018-2024	Alexandre Spangaro			<aspangaro@open-dsi.fr>
- * Copyright (C) 2021-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Benjamin Falière			<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
@@ -38,6 +38,14 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("members", "companies", "categories"));
@@ -102,7 +110,7 @@ if ($statut != '') {
 	$search_status = $statut; // For backward compatibility
 }
 
-$search_all = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$search_all = trim(GETPOST('search_all', 'alphanohtml'));
 
 if ($search_status < -2) {
 	$search_status = '';
@@ -166,7 +174,7 @@ $arrayfields = array(
 	'd.company' => array('label' => "Company", 'checked' => 1, 'position' => 70),
 	'd.login' => array('label' => "Login", 'checked' => 1),
 	'd.morphy' => array('label' => "MemberNature", 'checked' => 1),
-	't.libelle' => array('label' => "Type", 'checked' => 1, 'position' => 55),
+	't.libelle' => array('label' => "MemberType", 'checked' => 1, 'position' => 55),
 	'd.address' => array('label' => "Address", 'checked' => 0),
 	'd.zip' => array('label' => "Zip", 'checked' => 0),
 	'd.town' => array('label' => "Town", 'checked' => 0),
@@ -191,12 +199,16 @@ $tableprefix = 'd';
 foreach ($object->fields as $key => $val) {
 	// If $val['visible']==0, then we never show the field
 	if (!empty($val['visible'])) {
+		// Special case already added
+		if (in_array($key, array('fk_adherent_type', 'state_id', 'country'))) {	// Already managed by another field key in arrayfields
+			continue;
+		}
 		$visible = (int) dol_eval((string) $val['visible'], 1);
 		$arrayfields[$tableprefix.'.'.$key] = array(
 			'label' => $val['label'],
-			'checked' => (($visible < 0) ? 0 : 1),
-			'enabled' => (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
-			'position' => $val['position'],
+			'checked' => (($visible < 0) ? '0' : '1'),
+			'enabled' => (string) (int) (abs($visible) != 3 && (bool) dol_eval($val['enabled'], 1)),
+			'position' => (int) $val['position'],
 			'help' => isset($val['help']) ? $val['help'] : ''
 		);
 	}
@@ -209,11 +221,9 @@ $object->fields = dol_sort_array($object->fields, 'position');
 //$arrayfields['anotherfield'] = array('type'=>'integer', 'label'=>'AnotherField', 'checked'=>1, 'enabled'=>1, 'position'=>90, 'csslist'=>'right');
 
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Security check
 $result = restrictedArea($user, 'adherent');
-
 
 /*
  * Actions
@@ -227,9 +237,11 @@ if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massa
 	$massaction = '';
 }
 
-$permissiontoread = 0;
-$permissiontodelete = 0;
-$permissiontoadd = 0;
+$permissiontoread = $user->hasRight('adherent', 'lire');
+$permissiontodelete = $user->hasRight('adherent', 'supprimer');
+$permissiontoadd = $user->hasRight('adherent', 'creer');
+$uploaddir = $conf->member->dir_output;
+$error = 0;
 
 $parameters = array('socid' => isset($socid) ? $socid : null, 'arrayfields' => &$arrayfields);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
@@ -270,7 +282,6 @@ if (empty($reshook)) {
 		$search_filter = "";
 		$search_status = "";
 		$search_import_key = '';
-		$catid = "";
 		$search_all = "";
 		$toselect = array();
 		$search_datec_start = '';
@@ -283,7 +294,6 @@ if (empty($reshook)) {
 	// Close
 	if ($massaction == 'close' && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
-		$error = 0;
 		$nbclose = 0;
 
 		$db->begin();
@@ -313,7 +323,6 @@ if (empty($reshook)) {
 	// Create external user
 	if ($massaction == 'createexternaluser' && $user->hasRight('adherent', 'creer') && $user->hasRight('user', 'user', 'creer')) {
 		$tmpmember = new Adherent($db);
-		$error = 0;
 		$nbcreated = 0;
 
 		$db->begin();
@@ -350,7 +359,6 @@ if (empty($reshook)) {
 	if ($action == 'createsubscription_confirm' && $confirm == "yes" && $user->hasRight('adherent', 'creer')) {
 		$tmpmember = new Adherent($db);
 		$adht = new AdherentType($db);
-		$error = 0;
 		$nbcreated = 0;
 		$now = dol_now();
 		$amount = price2num(GETPOST('amount', 'alpha'));
@@ -358,7 +366,7 @@ if (empty($reshook)) {
 		foreach ($toselect as $id) {
 			$res = $tmpmember->fetch($id);
 			if ($res > 0) {
-				$result = $tmpmember->subscription($now, $amount);
+				$result = $tmpmember->subscription($now, (float) $amount);
 				if ($result < 0) {
 					$error++;
 				} else {
@@ -373,7 +381,7 @@ if (empty($reshook)) {
 			setEventMessages($langs->trans("XSubsriptionCreated", $nbcreated), null, 'mesgs');
 			$db->commit();
 		} else {
-			setEventMessages($langs->trans("XSubsriptionError", $error), null, 'mesgs');
+			setEventMessages($langs->trans("XSubsriptionErrors", $error), null, 'mesgs');
 			$db->rollback();
 		}
 	}
@@ -381,10 +389,6 @@ if (empty($reshook)) {
 	// Mass actions
 	$objectclass = 'Adherent';
 	$objectlabel = 'Members';
-	$permissiontoread = $user->hasRight('adherent', 'lire');
-	$permissiontodelete = $user->hasRight('adherent', 'supprimer');
-	$permissiontoadd = $user->hasRight('adherent', 'creer');
-	$uploaddir = $conf->adherent->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -520,7 +524,7 @@ if ($search_firstname) {
 	$sql .= natural_search("d.firstname", $search_firstname);
 }
 if ($search_lastname) {
-	$sql .= natural_search(array("d.firstname", "d.lastname", "d.societe"), $search_lastname);
+	$sql .= natural_search("d.lastname", $search_lastname);
 }
 if ($search_gender != '' && $search_gender != '-1') {
 	$sql .= natural_search("d.gender", $search_gender);
@@ -529,7 +533,7 @@ if ($search_login) {
 	$sql .= natural_search("d.login", $search_login);
 }
 if ($search_company) {
-	$sql .= natural_search("s.nom", $search_company);
+	$sql .= natural_search(array("s.nom", "d.societe"), $search_company);
 }
 if ($search_email) {
 	$sql .= natural_search("d.email", $search_email);
@@ -635,7 +639,7 @@ $arrayofselected = is_array($toselect) ? $toselect : array();
 
 if ($search_type > 0) {
 	$membertype = new AdherentType($db);
-	$result = $membertype->fetch($search_type);
+	$result = $membertype->fetch((int) $search_type);
 	$title .= " (".$membertype->label.")";
 }
 
@@ -1343,7 +1347,7 @@ while ($i < $imaxinloop) {
 		}
 		// Company
 		if (!empty($arrayfields['d.company']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($companyname).'">';
+			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag((string) $companyname).'">';
 			print $companynametoshow;
 			print "</td>\n";
 		}

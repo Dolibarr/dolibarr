@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ class printing_printgcp extends PrintingDriver
 	public $active = 'PRINTING_PRINTGCP';
 
 	/**
-	 * @var array module parameters
+	 * @var array<string|int,string|array{varname:string,info:string,type:'info',renew?:string,delete?:string}|array{enabled:int<0,1>,type:'submit'}> module parameters
 	 */
 	public $conf = array();
 
@@ -75,6 +75,9 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public $db;
 
+	/**
+	 * @var string
+	 */
 	private $OAUTH_SERVICENAME_GOOGLE = 'Google';
 
 	const LOGIN_URL = 'https://accounts.google.com/o/oauth2/token';
@@ -213,7 +216,7 @@ class printing_printgcp extends PrintingDriver
 		$html .= '<td>'.$langs->trans('GCP_Type').'</td>';
 		$html .= '<td class="center">'.$langs->trans("Select").'</td>';
 		$html .= '</tr>'."\n";
-		$list = $this->getlistAvailablePrinters();
+		$list = $this->getlistAvailableGcpPrinters();
 		//$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
 		foreach ($list['available'] as $printer_det) {
 			$html .= '<tr class="oddeven">';
@@ -242,9 +245,21 @@ class printing_printgcp extends PrintingDriver
 	/**
 	 *  Return list of available printers
 	 *
-	 *  @return array{available:array}	list of printers
+	 *  @return array<array{name:string,displayName:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}>	list of printers
 	 */
 	public function getlistAvailablePrinters()
+	{
+		/* Compatible with paretn class signature */
+		return $this->getlistAvailableGcpPrinters()['available'];
+	}
+
+
+	/**
+	 *  Return list of available printers (internal format)
+	 *
+	 *  @return array{available:array<array{name:string,displayName:string,id:string,ownerName:string,status:string,connectionStatus:string,type:string}>}	list of printers
+	 */
+	public function getlistAvailableGcpPrinters()
 	{
 		global $conf;
 		$ret = array();
@@ -366,7 +381,7 @@ class printing_printgcp extends PrintingDriver
 	 *  @param  string      $printjobtitle  Job Title
 	 *  @param  string      $filepath       File Path to be send to Google Cloud Print
 	 *  @param  string      $contenttype    File content type by example application/pdf, image/png
-	 *  @return array                       status array
+	 *  @return array{status:int<0,1>,errorcode:string,errormessage:string}  status array
 	 */
 	public function sendPrintToPrinter($printerid, $printjobtitle, $filepath, $contenttype)
 	{

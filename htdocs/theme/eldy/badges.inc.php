@@ -1,9 +1,21 @@
 <?php
-/* Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
+/**
+ * @var string $badgePrimary
+ * @var string $badgeSecondary
+ * @var string $badgeSuccess
+ * @var string $badgeDanger
+ * @var string $badgeWarning
+ * @var string $badgeInfo
+ * @var string $badgeLight
+ * @var string $badgeDark
+ * @var string $colorblind_deuteranopes_badgeWarning
+ */
 '
 @phan-var-force string $badgePrimary
 @phan-var-force string $badgeSecondary
@@ -16,6 +28,9 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 @phan-var-force string $colorblind_deuteranopes_badgeWarning
 ';
 ?>
+
+/* IDE Hack <style type="text/css"> */
+
 /* Badge style is based on bootstrap framework */
 
 .badge {
@@ -239,6 +254,8 @@ _createStatusBadgeCss('4b', '', "STATUS4b");
  * @param string $commentLabel 			a comment label
  * @param string $cssPrefix 			a css prefix
  * @return void
+ *
+ * @phan-suppress PhanRedefineFunction
  */
 function _createStatusBadgeCss($statusName, $statusVarNamePrefix = '', $commentLabel = '', $cssPrefix = '')
 {

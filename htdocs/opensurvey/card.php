@@ -2,7 +2,7 @@
 /* Copyright (C) 2013-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2014       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,16 @@ require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 require_once DOL_DOCUMENT_ROOT."/opensurvey/lib/opensurvey.lib.php";
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_url_root
+ */
+
 // Security check
 if (!$user->hasRight('opensurvey', 'read')) {
 	accessforbidden();
@@ -51,7 +61,7 @@ if (GETPOST('id')) {
 // Initialize objects
 $object = new Opensurveysondage($db);
 
-$result = $object->fetch(0, $numsondage);
+$result = $object->fetch('', $numsondage);
 if ($result <= 0) {
 	dol_print_error($db, $object->error);
 	exit;
@@ -60,7 +70,7 @@ if ($result <= 0) {
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('surveycard', 'globalcard'));
 
-$expiredate = dol_mktime(0, 0, 0, GETPOST('expiremonth'), GETPOST('expireday'), GETPOST('expireyear'));
+$expiredate = dol_mktime(0, 0, 0, GETPOSTINT('expiremonth'), GETPOSTINT('expireday'), GETPOSTINT('expireyear'));
 
 $permissiontoread = $user->hasRight('opensurvey', 'read');
 $permissiontoadd = $user->hasRight('opensurvey', 'write');
@@ -89,7 +99,7 @@ if (empty($reshook)) {
 			accessforbidden();
 		}
 
-		$result = $object->delete($user, '', $numsondage);
+		$result = $object->delete($user, 0, $numsondage);
 
 		header('Location: '.dol_buildpath('/opensurvey/list.php', 1));
 		exit();
@@ -191,6 +201,7 @@ if (empty($reshook)) {
  */
 
 $form = new Form($db);
+$userstatic = null;
 
 if ($object->fk_user_creat) {
 	$userstatic = new User($db);
@@ -209,7 +220,7 @@ $toutsujet = explode(",", $object->sujet);
 $listofanswers = array();
 foreach ($toutsujet as $value) {
 	$tmp = explode('@', $value);
-	$listofanswers[] = array('label'=>$tmp[0], 'format'=>(!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
+	$listofanswers[] = array('label' => $tmp[0], 'format' => (!empty($tmp[1]) ? $tmp[1] : 'checkbox'));
 }
 $toutsujet = str_replace("@", "<br>", $toutsujet);
 $toutsujet = str_replace("°", "'", $toutsujet);
@@ -238,7 +249,7 @@ print '<table class="border tableforfield centpercent">';
 
 // Type
 $type = ($object->format == "A") ? 'classic' : 'date';
-print '<tr><td class="titlefieldmax45">'.$langs->trans("Type").'</td><td>';
+print '<tr><td class="titlefieldmiddle">'.$langs->trans("Type").'</td><td>';
 print img_picto('', dol_buildpath('/opensurvey/img/'.($type == 'classic' ? 'chart-32.png' : 'calendar-32.png'), 1), 'width="16"', 1);
 print ' '.$langs->trans($type == 'classic' ? "TypeClassic" : "TypeDate").'</td></tr>';
 
@@ -247,19 +258,9 @@ print '<tr><td>';
 $adresseadmin = $object->mail_admin;
 print $langs->trans("Title").'</td><td>';
 if ($action == 'edit') {
-	print '<input type="text" name="nouveautitre" style="width: 95%" value="'.dol_escape_htmltag(dol_htmlentities($object->title)).'">';
+	print '<input class="width300" type="text" name="nouveautitre" value="'.dolPrintHTML($object->title).'">';
 } else {
-	print dol_htmlentities($object->title);
-}
-print '</td></tr>';
-
-// Description
-print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
-if ($action == 'edit') {
-	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
-	$doleditor->Create(0, '');
-} else {
-	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+	print dolPrintHTML($object->title);
 }
 print '</td></tr>';
 
@@ -271,7 +272,7 @@ if ($action == 'edit') {
 	print yn($object->mailsonde);
 
 	//If option is active and linked user does not have an email, we show a warning
-	if ($object->fk_user_creat && $object->mailsonde) {
+	if ($object->fk_user_creat && $object->mailsonde && $userstatic !== null) {
 		if (!$userstatic->email) {
 			print ' '.img_warning($langs->trans('NoEMail'));
 		}
@@ -297,6 +298,16 @@ if ($action == 'edit') {
 }
 print '</td></tr>';
 
+// Description
+print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td class="wordbreak">';
+if ($action == 'edit') {
+	$doleditor = new DolEditor('nouveauxcommentaires', $object->description, '', 120, 'dolibarr_notes', 'In', true, 1, 1, ROWS_7, '90%');
+	$doleditor->Create(0, '');
+} else {
+	print(dol_textishtml($object->description) ? $object->description : dol_nl2br($object->description, 1, true));
+}
+print '</td></tr>';
+
 print '</table>';
 
 print '</div>';
@@ -311,7 +322,7 @@ if ($action == 'edit') {
 	print $form->selectDate($expiredate ? $expiredate : $object->date_fin, 'expire', 0, 0, 0, '', 1, 0);
 } else {
 	print dol_print_date($object->date_fin, 'day');
-	if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
+	if ($object->date_fin && dol_get_last_hour($object->date_fin) < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) {
 		print img_warning($langs->trans("Expired"));
 	}
 }
@@ -320,7 +331,7 @@ print '</td></tr>';
 // Author
 print '<tr><td>';
 print $langs->trans("Author").'</td><td>';
-if ($object->fk_user_creat > 0) {
+if ($object->fk_user_creat > 0 && $userstatic !== null) {
 	print $userstatic->getLoginUrl(-1);
 } else {
 	if ($action == 'edit') {
@@ -342,7 +353,7 @@ $urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domai
 $url = $urlwithroot.'/public/opensurvey/studs.php?sondage='.$object->id_sondage;
 print '<input type="text" class="quatrevingtpercent" '.($action == 'edit' ? 'disabled' : '').' id="opensurveyurl" name="opensurveyurl" value="'.$url.'">';
 //if ($action != 'edit') {
-	print ajax_autoselect("opensurveyurl", $url, 'image');
+print ajax_autoselect("opensurveyurl", $url, 'image');
 //}
 
 print '</td></tr>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2016  Laurent Destailleur  		<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,10 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 dol_syslog("Call User webservices interfaces");
 
@@ -418,7 +422,7 @@ function getUser($authentication, $id, $ref = '', $ref_ext = '')
  * getListOfGroups
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @return	array							Array result
+ * @return array{result:array{result_code:string,result_label:string}} Array result
  */
 function getListOfGroups($authentication)
 {
@@ -486,8 +490,8 @@ function getListOfGroups($authentication)
  * Create an external user with thirdparty and contact
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @param	array		$thirdpartywithuser Datas
- * @return	mixed
+ * @param array{name:string,firstname:string,name_thirdparty:string,ref_ext:string,client:string,fournisseur:string,address:string,zip:string,town:string,country_id:string,country_code:string,phone:string,phone_mobile:string,fax:string,email:string,url:string,profid1:string,profid2:string,profid3:string,profid4:string,profid5:string,profid6:string,capital:string,tva_assuj:string,tva_intra:string,login:string,password:string,group_id:string}		$thirdpartywithuser Datas
+ * @return array{id?:int,result:array{result_code:string,result_label:string}} Array result
  */
 function createUserFromThirdparty($authentication, $thirdpartywithuser)
 {
@@ -548,7 +552,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->address = $thirdpartywithuser['address'];
 					$thirdparty->zip = $thirdpartywithuser['zip'];
 					$thirdparty->town = $thirdpartywithuser['town'];
-					$thirdparty->country_id = $thirdpartywithuser['country_id'];
+					$thirdparty->country_id = (int) $thirdpartywithuser['country_id'];
 					$thirdparty->country_code = $thirdpartywithuser['country_code'];
 
 					// find the country id by code
@@ -579,8 +583,8 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 					$thirdparty->idprof5 = $thirdpartywithuser['prof5'];
 					$thirdparty->idprof6 = $thirdpartywithuser['prof6'];
 
-					$thirdparty->client = $thirdpartywithuser['client'];
-					$thirdparty->fournisseur = $thirdpartywithuser['fournisseur'];
+					$thirdparty->client = (int) $thirdpartywithuser['client'];
+					$thirdparty->fournisseur = (int) $thirdpartywithuser['fournisseur'];
 
 					$socid_return = $thirdparty->create($fuser);
 
@@ -635,7 +639,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
 								$edituser->setPassword($fuser, trim($thirdpartywithuser['password']));
 
 								if ($thirdpartywithuser['group_id'] > 0) {
-									$edituser->SetInGroup($thirdpartywithuser['group_id'], $conf->entity);
+									$edituser->SetInGroup((int) $thirdpartywithuser['group_id'], $conf->entity);
 								}
 							} else {
 								$error++;
@@ -685,7 +689,7 @@ function createUserFromThirdparty($authentication, $thirdpartywithuser)
  * Set password of an user
  *
  * @param	array{login:string,password:string,entity:?int,dolibarrkey:string}	$authentication		Array of authentication information
- * @param	array		$shortuser			Array of login/password info
+ * @param	array{login:string,password:string}		$shortuser			Array of login/password info
  * @return	mixed
  */
 function setUserPassword($authentication, $shortuser)

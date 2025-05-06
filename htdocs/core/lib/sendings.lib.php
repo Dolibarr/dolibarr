@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ function shipping_prepare_head($object)
 	$head[$h][2] = 'shipping';
 	$h++;
 
-	if ($object->statut == Expedition::STATUS_DRAFT) {
+	if ($object->status == Expedition::STATUS_DRAFT) {
 		$head[$h][0] = DOL_URL_ROOT."/expedition/dispatch.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("ShipmentDistribution");
 		$head[$h][2] = 'dispatch';
@@ -71,7 +72,7 @@ function shipping_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $object;
-		if ($object->origin == 'commande' && $object->origin_id > 0) {
+		if (!getDolGlobalInt('SHIPPING_USE_ITS_OWN_CONTACTS') && $object->origin_type == 'commande' && $object->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($object->origin_id);
 		}
@@ -128,7 +129,7 @@ function shipping_prepare_head($object)
 /**
  * Prepare array with list of tabs
  *
- * @param   Object	$object		Object related to tabs
+ * @param   Delivery	$object		Object related to tabs
  * @return	array<array{0:string,1:string,2:string}>	Array of tabs to show
  */
 function delivery_prepare_head($object)
@@ -163,7 +164,7 @@ function delivery_prepare_head($object)
 
 	// Get parent object
 	$tmpobject = null;
-	if ($object->origin) {
+	if ($object->origin_type) {
 		$tmpobject = new Expedition($db);
 		$tmpobject->fetch($object->origin_id);
 	} else {
@@ -172,7 +173,7 @@ function delivery_prepare_head($object)
 
 	if (!getDolGlobalString('MAIN_DISABLE_CONTACTS_TAB')) {
 		$objectsrc = $tmpobject;
-		if ($tmpobject->origin == 'commande' && $tmpobject->origin_id > 0) {
+		if ($tmpobject->origin_type == 'commande' && $tmpobject->origin_id > 0) {
 			$objectsrc = new Commande($db);
 			$objectsrc->fetch($tmpobject->origin_id);
 		}
@@ -273,6 +274,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print load_fiche_titre($langs->trans("SendingsAndReceivingForSameOrder"));
 			}
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="liste centpercent">';
 			print '<tr class="liste_titre">';
 			//print '<td class="left">'.$langs->trans("QtyOrdered").'</td>';
@@ -310,7 +312,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				print '<tr class="oddeven">';
 
 				// Sending id
-				print '<td class="nowrap left">';
+				print '<td class="tdoverflowmax125">';
 				print $expedition->getNomUrl(1);
 				//print '<a href="'.DOL_URL_ROOT.'/expedition/card.php?id='.$objp->expedition_id.'">'.img_object($langs->trans("ShowSending"), 'sending').' '.$objp->exp_ref.'<a>';
 				print '</td>';
@@ -357,7 +359,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					$text = $product_static->getNomUrl(1);
 					$text .= ' - '.$label;
 					$description = (getDolGlobalInt('PRODUIT_DESC_IN_FORM_ACCORDING_TO_DEVICE') ? '' : dol_htmlentitiesbr($objp->description));
-					print $form->textwithtooltip($text, $description, 3, 0, '', $i);
+					print $form->textwithtooltip($text, $description, 3, 0, '', (string) $i);
 
 					// Show range
 					print_date_range($objp->date_start, $objp->date_end);
@@ -378,7 +380,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 					if (!empty($objp->label)) {
 						$text .= ' <strong>'.$objp->label.'</strong>';
-						print $form->textwithtooltip($text, $objp->description, 3, 0, '', $i);
+						print $form->textwithtooltip($text, $objp->description, 3, 0, '', (string) $i);
 					} else {
 						print $text.' '.nl2br($objp->description);
 					}
@@ -401,7 +403,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 				// Warehouse
 				if (isModEnabled('stock')) {
-					print '<td>';
+					print '<td class="tdoverflowmax125">';
 					if ($objp->warehouse_id > 0) {
 						$warehousestatic->fetch($objp->warehouse_id);
 						print $warehousestatic->getNomUrl(1);
@@ -444,7 +446,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 				// Information on receipt
 				if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) {
 					include_once DOL_DOCUMENT_ROOT.'/delivery/class/delivery.class.php';
-					$expedition->fetchObjectLinked($expedition->id, $expedition->element);
+					$expedition->fetchObjectLinked($expedition->id, $expedition->element, null, 'delivery');
 					//var_dump($expedition->linkedObjects);
 
 					$receiving = '';
@@ -453,6 +455,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 					}
 
 					if (!empty($receiving)) {
+						/** @var Delivery $receiving */
 						'@phan-var-force Delivery $receiving';
 						// $expedition->fk_elementdet = id of det line of order
 						// $receiving->fk_origin_line = id of det line of order
@@ -461,7 +464,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 
 						// Ref
 						print '<td>';
-						print $receiving->getNomUrl($db);
+						print $receiving->getNomUrl(1);
 						//print '<a href="'.DOL_URL_ROOT.'/delivery/card.php?id='.$livraison_id.'">'.img_object($langs->trans("ShowReceiving"),'sending').' '.$objp->livraison_ref.'<a>';
 						print '</td>';
 						// Qty received
@@ -485,6 +488,7 @@ function show_list_sending_receive($origin, $origin_id, $filter = '')
 			}
 
 			print '</table>';
+			print '</div>';
 		}
 		$db->free($resql);
 	} else {

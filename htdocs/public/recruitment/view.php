@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2020       Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/public.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "recruitment"));
@@ -131,7 +139,7 @@ if ($action == "dosubmit") {	// Test on permission not required here (anonymous 
 	if (!$error) {
 		$sql = "SELECT rrc.rowid FROM ".MAIN_DB_PREFIX."recruitment_recruitmentcandidature as rrc";
 		$sql .= " WHERE rrc.email = '". $db->escape($email)."'";
-		$sql .= " AND rrc.entity = ". getEntity($object->element, 0);
+		$sql .= " AND rrc.entity IN (". getEntity($object->element, 0).")";
 		$resql = $db->query($sql);
 		if ($resql) {
 			$num = $db->num_rows($resql);
@@ -349,13 +357,13 @@ $tmpuser->fetch($object->fk_user_recruiter);
 print  $langs->trans("ContactForRecruitment").' : ';
 $emailforcontact = $object->email_recruiter;
 if (empty($emailforcontact)) {
-	$emailforcontact = $tmpuser->email;
+	$emailforcontact = $tmpuser->email ?? '';
 	if (empty($emailforcontact)) {
-		$emailforcontact = $mysoc->email;
+		$emailforcontact = $mysoc->email ?? '';
 	}
 }
 print '<b class="wordbreak">';
-print $tmpuser->getFullName(-1);
+print $tmpuser->getFullName($langs);
 print ' &nbsp; '.dol_print_email($emailforcontact, 0, 0, 1, 0, 0, 'envelope');
 print '</b>';
 print '</b><br>';

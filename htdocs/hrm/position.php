@@ -40,6 +40,15 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("hrm", "other", 'products'));
 
@@ -54,9 +63,9 @@ $optioncss 	 = GETPOST('optioncss', 'aZ'); // Option for the css output (always 
 $backtopage  = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
-$id		 = GETPOSTINT('id');
-$ref 	 = GETPOST('ref', 'alpha');
-$fk_job  = (GETPOSTISSET('fk_job') ? GETPOSTINT('fk_job') : $id);
+$id = GETPOSTINT('id');
+$ref = GETPOST('ref', 'alpha');
+$fk_job = (GETPOSTISSET('fk_job') ? GETPOSTINT('fk_job') : $id);
 $fk_user = GETPOSTINT('fk_user');
 //$start_date = date('Y-m-d', GETPOST('date_startyear', 'int').'-'.GETPOST('date_startmonth', 'int').'-'.GETPOST('date_startday', 'int'));
 $start_date = dol_mktime(0, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
@@ -100,7 +109,7 @@ if (!$sortorder) {
 }
 
 // Initialize array of search criteria
-$search_all = GETPOST('search_all', 'alphanohtml') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml');
+$search_all = GETPOST('search_all', 'alphanohtml');
 $search = array();
 foreach ($objectposition->fields as $key => $val) {
 	if (GETPOST('search_' . $key, 'alpha') !== '') {

@@ -84,7 +84,7 @@ create table llx_facture
   note_public			text,
   model_pdf				varchar(255),
   last_main_doc			varchar(255),							-- relative filepath+filename of last main generated document
-
+  fk_input_reason       integer DEFAULT NULL,                   -- id coming from c_input_reason
   fk_incoterms          integer,								-- for incoterms
   location_incoterms    varchar(255),							-- for incoterms
 
@@ -102,7 +102,7 @@ create table llx_facture
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format
-  
+  is_also_delivery_note tinyint DEFAULT 0 NOT NULL,             -- 0=default, 1=can act also as a delivery note (for countries that accept invoices as delivery notes)
   fk_multicurrency		integer,
   multicurrency_code		varchar(3),
   multicurrency_tx			double(24,8) DEFAULT 1,

@@ -33,6 +33,9 @@ class box_last_modified_ticket extends ModeleBoxes
 {
 	public $boxcode = "box_last_modified_ticket";
 	public $boximg  = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 
@@ -58,7 +61,7 @@ class box_last_modified_ticket extends ModeleBoxes
 	 */
 	public function loadBox($max = 5)
 	{
-		global $conf, $user, $langs;
+		global $user, $langs;
 
 		$this->max = $max;
 

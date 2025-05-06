@@ -6,7 +6,7 @@
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2018-2022  Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2024       Jon Bendtsen            <jon.bendtsen.github@jonb.dk>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
-	 * @phan-return Object[]		List of extra fields
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET actiontriggers
 	 *
@@ -85,8 +86,9 @@ class Setup extends DolibarrApi
 
 		$sql = "SELECT t.rowid as id, t.elementtype, t.code, t.contexts, t.label, t.description, t.rang";
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		$sql .= " WHERE 1=1";
 		if (!empty($elementtype)) {
-			$sql .= " WHERE t.elementtype = '".$this->db->escape($elementtype)."'";
+			$sql .= " AND t.elementtype = '".$this->db->escape($elementtype)."'";
 		}
 		// Add sql filters
 		if ($sqlfilters) {
@@ -137,6 +139,8 @@ class Setup extends DolibarrApi
 	 * @url     GET dictionary/ordering_methods
 	 *
 	 * @return array [List of ordering methods]
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	403		Access denied
@@ -199,6 +203,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Payment type is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters SQL criteria to filter with. Syntax example "(t.code:=:'OrderByWWW')"
 	 * @return array [List of ordering reasons]
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/ordering_origins
 	 *
@@ -266,6 +272,8 @@ class Setup extends DolibarrApi
 	 * @url     GET dictionary/payment_types
 	 *
 	 * @return array [List of payment types]
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	403		Access denied
@@ -331,6 +339,8 @@ class Setup extends DolibarrApi
 	 * @param string    $filter     To filter the regions by name
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array                List of regions
+	 * @phan-return Cregion[]
+	 * @phpstan-return Cregion[]
 	 *
 	 * @url     GET dictionary/regions
 	 *
@@ -395,6 +405,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	int       $id       ID of region
 	 * @return 	Object 				Object with cleaned properties
+	 * @phan-return Cregion
+	 * @phpstan-return Cregion
 	 *
 	 * @url     GET dictionary/regions/{id}
 	 *
@@ -411,6 +423,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	string    $code     Code of region
 	 * @return 	Object 				Object with cleaned properties
+	 * @phan-return Cregion
+	 * @phpstan-return Cregion
 	 *
 	 * @url     GET dictionary/regions/byCode/{code}
 	 *
@@ -438,6 +452,8 @@ class Setup extends DolibarrApi
 	 * @param string    $filter     To filter the states by name
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array                List of states
+	 * @phan-return Cstate[]
+	 * @phpstan-return Cstate[]
 	 *
 	 * @url     GET dictionary/states
 	 *
@@ -504,6 +520,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	int       $id        	ID of state
 	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Cstate
+	 * @phpstan-return Cstate
 	 *
 	 * @url     GET dictionary/states/{id}
 	 *
@@ -520,6 +538,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param 	string    $code      	Code of state
 	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Cstate
+	 * @phpstan-return Cstate
 	 *
 	 * @url     GET dictionary/states/byCode/{code}
 	 *
@@ -547,6 +567,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the countries must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array                List of countries
+	 * @phan-return Ccountry[]
+	 * @phpstan-return Ccountry[]
 	 *
 	 * @url     GET dictionary/countries
 	 *
@@ -612,6 +634,8 @@ class Setup extends DolibarrApi
 	 * @param 	int       $id        	ID of country
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
 	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Ccountry
+	 * @phpstan-return Ccountry
 	 *
 	 * @url     GET dictionary/countries/{id}
 	 *
@@ -629,6 +653,8 @@ class Setup extends DolibarrApi
 	 * @param 	string    $code      	Code of country (2 characters)
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
 	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Ccountry
+	 * @phpstan-return Ccountry
 	 *
 	 * @url     GET dictionary/countries/byCode/{code}
 	 *
@@ -663,6 +689,8 @@ class Setup extends DolibarrApi
 	 * @param 	int       $id       ID of region
 	 * @param 	string    $code     Code of region
 	 * @return 	Object 				Object with cleaned properties
+	 * @phan-return Cregion
+	 * @phpstan-return Cregion
 	 *
 	 * @throws RestException
 	 */
@@ -670,7 +698,7 @@ class Setup extends DolibarrApi
 	{
 		$region = new Cregion($this->db);
 
-		$result = $region->fetch($id, $code);
+		$result = $region->fetch($id, (int) $code);
 		if ($result < 0) {
 			throw new RestException(503, 'Error when retrieving region : '.$region->error);
 		} elseif ($result == 0) {
@@ -686,6 +714,8 @@ class Setup extends DolibarrApi
 	 * @param 	int       $id        	ID of state
 	 * @param 	string    $code      	Code of state
 	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Cstate
+	 * @phpstan-return Cstate
 	 *
 	 * @throws RestException
 	 */
@@ -711,6 +741,8 @@ class Setup extends DolibarrApi
 	 * @param 	string    $iso       	ISO of country (3 characters)
 	 * @param 	string    $lang      	Code of the language the name of the country must be translated to
 	 * @return 	Object 					Object with cleaned properties
+	 * @phan-return Ccountry
+	 * @phpstan-return Ccountry
 	 *
 	 * @throws RestException
 	 */
@@ -744,6 +776,8 @@ class Setup extends DolibarrApi
 	 * @url     GET dictionary/availability
 	 *
 	 * @return array [List of availability]
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	403		Access denied
@@ -820,7 +854,7 @@ class Setup extends DolibarrApi
 	 * @param object   $object    Object with label to translate
 	 * @param string   $lang      Code of the language the name of the object must be translated to
 	 * @param string   $prefix 	  Prefix for translation key
-	 * @param array    $dict      Array of dictionary for translation
+	 * @param string[] $dict      Array of dictionary for translation
 	 * @return void
 	 */
 	private function translateLabel($object, $lang, $prefix = 'Country', $dict = array('dict'))
@@ -856,6 +890,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Event's type is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of events types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/event_types
 	 *
@@ -923,6 +959,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Event's type is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of expense report types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/expensereport_types
 	 *
@@ -989,6 +1027,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the civility must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array	  List of Contacts types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/contact_types
 	 *
@@ -1003,7 +1043,7 @@ class Setup extends DolibarrApi
 		$sql .= " FROM ".MAIN_DB_PREFIX."c_type_contact as t";
 		$sql .= " WHERE t.active = ".((int) $active);
 		if ($type) {
-			$sql .= " AND type LIKE '%".$this->db->escape($type)."%'";
+			$sql .= " AND t.element LIKE '%".$this->db->escape($type)."%'";
 		}
 		if ($module) {
 			$sql .= " AND t.module LIKE '%".$this->db->escape($module)."%'";
@@ -1058,6 +1098,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the civility must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array		List of civility types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/civilities
 	 *
@@ -1123,6 +1165,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Payment term is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of currencies
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/currencies
 	 *
@@ -1193,6 +1237,8 @@ class Setup extends DolibarrApi
 	 * @param string    $elementtype       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
 	 * @return array				List of extra fields
+	 * @phan-return array<string,array<string,array{id:string,type:string,label:string,size:string,elementtype:string,default:string,computed:string,unique:string,required:string,param:string,pos:string,alwayseditable:string,perms:string,list:string,printable:string,totalizable:string,langs:string,help:string,css:string,cssview:string,csslist:string,fk_user_author:string,fk_user_modif:string,datec:string,tms:string}>>
+	 * @phpstan-return array<string,array<string,array{id:string,type:string,label:string,size:string,elementtype:string,default:string,computed:string,unique:string,required:string,param:string,pos:string,alwayseditable:string,perms:string,list:string,printable:string,totalizable:string,langs:string,help:string,css:string,cssview:string,csslist:string,fk_user_author:string,fk_user_modif:string,datec:string,tms:string}>>
 	 *
 	 * @url     GET extrafields
 	 *
@@ -1279,9 +1325,10 @@ class Setup extends DolibarrApi
 	 * @param   string     $attrname         extrafield attrname
 	 * @param   string     $elementtype      extrafield elementtype
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url     DELETE extrafields/{elementtype}/{attrname}
-	 *
 	 */
 	public function deleteExtrafieldsFromNames($attrname, $elementtype)
 	{
@@ -1315,11 +1362,12 @@ class Setup extends DolibarrApi
 	 * @param	string	$attrname		extrafield attrname
 	 * @param	string	$elementtype	extrafield elementtype
 	 * @return	array					List of extra fields
+	 * @phan-return array<string,array<string,array{id:string,type:string,label:string,size:string,elementtype:string,default:string,computed:string,unique:string,required:string,param:string,pos:string,alwayseditable:string,perms:string,list:string,printable:string,totalizable:string,langs:string,help:string,css:string,cssview:string,csslist:string,fk_user_author:string,fk_user_modif:string,datec:string,tms:string}>>
+	 * @phpstan-return array<string,array<string,array{id:string,type:string,label:string,size:string,elementtype:string,default:string,computed:string,unique:string,required:string,param:string,pos:string,alwayseditable:string,perms:string,list:string,printable:string,totalizable:string,langs:string,help:string,css:string,cssview:string,csslist:string,fk_user_author:string,fk_user_modif:string,datec:string,tms:string}>>
 	 *
 	 * @url     GET		extrafields/{elementtype}/{attrname}
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
-	 *
 	 */
 	public function getExtrafields($attrname, $elementtype)
 	{
@@ -1390,13 +1438,14 @@ class Setup extends DolibarrApi
 	 *
 	 * @param	string	$attrname		extrafield attrname
 	 * @param	string	$elementtype	extrafield elementtype
-	 * @param	array	$request_data	Request datas
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of extrafield
 	 *
 	 * @url     POST	extrafields/{elementtype}/{attrname}
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
-	 *
 	 */
 	public function postExtrafields($attrname, $elementtype, $request_data = null)
 	{
@@ -1433,7 +1482,7 @@ class Setup extends DolibarrApi
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];
-		$default_value = $request_data['default_value'];
+		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
 		$required = $request_data['required'];
@@ -1449,7 +1498,7 @@ class Setup extends DolibarrApi
 		$pos = $request_data['pos'];
 		$moreparams = array();
 
-		if (0 > $extrafields->addExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+		if (0 > $extrafields->addExtraField($attrname, $label, $type, (int) $pos, $size, $elementtype, (int) $unique, (int) $required, $default_value, $param, (int) $alwayseditable, $perms, $list, $help, $computed, (string) $entity, $langfile, (string) $enabled, (int) $totalizable, (int) $printable, $moreparams)) {
 			throw new RestException(500, 'Error creating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
@@ -1474,18 +1523,18 @@ class Setup extends DolibarrApi
 	}
 
 	/**
-
 	 * Update Extrafield object
 	 *
 	 * @param	string	$attrname		extrafield attrname
 	 * @param	string	$elementtype	extrafield elementtype
-	 * @param	array	$request_data	Request datas
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	int						ID of extrafield
 	 *
 	 * @url     PUT		extrafields/{elementtype}/{attrname}
 	 *
 	 * @suppress PhanPluginUnknownArrayMethodParamType  Luracast limitation
-	 *
 	 */
 	public function updateExtrafields($attrname, $elementtype, $request_data = null)
 	{
@@ -1518,7 +1567,7 @@ class Setup extends DolibarrApi
 		}
 
 		$alwayseditable = $request_data['alwayseditable'];
-		$default_value = $request_data['default_value'];
+		$default_value = $request_data['default'];
 		$totalizable = $request_data['totalizable'];
 		$printable = $request_data['printable'];
 		$required = $request_data['required'];
@@ -1534,8 +1583,7 @@ class Setup extends DolibarrApi
 		$pos = $request_data['pos'];
 		$moreparams = array();
 
-		dol_syslog(get_class($this).'::updateExtraField', LOG_DEBUG);
-		if (0 > $extrafields->updateExtraField($attrname, $label, $type, $pos, $size, $elementtype, $unique, $required, $default_value, $param, $alwayseditable, $perms, $list, $help, $computed, $entity, $langfile, $enabled, $totalizable, $printable, $moreparams)) {
+		if (0 > $extrafields->updateExtraField($attrname, $label, $type, (int) $pos, $size, $elementtype, (int) $unique, (int) $required, $default_value, $param, (int) $alwayseditable, $perms, $list, $help, $computed, (string) $entity, $langfile, (string) $enabled, (int) $totalizable, (int) $printable, $moreparams)) {
 			throw new RestException(500, 'Error updating extrafield', array_merge(array($extrafields->errno), $extrafields->errors));
 		}
 
@@ -1571,6 +1619,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Town is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of towns
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/towns
 	 *
@@ -1639,6 +1689,8 @@ class Setup extends DolibarrApi
 	 * @url     GET dictionary/payment_terms
 	 *
 	 * @return array List of payment terms
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	403		Access denied
@@ -1704,6 +1756,8 @@ class Setup extends DolibarrApi
 	 * @url     GET dictionary/shipping_methods
 	 *
 	 * @return array List of shipping methods
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @throws	RestException	400		Bad value for sqlfilters
 	 * @throws	RestException	503		Error when retrieving list of shipping modes
@@ -1764,6 +1818,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Measuring unit is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of measuring unit
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/units
 	 *
@@ -1824,6 +1880,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Lega form is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of legal form
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/legal_form
 	 *
@@ -1886,6 +1944,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Staff is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of staff
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/staff
 	 *
@@ -1945,6 +2005,8 @@ class Setup extends DolibarrApi
 	 * @param int       $active     Social network is active or not {@min 0} {@max 1}
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of social networks
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/socialnetworks
 	 *
@@ -2012,6 +2074,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the category must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket categories
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/ticket_categories
 	 *
@@ -2075,6 +2139,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the severity must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket severities
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/ticket_severities
 	 *
@@ -2138,6 +2204,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of ticket types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/ticket_types
 	 *
@@ -2202,6 +2270,8 @@ class Setup extends DolibarrApi
 	 * @param string    $lang       Code of the language the label of the type must be translated to
 	 * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
 	 * @return array				List of incoterm types
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET dictionary/incoterms
 	 *
@@ -2258,7 +2328,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @url	GET /company
 	 *
-	 * @return  array|mixed Mysoc object
+	 * @return  array Mysoc object
+	 * @phan-return Societe		My Company properties
+	 * @phpstan-return Societe
 	 *
 	 * @throws RestException 403 Forbidden
 	 */
@@ -2312,6 +2384,8 @@ class Setup extends DolibarrApi
 	 * Get the list of establishments.
 	 *
 	 * @return array				List of establishments
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET /establishments
 	 *
@@ -2407,6 +2481,8 @@ class Setup extends DolibarrApi
 	 *
 	 * @param string	$target			Can be 'local' or 'default' or Url of the signatures file to use for the test. Must be reachable by the tested Dolibarr.
 	 * @return array					Result of file and setup integrity check
+	 * @phan-return array{resultcode:string,resultcomment:string,expectedchecksum:string,currentchecksum:string,out:string}
+	 * @phpstan-return array{resultcode:string,resultcomment:string,expectedchecksum:string,currentchecksum:string,out:string}
 	 *
 	 * @url     GET checkintegrity
 	 *
@@ -2480,7 +2556,7 @@ class Setup extends DolibarrApi
 			$xmlarray = getURLContent($xmlremote, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only. Same is used into filecheck.php.
 
 			// Return array('content'=>response,'curl_error_no'=>errno,'curl_error_msg'=>errmsg...)
-			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != '400' && $xmlarray['http_code'] != '404') {
+			if (!$xmlarray['curl_error_no'] && $xmlarray['http_code'] != 400 && $xmlarray['http_code'] != 404) {
 				$xmlfile = $xmlarray['content'];
 				//print "xmlfilestart".$xmlfile."endxmlfile";
 				$xml = simplexml_load_string($xmlfile, 'SimpleXMLElement', LIBXML_NOCDATA | LIBXML_NONET);
@@ -2551,6 +2627,7 @@ class Setup extends DolibarrApi
 
 				// Fill file_list with files in signature, new files, modified files
 				$ret = getFilesUpdated($file_list, $xml->dolibarr_htdocs_dir[0], '', DOL_DOCUMENT_ROOT, $checksumconcat); // Fill array $file_list
+				'@phan-var-force array{insignature:string[],missing?:array<array{filename:string,expectedmd5:string,expectedsize:string}>,updated:array<array{filename:string,expectedmd5:string,expectedsize:string,md5:string}>} $file_list';
 				// Complete with list of new files
 				foreach ($scanfiles as $keyfile => $valfile) {
 					$tmprelativefilename = preg_replace('/^'.preg_quote(DOL_DOCUMENT_ROOT, '/').'/', '', $valfile['fullname']);
@@ -2578,7 +2655,7 @@ class Setup extends DolibarrApi
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
 						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+						$out .= '<td class="center">'.(array_key_exists('expectedmd5', $file) ? $file['expectedmd5'] : '').'</td>'."\n";
 						$out .= "</tr>\n";
 					}
 				} else {
@@ -2657,7 +2734,7 @@ class Setup extends DolibarrApi
 						$out .= '<tr class="oddeven">';
 						$out .= '<td>'.$i.'</td>'."\n";
 						$out .= '<td>'.dol_escape_htmltag($file['filename']).'</td>'."\n";
-						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";
+						$out .= '<td class="center">'.$file['expectedmd5'].'</td>'."\n";  // @phan-suppress-current-line PhanTypeInvalidDimOffset,PhanTypeSuspiciousStringExpression
 						$out .= '<td class="center">'.$file['md5'].'</td>'."\n";
 						$size = dol_filesize(DOL_DOCUMENT_ROOT.'/'.$file['filename']);
 						$totalsize += $size;
@@ -2728,7 +2805,9 @@ class Setup extends DolibarrApi
 	 *
 	 * @url	GET /modules
 	 *
-	 * @return  array|mixed Data without useless information
+	 * @return  array Data without useless information
+	 * @phan-return array<string,string>
+	 * @phpstan-return array<string,string>
 	 *
 	 * @throws RestException 403 Forbidden
 	 */

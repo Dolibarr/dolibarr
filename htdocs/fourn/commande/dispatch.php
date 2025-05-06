@@ -9,7 +9,7 @@
  * Copyright (C) 2017-2022  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019-2020  Christophe Battarel	    <christophe@altairis.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@
 
 /**
  * \file htdocs/fourn/commande/dispatch.php
- * \ingroup commande
+ * \ingroup supplier order
  * \brief Page to dispatch receiving
  */
 
@@ -45,6 +45,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("bills", "orders", "sendings", "companies", "deliveries", "products", "stocks", "receptions"));
@@ -103,13 +111,15 @@ if (!isModEnabled('stock')) {
 }
 
 $usercancreate	= ($user->hasRight("fournisseur", "commande", "creer") || $user->hasRight("supplier_order", "creer"));
-$permissiontoadd	= $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $usercancreate; // Used by the include of actions_addupdatedelete.inc.php
 
 
 /*
  * Actions
  */
 
+$error = 0;
+$errors = [];
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
@@ -117,7 +127,6 @@ if ($reshook < 0) {
 }
 
 if ($action == 'checkdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -154,7 +163,6 @@ if ($action == 'checkdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -190,7 +198,6 @@ if ($action == 'uncheckdispatchline' && $permissiontocontrol) {
 }
 
 if ($action == 'denydispatchline' && $permissiontocontrol) {
-	$error = 0;
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 
 	$db->begin();
@@ -227,7 +234,6 @@ if ($action == 'denydispatchline' && $permissiontocontrol) {
 
 $saveprice = "savepriceIsNotSet";
 if ($action == 'dispatch' && $permissiontoreceive) {
-	$error = 0;
 	$notrigger = 0;
 
 	$db->begin();
@@ -443,7 +449,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 			if ($product > 0) {
 				$mouv->origin = &$object;
 				$mouv->setOrigin($object->element, $object->id);
-				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+				$result = $mouv->livraison($user, $product, $entrepot, $qty, (float) $price, $comment, '', (int) $eatby, (int) $sellby, $batch);
 				if ($result < 0) {
 					$errors = $mouv->errors;
 					$error++;
@@ -453,7 +459,7 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 	}
 	if ($error > 0) {
 		$db->rollback();
-		setEventMessages($error, $errors, 'errors');
+		setEventMessages(null, $errors, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -462,7 +468,6 @@ if ($action == 'confirm_deleteline' && $confirm == 'yes' && $permissiontoreceive
 // Update a dispatched line
 if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 	$db->begin();
-	$error = 0;
 
 	$supplierorderdispatch = new CommandeFournisseurDispatch($db);
 	$result = $supplierorderdispatch->fetch($lineid);
@@ -490,13 +495,13 @@ if ($action == 'updateline' && $permissiontoreceive && empty($cancel)) {
 			if ($product > 0) {
 				$mouv->origin = &$object;
 				$mouv->setOrigin($object->element, $object->id);
-				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', $eatby, $sellby, $batch);
+				$result = $mouv->livraison($user, $product, $entrepot, $qty, $price, $comment, '', (int) $eatby, (int) $sellby, $batch);
 				if ($result < 0) {
 					$errors = $mouv->errors;
 					$error++;
 				} else {
 					$mouv->origin = &$object;
-					$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, $eatby, $sellby, $batch);
+					$result = $mouv->reception($user, $product, $supplierorderdispatch->fk_entrepot, $supplierorderdispatch->qty, $price, $comment, (int) $eatby, (int) $sellby, $batch);
 					if ($result < 0) {
 						$errors = $mouv->errors;
 						$error++;
@@ -583,7 +588,7 @@ if ($id > 0 || !empty($ref)) {
 			if ($action != 'classify' && $caneditproject) {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, (!getDolGlobalString('PROJECT_CAN_ALWAYS_LINK_TO_ALL_SUPPLIERS') ? $object->socid : -1), (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -621,7 +626,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Author
 	print '<tr><td class="titlefield">'.$langs->trans("AuthorRequest").'</td>';
-	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
+	print '<td>'.$author->getNomUrl(-1, '', 0, 0, 0).'</td>';
 	print '</tr>';
 
 	$parameters = array();
@@ -634,10 +639,6 @@ if ($id > 0 || !empty($ref)) {
 	// if ($mesg) print $mesg;
 	print '<br>';
 
-	/*$disabled = 1;
-	if (!empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-		$disabled = 0;
-	}*/
 	$disabled = 0;	// This is used to disable or not the bulk selection of target warehouse. No reason to have it disabled so forced to 0.
 
 	// Line of orders
@@ -949,13 +950,13 @@ if ($id > 0 || !empty($ref)) {
 							print '</td>';
 							if (!getDolGlobalString('PRODUCT_DISABLE_SELLBY')) {
 								print '<td class="nowraponall">';
-								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc'.$suffix.'month'), GETPOST('dlc'.$suffix.'day'), GETPOST('dlc'.$suffix.'year'));
+								$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dlc'.$suffix.'month'), GETPOSTINT('dlc'.$suffix.'day'), GETPOSTINT('dlc'.$suffix.'year'));
 								print $form->selectDate($dlcdatesuffix, 'dlc'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
 							if (!getDolGlobalString('PRODUCT_DISABLE_EATBY')) {
 								print '<td class="nowraponall">';
-								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo'.$suffix.'month'), GETPOST('dluo'.$suffix.'day'), GETPOST('dluo'.$suffix.'year'));
+								$dluodatesuffix = dol_mktime(0, 0, 0, GETPOSTINT('dluo'.$suffix.'month'), GETPOSTINT('dluo'.$suffix.'day'), GETPOSTINT('dluo'.$suffix.'year'));
 								print $form->selectDate($dluodatesuffix, 'dluo'.$suffix, 0, 0, 1, '');
 								print '</td>';
 							}
@@ -1191,7 +1192,7 @@ if ($id > 0 || !empty($ref)) {
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
 	$sql .= " ,cd.rowid, cd.subprice";
 	if (isModEnabled('reception')) {
-		$sql .= " ,cfd.fk_reception, r.date_delivery";
+		$sql .= ", cfd.fk_reception, r.date_delivery";
 	}
 	$sql .= " FROM ".MAIN_DB_PREFIX."product as p,";
 	$sql .= " ".MAIN_DB_PREFIX."receptiondet_batch as cfd";
@@ -1219,7 +1220,7 @@ if ($id > 0 || !empty($ref)) {
 
 			print '<tr class="liste_titre">';
 			// Reception ref
-			if ($conf->reception->enabled) {
+			if (isModEnabled("reception")) {
 				print '<td>'.$langs->trans("Reception").'</td>';
 			}
 			// Product
@@ -1240,7 +1241,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<td>'.$langs->trans("Comment").'</td>';
 
 			// Status
-			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && $reception !== null && empty($reception->rowid)) {
+			if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && !isModEnabled("reception")) {
 				print '<td class="center" colspan="2">'.$langs->trans("Status").'</td>';
 			} elseif (isModEnabled("reception")) {
 				print '<td class="center"></td>';
@@ -1250,9 +1251,6 @@ if ($id > 0 || !empty($ref)) {
 
 			print "</tr>\n";
 
-
-
-			$reception = null;
 
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
@@ -1296,8 +1294,16 @@ if ($id > 0 || !empty($ref)) {
 				// Date creation
 				print '<td class="center">'.dol_print_date($db->jdate($objp->datec), 'day').'</td>';
 
-				// Date delivery
-				print '<td class="center">'.dol_print_date($db->jdate($objp->date_delivery), 'day').'</td>';
+				// Date delivery of reception
+				if (isModEnabled('reception')) {
+					print '<td class="center">';
+					if (!empty($objp->date_delivery)) {
+						print dol_print_date($db->jdate($objp->date_delivery), 'day');
+					}
+					print '</td>';
+				} else {
+					print '<td class="center"></td>';
+				}
 
 				// Batch / Eat by / Sell by
 				if (isModEnabled('productbatch')) {
@@ -1355,7 +1361,7 @@ if ($id > 0 || !empty($ref)) {
 				print '<td class="tdoverflowmax300" style="white-space: pre;">'.$objp->comment.'</td>';
 
 				// Status
-				if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && ($reception === null || empty($reception->rowid))) {
+				if (getDolGlobalString('SUPPLIER_ORDER_USE_DISPATCH_STATUS') && !isModEnabled("reception")) {
 					print '<td class="right">';
 					$supplierorderdispatch->status = (empty($objp->status) ? 0 : $objp->status);
 					// print $supplierorderdispatch->status;
@@ -1374,7 +1380,7 @@ if ($id > 0 || !empty($ref)) {
 						}
 					} else {
 						$disabled = '';
-						if ($object->statut == 5) {
+						if ($object->status == $object::STATUS_RECEIVED_COMPLETELY) {
 							$disabled = 1;
 						}
 						if (empty($objp->status)) {

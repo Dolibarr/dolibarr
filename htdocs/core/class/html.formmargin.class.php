@@ -1,6 +1,7 @@
 <?php
-/* Copyright (c) 2015-2019 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (c) 2015-2019  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,7 @@ class FormMargin
 				$line->pa_ht = $line->subprice * (1 - ($line->remise_percent / 100));
 			}
 
-			$pv = $line->total_ht;
+			$pv = (float) $line->total_ht;
 
 			// $line->pa_ht is always positive in database, so we guess the correct sign
 
@@ -108,6 +109,7 @@ class FormMargin
 
 			if (getDolGlobalInt('INVOICE_USE_SITUATION') == 1) {	// Special case for old situation mode
 				'@phan-var-force Facture $object';
+				/** @var Facture $object */
 				if (($object->element == 'facture' && $object->type == $object::TYPE_SITUATION)
 					|| ($object->element == 'facture' && $object->type == $object::TYPE_CREDIT_NOTE && getDolGlobalInt('INVOICE_USE_SITUATION_CREDIT_NOTE') && $object->situation_counter > 0)) {
 					// We need a compensation relative to $line->situation_percent
@@ -234,7 +236,7 @@ class FormMargin
 		if ($reshook < 0) {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		} elseif (empty($reshook)) {
-			$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW']) ?? ''; // Clean cookie
+			$hidemargininfos = preg_replace('/[^a-zA-Z0-9_\-]/', '', $_COOKIE['DOLUSER_MARGININFO_HIDE_SHOW'] ?? ''); // Clean cookie
 
 			$buttonToShowHideMargin = '<span id="showMarginInfos" class="linkobject valignmiddle ' . (!empty($hidemargininfos) ? '' : 'hideobject') . '">';
 			$buttonToShowHideMargin .= img_picto($langs->trans("ShowMarginInfos"), 'switch_off', '', 0, 0, 0, '', 'size15x');

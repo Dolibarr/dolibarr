@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2011-2012  Regis Houssin           <regis.houssin@inodbox.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,13 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $field = GETPOST('field', 'alpha', 2);
 $element = GETPOST('element', 'alpha', 2);
@@ -157,7 +164,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	}
 	//var_dump(GETPOST('action','aZ09'));
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
-	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
+	$check_access = restrictedArea($user, $feature, $object_id, '', (string) $feature2);
 	//var_dump($user->rights);
 	/*
 	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
@@ -241,7 +248,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$object->fk_element = $fk_element;
 			$object->element = $element;
 
-			$ret = $object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
+			$ret = $object->$savemethodname($field, $newvalue, $table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {
 					$value = price($newvalue);

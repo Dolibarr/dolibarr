@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2023       Frédéric France     <frederic.france@netlogic.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2023-2025  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,17 +57,17 @@
 trait CommonPeople
 {
 	/**
-	 * @var string Address
+	 * @var ?string Address
 	 */
 	public $address;
 
 	/**
-	 * @var string zip code
+	 * @var ?string zip code
 	 */
 	public $zip;
 
 	/**
-	 * @var string town
+	 * @var ?string town
 	 */
 	public $town;
 
@@ -79,18 +79,19 @@ trait CommonPeople
 	 * @var string
 	 */
 	public $state_code;
+
 	/**
-	 * @var string
+	 * @var ?string
 	 */
 	public $state;
 
 	/**
-	 * @var string email
+	 * @var ?string email
 	 */
 	public $email;
 
 	/**
-	 * @var string url
+	 * @var ?string url
 	 */
 	public $url;
 
@@ -99,8 +100,8 @@ trait CommonPeople
 	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
 	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
-	 *	@param	int			$option			0=No option, 1=Add civility
-	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 *	@param	int<0,1>	$option			0=No option, 1=Add civility
+	 * 	@param	int<-1,5>	$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
 	 * 	@param	int			$maxlen			Maximum length
 	 * 	@return	string						String with full name
 	 */
@@ -128,12 +129,33 @@ trait CommonPeople
 		return dol_string_nohtmltag(dol_trunc($ret, $maxlen));
 	}
 
+
+	/**
+	 *    Return civility label of object
+	 *
+	 *    @return	string      			Translated name of civility
+	 */
+	public function getCivilityLabel()
+	{
+		global $langs;
+
+		$code = (!empty($this->civility_code) ? $this->civility_code : (!empty($this->civility_id) ? $this->civility : (!empty($this->civilite) ? $this->civilite : '')));
+		if (empty($code)) {
+			return '';
+		}
+
+		$langs->load("dict");
+		return $langs->getLabelFromKey($this->db, "Civility".$code, "c_civility", "code", "label", $code);
+	}
+
+
+
 	/**
 	 * 	Return full address for banner
 	 *
-	 * 	@param		string		$htmlkey            HTML id to make banner content unique
-	 *  @param      Object      $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
-	 *	@return		string							Full address string
+	 * 	@param		string			$htmlkey            HTML id to make banner content unique
+	 *  @param      CommonObject    $object				Object (thirdparty, thirdparty of contact for contact, null for a member)
+	 *	@return		string								Full address string
 	 */
 	public function getBannerAddress($htmlkey, $object)
 	{
@@ -144,19 +166,23 @@ trait CommonPeople
 		$contactid = 0;
 		$thirdpartyid = 0;
 		$elementforaltlanguage = $this->element;
-		if ($this->element == 'societe') {
-			/** @var Societe $this */
+		if ($this->element === 'societe' && $this instanceof Societe) {
 			$thirdpartyid = $this->id;
 		}
-		if ($this->element == 'contact') {
-			/** @var Contact $this */
+		if ($this->element === 'contact' && $this instanceof Contact) {
 			$contactid = $this->id;
 			$thirdpartyid = empty($this->fk_soc) ? 0 : $this->fk_soc;
 		}
-		if ($this->element == 'user') {
-			/** @var User $this */
+		if ($this->element == 'member' && $this instanceof Adherent) {
+			$contactid = $this->id;
+			$thirdpartyid = empty($this->socid) ? 0 : $this->socid;
+		}
+		if ($this->element === 'user' && $this instanceof User) {
 			$contactid = $this->contact_id;
 			$thirdpartyid = empty($object->fk_soc) ? 0 : $object->fk_soc;
+		}
+		if ($this->element == 'recruitmentcandidature' && $this instanceof RecruitmentCandidature) {
+			$thirdpartyid = 0;
 		}
 
 		$out = '';
@@ -189,7 +215,7 @@ trait CommonPeople
 				$arrayoflangcode[] = getDolGlobalString('PDF_USE_ALSO_LANGUAGE_CODE');
 			}
 
-			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+			if (/* is_array($arrayoflangcode) &&  */count($arrayoflangcode)) {
 				if (!is_object($extralanguages)) {
 					include_once DOL_DOCUMENT_ROOT.'/core/class/extralanguages.class.php';
 					$extralanguages = new ExtraLanguages($this->db);
@@ -237,7 +263,7 @@ trait CommonPeople
 		// Phones
 		$outphonedone = 0;
 		if (!empty($this->phone) && empty($this->phone_pro)) {		// For objects that store pro phone into ->phone
-			$out .= ($outphonedone ? ' ' : '');
+			// $out .= ($outphonedone ? ' ' : '');
 			$out .= dol_print_phone($this->phone, $this->country_code, $contactid, $thirdpartyid, 'AC_TEL', '&nbsp;', 'phone', $langs->trans("PhonePro"));
 			$outdone++;
 			$outphonedone++;
@@ -363,10 +389,10 @@ trait CommonPeople
 			}
 		}
 		if (getDolGlobalString('MAIN_ALL_TOWN_TO_UPPER')) {
-			$this->address = dol_strtoupper($this->address);
-			$this->town = dol_strtoupper($this->town);
+			$this->address = dol_strtoupper($this->address ?? '');
+			$this->town = dol_strtoupper($this->town ?? '');
 		}
-		if (isset($this->email)) {
+		if (!empty($this->email)) {
 			$this->email = dol_strtolower($this->email);
 		}
 		if (isset($this->personal_email)) {

@@ -16,7 +16,7 @@ CancelPropal=Otkaži
 AddProp=Izradi ponudu
 ConfirmDeleteProp=Jeste li sigurni da želite izbrisati ovaj komercijalni prijedlog?
 ConfirmValidateProp=Jeste li sigurni da želite za potvrdu ovog komercijalnog prijedloga pod imenom <b>%s</b>?
-ConfirmCancelPropal=Are you sure you want to cancel commercial proposal <b>%s</b>?
+ConfirmCancelPropal=Jeste li sigurni da želite da biste otkazali komercijalni prijedlog <b>%s</b>?
 LastPropals=Zadnje %s ponude
 LastModifiedProposals=Zadnje %s izmijenjene ponude
 AllPropals=Sve ponude
@@ -24,12 +24,14 @@ SearchAProposal=Pronađi ponudu
 NoProposal=Nema ponude
 ProposalsStatistics=Statistika ponuda
 NumberOfProposalsByMonth=Broj u mjesecu
+AmountOfProposals=Amount of proposals
+AmountOfProposalsHT=Amount of proposals (excl. tax)
 AmountOfProposalsByMonthHT=Iznos po mjesecu (bez PDV-a)
 NbOfProposals=Broj ponuda
 ShowPropal=Prikaži ponudu
 PropalsDraft=Skice
 PropalsOpened=Otvorene
-PropalStatusCanceled=Canceled (Abandoned)
+PropalStatusCanceled=Otkazano (napušteno)
 PropalStatusDraft=Skica (potrebno ovjeriti)
 PropalStatusValidated=Ovjerena (otvorena ponuda)
 PropalStatusSigned=Potpisane (za naplatu)
@@ -77,13 +79,11 @@ AvailabilityTypeAV_1W=Tjedan dana
 AvailabilityTypeAV_2W=Dva tjedna
 AvailabilityTypeAV_3W=Tri tjedna
 AvailabilityTypeAV_1M=Mjesec dana
-
-##### Types ofe contacts #####
+##### Types of contacts #####
 TypeContact_propal_internal_SALESREPFOLL=Suradnik koji prati ponudu
 TypeContact_propal_external_BILLING=Kontakt osoba pri kupcu za račun
 TypeContact_propal_external_CUSTOMER=Kontakt osoba pri kupcu za ponudu
 TypeContact_propal_external_SHIPPING=Kontakt kupca za dostavu
-
 # Document models
 CantBeNoSign=ne može se postaviti nepotpisano
 CaseFollowedBy=Slučaj slijedi
@@ -118,7 +118,9 @@ RefusePropal=Odbij prijedlog
 Sign=Znak
 SignContract=Potpišite ugovor
 SignFichinter=Znak intervencije
-SignSociete_rib=Sign mandate
+SignSociete_rib=Potpišite mandat
 SignPropal=Prihvati prijedlog
 Signed=potpisan
 SignedOnly=Samo potpisano
+ExpeditionSigned=Pošiljka potpisana
+SignExpedition=Potpišite pošiljku

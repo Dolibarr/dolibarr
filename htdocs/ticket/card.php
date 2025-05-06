@@ -2,11 +2,11 @@
 /* Copyright (C) 2013-2016 Jean-François FERRY  <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel  <christophe@altairis.fr>
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2021-2024 Frédéric France		<frederic.france@free.fr>
+ * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,6 +52,14 @@ if (isModEnabled('contract')) {
 	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "ticket"));
 
@@ -69,6 +77,7 @@ $cancel    = GETPOST('cancel', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 
+$limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'aZ09comma') ? GETPOST('sortfield', 'aZ09comma') : "a.datep";
 $sortorder = GETPOST('sortorder', 'aZ09comma') ? GETPOST('sortorder', 'aZ09comma') : "desc";
 $search_rowid = GETPOST('search_rowid');
@@ -142,6 +151,11 @@ $triggermodname = 'TICKET_MODIFY';
 $permissiontoread   = $user->hasRight('ticket', 'read');
 $permissiontoadd    = $user->hasRight('ticket', 'write');
 $permissiontodelete = $user->hasRight('ticket', 'delete');
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->ticket->dir_output;
 
@@ -423,7 +437,7 @@ if (empty($reshook)) {
 	// Action to add a message (private or not, with email or not).
 	// This may also send an email (concatenated with email_intro and email footer if checkbox was selected)
 	if ($action == 'add_message' && GETPOSTISSET('btn_add_message') && $permissiontoread) {
-		$ret = $object->newMessage($user, $action, (GETPOST('private_message', 'alpha') == "on" ? 1 : 0), 0);
+		$ret = $object->newMessage($user, $action, GETPOSTINT('private_message'), 0);
 
 		if ($ret > 0) {
 			if (!empty($backtopage)) {
@@ -500,7 +514,7 @@ if (empty($reshook)) {
 	// Set progress status
 	if ($action == 'set_progression' && $user->hasRight('ticket', 'write')) {
 		if ($object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha')) >= 0) {
-			$result = $object->setProgression(GETPOST('progress', 'alpha'));
+			$result = $object->setProgression(GETPOSTINT('progress'));
 
 			$url = 'card.php?track_id=' . $object->track_id;
 			header("Location: " . $url);
@@ -548,9 +562,9 @@ if (empty($reshook)) {
 			// prevent browser refresh from reopening ticket several times
 			if ($object->status == Ticket::STATUS_CLOSED || $object->status == Ticket::STATUS_CANCELED) {
 				if ($object->fk_user_assign != null) {
-					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_ASSIGNED, null, '', $triggermodname);
 				} else {
-					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', 'TICKET_MODIFY');
+					$res = $object->setStatut(Ticket::STATUS_NOT_READ, null, '', $triggermodname);
 				}
 				if ($res) {
 					$url = 'card.php?track_id=' . $object->track_id;
@@ -617,27 +631,26 @@ if (empty($reshook)) {
 	}
 
 	// Action to update an extrafield
-	if ($action == "update_extras" && $permissiontoadd) {
+	if ($action == "update_extras" && $permissiontoeditextra) {
 		$object->fetch(GETPOSTINT('id'), '', GETPOST('track_id', 'alpha'));
 
-		$ret = $extrafields->setOptionalsFromPost(null, $object, GETPOST('attribute', 'restricthtml'));
+		$attribute_name = GETPOST('attribute', 'aZ09');
+
+		$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute_name);
 		if ($ret < 0) {
 			$error++;
 		}
 
 		if (!$error) {
-			$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
+			$result = $object->updateExtraField($attribute_name, $triggermodname);
 			if ($result < 0) {
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
 			}
 		}
 
 		if ($error) {
-			setEventMessages($object->error, $object->errors, 'errors');
 			$action = 'edit_extras';
-		} else {
-			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-			$action = 'view';
 		}
 	}
 
@@ -757,7 +770,7 @@ if ($action == 'create' || $action == 'presend') {
 	$formticket->showForm(0, 'edit', 0, null, $action, $object);
 
 	print dol_get_fiche_end();
-} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status', 'dellink'])) {
+} elseif (empty($action) || in_array($action, ['builddoc', 'view', 'addlink', 'addlinkbyref', 'dellink', 'presend', 'presend_addmessage', 'close', 'abandon', 'delete', 'editcustomer', 'progression', 'categories', 'reopen', 'edit_contrat', 'editsubject', 'edit_extras', 'update_extras', 'edit_extrafields', 'set_extrafields', 'classify', 'sel_contract', 'edit_message_init', 'set_status'])) {
 	if (!empty($res) && $res > 0) {
 		// or for unauthorized internals users
 		if (!$user->socid && (getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY') && $object->fk_user_assign != $user->id) && !$user->hasRight('ticket', 'manage')) {
@@ -778,7 +791,7 @@ if ($action == 'create' || $action == 'presend') {
 			}
 
 			// Default select all or no contact
-			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? -2 : -3);
+			$default = (getDolGlobalString('TICKET_NOTIFY_AT_CLOSING') ? '-2' : '-3');
 			$formquestion = array(
 				array(
 					'name' => 'contactid',
@@ -847,7 +860,7 @@ if ($action == 'create' || $action == 'presend') {
 				// Define a complementary filter for search of next/prev ref.
 				if (!$user->hasRight('projet', 'all', 'lire')) {
 					$objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
-					$projectstat->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+					$projectstat->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 				}
 				print $form->showrefnav($projectstat, 'ref', $linkback, 1, 'ref', 'ref', '');
 				print '</td></tr>';
@@ -897,14 +910,14 @@ if ($action == 'create' || $action == 'presend') {
 		}
 
 		if (!$user->socid && getDolGlobalString('TICKET_LIMIT_VIEW_ASSIGNED_ONLY')) {
-			$object->next_prev_filter = "te.fk_user_assign = ".((int) $user->id);
+			$object->next_prev_filter = "te.fk_user_assign:=:".((int) $user->id);
 		} elseif ($user->socid > 0) {
-			$object->next_prev_filter = "te.fk_soc = ".((int) $user->socid);
+			$object->next_prev_filter = "te.fk_soc:=:".((int) $user->socid);
 		}
 
 		$head = ticket_prepare_head($object);
 
-		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket');
+		print dol_get_fiche_head($head, 'tabTicket', $langs->trans("Ticket"), -1, 'ticket', 0, '', '', 0, '', 1);
 
 		$morehtmlref = '<div class="refidno">';
 
@@ -917,7 +930,7 @@ if ($action == 'create' || $action == 'presend') {
 			$morehtmlref .= '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 			$morehtmlref .= '<input type="hidden" name="action" value="setsubject">';
 			$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-			$morehtmlref .= '<input type="hidden" name="id" value="20">';
+			$morehtmlref .= '<input type="hidden" name="id" value="'.$object->id.'">';
 			$morehtmlref .= '<input type="text" class="minwidth300" id="subject" name="subject" value="'.$object->subject.'" autofocus="">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button valignmiddle" name="modify" value="'.$langs->trans("Modify").'">';
 			$morehtmlref .= '<input type="submit" class="smallpaddingimp button button-cancel vlignmiddle" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -976,9 +989,9 @@ if ($action == 'create' || $action == 'presend') {
 			if ($action != 'editcustomer' && $permissiontoedit) {
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
-			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
+			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
 			if (!empty($object->socid)) {
-				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
+				$morehtmlref .= ' - <a href="'.DOL_URL_ROOT.'/ticket/list.php?socid='.$object->socid.'&sortfield=t.datec&sortorder=desc'.(getDolGlobalBool('TICKET_CLIENT_OTHER_TICKET_ONLY_OPEN') ? '&search_fk_statut[]=openall' : '').'">'.img_picto($langs->trans("Tickets"), 'ticket', 'class="pictofixedwidth"').' '.$langs->trans("TicketHistory").'</a>';
 			}
 		}
 
@@ -987,15 +1000,15 @@ if ($action == 'create' || $action == 'presend') {
 			$langs->load("projects");
 			$morehtmlref .= '<br>';
 			if ($permissiontoedit) {
-				$object->fetch_project();
+				$object->fetchProject();
 				$morehtmlref .= img_picto($langs->trans("Project"), 'project'.((is_object($object->project) && $object->project->public) ? 'pub' : ''), 'class="pictofixedwidth"');
 				if ($action != 'classify') {
 					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 				}
-				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 			} else {
 				if (!empty($object->fk_project)) {
-					$object->fetch_project();
+					$object->fetchProject();
 					$morehtmlref .= $object->project->getNomUrl(1);
 					if ($object->project->title) {
 						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($object->project->title).'</span>';
@@ -1346,81 +1359,82 @@ if ($action == 'create' || $action == 'presend') {
 			foreach (array('internal', 'external') as $source) {
 				$tmpobject = $object;
 				$tab = $tmpobject->listeContact(-1, $source);
-				'@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:string,fk_c_typecontact:string,phone:string,phone_mobile:string,phone_perso?:string,nom:string}> $tab';
-				$num = is_array($tab) ? 0 : count($tab);
+				// '@phan-var-force array<array{source:string,id:int,rowid:int,email:string,civility:string,firstname:string,lastname:string,labeltype:string,libelle:string,socid:int,code:string,status:int,statuscontact:int,fk_c_typecontact:string,phone:string,phone_mobile:string,phone_perso?:string,nom:string}> $tab';
+				$num = is_array($tab) ? count($tab) : 0;
 				$i = 0;
 				foreach (array_keys($tab) as $i) {
+					$tab_i = &$tab[$i];
 					$var = !$var;
 					print '<div class="tagtr '.($var ? 'pair' : 'impair').'">';
 
 					print '<div class="tagtd left">';
-					if ($tab[$i]['source'] == 'internal') {
+					if ($tab_i['source'] == 'internal') {
 						echo $langs->trans("User");
 					}
 
-					if ($tab[$i]['source'] == 'external') {
+					if ($tab_i['source'] == 'external') {
 						echo $langs->trans("ThirdPartyContact");
 					}
 
 					print '</div>';
 					print '<div class="tagtd left">';
 
-					if ($tab[$i]['socid'] > 0) {
-						$companystatic->fetch($tab[$i]['socid']);
+					if ($tab_i['socid'] > 0) {
+						$companystatic->fetch($tab_i['socid']);
 						echo $companystatic->getNomUrl(-1);
 					}
-					if ($tab[$i]['socid'] < 0) {
+					if ($tab_i['socid'] < 0) {
 						echo getDolGlobalString('MAIN_INFO_SOCIETE_NOM');
 					}
-					if (!$tab[$i]['socid']) {
+					if (!$tab_i['socid']) {
 						echo '&nbsp;';
 					}
 					print '</div>';
 
 					print '<div class="tagtd">';
-					if ($tab[$i]['source'] == 'internal') {
-						if ($userstatic->fetch($tab[$i]['id'])) {
+					if ($tab_i['source'] == 'internal') {
+						if ($userstatic->fetch($tab_i['id'])) {
 							print $userstatic->getNomUrl(-1);
 						}
 					}
-					if ($tab[$i]['source'] == 'external') {
-						if ($contactstatic->fetch($tab[$i]['id'])) {
+					if ($tab_i['source'] == 'external') {
+						if ($contactstatic->fetch($tab_i['id'])) {
 							print $contactstatic->getNomUrl(-1);
 						}
 					}
 					print ' </div>
-					<div class="tagtd">' . $tab[$i]['libelle'].'</div>';
+					<div class="tagtd">' . $tab_i['libelle'].'</div>';
 
 					print '<div class="tagtd">';
 
-					print dol_print_phone($tab[$i]['phone'], '', 0, 0, 'AC_TEL').'<br>';
+					print dol_print_phone($tab_i['phone'], '', 0, 0, 'AC_TEL').'<br>';
 
-					if (!empty($tab[$i]['phone_perso'])) {
+					if (array_key_exists('phone_perso', $tab_i) && !empty($tab_i['phone_perso'])) {
 						//print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-						print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
+						print '<br>'.dol_print_phone((string) $tab_i['phone_perso'], '', 0, 0, 'AC_TEL').'<br>';
 					}
-					if (!empty($tab[$i]['phone_mobile'])) {
+					if (!empty($tab_i['phone_mobile'])) {
 						//print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-						print dol_print_phone($tab[$i]['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
+						print dol_print_phone($tab_i['phone_mobile'], '', 0, 0, 'AC_TEL').'<br>';
 					}
 					print '</div>';
 
 					print '<div class="tagtd center">';
 					if ($object->status >= 0) {
-						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+						echo '<a href="contact.php?track_id='.$object->track_id.'&amp;action=swapstatut&amp;ligne='.$tab_i['rowid'].'">';
 					}
 
-					if ($tab[$i]['source'] == 'internal') {
-						$userstatic->id = $tab[$i]['id'];
-						$userstatic->lastname = $tab[$i]['lastname'];
-						$userstatic->firstname = $tab[$i]['firstname'];
-						echo $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
+					if ($tab_i['source'] == 'internal') {
+						$userstatic->id = $tab_i['id'];
+						$userstatic->lastname = $tab_i['lastname'];
+						$userstatic->firstname = $tab_i['firstname'];
+						echo $userstatic->LibStatut($tab_i['statuscontact'], 3);
 					}
-					if ($tab[$i]['source'] == 'external') {
-						$contactstatic->id = $tab[$i]['id'];
-						$contactstatic->lastname = $tab[$i]['lastname'];
-						$contactstatic->firstname = $tab[$i]['firstname'];
-						echo $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
+					if ($tab_i['source'] == 'external') {
+						$contactstatic->id = $tab_i['id'];
+						$contactstatic->lastname = $tab_i['lastname'];
+						$contactstatic->firstname = $tab_i['firstname'];
+						echo $contactstatic->LibStatut($tab_i['statuscontact'], 3);
 					}
 					if ($object->status >= 0) {
 						echo '</a>';
@@ -1518,9 +1532,9 @@ if ($action == 'create' || $action == 'presend') {
 
 			$outputlangs = $langs;
 			$newlang = '';
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
-			} elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($object->thirdparty)) {
+			} elseif (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && is_object($object->thirdparty)) {
 				$newlang = $object->thirdparty->default_lang;
 			}
 			if (!empty($newlang)) {
@@ -1633,7 +1647,7 @@ if ($action == 'create' || $action == 'presend') {
 				$codelang = $object->thirdparty->default_lang;
 			}
 
-			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', 0, '', $codelang);
+			print $formfile->showdocuments('ticket', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $codelang);
 
 			// Show links to link elements
 			$tmparray = $form->showLinkToObjectBlock($object, array(), array('ticket'), 1);

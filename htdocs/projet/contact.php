@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010      Regis Houssin       <regis.houssin@inodbox.com>
  * Copyright (C) 2012-2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 if (isModEnabled('category')) {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langsLoad = array('projects', 'companies');
@@ -73,23 +81,23 @@ $permissiontoadd = $user->hasRight('projet', 'creer');
 /*
  * Actions
  */
-
+$error = 0;
 $parameters = array('id' => $id);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action);
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
 
+$formconfirmtoaddtasks = '';
 if (empty($reshook)) {
 	// Test if we can add contact to the tasks at the same times, if not or not required, make a redirect
-	$formconfirmtoaddtasks = '';
 	if ($action == 'addcontact' && $permissiontoadd) {
 		$form = new Form($db);
 
 		$source = GETPOST("source", 'aZ09');
 
 		$taskstatic = new Task($db);
-		$task_array = $taskstatic->getTasksArray(0, 0, $object->id, 0, 0);
+		$task_array = $taskstatic->getTasksArray(null, null, $object->id, 0, 0);
 		$nbTasks = count($task_array);
 
 		//If no task available, redirec to to add confirm
@@ -183,7 +191,7 @@ if (empty($reshook)) {
 			if ($result > 0) {
 				$excludefilter = 'statut = 1';
 				$tmpcontactarray = $usergroup->listUsersForGroup($excludefilter, 0);
-				if ($contactarray <= 0) {
+				if (!is_array($tmpcontactarray)) {
 					$error++;
 				} else {
 					foreach ($tmpcontactarray as $tmpuser) {
@@ -237,7 +245,7 @@ if (empty($reshook)) {
 						foreach ($task_to_affect as $task_id) {
 							if (GETPOSTISSET('person_'.$task_id) && GETPOST('person_'.$task_id, 'san_alpha')) {
 								$tasksToAffect = new Task($db);
-								$result = $tasksToAffect->fetch($task_id);
+								$result = $tasksToAffect->fetch((int) $task_id);
 								if ($result < 0) {
 									setEventMessages($tasksToAffect->error, null, 'errors');
 								} else {
@@ -372,7 +380,7 @@ if ($id > 0 || !empty($ref)) {
 	// Define a complementary filter for search of next/prev ref.
 	if (!$user->hasRight('projet', 'all', 'lire')) {
 		$objectsListId = $object->getProjectsAuthorizedForUser($user, 0, 0);
-		$object->next_prev_filter = "rowid IN (".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0').")";
+		$object->next_prev_filter = "rowid:IN:".$db->sanitize(count($objectsListId) ? implode(',', array_keys($objectsListId)) : '0');
 	}
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -415,17 +423,6 @@ if ($id > 0 || !empty($ref)) {
 		}
 		print '</td></tr>';
 	}
-
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) {
-		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
-		print $langs->trans('SharedProject');
-	} else {
-		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
-		print $langs->trans('PrivateProject');
-	}
-	print '</td></tr>';
 
 	if (getDolGlobalString('PROJECT_USE_OPPORTUNITIES') && !empty($object->usage_opportunity)) {
 		// Opportunity status
@@ -472,6 +469,17 @@ if ($id > 0 || !empty($ref)) {
 	}
 	print '</td></tr>';
 
+	// Visibility
+	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
+	if ($object->public) {
+		print img_picto($langs->trans('SharedProject'), 'world', 'class="paddingrightonly"');
+		print $langs->trans('SharedProject');
+	} else {
+		print img_picto($langs->trans('PrivateProject'), 'private', 'class="paddingrightonly"');
+		print $langs->trans('PrivateProject');
+	}
+	print '</td></tr>';
+
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
@@ -484,16 +492,21 @@ if ($id > 0 || !empty($ref)) {
 
 	print '<table class="border tableforfield centpercent">';
 
-	// Description
-	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
-	print dol_htmlentitiesbr($object->description);
-	print '</td></tr>';
-
 	// Categories
 	if (isModEnabled('category')) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
+	}
+
+	// Description
+	print '<tr><td class="titlefield'.($object->description ? ' noborderbottom' : '').'" colspan="2">'.$langs->trans("Description").'</td></tr>';
+	if ($object->description) {
+		print '<tr><td class="nottitleforfield" colspan="2">';
+		print '<div class="longmessagecut">';
+		print dolPrintHTML($object->description);
+		print '</div>';
+		print '</td></tr>';
 	}
 
 	print '</table>';

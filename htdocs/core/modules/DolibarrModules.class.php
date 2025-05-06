@@ -8,7 +8,7 @@
  * Copyright (C) 2014		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Josep Lluís Amador		<joseplluis@lliuretic.cat>
  * Copyright (C) 2019-2024	Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -126,17 +126,17 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $overwrite_translation = array();
 
 	/**
-	 * @var array Module cron jobs entries
+	 * @var array<array{entity?:int,label?:string,jobtype?:string,class?:string,objectname?:string,method?:string,command?:string,parameters?:string,md5params?:string,comment?:string,frequency?:int,unitfrequency?:int,priority?:int,datestart?:int,dateend?:int,datenextrun?:string,status?:int,maxrun?:int,libname?:string,test?:string|bool}> Module cron jobs entries
 	 */
 	public $cronjobs = array();
 
 	/**
-	 * @var array 	Module access rights
+	 * @var array<int,array<int<0,7>,string|int>> 	Module access rights
 	 */
 	public $rights;
 
 	/**
-	 * @var int		1=Admin is always granted of permission of modules (even when module is disabled)
+	 * @var int<0,1>	1=Admin is always granted of permission of modules (even when module is disabled)
 	 */
 	public $rights_admin_allowed;
 
@@ -144,6 +144,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * @var string 	Module access rights family
 	 */
 	public $rights_class;
+
+	const URL_FOR_BLACKLISTED_MODULES = 'https://ping.dolibarr.org/modules-blacklist.txt';
 
 	const KEY_ID = 0;
 	const KEY_LABEL = 1;
@@ -155,7 +157,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	const KEY_ENABLED = 7;
 
 	/**
-	 * @var array|int 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
+	 * @var array<array{commentgroup?:string,mainmenu:string,leftmenu:string,langs:string,enabled:int|string,target:string,titre:string,user:int,fk_menu:string,fk_parent:string,url:string,position:int,positionfull:int|string,perms:string,type:string}>|int<1,1> 	Module menu entries (1 means the menu entries are not declared into module descriptor but are hardcoded into menu manager)
 	 */
 	public $menu = array();
 
@@ -212,13 +214,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 	/**
 	 * Module last version
-	 * @var string $lastVersion
+	 * @var string
 	 */
 	public $lastVersion = '';
 
 	/**
 	 * true indicate this module need update
-	 * @var bool $needUpdate
+	 * @var bool
 	 */
 	public $needUpdate = false;
 
@@ -238,12 +240,12 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	public $descriptionlong;
 
 	/**
-	 * @var array dictionaries description
+	 * @var array{}|array{langs:string,tabname:string[],tablib:string[],tabsql:string[],tabsqlsort:string[],tabfield:string[],tabfieldvalue:string[],tabfieldinsert:string[],tabrowid:string[],tabcond:array<bool|int<0,1>>,tabhelp:array<array<string,string>>} dictionaries description
 	 */
 	public $dictionaries = array();
 
 	/**
-	 * @var array tabs description
+	 * @var array<string|array{data:string,entity:int}> tabs description
 	 */
 	public $tabs;
 
@@ -431,7 +433,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * 				Another example : array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 * Note: Example in modTakePos:  array('always'=>array("modBanque", "modFacture", "modProduct", "modCategorie"), 'FR'=>array('modBlockedLog'));
 	 *       Example in modAccounting: array("modFacture", "modBanque", "modTax");
-
+	 *
 	 * @see $requiredby
 	 */
 	public $depends;
@@ -491,12 +493,24 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 */
 	public $need_dolibarr_version;
 
+	/**
+	 * @var int[] Maximum version of Dolibarr required by module.
+	 * e.g.: Dolibarr ≤ 3.6 = array(3, 6)
+	 */
+	public $max_dolibarr_version;
+
+	/**
+	 * @var int<0,1>
+	 */
 	public $need_javascript_ajax;
 
+	/**
+	 * @var bool
+	 */
 	public $enabled_bydefault;
 
 	/**
-	 * @var bool|int Whether to hide the module.
+	 * @var bool|int<0,1> Whether to hide the module.
 	 */
 	public $hidden = false;
 
@@ -526,8 +540,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	 * Enables a module.
 	 * Inserts all information into database.
 	 *
-	 * @param array  $array_sql 	SQL requests to be executed when enabling module
-	 * @param string $options   	String with options when disabling module:
+	 * @param array<array{sql:string,ignoreerror:int<0,1>}>|string[]	$array_sql 	SQL requests to be executed when enabling module
+	 * @param string	$options   	String with options when disabling module:
 	 *                          	- 'noboxes' = Do all actions but do not insert boxes
 	 *                          	- 'newboxdefonly' = Do all actions but for boxes, insert def of boxes only and not boxes activation
 	 * @return int                  1 if OK, 0 if KO
@@ -1124,7 +1138,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Gives the last author of activation
 	 *
-	 * @return array       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
+	 * @return array{}|array{authorid:int|'',ip:string,lastactivationdate:int|'',lastactivationversion:string}       Array array('authorid'=>Id of last activation user, 'lastactivationdate'=>Date of last activation)
 	 */
 	public function getLastActivationInfo()
 	{
@@ -1148,10 +1162,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmp = json_decode($obj->note, true);
 				}
 				return array(
-					'authorid' => empty($tmp['authorid']) ? '' : $tmp['authorid'],
-					'ip' => empty($tmp['ip']) ? '' : $tmp['ip'],
+					'authorid' => empty($tmp['authorid']) ? '' : (int) $tmp['authorid'],
+					'ip' => empty($tmp['ip']) ? '' : (string) $tmp['ip'],
 					'lastactivationdate' => $this->db->jdate($obj->tms),
-					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? $tmp['lastactivationversion'] : 'unknown'),
+					'lastactivationversion' => (!empty($tmp['lastactivationversion']) ? (string) $tmp['lastactivationversion'] : 'unknown'),
 				);
 			}
 		}
@@ -1611,8 +1625,13 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		// phpcs:enable
 		include_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
 		include_once DOL_DOCUMENT_ROOT . '/cron/class/cronjob.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 
 		global $conf, $user;
+
+		if (empty($user)) {
+			$user = new User($this->db);
+		}
 
 		$err = 0;
 
@@ -1690,7 +1709,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$cronjob->command = $command;
 				$cronjob->params = $params;
 				$cronjob->md5params = $md5params;
-				$cronjob->comment = $comment;
+				$cronjob->note_private = $comment;
 				$cronjob->frequency = $frequency;
 				$cronjob->unitfrequency = $unitfrequency;
 				$cronjob->priority = $priority;
@@ -1760,8 +1779,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		$err = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const";
-		$sql .= " WHERE ".$this->db->decrypt('name')." like '".$this->db->escape($this->const_name)."_TABS_%'";
-		$sql .= " AND entity = ".$conf->entity;
+		$sql .= " WHERE ".$this->db->decrypt('name')." LIKE '".$this->db->escape($this->const_name)."_TABS_%'";
+		$sql .= " AND entity = ".((int) $conf->entity);
 
 		dol_syslog(get_class($this)."::delete_tabs", LOG_DEBUG);
 		if (!$this->db->query($sql)) {
@@ -1874,34 +1893,39 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 				$val = '';
 			}
 
-			$sql = "SELECT count(*) as nb";
-			$sql .= " FROM ".MAIN_DB_PREFIX."const";
-			$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
-			$sql .= " AND entity = ".((int) $entity);
+			if (!empty($name)) {
+				$sql = "SELECT count(*) as nb";
+				$sql .= " FROM ".MAIN_DB_PREFIX."const";
+				$sql .= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($name)."'";
+				$sql .= " AND entity = ".((int) $entity);
 
-			$result = $this->db->query($sql);
-			if ($result) {
-				$row = $this->db->fetch_row($result);
+				$result = $this->db->query($sql);
+				if ($result) {
+					$row = $this->db->fetch_row($result);
 
-				if ($row[0] == 0) {   // If not found
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible,entity)";
-					$sql .= " VALUES (";
-					$sql .= $this->db->encrypt($name);
-					$sql .= ",'".$this->db->escape($type)."'";
-					$sql .= ",".(($val != '') ? $this->db->encrypt($val) : "''");
-					$sql .= ",".($note ? "'".$this->db->escape($note)."'" : "null");
-					$sql .= ",'".$this->db->escape($visible)."'";
-					$sql .= ",".$entity;
-					$sql .= ")";
+					if ($row[0] == 0) {   // If not found
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name, type, value, note, visible, entity)";
+						$sql .= " VALUES (";
+						$sql .= $this->db->encrypt($name);
+						$sql .= ", '".$this->db->escape($type)."'";
+						$sql .= ", ".(($val != '') ? $this->db->encrypt($val) : "''");
+						$sql .= ", ".($note ? "'".$this->db->escape($note)."'" : "null");
+						$sql .= ", '".$this->db->escape($visible)."'";
+						$sql .= ", ".((int) $entity);
+						$sql .= ")";
 
-					if (!$this->db->query($sql)) {
-						$err++;
+						if (!$this->db->query($sql)) {
+							$err++;
+						} else {
+							// Set also the variable in running environment
+							$conf->global->$name = $val;
+						}
+					} else {
+						dol_syslog(__METHOD__." constant '".$name."' already exists", LOG_DEBUG);
 					}
 				} else {
-					dol_syslog(__METHOD__." constant '".$name."' already exists", LOG_DEBUG);
+					$err++;
 				}
-			} else {
-				$err++;
 			}
 		}
 
@@ -2011,10 +2035,10 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Adds access rights
 	 *
-	 * @param  int $reinitadminperms 	If 1, we also grant them to all admin users
-	 * @param  int $force_entity     	Force current entity
-	 * @param  int $notrigger        	1=Does not execute triggers, 0= execute triggers
-	 * @return int                     	Error count (0 if OK)
+	 * @param  int<0,1>	$reinitadminperms 	If 1, we also grant them to all admin users
+	 * @param  ?int		$force_entity     	Force current entity
+	 * @param  int<0,1> $notrigger        	1=Does not execute triggers, 0= execute triggers
+	 * @return int		                	Error count (0 if OK)
 	 */
 	public function insert_permissions($reinitadminperms = 0, $force_entity = null, $notrigger = 0)
 	{
@@ -2799,9 +2823,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 		if (empty($conf->cache['noncompliantmodules'])) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-			$urlforblacklistmodules = 'https://ping.dolibarr.org/modules-blacklist.txt';
-
-			$result = getURLContent($urlforblacklistmodules, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
+			$result = getURLContent(self::URL_FOR_BLACKLISTED_MODULES, 'GET', '', 1, array(), array('http', 'https'), 0);	// Accept http or https links on external remote server only
 			if (isset($result['content']) && $result['http_code'] == 200) {
 				$langs->load("errors");
 
@@ -2811,8 +2833,8 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 					$tmpfieldsofline = explode(';', $line);
 					$modulekey = strtolower($tmpfieldsofline[0]);
 					$conf->cache['noncompliantmodules'][$modulekey]['name'] = $tmpfieldsofline[0];
-					$conf->cache['noncompliantmodules'][$modulekey]['id'] = $tmpfieldsofline[1];
-					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = $tmpfieldsofline[2];
+					$conf->cache['noncompliantmodules'][$modulekey]['id'] = (isset($tmpfieldsofline[1]) ? $tmpfieldsofline[1] : '');
+					$conf->cache['noncompliantmodules'][$modulekey]['signature'] = (isset($tmpfieldsofline[2]) ? $tmpfieldsofline[2] : '');
 					$conf->cache['noncompliantmodules'][$modulekey]['message'] = $langs->trans(empty($tmpfieldsofline[3]) ? 'WarningModuleAffiliatedToAReportedCompany' : $tmpfieldsofline[3]);
 					if (!empty($tmpfieldsofline[4])) {
 						$message2 = $langs->trans("WarningModuleAffiliatedToAPiratPlatform", '{s}');
@@ -2844,18 +2866,18 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 	/**
 	 * Helper method to declare dictionaries one at a time (rather than declaring dictionaries property by property).
 	 *
-	 * @param array $dictionaryArray Array describing one dictionary. Keys are:
-	 *                               'name',        table name (without prefix)
-	 *                               'lib',         dictionary label
-	 *                               'sql',         query for select
-	 *                               'sqlsort',     sort order
-	 *                               'field',       comma-separated list of fields to select
-	 *                               'fieldvalue',  list of columns used for editing existing rows
-	 *                               'fieldinsert', list of columns used for inserting new rows
-	 *                               'rowid',       name of the technical ID (primary key) column, usually 'rowid'
-	 *                               'cond',        condition for the dictionary to be shown / active
-	 *                               'help',        optional array of translation keys by column for tooltips
-	 *                               'fieldcheck'   (appears to be unused)
+	 * @param array{name:string,lib:string,sql:string,sqlsort:string,field:string,fieldvalue:string,fieldinsert:string,rowid:string,cond:bool,help:array<string,string>,fieldcheck?:null} $dictionaryArray Array describing one dictionary. Keys are:
+	 *                                                                                                                                                                                                     'name',        table name (without prefix)
+	 *                                                                                                                                                                                                     'lib',         dictionary label
+	 *                                                                                                                                                                                                     'sql',         query for select
+	 *                                                                                                                                                                                                     'sqlsort',     sort order
+	 *                                                                                                                                                                                                     'field',       comma-separated list of fields to select
+	 *                                                                                                                                                                                                     'fieldvalue',  list of columns used for editing existing rows
+	 *                                                                                                                                                                                                     'fieldinsert', list of columns used for inserting new rows
+	 *                                                                                                                                                                                                     'rowid',       name of the technical ID (primary key) column, usually 'rowid'
+	 *                                                                                                                                                                                                     'cond',        condition for the dictionary to be shown / active
+	 *                                                                                                                                                                                                     'help',        optional array of translation keys by column for tooltips
+	 *                                                                                                                                                                                                     'fieldcheck'   (appears to be unused)
 	 * @param string $langs Optional translation file to include (appears to be unused)
 	 * @return void
 	 */
@@ -2865,6 +2887,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 
 		foreach ($fields as $field) {
 			if (isset($dictionaryArray[$field])) {
+				// @phan-suppress-next-line PhanTypeMismatchProperty
 				$this->dictionaries['tab'.$field][] = $dictionaryArray[$field];
 			}
 		}

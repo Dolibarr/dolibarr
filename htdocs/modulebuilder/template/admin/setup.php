@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2017	Laurent Destailleur			<eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  * Copyright (C) ---Replace with your own copyright and developer email---
  *
  * This program is free software: you can redistribute it and/or modify
@@ -54,17 +55,24 @@ if (!$res) {
 	die("Include of main fails");
 }
 
-global $langs, $user;
-
 // Libraries
 require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once '../lib/mymodule.lib.php';
 //require_once "../class/myclass.class.php";
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Translations
 $langs->loadLangs(array("admin", "mymodule@mymodule"));
 
 // Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
+/** @var HookManager $hookmanager */
 $hookmanager->initHooks(array('mymodulesetup', 'globalsetup'));
 
 // Parameters
@@ -104,7 +112,8 @@ if (!$user->admin) {
 
 // Setup conf for selection of an URL
 $item = $formSetup->newItem('MYMODULE_MYPARAM1');
-$item->fieldOverride = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
+$item->fieldParams['isMandatory'] = 1;
+$item->fieldAttr['placeholder'] = (empty($_SERVER['HTTPS']) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'];
 $item->cssClass = 'minwidth500';
 
 // Setup conf for selection of a simple string input
@@ -116,20 +125,20 @@ $item->fieldAttr['placeholder'] = 'A placeholder here';
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');
 $item->nameText = $item->getNameText().' more html text ';
 
-// Setup conf for a selection of a thirdparty
+// Setup conf for a selection of a Thirdparty
 $item = $formSetup->newItem('MYMODULE_MYPARAM4');
 $item->setAsThirdpartyType();
 
 // Setup conf for a selection of a boolean
 $formSetup->newItem('MYMODULE_MYPARAM5')->setAsYesNo();
 
-// Setup conf for a selection of an email template of type thirdparty
+// Setup conf for a selection of an Email template of type thirdparty
 $formSetup->newItem('MYMODULE_MYPARAM6')->setAsEmailTemplate('thirdparty');
 
 // Setup conf for a selection of a secured key
 //$formSetup->newItem('MYMODULE_MYPARAM7')->setAsSecureKey();
 
-// Setup conf for a selection of a product
+// Setup conf for a selection of a Product
 $formSetup->newItem('MYMODULE_MYPARAM8')->setAsProduct();
 
 // Add a title for a new section
@@ -159,14 +168,25 @@ $formSetup->newItem('MYMODULE_CATEGORY_ID_XXX')->setAsCategory('product');
 $item = $formSetup->newItem('MYMODULE_MYPARAM10');
 $item->setAsColor();
 $item->defaultFieldValue = '#FF0000';
-$item->nameText = $item->getNameText().' more html text ';
-$item->fieldInputOverride = '';
-$item->helpText = $langs->transnoentities('AnHelpMessage');
 //$item->fieldValue = '';
 //$item->fieldAttr = array() ; // fields attribute only for compatible fields like input text
 //$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
 //$item->fieldInputOverride = false; // set this var to override field input
 //$item->fieldOutputOverride = false; // set this var to override field output
+
+$item = $formSetup->newItem('MYMODULE_MYPARAM11')->setAsHtml();
+$item->nameText = $item->getNameText().' more html text ';
+$item->fieldInputOverride = '';
+$item->helpText = $langs->transnoentities('HelpMessage');
+$item->cssClass = 'minwidth500';
+
+$item = $formSetup->newItem('MYMODULE_MYPARAM12');
+$item->fieldOverride = "Value forced, can't be modified";
+$item->cssClass = 'minwidth500';
+
+//$item = $formSetup->newItem('MYMODULE_MYPARAM13')->setAsDate();	// Not yet implemented
+
+// End of definition of parameters
 
 
 $setupnotempty += count($formSetup->items);
@@ -333,16 +353,13 @@ echo '<span class="opacitymedium">'.$langs->trans("MyModuleSetupPage").'</span><
 if (!empty($formSetup->items)) {
 	print $formSetup->generateOutput(true);
 	print '<br>';
-} else {
-	print '<br>'.$langs->trans("NothingToSetup");
 }
 
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if (!empty($myTmpObjectArray['includerefgeneration'])) {
-		/*
-		 * Orders Numbering model
-		 */
+		// Numbering models
+
 		$setupnotempty++;
 
 		print load_fiche_titre($langs->trans("NumberingModules", $myTmpObjectArray['label']), '', '');
@@ -403,7 +420,9 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 
 								print '<td class="center">';
 								$constforvar = 'MYMODULE_'.strtoupper($myTmpObjectKey).'_ADDON';
-								if (getDolGlobalString($constforvar) == $file) {
+								$defaultifnotset = 'thevaluetousebydefault';
+								$activenumberingmodel = getDolGlobalString($constforvar, $defaultifnotset);
+								if ($activenumberingmodel == $file) {
 									print img_picto($langs->trans("Activated"), 'switch_on');
 								} else {
 									print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&token='.newToken().'&object='.strtolower($myTmpObjectKey).'&value='.urlencode($file).'">';
@@ -435,7 +454,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 								}
 
 								print '<td class="center">';
-								print $form->textwithpicto('', $htmltooltip, 1, 0);
+								print $form->textwithpicto('', $htmltooltip, 1, 'info');
 								print '</td>';
 
 								print "</tr>\n";
@@ -461,7 +480,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 		// Load array def with activated templates
 		$def = array();
 		$sql = "SELECT nom";
-		$sql .= " FROM ".MAIN_DB_PREFIX."document_model";
+		$sql .= " FROM ".$db->prefix()."document_model";
 		$sql .= " WHERE type = '".$db->escape($type)."'";
 		$sql .= " AND entity = ".$conf->entity;
 		$resql = $db->query($sql);
@@ -571,7 +590,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 										$htmltooltip .= '<br>'.$langs->trans("MultiLanguage").': '.yn($module->option_multilang, 1, 1);
 
 										print '<td class="center">';
-										print $form->textwithpicto('', $htmltooltip, 1, 0);
+										print $form->textwithpicto('', $htmltooltip, 1, 'info');
 										print '</td>';
 
 										// Preview
@@ -580,7 +599,7 @@ foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 											$newname = preg_replace('/_'.preg_quote(strtolower($myTmpObjectKey), '/').'/', '', $name);
 											print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.urlencode($newname).'&object='.urlencode($myTmpObjectKey).'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 										} else {
-											print img_object($langs->trans("PreviewNotAvailable"), 'generic');
+											print img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 										}
 										print '</td>';
 

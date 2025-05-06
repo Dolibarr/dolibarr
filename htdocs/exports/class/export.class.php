@@ -406,9 +406,9 @@ class Export
 		switch ($InfoFieldList[0]) {
 			case 'Text':
 				if (!(strpos($ValueField, '%') === false)) {
-					$szFilterQuery = " ".$NameField." LIKE '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField)." LIKE '".$this->db->escape($ValueField)."'";
 				} else {
-					$szFilterQuery = " ".$NameField." = '".$this->db->escape($ValueField)."'";
+					$szFilterQuery = " ".$this->db->sanitize($NameField)." = '".$this->db->escape($ValueField)."'";
 				}
 				break;
 			case 'Date':
@@ -504,7 +504,7 @@ class Export
 	public function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		// phpcs:enable
-		global $conf, $langs, $form;
+		global $langs, $form;
 
 		$szFilterField = '';
 		$InfoFieldList = explode(":", $TypeField);
@@ -525,7 +525,7 @@ class Export
 				$szFilterField = '<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				break;
 			case 'Boolean':
-				$szFilterField = '<select name="'.$NameField.'" class="flat">';
+				$szFilterField = '<select name="'.$NameField.'" id="'.dol_escape_all($NameField).'" class="flat width75 maxwidth75">';
 				$szFilterField .= '<option ';
 				if ($ValueField == '') {
 					$szFilterField .= ' selected ';
@@ -544,6 +544,7 @@ class Export
 				}
 				$szFilterField .= ' value="0">'.yn(0).'</option>';
 				$szFilterField .= "</select>";
+				$szFilterField .= ajax_combobox(dol_escape_all($NameField));
 				break;
 			case 'FormSelect':
 				//var_dump($NameField);
@@ -582,7 +583,7 @@ class Export
 
 				$resql = $this->db->query($sql);
 				if ($resql) {
-					$szFilterField = '<select class="flat" name="'.$NameField.'">';
+					$szFilterField = '<select class="minwidth300 maxwidth500" name="'.$NameField.'" id="'.dol_escape_all($NameField).'">';
 					$szFilterField .= '<option value="0">&nbsp;</option>';
 					$num = $this->db->num_rows($resql);
 
@@ -596,7 +597,7 @@ class Export
 								continue;
 							}
 							//var_dump($InfoFieldList[1]);
-							$labeltoshow = dol_trunc($obj->label, 18);
+							$labeltoshow = $obj->label;
 							if ($InfoFieldList[1] == 'c_stcomm') {
 								$langs->load("companies");
 								$labeltoshow = (($langs->trans("StatusProspect".$obj->id) != "StatusProspect".$obj->id) ? $langs->trans("StatusProspect".$obj->id) : $obj->label);
@@ -607,14 +608,15 @@ class Export
 								$labeltoshow = (($langs->trans("Country".$obj->code) != "Country".$obj->code) ? $langs->trans("Country".$obj->code) : $obj->label);
 							}
 							if (!empty($ValueField) && $ValueField == $obj->rowid) {
-								$szFilterField .= '<option value="'.$obj->rowid.'" selected>'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" selected data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.dolPrintHTML($labeltoshow).'</option>';
 							} else {
-								$szFilterField .= '<option value="'.$obj->rowid.'" >'.$labeltoshow.'</option>';
+								$szFilterField .= '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($labeltoshow).'">'.$labeltoshow.'</option>';
 							}
 							$i++;
 						}
 					}
 					$szFilterField .= "</select>";
+					$szFilterField .= ajax_combobox(dol_escape_all($NameField));
 
 					$this->db->free($resql);
 				} else {
@@ -801,10 +803,7 @@ class Export
 									$remaintopay = $tmpobjforcomputecall->getRemainToPay();
 								}
 								$obj->$alias = $remaintopay;
-							} elseif (is_array($item) &&
-								array_key_exists('rule', $item) &&
-								$item['rule'] == 'compute'
-							) {
+							} elseif (is_array($item) && array_key_exists('rule', $item) && $item['rule'] == 'compute') {
 								// Custom compute
 								$alias = str_replace(array('.', '-', '(', ')'), '_', $key);
 								$value = '';
@@ -831,13 +830,19 @@ class Export
 										return -1;
 									}
 
-									$methodName = $item['method'];
+									$methodName = dol_escape_all($item['method']);
 									$params = [];
 									if (!empty($item['method_params'])) {
+										// Example used for export of "Stocks and location (warehouse) with batch" in field "Date of last movement"
 										foreach ($item['method_params'] as $paramName) {
-											$params[] = $obj->$paramName ?? null;
+											if (property_exists($obj, $paramName)) {
+												$params[] = $obj->$paramName;
+											} else {
+												$params[] = $paramName;
+											}
 										}
 									}
+									//var_dump($tmpObject);var_dump($methodName);var_dump($params);exit;
 									$value = $tmpObject->$methodName(...$params);
 								}
 								$obj->$alias = $value;
@@ -845,11 +850,11 @@ class Export
 								// TODO FIXME
 								// Export of compute field does not work. $obj contains $obj->alias_field and formula may contains $obj->field
 								// Also the formula may contains objects of class that are not loaded.
-								$computestring = is_string($item) ? $item : json_encode($item);
+								//$computestring = is_string($item) ? $item : json_encode($item);
 								//$tmp = (string) dol_eval($computestring, 1, 0, '2');
 								//$obj->$alias = $tmp;
 
-								$this->error = "ERROPNOTSUPPORTED. Operation ".$computestring." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
+								$this->error = "ERRORNOTSUPPORTED. Operation not supported. Export of ".var_export($key, true).' '.var_export($item, true)." extrafields is not yet supported, please remove field.";
 								return -1;
 							}
 						}
@@ -959,7 +964,6 @@ class Export
 	 */
 	public function delete($user, $notrigger = 0)
 	{
-		global $conf, $langs;
 		$error = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."export_model";
@@ -998,7 +1002,7 @@ class Export
 	public function list_export_model()
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $langs;
 
 		$sql = "SELECT em.rowid, em.field, em.label, em.type, em.filter";
 		$sql .= " FROM ".MAIN_DB_PREFIX."export_model as em";

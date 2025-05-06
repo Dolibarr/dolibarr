@@ -2,7 +2,7 @@
 /* Copyright (C) 2010-2011  Laurent Destailleur     <ely@users.sourceforge.net>
  * Copyright (C) 2016	    Charlie Benke           <charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
 			//$texte .= '<table><tr><td>';
-			$texte .= '<textarea class="flat" cols="60" name="value1">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 			$texte .= getDolGlobalString('COMPANY_ADDON_PDF_ODT_PATH');
 			$texte .= '</textarea>';
 			//$texte .= '</td>';
@@ -228,6 +228,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 			$hookmanager = new HookManager($this->db);
 		}
 		$hookmanager->initHooks(array('odtgeneration'));
+		global $action;
 
 		if (!is_object($outputlangs)) {
 			$outputlangs = $langs;
@@ -341,7 +342,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines) {
+					if ($foundtagforlines && $contactstatic !== null) {
 						foreach ($contact_arrray as $array_key => $contact_id) {
 							$res_contact = $contactstatic->fetch($contact_id);
 							if ((int) $res_contact > 0) {
@@ -383,12 +384,19 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$parameters = array('odfHandler' => &$odfHandler, 'file' => $file, 'object' => $object, 'outputlangs' => $outputlangs, 'substitutionarray' => &$tmparray);
 				$reshook = $hookmanager->executeHooks('ODTSubstitution', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				// Replace variables into document
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) {	// Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}

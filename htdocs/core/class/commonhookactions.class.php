@@ -34,7 +34,7 @@ abstract class CommonHookActions
 	public $resprints;
 
 	/**
-	 * @var array 	Array of results.
+	 * @var array<mixed|mixed[]> 	Array of results.
 	 */
 	public $results = array();
 

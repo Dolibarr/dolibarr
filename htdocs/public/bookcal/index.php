@@ -3,7 +3,7 @@
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
  * Copyright (C) 2023		anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -54,6 +54,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/public.lib.php';
 if (!isModEnabled('bookcal')) {
 	httponly_accessforbidden('Module Bookcal isn\'t enabled');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ *
+ * @var string $dolibarr_main_url_root
+ */
 
 $langs->loadLangs(array("main", "other", "dict", "agenda", "errors", "companies"));
 
@@ -121,6 +129,8 @@ $errmsg = '';
 /**
  * Show header for booking
  *
+ * Note: also called by functions.lib:recordNotFound
+ *
  * @param 	string		$title				Title
  * @param 	string		$head				Head array
  * @param 	int    		$disablejs			More content into html header
@@ -129,7 +139,7 @@ $errmsg = '';
  * @param 	string[]|string	$arrayofcss			Array of complementary css files
  * @return	void
  */
-function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])
+function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $arrayofjs = [], $arrayofcss = [])  // @phan-suppress-current-line PhanRedefineFunction
 {
 	global $conf, $langs, $mysoc;
 
@@ -137,46 +147,8 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
 
 	print '<body id="mainbody" class="publicnewmemberform">';
 
-	$urllogo = '';
-
-	// Define urllogo
-	if (getDolGlobalInt('BOOKCAL_SHOW_COMPANY_LOGO') || getDolGlobalString('BOOPKCAL_PUBLIC_INTERFACE_TOPIC')) {
-		// Print logo
-		if (getDolGlobalInt('BOOKCAL_SHOW_COMPANY_LOGO')) {
-			$urllogo = DOL_URL_ROOT.'/theme/common/login_logo.png';
-
-			if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/thumbs/'.$mysoc->logo_small);
-			} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
-				$urllogo = DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;entity='.$conf->entity.'&amp;file='.urlencode('logos/'.$mysoc->logo);
-			} elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo.svg')) {
-				$urllogo = DOL_URL_ROOT.'/theme/dolibarr_logo.svg';
-			}
-		}
-	}
-
-	print '<div class="center">';
-	// Output html code for logo
-	print '<div class="backgreypublicpayment">';
-	print '<div class="logopublicpayment">';
-	if ($urllogo) {
-		print '<a href="'.(getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') ? getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') : dol_buildpath('/public/ticket/index.php?entity='.$conf->entity, 1)).'">';
-		print '<img id="dolpaymentlogo" src="'.$urllogo.'">';
-		print '</a>';
-	}
-	if (getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC')) {
-		print '<div class="clearboth"></div><strong>'.(getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') ? getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC') : $langs->trans("BookCalSystem")).'</strong>';
-	}
-	if (empty($urllogo) && ! getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC')) {
-		print $mysoc->name;
-	}
-	print '</div>';
-	if (!getDolGlobalInt('MAIN_HIDE_POWERED_BY')) {
-		print '<div class="poweredbypublicpayment opacitymedium right hideonsmartphone"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-	}
-	print '</div>';
-
-	print '</div>';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+	htmlPrintOnlineHeader($mysoc, $langs, 1, getDolGlobalString('BOOKCAL_PUBLIC_INTERFACE_TOPIC', $langs->trans("BookCalSystem")), 'BOOKCAL_PUBLIC_INTERFACE_IMAGE');
 
 	print '<div class="divmainbodylarge">';
 }
@@ -186,7 +158,7 @@ function llxHeaderVierge($title, $head = "", $disablejs = 0, $disablehead = 0, $
  * Actions
  */
 
-if ($action == 'add' ) {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
+if ($action == 'add') {	// Test on permission not required here (anonymous action protected by mitigation of /public/... urls)
 	$error = 0;
 	$idcontact = 0;
 	$calendar = $object;
@@ -268,7 +240,7 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
 				'id' => $contact->id,
 				'mandatory' => 0,
 				'answer_status' => 0,
-				'transparency' =>0,
+				'transparency' => 0,
 			]
 		];
 		$actioncomm->ip = getUserRemoteIP();
@@ -299,6 +271,14 @@ if ($action == 'add' ) {	// Test on permission not required here (anonymous acti
  */
 
 $form = new Form($db);
+
+
+// Define $urlwithroot
+$urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
+$urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+//$urlwithroot = DOL_MAIN_URL_ROOT; // This is to use same domain name than current. For Paypal payment, we can use internal URL like localhost.
+// TODO Replace DOL_URL_ROOT with $urlwithroot ?
+
 
 llxHeaderVierge('BookingCalendar');
 

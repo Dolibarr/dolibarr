@@ -211,6 +211,8 @@ class modAgenda extends DolibarrModules
 		//							'target'=>'',
 		//							'user'=>2);				// 0=Menu for internal users, 1=external users, 2=both
 		// $r++;
+
+		// TODO Move the top menu entry into the code part (eldy_menu.php and auguria.sql) so we can have a top menu shown for resource module only.
 		$this->menu[$r] = array(
 			'fk_menu' => 0,
 			'type' => 'top',
@@ -247,7 +249,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'NewAction',
 			'mainmenu' => 'agenda',
-			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&amp;action=create',
+			'url' => '/comm/action/card.php?mainmenu=agenda&amp;leftmenu=agenda&action=create',
 			'langs' => 'commercial',
 			'position' => 101,
 			'perms' => '($user->hasRight("agenda", "myactions", "create") || $user->hasRight("agenda", "allactions", "create"))',
@@ -420,7 +422,7 @@ class modAgenda extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'agenda',
-			'url' => '/categories/index.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
+			'url' => '/categories/categorie_list.php?mainmenu=agenda&amp;leftmenu=agenda&type=10',
 			'langs' => 'agenda',
 			'position' => 170,
 			'perms' => '$user->hasRight("agenda", "allactions", "read")',
@@ -602,15 +604,10 @@ class modAgenda extends DolibarrModules
 	 */
 	public function init($options = '')
 	{
-		global $conf;
-
 		// Permissions
 		$this->remove($options);
 
-		$sql = array(
-			"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type='action' AND entity = ".((int) $conf->entity),
-			// "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','action',".((int) $conf->entity).")"
-		);
+		$sql = array();
 
 		return $this->_init($sql, $options);
 	}

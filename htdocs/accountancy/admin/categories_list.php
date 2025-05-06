@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023  Laurent Destailleur      <eldy@users.sourceforge.net>
  * Copyright (C) 2011-2024  Alexandre Spangaro       <aspangaro@easya.solutions>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("errors", "admin", "companies", "resource", "holiday", "accountancy", "hrm"));
 
@@ -59,7 +67,7 @@ $actl[1] = img_picto($langs->trans("Activated"), 'switch_on', 'class="size15x"')
 $listoffset = GETPOST('listoffset', 'alpha');
 $listlimit = GETPOSTINT('listlimit') > 0 ? GETPOSTINT('listlimit') : 1000;
 
-$sortfield = GETPOST("sortfield", 'aZ09comma');
+$sortfield = (string) GETPOST("sortfield", 'aZ09comma');
 $sortorder = GETPOST("sortorder", 'aZ09comma');
 $page = GETPOSTISSET('pageplusone') ? (GETPOSTINT('pageplusone') - 1) : GETPOSTINT("page");
 if (empty($page) || $page < 0 || GETPOST('button_search', 'alpha') || GETPOST('button_removefilter', 'alpha')) {
@@ -91,7 +99,7 @@ $tablib[32] = "DictionaryAccountancyCategory";
 
 // Requests to extract data
 $tabsql = array();
-$tabsql[32] = "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid and c.active=1";
+$tabsql[32] = "SELECT a.rowid as rowid, a.code as code, a.label, a.range_account, a.category_type, a.formula, a.position as position, a.fk_country as country_id, c.code as country_code, c.label as country, a.active FROM ".MAIN_DB_PREFIX."c_accounting_category as a, ".MAIN_DB_PREFIX."c_country as c WHERE a.fk_country=c.rowid AND c.active=1 AND a.entity IN (".getEntity('c_accounting_category').")";
 
 // Criteria to sort dictionaries
 $tabsqlsort = array();
@@ -103,11 +111,11 @@ $tabfield[32] = "code,label,range_account,category_type,formula,position,country
 
 // Name of editing fields for record modification
 $tabfieldvalue = array();
-$tabfieldvalue[32] = "code,label,range_account,category_type,formula,position,country_id";
+$tabfieldvalue[32] = "code,label,range_account,category_type,formula,position,country_id,entity";
 
 // Name of the fields in the table for inserting a record
 $tabfieldinsert = array();
-$tabfieldinsert[32] = "code,label,range_account,category_type,formula,position,fk_country";
+$tabfieldinsert[32] = "code,label,range_account,category_type,formula,position,fk_country,entity";
 
 // Name of the rowid if the field is not of type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -469,7 +477,7 @@ if ($listlimit) {
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
-print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag($sortfield).'">';
+print '<input type="hidden" name="sortfield" value="'.dol_escape_htmltag((string) $sortfield).'">';
 print '<input type="hidden" name="sortorder" value="'.dol_escape_htmltag($sortorder).'">';
 
 
@@ -635,7 +643,7 @@ if ($resql) {
 	}
 
 	// Title line with search boxes
-	print '<tr class="liste_titre liste_titre_add liste_titre_filter">';
+	print '<tr class="liste_titre liste_titre_filter">';
 
 	// Action column
 	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
@@ -900,7 +908,7 @@ if ($resql) {
 				// Active
 				print '<td class="center" class="nowrap">';
 				if ($canbedisabled) {
-					print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+					print '<a class="reposition" href="'.$url.'action='.urlencode($acts[$obj->active]).'&token='.newToken().'">'.$actl[$obj->active].'</a>';
 				} else {
 					print $langs->trans("AlwaysActive");
 				}
@@ -954,14 +962,7 @@ $db->close();
  */
 function fieldListAccountingCategories($fieldlist, $obj = null, $tabname = '', $context = '')
 {
-	global $conf, $langs, $db;
 	global $form, $mysoc;
-
-	$formadmin = new FormAdmin($db);
-	$formcompany = new FormCompany($db);
-	if (isModEnabled('accounting')) {
-		$formaccounting = new FormAccounting($db);
-	}
 
 	foreach ($fieldlist as $field => $value) {
 		if ($fieldlist[$field] == 'country') {

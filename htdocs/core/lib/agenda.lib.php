@@ -2,8 +2,8 @@
 /* Copyright (C) 2008-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2011	   Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2022-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2022-2025  Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  *
  * @param	Form			$form				Form object
  * @param	int				$canedit			Can edit filter fields
- * @param	int				$status				Status
+ * @param	string			$status				Status see FormActions::form_select_status_action
  * @param 	int				$year				Year
  * @param 	int				$month				Month
  * @param 	int				$day				Day
@@ -42,10 +42,10 @@
  * @param 	int				$pid				Product id
  * @param 	int				$socid				Third party id
  * @param	string			$action				Action string
- * @param	array|int		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
- * @param	string|array	$actioncode			Preselected value(s) of actioncode for filter on event type
- * @param	int				$usergroupid		Id of group to filter on users
- * @param	string			$excludetype		A type to exclude ('systemauto', 'system', '')
+ * @param	array<array{type:string,sr:string,name:string,offsettz:int,color:string,default:string,buggedfile:string}>|int<-1,-1>		$showextcals		Array with list of external calendars (used to show links to select calendar), or -1 to show no legend
+ * @param	string|string[]	$actioncode			Preselected value(s) of actioncode for filter on event type
+ * @param	int|int[]		$usergroupid		Id of group to filter on users
+ * @param	''|'systemauto'|'system'	$excludetype	A type to exclude ('systemauto', 'system', '')
  * @param	int   			$resourceid			Preselected value of resource for filter on resource
  * @param	int     		$search_categ_cus	Tag id
  * @return	void
@@ -104,13 +104,13 @@ function print_actions_filter(
 		// Assigned to user
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ActionsToDoBy"), 'user', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolusers($filtert, 'search_filtert', 1, '', !$canedit, '', '', 0, 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolusers($filtert, 'search_filtert', 1, null, (int) !$canedit, '', '', '0', 0, 0, '', 0, '', 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		// Assigned to user group
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ToUserOfGroup"), 'object_group', 'class="pictofixedwidth inline-block"');
-		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', !$canedit, '', '', '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_dolgroups($usergroupid, 'usergroup', 1, '', (int) !$canedit, '', array(), '0', false, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 
 		if (isModEnabled('resource')) {
@@ -120,7 +120,7 @@ function print_actions_filter(
 			// Resource
 			print '<div class="divsearchfield">';
 			print img_picto($langs->trans("Resource"), 'object_resource', 'class="pictofixedwidth inline-block"');
-			print $formresource->select_resource_list($resourceid, "search_resourceid", [], 1, 0, 0, [], [], 2, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
+			print $formresource->select_resource_list($resourceid, "search_resourceid", '', 1, 0, 0, [], '', 2, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 			print '</div>';
 		}
 	}
@@ -128,7 +128,7 @@ function print_actions_filter(
 	if (isModEnabled('societe') && $user->hasRight('societe', 'lire')) {
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth inline-block"');
-		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, null, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $form->select_company($socid, 'search_socid', '', '&nbsp;', 0, 0, array(), 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
@@ -138,7 +138,7 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth inline-block"');
-		print $formproject->select_projects($socid ? $socid : -1, $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $formproject->select_projects($socid ? $socid : -1, (string) $pid, 'search_projectid', 0, 0, 1, 0, 0, 0, 0, '', 1, 0, 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
@@ -150,7 +150,7 @@ function print_actions_filter(
 
 		print '<div class="divsearchfield">';
 		print img_picto($langs->trans('Categories'), 'category', 'class="pictofixedwidth"');
-		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('ActionCommCategoriesArea'), 'minwidth100 maxwidth250 widthcentpercentminusx');
+		print $formother->select_categories('actioncomm', $search_categ_cus, 'search_categ_cus', 1, $langs->trans('Categories'), 'minwidth100 maxwidth250 widthcentpercentminusx');
 		print '</div>';
 	}
 
@@ -164,7 +164,7 @@ function print_actions_filter(
 
 	// Hooks
 	$parameters = array('canedit' => $canedit, 'pid' => $pid, 'socid' => $socid);
-	$object = null;
+	$object = null;  // Null on purpose: @phan-suppress-next-line PhanPluginConstantVariableNull
 	$reshook = $hookmanager->executeHooks('searchAgendaFrom', $parameters, $object, $action); // Note that $action and $object may have been
 
 	print '<div class="clearboth"></div>';
@@ -541,7 +541,6 @@ function calendars_prepare_head($param)
 	$head[$h][2] = 'cardday';
 	$h++;
 
-	//if (!empty($conf->global->AGENDA_USE_EVENT_TYPE))
 	if (getDolGlobalString('AGENDA_SHOW_PERTYPE')) {
 		$head[$h][0] = DOL_URL_ROOT.'/comm/action/pertype.php'.($param ? '?'.$param : '');
 		$head[$h][1] = $langs->trans("ViewPerType");

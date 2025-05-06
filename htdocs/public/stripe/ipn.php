@@ -2,7 +2,7 @@
 /* Copyright (C) 2018-2020  Thibault FOUCART            <support@ptibogxiv.net>
  * Copyright (C) 2018-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2023       Laurent Destailleur         <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,11 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 // You can find your endpoint's secret in your webhook settings
 if (GETPOSTISSET('connect')) {
@@ -92,7 +96,7 @@ if (empty($endpoint_secret)) {
 if (getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS')) {
 	// We set the user to use for all ipn actions in Dolibarr
 	$user = new User($db);
-	$user->fetch(getDolGlobalString('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
+	$user->fetch(getDolGlobalInt('STRIPE_USER_ACCOUNT_FOR_ACTIONS'));
 	$user->loadRights();
 } else {
 	httponly_accessforbidden('Error: Setup of module Stripe not complete for mode '.dol_escape_htmltag($service).'. The STRIPE_USER_ACCOUNT_FOR_ACTIONS is not defined.', 400, 1);
@@ -146,6 +150,7 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 	$sql .= " WHERE service = '".$db->escape($service)."' and tokenstring LIKE '%".$db->escape($db->escapeforlike($event->account))."%'";
 
 	dol_syslog(get_class($db)."::fetch", LOG_DEBUG);
+	dol_syslog(get_class($db)."::fetch", LOG_DEBUG, 0, '_payment');
 	$result = $db->query($sql);
 	if ($result) {
 		if ($db->num_rows($result)) {
@@ -172,16 +177,20 @@ if (getDolGlobalString('MAIN_APPLICATION_TITLE')) {
 top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
+dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
 
 
-if ($event->type == 'payout.created') {
-	// When a payout is create by Stripe to transfer money to your account
+if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
+	// When a payout is created by Stripe to transfer money to your account
+	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+
 	$error = 0;
 
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s', $event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0) {
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout scheduled';
+		$subject = '['.$societeName.'] Notification - Stripe payout scheduled';
 		if (!empty($user->email)) {
 			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 		} else {
@@ -217,8 +226,11 @@ if ($event->type == 'payout.created') {
 		http_response_code(500);
 		return -1;
 	}
-} elseif ($event->type == 'payout.paid') {
+} elseif ($event->type == 'payout.paid' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
 	// When a payout to transfer money to your account is completely done
+	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+
 	$error = 0;
 	$result = dolibarr_set_const($db, $service."_NEXTPAYOUT", 0, 'chaine', 0, '', $conf->entity);
 	if ($result) {
@@ -245,14 +257,16 @@ if ($event->type == 'payout.created') {
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
+			$db->begin();
+
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', '', $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', 0, $user);
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
 			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, price2num($amount), '', '', $user);
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), '', 0, $user);
 			}
 			if (!($bank_line_id_to > 0)) {
 				$error++;
@@ -270,37 +284,46 @@ if ($event->type == 'payout.created') {
 			if (!($result > 0)) {
 				$error++;
 			}
+
+			if (!$error) {
+				$db->commit();
+			} else {
+				$db->rollback();
+			}
+
+			// Send email
+			if (!$error) {
+				$subject = '['.$societeName.'] - NotificationOTIFICATION] Stripe payout done';
+				if (!empty($user->email)) {
+					$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
+				} else {
+					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+				}
+				$replyto = $sendto;
+				$sendtocc = '';
+				if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
+					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
+				}
+
+				$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
+
+				$mailfile = new CMailFile(
+					$subject,
+					$sendto,
+					$replyto,
+					$message,
+					array(),
+					array(),
+					array(),
+					$sendtocc,
+					'',
+					0,
+					-1
+				);
+
+				$ret = $mailfile->sendfile();
+			}
 		}
-
-		$subject = $societeName.' - [NOTIFICATION] Stripe payout done';
-		if (!empty($user->email)) {
-			$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
-		} else {
-			$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
-		}
-		$replyto = $sendto;
-		$sendtocc = '';
-		if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-			$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
-		}
-
-		$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
-
-		$mailfile = new CMailFile(
-			$subject,
-			$sendto,
-			$replyto,
-			$message,
-			array(),
-			array(),
-			array(),
-			$sendtocc,
-			'',
-			0,
-			-1
-		);
-
-		$ret = $mailfile->sendfile();
 
 		return 1;
 	} else {
@@ -317,13 +340,14 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'customer.deleted') {
 	// When a customer account is delete on Stripe side
 	$db->begin();
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' and site='stripe'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_account WHERE key_account = '".$db->escape($event->data->object->id)."' AND site = 'stripe'";
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {
-	// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+	// Called when making payment with PaymentIntent method.
+	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
-	//dol_syslog("object = ".var_export($event->data, true));
 	include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 	global $stripearrayofkeysbyenv;
 	$error = 0;
@@ -341,6 +365,7 @@ if ($event->type == 'payout.created') {
 	$payment_amountInDolibarr = 0;
 
 	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID);
+	dol_syslog("Try to find a payment in database for the payment_intent id = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
@@ -352,35 +377,41 @@ if ($event->type == 'payout.created') {
 		$obj = $db->fetch_object($result);
 		if ($obj) {
 			if ($obj->type == 'ban') {
+				$pdid = $obj->rowid;
+				$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
+
 				if ($obj->traite == 1) {
 					// This is a direct-debit with an order (llx_bon_prelevement) ALREADY generated, so
 					// it means we received here the confirmation that payment request is finished.
-					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
-					$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
 					$payment_amountInDolibarr = $obj->amount;
 					$paymentTypeCodeInDolibarr = $obj->type;
 
 					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
+					dol_syslog("Found a request in database to pay with direct debit generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")", LOG_DEBUG, 0, '_payment');
 				} else {
 					dol_syslog("Found a request in database not yet generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id."). Was the order deleted after being sent ?", LOG_WARNING);
+					dol_syslog("Found a request in database not yet generated (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id."). Was the order deleted after being sent ?", LOG_WARNING, 0, '_payment');
 				}
 			}
 			if ($obj->type == 'card' || empty($obj->type)) {
+				$pdid = $obj->rowid;
 				if ($obj->traite == 0) {
 					// This is a card payment not already flagged as sent to Stripe.
-					$pdid = $obj->rowid;
 					$invoice_id = $obj->fk_facture;
 					$payment_amountInDolibarr = $obj->amount;
 					$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1");
+					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid."). We should fix status traite to 1", LOG_DEBUG, 0, '_payment');
 				} else {
 					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid.") already set to traite=1. Nothing to fix.");
+					dol_syslog("Found a request in database to pay with card (pdid = ".$pdid.") already set to traite=1. Nothing to fix.", LOG_DEBUG, 0, '_payment');
 				}
 			}
 		} else {
 			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.");
+			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.", LOG_DEBUG, 0, '_payment');
 			http_response_code(200);
 			print "Payment intent ".$TRANSACTIONID." not found into database, so ignored.";
 			return 1;
@@ -397,6 +428,7 @@ if ($event->type == 'payout.created') {
 		$stripeacc = $stripearrayofkeysbyenv[$servicestatus]['secret_key'];
 
 		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid));
+		dol_syslog("Get the Stripe payment object for the payment method id = ".json_encode($paymentmethodstripeid), LOG_DEBUG, 0, '_payment');
 
 		$s = new \Stripe\StripeClient($stripeacc);
 
@@ -419,6 +451,7 @@ if ($event->type == 'payout.created') {
 
 			// TODO Set traite to 1
 			dol_syslog("TODO update flag traite to 1");
+			dol_syslog("TODO update flag traite to 1", LOG_DEBUG, 0, '_payment');
 		} elseif ($paymentTypeCode == "PRE" && $paymentTypeCodeInDolibarr == 'ban') {
 			// Case payment type in Stripe and into prelevement_demande are both BAN.
 			// For this case, payment on invoice (not yet recorded) must be done and direct debit order must be closed.
@@ -452,7 +485,7 @@ if ($event->type == 'payout.created') {
 
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'StripeSepa payment received by IPN webhook - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
 
@@ -465,6 +498,7 @@ if ($event->type == 'payout.created') {
 				if ($db->num_rows($result)) {
 					$ispaymentdone = 1;
 					dol_syslog('* Payment for ext_payment_id '.$paiement->ext_payment_id.' already done. We do not recreate the payment');
+					dol_syslog('* Payment for ext_payment_id '.$paiement->ext_payment_id.' already done. We do not recreate the payment', LOG_DEBUG, 0, '_payment');
 				}
 			}
 
@@ -472,6 +506,7 @@ if ($event->type == 'payout.created') {
 
 			if (!$error && !$ispaymentdone) {
 				dol_syslog('* Record payment type PRE for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document.');
+				dol_syslog('* Record payment type PRE for invoice id ' . $invoice_id . '. It includes closing of invoice and regenerating document.', LOG_DEBUG, 0, '_payment');
 
 				// This include closing invoices to 'paid' (and trigger including unsuspending) and regenerating document
 				$paiement_id = $paiement->create($user, 1);
@@ -481,10 +516,12 @@ if ($event->type == 'payout.created') {
 					$error++;
 
 					dol_syslog("Failed to create the payment for invoice id " . $invoice_id);
+					dol_syslog("Failed to create the payment for invoice id " . $invoice_id, LOG_DEBUG, 0, '_payment');
 				} else {
 					$postactionmessages[] = 'Payment created';
 
 					dol_syslog("The payment has been created for invoice id " . $invoice_id);
+					dol_syslog("The payment has been created for invoice id " . $invoice_id, LOG_DEBUG, 0, '_payment');
 				}
 			}
 
@@ -501,10 +538,12 @@ if ($event->type == 'payout.created') {
 						$ispaymentdone = 1;
 						$obj = $db->fetch_object($result);
 						dol_syslog('* Payment already linked to bank record '.$obj->fk_bank.' . We do not recreate the link');
+						dol_syslog('* Payment already linked to bank record '.$obj->fk_bank.' . We do not recreate the link', LOG_DEBUG, 0, '_payment');
 					}
 				}
 				if (!$ispaymentdone) {
 					dol_syslog('* Add payment to bank');
+					dol_syslog('* Add payment to bank', LOG_DEBUG, 0, '_payment');
 
 					// The bank used is the one defined into Stripe setup
 					$paymentmethod = 'stripe';
@@ -546,8 +585,10 @@ if ($event->type == 'payout.created') {
 						$obj = $db->fetch_object($result);
 						$idbon = $obj->idbon;
 						dol_syslog('* Prelevement must be set to credited');
+						dol_syslog('* Prelevement must be set to credited', LOG_DEBUG, 0, '_payment');
 					} else {
 						dol_syslog('* Prelevement not found or already credited');
+						dol_syslog('* Prelevement not found or already credited', LOG_DEBUG, 0, '_payment');
 					}
 				} else {
 					$postactionmessages[] = $db->lasterror();
@@ -596,13 +637,16 @@ if ($event->type == 'payout.created') {
 			}
 		} else {
 			dol_syslog("The payment mode of this payment is ".$paymentTypeCode." in Stripe and ".$paymentTypeCodeInDolibarr." in Dolibarr. This case is not managed by the IPN");
+			dol_syslog("The payment mode of this payment is ".$paymentTypeCode." in Stripe and ".$paymentTypeCodeInDolibarr." in Dolibarr. This case is not managed by the IPN", LOG_DEBUG, 0, '_payment');
 		}
 	} else {
 		dol_syslog("Nothing to do in database because we don't know paymentTypeIdInDolibarr");
+		dol_syslog("Nothing to do in database because we don't know paymentTypeIdInDolibarr", LOG_DEBUG, 0, '_payment');
 	}
 } elseif ($event->type == 'payment_intent.payment_failed') {
 	// When a try to take payment has failed. Useful for asynchronous SEPA payment that fails.
 	dol_syslog("A try to make a payment has failed");
+	dol_syslog("A try to make a payment has failed", LOG_DEBUG, 0, '_payment');
 
 	$object = $event->data->object;
 	$ipaddress = $object->metadata->ipaddress;
@@ -648,6 +692,7 @@ if ($event->type == 'payout.created') {
 	}
 
 	dol_syslog("objpayid=".$objpayid." objpaymentmodetype=".$objpaymentmodetype." objerrcode=".$objerrcode);
+	dol_syslog("objpayid=".$objpayid." objpaymentmodetype=".$objpaymentmodetype." objerrcode=".$objerrcode, LOG_DEBUG, 0, '_payment');
 
 	// If this is a differed payment for SEPA, add a line into agenda events
 	if ($objpaymentmodetype == 'sepa_debit') {
@@ -683,6 +728,7 @@ if ($event->type == 'payout.created') {
 		$result = $actioncomm->create($user);
 		if ($result <= 0) {
 			dol_syslog($actioncomm->error, LOG_ERR);
+			dol_syslog($actioncomm->error, LOG_ERR, 0, '_payment');
 			$error++;
 		}
 
@@ -697,6 +743,9 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'checkout.session.completed') {		// Called when making payment with new Checkout method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
 	// TODO: create fees
 } elseif ($event->type == 'payment_method.attached') {
+	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+
 	// When we link a payment method with a customer on Stripe side
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
@@ -746,6 +795,9 @@ if ($event->type == 'payout.created') {
 		}
 	}
 } elseif ($event->type == 'payment_method.updated') {
+	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
+
 	// When we update a payment method on Stripe side
 	require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 	$companypaymentmode = new CompanyPaymentMode($db);
@@ -756,11 +808,12 @@ if ($event->type == 'payout.created') {
 		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);	// deprecated
+		$companypaymentmode->owner_name      = $db->escape($event->data->object->billing_details->name);
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;
-		$companypaymentmode->datec           = $db->escape($event->data->object->created);
+		$companypaymentmode->datec           = (int) $event->data->object->created;
 		$companypaymentmode->default_rib     = 0;
 		$companypaymentmode->type            = $db->escape($event->data->object->type);
 		$companypaymentmode->country_code    = $db->escape($event->data->object->card->country);
@@ -794,9 +847,11 @@ if ($event->type == 'payout.created') {
 } elseif ($event->type == 'charge.dispute.closed') {
 	// When a dispute to cancel a SEPA payment is finished
 	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 } elseif ($event->type == 'charge.dispute.funds_withdrawn') {
 	// When a dispute/withdraw to cancel a SEPA payment is done
 	dol_syslog("object = ".var_export($event->data, true));
+	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
 	global $stripearrayofkeysbyenv;
 	$error = 0;
@@ -812,13 +867,14 @@ if ($event->type == 'payout.created') {
 	$amountdisputestripe = $object->amoutndispute;	// In stripe format
 	$amountdispute = $amountdisputestripe;			// In real currency format
 
-	$invoice_id = "";
+	$invoice_id = 0;
 	$paymentTypeCode = "";			// payment type according to Stripe
 	$paymentTypeCodeInDolibarr = "";	// payment type according to Dolibarr
 	$payment_amount = 0;
 	$payment_amountInDolibarr = 0;
 
 	dol_syslog("Try to find the payment in database for the payment_intent id = ".$TRANSACTIONID);
+	dol_syslog("Try to find the payment in database for the payment_intent id = ".$TRANSACTIONID, LOG_DEBUG, 0, '_payment');
 
 	$sql = "SELECT pi.rowid, pi.fk_facture, pi.fk_prelevement_bons, pi.amount, pi.type, pi.traite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pi";
@@ -838,18 +894,22 @@ if ($event->type == 'payout.created') {
 				$paymentTypeCodeInDolibarr = $obj->type;
 
 				dol_syslog("Found the payment intent for ban in database (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
+				dol_syslog("Found the payment intent for ban in database (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")", LOG_DEBUG, 0, '_payment');
 			}
 			if ($obj->type == 'card' || empty($obj->type)) {
 				// This is a card payment.
 				$pdid = $obj->rowid;
 				$invoice_id = $obj->fk_facture;
+				$directdebitorcreditransfer_id = 0;
 				$payment_amountInDolibarr = $obj->amount;
 				$paymentTypeCodeInDolibarr = empty($obj->type) ? 'card' : $obj->type;
 
 				dol_syslog("Found the payment intent for card in database (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")");
+				dol_syslog("Found the payment intent for card in database (pdid = ".$pdid." directdebitorcreditransfer_id=".$directdebitorcreditransfer_id.")", LOG_DEBUG, 0, '_payment');
 			}
 		} else {
 			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.");
+			dol_syslog("Payment intent ".$TRANSACTIONID." not found into database, so ignored.", LOG_DEBUG, 0, '_payment');
 			http_response_code(200);
 			print "Payment intent ".$TRANSACTIONID." not found into database, so ignored.";
 			return 1;
@@ -861,11 +921,13 @@ if ($event->type == 'payout.created') {
 	}
 
 	dol_syslog("objinvoiceid=".$invoice_id);
+	dol_syslog("objinvoiceid=".$invoice_id, LOG_DEBUG, 0, '_payment');
 	$tmpinvoice = new Facture($db);
 	$tmpinvoice->fetch($invoice_id);
 	$tmpinvoice->fetch_thirdparty();
 
 	dol_syslog("The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr);
+	dol_syslog("The payment disputed is ".$amountdispute." and the invoice is ".$payment_amountInDolibarr, LOG_DEBUG, 0, '_payment');
 
 	if ($amountdispute != $payment_amountInDolibarr) {
 		http_response_code(500);

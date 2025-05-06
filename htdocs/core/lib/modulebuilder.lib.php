@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2009-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -143,10 +143,10 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir =
 				$texttoinsert .= " 'notnull' => ".(empty($val['notnull']) ? 0 : (int) $val['notnull']).",";
 				$texttoinsert .= ' "visible" => "'.($val['visible'] !== '' ? dol_escape_js($val['visible']) : -1).'",';
 				if (!empty($val['noteditable'])) {
-					$texttoinsert .= ' "noteditable" => "'.dol_escape_php($val['noteditable']).'",';
+					$texttoinsert .= ' "noteditable" => "'.dol_escape_php((string) $val['noteditable']).'",';
 				}
 				if (!empty($val['alwayseditable'])) {
-					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php($val['alwayseditable']).'",';
+					$texttoinsert .= ' "alwayseditable" => "'.dol_escape_php((string) $val['alwayseditable']).'",';
 				}
 				if (array_key_exists('default', $val) && (!empty($val['default']) || $val['default'] === '0')) {
 					$texttoinsert .= ' "default" => "'.dol_escape_php($val['default']).'",';
@@ -348,6 +348,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 				$type = 'double'; // html modulebuilder type is a text type in database
 			} elseif (in_array($type, array('link', 'sellist', 'duration'))) {
 				$type = 'integer';
+			} elseif ($type == 'chkbxlst') {
+				$type = 'varchar(128)';
 			} elseif ($type == 'mail') {
 				$type = 'varchar(128)';
 			} elseif (strpos($type, 'stars(') === 0) {
@@ -409,7 +411,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir = '
 		foreach ($object->fields as $key => $val) {
 			$i++;
 			if (!empty($val['index'])) {
-				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
+				$texttoinsert .= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD ".($key == 'ref' ? "UNIQUE INDEX uk_" : "INDEX idx_").strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.($key == 'ref' && array_key_exists('entity', $object->fields) ? ", entity" : "").");";
 				$texttoinsert .= "\n";
 			}
 			if (!empty($val['foreignkey'])) {
@@ -553,7 +555,7 @@ function deletePerms($file)
  * @param	int|string	$a	value 1
  * @param	int|string	$b	value 2
  * @return	int<-1,1> 		<=0 if str1 is less than str2; > 0 if str1 is greater than str2, and 0 if they are equal.
-*/
+ */
 function compareFirstValue($a, $b)
 {
 	return strcmp($a[0], $b[0]);
@@ -1119,8 +1121,8 @@ function removeObjectFromApiFile($file, $objects, $objectname)
 
 /**
  * @param	string		$file		path of filename
- * @param	array<int,array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}>	$menus      all menus for module
- * @param	null|string|array{commentgroup:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int,enabled:int,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
+ * @param	array<int,array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}>	$menus      all menus for module
+ * @param	null|string|array{commentgroup?:string,fk_menu:string,type:string,titre:string,mainmenu:string,leftmenu:string,url:string,langs:string,position:int|string,enabled:int|string,perms:string,target:string,user:int}	$menuWantTo  menu get for do actions
  * @param	?int		$key		key for the concerned menu
  * @param	int<-1,2>	$action		for specify what action (0 = delete perm, 1 = add perm, 2 = update perm, -1 = when we delete object)
  * @return	int<-1,1>				1 if OK, -1 if KO

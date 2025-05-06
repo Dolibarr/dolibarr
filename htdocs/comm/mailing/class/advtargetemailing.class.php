@@ -2,7 +2,7 @@
 /* Advance Targeting Emailing for mass emailing module
  * Copyright (C) 2013  		Florian Henry 			<florian.henry@open-concept.pro>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -185,13 +185,13 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql .= "fk_user_mod";
 		$sql .= ") VALUES (";
 		$sql .= " ".(!isset($this->name) ? 'NULL' : "'".$this->db->escape($this->name)."'").",";
-		$sql .= " ".$conf->entity.",";
-		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : "'".$this->db->escape($this->fk_element)."'").",";
+		$sql .= " ".((int) $conf->entity).",";
+		$sql .= " ".(!isset($this->fk_element) ? 'NULL' : "'".$this->db->escape((string) $this->fk_element)."'").",";
 		$sql .= " ".(!isset($this->type_element) ? 'NULL' : "'".$this->db->escape($this->type_element)."'").",";
 		$sql .= " ".(!isset($this->filtervalue) ? 'NULL' : "'".$this->db->escape($this->filtervalue)."'").",";
-		$sql .= " ".$user->id.",";
+		$sql .= " ".((int) $user->id).",";
 		$sql .= " '".$this->db->idate(dol_now())."',";
-		$sql .= " ".$user->id;
+		$sql .= " ".((int) $user->id);
 		$sql .= ")";
 
 		$this->db->begin();
@@ -429,11 +429,11 @@ class AdvanceTargetingMailing extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."mailing_advtarget SET";
 
 		$sql .= " name=".(isset($this->name) ? "'".$this->db->escape($this->name)."'" : "''").",";
-		$sql .= " entity=".$conf->entity.",";
+		$sql .= " entity=".((int) $conf->entity).",";
 		$sql .= " fk_element=".(isset($this->fk_element) ? $this->fk_element : "null").",";
 		$sql .= " type_element=".(isset($this->type_element) ? "'".$this->db->escape($this->type_element)."'" : "null").",";
 		$sql .= " filtervalue=".(isset($this->filtervalue) ? "'".$this->db->escape($this->filtervalue)."'" : "null").",";
-		$sql .= " fk_user_mod=".$user->id;
+		$sql .= " fk_user_mod=".((int) $user->id);
 
 		$sql .= " WHERE rowid=".((int) $this->id);
 
@@ -734,7 +734,7 @@ class AdvanceTargetingMailing extends CommonObject
 				if (!empty($arrayquery['contact_no_email'])) {
 					$tmpwhere .= "(t.email IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
 				} else {
-					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape($arrayquery['contact_no_email'])."'))";
+					$tmpwhere .= "(t.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_unsubscribe WHERE t.entity IN (".getEntity('mailing').") AND email = '".$this->db->escape((string) $arrayquery['contact_no_email'])."'))";
 				}
 				$sqlwhere[] = $tmpwhere;
 			}

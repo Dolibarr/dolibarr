@@ -129,7 +129,7 @@ class modDataPolicy extends DolibarrModules
 		  'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
 		  ) */
 
-		if (!isset($conf->datapolicy) || !isset($conf->datapolicy->enabled)) {
+		if (!isModEnabled('datapolicy')) {
 			$conf->datapolicy = new stdClass();
 			$conf->datapolicy->enabled = 0;
 		}

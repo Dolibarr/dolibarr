@@ -4,6 +4,7 @@
  * Copyright (C) 2013-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2024		William Mead			<william.mead@manchenumerique.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'cron', 'members', 'bills'));
@@ -227,7 +236,7 @@ if ($action == 'inactive' && $permissiontoadd) {
 
 // Action clone object
 if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
-	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {
+	if (1 == 0 && !GETPOST('clone_content') && !GETPOST('clone_receivers')) {  // @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 	} else {
 		$objectutil = dol_clone($object, 1); // We clone to avoid to denaturate loaded object when setting some properties for clone or if createFromClone modifies the object. We use the native clone to keep this->db valid.
@@ -629,7 +638,7 @@ if (($action == "create") || ($action == "edit")) {
 	print '<tr><td>';
 	print $langs->trans('CronNote')."</td><td>";
 	if (!is_null($object->note_private) && $object->note_private != '') {
-		print '<span class="small">'.$langs->trans($object->note_private).'</small>';
+		print '<div class="small lineheightsmall">'.$langs->trans($object->note_private).'</div>';
 	}
 	print "</td></tr>";
 

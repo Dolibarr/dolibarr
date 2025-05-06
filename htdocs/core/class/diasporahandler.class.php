@@ -120,7 +120,7 @@ class DiasporaHandler
 			}
 		}
 
-		$data = json_decode($data, true);
+		$data = json_decode((string) $data, true);
 		if (!is_null($data)) {
 			if (is_array($data)) {
 				$this->posts = [];

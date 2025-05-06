@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016       Ferran Marcet		    <fmarcet@2byte.es>
  * Copyright (C) 2023       Lenin Rivas		    	<lenin.rivas777@gmail.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -40,28 +40,35 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'multicurrency'));
 
 // Get Parameters
-$action				= GETPOST('action', 'alpha');
-$massaction			= GETPOST('massaction', 'alpha');
-$show_files			= GETPOSTINT('show_files');
-$confirm			= GETPOST('confirm', 'alpha');
+$action = GETPOST('action', 'alpha');
+$massaction = GETPOST('massaction', 'alpha');
+$show_files = GETPOSTINT('show_files');
+$confirm = GETPOST('confirm', 'alpha');
 $toselect = GETPOST('toselect', 'array');
 $id_rate_selected = GETPOSTINT('id_rate');
-$sall = trim((GETPOST('search_all', 'alphanohtml') != '') ? GETPOST('search_all', 'alphanohtml') : GETPOST('sall', 'alphanohtml'));
+$sall = trim(GETPOST('search_all', 'alphanohtml'));
 $search_date_sync = dol_mktime(0, 0, 0, GETPOSTINT('search_date_syncmonth'), GETPOSTINT('search_date_syncday'), GETPOSTINT('search_date_syncyear'));
-$search_date_sync_end	= dol_mktime(0, 0, 0, GETPOSTINT('search_date_sync_endmonth'), GETPOSTINT('search_date_sync_endday'), GETPOSTINT('search_date_sync_endyear'));
-$search_rate		= GETPOST('search_rate', 'alpha');
-$search_rate_indirect	= GETPOST('search_rate_indirect', 'alpha');
-$search_code		= GETPOST('search_code', 'alpha');
+$search_date_sync_end = dol_mktime(0, 0, 0, GETPOSTINT('search_date_sync_endmonth'), GETPOSTINT('search_date_sync_endday'), GETPOSTINT('search_date_sync_endyear'));
+$search_rate = GETPOST('search_rate', 'alpha');
+$search_rate_indirect = GETPOST('search_rate_indirect', 'alpha');
+$search_code = GETPOST('search_code', 'alpha');
 $multicurrency_code = GETPOST('multicurrency_code', 'alpha');
-$dateinput 			= dol_mktime(0, 0, 0, GETPOSTINT('dateinputmonth'), GETPOSTINT('dateinputday'), GETPOSTINT('dateinputyear'));
-$rateinput 			= (float) price2num(GETPOST('rateinput', 'alpha'));
-$rateindirectinput 	= (float) price2num(GETPOST('rateinidirectinput', 'alpha'));
-$optioncss 			= GETPOST('optioncss', 'alpha');
+$dateinput = dol_mktime(0, 0, 0, GETPOSTINT('dateinputmonth'), GETPOSTINT('dateinputday'), GETPOSTINT('dateinputyear'));
+$rateinput = (float) price2num(GETPOST('rateinput', 'alpha'));
+$rateindirectinput = (float) price2num(GETPOST('rateinidirectinput', 'alpha'));
+$optioncss = GETPOST('optioncss', 'alpha');
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : $conf->liste_limit;
 $page = GETPOSTINT("page");
 if (empty($page) || $page == -1) {
@@ -70,8 +77,8 @@ if (empty($page) || $page == -1) {
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$sortfield 			= GETPOST('sortfield', 'aZ09comma');
-$sortorder 			= GETPOST('sortorder', 'aZ09comma');
+$sortfield = GETPOST('sortfield', 'aZ09comma');
+$sortorder = GETPOST('sortorder', 'aZ09comma');
 if (!$sortfield) {
 	$sortfield = "cr.date_sync";
 }
@@ -105,16 +112,15 @@ $fieldstosearchall = array(
 
 // Definition of fields for lists
 $arrayfields = array(
-	'cr.date_sync' => array('label' => 'Date', 'checked' => 1),
-	'cr.rate' => array('label' => 'Rate', 'checked' => 1),
-	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => 0, 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? 0 : 1)),
-	'm.code' => array('label' => 'Code', 'checked' => 1),
+	'cr.date_sync' => array('label' => 'Date', 'checked' => '1'),
+	'cr.rate' => array('label' => 'Rate', 'checked' => '1'),
+	'cr.rate_indirect' => array('label' => 'RateIndirect', 'checked' => '0', 'enabled' => (!getDolGlobalString('MULTICURRENCY_USE_RATE_INDIRECT') ? '0' : '1')),
+	'm.code' => array('label' => 'Code', 'checked' => '1'),
 );
 
 
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-'@phan-var-force array<string,array{label:string,checked?:int<0,1>,position?:int,help?:string}> $arrayfields';  // dol_sort_array looses type for Phan
 
 // Access control
 // TODO Open this page to a given permission so a sale representative can modify change rates. Permission should be added into module multicurrency.
@@ -355,7 +361,8 @@ if ($search_rate) {
 if ($search_code) {
 	$sql .= natural_search('m.code', $search_code);
 }
-$sql .= " WHERE m.code <> '".$db->escape($conf->currency)."'";
+$sql .= " WHERE cr.entity IN (".getEntity('multicurrency').")";
+$sql .= " AND m.code <> '".$db->escape($conf->currency)."'";
 
 // Add where from hooks
 $parameters = array();

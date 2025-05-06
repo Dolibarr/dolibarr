@@ -49,8 +49,17 @@ class ReceptionStats extends Stats
 	 */
 	public $userid;
 
+	/**
+	 * @var string
+	 */
 	public $from;
+	/**
+	 * @var string
+	 */
 	public $field;
+	/**
+	 * @var string
+	 */
 	public $where;
 
 

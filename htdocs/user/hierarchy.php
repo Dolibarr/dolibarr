@@ -1,11 +1,11 @@
 <?php
-/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2019-2024  Frédéric France      <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2005       Matthieu Valleton       <mv@seeschloss.org>
+ * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
+ * Copyright (C) 2006-2015  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2007       Patrick Raguin          <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by page
 $langs->loadLangs(array('users', 'companies', 'hrm', 'salaries'));
@@ -110,8 +118,8 @@ $filters = [];
 if (($search_status != '' && $search_status >= 0)) {
 	$filters[] = "statut = ".((int) $search_status);
 }
-if (($search_employee != '' && $search_employee >= 0)) {
-	$filters[] = "employee = ".((int) $search_employee);
+if ($search_employee == 1) {
+	$filters[] = "employee = 1";
 }
 $sqlfilter = '';
 if (!empty($filters)) {
@@ -137,7 +145,7 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 	//var_dump($fulltree);
 	// Define data (format for treeview)
 	$data = array();
-	$data[0] = array('rowid' => 0, 'fk_menu' => -1, 'title' => "racine", 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
+	$data[0] = array('rowid' => 0, 'fk_menu' => -1, 'title' => 'racine', 'mainmenu' => '', 'leftmenu' => '', 'fk_mainmenu' => '', 'fk_leftmenu' => '');
 
 	foreach ($fulltree as $key => $val) {
 		$userstatic->id = $val['id'];
@@ -255,9 +263,9 @@ if (!is_array($user_arbo) && $user_arbo < 0) {
 						$li = '<span class="opacitymedium">'.$langs->trans("WarningParentIDDoesNotExistAnymore").'</span>';
 						$entry = '<table class="nobordernopadding centpercent"><tr class="trtree"><td class="usertddisabled">'.$li.'</td><td align="right" class="usertddisabled"></td></tr></table>';
 						$data[-2] = array(
-							'rowid' => '-2',
+							'rowid' => -2,
 							'fk_menu' => null,
-							'statut' => '1',
+							'statut' => 1,
 							'entry' => $entry
 						);
 					}

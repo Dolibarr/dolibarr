@@ -1,6 +1,8 @@
 <?php
+
 /* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -41,6 +43,14 @@ if (!defined('NOREQUIREMENU')) {
 //if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML',1);
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var Form $form
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -120,11 +130,11 @@ $hookmanager->initHooks(array('searchform'));
 // Define $searchform
 $searchform = '';
 
-if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone
+if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartphone @phan-suppress-current-line PhanPluginBothLiteralsBinaryOp
 	if (!is_object($form)) {
 		$form = new Form($db);
 	}
-	$selected = -1;
+	$selected = '-1';
 	$searchform .= '<br><br>'.$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'minwidth300', 1, $langs->trans("Search"), 0);
 } else {
 	$usedbyinclude = 1; // Used into next include
@@ -134,7 +144,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 
 	$i = 0;
 	$accesskeyalreadyassigned = array();
-	foreach ($arrayresult as $key => $val) {
+	foreach ($arrayresult as $key => $val) {  // @phan-suppress-current-line PhanEmptyForeach
 		$tmp = explode('?', $val['url']);
 		$urlaction = $tmp[0];
 		$keysearch = 'search_all';
@@ -154,7 +164,7 @@ if ($conf->use_javascript_ajax && 1 == 2) {   // select2 is not best with smartp
 
 
 // Execute hook printSearchForm
-$parameters = array('searchform'=>$searchform);
+$parameters = array('searchform' => $searchform);
 $reshook = $hookmanager->executeHooks('printSearchForm', $parameters); // Note that $action and $object may have been modified by some hooks
 if (empty($reshook)) {
 	$searchform .= $hookmanager->resPrint;

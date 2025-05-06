@@ -2,7 +2,7 @@
 /* Copyright (C) 2017		ATM Consulting				<contact@atm-consulting.fr>
  * Copyright (C) 2017-2018	Laurent Destailleur			<eldy@destailleur.fr>
  * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -35,6 +35,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var string $dolibarr_main_db_name
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array('admin', 'bills', 'blockedlog', 'other'));
 
@@ -63,14 +73,14 @@ $search_endday = GETPOSTINT('search_endday');
 $search_id = GETPOST('search_id', 'alpha');
 $search_fk_user = GETPOST('search_fk_user', 'intcomma');
 $search_start = -1;
-if ($search_startyear != '') {
+if (GETPOST('search_startyear') != '') {
 	$search_start = dol_mktime(0, 0, 0, $search_startmonth, $search_startday, $search_startyear);
 }
 $search_end = -1;
 if (GETPOST('search_endyear') != '') {
-	$search_end = dol_mktime(23, 59, 59, GETPOST('search_endmonth'), GETPOST('search_endday'), GETPOST('search_endyear'));
+	$search_end = dol_mktime(23, 59, 59, $search_endmonth, $search_endday, $search_endyear);
 }
-$search_code = GETPOST('search_code', 'alpha');
+$search_code = GETPOST('search_code', 'array:alpha');
 $search_ref = GETPOST('search_ref', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 
@@ -107,12 +117,15 @@ $block_static->loadTrackedEvents();
 $result = restrictedArea($user, 'blockedlog', 0, '');
 
 // Execution Time
-$max_execution_time_for_importexport = (!getDolGlobalString('EXPORT_MAX_EXECUTION_TIME') ? 300 : $conf->global->EXPORT_MAX_EXECUTION_TIME); // 5mn if not defined
+$max_execution_time_for_importexport = getDolGlobalInt('EXPORT_MAX_EXECUTION_TIME', 300); // 5mn if not defined
 $max_time = @ini_get("max_execution_time");
 if ($max_time && $max_time < $max_execution_time_for_importexport) {
 	dol_syslog("max_execution_time=".$max_time." is lower than max_execution_time_for_importexport=".$max_execution_time_for_importexport.". We try to increase it dynamically.");
 	@ini_set("max_execution_time", $max_execution_time_for_importexport); // This work only if safe mode is off. also web servers has timeout of 300
 }
+
+$MAXLINES = getDolGlobalInt('BLOCKEDLOG_MAX_LINES', 10000);
+$MAXFORSHOWNLINKS = getDolGlobalInt('BLOCKEDLOG_MAX_FOR_SHOWN_LINKS', 100);
 
 
 /*
@@ -125,7 +138,7 @@ if (GETPOST('button_removefilter_x', 'alpha') || GETPOST('button_removefilter.x'
 	$search_fk_user = '';
 	$search_start = -1;
 	$search_end = -1;
-	$search_code = '';
+	$search_code = array();
 	$search_ref = '';
 	$search_amount = '';
 	$search_showonlyerrors = 0;
@@ -340,9 +353,7 @@ $help_url = "EN:Module_Unalterable_Archives_-_Logs|FR:Module_Archives_-_Logs_Ina
 
 llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'bodyforlist mod-blockedlog page-admin_blockedlog_list');
 
-$MAXLINES = 10000;
-
-$blocks = $block_static->getLog('all', $search_id, $MAXLINES, $sortfield, $sortorder, $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
+$blocks = $block_static->getLog('all', (int) $search_id, $MAXLINES, $sortfield, $sortorder, (int) $search_fk_user, $search_start, $search_end, $search_ref, $search_amount, $search_code);
 if (!is_array($blocks)) {
 	if ($blocks == -2) {
 		setEventMessages($langs->trans("TooManyRecordToScanRestrictFilters", $MAXLINES), null, 'errors');
@@ -364,7 +375,18 @@ if (GETPOST('withtab', 'alpha')) {
 	print dol_get_fiche_head($head, 'fingerprints', '', -1);
 }
 
-print '<div class="opacitymedium hideonsmartphone justify">'.$langs->trans("FingerprintsDesc")."<br></div>\n";
+print '<div class="opacitymedium hideonsmartphone justify">';
+
+print $langs->trans("FingerprintsDesc")."<br>";
+
+print '<br>';
+
+$s = $langs->trans("FilesIntegrityDesc", '{s}');
+$s = str_replace('{s}', DOL_URL_ROOT.'/admin/system/filecheck.php', $s);
+print $s;
+print "<br>\n";
+
+print "</div>\n";
 
 print '<br>';
 
@@ -418,7 +440,7 @@ print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<div class="right">';
 print $langs->trans("RestrictYearToExport").': ';
 // Month
-print $formother->select_month(GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
+print $formother->select_month((string) GETPOSTINT('monthtoexport'), 'monthtoexport', 1, 0, 'minwidth50 maxwidth75imp valignmiddle', true);
 print '<input type="text" name="yeartoexport" class="valignmiddle maxwidth50imp" value="'.GETPOST('yeartoexport').'" placeholder="'.$langs->trans("Year").'">';
 print '<input type="hidden" name="withtab" value="'.GETPOST('withtab', 'alpha').'">';
 print '<input type="submit" name="downloadcsv" class="button" value="'.$langs->trans('DownloadLogCSV').'">';
@@ -469,19 +491,17 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth150');
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', '0', 0, 0, '', 0, '', 'maxwidth150');
 print '</td>';
 
 // Actions code
 print '<td class="liste_titre">';
-print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth150', 1);
+//print $form->selectarray('search_code', $block_static->trackedevents, $search_code, 1, 0, 0, '', 1, 0, 0, 'ASC', 'maxwidth150', 1);
+print $form->multiselectarray('search_code', $block_static->trackedevents, $search_code, 0, 0, 'maxwidth150', 1);
 print '</td>';
 
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
-
-// Link to ref
-print '<td class="liste_titre"></td>';
 
 // Amount
 print '<td class="liste_titre right"><input type="text" class="maxwidth50" name="search_amount" value="'.dol_escape_htmltag($search_amount).'"></td>';
@@ -499,6 +519,9 @@ print $form->selectarray('search_showonlyerrors', $array, $search_showonlyerrors
 print '</td>';
 
 // Status note
+//print '<td class="liste_titre"></td>';
+
+// Link to original ref into business software
 print '<td class="liste_titre"></td>';
 
 // Action column
@@ -521,12 +544,12 @@ print getTitleFieldOfList($langs->trans('Date'), 0, $_SERVER["PHP_SELF"], 'date_
 print getTitleFieldOfList($langs->trans('Author'), 0, $_SERVER["PHP_SELF"], 'user_fullname', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Action'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Ref'), 0, $_SERVER["PHP_SELF"], 'ref_object', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 print getTitleFieldOfList($langs->trans('Amount'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'right ')."\n";
-print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp').'<br>'.$langs->trans('DataOfArchivedEventHelp2'), 1)."\n";
+print getTitleFieldOfList($langs->trans('DataOfArchivedEvent'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ', 0, $langs->trans('DataOfArchivedEventHelp'), 1)."\n";
 print getTitleFieldOfList($langs->trans('Fingerprint'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
-print getTitleFieldOfList($langs->trans('Status'), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
-print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList($form->textwithpicto($langs->trans('Status'), $langs->trans('DataOfArchivedEventHelp2')), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+//print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'center ')."\n";
+print getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, '')."\n";
 // Action column
 if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 	print getTitleFieldOfList('<span id="blockchainstatus"></span>', 0, $_SERVER["PHP_SELF"], '', '', $param, 'class="center"', $sortfield, $sortorder, '')."\n";
@@ -566,7 +589,6 @@ if (getDolGlobalString('BLOCKEDLOG_SCAN_ALL_FOR_LOWERIDINERROR')) {
 
 if (is_array($blocks)) {
 	$nbshown = 0;
-	$MAXFORSHOWLINK = 100;
 	$object_link = '';
 	$object_link_title = '';
 
@@ -575,7 +597,7 @@ if (is_array($blocks)) {
 		if (empty($search_showonlyerrors) || !$checkresult[$block->id]) {
 			$nbshown++;
 
-			if ($nbshown < $MAXFORSHOWLINK) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
+			if ($nbshown < $MAXFORSHOWNLINKS) {	// For performance and memory purpose, we get/show the link of objects only for the 100 first output
 				$object_link = $block->getObjectLink();
 				$object_link_title = '';
 			} else {
@@ -612,12 +634,6 @@ if (is_array($blocks)) {
 			print dol_escape_htmltag($block->ref_object);
 			print '</td>';
 
-			// Link to source object
-			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
-			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
-			print $object_link;
-			print '</td>';
-
 			// Amount
 			print '<td class="right nowraponall">'.price($block->amounts).'</td>';
 
@@ -626,8 +642,9 @@ if (is_array($blocks)) {
 
 			// Fingerprint
 			print '<td class="nowraponall">';
+			// Note: the previous line id is not necessarily id-1, so in texttoshow we say "on previous line" without giving id to avoid a search/fetch to get previous id.
 			$texttoshow = $langs->trans("Fingerprint").' - '.$langs->trans("SavedOnLine").' =<br>'.$block->signature;
-			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256('.$langs->trans("PreviousHash").' on line '.($block->id - 1).' + data) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
+			$texttoshow .= '<br><br>'.$langs->trans("Fingerprint").' - Recalculated sha256('.$langs->trans("PreviousHash").' on previous line + data) =<br>'.$checkdetail[$block->id]['calculatedsignature'];
 			$texttoshow .= '<br><span class="opacitymedium">'.$langs->trans("PreviousHash").'='.$checkdetail[$block->id]['previoushash'].'</span>';
 			//$texttoshow .= '<br>keyforsignature='.$checkdetail[$block->id]['keyforsignature'];
 			print $form->textwithpicto(dol_trunc($block->signature, 8), $texttoshow, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
@@ -644,19 +661,29 @@ if (is_array($blocks)) {
 			} else {
 				print '<span class="badge badge-status4 badge-status" title="'.$langs->trans('OkCheckFingerprintValidity').'">OK</span>';
 			}
-			print '</td>';
+			//print '</td>';
 
 			// Note
-			print '<td class="center">';
+			//print '<td class="center">';
 			if (!$checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror)) {	// If error
 				if ($checkresult[$block->id]) {
 					print $form->textwithpicto('', $langs->trans('OkCheckFingerprintValidityButChainIsKo'));
+				} else {
+					//print $form->textwithpicto('', $langs->trans('KoCheckFingerprintValidity'));
 				}
+			} else {
+				//print $form->textwithpicto('', $langs->trans('DataOfArchivedEventHelp2'));
 			}
 
 			if (getDolGlobalString('BLOCKEDLOG_USE_REMOTE_AUTHORITY') && getDolGlobalString('BLOCKEDLOG_AUTHORITY_URL')) {
 				print ' '.($block->certified ? img_picto($langs->trans('AddedByAuthority'), 'info') : img_picto($langs->trans('NotAddedByAuthorityYet'), 'info_black'));
 			}
+			print '</td>';
+
+			// Link to source object
+			print '<td class="tdoverflowmax150"'.(preg_match('/<a/', $object_link) ? '' : 'title="'.dol_escape_htmltag(dol_string_nohtmltag($object_link.($object_link_title ? ' - '.$object_link_title : ''))).'"').'>';
+			print '<!-- object_link -->';	// $object_link can be a '<a href' link or a text
+			print $object_link;
 			print '</td>';
 
 			// Action column

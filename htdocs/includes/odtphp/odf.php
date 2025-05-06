@@ -36,32 +36,70 @@ class Odf
 		'DELIMITER_RIGHT' => '}',
 		'PATH_TO_TMP' => '/tmp'
 	);
+	/**
+	 * @var PclZipProxy|PhpZipProxy
+	 */
 	protected $file;
-	protected $contentXml;			// To store content of content.xml file
-	protected $metaXml;			    // To store content of meta.xml file
-	protected $stylesXml;			// To store content of styles.xml file
-	protected $manifestXml;			// To store content of META-INF/manifest.xml file
+
+	/**
+	 * @var string To store content of content.xml file
+	 */
+	protected $contentXml;
+
+	/**
+	 * @var string To store content of meta.xml file
+	 */
+	protected $metaXml;
+
+	/**
+	 * @var string To store content of styles.xml file
+	 */
+	protected $stylesXml;
+
+	/**
+	 * @var string To store content of META-INF/manifest.xml file
+	 */
+	protected $manifestXml;
+
+	/**
+	 * @var string
+	 */
 	protected $tmpfile;
-	protected $tmpdir='';
+
+	/**
+	 * @var string
+	 */
+	protected $tmpdir = '';
 	protected $images = array();
 	protected $vars = array();
 	protected $segments = array();
 
+	/**
+	 * @var string
+	 */
 	public $creator;
+
+	/**
+	 * @var string
+	 */
 	public $title;
+
+	/**
+	 * @var string
+	 */
 	public $subject;
-	public $userdefined=array();
+	public $userdefined = array();
 
 	const PIXEL_TO_CM = 0.026458333;
-	const FIND_TAGS_REGEX = '/<([A-Za-z0-9]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(.*)<\/\1>))/s';
-	const FIND_ENCODED_TAGS_REGEX = '/&lt;([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/&gt;)|(?:&gt;(.*)&lt;\/\1&gt;))/';
+	const FIND_TAGS_REGEX = '/<([A-Za-z0-9]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/>)|(?:>(((?!<\1(\s.*)?>).)*)<\/\1>))/s';
+	const FIND_ENCODED_TAGS_REGEX = '/&lt;([A-Za-z]+)(?:\s([A-Za-z]+(?:\-[A-Za-z]+)?(?:=(?:".*?")|(?:[0-9]+))))*(?:(?:\s\/&gt;)|(?:&gt;(((?!&lt;\1(\s.*)?&gt;).)*)&lt;\/\1&gt;))/';
 
 
 	/**
 	 * Class constructor
 	 *
 	 * @param string $filename     The name of the odt file
-	 * @param string $config       Array of config data
+	 * @param array $config       Array of config data
 	 * @throws OdfException
 	 */
 	public function __construct($filename, $config = array())
@@ -367,6 +405,7 @@ class Odf
 
 		while (strlen($tempHtml) > 0) {
 			// Check if the string includes a html tag
+			$matches = array();
 			if (preg_match_all(self::FIND_TAGS_REGEX, $tempHtml, $matches)) {
 				$tagOffset = strpos($tempHtml, $matches[0][0]);
 				// Check if the string starts with the html tag
@@ -379,6 +418,7 @@ class Odf
 					$tempHtml = substr($tempHtml, $tagOffset);
 				}
 				// Extract the attribute data from the html tag
+				$explodedAttributes = array();
 				preg_match_all('/([0-9A-Za-z]+(?:="[0-9A-Za-z\:\-\s\,\;\#]*")?)+/', $matches[2][0], $explodedAttributes);
 				$explodedAttributes = array_filter($explodedAttributes[0]);
 				$attributes = array();
@@ -489,10 +529,11 @@ class Odf
 	 *
 	 * @param string $key name of the variable within the template
 	 * @param string $value path to the picture
+	 * @param float $ratio   Ratio for image
 	 * @throws OdfException
 	 * @return odf
 	 */
-	public function setImage($key, $value)
+	public function setImage($key, $value, float $ratio=1)
 	{
 		$filename = strtok(strrchr($value, '/'), '/.');
 		$file = substr(strrchr($value, '/'), 1);
@@ -501,8 +542,8 @@ class Odf
 			throw new OdfException("Invalid image");
 		}
 		list ($width, $height) = $size;
-		$width *= self::PIXEL_TO_CM;
-		$height *= self::PIXEL_TO_CM;
+		$width *= self::PIXEL_TO_CM * $ratio;
+		$height *= self::PIXEL_TO_CM * $ratio;
 		$xml = <<<IMG
 			<draw:frame draw:style-name="fr1" draw:name="$filename" text:anchor-type="aschar" svg:width="{$width}cm" svg:height="{$height}cm" draw:z-index="3"><draw:image xlink:href="Pictures/$file" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/></draw:frame>
 IMG;
@@ -562,17 +603,15 @@ IMG;
 		else return;
 
 		// Search all tags found into condition to complete $this->vars, so we will proceed all tests even if not defined
-		$reg='@\[!--\sIF\s([{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
+		$reg='@\[!--\sIF\s([\[\]{}a-zA-Z0-9\.\,_]+)\s--\]@smU';
 		$matches = array();
 		preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 
-		//var_dump($this->vars);exit;
 		foreach ($matches as $match) {   // For each match, if there is no entry into this->vars, we add it
 			if (! empty($match[1]) && ! isset($this->vars[$match[1]])) {
 				$this->vars[$match[1]] = '';     // Not defined, so we set it to '', we just need entry into this->vars for next loop
 			}
 		}
-		//var_dump($this->vars);exit;
 
 		// Conditionals substitution
 		// Note: must be done before static substitution, else the variable will be replaced by its value and the conditional won't work anymore
@@ -584,7 +623,7 @@ IMG;
 				// Remove the IF tag
 				$xml = str_replace('[!-- IF '.$key.' --]', '', $xml);
 				// Remove everything between the ELSE tag (if it exists) and the ENDIF tag
-				$reg = '@(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				$xml = preg_replace($reg, '', $xml);
 				/*if ($sav != $xml)
 				 {
@@ -597,7 +636,7 @@ IMG;
 				//dol_syslog("Var ".$key." is not defined, we remove the IF, ELSE and ENDIF ");
 				//$sav=$xml;
 				// Find all conditional blocks for this variable: from IF to ELSE and to ENDIF
-				$reg = '@\[!--\sIF\s' . $key . '\s--\](.*)(\[!--\sELSE\s' . $key . '\s--\](.*))?\[!--\sENDIF\s' . $key . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
+				$reg = '@\[!--\sIF\s' . preg_quote($key, '@') . '\s--\](.*)(\[!--\sELSE\s' . preg_quote($key, '@') . '\s--\](.*))?\[!--\sENDIF\s' . preg_quote($key, '@') . '\s--\]@smU'; // U modifier = all quantifiers are non-greedy
 				preg_match_all($reg, $xml, $matches, PREG_SET_ORDER);
 				foreach ($matches as $match) { // For each match, if there is an ELSE clause, we replace the whole block by the value in the ELSE clause
 					if (!empty($match[3])) $xml = str_replace($match[0], $match[3], $xml);
@@ -796,7 +835,10 @@ IMG;
 	public function exportAsAttachedFile($name = "")
 	{
 		$this->_save();
-		if (headers_sent($filename, $linenum)) {
+
+		$filename = '';
+		$linenum = 0;
+		if (headers_sent($filename, $linenum)) {	// this fills $filename and $linenum variables
 			throw new OdfException("headers already sent ($filename at $linenum)");
 		}
 
@@ -814,11 +856,12 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
+	 * @param 	string 	$name 					Name of ODT file to generate before generating PDF
+	 * @param	int		$dooutputfordownload	Output the file content to make the download
 	 * @throws OdfException
 	 * @return void
 	 */
-	public function exportAsAttachedPDF($name = "")
+	public function exportAsAttachedPDF($name = "", $dooutputfordownload = 1)
 	{
 		global $conf;
 
@@ -827,7 +870,7 @@ IMG;
 		dol_syslog(get_class($this).'::exportAsAttachedPDF $name='.$name, LOG_DEBUG);
 		$this->saveToDisk($name);
 
-		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
+		$execmethod = (getDolGlobalString('MAIN_EXEC_USE_POPEN') ? 2 : 1);	// 1 or 2
 		// Method 1 sometimes hang the server.
 
 
@@ -836,14 +879,15 @@ IMG;
 			dol_mkdir($conf->user->dir_temp);	// We must be sure the directory exists and is writable
 
 			// We delete and recreate a subdir because the soffice may have change pemrissions on it
-			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf');
+			$countdeleted = 0;
+			dol_delete_dir_recursive($conf->user->dir_temp.'/odtaspdf', 0, 0, 0, $countdeleted, 0, 1);
 			dol_mkdir($conf->user->dir_temp.'/odtaspdf');
 
 			// Install prerequisites: apt install soffice libreoffice-common libreoffice-writer
 			// using windows libreoffice that must be in path
 			// using linux/mac libreoffice that must be in path
 			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
-			$command ='soffice --headless -env:UserInstallation=file:\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+			$command ='soffice --headless -env:UserInstallation=file:'.(getDolGlobalString('MAIN_ODT_ADD_SLASH_FOR_WINDOWS') ? '///' : '').'\''.$conf->user->dir_temp.'/odtaspdf\' --convert-to pdf --outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
 		} elseif (preg_match('/unoconv/', getDolGlobalString('MAIN_ODT_AS_PDF'))) {
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 
@@ -920,20 +964,22 @@ IMG;
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			$filename=''; $linenum=0;
 
-			if (php_sapi_name() != 'cli') {	// If we are in a web context (not into CLI context)
-				if (headers_sent($filename, $linenum)) {
-					throw new OdfException("headers already sent ($filename at $linenum)");
-				}
+			if ($dooutputfordownload) {
+				if (php_sapi_name() != 'cli') {    // If we are in a web context (not into CLI context)
+					if (headers_sent($filename, $linenum)) {
+						throw new OdfException("headers already sent ($filename at $linenum)");
+					}
 
-				if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
-					$name=preg_replace('/\.od(x|t)/i', '', $name);
-					header('Content-type: application/pdf');
-					header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-					readfile($name.".pdf");
+					if (getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+						$name = preg_replace('/\.od(x|t)/i', '', $name);
+						header('Content-type: application/pdf');
+						header('Content-Disposition: attachment; filename="' . basename($name) . '.pdf"');
+						readfile($name . ".pdf");
+					}
 				}
 			}
 
-			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE)) {
+			if (getDolGlobalString('MAIN_ODT_AS_PDF_DEL_SOURCE')) {
 				unlink($name);
 			}
 		} else {

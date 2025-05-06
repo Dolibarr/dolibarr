@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2011-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,14 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("other", "users", "admin"));
 
@@ -40,6 +49,7 @@ $upload_dir = $conf->admin->dir_temp;
 /*
  * Actions
  */
+$error = 0;
 
 if (GETPOST('action', 'aZ09') == 'set_proxy') {
 	if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && !is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT"))) {
