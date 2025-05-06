@@ -271,8 +271,8 @@ $arrayfields = array(
 	'p.note_public' => array('label' => 'NotePublic', 'checked' => '0', 'position' => 510, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PUBLIC_NOTES'))),
 	'p.note_private' => array('label' => 'NotePrivate', 'checked' => '0', 'position' => 511, 'enabled' => (string) (!getDolGlobalInt('MAIN_LIST_HIDE_PRIVATE_NOTES'))),
 	'p.import_key' => array('type' => 'varchar(14)', 'label' => 'ImportId', 'enabled' => '1', 'visible' => -2, 'position' => 999),
-	'has_orders' => array('label' => "Orders", 'checked' => '0', 'position' => 1000, 'enabled' => (isModEnabled('order') ? '1' : '0')),
-	'has_invoices' => array('label' => "Invoices", 'checked' => '0', 'position' => 1001, 'enabled' => !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE') ? '0' : '1'),
+	'has_orders' => array('label' => "Orders", 'checked' => '0', 'position' => 1000, 'enabled' => ((getDolGlobalInt('PROPOSAL_COLUMN_HAS_ORDERS') && isModEnabled('order')) ? '1' : '0')),
+	'has_invoices' => array('label' => "Invoices", 'checked' => '0', 'position' => 1001, 'enabled' => ((getDolGlobalInt('PROPOSAL_COLUMN_HAS_INVOICES') && isModEnabled('invoice') && !getDolGlobalString('PROPOSAL_ARE_NOT_BILLABLE')) ? '1' : '0')),
 	'p.fk_statut' => array('label' => "Status", 'checked' => '1', 'position' => 1002),
 );
 
