@@ -74,7 +74,8 @@ class Form
 	// Some properties used to return data by some methods
 	/** @var array<string,int> */
 	public $result;
-	/** @var int */
+
+	/** @var int 	Number of line returned by method to generate combo select */
 	public $num;
 
 	// Cache arrays
@@ -5684,6 +5685,8 @@ class Form
 		$output .= '</select>';
 		$output .= "\n";
 
+		$this->num = count($cate_arbo);
+
 		if ($outputmode == 2) {
 			// TODO: handle error when $cate_arbo is not an array
 			return $cate_arbo;
@@ -5891,7 +5894,9 @@ class Form
 						if (!empty($input['label'])) {
 							$more .= $input['label'] . '</div><div class="tagtd">';
 						}
-						$more .= $input['value'];
+						if (!empty($input['value'])) {
+							$more .= $input['value'];
+						}
 						$more .= '</div></div>' . "\n";
 					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
@@ -7470,8 +7475,12 @@ class Form
 
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy") {
+					// To have this manager working back, you must retrieve all functions showDP child found into the lib_head.js of v4 for example
+					// and use load the js so the call of showDP will works.
+
+					/*
 					// Input area to enter date manually
-					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
+					$retstring .= '<!-- datepicker usecalendar=eldy --><input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
@@ -7491,13 +7500,14 @@ class Form
 					$retstring .= '<input type="hidden" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
 					$retstring .= '<input type="hidden" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
 					$retstring .= '<input type="hidden" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
+					*/
 				} elseif ($usecalendar == 'jquery' || $usecalendar == 'html') {
 					if (!$disabled && $usecalendar != 'html') {
 						// Output javascript for datepicker
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
-						$retstring .= '<script nonce="' . getNonce() . '" type="text/javascript">';
+						$retstring .= '<!-- datepicker usecalendar=eldy --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
 							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
 							autoclose: true,
@@ -7621,7 +7631,7 @@ class Form
 				$retstring .= '</option>';
 			}
 			$retstring .= '</select>';
-			//if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+
 			if ($m) {
 				$retstring .= ":";
 			}

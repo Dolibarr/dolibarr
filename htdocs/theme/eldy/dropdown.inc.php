@@ -455,6 +455,8 @@ li.liinputsearch {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .quickadd-item {

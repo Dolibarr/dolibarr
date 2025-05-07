@@ -489,9 +489,10 @@ class Fichinter extends CommonObject
 	 *
 	 *	@param		int		$rowid		Id of intervention
 	 *	@param		string	$ref		Ref of intervention
+	 *	@param		string	$ref_ext	Ref extern of intervention
 	 *	@return		int					Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($rowid, $ref = '')
+	public function fetch($rowid, $ref = '', $ref_ext = '')
 	{
 		$sql = "SELECT f.rowid, f.ref, f.ref_client, f.description, f.fk_soc, f.fk_statut as status, f.signed_status,";
 		$sql .= " f.datec, f.dateo, f.datee, f.datet, f.fk_user_author,";
@@ -499,14 +500,15 @@ class Fichinter extends CommonObject
 		$sql .= " f.tms as datem,";
 		$sql .= " f.duree, f.fk_projet as fk_project, f.note_public, f.note_private, f.model_pdf, f.last_main_doc, f.extraparams, fk_contrat, f.entity as entity";
 		$sql .= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+		$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 		if ($ref) {
-			$sql .= " WHERE f.entity IN (".getEntity('intervention').")";
 			$sql .= " AND f.ref = '".$this->db->escape($ref)."'";
+		} elseif ($ref_ext) {
+			$sql .= " AND f.ref_ext = '".$this->db->escape($ref_ext)."'";
 		} else {
-			$sql .= " WHERE f.rowid = ".((int) $rowid);
+			$sql .= " AND f.rowid = ".((int) $rowid);
 		}
 
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			if ($this->db->num_rows($resql)) {

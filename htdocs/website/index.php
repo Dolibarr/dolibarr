@@ -3069,20 +3069,11 @@ $arrayofjs = array(
 );
 $arrayofcss = array();
 
-$moreheadcss = '';
-$moreheadjs = '';
-
-$arrayofjs[] = 'includes/jquery/plugins/blockUI/jquery.blockUI.js';
-$arrayofjs[] = 'core/js/blockUI.js'; // Used by ecm/tpl/enabledfiletreeajax.tpl.php
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$arrayofjs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
-
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
@@ -4397,9 +4388,9 @@ if ($action == 'editsecurity') {
 
 	print '<input class="minwidth500 quatrevingtpercent" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
 
-	print '<br>';
+	print '<br class="selectaddcontentsecuritypolicy hidden">';
 
-	print '<div id="selectaddcontentsecuritypolicy" class="hidden">';
+	print '<div id="selectaddcontentsecuritypolicy" class="hidden selectaddcontentsecuritypolicy">';
 	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPDirective"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth350 inline-block');
 	print ' ';
 	print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
@@ -4417,6 +4408,7 @@ if ($action == 'editsecurity') {
 
 	if (!empty($forceCSP)) {
 		// Content Security Policy list of selected rules
+		print '<br>';
 		print '<div class="div-table-responsive-no-min">';
 		print img_picto('', 'graph', 'class="pictofixedwidth"').$langs->trans("HierarchicView").'<br>';
 		print '<ul>';
@@ -4471,10 +4463,10 @@ if ($action == 'editsecurity') {
 			$("#btnaddcontentsecuritypolicy").on("click", function(){
 				if($("#selectaddcontentsecuritypolicy").is(":visible")){
 					console.log("We hide select to add Content Security Policy");
-					$("#selectaddcontentsecuritypolicy").hide();
+					$(".selectaddcontentsecuritypolicy").hide();
 				} else {
 					console.log("We show select to add Content Security Policy");
-					$("#selectaddcontentsecuritypolicy").show();
+					$(".selectaddcontentsecuritypolicy").show();
 				}
 			});
 
@@ -4537,14 +4529,14 @@ if ($action == 'createsite') {
 	$head = array();
 
 	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AddSite");
+	$head[$h][1] = $langs->trans("AddWebsite");
 	   $head[$h][2] = 'card';
 	$h++;
 
 	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
 	*/
 	if ($action == 'createcontainer') {
-		print load_fiche_titre($langs->trans("AddSite"));
+		print load_fiche_titre($langs->trans("AddWebsite"));
 	}
 
 	print '<!-- Add site -->'."\n";

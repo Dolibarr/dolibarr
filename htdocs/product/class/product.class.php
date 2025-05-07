@@ -1047,7 +1047,8 @@ class Product extends CommonObject
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
-			$this->error = 'ErrorMandatoryParametersNotProvided';
+			$langs->load('errors');
+			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 			return -1;
 		}
 
@@ -5723,6 +5724,9 @@ class Product extends CommonObject
 				if (isModEnabled('productbatch')) {
 					$langs->load("productbatch");
 					$datas['batchstatus'] = "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
+					if ($this->status_batch) {
+						$datas['batchdlc'] = "<br><b>".$langs->trans("BatchSellOrEatByMandatoryList", $langs->transnoentitiesnoconv("SellByDate"), $langs->transnoentitiesnoconv("EatByDate")).'</b>: '.$this->getSellOrEatByMandatoryLabel();
+					}
 				}
 			}
 			if (isModEnabled('barcode')) {

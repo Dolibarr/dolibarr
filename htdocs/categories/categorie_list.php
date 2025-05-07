@@ -315,57 +315,12 @@ foreach ($search as $key => $val) {
 if ($search_all) {
 	$sql .= natural_search(array_keys($fieldstosearchall), $search_all);
 }
-/*
-// If the internal user must only see his customers, force searching by him
-$search_sale = 0;
-if (!$user->hasRight('societe', 'client', 'voir')) {
-	$search_sale = $user->id;
-}
-// Search on sale representative
-if ($search_sale && $search_sale != '-1') {
-	if ($search_sale == -2) {
-		$sql .= " AND NOT EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc)";
-	} elseif ($search_sale > 0) {
-		$sql .= " AND EXISTS (SELECT sc.fk_soc FROM ".$db->prefix()."societe_commerciaux as sc WHERE sc.fk_soc = t.fk_soc AND sc.fk_user = ".((int) $search_sale).")";
-	}
-}
-// Search on socid
-if ($socid) {
-	$sql .= " AND t.fk_soc = ".((int) $socid);
-}
-*/
-//$sql.= dolSqlDateFilter("t.field", $search_xxxday, $search_xxxmonth, $search_xxxyear);
 // Add where from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters = array();
 $reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 $sql .= $hookmanager->resPrint;
-
-/* If a group by is required
-$sql .= " GROUP BY ";
-foreach($object->fields as $key => $val) {
-	$sql .= "t.".$db->sanitize($key).", ";
-}
-// Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? "ef.".$key.', ' : '');
-	}
-}
-// Add groupby from hooks
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= $hookmanager->resPrint;
-$sql = preg_replace('/,\s*$/', '', $sql);
-*/
-
-// Add HAVING from hooks
-/*
-$parameters = array();
-$reshook = $hookmanager->executeHooks('printFieldListHaving', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-$sql .= empty($hookmanager->resPrint) ? "" : " HAVING 1=1 ".$hookmanager->resPrint;
-*/
 
 // Count total nb of records
 $nbtotalofrecords = '';
@@ -404,20 +359,12 @@ if (!$resql) {
 $num = $db->num_rows($resql);
 
 
-// Direct jump if only one record found
-/*
-if ($num == 1 && getDolGlobalInt('MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE') && $search_all && !$page) {
-	$obj = $db->fetch_object($resql);
-	$id = $obj->rowid;
-	header("Location: ".dol_buildpath('/aaa/categorie_card.php', 1).'?id='.((int) $id));
-	exit;
-}
-*/
-
 // Output page
 // --------------------------------------------------------------------
 
-if (empty($mode) || $mode == 'hierarchy') {
+if ($mode == 'hierarchy') {
+	// Mode tree
+
 	$param = ($nosearch ? '&nosearch=1' : '');
 	if ($type != '') {
 		$param .= '&type='.urlencode($type);
@@ -447,9 +394,7 @@ if (empty($mode) || $mode == 'hierarchy') {
 		$counter = '';
 		if (getDolGlobalString('CATEGORY_SHOW_COUNTS')) {
 			// we need only a count of the elements, so it is enough to consume only the id's from the database
-			$elements = ($type == Categorie::TYPE_ACCOUNT)
-				? $object->getObjectsInCateg("account", 1)			// Categorie::TYPE_ACCOUNT is "bank_account" instead of "account"
-				: $object->getObjectsInCateg($type, 1);
+			$elements = $object->getObjectsInCateg($type, 1);
 
 			$counter = "<td class='left' width='40px;'>".(is_array($elements) ? count($elements) : '0')."</td>";
 		}
@@ -460,28 +405,37 @@ if (empty($mode) || $mode == 'hierarchy') {
 		$entry = '<table class="nobordernopadding centpercent">';
 		$entry .= '<tr>';
 
+		// Force tools on right
+		$conf->main_checkbox_left_column = 0;
+
 		$entry .= '<td>';
 		$entry .= '<span class="noborderoncategories" '.$color.'>'.$li.'</span>';
+		if (!empty($conf->main_checkbox_left_column)) {
+			if ($user->hasRight('categorie', 'creer')) {
+				$entry .= ' &nbsp; <a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+			}
+			if ($user->hasRight('categorie', 'supprimer')) {
+				$entry .= ' &nbsp; <a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
+			}
+		}
 		$entry .= '</td>';
 
 		// Add column counter
 		$entry .= $counter;
 
-		/*
-		$entry .= '<td class="right" width="30px;">';
-		$entry .= '<a href="'.DOL_URL_ROOT.'/categories/viewcat.php?id='.$val['id'].$param.'&backtolist='.urlencode($_SERVER["PHP_SELF"].'?type='.urlencode($type)).'">'.img_view().'</a>';
-		$entry .= '</td>';
-		*/
-		$entry .= '<td class="right" width="30px;">';
-		if ($user->hasRight('categorie', 'creer')) {
-			$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+		if (empty($conf->main_checkbox_left_column)) {
+			$entry .= '<td class="right" width="30px;">';
+			if ($user->hasRight('categorie', 'creer')) {
+				$entry .= '<a class="editfielda" href="' . DOL_URL_ROOT . '/categories/edit.php?id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?type=' . urlencode($type)) . '">' . img_edit() . '</a>';
+			}
+			$entry .= '</td>';
+
+			$entry .= '<td class="center" width="30px;">';
+			if ($user->hasRight('categorie', 'supprimer')) {
+				$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
+			}
+			$entry .= '</td>';
 		}
-		$entry .= '</td>';
-		$entry .= '<td class="right" width="30px;">';
-		if ($user->hasRight('categorie', 'supprimer')) {
-			$entry .= '<a class="deletefilelink" href="' . DOL_URL_ROOT . '/categories/viewcat.php?action=delete&token=' . newToken() . '&id=' . $val['id'] . $param . '&backtopage=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '&backtolist=' . urlencode($_SERVER["PHP_SELF"] . '?' . $param) . '">' . img_delete() . '</a>';
-		}
-		$entry .= '</td>';
 
 		$entry .= '</tr>';
 		$entry .= '</table>';
@@ -509,7 +463,9 @@ if (empty($mode) || $mode == 'hierarchy') {
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1);
+	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+
+	print_barre_liste($title, 0, $_SERVER["PHP_SELF"], $param, '', '', '', 0, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', 0, 0, 0, 1, $morehtmlrightbeforebutton);
 
 
 	print '<div class="fichecenter">';
@@ -533,7 +489,7 @@ if (empty($mode) || $mode == 'hierarchy') {
 		print '<tr class="oddeven">';
 		print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 		print '<td class="valignmiddle">';
-		print $langs->trans("NoCategoryYet");
+		print '<span class="opacitymedium">'.$langs->trans("NoCategoryYet").'</span>';
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '</table></td>';
@@ -544,29 +500,14 @@ if (empty($mode) || $mode == 'hierarchy') {
 
 	print '</div>';
 } else {
-	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
+	// Mode list
 
-	// Example : Adding jquery code
-	// print '<script type="text/javascript">
-	// jQuery(document).ready(function() {
-	// 	function init_myfunc()
-	// 	{
-	// 		jQuery("#myid").removeAttr(\'disabled\');
-	// 		jQuery("#myid").attr(\'disabled\',\'disabled\');
-	// 	}
-	// 	init_myfunc();
-	// 	jQuery("#mybutton").click(function() {
-	// 		init_myfunc();
-	// 	});
-	// });
-	// </script>';
+	llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-aaa page-list bodyforlist');	// Can use also classforhorizontalscrolloftabs instead of bodyforlist for a horizontal scroll in the table instead of page
 
 	$arrayofselected = is_array($toselect) ? $toselect : array();
 
 	$param = '';
-	if (!empty($mode)) {
-		$param .= '&mode='.urlencode($mode);
-	}
+	$param .= '&mode='.urlencode($mode);
 	if (!empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) {
 		$param .= '&contextpage='.urlencode($contextpage);
 	}
@@ -636,13 +577,16 @@ if (empty($mode) || $mode == 'hierarchy') {
 
 
 	$newcardbutton = '';
-	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ((empty($mode) || $mode == 'common') ? 2 : 1), array('morecss' => 'reposition'));
+	$newcardbutton .= dolGetButtonTitle($langs->trans('ViewList'), '', 'fa fa-bars imgforviewmode', $_SERVER["PHP_SELF"].'?mode=common'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'common' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitle($langs->trans('HierarchicView'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', (($mode == 'hierarchy') ? 2 : 1), array('morecss' => 'reposition'));
+
 	//$newcardbutton .= dolGetButtonTitle($langs->trans('ViewKanban'), '', 'fa fa-th-list imgforviewmode', $_SERVER["PHP_SELF"].'?mode=kanban'.preg_replace('/(&|\?)*mode=[^&]+/', '', $param), '', ($mode == 'kanban' ? 2 : 1), array('morecss' => 'reposition'));
 	$newcardbutton .= dolGetButtonTitleSeparator();
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewCategory'), '', 'fa fa-plus-circle', DOL_URL_ROOT.'/categories/card.php?action=create&type='.$type.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?type='.$type.$param).$param, '', $permissiontoadd);
 
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1);
+	$morehtmlrightbeforebutton = '<a class="small paddingright marginrightonly" href="'.DOL_URL_ROOT.'/categories/index.php">'.$langs->trans("BackToCategoryTypes").'</a> &nbsp; ';
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, $object->picto, 0, $newcardbutton, '', $limit, 0, 0, 1, $morehtmlrightbeforebutton);
 
 	// Add code for pre mass action (confirmation or email presend form)
 	$topicmail = "SendCategorieRef";
@@ -793,10 +737,6 @@ if (empty($mode) || $mode == 'hierarchy') {
 	$parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder, 'totalarray' => &$totalarray);
 	$reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	/*if (!empty($arrayfields['anotherfield']['checked'])) {
-		print '<th class="liste_titre right">'.$langs->trans("AnotherField").'</th>';
-		$totalarray['nbfield']++;
-	}*/
 	// Action column
 	if (!$conf->main_checkbox_left_column) {
 		print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
@@ -830,20 +770,6 @@ if (empty($mode) || $mode == 'hierarchy') {
 
 		// Store properties in $object
 		$object->setVarsFromFetchObj($obj);
-
-		/*
-		$object->thirdparty = null;
-		if ($obj->fk_soc > 0) {
-			if (!empty($conf->cache['thirdparty'][$obj->fk_soc])) {
-				$companyobj = $conf->cache['thirdparty'][$obj->fk_soc];
-			} else {
-				$companyobj = new Societe($db);
-				$companyobj->fetch($obj->fk_soc);
-				$conf->cache['thirdparty'][$obj->fk_soc] = $companyobj;
-			}
-
-			$object->thirdparty = $companyobj;
-		}*/
 
 		if ($mode == 'kanban') {
 			if ($i == 0) {
@@ -902,7 +828,6 @@ if (empty($mode) || $mode == 'hierarchy') {
 				if (in_array($val['type'], array('double(24,8)', 'double(6,3)', 'integer', 'real', 'price')) && !in_array($key, array('id', 'rowid', 'ref', 'status')) && empty($val['arrayofkeyval'])) {
 					$cssforfield .= ($cssforfield ? ' ' : '').'right';
 				}
-				//if (in_array($key, array('fk_soc', 'fk_user', 'fk_warehouse'))) $cssforfield = 'tdoverflowmax100';
 
 				if (!empty($arrayfields['t.'.$key]['checked'])) {
 					print '<td'.($cssforfield ? ' class="'.$cssforfield.((preg_match('/tdoverflow/', $cssforfield) && !in_array($val['type'], array('ip', 'url')) && !is_numeric($object->$key)) ? ' classfortooltip' : '').'"' : '');

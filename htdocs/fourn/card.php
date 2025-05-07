@@ -49,14 +49,7 @@ if (isModEnabled('accounting')) {
  */
 
 // Load translation files required by page
-$langs->loadLangs(array(
-	'companies',
-	'suppliers',
-	'products',
-	'bills',
-	'orders',
-	'commercial',
-));
+$langs->loadLangs(array('accountancy', 'companies', 'suppliers', 'products', 'bills', 'orders', 'commercial'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');

@@ -45,21 +45,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("accountancy", "agenda", "banks", "bills", "categories", "contracts", "interventions"));
-$langs->loadLangs(array("knowledgemanagement", "members", "orders", "products", "stocks", "suppliers", "tickets"));
+$langs->loadLangs(array("knowledgemanagement", "members", "orders", "products", "stocks", "suppliers", "tickets", "website"));
 
 $mode = GETPOST('mode', 'aZ09');
 if (empty($mode)) {
 	$mode = 'hierarchy';
 }
-$id = GETPOSTINT('id');
-$type = (GETPOST('type', 'aZ09') ? GETPOST('type', 'aZ09') : Categorie::TYPE_PRODUCT);
-$catname = GETPOST('catname', 'alpha');
-$nosearch = GETPOSTINT('nosearch');
 
 $categstatic = new Categorie($db);
-if (is_numeric($type)) {
-	$type = array_search($type, $categstatic->MAP_ID);	// For backward compatibility
-}
 
 // Initialize a technical object to manage hooks. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('categoryindex'));
@@ -75,48 +68,89 @@ if (!$permissiontoread) {
 	accessforbidden();
 }
 
-$nbtotalofrecords = 99;
-
 
 /*
  * View
  */
 
 $title = $langs->trans("Categories");
-$title .= ' ('.$langs->trans(empty(Categorie::$MAP_TYPE_TITLE_AREA[$type]) ? ucfirst($type) : Categorie::$MAP_TYPE_TITLE_AREA[$type]).')';
-
-
-// Output page
-// --------------------------------------------------------------------
 
 llxHeader('', $title, '', '', 0, 0, '', '');
 
+// Get list of category type
+$arrayofcateg = array();
+foreach ($categstatic->MAP_ID as $key => $idtype) {
+	$arrayofcateg[$idtype] = array();
+	$arrayofcateg[$idtype]['key'] = $key;
+	$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
+	$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
+}
+$arrayofcateg = dol_sort_array($arrayofcateg, 'labelwithoutaccent', 'asc', 1, 0, 1);
 
-print '<div class="fichecenter">';
+// Get number of tags per category type
+$sql = "SELECT type as idtype, COUNT(rowid) as nb FROM ".MAIN_DB_PREFIX."categorie GROUP BY type";
+$resql = $db->query($sql);
+if ($resql) {
+	while ($obj = $db->fetch_object($resql)) {
+		$arrayofcateg[$obj->idtype]['nb'] = $obj->nb;
+	}
+} else {
+	dol_print_error($db);
+}
+
+print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', '', '', '', -1, 0, $categstatic->picto, 0, '', '', -1, 0, 1, 1);
+
+print '<span class="opacitymedium">';
+print $langs->trans("CategorieListOfType").'...<br>';
+print '</span>';
+
+print '<br>';
+
+print '<div class="aaa">';
 
 print '<table class="liste nohover centpercent noborder">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Categories").'</td><td></td><td class="right">';
-if ($morethan1level && !empty($conf->use_javascript_ajax)) {
-	print '<div id="iddivjstreecontrol">';
-	print '<a class="notasortlink" href="#">'.img_picto('', 'folder', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("UndoExpandAll").'</span></a>';
-	print ' | ';
-	print '<a class="notasortlink" href="#">'.img_picto('', 'folder-open', 'class="paddingright"').'<span class="hideonsmartphone">'.$langs->trans("ExpandAll").'</span></a>';
-	print '</div>';
-}
-print '</td></tr>';
 
-if ($nbofentries > 0) {
-	print '<tr class="oddeven nohover"><td colspan="3">';
-	tree_recur($data, $data[0], 0);
-	print '</td></tr>';
-} else {
+print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td>';
+print '<td class="center">'.$langs->trans("NumberOfCategories").'</td>';
+print '<td></td>';
+print '</tr>';
+
+
+foreach ($arrayofcateg as $idtype => $val) {
+	$key = $val['key'];
+	$tmparray = getElementProperties($key);
+
+	$classname = $tmparray['classname'];
+	$classpath = $tmparray['classpath'];
+	$classfile = $tmparray['classfile'];
+	$module = $tmparray['module'];
+	$fullpath = DOL_DOCUMENT_ROOT.'/'.$classpath.'/'.$classfile.'.class.php';
+
+	if (!isModEnabled($module)) {
+		continue;
+	}
+
 	print '<tr class="oddeven">';
-	print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
-	print '<td class="valignmiddle">';
-	print $langs->trans("NoCategoryYet");
+	print '<td>';
+
+	$tmpobject = null;
+	include_once $fullpath;
+	if (class_exists($classname)) {
+		$tmpobject = new $classname($db);
+	}
+	//print "key=".$key." fullpath=".$fullpath." classname=".$classname." classpath=".$classpath." classfile=".$classfile;
+
+	if ($tmpobject) {
+		print img_picto('', $tmpobject->picto, 'class="pictofixedwidth"');
+	} else {
+		print img_picto('', 'generic', 'class="pictofixedwidth"');
+	}
+	print dolPrintHTML($arrayofcateg[$idtype]['label']);
 	print '</td>';
-	print '<td>&nbsp;</td>';
-	print '</table></td>';
+	print '<td class="center">';
+	print $arrayofcateg[$idtype]['nb'];
+	print '</td>';
+	print '<td class="center"><a class="editfielda" href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';
 }
 

@@ -5372,7 +5372,8 @@ img.boxhandle, img.boxclose {
 .star-selection {
 	font-size: 1rem;
 	cursor: pointer;
-	display: flex;
+	display: inline-block;
+	white-space: nowrap;
 }
 .star {
 	color: #ccc;
@@ -7981,11 +7982,11 @@ border-top-right-radius: 6px;
 	border: 1px solid #888;
 }
 .publicnewmemberform div.tabBarWithBottom {
-	border: 1px solid #e8e8e8;
+	border: 2px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: #f8f8f8;
-	/*box-shadow: 2px 2px 10px #ddd;*/
+	/* background-color: #f8f8f8; */
+	box-shadow: 2px 2px 10px #ddd;
 }
 
 .publicnewmemberform #tablesubscribe {
@@ -8340,6 +8341,32 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 	font-weight: 400;
 	writing-mode: vertical-rl;
 	white-space: nowrap;
+}
+
+
+/* ============================================================================== */
+/* For dolUIBlock() feature                                                       */
+/* ============================================================================== */
+
+#dol-block-ui {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#dol-block-ui .message {
+	padding: 15px 20px 15px 50px;
+	color: #fff;
+	background: #000 no-repeat 10px center;
+	border-radius: 10px;
+	font-family: sans-serif;
 }
 
 

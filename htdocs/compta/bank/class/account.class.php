@@ -730,16 +730,19 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (empty($this->country_id)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (empty($this->ref)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (empty($this->date_solde)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateInitialBalance"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -748,6 +751,7 @@ class Account extends CommonObject
 		// Load libraries to check BAN
 		$balance = $this->balance;
 		if (empty($balance) && !empty($this->solde)) {
+			dol_syslog(get_class($this)."::create solde is deprecated use balance", LOG_NOTICE);
 			$balance = $this->solde;
 		}
 		if (empty($balance)) {
@@ -851,8 +855,7 @@ class Account extends CommonObject
 
 				if ($accline->insert() < 0) {
 					$error++;
-					$this->error = $accline->error;
-					$this->errors = $accline->errors;
+					$this->setErrorsFromObject($accline);
 				}
 
 				if (!$error) {

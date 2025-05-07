@@ -1867,7 +1867,7 @@ function dol_sanitizeKeyCode($str)
 /**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
- *	@param	string	$str			String to clean
+ *	@param	string	$str			String to clean. Must be an ascii or utf8 string without any htmlentities.
  *	@return string   	       		Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_nospecial()
@@ -10451,19 +10451,11 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	if ($out) {
 		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			$return = '<script nonce="'.getNonce().'">
-					$(document).ready(function() {
-						var block = '.(getDolGlobalString('MAIN_USE_JQUERY_BLOCKUI') ? "true" : "false").'
-						if (block) {
-							$.dolEventValid("","'.dol_escape_js($out).'");
-						} else {
-							/* jnotify(message, preset of message type, keepmessage) */
-							$.jnotify("'.dol_escape_js($out).'",
-							"'.($style == "ok" ? 3000 : $style).'",
-							'.($style == "ok" ? "false" : "true").',
-							{ remove: function (){} } );
-						}
-					});
-				</script>';
+				$(document).ready(function() {
+					/* jnotify(message, preset of message type, keepmessage) */
+					$.jnotify("'.dol_escape_js($out).'", "'.($style == "ok" ? 3000 : $style).'", '.($style == "ok" ? "false" : "true").',{ remove: function (){} } );
+				});
+			</script>';
 		} else {
 			$return = $out;
 		}
@@ -11098,7 +11090,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 
-	// Old variables used
+	// Old variables used (deprecated)
 	global $object;
 	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
@@ -11192,8 +11184,8 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 			}
 
 			// TODO
-			// We can exclude $ char that are not:
-			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
+			// We can exclude $ char that are not in dol_eval global, so that are not:
+			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object, $obj, ...,
 		}
 		if (is_array($s) || $s === 'Array') {
 			if ($returnvalue) {
@@ -11203,11 +11195,11 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 				return '';
 			}
 		}
-		if (strpos($s, '::') !== false) {
+		if (!getDolGlobalString('MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL') && strpos($s, '::') !== false) {
 			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
+				return 'Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s, LOG_WARNING);
+				dol_syslog('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL): '.$s, LOG_WARNING);
 				return '';
 			}
 		}
@@ -13693,6 +13685,11 @@ function getElementProperties($elementType)
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+	} elseif ($elementType == 'bank_line') {
+		$classpath = 'compta/bank/class';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$classfile = 'account';
+		$classname = 'AccountLine';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -13712,7 +13709,7 @@ function getElementProperties($elementType)
 		$classpath = 'product/inventory/class';
 		$table_element = 'inventorydet';
 		$parent_element = 'inventory';
-	} elseif ($elementType == 'stock' || $elementType == 'entrepot') {
+	} elseif ($elementType == 'stock' || $elementType == 'entrepot' || $elementType == 'warehouse') {
 		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -13866,7 +13863,7 @@ function getElementProperties($elementType)
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
+	} elseif ($elementType == 'order_supplier' || $elementType == 'supplier_order' ||$elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -13883,7 +13880,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -13925,7 +13922,7 @@ function getElementProperties($elementType)
 		$classfile = 'societeaccount';
 		$classname = 'SocieteAccount';
 		$module = 'societe';
-	} elseif ($elementType == 'websitepage') {
+	} elseif ($elementType == 'websitepage' || $elementType == 'website_page') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
@@ -13976,14 +13973,29 @@ function getElementProperties($elementType)
 		$classname = 'Ecmfiles';
 		$table_element = 'ecmfiles';
 		$subelement = '';
-	} elseif ($elementType == 'knowledgerecord') {
+	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
 		$module = '';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
+	} elseif ($elementType == 'customer') {
+		$module = 'thirdparty';
+		$classpath = 'societe/class';
+		$classfile = 'client';
+		$classname = 'Client';
+		$table_element = 'societe';
+		$subelement = '';
+	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
+		$module = 'thirdparty';
+		$classpath = 'fourn/class';
+		$classfile = 'fournisseur';
+		$classname = 'Fournisseur';
+		$table_element = 'societe';
+		$subelement = '';
 	}
+
 
 	if (empty($classfile)) {
 		$classfile = strtolower($subelement);
@@ -15424,7 +15436,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 			// Title
 			$out .= ' <div class="messaging-title inline-block">';
-			//$out .= $actionstatic->getTypePicto();
+			//$out .= $actionstatic->getTypePicto();	// The type of event is already into the timeline on left.
 			if (empty($conf->dol_optimize_smallscreen) && $actionstatic->type_code != 'AC_OTH_AUTO') {
 				$out .= $labeltype.' - ';
 			}
@@ -15440,7 +15452,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 					$libelle = $histo[$key]['note'];
 					$actionstatic->id = $histo[$key]['id'];
-					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					if ($libelle != $labeltype) {
+						$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					}
 				} elseif ($histo[$key]['type'] == 'mailing') {
 					$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
@@ -15451,6 +15465,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
 				}
 			}
+			$out = preg_replace('/ - $/', '', $out);	// Remove ending ' - '
 
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']]) && isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
@@ -15725,6 +15740,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
+		if (is_object($db)) {
+			$db->close();
+		}
 	}
 	exit(0);
 }

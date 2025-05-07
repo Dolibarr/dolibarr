@@ -71,7 +71,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> 	Table of mapping between type string and type ID used for field 'type' in table llx_categories
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
@@ -186,13 +186,14 @@ class Categorie extends CommonObject
 		'user'					=> 'Users',
 		'account'				=> 'Accounts', // old for bank account
 		'bank_account'			=> 'BankAccounts',
+		'bank_line'				=> 'BankTransactions',
 		'project'				=> 'Projects',
 		'warehouse'				=> 'Warehouse',
 		'actioncomm'			=> 'AgendaEvents',
 		'website_page'			=> 'WebsitePages',
 		'ticket'				=> 'Tickets',
 		'knowledgemanagement'	=> 'KnowledgeRecords',
-		'fichinter'				=> 'Fichinters',
+		'fichinter'				=> 'Interventions',
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
@@ -749,7 +750,7 @@ class Categorie extends CommonObject
 			'categorie_contact' => 'fk_categorie',
 			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
-			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('intervention')),
+			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => false ),  // not yet fully implemented (wait 22) isModEnabled('intervention')),
 			'categorie_member' => 'fk_categorie',
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',

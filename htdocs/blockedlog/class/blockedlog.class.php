@@ -3,7 +3,7 @@
  * Copyright (C) 2017-2020  Laurent Destailleur <eldy@destailleur.fr>
  * Copyright (C) 2022 		charlene benke		<charlene@patas-monkey.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -833,8 +833,8 @@ class BlockedLog
 
 				return 1;
 			} else {
-				$langs->load("blockedlog");
-				$this->error = $langs->trans("RecordNotFound");
+				$langs->load("errors");
+				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
 		} else {

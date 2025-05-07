@@ -154,6 +154,10 @@ class Invoices extends DolibarrApi
 			if (is_array($tmparray)) {
 				$this->invoice->contacts_ids = $tmparray;
 			}
+			$tmparray = $this->invoice->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->invoice->contacts_ids = $tmparray;
+			}
 		}
 
 		$this->invoice->fetchObjectLinked();
@@ -964,10 +968,6 @@ class Invoices extends DolibarrApi
 		$result = $this->invoice->fetch($id);
 		if (!$result) {
 			throw new RestException(404, 'Invoice not found');
-		}
-
-		if (!DolibarrApi::_checkAccessToResource('facture', $this->invoice->id)) {
-			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
 		return $this->_cleanObjectDatas($this->invoice);
