@@ -1120,13 +1120,15 @@ class Thirdparties extends DolibarrApi
 
 
 	/**
-	 * Return list of invoices qualified to be replaced by another invoice.
+	 * Return invoices qualified to be replaced by another invoice
 	 *
-	 * @param int   $id             Id of thirdparty
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     GET {id}/getinvoicesqualifiedforreplacement
+	 * @param	int		$id		ID of a third party
 	 *
-	 * @return array
+	 * @url		GET		{id}/getinvoicesqualifiedforreplacement
+	 *
+	 * @return	array
 	 * @phan-return array<int,array{id:int,ref:string,status:int,paid:int,alreadypaid:int}>|int
 	 * @phpstan-return array<int,array{id:int,ref:string,status:int,paid:int,alreadypaid:int}>|int
 	 * @throws RestException 400
@@ -1163,15 +1165,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Return list of invoices qualified to be corrected by a credit note.
+	 * Return invoices qualified to be corrected by a credit note
+	 *
 	 * Invoices matching the following rules are returned
 	 * (validated + payment on process) or classified (paid completely or paid partially) + not already replaced + not already a credit note
 	 *
-	 * @param int   $id             Id of thirdparty
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     GET {id}/getinvoicesqualifiedforcreditnote
+	 * @param	int		$id		ID of a third party
 	 *
-	 * @return array
+	 * @url		GET		{id}/getinvoicesqualifiedforcreditnote
+	 *
+	 * @return	array
 	 * @phan-return array<int,array{ref:string,status:int,type:int,paye:int,paymentornot:int}>|int
 	 * @phpstan-return array<int,array{ref:string,status:int,type:int,paye:int,paymentornot:int}>|int
 	 *
@@ -1209,15 +1214,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get CompanyNotification objects for thirdparty
+	 * Get CompanyNotifications for a third party
 	 *
-	 * @param int $id ID of thirdparty
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @return array
+	 * @param	int		$id		ID of the third party
+	 *
+	 * @return	array
 	 * @phan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
 	 * @phpstan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
 	 *
-	 * @url GET {id}/notifications
+	 * @url		GET		{id}/notifications
+	 *
+	 * @throws RestException
 	 */
 	public function getCompanyNotification($id)
 	{
@@ -1280,16 +1289,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create CompanyNotification object for thirdparty
+	 * Create CompanyNotification for a third party
 	 *
-	 * @param int  $id ID of thirdparty
-	 * @param array $request_data Request data
+	 * @since	20.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party
+	 * @param	array	$request_data	Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 *
-	 * @return array|mixed  Notification of thirdparty
+	 * @return	array|mixed				Notification of the third party
 	 *
-	 * @url POST {id}/notifications
+	 * @url		POST	{id}/notifications
+	 *
+	 * @throws RestException
 	 */
 	public function createCompanyNotification($id, $request_data = null)
 	{
@@ -1337,18 +1350,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create CompanyNotification object for thirdparty using action trigger code
+	 * Create CompanyNotification for a third party using action trigger code
 	 *
-	 * @param int  $id ID of thirdparty
-	 * @param string  $code Action Trigger code
-	 * @param array $request_data Request data
+	 * @since	21.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party
+	 * @param	string	$code			Action Trigger code
+	 * @param	array	$request_data	Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 *
-	 * @return array|mixed  Notification of thirdparty
+	 * @return	array|mixed				Notification for the third party
 	 * @phan-return Notify
 	 *
-	 * @url POST {id}/notificationsbycode/{code}
+	 * @url		POST	{id}/notificationsbycode/{code}
+	 *
+	 * @throws RestException
 	 */
 	public function createCompanyNotificationByCode($id, $code, $request_data = null)
 	{
@@ -1407,14 +1424,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a CompanyNotification attached to a thirdparty
+	 * Delete a CompanyNotification attached to a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int $notification_id ID of CompanyNotification
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @return int -1 if error 1 if correct deletion
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$notification_id	ID of CompanyNotification
 	 *
-	 * @url DELETE {id}/notifications/{notification_id}
+	 * @return	int							-1 if error, 1 if correct deletion
+	 *
+	 * @url		DELETE	{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteCompanyNotification($id, $notification_id)
 	{
@@ -1436,17 +1457,21 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update CompanyNotification object for thirdparty
+	 * Update CompanyNotification for a third party
 	 *
-	 * @param int $id ID of thirdparty
-	 * @param int  $notification_id ID of CompanyNotification
-	 * @param array $request_data Request data
+	 * @since	20.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$notification_id	ID of CompanyNotification
+	 * @param	array	$request_data		Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
 	 *
-	 * @return array|mixed  Notification of thirdparty
+	 * @return	array|mixed					Notification for the third party
 	 *
-	 * @url PUT {id}/notifications/{notification_id}
+	 * @url		PUT		{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
 	 */
 	public function updateCompanyNotification($id, $notification_id, $request_data = null)
 	{
