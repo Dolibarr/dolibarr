@@ -432,7 +432,7 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete third party
+	 * Delete a third party
 	 *
 	 * @since	3.8.0	Initial implementation
 	 *
@@ -535,16 +535,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Add a customer representative to a thirdparty
+	 * Add a customer representative to a third party
 	 *
-	 * @param int		$id					Id of thirdparty
-	 * @param int       $representative_id	Id of representative
-	 * @return int							Return integer <=0 if KO, >0 if OK
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @url POST {id}/representative/{representative_id}
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$representative_id	ID of representative
+	 * @return	int							Return integer <=0 if KO, >0 if OK
+	 *
+	 * @url		POST	{id}/representative/{representative_id}
 	 *
 	 * @throws RestException 401 Access not allowed for your login
-	 * @throws RestException 404 User or Thirdparty not found
+	 * @throws RestException 404 User or Third party not found
 	 */
 	public function addRepresentative($id, $representative_id)
 	{
@@ -569,16 +571,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete a customer representative to a thirdparty
+	 * Remove the link between a customer representative and a third party
 	 *
-	 * @param int		$id					Id of thirdparty
-	 * @param int       $representative_id	Id of representative
-	 * @return int							Return integer <=0 if KO, >0 if OK
+	 * @since	20.0.0	Initial implementation
 	 *
-	 * @url DELETE {id}/representative/{representative_id}
+	 * @param	int		$id					ID of the third party
+	 * @param	int		$representative_id	ID of representative
+	 * @return	int							Return integer <=0 if KO, >0 if OK
+	 *
+	 * @url		DELETE	{id}/representative/{representative_id}
 	 *
 	 * @throws RestException 401 Access not allowed for your login
-	 * @throws RestException 404 User or Thirdparty not found
+	 * @throws RestException 404 User or Third party not found
 	 */
 	public function deleteRepresentative($id, $representative_id)
 	{
@@ -603,18 +607,22 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get customer categories for a thirdparty
+	 * Get customer categories for a third party
 	 *
-	 * @param int		$id         ID of thirdparty
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
-	 * @return array
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
+	 * @param	string	$sortfield	Sort field
+	 * @param	string	$sortorder	Sort order
+	 * @param	int		$limit		List limit
+	 * @param	int		$page		Page number
+	 * @return	array
 	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 *
-	 * @url GET {id}/categories
+	 * @url		GET		{id}/categories
+	 *
+	 * @throws RestException
 	 */
 	public function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
@@ -643,15 +651,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Add a customer category to a thirdparty
+	 * Add a customer category to a third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int       $category_id	Id of category
-	 * @return Object
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
+	 * @return	Object
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
-	 * @url PUT {id}/categories/{category_id}
+	 * @url		PUT		{id}/categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function addCategory($id, $category_id)
 	{
@@ -682,16 +694,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Remove the link between a customer category and the thirdparty
+	 * Remove the link between a customer category and the third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int		$category_id	Id of category
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return Object
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
+	 *
+	 * @return	Object
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
-	 * @url DELETE {id}/categories/{category_id}
+	 * @url		DELETE	{id}/categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteCategory($id, $category_id)
 	{
@@ -722,19 +738,23 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get supplier categories for a thirdparty
+	 * Get supplier categories for a third party
 	 *
-	 * @param int		$id         ID of thirdparty
-	 * @param string	$sortfield	Sort field
-	 * @param string	$sortorder	Sort order
-	 * @param int		$limit		Limit for list
-	 * @param int		$page		Page number
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
+	 * @param	string	$sortfield	Sort field
+	 * @param	string	$sortorder	Sort order
+	 * @param	int		$limit		List limit
+	 * @param	int		$page		Page number
 	 *
 	 * @return array
 	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 *
-	 * @url GET {id}/supplier_categories
+	 * @url		GET		{id}/supplier_categories
+	 *
+	 * @throws RestException
 	 */
 	public function getSupplierCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
 	{
