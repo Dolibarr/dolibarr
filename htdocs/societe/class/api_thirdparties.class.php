@@ -6,6 +6,7 @@
  * Copyright (C) 2023       Alexandre Janniaux  	<alexandre.janniaux@gmail.com>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
+ * Copyright (C) 2025		William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,8 @@ use Luracast\Restler\RestException;
 
 /**
  * API class for thirdparties
+ *
+ * @since	3.8.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -67,10 +70,12 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get properties of a thirdparty object
 	 *
+	 * @since	3.8.0	Initial implementation
+	 *
 	 * Return an array with thirdparty information
 	 *
-	 * @param	int		$id				Id of third party to load
-	 * @return  Object					Object with cleaned properties
+	 * @param	int		$id				ID of third party to load
+	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
@@ -84,12 +89,14 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty information
 	 *
-	 * @param string    $email  Email of third party to load
-	 * @return array|mixed Cleaned Societe object
+	 * @since	11.0.0		Initial implementation
+	 *
+	 * @param	string		$email		Email of third party to load
+	 * @return	array|mixed				Cleaned Societe object
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
-	 * @url     GET email/{email}
+	 * @url		GET			email/{email}
 	 *
 	 * @throws RestException
 	 */
@@ -103,10 +110,12 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Return an array with thirdparty information
 	 *
-	 * @param string    $barcode  Barcode of third party to load
-	 * @return array|mixed Cleaned Societe object
+	 * @since	13.0.0			Initial implementation
 	 *
-	 * @url     GET barcode/{barcode}
+	 * @param	string		$barcode	Barcode of third party to load
+	 * @return	array|mixed				Cleaned Societe object
+	 *
+	 * @url		GET			barcode/{barcode}
 	 *
 	 * @throws RestException
 	 */
@@ -120,21 +129,22 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * Get a list of thirdparties
 	 *
-	 * @param   string  $sortfield  Sort field
-	 * @param   string  $sortorder  Sort order
-	 * @param   int     $limit      Limit for list
-	 * @param   int     $page       Page number
-	 * @param   int     $mode       Set to 1 to show only customers
-	 *                              Set to 2 to show only prospects
-	 *                              Set to 3 to show only those are not customer neither prospect
-	 *								Set to 4 to show only suppliers
-	 * @param	int		$category   Use this param to filter list by category
-	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
-	 * @param   string  $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param bool $pagination_data If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array               Array of thirdparty objects
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	string	$sortfield		S	ort field
+	 * @param	string	$sortorder			Sort order
+	 * @param	int		$limit				List limit
+	 * @param	int		$page				Page number
+	 * @param	int		$mode				Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers {@choice 1,2,3,4}
+	 * @param	int		$category			Use this param to filter the list by category
+	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
+	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array						Array of thirdparty objects
 	 * @phan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 * @phpstan-return Societe[]|array{data:Societe[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode = 0, $category = 0, $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -263,12 +273,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Create thirdparty object
+	 * Create a third party
 	 *
-	 * @param array $request_data   Request data
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	array	$request_data	Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return int  ID of thirdparty
+	 * @return	int		ID of third party
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -301,11 +315,13 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Update thirdparty
 	 *
-	 * @param 	int   			$id             Id of thirdparty to update
-	 * @param 	array 			$request_data   Data
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int				$id				ID of thirdparty to update
+	 * @param	array 			$request_data	Data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return 	Object							Updated object
+	 * @return	Object							Updated object
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
@@ -358,20 +374,24 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Merge a third party into another one.
+	 * Merge a third party into another one
 	 *
-	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a thirdparty into a target third party,
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a third party into a target third party,
 	 * then delete the merged third party.
-	 * If a property has a defined value both in third party to delete and third party to keep, the value into the third party to
-	 * delete will be ignored, the value of target thirdparty will remain, except for notes (content is concatenated).
+	 * If a property has a defined value both in the third party to delete and the third party to keep, the value of the third party to
+	 * delete will be ignored, the value of the target third party will remain, except for notes (content is concatenated).
 	 *
-	 * @param int   $id             ID of thirdparty to keep (the target third party)
-	 * @param int   $idtodelete     ID of thirdparty to remove (the thirdparty to delete), once data has been merged into the target third party.
-	 * @return Object				Return the resulted third party.
+	 * @param	int		$id				ID of the third party to keep (the target third party)
+	 * @param	int		$idtodelete		ID of the third party to remove (the third party to delete), once data has been merged into the target third party.
+	 * @return	Object					Return the resulted third party.
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
-	 * @url PUT {id}/merge/{idtodelete}
+	 * @url		PUT		{id}/merge/{idtodelete}
+	 *
+	 * @throws RestException
 	 */
 	public function merge($id, $idtodelete)
 	{
@@ -412,12 +432,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Delete thirdparty
+	 * Delete third party
 	 *
-	 * @param int $id   Thirdparty ID
-	 * @return array
+	 * @since	3.8.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of the third party
+	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -449,17 +473,19 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Set new price level for the given thirdparty
+	 * Set a new price level for the given third party
+	 *
+	 * @since	13.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of thirdparty
 	 * @param	int		$priceLevel		Price level to apply to thirdparty
 	 * @return	Object					Thirdparty data without useless information
 	 *
-	 * @url PUT {id}/setpricelevel/{priceLevel}
+	 * @url		PUT		{id}/setpricelevel/{priceLevel}
 	 *
 	 * @throws RestException 400 Price level out of bounds
 	 * @throws RestException 401 Access not allowed for your login
-	 * @throws RestException 404 Thirdparty not found
+	 * @throws RestException 404 Third party not found
 	 * @throws RestException 500 Error fetching/setting price level
 	 * @throws RestException 501 Request needs modules "Thirdparties" and "Products" and setting Multiprices activated
 	 */

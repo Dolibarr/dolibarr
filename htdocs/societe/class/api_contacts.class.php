@@ -26,6 +26,8 @@ use Luracast\Restler\RestException;
 /**
  * API class for contacts
  *
+ * @since	3.8.0	Initial implementation
+ *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
