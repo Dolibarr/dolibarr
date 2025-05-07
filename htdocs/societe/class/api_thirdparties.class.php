@@ -872,14 +872,16 @@ class Thirdparties extends DolibarrApi
 
 
 	/**
-	 * Get outstanding proposals of thirdparty
+	 * Get outstanding proposals for a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	string	$mode		'customer' or 'supplier'
 	 *
-	 * @url     GET {id}/outstandingproposals
+	 * @url		GET		{id}/outstandingproposals
 	 *
-	 * @return array				List of outstandings proposals of thirdparty
+	 * @return	array				List of outstandings proposals of thirdparty
 	 * @phan-return array{opened?:float}
 	 * @phpstan-return array{opened?:float}
 	 *
@@ -916,14 +918,16 @@ class Thirdparties extends DolibarrApi
 
 
 	/**
-	 * Get outstanding orders of thirdparty
+	 * Get outstanding orders for a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	string	$mode		'customer' or 'supplier'
 	 *
-	 * @url     GET {id}/outstandingorders
+	 * @url		GET		{id}/outstandingorders
 	 *
-	 * @return array				List of outstandings orders of thirdparty
+	 * @return	array				List of outstandings orders of the third party
 	 * @phan-return array{opened?:float}
 	 * @phpstan-return array{opened?:float}
 	 *
@@ -959,14 +963,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get outstanding invoices of thirdparty
+	 * Get outstanding invoices for a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	7.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	string	$mode		'customer' or 'supplier'
 	 *
-	 * @url     GET {id}/outstandinginvoices
+	 * @url		GET		{id}/outstandinginvoices
 	 *
-	 * @return array				List of outstanding invoices of third party
+	 * @return	array				List of outstanding invoices of the third party
 	 * @phan-return array{opened?:float}
 	 * @phpstan-return array{opened?:float}
 	 *
@@ -1002,14 +1008,16 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get representatives of thirdparty
+	 * Get representatives of a third party
 	 *
-	 * @param	int		$id			ID of the thirdparty
+	 * @since	11.0.0	Initial implementation
+	 *
+	 * @param	int		$id			ID of the third party
 	 * @param	int 	$mode		0=Array with properties, 1=Array of id.
 	 *
-	 * @url     GET {id}/representatives
+	 * @url		GET		{id}/representatives
 	 *
-	 * @return array				List of representatives of thirdparty
+	 * @return	array				List of representatives of the third party
 	 * @phan-return int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>
 	 * @phpstan-return int[]|array<array{id:int,lastname:string,firstname:string,email:string,phone:string,office_phone:string,office_fax:string,user_mobile:string,personal_mobile:string,job:string,statut:int,status:int,entity:int,login:string,photo:string,gender:string}>
 	 *
@@ -1042,16 +1050,18 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
+	 * Get fixed amount discount of a third party (all sources: deposit, credit note, commercial offers...)
 	 *
-	 * @param	int		$id             ID of the thirdparty
-	 * @param	string	$filter		Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
-	 * @param   string  $sortfield		Sort field
-	 * @param   string  $sortorder		Sort order
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @url     GET {id}/fixedamountdiscounts
+	 * @param	int		$id				ID of the third party
+	 * @param	string	$filter			Filter exceptional discount. "none" will return every discount, "available" returns unapplied discounts, "used" returns applied discounts   {@choice none,available,used}
+	 * @param	string	$sortfield		Sort field
+	 * @param	string	$sortorder		Sort order
 	 *
-	 * @return array  List of fixed discount of thirdparty
+	 * @url		GET		{id}/fixedamountdiscounts
+	 *
+	 * @return	array					List of fixed discount of the third party
 	 * @phan-return stdClass[]
 	 * @phpstan-return stdClass[]
 	 *
