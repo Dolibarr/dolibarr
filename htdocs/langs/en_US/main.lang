@@ -1126,6 +1126,7 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Assigned to
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft mass delete confirmation
+Shared=Shared
 FileSharedViaALink=Public file shared via link
 LinkSharedViaALink=Public link shared via link
 SelectAThirdPartyFirst=Select a third party first...
