@@ -6703,7 +6703,7 @@ abstract class CommonObject
 
 		$error = 0;
 
-    // Check parameters
+		// Check parameters
 		$langs->load('admin');
 		$extrafields = new ExtraFields($this->db);
 		$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
