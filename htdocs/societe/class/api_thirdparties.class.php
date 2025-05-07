@@ -106,13 +106,13 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get a third party object by barcode.
+	 * Get a third party by barcode.
 	 *
 	 * Return an array with third party information
 	 *
 	 * @since	13.0.0			Initial implementation
 	 *
-	 * @param	string		$barcode	Barcode of third party to load
+	 * @param	string		$barcode	Barcode of the third party
 	 * @return	array|mixed				Cleaned Societe object
 	 *
 	 * @url		GET			barcode/{barcode}
