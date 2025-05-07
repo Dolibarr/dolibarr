@@ -68,13 +68,13 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a thirdparty object
+	 * Get a third party
+	 *
+	 * Return the third party object
 	 *
 	 * @since	3.8.0	Initial implementation
 	 *
-	 * Return an array with thirdparty information
-	 *
-	 * @param	int		$id				ID of third party to load
+	 * @param	int		$id				ID of the third party to load
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @throws	RestException
@@ -85,13 +85,13 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a thirdparty object by email.
+	 * Get properties of a third party by email.
 	 *
-	 * Return an array with thirdparty information
+	 * Return an array with third party information
 	 *
 	 * @since	11.0.0		Initial implementation
 	 *
-	 * @param	string		$email		Email of third party to load
+	 * @param	string		$email		Email of the third party to load
 	 * @return	array|mixed				Cleaned Societe object
 	 * @phan-return Societe
 	 * @phpstan-return Societe
@@ -106,9 +106,9 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of a thirdparty object by barcode.
+	 * Get a third party object by barcode.
 	 *
-	 * Return an array with thirdparty information
+	 * Return an array with third party information
 	 *
 	 * @since	13.0.0			Initial implementation
 	 *
@@ -125,9 +125,9 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * List thirdparties
+	 * List third parties
 	 *
-	 * Get a list of thirdparties
+	 * Get a list of third parties
 	 *
 	 * @since	3.8.0	Initial implementation
 	 *
@@ -313,7 +313,7 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Update thirdparty
+	 * Update third party
 	 *
 	 * @since	3.8.0	Initial implementation
 	 *
@@ -374,14 +374,14 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Merge a third party into another one
-	 *
-	 * @since	7.0.0	Initial implementation
+	 * Merge a third party into another third party
 	 *
 	 * Merge content (properties, notes) and objects (like invoices, events, orders, proposals, ...) of a third party into a target third party,
 	 * then delete the merged third party.
 	 * If a property has a defined value both in the third party to delete and the third party to keep, the value of the third party to
 	 * delete will be ignored, the value of the target third party will remain, except for notes (content is concatenated).
+	 *
+	 * @since	7.0.0	Initial implementation
 	 *
 	 * @param	int		$id				ID of the third party to keep (the target third party)
 	 * @param	int		$idtodelete		ID of the third party to remove (the third party to delete), once data has been merged into the target third party.
