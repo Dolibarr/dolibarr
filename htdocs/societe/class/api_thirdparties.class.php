@@ -748,7 +748,7 @@ class Thirdparties extends DolibarrApi
 	 * @param	int		$limit		List limit
 	 * @param	int		$page		Page number
 	 *
-	 * @return array
+	 * @return	array
 	 * @phan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 * @phpstan-return array<int,array{id:int,fk_parent:int,label:string,description:string,color:string,position:int,socid:int,type:string,entity:int,array_options:array<string,mixed>,visible:int,ref_ext:string,multilangs?:array<string,array{label:string,description:string,note?:string}>}>
 	 *
@@ -783,16 +783,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Add a supplier category to a thirdparty
+	 * Add a supplier category to a third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int       $category_id	Id of category
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
+	 *
+	 * @return	mixed
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
-	 * @url PUT {id}/supplier_categories/{category_id}
+	 * @url		PUT		{id}/supplier_categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function addSupplierCategory($id, $category_id)
 	{
@@ -823,16 +827,20 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * Remove the link between a category and the thirdparty
+	 * Remove the link between a category and the third party
 	 *
-	 * @param int		$id				Id of thirdparty
-	 * @param int		$category_id	Id of category
+	 * @since	7.0.0	Initial implementation
 	 *
-	 * @return mixed
+	 * @param	int		$id				ID of the third party
+	 * @param	int		$category_id	ID of category
+	 *
+	 * @return	mixed
 	 * @phan-return Societe
 	 * @phpstan-return Societe
 	 *
-	 * @url DELETE {id}/supplier_categories/{category_id}
+	 * @url		DELETE	{id}/supplier_categories/{category_id}
+	 *
+	 * @throws RestException
 	 */
 	public function deleteSupplierCategory($id, $category_id)
 	{
