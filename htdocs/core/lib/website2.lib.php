@@ -451,7 +451,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		}
 		$tplcontent .= "// END PHP ?>\n";
 
-		$tplcontent .= $objectpage->content; // We do not add the header and footer, we just add the content
+		$tplcontent .= $objectpage->content;
 	}
 
 	//var_dump($filetpl);exit;
