@@ -1643,7 +1643,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($object->duration_value > 0) {
 					print ' &nbsp; &nbsp; ';
 				}
-				print '<input type="checkbox" class="marginleftonly valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				print '<input type="checkbox" class="marginleftonly valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.(GETPOSTISSET('mandatoryperiod') ? ' checked="checked"' : '').'>';
 				print '<label for="mandatoryperiod">';
 				$htmltooltip = $langs->trans("mandatoryHelper");
 				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
