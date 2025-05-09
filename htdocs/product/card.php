@@ -1628,7 +1628,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
-				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print $formproduct->selectWorkstations((GETPOSTISSET('fk_default_workstation') ? GETPOSTINT('fk_default_workstation') : ''), 'fk_default_workstation', 1);
 				print '</td></tr>';
 			}
 
