@@ -445,3 +445,6 @@ SHOW_EVENT_PARTICIPATE_LINK=Show Event Participate Link
 ENABLE_DONATION_PAGE=Enable Donation Page
 TEMPLATE_MODULES_NOTICE=This template supports the following modules: <strong>Members</strong>, <strong>Events</strong>, <strong>webportal</strong>, and <strong>Donations</strong>. If any of these modules are not enabled, you can activate them to unlock additional configuration options.
 SetupAndProperties=Setup And Properties
+DISABLE_EVENTS_SECTION=Disable Events Section
+DONATION_COUNTERS_ARE_PUBLIC=The total amount of valid donations is publicly visible
+SHOW_EVENT_GOAL_RAISED_AMOUNTS=Show goal and raised amounts for each event card

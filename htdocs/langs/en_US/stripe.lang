@@ -90,3 +90,4 @@ ExampleOnlyForBECustomers=Only for belgium customers
 ExampleOnlyForDECustomers=Only for german customers
 ExampleOnlyForNLCustomers=Only for dutch customers
 ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain
+ListOfSupportedHooksToActivate=List of supported hooks to activate

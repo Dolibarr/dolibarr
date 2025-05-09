@@ -1336,6 +1336,7 @@ class FormFile
 			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dir);
 			$relativedir = preg_replace('/^[\\/]/', '', $relativedir);
 		}
+
 		// For example here $upload_dir = '/pathtodocuments/commande/SO2001-123/'
 		// For example here $upload_dir = '/pathtodocuments/tax/vat/1'
 		// For example here $upload_dir = '/home/ldestailleur/git/dolibarr_dev/documents/fournisseur/facture/6/1/SI2210-0013' and relativedir='fournisseur/facture/6/1/SI2210-0013'
@@ -1438,7 +1439,7 @@ class FormFile
 				print "</tr>\n";
 			}
 
-			// Get list of files stored into database for same relative directory
+			// Get list of files stored into database for the same relative directory
 			if ($relativedir) {
 				completeFileArrayWithDatabaseInfo($filearray, $relativedir, $object);
 				'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
@@ -1450,18 +1451,22 @@ class FormFile
 			}
 
 			print '<tr class="liste_titre nodrag nodrop">';
-			//print $url.' sortfield='.$sortfield.' sortorder='.$sortorder;
+			// Name
 			print_liste_field_titre('Documents2', $url, "name", "", $param, '', $sortfield, $sortorder, 'left ');
+			// Size
 			print_liste_field_titre('Size', $url, "size", "", $param, '', $sortfield, $sortorder, 'right ');
+			// Date
 			print_liste_field_titre('Date', $url, "date", "", $param, '', $sortfield, $sortorder, 'center ');
+			// Preview
 			if (empty($useinecm) || $useinecm == 4 || $useinecm == 5 || $useinecm == 6) {
 				print_liste_field_titre('', $url, "", "", $param, '', $sortfield, $sortorder, 'center '); // Preview
 			}
 			// Shared or not - Hash of file
-			print_liste_field_titre('');
+			print_liste_field_titre('Shared');
 			// Action button
 			print_liste_field_titre('');
 			if (empty($disablemove) && count($filearray) > 1) {
+				// Move
 				print_liste_field_titre('');
 			}
 			print "</tr>\n";
@@ -1645,8 +1650,9 @@ class FormFile
 
 								$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
+								print '<!-- shared link -->';
 								print '<a href="'.$fulllink.'" target="_blank" rel="noopener">'.img_picto($langs->trans("FileSharedViaALink"), 'globe').'</a> ';
-								print '<input type="text" class="centpercentminusx minwidth200imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
+								print '<input type="text" class="centpercentminusx minwidth50imp nopadding small" id="downloadlink'.$filearray[$key]['rowid'].'" name="downloadexternallink" title="'.dol_escape_htmltag($langs->trans("FileSharedViaALink")).'" value="'.dol_escape_htmltag($fulllink).'">';
 							} else {
 								//print '<span class="opacitymedium">'.$langs->trans("FileNotShared").'</span>';
 							}
@@ -1846,11 +1852,15 @@ class FormFile
 
 		if (!empty($addfilterfields)) {
 			print '<tr class="liste_titre nodrag nodrop">';
+			// Ref
 			print '<td class="liste_titre"></td>';
+			// Name
 			print '<td class="liste_titre"><input type="text" class="maxwidth100onsmartphone" name="search_doc_ref" value="'.dol_escape_htmltag($search_doc_ref).'"></td>';
+			// Size
 			print '<td class="liste_titre"></td>';
+			// Date
 			print '<td class="liste_titre"></td>';
-			// Action column
+			// Shared and action column
 			print '<td class="liste_titre right">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
@@ -2085,7 +2095,8 @@ class FormFile
 
 				print '<!-- Line list_of_autoecmfiles key='.$key.' -->'."\n";
 				print '<tr class="oddeven">';
-				print '<td>';
+				// Ref
+				print '<td class="tdoverflowmax150">';
 				if ($found > 0 && is_object($conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref])) {
 					$tmpobject = $conf->cache['modulepartobject'][$modulepart.'_'.$id.'_'.$ref];
 					//if (! in_array($tmpobject->element, array('expensereport'))) {
@@ -2163,6 +2174,7 @@ class FormFile
 
 					$fulllink = $urlwithroot.'/document.php'.($paramlink ? '?'.$paramlink : '');
 
+					print '<!-- shared link -->';
 					print img_picto($langs->trans("FileSharedViaALink"), 'globe').' ';
 					print '<input type="text" class="quatrevingtpercent width100 nopadding nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 				}
