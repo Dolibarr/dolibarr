@@ -252,7 +252,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= '<input type="text" id="onlinetestwebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinetestwebhookurl");
 	print '<br>'.$out;
-	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.join('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodetest');
+	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.implode('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodetest');
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_TEST_WEBHOOK_KEY') && getDolGlobalString('STRIPE_TEST_SECRET_KEY') && getDolGlobalString('STRIPE_TEST_WEBHOOK_ID')) {
@@ -326,7 +326,7 @@ if (empty($conf->stripeconnect->enabled)) {
 	$out .= '<input type="text" id="onlinelivewebhookurl" class="minwidth500" value="'.$url.'" disabled>';
 	$out .= ajax_autoselect("onlinelivewebhookurl", '0');
 	print '<br>'.$out;
-	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.join('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodeprod');
+	print $form->textwithpicto('', $langs->trans('ListOfSupportedHooksToActivate').':<br><br>'.implode('<br>', $listofsupportedhooks), 1, 'help', 'valignmiddle', 0, 3, 'webhookscodeprod');
 	print '</td><td>';
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		if (getDolGlobalString('STRIPE_LIVE_WEBHOOK_KEY') && getDolGlobalString('STRIPE_LIVE_SECRET_KEY') && getDolGlobalString('STRIPE_LIVE_WEBHOOK_ID')) {
