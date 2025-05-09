@@ -74,7 +74,7 @@ class cEmailTemplate extends CommonObject
 	 */
 	public $rowid;
 	/**
-	 * @var null|string type of the template
+	 * @var string type of the template
 	 */
 	public $type_template;
 	/**
@@ -90,11 +90,11 @@ class cEmailTemplate extends CommonObject
 	 */
 	public $active;
 	/**
-	 * @var null|string if 0 hidden from GUI, if 1 visible in GUI
+	 * @var string if 0 hidden from GUI, if 1 visible in GUI
 	 */
 	public $enabled;
 	/**
-	 * @var null|int is the template a default or not
+	 * @var int is the template a default or not
 	 */
 	public $defaultfortype;
 
@@ -109,7 +109,7 @@ class cEmailTemplate extends CommonObject
 	public $label;
 
 	/**
-	 * @var null|int Owner of email template
+	 * @var int Owner of email template
 	 */
 	public $fk_user;
 
@@ -119,21 +119,21 @@ class cEmailTemplate extends CommonObject
 	public $private;
 
 	/**
-	 * @var null|string Model mail topic
+	 * @var string Model mail topic
 	 */
 	public $topic;
 
 	/**
-	 * @var null|string 	Model mail content
+	 * @var string 	Model mail content
 	 */
 	public $content;
 	/**
-	 * @var null|string 	Model to use to generate the string with each lines
+	 * @var string 	Model to use to generate the string with each lines
 	 */
 	public $content_lines;
 
 	/**
-	 * @var null|string language of the template
+	 * @var string language of the template
 	 */
 	public $lang;
 	/**
@@ -142,22 +142,22 @@ class cEmailTemplate extends CommonObject
 	public $joinfiles;
 
 	/**
-	 * @var null|string sender email address
+	 * @var string sender email address
 	 */
 	public $email_from;
 
 	/**
-	 * @var null|string recipient email address
+	 * @var string recipient email address
 	 */
 	public $email_to;
 
 	/**
-	 * @var null|string Additional visible recipients
+	 * @var string Additional visible recipients
 	 */
 	public $email_tocc;
 
 	/**
-	 * @var null|string additional hidden recipients
+	 * @var string additional hidden recipients
 	 */
 	public $email_tobcc;
 
@@ -167,7 +167,7 @@ class cEmailTemplate extends CommonObject
 	public $module;
 
 	/**
-	 * @var null|int Position of template in a combo list
+	 * @var int Position of template in a combo list
 	 */
 	public $position;
 	// END MODULEBUILDER PROPERTIES
