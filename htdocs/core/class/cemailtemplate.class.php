@@ -104,7 +104,7 @@ class cEmailTemplate extends CommonObject
 	public $id;
 
 	/**
-	 * @var null|string Model mail label
+	 * @var string 	Model mail label
 	 */
 	public $label;
 
