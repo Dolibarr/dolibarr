@@ -118,7 +118,7 @@ class ContratStats extends Stats
 		$this->categ_link = MAIN_DB_PREFIX.'categorie_societe';
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('commande').')';
+		$this->where .= ($this->where ? ' AND ' : '').'c.entity IN ('.getEntity('contract').')';
 
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
