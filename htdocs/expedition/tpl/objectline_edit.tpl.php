@@ -142,7 +142,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 		$cUnit = new CUnits($line->db);
 		if ($cUnit->fetch($line->fk_unit) > 0) {
 			if (!empty($cUnit->unit_type)) {
-			$unit_type = $cUnit->unit_type;
+				$unit_type = $cUnit->unit_type;
 			}
 		}
 	}
