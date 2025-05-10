@@ -1400,7 +1400,6 @@ class pdf_espadon extends ModelePdfExpedition
 		$object->fetch_origin();
 
 		if ($origin && $origin_id) {     // commonly $origin='commande'
-
 			$rank += 10; // do not use negative rank
 			$this->cols['desc'] = array(
 				'rank' => $rank,
@@ -1538,7 +1537,6 @@ class pdf_espadon extends ModelePdfExpedition
 				$this->cols = $hookmanager->resArray;
 			}
 		} elseif (!$origin_id && getDolGlobalString('SHIPMENT_STANDALONE')) {
-
 			$rank = 5;
 			$this->cols['qty'] = array(
 				'rank' => $rank,
