@@ -67,7 +67,7 @@ if (empty($filtertype)) {
 $formproduct = new FormProduct($object->db);
 
 // Define colspan for the button 'Add'
-$colspan = 3; 
+$colspan = 3;
 
 
 // Lines for extrafield
