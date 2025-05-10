@@ -1341,10 +1341,11 @@ class Expedition extends CommonObject
 	}
 
 
+
 	/**
 	 * Add a simple expedition line.
 	 *
-  	 * @param 	int		$rowid							Id of line to update
+	 * @param 	int		$rowid							ID of line
 	 * @param 	float	$qty							Quantity
 	 * @param 	string	$element_type					Element type
 	 * @param	int		$fk_product      				Id of product
@@ -1352,7 +1353,7 @@ class Expedition extends CommonObject
 	 * @param   int		$rang             				Position of line
 	 * @param 	string	$description					Description of line product
 	 * @param 	int		$fk_parent					    ID of parent line. For a hierarchy of lines.
-	 * @param	int		$notrigger						Disable line update trigger
+	 * @param 	int		$notrigger					    disable line update trigger
 	 * @param	array<string,mixed>	$array_options		extrafields array
 	 * @return	int										Return integer <0 if KO, >0 if OK
 	 */
