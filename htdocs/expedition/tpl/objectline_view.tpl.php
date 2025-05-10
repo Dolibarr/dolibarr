@@ -106,9 +106,9 @@ $tmpproduct->fetch($line->fk_product);
 $tmpexpe = new Expedition($object->db);
 if ($line->fk_product > 0) {
 	print $tmpproduct->getNomUrl(1);
-	print ' - '.$tmpproduct->label;	
+	print ' - '.$tmpproduct->label;
 } else {
-	print ' - '.$line->description;	
+	print ' - '.$line->description;
 }
 print '</td>';
 
@@ -120,13 +120,13 @@ print '</td>';
 
 // Unit
 if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only if option PRODUCT_USE_UNITS is on
-  print '<td class="linecoluseunit nowrap">';
-  $coldisplay++;
-  $label = measuringUnitString((int) $line->fk_unit, '', null, 1);
-  if ($label !== '') {
-    print $langs->trans($label);
-  }
-  print '</td>';
+	print '<td class="linecoluseunit nowrap">';
+	$coldisplay++;
+	$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
+	if ($label !== '') {
+	print $langs->trans($label);
+}
+	print '</td>';
 }
 
 if ($this->status == 0 && $user->hasRight('expedition', 'write') && $action != 'selectlines') {
