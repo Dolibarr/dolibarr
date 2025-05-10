@@ -1135,7 +1135,7 @@ if (empty($reshook)) {
 		$fk_product = 0;
 		$fk_entrepot = '';
 		$rang = '';
-		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');																							
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
