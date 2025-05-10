@@ -558,7 +558,7 @@ if (empty($reshook)) {
 						$error++;
 					}
 				}
-			} elseif (!$error && $origin && $origin_id) {
+			} elseif (!$error) {
 				$labelfieldmissing = $langs->transnoentitiesnoconv("QtyToShip");
 				if (isModEnabled('stock')) {
 					$labelfieldmissing .= '/'.$langs->transnoentitiesnoconv("Warehouse");
@@ -613,7 +613,7 @@ if (empty($reshook)) {
 			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 				$outputlangs = $langs;
 				$newlang = '';
-				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+				if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 					$newlang = GETPOST('lang_id', 'aZ09');
 				}
 				if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1099,7 +1099,7 @@ if (empty($reshook)) {
 					// Define output language
 					$outputlangs = $langs;
 					$newlang = '';
-					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+					if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 						$newlang = GETPOST('lang_id', 'aZ09');
 					}
 					if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
@@ -1135,6 +1135,7 @@ if (empty($reshook)) {
 		$fk_product = 0;
 		$fk_entrepot = '';
 		$rang = '';
+		$prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');																							
 		if ($prod_entry_mode == 'free') {
 			$idprod = 0;
 		} else {
@@ -2988,7 +2989,7 @@ if ($action == 'create'&& $usercancreate) {
 					// Add products/services form
 
 					$parameters = array();
-					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action, '/expedition/tpl'); // Note that $action and $object may have been modified by hook
+					$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 					if ($reshook < 0) {
 						setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 					}
