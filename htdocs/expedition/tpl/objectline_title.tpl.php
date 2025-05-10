@@ -80,7 +80,6 @@ print '<th class="linecolqty right">'.$langs->trans('Qty').'</th>';
 // Unit
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	print '<th class="linecoluseunit left">'.$langs->trans('Unit').'</th>';
-
 }
 
 print '<td class="linecoledit" style="width: 10px"></td>'; // No width to allow autodim
