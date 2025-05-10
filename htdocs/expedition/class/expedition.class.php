@@ -655,7 +655,7 @@ class Expedition extends CommonObject
 				$sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($initialref)."' WHERE rowid=".((int) $this->id);
 				if ($this->db->query($sql)) {
 					$this->ref = $initialref;
-					}
+				}
 				if (!$error && $this->id && $this->origin_id) {
 					$ret = $this->add_object_linked();
 					if (!$ret) {
@@ -943,7 +943,7 @@ class Expedition extends CommonObject
 				 */
 				if (empty($obj->origin_id)) {
 					$result = $this->fetch_lines_free();
-				} else {	
+				} else {
 					$result = $this->fetch_lines();
 				}
 				if ($result < 0) {
@@ -1282,7 +1282,6 @@ class Expedition extends CommonObject
 		global $mysoc, $langs, $user;
 
 		if ($this->status == self::STATUS_DRAFT) {
-
 			if (empty($rang)) {
 				$rang = 0;
 			}
@@ -1292,7 +1291,6 @@ class Expedition extends CommonObject
 			$this->db->begin();
 
 			// Rang to use
-			
 			$ranktouse = $rang;
 			if ($ranktouse == -1) {
 				$rangmax = $this->line_max($fk_parent);
@@ -1307,7 +1305,7 @@ class Expedition extends CommonObject
 			$this->line->description = $description;
 			$this->line->fk_parent = $fk_parent;
 			$this->line->qty = (float) $qty;
-			$this->line->fk_unit = $fk_unit; 
+			$this->line->fk_unit = $fk_unit;
 			$this->line->rang = $ranktouse;
 
 			if (is_array($array_options) && count($array_options) > 0) {
@@ -1360,10 +1358,9 @@ class Expedition extends CommonObject
 	 */
 	public function updatelinefree($rowid, $qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $notrigger, $array_options = array())
 	{
-    	global $mysoc, $langs, $user;
+		global $mysoc, $langs, $user;
 
 		if ($this->status == self::STATUS_DRAFT) {
-
 			$this->db->begin();
 
 			if (empty($qty)) {
@@ -1381,7 +1378,7 @@ class Expedition extends CommonObject
 
 			$line->fetch($rowid);
 			$line->fetch_optionals();
-			
+
 			if (!empty($line->fk_product)) {
 				$product = new Product($this->db);
 				$result = $product->fetch($line->fk_product);
