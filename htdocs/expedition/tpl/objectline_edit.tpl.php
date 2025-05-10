@@ -78,7 +78,7 @@ $formproduct = new FormProduct($object->db);
 
 
 // Define colspan for the button 'Add'
-$colspan = 3; 
+$colspan = 3;
 
 // Lines for extrafield
 $objectline = new ExpeditionLigne($this->db);
@@ -114,7 +114,7 @@ if ($line->fk_product > 0) {
 
 //Line extrafield
 if (is_object($objectline) && !empty($extrafields)) {
-  $temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', '1', 'line');
+	$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', '1', 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
 		print $temps;
@@ -129,27 +129,27 @@ $coldisplay++;
 print '<td class="nobottom linecolqty right">';
 
 if (($line->info_bits & 2) != 2) {
-print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
+	print '<input size="3" type="text" class="flat right" name="qty" id="qty" value="'.$line->qty.'">';
 }
 print '</td>';
 
 
 if (getDolGlobalString('PRODUCT_USE_UNITS')) {
-  $unit_type = false;
-  // limit unit select to unit type
-  if (!empty($line->fk_unit) && !getDolGlobalString('MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE')) {
-    include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
-    $cUnit = new CUnits($line->db);
-    if ($cUnit->fetch($line->fk_unit) > 0) {
-      if (!empty($cUnit->unit_type)) {
-        $unit_type = $cUnit->unit_type;
-      }
-    }
-  }
-  $coldisplay++;
-  print '<td class="left">';
-  print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
-  print '</td>';
+	$unit_type = false;
+	// limit unit select to unit type
+	if (!empty($line->fk_unit) && !getDolGlobalString('MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE')) {
+		include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
+		$cUnit = new CUnits($line->db);
+		if ($cUnit->fetch($line->fk_unit) > 0) {
+			if (!empty($cUnit->unit_type)) {
+			$unit_type = $cUnit->unit_type;
+			}
+		}
+	}
+	$coldisplay++;
+	print '<td class="left">';
+	print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units') : $line->fk_unit, "units", 0, $unit_type);
+	print '</td>';
 }
 
 $coldisplay += $colspan;
