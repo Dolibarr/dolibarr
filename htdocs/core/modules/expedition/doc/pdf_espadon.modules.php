@@ -1586,4 +1586,5 @@ class pdf_espadon extends ModelePdfExpedition
 				'border-left' => true, // add left line separator
 			);
 		}
+	}
 }
