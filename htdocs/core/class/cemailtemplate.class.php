@@ -230,7 +230,7 @@ class cEmailTemplate extends CommonObject
 	 */
 	public function create($user, $notrigger = 0)
 	{
-		global $db, $conf;
+		global $conf;
 		$error = 0;
 
 		// setEntity will set entity with the right value if empty or change it for the right value if multicompany module is active
@@ -262,13 +262,13 @@ class cEmailTemplate extends CommonObject
 		if (is_null($this->module)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->module))."',";
+			$sql .= " '".$this->db->escape($this->module)."',";
 		}
-		$sql .= " '".((string) $db->escape($this->type_template))."',";
+		$sql .= " '".$this->db->escape($this->type_template)."',";
 		if (is_null($this->lang)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->lang))."',";
+			$sql .= " '".$this->db->escape($this->lang)."',";
 		}
 		$sql .= " ".((int) $this->private).",";
 		if (is_null($this->fk_user)) {
@@ -281,7 +281,7 @@ class cEmailTemplate extends CommonObject
 		} else {
 			$sql .= " '".((int) $this->datec)."',";
 		}
-		$sql .= " '".((string) $db->escape($this->label))."',";
+		$sql .= " '".$this->db->escape($this->label)."',";
 		$sql .= " ".((int) $this->position).", ".((int) $this->defaultfortype ).",";
 		if (is_null($this->enabled)) {
 			$sql .= " 1,";
@@ -296,34 +296,34 @@ class cEmailTemplate extends CommonObject
 		if (is_null($this->email_from)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->email_from))."',";
+			$sql .= " '".$this->db->escape($this->email_from)."',";
 		}
 		if (is_null($this->email_to)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->email_to))."',";
+			$sql .= " '".$this->db->escape($this->email_to)."',";
 		}
 		if (is_null($this->email_tocc)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->email_tocc))."',";
+			$sql .= " '".$this->db->escape($this->email_tocc)."',";
 		}
 		if (is_null($this->email_tobcc)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->email_tobcc))."',";
+			$sql .= " '".$this->db->escape($this->email_tobcc)."',";
 		}
-		$sql .= " '".((string) $db->escape($this->topic))."',";
+		$sql .= " '".$this->db->escape($this->topic)."',";
 		$sql .= " ".((int) $this->joinfiles).",";
 		if (is_null($this->content)) {
 			$sql .= " NULL,";
 		} else {
-			$sql .= " '".((string) $db->escape($this->content))."',";
+			$sql .= " '".((string) $this->db->escape($this->content))."',";
 		}
 		if (is_null($this->content_lines)) {
 			$sql .= " NULL";
 		} else {
-			$sql .= " '".((string) $db->escape($this->content_lines))."',";
+			$sql .= " '".((string) $this->db->escape($this->content_lines))."',";
 		}
 		$sql .= ")";
 
@@ -367,9 +367,9 @@ class cEmailTemplate extends CommonObject
 
 	 *  @return int     			Return integer <0 if KO, 0 if OK but not found, >0 if OK and exists
 	 */
-	public static function isExistingObject($element, $id, $label = '', $ref_ext = '')
+	public function isExistingObject($element, $id, $label = '', $ref_ext = '')
 	{
-		global $db, $conf;
+		global $conf;
 
 		// hardcoded string because I kept getting this error
 		// PHP Fatal error:  Uncaught Error: Using $this when not in object context
@@ -386,7 +386,7 @@ class cEmailTemplate extends CommonObject
 		if ($id > 0) {
 			$sql .= " AND rowid = ".((int) $id);
 		} elseif ($label) {
-			$sql .= " AND label = '".$db->escape($label)."'";
+			$sql .= " AND label = '".$this->db->escape($label)."'";
 		} else {
 			$error = 'ErrorWrongParameters';
 			dol_syslog(get_class()."::isExistingObject ".$error, LOG_ERR);
@@ -397,9 +397,9 @@ class cEmailTemplate extends CommonObject
 		}
 
 		dol_syslog(get_class()."::isExistingObject", LOG_DEBUG);
-		$resql = $db->query($sql);
+		$resql = $this->db->query($sql);
 		if ($resql) {
-			$num = $db->num_rows($resql);
+			$num = $this->db->num_rows($resql);
 			if ($num > 0) {
 				return 1;
 			} else {
@@ -572,7 +572,7 @@ class cEmailTemplate extends CommonObject
 			$sql .= " WHERE e.rowid = ".((int) $id);
 		}
 		if ($label) {
-			$sql .= " WHERE e.label = '".$db->escape($label)."'";
+			$sql .= " WHERE e.label = '".$this->db->escape($label)."'";
 		}
 		$sql .= " AND e.entity = ".((int) $this->entity);
 
