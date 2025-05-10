@@ -1199,7 +1199,7 @@ if (empty($reshook)) {
 				$desc = $prod->label;
 				$description = $desc;
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {                 
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
 					$outputlangs = $langs;
 					$newlang = '';
 					if (GETPOST('lang_id', 'aZ09')) {
