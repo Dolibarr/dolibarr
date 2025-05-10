@@ -352,6 +352,9 @@ if (empty($reshook)) {
 					if (empty($lines) && method_exists($expd, 'fetch_lines')) {
 						$expd->fetch_lines();
 						$lines = $expd->lines;
+					} elseif (!$origin && empty($lines) && method_exists($expd, 'fetch_lines_free')) {
+						$expd->fetch_lines_free();
+						$lines = $expd->lines;
 					}
 
 					$fk_parent_line = 0;
