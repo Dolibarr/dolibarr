@@ -10994,8 +10994,18 @@ class Form
 		}
 		$out .= '         });
         	        $(".' . $cssclass . '").change(function() {
-					$(this).closest("tr").toggleClass(this.checked);
-				});
+						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
+						var $row = $(this).closest("tr");
+						if ($row.length) {
+	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
+							console.log(anyChecked);
+							if (!anyChecked) {
+								$row.removeClass("highlight");
+							} else {
+								$row.addClass("highlight");
+							}
+						}
+					});
 		 	});
     	</script>';
 
