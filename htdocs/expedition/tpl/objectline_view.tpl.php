@@ -124,8 +124,8 @@ if (getDolGlobalInt('PRODUCT_USE_UNITS')) {		// For product, unit is shown only 
 	$coldisplay++;
 	$label = measuringUnitString((int) $line->fk_unit, '', null, 1);
 	if ($label !== '') {
-	print $langs->trans($label);
-}
+		print $langs->trans($label);
+	}
 	print '</td>';
 }
 
