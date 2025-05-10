@@ -875,11 +875,8 @@ if (empty($reshook)) {
 						$ret = $object->fetch($object->id); // Reload to get new records
 						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
-
 					unset($_POST['qty']);
-
 					unset($_POST['units']);
-
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
@@ -1123,7 +1120,7 @@ if (empty($reshook)) {
 		}
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
-		exit();	
+		exit();
 	} elseif ($action == 'addline' && !$origin && getDolGlobalString('SHIPMENT_STANDALONE') && $usercancreate) {	// Add a new line
 		$langs->load('errors');
 		$error = 0;
@@ -1134,7 +1131,7 @@ if (empty($reshook)) {
 		$fk_elementdet = '';
 		$element_type = 'shipping';
 		$fk_unit = '';
-		$idprod = 0; 
+		$idprod = 0;
 		$fk_product = 0;
 		$fk_entrepot = '';
 		$rang = '';
@@ -1196,13 +1193,13 @@ if (empty($reshook)) {
 
 		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
 			// Clean parameters
-				if (!empty($idprod) && $idprod > 0) {
+			if (!empty($idprod) && $idprod > 0) {
 				$prod = new Product($db);
-				$prod->fetch($idprod);	
+				$prod->fetch($idprod);
 				$desc = $prod->label;
 				$description = $desc;
 				// Define output language
-				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {	                    
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {                 
 					$outputlangs = $langs;
 					$newlang = '';
 					if (GETPOST('lang_id', 'aZ09')) {
@@ -1245,7 +1242,7 @@ if (empty($reshook)) {
 						}
 						if (!empty($prod->customcode)) {
 							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
-                        }
+						}
 						if (!empty($prod->customcode) && !empty($prod->country_code)) {
 							$tmptxt .= ' - ';
 						}
@@ -1302,7 +1299,7 @@ if (empty($reshook)) {
 					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 					exit();
 				}
-			} 
+			}
 		}
 	}
 
@@ -1367,11 +1364,10 @@ if ($action == 'create'&& $usercancreate) {
 	print load_fiche_titre($langs->trans("NewSending"), '', 'dolly');
 
 	if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
-
 		$soc = new Societe($db);
 		if ($socid > 0) {
 			$res = $soc->fetch($socid);
-		}		
+		}
 
 		$shipping_method_id = $soc->shipping_method_id;
 		$note_private = $object->getDefaultCreateValueFor('note_private');
@@ -1555,9 +1551,7 @@ if ($action == 'create'&& $usercancreate) {
 		print $form->buttonsSaveCancel("CreateDraft");
 
 		print '</form>';
-
 		print '<br>';
-
 	} elseif ($origin) {
 		$classname = ucfirst($origin);
 		$object = new $classname($db);
@@ -2963,7 +2957,6 @@ if ($action == 'create'&& $usercancreate) {
 	* Lines of simple shipment
 	*/
 	if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
-
 		if (!empty($object->table_element_line)) {
 			// Show object lines
 			$result = $object->getLinesArray();
