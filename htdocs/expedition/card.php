@@ -93,7 +93,6 @@ if (empty($origin_id) && !empty($origin)) {
 	$origin_id  = GETPOSTINT('origin_id'); // Id of order or propal
 }
 if (empty($origin_id) && !empty($origin)) {
-
 	$origin_id  = GETPOSTINT('object_id'); // Id of order or propal
 }
 $socid  =  GETPOSTINT('socid');
@@ -331,7 +330,7 @@ if (empty($reshook)) {
 			}
 
 			if (!$error) {
-				$ret = $object->create($user); 
+				$ret = $object->create($user);
 				if ($ret <= 0) {
 					setEventMessages($object->error, $object->errors, 'errors');
 					$error++;
@@ -824,12 +823,12 @@ if (empty($reshook)) {
 		if (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
 			// Update a line
 			// Clean parameters
-		
+
 			if (!$object->fetch($id) > 0) {
 				dol_print_error($db);
 			}
 			$object->fetch_thirdparty();
-		
+
 			$qty = GETPOST('qty', 'alpha');
 			$description = '';
 			$fk_parent = 0;
@@ -857,7 +856,6 @@ if (empty($reshook)) {
 				$result = $object->updatelinefree(GETPOSTINT('lineid'), (float) $qty, $element_type, $fk_product, GETPOSTINT('units'), $rang, $description, $fk_parent, 0, $array_options);
 
 				if ($result >= 0) {
-
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						// Define output language
 						$outputlangs = $langs;
@@ -881,11 +879,11 @@ if (empty($reshook)) {
 					unset($_POST['qty']);
 
 					unset($_POST['units']);
-		
+
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
 				}
-			} 
+			}
 		} elseif ($origin && $origin_id > 0) {
 			// Update a line
 			// Clean parameters
@@ -1126,171 +1124,163 @@ if (empty($reshook)) {
 	} elseif ($action == 'updateline' && $permissiontoadd && GETPOST('cancel', 'alpha') == $langs->trans("Cancel")) {
 		header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
 		exit();	
-	} elseif ($action == 'addline' && !$origin && getDolGlobalString('SHIPMENT_STANDALONE') && $usercancreate) {		// Add a new line
-
-        $langs->load('errors');
-        $error = 0;
+	} elseif ($action == 'addline' && !$origin && getDolGlobalString('SHIPMENT_STANDALONE') && $usercancreate) {	// Add a new line
+		$langs->load('errors');
+		$error = 0;
 		$line_desc = (GETPOSTISSET('dp_desc') ? GETPOST('dp_desc', 'restricthtml') : '');
-        // Set if we used free entry or predefined product
 		$predef = '';
 		$description = '';
-        $fk_parent = 0;
-        $fk_elementdet = '';
-        $element_type = 'shipping';
+		$fk_parent = 0;
+		$fk_elementdet = '';
+		$element_type = 'shipping';
 		$fk_unit = '';
-        $idprod = 0; 
-        $fk_product = 0;
-        $fk_entrepot = '';
-        $rang = '';
+		$idprod = 0; 
+		$fk_product = 0;
+		$fk_entrepot = '';
+		$rang = '';
+		if ($prod_entry_mode == 'free') {
+			$idprod = 0;
+		} else {
+			$idprod = GETPOSTINT('idprod');
+			if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
+				$error++;
+			}
+		}
 
-        $prod_entry_mode = GETPOST('prod_entry_mode', 'aZ09');
-        if ($prod_entry_mode == 'free') {
-            $idprod = 0;
-        } else {
-            $idprod = GETPOSTINT('idprod');
+		$qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
 
-            if (getDolGlobalString('MAIN_DISABLE_FREE_LINES') && $idprod <= 0) {
-                setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ProductOrService")), null, 'errors');
-                $error++;
-            }
-        }
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key]);
+			}
+		}
 
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
+			$error++;
+		}
 
-        $qty = price2num(GETPOST('qty'.$predef, 'alpha'), 'MS', 2);
+		if ($qty == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+		if ($qty < 0) {
+			setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
+			$error++;
+		}
+		if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
+			$error++;
+		}
 
-        // Extrafields
-        $extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
-        $array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
-        // Unset extrafield
-        if (is_array($extralabelsline)) {
-            // Get extra fields
-            foreach ($extralabelsline as $key => $value) {
-                unset($_POST["options_".$key]);
-            }
-        }
+		if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
+			if ($combinations = GETPOST('combinations', 'array')) {
+				// Check if there is a product with the given combination
+				$prodcomb = new ProductCombination($db);
 
-        if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && GETPOST('type') < 0) {
-            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Type')), null, 'errors');
-            $error++;
-        }
-
-        if ($qty == '') {
-            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
-            $error++;
-        }
-        if ($qty < 0) {
-            setEventMessages($langs->trans('FieldCannotBeNegative', $langs->transnoentitiesnoconv('Qty')), null, 'errors');
-            $error++;
-        }
-        if ($prod_entry_mode == 'free' && (empty($idprod) || $idprod < 0) && empty($line_desc)) {
-            setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('Description')), null, 'errors');
-            $error++;
-        }
-
-        if (!$error && isModEnabled('variants') && $prod_entry_mode != 'free') {
-            if ($combinations = GETPOST('combinations', 'array')) {
-                // Check if there is a product with the given combination
-                $prodcomb = new ProductCombination($db);
-
-                if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
-                    $idprod = $res->fk_product_child;
-                    $fk_product = $idprod; // Update $fk_product with the fetched child product
-                } else {
-                    setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
-                    $error++;
-                }
-            }
-        }
+				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
+					$idprod = $res->fk_product_child;
+					$fk_product = $idprod; // Update $fk_product with the fetched child product
+				} else {
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
+					$error++;
+				}
+			}
+		}
 
 		if (!$error && ($qty >= 0) && (!empty($line_desc) || (!empty($idprod) && $idprod > 0))) {
-            // Clean parameters
-
-            if (!empty($idprod) && $idprod > 0) {
-                $prod = new Product($db);
-                $prod->fetch($idprod);	
-                $desc = $prod->label;
+			// Clean parameters
+				if (!empty($idprod) && $idprod > 0) {
+				$prod = new Product($db);
+				$prod->fetch($idprod);	
+				$desc = $prod->label;
 				$description = $desc;
-                // Define output language
-                if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-                    $outputlangs = $langs;
-                    $newlang = '';
-                    if (GETPOST('lang_id', 'aZ09')) {
-                        $newlang = GETPOST('lang_id', 'aZ09');
-                    }
-                    if (empty($newlang)) {
-                        $newlang = $object->thirdparty->default_lang;
-                    }
-                    if (!empty($newlang)) {
-                        $outputlangs = new Translate("", $conf);
-                        $outputlangs->setDefaultLang($newlang);
-                    }
+				// Define output language
+				if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {	                    
+					$outputlangs = $langs;
+					$newlang = '';
+					if (GETPOST('lang_id', 'aZ09')) {
+						$newlang = GETPOST('lang_id', 'aZ09');
+					}
+					if (empty($newlang)) {
+						$newlang = $object->thirdparty->default_lang;
+					}
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
 
-                    $description = (!empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
-                } else {
-                    $description = $prod->description;
-                }
+					$description = (!empty($prod->multilangs[$outputlangs->defaultlang]["description"])) ? $prod->multilangs[$outputlangs->defaultlang]["description"] : $prod->description;
+				} else {
+					$description = $prod->description;
+				}
+				if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
+					$description = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
+				} else {
+					$description = $line_desc;
+				}
 
-                if (getDolGlobalInt('PRODUIT_AUTOFILL_DESC') == 0) {
-                    $description = dol_concatdesc($desc, $line_desc, false, getDolGlobalString('MAIN_CHANGE_ORDER_CONCAT_DESCRIPTION') ? true : false);
-                } else {
-                    $description = $line_desc;
-                }
-
-                // Add custom code and origin country into description
-                if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
-                    $tmptxt = '(';
-                    if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
-                        $outputlangs = $langs;
-                        $newlang = '';
-                        if (GETPOST('lang_id', 'alpha')) {
-                            $newlang = GETPOST('lang_id', 'alpha');
+				// Add custom code and origin country into description
+				if (!getDolGlobalString('MAIN_PRODUCT_DISABLE_CUSTOMCOUNTRYCODE') && (!empty($prod->customcode) || !empty($prod->country_code))) {
+					$tmptxt = '(';
+					if (getDolGlobalInt('MAIN_MULTILANGS') && getDolGlobalString('PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE')) {
+						$outputlangs = $langs;
+						$newlang = '';
+						if (GETPOST('lang_id', 'alpha')) {
+							$newlang = GETPOST('lang_id', 'alpha');
+						}
+						if (empty($newlang)) {
+							$newlang = $object->thirdparty->default_lang;
+						}
+						if (!empty($newlang)) {
+							$outputlangs = new Translate("", $conf);
+							$outputlangs->setDefaultLang($newlang);
+							$outputlangs->load('products');
+						}
+						if (!empty($prod->customcode)) {
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
                         }
-                        if (empty($newlang)) {
-                            $newlang = $object->thirdparty->default_lang;
-                        }
-                        if (!empty($newlang)) {
-                            $outputlangs = new Translate("", $conf);
-                            $outputlangs->setDefaultLang($newlang);
-                            $outputlangs->load('products');
-                        }
-                        if (!empty($prod->customcode)) {
-                            $tmptxt .= $outputlangs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
-                        }
-                        if (!empty($prod->customcode) && !empty($prod->country_code)) {
-                            $tmptxt .= ' - ';
-                        }
-                        if (!empty($prod->country_code)) {
-                            $tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
-                        }
-                    } else {
-                        if (!empty($prod->customcode)) {
-                            $tmptxt .= $langs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
-                        }
-                        if (!empty($prod->customcode) && !empty($prod->country_code)) {
-                            $tmptxt .= ' - ';
-                        }
-                        if (!empty($prod->country_code)) {
-                            $tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
-                        }
-                    }
-                    $tmptxt .= ')';
-                    $description = dol_concatdesc($desc, $tmptxt);
-                }
+						if (!empty($prod->customcode) && !empty($prod->country_code)) {
+							$tmptxt .= ' - ';
+						}
+						if (!empty($prod->country_code)) {
+							$tmptxt .= $outputlangs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $outputlangs, 0);
+						}
+					} else {
+						if (!empty($prod->customcode)) {
+							$tmptxt .= $langs->transnoentitiesnoconv("CustomsCode").': '.$prod->customcode;
+						}
+						if (!empty($prod->customcode) && !empty($prod->country_code)) {
+							$tmptxt .= ' - ';
+						}
+						if (!empty($prod->country_code)) {
+							$tmptxt .= $langs->transnoentitiesnoconv("CountryOrigin").': '.getCountry($prod->country_code, '', $db, $langs, 0);
+						}
+					}
+					$tmptxt .= ')';
+					$description = dol_concatdesc($desc, $tmptxt);
+				}
 				$type = $prod->type;
 				$fk_unit = $prod->fk_unit;
-            } else {
+			} else {
 				$label = (GETPOST('product_label') ? GETPOST('product_label') : '');
 				$desc = $line_desc;
 				$type = GETPOST('type');
 				$fk_unit = GETPOST('units', 'alpha');
 				$description = $desc;
-                $fk_elementdet = '';
-            }
-            $desc = dol_htmlcleanlastbr($desc);
+				$fk_elementdet = '';
+			}
+			$desc = dol_htmlcleanlastbr($desc);
 
-            if (!$error) {
-                // Insert line
-                $result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options);
+			if (!$error) {
+				// Insert line
+				$result = $object->addlinefree((float) $qty, $element_type, $idprod, $fk_unit, min($rank, count($object->lines) + 1), $description, $fk_parent, $array_options);
 
 				if ($result > 0) {
 					$ret = $object->fetch($object->id); // Reload to get new records
@@ -1303,10 +1293,10 @@ if (empty($reshook)) {
 							$newlang = $object->thirdparty->default_lang;
 						}
 						if (!empty($newlang)) {
- 							$outputlangs = new Translate("", $conf);
+							$outputlangs = new Translate("", $conf);
 							$outputlangs->setDefaultLang($newlang);
 						}
-                        $object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+						$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					}
 				} else {
 					header('Location: '.$_SERVER['PHP_SELF'].'?id='.$object->id); // To redisplay the form being edited
@@ -1330,15 +1320,14 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
-
 /*
  * View
  */
- 
+
 $title = $object->ref.' - '.$langs->trans("Card");
 if ($action == 'create') {
 	$title = $langs->trans("NewSending");
-} 
+}
 
 $help_url = 'EN:Module_Shipments|FR:Module_Expéditions|ES:M&oacute;dulo_Expediciones|DE:Modul_Lieferungen';
 
@@ -1466,6 +1455,7 @@ if ($action == 'create'&& $usercancreate) {
 		$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 		print $form->textwithpicto($text, $htmltext);
 		print '</td></tr>';
+
 		// Dim
 		print '<tr><td>';
 		print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
@@ -1570,7 +1560,6 @@ if ($action == 'create'&& $usercancreate) {
 
 	} elseif ($origin) {
 		$classname = ucfirst($origin);
-
 		$object = new $classname($db);
 		'@phan-var-force Commande|Facture $object';
 		if ($object->fetch($origin_id)) {	// This include the fetch_lines
@@ -1638,7 +1627,6 @@ if ($action == 'create'&& $usercancreate) {
 				if ($origin == 'project') {
 					$projectid = ($object->id ? $object->id : 0);
 				}
-
 				$langs->load("projects");
 				print '<tr>';
 				print '<td>'.$langs->trans("Project").'</td><td colspan="2">';
@@ -1693,6 +1681,7 @@ if ($action == 'create'&& $usercancreate) {
 			$htmltext = $langs->trans("KeepEmptyForAutoCalculation");
 			print $form->textwithpicto($text, $htmltext);
 			print '</td></tr>';
+
 			// Dim
 			print '<tr><td>';
 			print $langs->trans("Width").' x '.$langs->trans("Height").' x '.$langs->trans("Depth");
@@ -2667,26 +2656,26 @@ if ($action == 'create'&& $usercancreate) {
 	$morehtmlref .= '<br>'.$object->thirdparty->getNomUrl(1);
 	// Project
 	if ($origin && $origin_id > 0) {
-	if (isModEnabled('project')) {
-		$langs->load("projects");
-		$morehtmlref .= '<br>';
-		if (0) {	// Do not change on shipment
-			$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
-			if ($action != 'classify') {
-				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
-			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
-		} else {
-			if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
-				$proj = new Project($db);
-				$proj->fetch($objectsrc->fk_project);
-				$morehtmlref .= $proj->getNomUrl(1);
-				if ($proj->title) {
-					$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+		if (isModEnabled('project')) {
+			$langs->load("projects");
+			$morehtmlref .= '<br>';
+			if (0) {	// Do not change on shipment
+				$morehtmlref .= img_picto($langs->trans("Project"), 'project', 'class="pictofixedwidth"');
+				if ($action != 'classify') {
+					$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
+				}
+				$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $objectsrc->socid, (string) $objectsrc->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			} else {
+				if (!empty($objectsrc) && !empty($objectsrc->fk_project)) {
+					$proj = new Project($db);
+					$proj->fetch($objectsrc->fk_project);
+					$morehtmlref .= $proj->getNomUrl(1);
+					if ($proj->title) {
+						$morehtmlref .= '<span class="opacitymedium"> - '.dol_escape_htmltag($proj->title).'</span>';
+					}
 				}
 			}
 		}
-	}
 	} elseif (!$origin && getDolGlobalString('SHIPMENT_STANDALONE')) {
 		// Project
 		if (isModEnabled('project')) {
@@ -2709,12 +2698,10 @@ if ($action == 'create'&& $usercancreate) {
 				}
 			}
 		}
-
 	}
 
 	$morehtmlref .= '</div>';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-
 
 	print '<div class="fichecenter">';
 	print '<div class="fichehalfleft">';
