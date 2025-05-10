@@ -5,6 +5,7 @@
  * Copyright (C) 2021	Alexis LAURIER			<contact@alexislaurier.fr>
  * Copyright (C) 2024	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024   Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025   Charlene Benke          <charlene@patas-monkey>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,6 +461,21 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 
 	// Restler did not output data yet, we return it now
 	echo $result;
+}
+
+$parameters = array(
+		'url' => $url, 
+		'ip' => getUserRemoteIP(), 
+		'reponseCode' => $api->r->responseCode, 
+		'userId' => DolibarrApiAccess::$user->id, 
+		'data' => json_encode($api->r->getRequestData())
+	);
+$object = $api;
+$action = $api->r->responseCode;
+// Note that $action and $object may be modified by some hooks
+$reshook = $hookmanager->executeHooks('afterApiCall', $parameters, $object, $action);
+if ($reshook < 0) {
+	dol_syslog('afterApiCall Failed to call hook '.$hookmanager->error, LOG_ERR);
 }
 
 if (getDolGlobalInt("API_ENABLE_COUNT_CALLS") && $api->r->responseCode == 200) {
