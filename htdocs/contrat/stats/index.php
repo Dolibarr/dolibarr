@@ -123,7 +123,7 @@ dol_mkdir($dir);
 $stats = new ContratStats($db, $socid, $mode, ($userid > 0 ? $userid : 0), ($typent_id > 0 ? $typent_id : 0), ($categ_id > 0 ? $categ_id : 0));
 
 if ($object_status != '' && $object_status >= -1) {
-	$stats->where .= ' AND c.fk_statut IN ('.$db->sanitize($object_status).')';
+	$stats->where .= ' AND c.statut IN ('.$db->sanitize($object_status).')';
 }
 
 
@@ -289,9 +289,9 @@ print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0
 print '<tr><td>'.$langs->trans("Status").'</td><td>';
 
 $liststatus = array(
-	Contrat::STATUS_DRAFT => $langs->trans("StatusContractDraft"),
-	Contrat::STATUS_VALIDATED => $langs->trans("StatusContractValidated"),
-	Contrat::STATUS_CLOSED => $langs->trans("StatusContractDelivered"),
+	Contrat::STATUS_DRAFT => $langs->trans("ContractStatusDraft"),
+	Contrat::STATUS_VALIDATED => $langs->trans("ContractStatusValidated"),
+	Contrat::STATUS_CLOSED => $langs->trans("ContractStatusClosed"),
 );
 print $form->selectarray('object_status', $liststatus, GETPOST('object_status', 'intcomma'), -4);
 
