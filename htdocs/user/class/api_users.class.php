@@ -734,7 +734,7 @@ class Users extends DolibarrApi
 		);
 	}
 
-/**
+	/**
 	 * Get notifications for an user
 	 *
 	 * @since	22.0.0	Initial implementation
