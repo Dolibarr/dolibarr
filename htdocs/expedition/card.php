@@ -760,13 +760,11 @@ if (empty($reshook)) {
 			$object->shipping_method_id = GETPOSTINT('shipping_method_id');
 		}
 
-		if (!$error) {
-			if ($object->update($user) >= 0) {
-				header("Location: card.php?id=".$object->id);
-				exit;
-			}
-			setEventMessages($object->error, $object->errors, 'errors');
+		if ($object->update($user) >= 0) {
+			header("Location: card.php?id=".$object->id);
+			exit;
 		}
+		setEventMessages($object->error, $object->errors, 'errors');
 
 		$action = "";
 	} elseif ($action == 'classifybilled' && $permissiontoadd) {
