@@ -1742,7 +1742,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td>';
-				print $form->selectUnits(GETPOSTISSET('unit') ? GETPOST('unit', 'alpha') : (GETPOST('unit', 'alpha') ?: '0'), 'units');
+				print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units', 'alpha') : (GETPOST('units', 'alpha') ?: '0'), 'units');
 				print '</td></tr>';
 			}
 
