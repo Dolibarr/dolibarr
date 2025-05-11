@@ -352,7 +352,7 @@ if (empty($reshook)) {
 					if (empty($lines) && method_exists($expd, 'fetch_lines')) {
 						$expd->fetch_lines();
 						$lines = $expd->lines;
-					} elseif (!$origin && empty($lines) && method_exists($expd, 'fetch_lines_free')) {
+					} elseif (!$objecttmp->origin && empty($lines)) {
 						$expd->fetch_lines_free();
 						$lines = $expd->lines;
 					}
