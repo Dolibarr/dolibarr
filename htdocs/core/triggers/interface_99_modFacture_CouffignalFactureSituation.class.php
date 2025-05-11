@@ -67,7 +67,6 @@ class InterfaceCouffignalFactureSituation extends DolibarrTriggers
 		return $this->description;
 	}
 
-
 	/**
 	 * Function called when a Dolibarrr business event is done.
 	 * All functions "runTrigger" are triggered if file
@@ -86,22 +85,131 @@ class InterfaceCouffignalFactureSituation extends DolibarrTriggers
 			return 0;
 		}
 
-		if ($action !== 'BILL_VALIDATE' || !($object instanceof Facture) || (int) $object->type !== Facture::TYPE_SITUATION) {
+		if (($object instanceof Facture) && ((int) $object->type === Facture::TYPE_SITUATION)) {
+			if ($action === 'BILL_VALIDATE') {
+				$difference = abs(round(FactureTools::calculateDifference($this->db, $object), 2));
+
+				if ($difference <= 0.01) {
+					return 1;
+				}
+
+				if ($difference < 5) {
+					setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'warnings');
+					return 1;
+				}
+
+				setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'errors');
+				return -1;
+			}
+		}
+
+		// SpecialCode devis client
+		if (($object instanceof PropaleLigne)) {
+			if ($action === 'LINEPROPAL_INSERT') {
+				$productSpecialCode = $this->getSpecialCodeFromProductId($object->fk_product);
+				if ($productSpecialCode === 0) {
+					return 0;
+				}
+				$object->special_code = $productSpecialCode;
+				$object->update(true);
+				return 1;
+			}
+		}
+
+		// SpecialCode devis fournisseur
+		if (($object instanceof SupplierProposalLine)) {
+			if ($action === 'LINESUPPLIER_PROPOSAL_INSERT') {
+				$productSpecialCode = $this->getSpecialCodeFromProductId($object->fk_product);
+				if ($productSpecialCode === 0) {
+					return 0;
+				}
+				$object->special_code = $productSpecialCode;
+				$object->update(true);
+				return 1;
+			}
+		}
+
+		// SpecialCode commande client
+		if (($object instanceof OrderLine)) {
+			if ($action === 'LINEORDER_INSERT') {
+				$productSpecialCode = $this->getSpecialCodeFromProductId($object->fk_product);
+				if ($productSpecialCode === 0) {
+					return 0;
+				}
+				$object->special_code = $productSpecialCode;
+				$object->update($user, true);
+				return 1;
+			}
+		}
+
+		// SpecialCode commande fournisseur
+		if (($object instanceof CommandeFournisseurLigne)) {
+			if ($action === 'LINEORDER_SUPPLIER_CREATE') {
+				$productSpecialCode = $this->getSpecialCodeFromProductId($object->fk_product);
+				if ($productSpecialCode === 0) {
+					return 0;
+				}
+				$object->special_code = $productSpecialCode;
+				$object->update(true);
+				return 1;
+			}
+		}
+
+		// SpecialCode facture client
+		if (($object instanceof FactureLigne)) {
+			if ($action === 'LINEBILL_INSERT') {
+				$productSpecialCode = $this->getSpecialCodeFromProductId($object->fk_product);
+				if ($productSpecialCode === 0) {
+					return 0;
+				}
+
+				$object->special_code = $productSpecialCode;
+				$object->update($user, true);
+				return 1;
+			}
+		}
+
+		// SpecialCode facture fournisseur
+		if (($object instanceof SupplierInvoiceLine)) {
+			if ($action === 'LINEBILL_SUPPLIER_CREATE') {
+				$productSpecialCode = $this->getSpecialCodeFromProductId($object->fk_product);
+				if ($productSpecialCode === 0) {
+					return 0;
+				}
+				$object->special_code = $productSpecialCode;
+
+				/**
+				 * SupplierInvoiceLine::update() does not update the special_code :-/
+				 */
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det t';
+				$sql .= ' SET t.special_code = '.$this->db->escape($object->special_code);
+				$sql .= ' WHERE t.rowid = '.(int) $object->id;
+				$this->db->query($sql);
+				if ($this->db->error()) {
+					setEventMessage($this->db->lasterror(), 'errors');
+					return -1;
+				}
+
+				return 1;
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Get special code from product id.
+	 *
+	 * @param int $productId ID of the product
+	 * @return int
+	 */
+	private function getSpecialCodeFromProductId($productId): int
+	{
+		$product = new Product($this->db);
+		$product->fetch($productId);
+		if (empty($product->array_options) || !array_key_exists('options_specialcodeauto', $product->array_options)) {
 			return 0;
 		}
-
-		$difference = abs(round(FactureTools::calculateDifference($this->db, $object), 2));
-
-		if ($difference <= 0.01) {
-			return 1;
-		}
-
-		if ($difference < 5) {
-			setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'warnings');
-			return 1;
-		}
-
-		setEventMessage($langs->trans('InvoiceSituationMustHaveOrdersImportedForBeingValidated', number_format($difference, 2)), 'errors');
-		return -1;
+		return (int) $product->array_options['options_specialcodeauto'];
 	}
 }
