@@ -83,7 +83,7 @@ $colspan = 3;
 
 // Lines for extrafield
 $objectline = new ExpeditionLigne($this->db);
-
+$line = new ExpeditionLigne($object->db);
 print "<!-- BEGIN PHP TEMPLATE expedition/tpl/objectline_edit.tpl.php -->\n";
 
 $coldisplay = 0;
@@ -114,7 +114,7 @@ if ($line->fk_product > 0) {
 }
 
 //Line extrafield
-if (is_object($objectline) && !empty($extrafields)) {
+if (!empty($extrafields)) {
 	$temps = $line->showOptionals($extrafields, 'edit', array('class' => 'tredited'), '', '', '1', 'line');
 	if (!empty($temps)) {
 		print '<div style="padding-top: 10px" id="extrafield_lines_area_edit" name="extrafield_lines_area_edit">';
@@ -141,7 +141,7 @@ if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 	if (!empty($line->fk_unit) && !getDolGlobalString('MAIN_EDIT_LINE_ALLOW_ALL_UNIT_TYPE')) {
 		include_once DOL_DOCUMENT_ROOT.'/core/class/cunits.class.php';
 		$cUnit = new CUnits($line->db);
-		if ($cUnit->fetch($line->fk_unit) > 0) {
+		if (!empty($line->fk_unit) && $cUnit->fetch($line->fk_unit) > 0) {
 			if (!empty($cUnit->unit_type)) {
 				$unit_type = $cUnit->unit_type;
 			}
