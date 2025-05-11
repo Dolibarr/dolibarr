@@ -686,6 +686,8 @@ class SecurityTest extends CommonClassTest
 		print "result8b = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');
 
+		$conf->global->MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL = 1;
+
 		$result = (string) dol_eval('$a="test"; $$a;', 1, 0);
 		print "result9 = ".$result."\n";
 		$this->assertStringContainsString('Bad string syntax to evaluate', $result, 'The string was not detected as evil');

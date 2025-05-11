@@ -291,7 +291,7 @@ class BookKeeping extends CommonObject
 			$this->credit = 0.0;
 		}
 
-		$result = $this->validBookkeepingDate($this->doc_date);
+		$result = $this->validBookkeepingDate($this->doc_date);	// Check date according to ACCOUNTANCY_FISCAL_PERIOD_MODE.
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -2326,7 +2326,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = '';
+			$obj = (object) array('label' => '');
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 			}

@@ -963,7 +963,6 @@ abstract class CommonInvoice extends CommonObject
 			}
 		} else {
 			$statusType = 'status6';
-
 			if ($type == self::TYPE_CREDIT_NOTE) {
 				$labelStatus = $langs->transnoentitiesnoconv('BillStatusPaidBackOrConverted'); // credit note
 				$labelStatusShort = $langs->transnoentitiesnoconv('Bill'.$prefix.'StatusPaidBackOrConverted'); // credit note

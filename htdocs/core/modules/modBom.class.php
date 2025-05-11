@@ -302,6 +302,7 @@ class modBom extends DolibarrModules
 		$this->export_sql_end[$r]  = ' FROM '.MAIN_DB_PREFIX.'bom_bom as t';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bom_extrafields as extra on (t.rowid = extra.fk_object)';
 		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline as tl ON tl.fk_bom = t.rowid';
+		$this->export_sql_end[$r] .= ' LEFT JOIN '.MAIN_DB_PREFIX.'bom_bomline_extrafields as extraline ON tl.rowid = extraline.fk_object';
 		$this->export_sql_end[$r] .= ' WHERE 1 = 1';
 		$this->export_sql_end[$r] .= ' AND t.entity IN ('.getEntity('bom').')';
 		$r++;

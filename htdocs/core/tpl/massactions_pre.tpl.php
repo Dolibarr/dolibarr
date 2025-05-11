@@ -4,6 +4,7 @@
  * Copyright (C) 2015	    Marcos García		    <marcosgdf@gmail.com>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -423,7 +424,7 @@ if ($massaction == 'predisable') {
 }
 if ($massaction == 'presetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 			'name' => 'affectedcommercial',
 			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
@@ -432,7 +433,7 @@ if ($massaction == 'presetcommercial') {
 }
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
-	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'AND u.statut = 1', 0, '', '', 0, 1);
+	$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, 'u.statut:=:1', 0, '', '', 0, 1);
 	$formquestion[] = array('type' => 'other',
 		'name' => 'unassigncommercial',
 		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),
