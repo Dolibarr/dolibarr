@@ -1267,15 +1267,15 @@ class Expedition extends CommonObject
 	/**
 	 * Add a simple expedition line.
 	 *
-	 * @param 	float	$qty							Quantity
-	 * @param 	string	$element_type					Element type
-	 * @param	int		$fk_product      				Id of product
-	 * @param 	?int	$fk_unit 						Code of the unit to use.
-	 * @param   int		$rang             				Position of line
-	 * @param 	string	$description					Description of line product
-	 * @param 	int		$fk_parent					    ID of parent line. For a hierarchy of lines.
-	 * @param	array<string,mixed>	$array_options		extrafields array
-	 * @return	int										Return integer <0 if KO, >0 if OK
+	 * @param 	float		$qty							Quantity
+	 * @param 	string		$element_type					Element type
+	 * @param	int			$fk_product      				Id of product
+	 * @param 	int|null	$fk_unit 						Code of the unit to use.
+	 * @param   int			$rang             				Position of line
+	 * @param 	string		$description					Description of line product
+	 * @param 	int			$fk_parent					    ID of parent line. For a hierarchy of lines.
+	 * @param	array<string,mixed>		$array_options		extrafields array
+	 * @return	int											Return integer <0 if KO, >0 if OK
 	 */
 	public function addlinefree($qty, $element_type, $fk_product, $fk_unit, $rang, $description, $fk_parent, $array_options = [])
 	{
