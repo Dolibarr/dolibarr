@@ -115,7 +115,7 @@ class Categories extends DolibarrApi
 	 * @return	array   Data without useless information
 	 * @phan-return Categorie
 	 * @phpstan-return Categorie
-	 * 
+	 *
 	 * @url GET /label/{label}
 	 *
 	 * @throws	RestException
