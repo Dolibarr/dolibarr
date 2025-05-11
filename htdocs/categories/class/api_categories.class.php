@@ -106,6 +106,50 @@ class Categories extends DolibarrApi
 	}
 
 	/**
+	 * Get properties of a category object
+	 *
+	 * Return an array with category information
+	 *
+	 * @param	string	$label ID of category
+	 * @param	bool	$include_childs Include child categories list (true or false)
+	 * @return	array   Data without useless information
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
+	 * 
+	 * @url GET /label/{label}
+	 *
+	 * @throws	RestException
+	 */
+	public function getLabel($label, $include_childs = false)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->category->fetch(0, $label);
+		if (!$result) {
+			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->label)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($include_childs) {
+			$cats = $this->category->get_filles();
+			if (!is_array($cats)) {
+				throw new RestException(500, 'Error when fetching child categories', array_merge(array($this->category->error), $this->category->errors));
+			}
+			$this->category->childs = array();
+			foreach ($cats as $cat) {
+				$this->category->childs[] = $this->_cleanObjectDatas($cat);
+			}
+		}
+
+		return $this->_cleanObjectDatas($this->category);
+	}
+
+	/**
 	 * List categories
 	 *
 	 * Get a list of categories according to filters
