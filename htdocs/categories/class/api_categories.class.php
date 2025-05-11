@@ -306,9 +306,9 @@ class Categories extends DolibarrApi
 	 *
 	 * @param string $label   Category label
 	 * @return array
-	 * 
+	 *
 	 * @url DELETE /label/{label}
-	 * 
+	 *
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
