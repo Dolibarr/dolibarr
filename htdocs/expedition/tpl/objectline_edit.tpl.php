@@ -76,7 +76,7 @@ if (empty($filtertype)) {
 }
 
 $formproduct = new FormProduct($object->db);
-
+$form = new Form($db);
 
 // Define colspan for the button 'Add'
 $colspan = 3;
