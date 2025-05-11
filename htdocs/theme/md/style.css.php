@@ -8626,7 +8626,7 @@ table.jPicker {
 	}
 
 	div.tmenucenter {
-		max-width: <?php echo max(24, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
+		max-width: <?php echo max(34, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
 	.menuhider div.tmenucenter {
