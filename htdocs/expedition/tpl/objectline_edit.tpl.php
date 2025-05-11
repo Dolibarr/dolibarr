@@ -56,6 +56,7 @@ if (empty($object) || !is_object($object)) {
 }
 
 '
+@phan-var-force expeditionligne $line
 @phan-var-force CommonObject $this
 @phan-var-force CommonObject $object
 @phan-var-force int $i
