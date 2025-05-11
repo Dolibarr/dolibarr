@@ -766,7 +766,7 @@ class Users extends DolibarrApi
 		 * We select all the records that match the socid
 		 */
 
-		$sql = "SELECT rowid as id, fk_action as event, fk_user as userid, type, datec, tms";
+		$sql = "SELECT rowid as id, fk_action as event, fk_user, type, datec, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 		if ($id) {
 			$sql .= " WHERE fk_user  = ".((int) $id);
@@ -792,7 +792,7 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'No notifications found');
 		}
 
-		$fields = array('id', 'userid', 'event', 'datec', 'tms', 'type');
+		$fields = array('id', 'fk_user', 'event', 'datec', 'tms', 'type');
 
 		$returnNotifications = array();
 
@@ -831,12 +831,12 @@ class Users extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 			throw new RestException(403, "User has no right to update users");
 		}
-		if ($this->user->fetch($id) <= 0) {
+		if ($this->useraccount->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
 		}
 		$notification = new Notify($this->db);
 
-		$notification->userid = $id;
+		$notification->fk_user = $id;
 
 		foreach ($request_data as $field => $value) {
 			$notification->$field = $value;
@@ -846,12 +846,12 @@ class Users extends DolibarrApi
 		if (!$event) {
 			throw new RestException(500, 'Error creating User Notification, request_data missing event');
 		}
-		$userid = $notification->userid;
+		$fk_user = $notification->fk_user;
 
-		$exists_sql = "SELECT rowid, fk_action as event, fk_user as userid, type, datec, tms as datem";
+		$exists_sql = "SELECT rowid, fk_action as event, fk_user, type, datec, tms as datem";
 		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
-		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $userid)."'";
+		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $fk_user)."'";
 
 		$exists_result = $this->db->query($exists_sql);
 		if ($this->db->num_rows($exists_result) > 0) {
@@ -892,11 +892,11 @@ class Users extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 			throw new RestException(403, "User has no right to update users");
 		}
-		if ($this->user->fetch($id) <= 0) {
+		if ($this->useraccount->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
 		}
 		$notification = new Notify($this->db);
-		$notification->userid = $id;
+		$notification->fk_user = $fk_user;
 
 		$sql = "SELECT t.rowid as id FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
 		$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
@@ -918,12 +918,12 @@ class Users extends DolibarrApi
 		}
 
 		$event = $notification->event;
-		$userid = $notification->userid;
+		$fk_user = $notification->fk_user;
 
-		$exists_sql = "SELECT rowid, fk_action as event, fk_user as userid, type, datec, tms as datem";
+		$exists_sql = "SELECT rowid, fk_action as event, fk_user, type, datec, tms as datem";
 		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
 		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
-		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $userid)."'";
+		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $fk_user)."'";
 
 		$exists_result = $this->db->query($exists_sql);
 		if ($this->db->num_rows($exists_result) > 0) {
@@ -965,7 +965,7 @@ class Users extends DolibarrApi
 
 		$notification->fetch($notification_id);
 
-		$userid = (int) $notification->userid;
+		$fk_user = (int) $notification->fk_user;
 
 		if ($userid == $id) {
 			return $notification->delete(DolibarrApiAccess::$user);
@@ -996,7 +996,7 @@ class Users extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 			throw new RestException(403, "User has no right to update users");
 		}
-		if ($this->user->fetch($id) <= 0) {
+		if ($this->useraccount->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating Notification, User doesn\'t exists');
 		}
 		$notification = new Notify($this->db);
