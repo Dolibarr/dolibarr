@@ -5,6 +5,7 @@
  * Copyright (C) 2008      Raphael Bertrand (Resultic)  <raphael.bertrand@resultic.fr>
  * Copyright (C) 2013      Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 {
 	/**
 	 * Dolibarr version of the loaded document
-	 * @var string
+	 * @var string Version, possible values are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'''|'development'|'dolibarr'|'experimental'
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
@@ -46,7 +47,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 	/**
 	 * @var string Nom du modele
-	 * @deprecated
+	 * @deprecated Use $name, getName()
 	 * @see $name
 	 */
 	public $nom = 'arctic';
@@ -76,7 +77,9 @@ class mod_arctic extends ModeleNumRefFicheinter
 		$texte .= '<input type="hidden" name="token" value="'.newToken().'">';
 		$texte .= '<input type="hidden" name="action" value="updateMask">';
 		$texte .= '<input type="hidden" name="maskconst" value="FICHINTER_ARTIC_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("InterventionCard"), $langs->transnoentities("InterventionCard"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -87,9 +90,9 @@ class mod_arctic extends ModeleNumRefFicheinter
 
 		// Setting the prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
-		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString("FICHINTER_ARTIC_MASK").'">', $tooltip, 1, 1).'</td>';
+		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskvalue" value="'.getDolGlobalString("FICHINTER_ARTIC_MASK").'">', $tooltip, 1, 'help', 'valignmiddle', 0, 3, $this->name).'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 
@@ -124,7 +127,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 	 *
 	 *  @param	Societe|string		$objsoc     Object thirdparty
 	 *  @param  Fichinter|string	$object		Object we need next value for
-	 *  @return string|int  					Value if OK, 0 if KO
+	 *	@return string|int<-1,0>    			Next value if OK, <=0 if KO
 	 */
 	public function getNextValue($objsoc = '', $object = '')
 	{
@@ -141,7 +144,7 @@ class mod_arctic extends ModeleNumRefFicheinter
 		}
 		$datec = '';
 		if (!empty($object->datec)) {
-			$datec = $object->datec;
+			$datec = (int) $object->datec;
 		}
 		$numFinal = get_next_value($db, $mask, 'fichinter', 'ref', '', $objsoc, $datec);
 

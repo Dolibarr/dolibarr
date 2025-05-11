@@ -12,7 +12,7 @@ WEBSITE_ALIASALTDesc=Користете го списокот со други и
 WEBSITE_CSS_URL=URL of external CSS file
 WEBSITE_CSS_INLINE=Содржина на CSS датотека (заедничка за сите страници)
 WEBSITE_JS_INLINE=Содржина на датотеката JavaScript (заедничка за сите страници)
-WEBSITE_HTML_HEADER=Додаток на дното на HTML заглавието (заедничко за сите страници)
+WEBSITE_HTML_HEADER=HTML Header (common to all pages)
 WEBSITE_ROBOT=Датотека со роботи (robots.txt)
 WEBSITE_HTACCESS=Датотека .htaccess на веб-страница
 WEBSITE_MANIFEST_JSON=Датотека на веб-страница manifest.json
@@ -56,16 +56,17 @@ ReadPerm=Прочитајте
 WritePerm=Напиши
 TestDeployOnWeb=Тестирајте/распоредете на веб
 PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
-PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that points on directory<br><strong>%s</strong><br>then enter the name of this virtual server in the properties of this website and click on the link "Test/Deploy on the web".
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that the URLs of pages are not user friendly and start with the path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To deploy or test using your own external web server (like Apache, Nginx, Lighttp) use the link "%s".
 VirtualHostUrlNotDefined=URL-то на виртуелниот домаќин што го опслужува надворешен веб-сервер не е дефинирано
 NoPageYet=Сè уште нема страници
 YouCanCreatePageOrImportTemplate=Можете да креирате нова страница или да увезете целосен образец на веб-локација
 SyntaxHelp=Помош за специфични совети за синтакса
 YouCanEditHtmlSourceckeditor=Можете да го уредувате изворниот код на HTML користејќи го копчето „Извор“ во уредникот.
 YouCanEditHtmlSource=<br><span class="fa fa-bug paddingright"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $db, $mysoc, $user, $website, $websitepage, $weblangs, $pagelangs.<br><br><span class="fa fa-bug paddingright"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug paddingright"></span> You can make a redirect to another Page/Container with the following syntax (Note: do not output any content before a redirect):<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br>You can also make a redirection with GET parameters:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to', '', 0, 0, $array_of_get_params); ?&gt;</strong><br><br><span class="fa fa-link paddingright"></span> To add a link to another page, use the syntax:<br><strong>&lt;a href="alias_of_page_to_link_to.php"&gt;mylink&lt;a&gt;</strong><br><br><p><span class="fa fa-bug paddingright"></span> You can dynamically set the page title and <strong>SEO meta tags</strong> (title, keywords, description). Simply define the following variables:<br> <code>$__PAGE__TITLE__ = "Title value …";</code><br> <code>$__PAGE__KEYWORDS__ = "keyword1, keyword2, keyword3 …"; // Comma separated</code><br> <code>$__PAGE__DESC__ = "Description …";</code></p><br><span class="fa fa-download paddingright"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br>
-YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper.<br>Example, for an image into documents/medias (open directory for public access), syntax is:<br><strong>&lt;img src="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
-YouCanEditHtmlSource2=За слика споделена со врска за споделување (отворен пристап користејќи го хаш-клучот за споделување на датотеката), синтаксата е:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;<span class='70f6000000012c7dcbe087z0 </span><br>
+YouCanEditHtmlSource1=<br><span class="fa fa-image paddingright"></span> To include an <strong>image</strong> stored into the <strong>medias</strong> directory (directory open for public access), use the relative path starting with <strong>/medias</strong>, example:<br><strong>&lt;img src="/medias/image/myimagepath/filename.ext"&gt;</strong><br>
+YouCanEditHtmlSource2=For an image shared with a share link (open access using the sharing hash key of file), use the wrapper:<br><strong>&lt;img src="/viewimage.php?hashp=12345679012..."&gt;</strong><br>
 YouCanEditHtmlSource3=To get the URL of the image of a PHP object, use<br><strong>&lt;img src="&lt;?php print getImagePublicURLOfObject($object, 1, "_small") ?&gt;"&gt;</strong><br>
+YouCanEditHtmlSource4=To get the URL of an image inside a html content of an article, use<br><strong>&lt;img src="&lt;?php print getImageFromHtmlContent($htmlcontent, 1) ?&gt;"&gt;</strong><br>
 YouCanEditHtmlSourceMore=<br>More examples of HTML or dynamic code available on <a href="%s" target="_blank" rel="noopener noreferrer external" class="nofocusvisible">the wiki documentation</a>.<br>
 ClonePage=Клонирајте страница/контејнер
 CloneSite=Сајт за клонирање
@@ -87,15 +88,15 @@ WebsiteAccount=Сметка на веб-страница
 WebsiteAccounts=Сметки на веб-страници
 AddWebsiteAccount=Креирајте сметка на веб-страница
 BackToListForThirdParty=Назад на списокот за трети лица
-DisableSiteFirst=Прво исклучете ја веб-локацијата
+DisableSiteFirst=Put website offline first
 MyContainerTitle=Наслов на мојата веб-страница
 AnotherContainer=Ова е како да вклучите содржина на друга страница/контејнер (може да имате грешка овде ако овозможите динамичен код бидејќи вградениот подконтејнер можеби не постои)
 SorryWebsiteIsCurrentlyOffLine=За жал, оваа веб-локација моментално е офлајн. Ве молиме вратете се подоцна...
-WEBSITE_USE_WEBSITE_ACCOUNTS=Овозможете ја табелата за сметки на веб-страницата
-WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Овозможете ја табелата за складирање на сметки на веб-страници (најава/пропусница) за секоја веб-локација / трета страна
+WEBSITE_USE_WEBSITE_ACCOUNTS=Enable the table of web site account fo thirdparties
+WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Enable the table to store the web site accounts (login/pass) for each third party
 YouMustDefineTheHomePage=Прво мора да ја дефинирате стандардната почетна страница
-OnlyEditionOfSourceForGrabbedContentFuture=Предупредување: Креирањето веб-страница со увоз на надворешна веб-страница е резервирано за искусни корисници. Во зависност од сложеноста на изворната страница, резултатот од увозот може да се разликува од оригиналот. Исто така, ако изворната страница користи вообичаени CSS стилови или конфликтни JavaScript, може да го наруши изгледот или карактеристиките на уредникот на веб-локацијата кога работите на оваа страница. Овој метод е побрз начин за креирање страница, но се препорачува да ја креирате вашата нова страница од нула или од предложен шаблон за страница.<br>Исто така, имајте предвид дека вградениот уредувач може да не работи исправност кога се користи на фатена надворешна страница.
-OnlyEditionOfSourceForGrabbedContent=Можно е само издание на изворот на HTML кога содржината е одземена од надворешна страница
+OnlyEditionOfSourceForGrabbedContentFuture=Warning: Creating a web page by importing an external web page is reserved for experienced users. Depending on the complexity of source page, the result of importation may differ from the original. Also if the source page uses common CSS styles or conflicting JavaScript, it may break the look or features of the Website editor when working on this page. This method is a quicker way to create a page but it is recommended to create your new page from scratch or from a suggested page template.<br>Note also that the inline editor might not work correctly when used on a grabbed external page.
+OnlyEditionOfSourceForGrabbedContent=Only HTML source modification is possible when content is grabbed from an external site
 GrabImagesInto=Земи и слики пронајдени во css и страница.
 ImagesShouldBeSavedInto=Сликите треба да се зачуваат во директориумот
 WebsiteRootOfImages=Корен директориум за слики на веб-страници
@@ -256,6 +257,7 @@ logOutFromYourCustomerAccount=Одјавете се од вашата корис
 filteredByVersion=Филтрирано по верзија
 removeFilter=Отстранете го филтерот
 viewMyCart=Погледнете ја мојата количка
+Shipping=Shipping
 freeShipping=Бесплатна испорака!
 noProducts=Нема производи
 nbrItemsInCart=Има <span class="ajax_cart_quantity">0</span> ставки во вашата кошничка.
@@ -284,12 +286,13 @@ productNameAToZ=Име на производ: А до Ш
 productNameZToA=Име на производ: од Z до A
 referenceLowestFirst=Референца: Прво најниско
 referenceHighestFirst=Референца: Прво највисоко
+productPerPage=products per page
 perPage=по страница
 showAll=Покажи се
 showing= Се прикажува
 nbrOfProducts= Има производи %s.
 noResultsHaveBeenFound=Пронајдени се 0 резултати.
-noResultsWereFound= Не беа пронајдени резултати.
+noResultsWereFound=Не беа пронајдени резултати.
 addToCart=Додади го во кошничка
 backHome=Врати се дома
 priceDrop=Пад на цената
@@ -302,10 +305,11 @@ lastUpdate=Последно ажурирање
 contactSupport=Како да контактирате со поддршката
 noProductToDisplay=Грешка, нема производ за прикажување
 yourCompanyInformation=Информации за вашата компанија
+yourBillingInformation=Your billing information
 emailAlreadyRegistered=Оваа електронска адреса е веќе регистрирана.
 firstnameContainsLettersOnly=<b>Името</b> мора да содржи само букви и празни места
 lastnameContainsLettersOnly=<b>Презиме</b> мора да содржи само букви и празни места
-passwordCriteria=<b>Password</b> must meet the following criteria:<br>- 12 characters<br>- 1 uppercase letter<br>- 1 digit<br>- No special characters<br>- Avoid repeating characters more than 3 times<br>
+passwordCriteria=<b>Password</b> must meet the following criteria:<br>- At least 12 characters<br>- At lest 1 uppercase letter<br>- At least 1 digit<br>- At last 1 special characters<br>- Avoid repeating characters more than 3 times<br>
 errorOccurred=Се појави грешка.
 accountCreation=Направете сметка
 errorsOccurred=Има %s грешка%s
@@ -357,3 +361,7 @@ subtract=Одземете
 LoginCheckout=Најавете се и продолжете на наплатата
 paymentSuccessProcessed=Вашата уплата е успешно обработена.
 youWillBeRedirectedToOrderPage=Наскоро ќе бидете пренасочени на страницата со детали за нарачката.
+WebPortalSetupNotComplete=Web portal setup is not complete
+DeleteWebsiteAccount=Delete website account
+ConfirmDeleteWebsiteAccount=Are you sure you want to delete this account.
+ConfirmDeleteWebsiteAccount2=If this account was used to login on the public portal or any otherweb site powered by Dolibarr, the login may be no more possible.

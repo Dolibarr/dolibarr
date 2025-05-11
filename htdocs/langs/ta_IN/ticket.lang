@@ -5,35 +5,27 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#
 # Generic
-#
-
 Module56000Name=டிக்கெட்டுகள்
 Module56000Desc=வெளியீடு அல்லது கோரிக்கை மேலாண்மைக்கான டிக்கெட் அமைப்பு
-
 Permission56001=டிக்கெட்டுகளைப் பார்க்கவும்
 Permission56002=டிக்கெட்டுகளை மாற்றவும்
 Permission56003=டிக்கெட்டுகளை நீக்கு
 Permission56004=டிக்கெட்டுகளை நிர்வகிக்கவும்
 Permission56005=அனைத்து மூன்றாம் தரப்பினரின் டிக்கெட்டுகளையும் பார்க்கவும் (வெளிப்புற பயனர்களுக்கு பயனுள்ளதாக இல்லை, எப்போதும் அவர்கள் சார்ந்திருக்கும் மூன்றாம் தரப்பினருக்கு மட்டுமே)
 Permission56006=Export tickets
-
 Tickets=Tickets
 TicketDictType=டிக்கெட் - வகைகள்
 TicketDictCategory=Ticket - Groups
 TicketDictSeverity=டிக்கெட் - தீவிரங்கள்
 TicketDictResolution=டிக்கெட் - தீர்மானம்
-
 TicketTypeShortCOM=வணிக கேள்வி
 TicketTypeShortHELP=Request for functional help
 TicketTypeShortISSUE=சிக்கல் அல்லது பிழை
@@ -41,51 +33,39 @@ TicketTypeShortPROBLEM=பிரச்சனை
 TicketTypeShortREQUEST=மாற்றம் அல்லது மேம்படுத்தல் கோரிக்கை
 TicketTypeShortPROJET=திட்டம்
 TicketTypeShortOTHER=மற்றவை
-
 TicketSeverityShortLOW=குறைந்த
 TicketSeverityShortNORMAL=இயல்பானது
 TicketSeverityShortHIGH=உயர்
 TicketSeverityShortBLOCKING=விமர்சனம், தடுப்பது
-
 TicketCategoryShortOTHER=மற்றவை
-
 ErrorBadEmailAddress=புலம் '%s' தவறானது
 MenuTicketMyAssign=எனது டிக்கெட்டுகள்
 MenuTicketMyAssignNonClosed=எனது திறந்த டிக்கெட்டுகள்
 MenuListNonClosed=டிக்கெட்டுகளைத் திறக்கவும்
-
 TypeContact_ticket_internal_CONTRIBUTOR=பங்களிப்பாளர்
 TypeContact_ticket_internal_SUPPORTTEC=ஒதுக்கப்பட்ட பயனர்
 TypeContact_ticket_external_SUPPORTCLI=வாடிக்கையாளர் தொடர்பு / சம்பவம் கண்காணிப்பு
 TypeContact_ticket_external_CONTRIBUTOR=வெளி பங்களிப்பாளர்
-
 OriginEmail=நிருபர் மின்னஞ்சல்
+EmailReplyto=Reply to in Email
+EmailReferences=References in Emails
 Notify_TICKET_SENTBYMAIL=மின்னஞ்சல் மூலம் டிக்கெட் செய்தியை அனுப்பவும்
-
 ExportDataset_ticket_1=Tickets
-
 # Status
 Read=படி
 Assigned=ஒதுக்கப்படும்
 NeedMoreInformation=நிருபர் கருத்துக்காக காத்திருக்கிறேன்
 NeedMoreInformationShort=கருத்துக்காக காத்திருக்கிறேன்
-TicketAnswered=Answered
 Waiting=காத்திருக்கிறது
 SolvedClosed=தீர்க்கப்பட்டது
 Deleted=நீக்கப்பட்டது
-
 # Dict
-Type=வகை
 Severity=தீவிரம்
 TicketGroupIsPublic=குழு பொது
 TicketGroupIsPublicDesc=ஒரு டிக்கெட் குழு பொதுவில் இருந்தால், பொது இடைமுகத்திலிருந்து டிக்கெட்டை உருவாக்கும் போது அது படிவத்தில் தெரியும்
-
 # Email templates
 MailToSendTicketMessage=டிக்கெட் செய்தியிலிருந்து மின்னஞ்சல் அனுப்ப
-
-#
 # Admin page
-#
 TicketSetup=டிக்கெட் தொகுதி அமைப்பு
 TicketSettings=அமைப்புகள்
 TicketPublicAccess=அடையாளம் தேவைப்படாத பொது இடைமுகம் பின்வரும் url இல் உள்ளது
@@ -157,10 +137,7 @@ TicketUseCaptchaCode=Use graphical code (CAPTCHA) when creating a ticket
 TicketUseCaptchaCodeHelp=Adds CAPTCHA verification when creating a new ticket.
 TicketsAllowClassificationModificationIfClosed=Allow to modify classification of closed tickets
 TicketsAllowClassificationModificationIfClosedHelp=Allow to modify classification (type, ticket group, severity) even if tickets are closed.
-
-#
 # Index & list page
-#
 TicketsIndex=டிக்கெட் பகுதி
 TicketList=டிக்கெட்டுகளின் பட்டியல்
 TicketAssignedToMeInfos=இந்தப் பக்கம் தற்போதைய பயனரால் உருவாக்கப்பட்ட அல்லது ஒதுக்கப்பட்ட டிக்கெட் பட்டியலைக் காட்டுகிறது
@@ -175,10 +152,7 @@ ShowAsConversation=உரையாடல் பட்டியலாகக் �
 MessageListViewType=அட்டவணைப் பட்டியலாகக் காட்டு
 ConfirmMassTicketClosingSendEmail=Automatically send emails when closing tickets
 ConfirmMassTicketClosingSendEmailQuestion=Do you want to notify thirdparties when closing these tickets ?
-
-#
 # Ticket card
-#
 Ticket=டிக்கெட்
 TicketCard=டிக்கெட் அட்டை
 CreateTicket=டிக்கெட்டை உருவாக்கவும்
@@ -278,20 +252,14 @@ TicketsDelayFromLastResponseTooLong=Too much time elapsed since last answer on t
 TicketNoContractFoundToLink=No contract was found to be automatically linked to this ticket. Please link a contract manually.
 TicketManyContractsLinked=Many contracts have been automatically linked to this ticket. Make sure to verify which should be chosen.
 TicketRefAlreadyUsed=The reference [%s] is already used, your new reference is [%s]
-
-#
 # Logs
-#
 TicketLogMesgReadBy=%s டிக்கெட்டை %s படித்தார்
 NoLogForThisTicket=இந்த டிக்கெட்டுக்கான பதிவு இன்னும் இல்லை
 TicketLogAssignedTo=%s டிக்கெட் %sக்கு ஒதுக்கப்பட்டது
 TicketLogPropertyChanged=டிக்கெட் %s மாற்றப்பட்டது: %s இலிருந்து %s என வகைப்பாடு
 TicketLogClosedBy=%s டிக்கெட்டை %s மூடியது
 TicketLogReopen=டிக்கெட் %s மீண்டும் திறக்கப்பட்டது
-
-#
 # Public pages
-#
 TicketSystem=டிக்கெட் அமைப்பு
 ShowListTicketWithTrackId=டிராக் ஐடியிலிருந்து டிக்கெட் பட்டியலைக் காண்பி
 ShowTicketWithTrackId=டிராக் ஐடியிலிருந்து டிக்கெட்டைக் காண்பி
@@ -306,13 +274,13 @@ TicketNewEmailBodyCustomer=இது உங்கள் கணக்கில்
 TicketNewEmailBodyInfosTicket=டிக்கெட்டை கண்காணிப்பதற்கான தகவல்
 TicketNewEmailBodyInfosTrackId=டிக்கெட் கண்காணிப்பு எண்: %s
 TicketNewEmailBodyInfosTrackUrl=You can view the progress of the ticket by clicking the following link
-TicketNewEmailBodyInfosTrackUrlCustomer=பின்வரும் இணைப்பைக் கிளிக் செய்வதன் மூலம் குறிப்பிட்ட இடைமுகத்தில் டிக்கெட்டின் முன்னேற்றத்தைக் காணலாம்
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the public ticket portal by clicking the following link
 TicketCloseEmailBodyInfosTrackUrlCustomer=You can consult the history of this ticket by clicking the following link
 TicketEmailPleaseDoNotReplyToThisEmail=இந்த மின்னஞ்சலுக்கு நேரடியாக பதிலளிக்க வேண்டாம்! இடைமுகத்தில் பதிலளிக்க இணைப்பைப் பயன்படுத்தவும்.
 TicketPublicInfoCreateTicket=எங்கள் நிர்வாக அமைப்பில் ஆதரவு டிக்கெட்டை பதிவு செய்ய இந்தப் படிவம் உங்களை அனுமதிக்கிறது.
 TicketPublicPleaseBeAccuratelyDescribe=Please accurately describe your request. Provide the most information possible to allow us to correctly identify your request.
 TicketPublicMsgViewLogIn=டிக்கெட் கண்காணிப்பு ஐடியை உள்ளிடவும்
-TicketTrackId=பொது கண்காணிப்பு ஐடி
+TicketTrackId=Tracking ID
 OneOfTicketTrackId=உங்கள் கண்காணிப்பு ஐடி ஒன்று
 ErrorTicketNotFound=கண்காணிப்பு ஐடி %s கொண்ட டிக்கெட் கிடைக்கவில்லை!
 Subject=பொருள்
@@ -330,7 +298,6 @@ NumberOfTicketsByMonth=ஒரு மாதத்திற்கான டிக�
 NbOfTickets=டிக்கெட்டுகளின் எண்ணிக்கை
 ExternalContributors=External contributors
 AddContributor=Add external contributor
-
 # notifications
 TicketCloseEmailSubjectCustomer=Ticket closed
 TicketCloseEmailBodyCustomer=This is an automatic message to notify you that ticket %s has just been closed.
@@ -342,12 +309,8 @@ TicketNotificationRecipient=அறிவிப்பு பெறுபவர்
 TicketNotificationLogMessage=பதிவு செய்தி
 TicketNotificationEmailBodyInfosTrackUrlinternal=இடைமுகத்தில் டிக்கெட்டைப் பார்க்கவும்
 TicketNotificationNumberEmailSent=அறிவிப்பு மின்னஞ்சல் அனுப்பப்பட்டது: %s
-
 ActionsOnTicket=டிக்கெட்டில் நிகழ்வுகள்
-
-#
 # Boxes
-#
 BoxLastTicket=சமீபத்தில் உருவாக்கப்பட்ட டிக்கெட்டுகள்
 BoxLastTicketDescription=சமீபத்திய %s டிக்கெட்டுகளை உருவாக்கியது
 BoxLastTicketContent=

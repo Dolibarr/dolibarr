@@ -4,7 +4,8 @@
  * Copyright (C) 2020       Thibault FOUCART        <support@ptibogxiv.net>
  * Copyright (C) 2022       ATM Consulting          <contact@atm-consulting.fr>
  * Copyright (C) 2022       OpenDSI                 <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,14 +35,14 @@ require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 class Proposals extends DolibarrApi
 {
 	/**
-	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
+	 * @var string[]       Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
 		'socid'
 	);
 
 	/**
-	 * @var Propal $propal {@type Propal}
+	 * @var Propal {@type Propal}
 	 */
 	public $propal;
 
@@ -86,7 +87,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function getByRef($ref, $contact_list = 1)
 	{
-		return $this->_fetch('', $ref, '', $contact_list);
+		return $this->_fetch(0, $ref, '', $contact_list);
 	}
 
 	/**
@@ -104,7 +105,7 @@ class Proposals extends DolibarrApi
 	 */
 	public function getByRefExt($ref_ext, $contact_list = 1)
 	{
-		return $this->_fetch('', '', $ref_ext, $contact_list);
+		return $this->_fetch(0, '', $ref_ext, $contact_list);
 	}
 
 	/**
@@ -135,10 +136,16 @@ class Proposals extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add external contacts ids.
-		$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
-		if (is_array($tmparray)) {
-			$this->propal->contacts_ids = $tmparray;
+		if ($contact_list > -1) {
+			// Add external contacts ids.
+			$tmparray = $this->propal->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->propal->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->propal->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->propal->contacts_ids_internal = $tmparray;
+			}
 		}
 
 		$this->propal->fetchObjectLinked();
@@ -157,10 +164,14 @@ class Proposals extends DolibarrApi
 	 * @param int		$page				Page number
 	 * @param string	$thirdparty_ids		Thirdparty ids to filter commercial proposals (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param string    $sqlfilters         Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.datec:<:'2016-01-01')"
-	 * @param string    $properties	Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param string    $properties	        Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @param int		$loadlinkedobjects	Load also linked object
 	 * @return  array                       Array of order objects
+	 * @phan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
+	 * @phpstan-return Propal[]|array{data:Propal[],pagination:array{total:int,page:int,page_count:int,limit:int}}
 	 */
-	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '')
+	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false, $loadlinkedobjects = 0)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'lire')) {
 			throw new RestException(403);
@@ -201,6 +212,9 @@ class Proposals extends DolibarrApi
 			}
 		}
 
+		//this query will return total proposals with the filters given
+		$sqlTotals = str_replace('SELECT t.rowid', 'SELECT count(t.rowid) as total', $sql);
+
 		$sql .= $this->db->order($sortfield, $sortorder);
 		if ($limit) {
 			if ($page < 0) {
@@ -221,18 +235,41 @@ class Proposals extends DolibarrApi
 			while ($i < $min) {
 				$obj = $this->db->fetch_object($result);
 				$proposal_static = new Propal($this->db);
-				if ($proposal_static->fetch($obj->rowid)) {
+				if ($proposal_static->fetch($obj->rowid) > 0) {
 					// Add external contacts ids
 					$tmparray = $proposal_static->liste_contact(-1, 'external', 1);
 					if (is_array($tmparray)) {
 						$proposal_static->contacts_ids = $tmparray;
 					}
+
+					if ($loadlinkedobjects) {
+						// retrieve linked objects
+						$proposal_static->fetchObjectLinked();
+					}
+
 					$obj_ret[] = $this->_filterObjectProperties($this->_cleanObjectDatas($proposal_static), $properties);
 				}
 				$i++;
 			}
 		} else {
 			throw new RestException(503, 'Error when retrieve propal list : '.$this->db->lasterror());
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$totalsResult = $this->db->query($sqlTotals);
+			$total = $this->db->fetch_object($totalsResult)->total;
+
+			$tmp = $obj_ret;
+			$obj_ret = [];
+
+			$obj_ret['data'] = $tmp;
+			$obj_ret['pagination'] = [
+				'total' => (int) $total,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $total / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $obj_ret;
@@ -242,6 +279,8 @@ class Proposals extends DolibarrApi
 	 * Create commercial proposal object
 	 *
 	 * @param   array   $request_data   Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  int     ID of proposal
 	 */
 	public function post($request_data = null)
@@ -284,6 +323,8 @@ class Proposals extends DolibarrApi
 	 * @url	GET {id}/lines
 	 *
 	 * @return array
+	 * @phan-return PropaleLigne[]
+	 * @phpstan-return PropaleLigne[]
 	 */
 	public function getLines($id, $sqlfilters = '')
 	{
@@ -322,6 +363,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/line
 	 *
@@ -388,6 +431,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param int   $id             Id of commercial proposal to update
 	 * @param array $request_data   Commercial proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 *
 	 * @url	POST {id}/lines
 	 *
@@ -470,6 +515,8 @@ class Proposals extends DolibarrApi
 	 * @param	int				$id             Id of commercial proposal to update
 	 * @param	int				$lineid         Id of line to update
 	 * @param	array			$request_data   Commercial proposal line data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return  Object|false					Object with cleaned properties
 	 *
 	 * @url	PUT {id}/lines/{lineid}
@@ -583,6 +630,8 @@ class Proposals extends DolibarrApi
 	 * @param string $type           Type of the external contact (BILLING, SHIPPING, CUSTOMER), internal contact (SALESREPFOLL)
 	 * @param string $source         Source of the contact (internal, external)
 	 * @return array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 *
 	 * @url	POST {id}/contact/{contactid}/{type}/{source}
 	 *
@@ -681,6 +730,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param	int		$id             Id of commercial proposal to update
 	 * @param	array	$request_data   Datas
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
 	 * @return	Object					Object with cleaned properties
 	 */
 	public function put($id, $request_data = null)
@@ -738,6 +789,8 @@ class Proposals extends DolibarrApi
 	 *
 	 * @param   int     $id         Commercial proposal ID
 	 * @return  array
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
 	public function delete($id)
 	{
@@ -872,11 +925,12 @@ class Proposals extends DolibarrApi
 	 * @param   int		$status			Must be 2 (accepted) or 3 (refused)				{@min 2}{@max 3}
 	 * @param   string  $note_private   Add this mention at end of private note
 	 * @param   int     $notrigger      Disabled triggers
+	 * @param   string  $note_public    Add this mention at end of public note
 	 * @return	Object					Object with cleaned properties
 	 *
 	 * @url POST    {id}/close
 	 */
-	public function close($id, $status, $note_private = '', $notrigger = 0)
+	public function close($id, $status, $note_private = '', $notrigger = 0, $note_public = '')
 	{
 		if (!DolibarrApiAccess::$user->hasRight('propal', 'creer')) {
 			throw new RestException(403);
@@ -890,7 +944,7 @@ class Proposals extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger);
+		$result = $this->propal->closeProposal(DolibarrApiAccess::$user, $status, $note_private, $notrigger, $note_public);
 		if ($result == 0) {
 			throw new RestException(304, 'Error nothing done. May be object is already closed');
 		}
@@ -957,13 +1011,16 @@ class Proposals extends DolibarrApi
 	/**
 	 * Validate fields before create or update object
 	 *
-	 * @param   array           $data   Array with data to verify
-	 * @return  array
+	 * @param ?array<string,string> $data   Array with data to verify
+	 * @return array<string,string>
 	 *
 	 * @throws  RestException
 	 */
 	private function _validate($data)
 	{
+		if ($data === null) {
+			$data = array();
+		}
 		$propal = array();
 		foreach (Proposals::$FIELDS as $field) {
 			if (!isset($data[$field])) {

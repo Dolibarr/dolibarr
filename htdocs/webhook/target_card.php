@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/webhook/class/target.class.php';
 require_once DOL_DOCUMENT_ROOT.'/webhook/lib/webhook_target.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 
-global $conf, $db, $hookmanager, $langs, $user;
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Societe $mysoc
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array('other','admin'));
@@ -47,7 +55,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOSTINT('lineid');
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Target($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->webhook->dir_output.'/temp/massgeneration/'.$user->id;
@@ -72,24 +80,24 @@ if (empty($action) && empty($id) && empty($ref)) {
 }
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'.
 
 // Permissions
 // There is several ways to check permission.
 // Set $enablepermissioncheck to 1 to enable a minimum low level of checks
-$enablepermissioncheck = 0;
+$enablepermissioncheck = getDolGlobalBool("WEBHOOK_ENABLE_PERMISSION_CHECK");
 if ($enablepermissioncheck) {
-	$permissiontoread = $user->hasRight('webhook', 'target', 'read');
-	$permissiontoadd = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = $user->hasRight('webhook', 'target', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
-	$permissionnote = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_setnotes.inc.php
-	$permissiondellink = $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_dellink.inc.php
+	$permissiontoread = (bool) $user->hasRight('webhook', 'target', 'read');
+	$permissiontoadd = (bool) $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	$permissiontodelete = (bool) $user->hasRight('webhook', 'target', 'delete') || ((bool) $permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
+	$permissionnote = (bool) $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_setnotes.inc.php
+	$permissiondellink = (bool) $user->hasRight('webhook', 'target', 'write'); // Used by the include of actions_dellink.inc.php
 } else {
-	$permissiontoread = 1;
-	$permissiontoadd = 1; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
-	$permissiontodelete = 1;
-	$permissionnote = 1;
-	$permissiondellink = 1;
+	$permissiontoread = true;
+	$permissiontoadd = true; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+	$permissiontodelete = true;
+	$permissionnote = true;
+	$permissiondellink = true;
 }
 
 $upload_dir = $conf->webhook->multidir_output[isset($object->entity) ? $object->entity : 1].'/target';
@@ -150,12 +158,17 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	if ($action == 'set_thirdparty' && $permissiontoadd) {
-		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', '', 'date', '', $user, $triggermodname);
+		$object->setValueFrom('fk_soc', GETPOSTINT('fk_soc'), '', null, 'date', '', $user, $triggermodname);
 	}
 	if ($action == 'classin' && $permissiontoadd) {
 		$object->setProject(GETPOSTINT('projectid'));
 	}
-
+	if ($action == 'confirm_statusmanual' && $confirm == "yes" && $permissiontoadd) {
+		$object->setStatusCommon($user, $object::STATUS_MANUAL_TRIGGER, 0, 'TARGET_REOPEN');
+	}
+	if ($action == 'confirm_statusautomatic' && $confirm == "yes" && $permissiontoadd) {
+		$object->setStatusCommon($user, $object::STATUS_AUTOMATIC_TRIGGER, 0, 'TARGET_REOPEN');
+	}
 	if ($action == 'testsendtourl' && $permissiontoadd) {
 		$triggercode = GETPOST("triggercode");
 		$url = GETPOST("url");
@@ -168,7 +181,19 @@ if (empty($reshook)) {
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("DataToSendTrigger")), null, 'errors');
 		}
-		$response = getURLContent($url, 'POST', $jsondata, 1, array('content-type:application/json'), array('http', 'https'), 0, -1);
+
+		$headers = array(
+			'Content-Type: application/json'
+			//'Accept: application/json'
+		);
+
+		$method = 'POSTALREADYFORMATED';
+		if (getDolGlobalString('WEBHOOK_POST_SEND_DATA_AS_PARAM_STRING')) {		// For compatibility with v20- versions
+			$method = 'POST';
+		}
+
+		// TODO Replace this by a call of trigger...
+		$response = getURLContent($url, $method, $jsondata, 1, $headers, array('http', 'https'), 2, -1);
 		if (empty($response['curl_error_no']) && $response['http_code'] >= 200 && $response['http_code'] < 300) {
 			setEventMessages($langs->trans("Success"), null);
 		} else {
@@ -215,7 +240,6 @@ llxHeader('', $title, $help_url, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-web
 if ($action == 'create') {
 	if (empty($permissiontoadd)) {
 		accessforbidden('NotEnoughPermissions', 0, 1);
-		exit;
 	}
 
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Target")), '', 'object_'.$object->picto);
@@ -312,29 +336,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Confirmation of action xxxx (You can use it for xxx = 'close', xxx = 'reopen', ...)
-	if ($action == 'xxx') {
-		$text = $langs->trans('ConfirmActionTarget', $object->ref);
-		/*if (isModEnabled('notification'))
-		{
-			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
-			$notify = new Notify($db);
-			$text .= '<br>';
-			$text .= $notify->confirmMessage('TARGET_CLOSE', $object->socid, $object);
-		}*/
-
-		$formquestion = array();
-		/*
-		$forcecombo=0;
-		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
-		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
-			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
-			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
-		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
-	}
 
 	// Call Hook formConfirm
 	$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
@@ -514,11 +515,26 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Enable
 			if ($object->status == $object::STATUS_DRAFT) {
-				print dolGetButtonAction('', $langs->trans('Enable'), 'default', $_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes&token='.newToken(), '', $permissiontoadd);
+				$arrayforbutactivate = array();
+				$arrayforbutactivate[] = array(
+					'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_statusautomatic&confirm=yes&token='.newToken(),
+					'label' => 'AutomaticTrigger',
+					'lang' => 'admin',
+					'perm' => true,
+					'enabled' => true,
+				);
+				$arrayforbutactivate[] = array(
+					'url' => $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_statusmanual&confirm=yes&token='.newToken(),
+					'label' => 'ManualTrigger',
+					'lang' => 'admin',
+					'perm' => true,
+					'enabled' => true,
+				);
+				print dolGetButtonAction('', $langs->trans('Enable'), 'default', $arrayforbutactivate, '', $permissiontoadd);
 			}
 
 			// Disable
-			if ($object->status == $object::STATUS_VALIDATED) {
+			if (in_array($object->status, array($object::STATUS_AUTOMATIC_TRIGGER, $object::STATUS_MANUAL_TRIGGER))) {
 				print dolGetButtonAction('', $langs->trans('Disable'), 'delete', $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes&token='.newToken(), '', $permissiontoadd);
 			}
 
@@ -602,7 +618,7 @@ if ($action == "test") {
 			$.ajax({
 				method: \'GET\',
 				url:  \''.DOL_URL_ROOT.'/webhook/ajax/webhook.php\',
-				data: { action: "getjsonformtrigger", triggercode: triggercode },
+				data: { action: "getjsonformtrigger", triggercode: triggercode , token:"'.currentToken().'"},
 				success: function(response) {
 					obj = JSON.stringify(response);
 					$("#jsondata").val(obj);

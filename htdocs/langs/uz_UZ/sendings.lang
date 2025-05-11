@@ -63,6 +63,9 @@ NoProductToShipFoundIntoStock=<b> %s </b> omborida jo'natiladigan mahsulot topil
 WeightVolShort=Og'irligi / jild
 ValidateOrderFirstBeforeShipment=Yuklarni jo'natishdan oldin avval buyurtmani tasdiqlashingiz kerak.
 NoLineGoOnTabToAddSome=Qator yoʻq, qoʻshish uchun “%s” sahifasiga oʻting
+CreateInvoiceForThisCustomerFromSendings=Bill sendings
+IfValidateInvoiceIsNoSendingStayUnbilled=If invoice validation is 'No', the sending will remain to status 'Unbilled' until the invoice is validated.
+OptionToSetSendingBilledNotEnabled=Option from module Workflow, to set sending to 'Billed' automatically when invoice is validated, is not enabled, so you will have to set the status of sendings to 'Billed' manually after the invoice has been generated.
 
 # Sending methods
 # ModelDocument
@@ -71,16 +74,12 @@ DocumentModelStorm=Yetkazib berish kvitansiyalari va ekstraditsiyalarning muvofi
 Error_EXPEDITION_ADDON_NUMBER_NotDefined=Doimiy EXPEDITION_ADDON_NUMBER aniqlanmagan
 SumOfProductVolumes=Mahsulot hajmi
 SumOfProductWeights=Mahsulot og'irliklari yig'indisi
-
 # warehouse details
 DetailWarehouseNumber= Ombor tafsilotlari
 DetailWarehouseFormat= V: %s (Miqdor: %d)
 SHIPPING_DISPLAY_STOCK_ENTRY_DATE=Seriya raqami yoki partiya uchun jo'natishni yaratish paytida stokda so'nggi kirish sanasini ko'rsatish
 CreationOptions=Yukni yaratish vaqtida mavjud variantlar
-
 ShipmentDistribution=Yuklarni taqsimlash
-
 ErrorTooManyCombinationBatchcode=%s qatori uchun jo‘natma yo‘q, chunki ombor, mahsulot, partiya kodining juda ko‘p kombinatsiyasi topilmadi (%s).
 ErrorNoCombinationBatchcode=Could not save the line %s as the combination of warehouse-product-lot/serial (%s, %s, %s) was not found in stock.
-
 ErrorTooMuchShipped=Yuborilgan miqdor %s qatori uchun buyurtma qilingan miqdordan oshmasligi kerak

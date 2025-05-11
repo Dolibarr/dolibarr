@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+/* Copyright (C) 2013-2018 Jean-François FERRY      <hello@librethic.io>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -317,7 +317,7 @@ class modTicket extends DolibarrModules
 			'titre' => 'List',
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticketlist',
-			'url' => '/ticket/list.php?search_fk_status=non_closed',
+			'url' => '/ticket/list.php?search_fk_statut=openall',
 			'langs' => 'ticket',
 			'position' => 103,
 			'enabled' => 'isModEnabled("ticket")',
@@ -331,7 +331,7 @@ class modTicket extends DolibarrModules
 			'titre' => 'MenuTicketMyAssign',
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'ticketmy',
-			'url' => '/ticket/list.php?mode=mine&search_fk_status=non_closed',
+			'url' => '/ticket/list.php?mode=mine&search_fk_statut=openall',
 			'langs' => 'ticket',
 			'position' => 105,
 			'enabled' => 'isModEnabled("ticket")',
@@ -357,7 +357,7 @@ class modTicket extends DolibarrModules
 			'type' => 'left',
 			'titre' => 'Categories',
 			'mainmenu' => 'ticket',
-			'url' => '/categories/index.php?type=12',
+			'url' => '/categories/categorie_list.php?type=12',
 			'langs' => 'ticket',
 			'position' => 107,
 			'enabled' => 'isModEnabled("ticket") && isModEnabled("categorie")',
@@ -420,7 +420,7 @@ class modTicket extends DolibarrModules
 		if (file_exists($src) && !file_exists($dest)) {
 			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 			dol_mkdir($dirodt);
-			$result = dol_copy($src, $dest, 0, 0);
+			$result = dol_copy($src, $dest, '0', 0);
 			if ($result < 0) {
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorFailToCopyFile', $src, $dest);

@@ -133,7 +133,6 @@ ProjectReferers=Itens relacionados
 ProjectMustBeValidatedFirst=O projeto tem que primeiramente ser validado
 FirstAddRessourceToAllocateTime=Atribuir um recurso do usuário como contato do projeto para alocar tempo
 TimeAlreadyRecorded=Este é o tempo gasto já gravado para esta tarefa / dia e usuário %s
-ProjectsWithThisUserAsContact=Projetos com este usuário como contato
 TasksWithThisUserAsContact=As tarefas atribuídas a esse usuário
 NoUserAssignedToTheProject=Nenhum usuário atribuído a este projeto
 ProjectOverview=Visão geral

@@ -10,7 +10,8 @@
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,6 +49,14 @@ if (isModEnabled('member')) {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 }
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "commercial", "bills", "banks", "users"));
 
@@ -66,11 +75,12 @@ $errors = array();
 
 
 // Get parameters
-$action		= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
-$cancel 	= GETPOST('cancel', 'alpha');
-$backtopage = GETPOST('backtopage', 'alpha');
-$confirm 	= GETPOST('confirm');
-$socid 		= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
+$action			= (GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'view');
+$cancel 		= GETPOST('cancel', 'alpha');
+$backtopage 	= GETPOST('backtopage', 'alpha');
+$confirm 		= GETPOST('confirm');
+$socid 			= GETPOSTINT('socid') ? GETPOSTINT('socid') : GETPOSTINT('id');
+$selectedfields = GETPOST('selectedfields', 'alpha');
 
 if ($user->socid) {
 	$socid = $user->socid;
@@ -87,7 +97,7 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('thirdpartycontact', 'globalcard'));
 
 if ($object->fetch($socid) <= 0 && $action == 'view') {
@@ -116,7 +126,7 @@ if (!$user->hasRight('societe', 'contact', 'lire')) {
  * Actions
  */
 
-$parameters = array('id'=>$socid, 'objcanvas'=>$objcanvas);
+$parameters = array('id' => $socid, 'objcanvas' => $objcanvas);
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -136,8 +146,8 @@ if (empty($reshook)) {
 }
 
 if ($action == 'confirm_delete' && $user->hasRight('societe', 'contact', 'delete')) {
-	$id = GETPOST('id', 'int');
-	if (!empty($id) && $socid > 0) {
+	$id = GETPOSTINT('id');
+	if ($id > 0 && $socid > 0) {
 		$contact = new Contact($db);
 		$ret = $contact->fetch($id);
 		if ($ret > 0) {
@@ -196,7 +206,11 @@ print dol_get_fiche_head($head, 'contact', $langs->trans("ThirdParty"), 0, 'comp
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', '', '', 0, '', '', 'arearefnobottom');
+$morehtmlref = '<a href="'.DOL_URL_ROOT.'/societe/vcard.php?id='.$socid.'" class="refid">';
+$morehtmlref .= img_picto($langs->trans("Download").' '.$langs->trans("VCard"), 'vcard.png', 'class="valignmiddle marginleftonly paddingrightonly"');
+$morehtmlref .= '</a>';
+
+dol_banner_tab($object, 'socid', $linkback, ($user->socid ? 0 : 1), 'rowid', 'nom', $morehtmlref, '', 0, '', '', 1);
 
 print dol_get_fiche_end();
 
@@ -205,7 +219,8 @@ print '<br>';
 if ($action != 'presend') {
 	// Contacts list
 	if (!getDolGlobalString('SOCIETE_DISABLE_CONTACTS')) {
-		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+		$showuserlogin = in_array('u.user', explode(',', $selectedfields)) ? 1 : 0;
+		$result = show_contacts($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, $showuserlogin);
 	}
 }
 if ($action == 'delete') {

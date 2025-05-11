@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2023 Alexandre Janniaux   <alexandre.janniaux@gmail.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,12 +64,12 @@ require_once dirname(__FILE__).'/../../htdocs/website/class/website.class.php';
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
 	$user->fetch(1);
-	$user->getrights();
-
-	if (empty($user->rights->website)) {
-		$user->rights->website = new stdClass();
-	}
+	$user->loadRights();
 }
+if (empty($user->rights->website)) {
+	$user->rights->website = new stdClass();
+}
+
 $conf->global->MAIN_DISABLE_ALL_MAILS = 1;
 
 
@@ -131,13 +132,48 @@ class WebsiteTest extends CommonClassTest
 	 */
 	public function testCheckPHPCode()
 	{
-		global $user;
+		global $conf, $user;
 
 		// Force permission so this is not the permission that will affect result of checkPHPCode
 		$user->rights->website->writephp = 1;
 
+		// Legitimate
+
+		$t = '';
+		$s = '<?php execu ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 0, 'checkPHPCode detect string as dangerous when it is legitimate');
+
+		$t = '';
+		$s = '<?php echo $_SESSION["eee"] ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 0, 'checkPHPCode detect string as dangerous when it is legitimate');
+
+
+		// Dangerous
+
 		$t = '';
 		$s = '<?php exec("eee"); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php eXec  ("eee"); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php $a="xec"; "e$a" ("ee"); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		$t = '';
+		$s = '<?php $a=\'exec\'("ee"); ?>';
 		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
@@ -147,6 +183,16 @@ class WebsiteTest extends CommonClassTest
 		$result = checkPHPCode($t, $s);
 		print __METHOD__." result checkPHPCode=".$result."\n";
 		$this->assertEquals($result, 1, 'checkPHPCode did not detect the string was dangerous');
+
+		// Dangerous but legitimate due to option WEBSITE_PHP_ALLOW_EXEC
+
+		$conf->global->WEBSITE_PHP_ALLOW_EXEC = 1;
+
+		$t = '';
+		$s = '<?php exec("eee"); ?>';
+		$result = checkPHPCode($t, $s);
+		print __METHOD__." result checkPHPCode=".$result."\n";
+		$this->assertEquals($result, 0, 'checkPHPCode did not accept the exec. it should when WEBSITE_PHP_ALLOW_EXEC is set.');
 	}
 
 	/**
@@ -170,5 +216,24 @@ class WebsiteTest extends CommonClassTest
 		$result = dolKeepOnlyPhpCode($s);
 		print __METHOD__." result dolKeepOnlyPhpCode=".$result."\n";
 		$this->assertEquals('<?php test() ?><?php test2(); ?>', $result, 'dolKeepOnlyPhpCode did extract the correct string');
+	}
+
+	/**
+	 * testGetImageFromHtmlContent
+	 *
+	 * @return void
+	 */
+	public function testGetImageFromHtmlContent()
+	{
+		// Example of usage
+		$htmlContent = '<p>Some text before.</p><img src="image1.jpg"><p>Some text in between.</p><img src="/mydir/image2.jpg"><p>Some text after.</p>';
+
+		$firstImage = getImageFromHtmlContent($htmlContent, 1);
+		print __METHOD__." result firstImage=".$firstImage."\n";
+		$this->assertEquals('image1.jpg', $firstImage, ' failed to get firstimage');
+
+		$secondImage = getImageFromHtmlContent($htmlContent, 2);
+		print __METHOD__." result secondImage=".$secondImage."\n";
+		$this->assertEquals('/mydir/image2.jpg', $secondImage, ' failed to get second image');
 	}
 }

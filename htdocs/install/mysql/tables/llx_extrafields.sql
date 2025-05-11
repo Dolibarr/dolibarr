@@ -32,6 +32,7 @@ create table llx_extrafields
 	fieldrequired   integer DEFAULT 0,
 	perms			varchar(255),								-- not used yet
 	enabled         varchar(255),
+	module          varchar(64),
 	pos             integer DEFAULT 0,
 	alwayseditable  integer DEFAULT 0,							-- 1 if field can be edited whatever is element status
 	param			text,										-- extra parameters to define possible values of field
@@ -40,6 +41,7 @@ create table llx_extrafields
     totalizable     boolean DEFAULT FALSE,                      -- is extrafield totalizable on list
 	langs			varchar(64),								-- example: fileofmymodule@mymodule
 	help            text,                                       -- to store help tooltip
+	aiprompt		text,										-- a prompt to autofill the value with AI
 	css             varchar(128),                               -- to store css on create/update forms
 	cssview         varchar(128),                               -- to store css on view form
 	csslist         varchar(128),                               -- to store css on list

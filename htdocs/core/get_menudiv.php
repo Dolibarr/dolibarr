@@ -1,5 +1,7 @@
 <?php
 /* Copyright (C) 2005-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
@@ -67,6 +69,13 @@ if (!defined('DISABLE_SELECT2')) {
 }
 
 require_once '../main.inc.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 if (GETPOST('lang', 'aZ09')) {
 	$langs->setDefaultLang(GETPOST('lang', 'aZ09')); // If language was forced on URL by the main.inc.php
@@ -103,16 +112,16 @@ top_htmlhead($head, $title, 0, 0, $arrayofjs, $arrayofcss);
 
 print '<body class="getmenudiv">'."\n";
 
-// Javascript to make menu active like Jmobile did.
+// JavaScript to make menu active like Jmobile did.
 print '
 <style>
-    /*Lets hide the non active LIs by default*/
+    /* Hide the non active LIs by default*/
     body {
         font-size: 16px;
     }
     body ul {
         margin: 0;
-        padding-left: 0;
+        padding-'.$left.': 0;
     }
     body ul li {
         list-style: none;
@@ -122,7 +131,16 @@ print '
     }
 
 	ul li.lilevel2 {
-		padding-left: 40px;	/* width = 20 for level0, 20 for level1 */
+		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
+	}
+	ul li.lilevel3 {
+		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
+	}
+	ul li.lilevel4 {
+		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
+	}
+	ul li.lilevel5 {
+		padding-'.$left.': 60px;		/* width = 20 for level0, 20 for level1 */
 	}
 
 	.getmenudiv a:hover {
@@ -131,33 +149,34 @@ print '
 
 	.pictofixedwidth {
     	text-align: left;
-    	padding-right: 10px !important;
+    	padding-'.$right.': 8px !important;
 	}
 
 	li.lilevel1 > a, li.lilevel1 > i {
-		padding-left: 30px !important;
+		padding-'.$left.': 30px !important;
 	}
 	li.lilevel2 a {
-		padding-left: 60px !important;
+		padding-'.$left.': 60px !important;
 	}
 	li.lilevel3 a {
-		padding-left: 90px !important;
+		padding-'.$left.': 85px !important;
 	}
 	li.lilevel4 a {
-		padding-left: 120px !important;
+		padding-'.$left.': 105px !important;
 	}
 
     a.alilevel0, span.spanlilevel0 {
         background-image: url(\''.DOL_URL_ROOT.'/theme/'.urlencode($conf->theme).'/img/next.png\') !important;
-        background-repeat: no-repeat !important;';
+        background-repeat: no-repeat !important;
+		background-position-y: 18px;';
 if ($langs->trans("DIRECTION") == 'rtl') {
 	print 'background-position: right;';
+	print 'padding: 1em 40px 1em 15px;';
 } else {
 	print 'background-position-x: 10px;';
+	print 'padding: 1em 15px 1em 40px;';
 }
-	print '
-        background-position-y: 18px;
-        padding: 1em 15px 1em 40px;
+print '
 		display: block;
     }
     li.lilevel0 font.vsmenudisabled {
@@ -191,15 +210,19 @@ if ($langs->trans("DIRECTION") == 'rtl') {
 } else {
 	print 'background-position-x: 10px;';
 }
-	print 'background-position-y: 1px;';
-	print 'padding-left: 20px;';
-	print '
+print '	background-position-y: 1px;
+		padding-'.$left.': 20px;
 	}
     li.lilevel1 a, li.lilevel1 {
         color: #000;
         cursor: pointer;
         display: block;
     }
+	.fa.fa-does-not-exists {
+	    padding: 0px !important;
+	    margin: 0px;
+	    width: 0px;
+	}
     li.lilevel2 a {
         padding: 0.7em 15px 0.7em 40px;
         color: #000;
@@ -284,9 +307,12 @@ if (!class_exists('MenuManager')) {
 		include_once DOL_DOCUMENT_ROOT."/core/menus/standard/".dol_sanitizeFileName($file_menu);
 	}
 }
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager = new MenuManager($db, empty($user->socid) ? 0 : 1);
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->loadMenu('all', 'all'); // Load this->tabMenu with sql menu entries
-//var_dump($menumanager);exit;
+
+// @phan-suppress-next-line PhanRedefinedClassReference
 $menumanager->showmenu('jmobile');
 
 print '</body>';

@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@inodbox.com>
- * Copyright (C) 2013 	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2020      Frédéric France      <frederic.france@netlogic.fr>
+/* Copyright (C) 2007-2011  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2009       Regis Houssin        <regis.houssin@inodbox.com>
+ * Copyright (C) 2013 	    Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2020-2024  Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,14 @@
 // Load Dolibarr environment
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "admin", "products", "sms", "other", "errors"));
@@ -75,10 +83,10 @@ if ($action == 'send' && !$cancel) {
 	}
 	$sendto     = GETPOST("sendto", 'alphanohtml');
 	$body       = GETPOST('message', 'alphanohtml');
-	$deliveryreceipt = GETPOST("deliveryreceipt", 'alphanohtml');
-	$deferred   = GETPOST('deferred', 'alphanohtml');
-	$priority   = GETPOST('priority', 'alphanohtml');
-	$class      = GETPOST('class', 'alphanohtml');
+	$deliveryreceipt = GETPOSTINT("deliveryreceipt");
+	$deferred   = GETPOSTINT('deferred');
+	$priority   = GETPOSTINT('priority');
+	$class      = GETPOSTINT('class');
 	$errors_to  = GETPOST("errorstosms", 'alphanohtml');
 
 	// Create form object
@@ -173,7 +181,7 @@ if ($action == 'edit') {
 	clearstatcache();
 
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
@@ -199,7 +207,7 @@ if ($action == 'edit') {
 
 	print '</table>';
 
-	print '<br><div class="center">';
+	print '<div class="center">';
 	print '<input class="button button-save" type="submit" name="save" value="'.$langs->trans("Save").'"'.(!count($listofmethods) ? ' disabled' : '').'>';
 	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
 	print '<input class="button button-cancel" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
@@ -209,7 +217,7 @@ if ($action == 'edit') {
 	print '<br>';
 } else {
 	print '<table class="noborder centpercent">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td></td></tr>';
 
 	// Disable
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn(getDolGlobalString('MAIN_DISABLE_ALL_SMS')).'</td></tr>';
@@ -241,14 +249,18 @@ if ($action == 'edit') {
 
 	print '<div class="tabsAction">';
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	if ($action != 'test') {
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
 
-	if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
-	} else {
-		print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		if (count($listofmethods) && getDolGlobalString('MAIN_SMS_SENDMODE')) {
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init&token='.newToken().'">'.$langs->trans("DoTestSend").'</a>';
+		} else {
+			print '<a class="butActionRefused classfortooltip" href="#">'.$langs->trans("DoTestSend").'</a>';
+		}
 	}
+
 	print '</div>';
+
 
 	// Affichage formulaire de TEST simple
 	if ($action == 'test') {

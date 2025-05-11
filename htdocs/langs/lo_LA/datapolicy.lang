@@ -17,8 +17,9 @@ Module4100Name = ນະໂຍບາຍຄວາມເປັນສ່ວນຕົ
 Module4100Desc = ໂມດູນເພື່ອຈັດການຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນ (ສອດຄ່ອງກັບ GDPR)
 # Administration page
 datapolicySetup = ການຕັ້ງຄ່ານະໂຍບາຍຄວາມເປັນສ່ວນຕົວຂອງຂໍ້ມູນໂມດູນ
-Deletion = ການລຶບຂໍ້ມູນ
-datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>The deletion will be done automatically after a certain duration without events (the duration which you will have indicated below).
+DataDeletion=Deletion of data
+DataAnonymization=Anonymization of data
+datapolicySetupPage = Depending on the laws of your countries (Example <a href="http://www.privacy-regulation.eu/en/5.htm" target="_blank" rel="noopener noreferrer external">Article 5</a> of the GDPR), personal data must be kept for a period not exceeding the duration the data is needed for the purpose for which it was collected, except for archival purposes.<br>This module will make an anonymization automatically after a certain duration without events (the duration which you will have indicated below) and if the object has no existing business object children.
 NB_MONTHS = %s ເດືອນ
 ONE_YEAR = 1 ປີ
 NB_YEARS = %s ປີ
@@ -33,12 +34,14 @@ DATAPOLICY_CONTACT_PROSPECT_CLIENT = ຄວາມສົດໃສດ້ານ/ລ
 DATAPOLICY_CONTACT_NIPROSPECT_NICLIENT = ບໍ່ແມ່ນຄວາມສົດໃສດ້ານ / ຫຼືລູກຄ້າ
 DATAPOLICY_CONTACT_FOURNISSEUR = ຜູ້ສະຫນອງ
 DATAPOLICY_ADHERENT = ສະມາຊິກ
-DATAPOLICY_Tooltip_SETUP=Define the delay with no interaction after which you want the record to be automatically purged.
+DATAPOLICY_Tooltip_SETUP=The anonymization is done by the scheduled job "%s" ran by the module "%s", so this module must be enabled and working correctly.
 SendAgreementText = ທ່ານສາມາດສົ່ງອີເມວ GDPR ໄປຫາຜູ້ຕິດຕໍ່ທີ່ກ່ຽວຂ້ອງທັງຫມົດຂອງທ່ານ (ຜູ້ທີ່ຍັງບໍ່ທັນໄດ້ຮັບອີເມລ໌ແລະທີ່ທ່ານບໍ່ໄດ້ລົງທະບຽນຫຍັງກ່ຽວກັບຂໍ້ຕົກລົງ GDPR ຂອງພວກເຂົາ). ເພື່ອເຮັດສິ່ງນີ້, ໃຊ້ປຸ່ມຕໍ່ໄປນີ້.
 SendAgreement = ສົ່ງອີເມວ
 AllAgreementSend = ອີເມວທັງໝົດຖືກສົ່ງໄປແລ້ວ
 TXTLINKDATAPOLICYACCEPT = ຂໍ້ຄວາມສໍາລັບການເຊື່ອມຕໍ່ "ຂໍ້ຕົກລົງ"
 TXTLINKDATAPOLICYREFUSE = Text for the link "disagreement"
+DelayForAnonymization=Delay for anonymization
+DelayForDeletion=Delay for deletion
 # Extrafields
 DATAPOLICY_BLOCKCHECKBOX = GDPR : ການປະມວນຜົນຂໍ້ມູນສ່ວນຕົວ
 DATAPOLICY_consentement = ການຍິນຍອມທີ່ໄດ້ຮັບສຳລັບການປະມວນຜົນຂໍ້ມູນສ່ວນຕົວ

@@ -32,6 +32,7 @@ PRINTIPP_HOST=Print server
 PRINTIPP_PORT=Port
 PRINTIPP_USER=Korisničko ime
 PRINTIPP_PASSWORD=Lozinka
+PRINTIPP_SSL=Koristite SSL
 NoDefaultPrinterDefined=Nije definiran predefiniran pisač
 DefaultPrinter=Predefinirani pisač
 Printer=Pisač
@@ -52,3 +53,4 @@ PrintingDriverDescprintgcp=Configuration variables for printing driver Google Cl
 PrintingDriverDescprintipp=Konfiguracijske varijable za ispis driver CUPS.
 PrintTestDescprintgcp=List of Printers for Google Cloud Print.
 PrintTestDescprintipp=Popis pisača za CUPS.
+Testbbbb

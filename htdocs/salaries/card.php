@@ -1,13 +1,14 @@
 <?php
-/* Copyright (C) 2011-2023  Alexandre Spangaro      <aspangaro@easya.solutions>
- * Copyright (C) 2014-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2015       Charlie BENKE           <charlie@patas-monkey.com>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2021       Gauthier VERDOL         <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2023       Maxime Nicolas          <maxime@oarces.com>
- * Copyright (C) 2023       Benjamin GREMBI         <benjamin@oarces.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2011-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2015		Charlie BENKE				<charlie@patas-monkey.com>
+ * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
+ * Copyright (C) 2023		Maxime Nicolas				<maxime@oarces.com>
+ * Copyright (C) 2023		Benjamin GREMBI				<benjamin@oarces.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	Nick Fragoulis
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,14 @@ if (isModEnabled('project')) {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "salaries", "hrm", "trips"));
@@ -82,11 +91,11 @@ $childids = $user->getAllChildIds(1);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+// Initialize a technical object to manage hooks of page. Note that conf->hooks_modules contains an array of hook context
 $hookmanager->initHooks(array('salarycard', 'globalcard'));
 
-if ($id > 0 || !empty($ref)) {
-	$object->fetch($id, $ref);
+if ($id > 0) {
+	$object->fetch($id);
 
 	// Check current user can read this salary
 	$canread = 0;
@@ -112,9 +121,15 @@ restrictedArea($user, 'salaries', $object->id, 'salary', '');
 $permissiontoread = $user->hasRight('salaries', 'read');
 $permissiontoadd = $user->hasRight('salaries', 'write'); // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
 $permissiontodelete = $user->hasRight('salaries', 'delete') || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_UNPAID);
+$permissiontoeditextra = $permissiontoadd;
+if (GETPOST('attribute', 'aZ09') && isset($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')])) {
+	// For action 'update_extras', is there a specific permission set for the attribute to update
+	$permissiontoeditextra = dol_eval($extrafields->attributes[$object->table_element]['perms'][GETPOST('attribute', 'aZ09')]);
+}
 
 $upload_dir = $conf->salaries->multidir_output[$conf->entity];
 
+$error = 0;
 
 /*
  * Actions
@@ -228,7 +243,7 @@ if ($action == 'setbankaccount' && $permissiontoadd) {
 	}
 }
 
-if ($action == 'add' && empty($cancel)) {
+if ($action == 'add' && empty($cancel) && $permissiontoadd) {
 	$error = 0;
 
 	if (empty($datev)) {
@@ -344,7 +359,7 @@ if ($action == 'add' && empty($cancel)) {
 	$action = 'create';
 }
 
-if ($action == 'confirm_delete') {
+if ($action == 'confirm_delete' && $permissiontodelete) {
 	$result = $object->fetch($id);
 	$totalpaid = $object->getSommePaiement();
 
@@ -389,7 +404,7 @@ if ($action == 'update' && !GETPOST("cancel") && $permissiontoadd) {
 	}
 }
 
-if ($action == 'confirm_clone' && $confirm != 'yes') {
+if ($action == 'confirm_clone' && $confirm != 'yes') {	// Test on permission not required here
 	$action = '';
 }
 
@@ -444,30 +459,33 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && $permissiontoadd) {
 	}
 }
 
+
 // Action to update one extrafield
-if ($action == "update_extras" && $permissiontoadd) {
-	$object->fetch(GETPOSTINT('id'));
+if ($action == 'update_extras' && $permissiontoeditextra) {
+	$object->oldcopy = dol_clone($object, 2); // @phan-suppress-current-line PhanTypeMismatchProperty
 
-	$attributekey = GETPOST('attribute', 'alpha');
-	$attributekeylong = 'options_'.$attributekey;
+	$attribute = GETPOST('attribute', 'aZ09');
 
-	if (GETPOSTISSET($attributekeylong.'day') && GETPOSTISSET($attributekeylong.'month') && GETPOSTISSET($attributekeylong.'year')) {
-		// This is properties of a date
-		$object->array_options['options_'.$attributekey] = dol_mktime(GETPOSTINT($attributekeylong.'hour'), GETPOSTINT($attributekeylong.'min'), GETPOSTINT($attributekeylong.'sec'), GETPOSTINT($attributekeylong.'month'), GETPOSTINT($attributekeylong.'day'), GETPOSTINT($attributekeylong.'year'));
-		//var_dump(dol_print_date($object->array_options['options_'.$attributekey]));exit;
-	} else {
-		$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong, 'alpha');
+	// Fill array 'array_options' with data from update form
+	$ret = $extrafields->setOptionalsFromPost(null, $object, $attribute);
+	if ($ret < 0) {
+		setEventMessages($extrafields->error, $object->errors, 'errors');
+		$error++;
 	}
 
-	$result = $object->insertExtraFields(empty($triggermodname) ? '' : $triggermodname, $user);
-	if ($result > 0) {
-		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
-		$action = 'view';
-	} else {
-		setEventMessages($object->error, $object->errors, 'errors');
+	if (!$error) {
+		$result = $object->updateExtraField($attribute, 'SALARY_MODIFY');
+		if ($result < 0) {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$error++;
+		}
+	}
+
+	if ($error) {
 		$action = 'edit_extras';
 	}
 }
+
 
 /*
  *	View
@@ -497,8 +515,8 @@ if ($id > 0) {
 
 // Create
 if ($action == 'create' && $permissiontoadd) {
-	$year_current = dol_print_date(dol_now('gmt'), "%Y", 'gmt');
-	$pastmonth = dol_print_date(dol_now(), "%m") - 1;
+	$year_current = (int) dol_print_date(dol_now('gmt'), "%Y", 'gmt');
+	$pastmonth = (int) dol_print_date(dol_now(), "%m") - 1;
 	$pastmonthyear = $year_current;
 	if ($pastmonth == 0) {
 		$pastmonth = 12;
@@ -569,7 +587,7 @@ if ($action == 'create' && $permissiontoadd) {
 	print '<tr><td class="titlefieldcreate">';
 	print $form->editfieldkey('Employee', 'fk_user', '', $object, 0, 'string', '', 1).'</td><td>';
 	$noactive = 0; // We keep active and unactive users
-	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
+	print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTINT('fk_user'), 'fk_user', 1, null, 0, '', '', '0', 0, 0, 'employee:=:1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
@@ -604,7 +622,7 @@ if ($action == 'create' && $permissiontoadd) {
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 		print img_picto('', 'project', 'class="pictofixedwidth"');
-		print $formproject->select_projects(-1, $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
+		print $formproject->select_projects(-1, (string) $projectid, 'fk_project', 0, 0, 1, 1, 0, 0, 0, '', 1);
 		print '</td></tr>';
 	}
 
@@ -750,21 +768,72 @@ if ($id > 0) {
 		);
 
 		//$formquestion[] = array('type' => 'date', 'name' => 'clone_date_ech', 'label' => $langs->trans("Date"), 'value' => -1);
-		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		if (!empty($object->dateep)) {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => ($object->dateep) + 86400);
+		} else {
+			$formquestion[] = array('type' => 'date', 'name' => 'clone_date_start', 'label' => $langs->trans("DateStart"), 'value' => -1);
+		}
 		$formquestion[] = array('type' => 'date', 'name' => 'clone_date_end', 'label' => $langs->trans("DateEnd"), 'value' => -1);
 		$formquestion[] = array('type' => 'text', 'name' => 'amount', 'label' => $langs->trans("Amount"), 'value' => price($object->amount), 'morecss' => 'width100 right');
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 280);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneSalary', $object->ref), 'confirm_clone', $formquestion, 'yes', 1, 300);
 
-		//Add fill with end of month button
+		//Add buttons to fill start and end dates
 		$formconfirm .= "<script>
+			// Buttons for start date: previous month, current month, previous week, current week
+			$('#clone_date_start').after(
+				$('<button id=\"start_prev_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousMonthShort')."</button>')
+				.add('<button id=\"start_curr_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentMonthShort')."</button>')
+			";
+		if (getDolGlobalString('SALARY_MANAGEMENT_PER_WEEK')) {
+			$formconfirm .= "
+					.add('<button id=\"start_prev_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('PreviousWeekShort')."</button>')
+					.add('<button id=\"start_curr_week\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('CurrentWeekShort')."</button>')";
+		}
+		$formconfirm .= "
+			);
+
+			$('#start_prev_month').click(function(){
+				var now = new Date();
+				var startPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+				setStartDate(startPrevMonth);
+			});
+
+			$('#start_curr_month').click(function(){
+				var now = new Date();
+				var startCurrMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+			setStartDate(startCurrMonth);
+			});
+
+			$('#start_prev_week').click(function(){
+				var now = new Date();
+				var startPrevWeek = new Date(now.setDate(now.getDate() - now.getDay() - 7));
+				startPrevWeek.setDate(startPrevWeek.getDate() + 1);
+				setStartDate(startPrevWeek);
+			});
+
+			$('#start_curr_week').click(function(){
+				var now = new Date();
+				var startCurrWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1));
+				setStartDate(startCurrWeek);
+			});
+
+			function setStartDate(date) {
+				$('#clone_date_start').val(formatDate(date, '".$langs->trans("FormatDateShortJavaInput")."'));
+				$('#clone_date_startday').val(date.getDate());
+				$('#clone_date_startmonth').val(date.getMonth() + 1);
+				$('#clone_date_startyear').val(date.getFullYear());
+			}
+
+   			// Button for end date
 			$('#clone_date_end').after($('<button id=\"fill_end_of_month\" class=\"dpInvisibleButtons\" style=\"color: var(--colortextlink);font-size: 0.8em;opacity: 0.7;margin-left:4px;\" type=\"button\">".$langs->trans('FillEndOfMonth')."</button>'));
 			$('#fill_end_of_month').click(function(){
 				var clone_date_startmonth = +$('#clone_date_startmonth').val();
 				var clone_date_startyear = +$('#clone_date_startyear').val();
 				var end_date;
+
 				if (clone_date_startmonth && clone_date_startyear) {
-					end_date = new Date(clone_date_startyear, clone_date_startmonth , 0);
+					end_date = new Date(clone_date_startyear, clone_date_startmonth, 0);
 				} else {
 					var currentDate = new Date();
 					var currentDay = currentDate.getDate();
@@ -773,7 +842,8 @@ if ($id > 0) {
 					} else {
 						end_date = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
 					}
-	 			}
+				}
+
 				$('#clone_date_end').val(formatDate(end_date,'".$langs->trans("FormatDateShortJavaInput")."'));
 				$('#clone_date_endday').val(end_date.getDate());
 				$('#clone_date_endmonth').val(end_date.getMonth() + 1);
@@ -873,7 +943,7 @@ if ($id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, -1, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -901,12 +971,12 @@ if ($id > 0) {
 	print '<table class="border centpercent tableforfield">';
 
 	if ($action == 'edit') {
-		print '<tr><td class="titlefield">'.$langs->trans("DateStartPeriod")."</td><td>";
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("DateStartPeriod")."</td><td>";
 		print $form->selectDate($object->datesp, 'datesp', 0, 0, 0, 'datesp', 1);
 		print "</td></tr>";
 	} else {
 		print "<tr>";
-		print '<td class="titlefield">' . $langs->trans("DateStartPeriod") . '</td><td>';
+		print '<td class="titlefieldmiddle">' . $langs->trans("DateStartPeriod") . '</td><td>';
 		print dol_print_date($object->datesp, 'day');
 		print '</td></tr>';
 	}
@@ -949,9 +1019,9 @@ if ($id > 0) {
 	print '</td><td>';
 
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'mode_reglement_id');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'mode_reglement_id');
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->type_payment, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->type_payment, 'none');
 	}
 	print '</td></tr>';
 
@@ -967,9 +1037,9 @@ if ($id > 0) {
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editbankaccount') {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 		} else {
-			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+			$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 		}
 		print '</td>';
 		print '</tr>';
@@ -1078,7 +1148,7 @@ if ($id > 0) {
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AlreadyPaid").' :</td><td class="right nowrap amountcard">'.price($totalpaid)."</td></tr>\n";
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("AmountExpected").' :</td><td class="right nowrap amountcard">'.price($object->amount)."</td></tr>\n";
 
-		$resteapayer = $object->amount - $totalpaid;
+		$resteapayer = (float) $object->amount - $totalpaid;
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		print '<tr><td colspan="'.$nbcols.'" class="right">'.$langs->trans("RemainderToPay")." :</td>";
@@ -1125,28 +1195,30 @@ if ($id > 0) {
 		}
 
 		// Reopen
-		if ($object->paye && $permissiontoadd) {
+		if ($object->status == $object::STATUS_PAID && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ReOpen'), 'default', $_SERVER["PHP_SELF"].'?action=reopen&token='.newToken().'&id='.$object->id, '');
 		}
 
 		// Edit
-		if ($object->paye == 0 && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('Modify'), 'default', $_SERVER["PHP_SELF"].'?action=edit&token='.newToken().'&id='.$object->id, '');
 		}
 
+		// Transfer request
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+			print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT . '/salaries/virement_request.php?id=' . $object->id, '');
+		}
+
 		// Emit payment
-		if ($object->paye == 0 && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && ((price2num($object->amount) < 0 && $resteapayer < 0) || (price2num($object->amount) > 0 && $resteapayer > 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('DoPayment'), 'default', DOL_URL_ROOT.'/salaries/paiement_salary.php?action=create&token='.newToken().'&id='. $object->id, '');
 		}
 
 		// Classify 'paid'
 		// If payment complete $resteapayer <= 0 on a positive salary, or if amount is negative, we allow to classify as paid.
-		if ($object->paye == 0 && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
+		if ($object->status == $object::STATUS_UNPAID && (($resteapayer <= 0 && $object->amount > 0) || ($object->amount <= 0)) && $permissiontoadd) {
 			print dolGetButtonAction('', $langs->trans('ClassifyPaid'), 'default', $_SERVER["PHP_SELF"].'?action=paid&token='.newToken().'&id='.$object->id, '');
 		}
-
-		// Transfer request
-		print dolGetButtonAction('', $langs->trans('MakeTransferRequest'), 'default', DOL_URL_ROOT.'/salaries/virement_request.php?id='.$object->id, '');
 
 		// Clone
 		if ($permissiontoadd) {
@@ -1188,7 +1260,11 @@ if ($id > 0) {
 
 		// Show links to link elements
 		/*
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('salaries'));
+		$tmparray = $form->showLinkToObjectBlock($object, array(), array('salaries'), 1);
+		$linktoelem = $tmparray['linktoelem'];
+		$htmltoenteralink = $tmparray['htmltoenteralink'];
+		print $htmltoenteralink;
+
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 		*/
 
@@ -1206,7 +1282,7 @@ if ($id > 0) {
 		print '</div></div>';
 	}
 
-	//Select mail models is same action as presend
+	// Select mail models is same action as presend
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
