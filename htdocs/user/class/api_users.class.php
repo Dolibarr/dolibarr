@@ -768,9 +768,7 @@ class Users extends DolibarrApi
 
 		$sql = "SELECT rowid as id, fk_action as event, fk_user, type, datec, tms";
 		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
-		if (isset($id)) {
-			$sql .= " WHERE fk_user  = ".((int) $id);
-		}
+		$sql .= " WHERE fk_user  = ".((int) $id);
 
 		$result = $this->db->query($sql);
 		if ($this->db->num_rows($result) == 0) {
