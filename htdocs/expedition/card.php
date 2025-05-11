@@ -106,6 +106,7 @@ $confirm	= GETPOST('confirm', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $rank      = (GETPOSTINT('rank') > 0) ? GETPOSTINT('rank') : -1;
 $lineid    =  GETPOSTINT('lineid');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 //PDF
 $hidedetails = (GETPOSTINT('hidedetails') ? GETPOSTINT('hidedetails') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -1395,15 +1396,7 @@ if ($action == 'create'&& $usercancreate) {
 			print '</td>';
 		} else {
 			print '<td class="valuefieldcreate">';
-			$filter = '';
-			$mode = '';
-			if ($mode = 'customer') {
-				$filter = '(s.client:IN:1,2,3)';
-			}
-			if ($mode = 'supplier') {
-				$filter = '(s.fournisseur:=:1)';
-			}
-			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', $filter, 'SelectThirdParty', 1, 0, array(), 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
+			print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company('', 'socid', '', 'SelectThirdParty', 1, 0, array(), 0, 'minwidth175 maxwidth500 widthcentpercentminusxx');
 			// reload page to retrieve customer information
 			if (!getDolGlobalString('RELOAD_PAGE_ON_CUSTOMER_CHANGE_DISABLED')) {
 				print '<script>
