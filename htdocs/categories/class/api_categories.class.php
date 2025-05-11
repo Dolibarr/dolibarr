@@ -268,6 +268,62 @@ class Categories extends DolibarrApi
 	}
 
 	/**
+	 * Update category
+	 *
+	 * @param 	string   	$label          Label of category to update
+	 * @param 	array 		$request_data   Data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 * @return 	Object						Updated object
+	 *
+	 * @url PUT /label/{label}
+	 *
+	 * @phan-return Categorie
+	 * @phpstan-return Categorie
+	 */
+	public function putLabel($label, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'creer')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->category->fetch(0, $label);
+		if (!$result) {
+			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->label)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		foreach ($request_data as $field => $value) {
+			if ($field == 'id') {
+				continue;
+			}
+			if ($field === 'caller') {
+				// Add a mention of caller so on trigger called after action, we can filter to avoid a loop if we try to sync back again with the caller
+				$this->category->context['caller'] = sanitizeVal($request_data['caller'], 'aZ09');
+				continue;
+			}
+
+			if ($field == 'array_options' && is_array($value)) {
+				foreach ($value as $index => $val) {
+					$this->category->array_options[$index] = $this->_checkValForAPI($field, $val, $this->category);
+				}
+				continue;
+			}
+
+			$this->category->$field = $this->_checkValForAPI($field, $value, $this->category);
+		}
+
+		if ($this->category->update(DolibarrApiAccess::$user) > 0) {
+			return $this->get($this->category->id);
+		} else {
+			throw new RestException(500, $this->category->error);
+		}
+	}
+
+	/**
 	 * Delete category
 	 *
 	 * @param int $id   Category ID
