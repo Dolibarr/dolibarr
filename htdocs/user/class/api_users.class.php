@@ -896,7 +896,7 @@ class Users extends DolibarrApi
 			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
 		}
 		$notification = new Notify($this->db);
-		$notification->fk_user = $fk_user;
+		$notification->fk_user = $id;
 
 		$sql = "SELECT t.rowid as id FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
 		$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
