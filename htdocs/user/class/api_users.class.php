@@ -811,7 +811,7 @@ class Users extends DolibarrApi
 	}
 
 	/**
-	 * Create anotification for an user
+	 * Create a notification for an user
 	 *
 	 * @since	22.0.0	Initial implementation
 	 *
@@ -844,10 +844,9 @@ class Users extends DolibarrApi
 
 		$event = $notification->event;
 		if (!$event) {
-			throw new RestException(500, 'Error creating Thirdparty Notification, request_data missing event');
+			throw new RestException(500, 'Error creating User Notification, request_data missing event');
 		}
-		$socid = $notification->socid;
-		$contact_id = $notification->contact_id;
+		$userid = $notification->userid;
 
 		$exists_sql = "SELECT rowid, fk_action as event, fk_user as userid, type, datec, tms as datem";
 		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
@@ -893,8 +892,8 @@ class Users extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 			throw new RestException(403, "User has no right to update users");
 		}
-		if ($this->company->fetch($id) <= 0) {
-			throw new RestException(404, 'Error creating User Notification, USer doesn\'t exists');
+		if ($this->user->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
 		}
 		$notification = new Notify($this->db);
 		$notification->userid = $id;
@@ -910,10 +909,10 @@ class Users extends DolibarrApi
 		$notification->event = $this->db->fetch_row($result)[0];
 		foreach ($request_data as $field => $value) {
 			if ($field === 'event') {
-				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains event key');
+				throw new RestException(500, 'Error creating User Notification, request_data contains event key');
 			}
 			if ($field === 'fk_action') {
-				throw new RestException(500, 'Error creating Thirdparty Notification, request_data contains fk_action key');
+				throw new RestException(500, 'Error creating User Notification, request_data contains fk_action key');
 			}
 			$notification->$field = $value;
 		}
@@ -948,7 +947,7 @@ class Users extends DolibarrApi
 	 * @since	22.0.0	Initial implementation
 	 *
 	 * @param	int		$id					ID of the user
-	 * @param	int		$notification_id	ID of CompanyNotification
+	 * @param	int		$notification_id	ID of UserNotification
 	 *
 	 * @return	int							-1 if error, 1 if correct deletion
 	 *
@@ -997,7 +996,7 @@ class Users extends DolibarrApi
 		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
 			throw new RestException(403, "User has no right to update users");
 		}
-		if ($this->company->fetch($id) <= 0) {
+		if ($this->user->fetch($id) <= 0) {
 			throw new RestException(404, 'Error creating Notification, User doesn\'t exists');
 		}
 		$notification = new Notify($this->db);
