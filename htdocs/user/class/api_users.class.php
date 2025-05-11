@@ -967,7 +967,7 @@ class Users extends DolibarrApi
 
 		$fk_user = (int) $notification->fk_user;
 
-		if ($userid == $id) {
+		if ($fk_user == $id) {
 			return $notification->delete(DolibarrApiAccess::$user);
 		} else {
 			throw new RestException(403, "Not allowed due to bad consistency of input data");
@@ -1004,7 +1004,7 @@ class Users extends DolibarrApi
 		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
 		$notification->fetch($notification_id, $id);
 
-		if ($notification->userid != $id) {
+		if ($notification->fk_user != $id) {
 			throw new RestException(403, "Not allowed due to bad consistency of input data");
 		}
 
