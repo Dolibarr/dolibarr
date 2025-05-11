@@ -126,7 +126,7 @@ if (isModEnabled("product")) {
 }
 
 
-if (is_object($objectline)) {
+if (!empty($extrafields)) {
 	$temps = $objectline->showOptionals($extrafields, 'create', array(), '', '', '1', 'line');
 
 	if (!empty($temps)) {
