@@ -302,6 +302,43 @@ class Categories extends DolibarrApi
 	}
 
 	/**
+	 * Delete category
+	 *
+	 * @param string $label   Category label
+	 * @return array
+	 * 
+	 * @url DELETE /label/{label}
+	 * 
+	 * @phan-return array{success:array{code:int,message:string}}
+	 * @phpstan-return array{success:array{code:int,message:string}}
+	 */
+	public function deleteLabel($label)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'supprimer')) {
+			throw new RestException(403);
+		}
+		$result = $this->category->fetch(0, $label);
+		if (!$result) {
+			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		if ($this->category->delete(DolibarrApiAccess::$user) <= 0) {
+			throw new RestException(500, 'Error when delete category : ' . $this->category->error);
+		}
+
+		return array(
+			'success' => array(
+				'code' => 200,
+				'message' => 'Category deleted'
+			)
+		);
+	}
+
+	/**
 	 * List categories of an object
 	 *
 	 * Get the list of categories linked to an object
