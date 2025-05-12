@@ -2405,7 +2405,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '</tr>';
 
-				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td colspan="3">';
+				$colspan = 0;
+				if ($conf->browser->layout == 'phone') {
+					$colspan = 3;
+				}
+
+				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td'.($colspan ? ' colspan="'.$colspan.'"': '').'>';
 				print '<table class="nobordernopadding"><tr><td>';
 				$tmpcode = $object->code_client ?? '';
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
@@ -2422,7 +2427,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</tr><tr>';
 				}
 
-				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td colspan="3">';
+				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td'.($colspan ? ' colspan="'.$colspan.'"': '').'>';
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 					print '<table class="nobordernopadding"><tr><td>';
@@ -2753,7 +2758,32 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"');
+					$htmlname = 'custcats';
+					print $form->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
+
+					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+						// Add html code to add the edit button and go back
+						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
+						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Tags"), img_picto('', 'add', 'class="editfielda"'), '/categories/categorie_list.php?type='.Categorie::TYPE_CUSTOMER, '', '', '', $jsonclose);
+						print $s;
+						// Add js code to add the edit button and go back
+						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
+							console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
+
+							// Call an ajax to reload values and update the select
+							// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
+
+							// Refresh select2 to take account of new values (enough for small change)
+							$("#'.dol_escape_js($htmlname).'").trigger("change");
+							// Alternative if change in select is complex
+							/*
+							$("#'.dol_escape_js($htmlname).'").select2("destroy");
+							$("#'.dol_escape_js($htmlname).'").select2();
+							*/
+						}</script>';
+					}
+
 					print "</td></tr>";
 
 					// Supplier
@@ -2767,7 +2797,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						foreach ($cats as $cat) {
 							$arrayselected[] = $cat->id;
 						}
-						print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+						print img_picto('', 'category', 'class="pictofixedwidth"');
+						print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
 						print "</td></tr>";
 					}
 				}

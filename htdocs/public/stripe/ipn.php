@@ -165,7 +165,6 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 	$ret = $mc->switchEntity($key);
 }
 
-// list of  action
 $stripe = new Stripe($db);
 
 // Subject
@@ -178,6 +177,10 @@ top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
+
+
+// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
+sleep(2);
 
 
 if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
