@@ -2765,7 +2765,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 						// Add html code to add the edit button and go back
 						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
-						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Tags"), img_picto('', 'add', 'class="editfielda"'), '/categories/categorie_list.php?type='.Categorie::TYPE_CUSTOMER, '', '', '', $jsonclose);
+						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Rubriques"), img_picto('', 'add', 'class="editfielda"'), '/categories/categorie_list.php?type='.Categorie::TYPE_CUSTOMER, '', '', '', $jsonclose);
 						print $s;
 						// Add js code to add the edit button and go back
 						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {

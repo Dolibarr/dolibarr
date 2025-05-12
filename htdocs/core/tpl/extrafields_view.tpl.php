@@ -229,23 +229,38 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 					$fieldid = 'socid';
 				}
 
-				print '<td class="right"><a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a></td>';
-			}
-			if (isModEnabled("ai") && $action == 'edit_extras' && GETPOST('attribute') == $tmpkeyextra && !empty($extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra])) {
-				$showlinktoai = "extrafieldfiller";
-				$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
-				$htmlname = "options_".$tmpkeyextra;
-				$onlyenhancements = "textgenerationextrafield";
-				$morecss = "editfielda";
-				$aiprompt = $extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra];
-				$out = "";
-
-				// Fill $out
-				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
 				print '<td class="right">';
-				print '<!-- TODO Step 3 Then a next step will be to use the ajax call core/aja/updateextrafield.php to update field in database directly with no need to pass by edit_extras step -->';
-				print $out;
-				print '</td>';
+				if (isModEnabled("ai") && !empty($extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra])) {
+					$showlinktoai = "extrafieldfiller_".$tmpkeyextra;
+					$showlinktoailabel = $langs->trans("FillExtrafieldWithAi");
+					$htmlname = !empty($object->id) ? $object->element.'_extras_'.$tmpkeyextra.'_'.$object->id : "options_".$tmpkeyextra;
+					$onlyenhancements = "textgenerationextrafield";
+					$morecss = "editfielda";
+					$aiprompt = $extrafields->attributes[$object->table_element]["aiprompt"][$tmpkeyextra];
+					$out = "";
+
+					// Fill $out
+					include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
+					print $out;
+					print '<script>
+						$(document).ready(function() {
+							$("#'.$htmlname.'").on("change", function () {
+								value = $(this).html();
+								$.ajax({
+									method: "POST",
+									dataType: "json",
+									url: "'. DOL_URL_ROOT.'/core/ajax/updateextrafield.php",
+									data: {"token": "'.currentToken().'", "objectType": "'.$object->element.'", "objectId": "'.$object->id.'", "field": "'.$tmpkeyextra.'", "value": value},
+									success: function(response) {
+										console.log("Extrafield "+'.$tmpkeyextra.'+" successfully updated");
+									},
+								});
+							});
+						});
+					</script>';
+				}
+				print '<a class="reposition editfielda" href="'.$_SERVER['PHP_SELF'].'?'.$fieldid.'='.$valueid.'&action=edit_extras&token='.newToken().'&attribute='.$tmpkeyextra.'&ignorecollapsesetup=1">'.img_edit().'</a>';
+				print'</td>';
 			}
 			print '</tr></table>';
 			print '</td>';
