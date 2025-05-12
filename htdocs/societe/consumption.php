@@ -419,7 +419,7 @@ if (!empty($sql_select)) {
 	if ($type_element != 'fichinter') {
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON d.fk_product = p.rowid ';
 	}
-	$parameters = array();	
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListFrom', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 	$sql .= $where;
@@ -439,11 +439,11 @@ if (!empty($sql_select)) {
 		$sql .= ")";
 	}
 
-	$parameters = array();	
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListWhere', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 
-	$parameters = array();	
+	$parameters = array();
 	$reshook = $hookmanager->executeHooks('printFieldListGroupBy', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	$sql .= $hookmanager->resPrint;
 
