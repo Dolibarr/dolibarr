@@ -2824,26 +2824,10 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 							 	width: \'80%\',
 							 	title: \''.dol_escape_js($label).'\',
 								open: function (event, ui) {
-									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
+									console.log("open popup name='.$name.'");
 	       						},
 								close: function (event, ui) {
-									console.log("Popup is closed.");
-									/* to remove
-									var returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-									var returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-									var returnedhtml = jQuery("#varforreturndialoghtml'.$name.'").text();
-									console.log("popup has been closed.");
-									console.log("returnedid="+returnedid+", returnedlabel="+returnedlabel+", returnedhtml="+returnedhtml+". We save this value into main page.");
-									if (returnedid != "" && returnedid != "div for returned id") {
-										jQuery("#'.(empty($backtopagejsfieldsid) ? "none" : $backtopagejsfieldsid).'").val(returnedid);
-									}
-									if (returnedlabel != "" && returnedlabel != "div for returned label") {
-										jQuery("#'.(empty($backtopagejsfieldslabel) ? "none" : $backtopagejsfieldslabel).'").val(returnedlabel);
-									}
-									if (returnedhtml != "" && returnedhtml != "div for returned html") {
-										jQuery("#'.(empty($backtopagejsfieldshtml) ? "none" : $backtopagejsfieldshtml).'").val(returnedlabel);
-									}
-									*/
+									console.log("Popup is closed, run jsonclose='.$jsonclose.');
 									'.(empty($jsonclose) ? '' : $jsonclose.';').'
 								}
 							});
