@@ -7,7 +7,7 @@
  * Copyright (C) 2018-2024  Frédéric France			<frederic.france@free.fr>
  * Copyright (C) 2022		Charlene Benke			<charlene@patas-monkey.com>
  * Copyright (C) 2023		Anthony Berton			<anthony.berton@bb2a.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  *
  * This program is free software; you can redistribute it and/or modify
@@ -472,13 +472,16 @@ class FormMail extends Form
 		// phpcs:enable
 		global $conf, $langs, $user, $hookmanager, $form;
 
-		// Required to show preview wof mail attachments
-		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-		$formfile = new FormFile($this->db);
-
 		if (!is_object($form)) {
 			$form = new Form($this->db);
 		}
+
+		// Required to show editor assistants
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+		$formfile = new FormFile($this->db);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formai.class.php';
+		$formai = new FormAI($this->db);
 
 		// Load translation files required by the page
 		$langs->loadLangs(array('other', 'mails', 'members'));
@@ -624,7 +627,7 @@ class FormMail extends Form
 			} elseif (!empty($this->param['models']) && in_array($this->param['models'], array(
 					'propal_send', 'order_send', 'facture_send',
 					'shipping_send', 'fichinter_send', 'supplier_proposal_send', 'order_supplier_send',
-					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'all'
+					'invoice_supplier_send', 'thirdparty', 'contract', 'user', 'recruitmentcandidature_send', 'product_send', 'all'
 				))) {
 				// If list of template is empty
 				$out .= '<div class="center" style="padding: 0px 0 12px 0">'."\n";
@@ -989,19 +992,21 @@ class FormMail extends Form
 				$defaultmessage = GETPOST('message', 'restricthtml');
 				if (!GETPOST('modelselected', 'alpha') || GETPOST('modelmailselected') != '-1') {
 					if ($arraydefaultmessage && $arraydefaultmessage->content) {
-						$defaultmessage = $arraydefaultmessage->content;
+						$defaultmessage = (string) $arraydefaultmessage->content;
 					} elseif (!is_numeric($this->withbody)) {
 						$defaultmessage = $this->withbody;
 					}
 				}
 
 				// Complete substitution array with the url to make online payment
-				$validpaymentmethod = array();
+				$paymenturl = '';
+				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				$validpaymentmethod = getValidOnlinePaymentMethods('');
+
 				if (empty($this->substit['__REF__'])) {  // @phan-suppress-current-line PhanTypeMismatchProperty
 					$paymenturl = '';
 				} else {
-					// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
-					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$langs->loadLangs(array('paypal', 'other'));
 					$typeforonlinepayment = 'free';
 					if ($this->param["models"] == 'order' || $this->param["models"] == 'order_send') {
@@ -1015,14 +1020,15 @@ class FormMail extends Form
 					}
 					$url = getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 					$paymenturl = $url;
-
-					$validpaymentmethod = getValidOnlinePaymentMethods('');
 				}
 
 				if (count($validpaymentmethod) > 0 && $paymenturl) {
 					$langs->load('other');
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = str_replace('\n', "\n", $langs->transnoentities("PredefinedMailContentLink", $paymenturl));
 					$this->substit['__ONLINE_PAYMENT_URL__'] = $paymenturl;
+				} elseif (count($validpaymentmethod) > 0) {
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '__ONLINE_PAYMENT_TEXT_AND_URL__';
+					$this->substit['__ONLINE_PAYMENT_URL__'] = '__ONLINE_PAYMENT_URL__';
 				} else {
 					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
 					$this->substit['__ONLINE_PAYMENT_URL__'] = '';
@@ -1093,9 +1099,11 @@ class FormMail extends Form
 				$showlinktolayout = ($formmail->withfckeditor && getDolGlobalInt('MAIN_EMAIL_USE_LAYOUT')) ? $formmail->withlayout : '';
 				$showlinktolayoutlabel = $langs->trans("FillMessageWithALayout");
 				$showlinktoai = ($formmail->withaiprompt && isModEnabled('ai')) ? 'textgenerationemail' : '';
-				$showlinktoailabel = $langs->trans("FillMessageWithAIContent");
+				$showlinktoailabel = $langs->trans("AIEnhancements");
 				$formatforouput = '';
 				$htmlname = 'message';
+				$formai->substit = $this->substit;
+				$formai->substit_lines = $this->substit_lines;
 
 				// Fill $out
 				include DOL_DOCUMENT_ROOT.'/core/tpl/formlayoutai.tpl.php';
@@ -1484,152 +1492,9 @@ class FormMail extends Form
 	}
 
 	/**
-	 * Return Html code for AI instruction of message and autofill result
-	 *
-	 * @param	string		$function		Function ('textgenerationmail', 'textgenerationwebpage', ...)
-	 * @param	string		$format			Format for output ('', 'html', ...)
-	 * @param   string      $htmlContent    HTML name of WYSIWYG field
-	 * @return 	string      				HTML code to ask AI instruction and autofill result
-	 */
-	public function getSectionForAIPrompt($function = 'textgeneration', $format = '', $htmlContent = 'message')
-	{
-		global $langs;
-
-		$langs->load("other");
-
-		$htmlContent = preg_replace('/[^a-z0-9_]/', '', $htmlContent);
-
-		$out = '<div id="ai_input'.$htmlContent.'" class="hidden paddingtop paddingbottom">';
-		$out .= '<input type="text" class="quatrevingtpercent" id="ai_instructions'.$htmlContent.'" name="instruction" placeholder="'.$langs->trans("EnterYourAIPromptHere").'..." />';
-		$out .= '<input id="generate_button'.$htmlContent.'" type="button" class="button smallpaddingimp"  value="'.$langs->trans('Generate').'"/>';
-		$out .= '<div id="ai_status_message'.$htmlContent.'" class="fieldrequired hideobject marginrightonly margintoponly">';
-		$out .= '<i class="fa fa-spinner fa-spin fa-2x fa-fw valignmiddle marginrightonly"></i>'.$langs->trans("AIProcessingPleaseWait", getDolGlobalString('AI_API_SERVICE', 'chatgpt'));
-		$out .= '</div>';
-
-		if ($function == 'imagegeneration') {
-			$out .= '<div id="ai_image_result" class="margintoponly"></div>'; // Div for displaying the generated image
-		}
-
-		$out .= "</div>\n";
-
-		$out .= "<script type='text/javascript'>
-			$(document).ready(function() {
-				// for keydown
-				$('#ai_instructions".$htmlContent."').keydown(function(event) {
-					if (event.keyCode === 13) {
-						event.preventDefault();
-						$('#generate_button".$htmlContent."').click();
-					}
-				});
-
-				$('#generate_button".$htmlContent."').click(function() {
-					console.log('We click on generate_button".$htmlContent." ai button');
-
-					var instructions = $('#ai_instructions".$htmlContent."').val();
-					var timeoutfinished = 0;
-					var apicallfinished = 0;
-
-					$('#ai_status_message".$htmlContent."').show();
-					$('.icon-container .loader').show();
-					setTimeout(function() {
-						timeoutfinished = 1;
-						if (apicallfinished) {
-							$('#ai_status_message".$htmlContent."').hide();
-						}
-					}, 2000);
-
-					if ('".$function."' === 'imagegeneration') {
-						// Handle image generation request
-						$.ajax({
-							url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
-							type: 'POST',
-							contentType: 'application/json',
-							data: JSON.stringify({
-								'format': '".dol_escape_js($format)."',			/* the format for output */
-								'function': '".dol_escape_js($function)."',		/* the AI feature to call */
-								'instructions': instructions,					/* the prompt string */
-							}),
-							success: function(response) {
-								console.log('Received image URL: '+response);
-								// Assuming response is the URL of the generated image
-								var imageUrl = response;
-								$('#ai_image_result').html('<img src=\"' + imageUrl + '\" alt=\"Generated Image\" />');
-
-								// Clear the input field
-								$('#ai_instructions').val('');
-
-								apicallfinished = 1;
-								if (timeoutfinished) {
-									$('#ai_status_message').hide();
-								}
-							},
-							error: function(xhr, status, error) {
-								alert(error);
-								console.error('error ajax', status, error);
-								$('#ai_status_message').hide();
-							}
-						});
-					} else {
-
-						// set editor in readonly
-						if (CKEDITOR.instances.".$htmlContent.") {
-							CKEDITOR.instances.".$htmlContent.".setReadOnly(1);
-						}
-
-					$.ajax({
-						url: '". DOL_URL_ROOT."/ai/ajax/generate_content.php?token=".currentToken()."',
-						type: 'POST',
-						contentType: 'application/json',
-						data: JSON.stringify({
-							'format': '".dol_escape_js($format)."',			/* the format for output */
-							'function': '".dol_escape_js($function)."',		/* the AI feature to call */
-							'instructions': instructions,					/* the prompt string */
-						}),
-						success: function(response) {
-							console.log('Add response into field \'#".$htmlContent."\': '+response);
-
-							jQuery('#".$htmlContent."').val(response);		// If #htmlcontent is a input name or textarea
-							jQuery('#".$htmlContent."').html(response);		// If #htmlContent is a div
-							//jQuery('#".$htmlContent."preview').val(response);
-
-							if (CKEDITOR.instances) {
-								var editorInstance = CKEDITOR.instances.".$htmlContent.";
-								if (editorInstance) {
-									editorInstance.setReadOnly(0);
-									editorInstance.setData(response);
-								}
-								//var editorInstancepreview = CKEDITOR.instances.".$htmlContent."preview;
-								//if (editorInstancepreview) {
-								//	editorInstancepreview.setData(response);
-								//}
-							}
-
-							// remove readonly
-							$('#ai_instructions".$htmlContent."').val('');
-
-							apicallfinished = 1;
-							if (timeoutfinished) {
-								$('#ai_status_message".$htmlContent."').hide();
-							}
-						},
-						error: function(xhr, status, error) {
-							alert(error);
-							console.error('error ajax', status, error);
-							$('#ai_status_message".$htmlContent."').hide();
-						}
-
-					});
-				});
-			});
-			</script>
-			";
-		return $out;
-	}
-
-	/**
 	 * Return HTML code for selection of email layout
 	 *
-	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill
+	 * @param   string      $htmlContent    	HTML name of WYSIWYG field to fill once layout has been chosen
 	 * @param	string		$showlinktolayout	Show link to layout
 	 * @return  string                      	HTML for model email boxes
 	 */
@@ -1641,16 +1506,13 @@ class FormMail extends Form
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 		require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-		// Fetch blogs
-		$websitepage = new WebsitePage($this->db);
-		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
-
-		$out = '<div id="template-selector" class="email-layout-container hidden" style="display:none;">';
+		$out = '<div id="template-selector" class="template-selector email-layout-container hidden" style="display:none;">';
 
 		// Define list of email layouts to use
 		$layouts = array(
 			'empty' => 'empty',
 		);
+
 		// Search available layouts on disk
 		$arrayoflayoutemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/maillayout/', 'files', 0, '\.html$');
 		foreach ($arrayoflayoutemplates as $layouttemplatefile) {
@@ -1680,6 +1542,11 @@ class FormMail extends Form
 		$out .= '</div>';
 
 		// Prepare the array for multiselect
+
+		// Fetch blogs
+		$websitepage = new WebsitePage($this->db);
+		$arrayofblogs = $websitepage->fetchAll('', 'DESC', 'date_creation', 0, 0, array('type_container' => 'blogpost'));
+
 		$blogArray = array();
 		if (!empty($arrayofblogs)) {
 			foreach ($arrayofblogs as $blog) {
@@ -1690,30 +1557,24 @@ class FormMail extends Form
 		// Use the multiselect array function to create the dropdown
 		$out .= '<div id="post-dropdown-container" class="email-layout-container hidden" style="display:none;">';
 		$out .= '<label for="blogpost-select">Select Posts: </label>';
-		$out .= self::multiselectarray('blogpost-select', $blogArray);
+		$out .= self::multiselectarray('blogpost-select', $blogArray, array(), 0, 0, 'minwidth200');
 		$out .= '</div>';
 
+		$out .= '<!-- Js code to manage choice of an email layout -->'."\n";
 		$out .= '<script type="text/javascript">
-      $(document).ready(function() {
-        $(".template-option").click(function() {
-          var template = $(this).data("template");
-          var subject = jQuery("#subject").val();
-          var fromtype = jQuery("#fromtype").val();
-          var sendto = jQuery("#sendto").val();
-          var sendtocc = jQuery("#sendtocc").val();
-          var sendtoccc = jQuery("#sendtoccc").val();
+      	$(document).ready(function() {
+        	$(".template-option").click(function() {
+				var template = $(this).data("template");
+				var subject = jQuery("#subject").val();
+				var fromtype = jQuery("#fromtype").val();
+				var sendto = jQuery("#sendto").val();
+				var sendtocc = jQuery("#sendtocc").val();
+				var sendtoccc = jQuery("#sendtoccc").val();
 
-					console.log("We choose a layout for email template=" + template + ", subject="+subject);
-
-				console.log("We choose a layout for email template " + template);
+				console.log("We choose a layout for email template=" + template + ", subject="+subject);
 
 				$(".template-option").removeClass("selected");
 				$(this).addClass("selected");
-
-				var subject = $("#sujet").val();
-
-				var contentHtml = $(this).data("content");
-				contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
 
 				if (template === "news") {
 					$("#post-dropdown-container").show();
@@ -1726,15 +1587,14 @@ class FormMail extends Form
 						type: "POST",
 						url: "'.DOL_URL_ROOT.'/core/ajax/mailtemplate.php",
 						data: {
+							token: csrfToken,
 							template: template,
 							subject: subject,
 							fromtype: fromtype,
 							sendto: sendto,
 							sendtocc: sendtocc,
 							sendtoccc: sendtoccc,
-							content: contentHtml,
-							selectedPosts: "[]",
-							token: csrfToken
+							selectedPosts: "[]"
 						},
 						success: function(response) {
 							jQuery("#'.$htmlContent.'").val(response);
@@ -1768,7 +1628,7 @@ class FormMail extends Form
 					},
 					success: function(response) {
 						var selectedPosts = JSON.parse(response);
-						var subject = $("#sujet").val();
+						var subject = $("#subject").val();
 
 						contentHtml = contentHtml.replace(/__SUBJECT__/g, subject);
 
@@ -1776,9 +1636,14 @@ class FormMail extends Form
 							type: "POST",
 							url: "/core/ajax/mailtemplate.php",
 							data: {
-								content: contentHtml,
-								selectedPosts: selectedIds.join(","),
-								token: csrfToken
+								token: csrfToken,
+								template: template,
+								subject: subject,
+								fromtype: fromtype,
+								sendto: sendto,
+								sendtocc: sendtocc,
+								sendtoccc: sendtoccc,
+								selectedPosts: selectedIds.join(",")
 							},
 							success: function(response) {
 								jQuery("#'.$htmlContent.'").val(response);
@@ -1891,15 +1756,15 @@ class FormMail extends Form
 				}
 
 				// If a record was found
-				$ret->id = $obj->rowid;
-				$ret->module = $obj->module;
-				$ret->label = $obj->label;
+				$ret->id = (int) $obj->rowid;
+				$ret->module = (string) $obj->module;
+				$ret->label = (string) $obj->label;
 				$ret->lang = $obj->lang;
 				$ret->topic = $obj->topic;
-				$ret->content = $obj->content;
-				$ret->content_lines = $obj->content_lines;
+				$ret->content = (string) $obj->content;
+				$ret->content_lines = (string) $obj->content_lines;
 				$ret->joinfiles = $obj->joinfiles;
-				$ret->email_from = $obj->email_from;
+				$ret->email_from = (string) $obj->email_from;
 
 				break;
 			} else {
@@ -1913,7 +1778,7 @@ class FormMail extends Form
 
 					if ($type_template == 'body') {
 						// Special case to use this->withbody as content
-						$defaultmessage = $this->withbody;
+						$defaultmessage = (string) $this->withbody;
 					} elseif ($type_template == 'facture_send') {
 						$defaultmessage = $outputlangs->transnoentities("PredefinedMailContentSendInvoice");
 					} elseif ($type_template == 'facture_relance') {
@@ -2028,8 +1893,8 @@ class FormMail extends Form
 				}
 
 				$line = new ModelMail($db);
-				$line->id = $obj->rowid;
-				$line->label = $obj->label;
+				$line->id = (int) $obj->rowid;
+				$line->label = (string) $obj->label;
 				$line->lang = $obj->lang;
 				$line->fk_user = $obj->fk_user;
 				$line->private = $obj->private;
@@ -2091,7 +1956,7 @@ class FormMail extends Form
 						$extrafields = new ExtraFields($this->db);
 					}
 					$product = new Product($this->db);
-					$product->fetch($line->fk_product, '', '', 1);
+					$product->fetch($line->fk_product, '', '', '1');
 					$product->fetch_optionals();
 
 					$extrafields->fetch_name_optionals_label($product->table_element, true);
@@ -2248,30 +2113,30 @@ class ModelMail extends CommonObject
 
 	// BEGIN MODULEBUILDER PROPERTIES
 	/**
-	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-2,5>|string,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,2>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,comment?:string,validate?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>	Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields = array(
-		"rowid" => array("type" => "integer", "label" => "TechnicalID", "enabled" => "1", 'position' => 10, 'notnull' => 1, "visible" => "-1",),
-		"module" => array("type" => "varchar(32)", "label" => "Module", "enabled" => "1", 'position' => 20, 'notnull' => 0, "visible" => "-1",),
-		"type_template" => array("type" => "varchar(32)", "label" => "Typetemplate", "enabled" => "1", 'position' => 25, 'notnull' => 0, "visible" => "-1",),
-		"lang" => array("type" => "varchar(6)", "label" => "Lang", "enabled" => "1", 'position' => 30, 'notnull' => 0, "visible" => "-1",),
-		"private" => array("type" => "smallint(6)", "label" => "Private", "enabled" => "1", 'position' => 35, 'notnull' => 1, "visible" => "-1",),
-		"fk_user" => array("type" => "integer:User:user/class/user.class.php", "label" => "Fkuser", "enabled" => "1", 'position' => 40, 'notnull' => 0, "visible" => "-1", "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
-		"datec" => array("type" => "datetime", "label" => "DateCreation", "enabled" => "1", 'position' => 45, 'notnull' => 0, "visible" => "-1",),
-		"tms" => array("type" => "timestamp", "label" => "DateModification", "enabled" => "1", 'position' => 50, 'notnull' => 1, "visible" => "-1",),
-		"label" => array("type" => "varchar(255)", "label" => "Label", "enabled" => "1", 'position' => 55, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1", "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
-		"position" => array("type" => "smallint(6)", "label" => "Position", "enabled" => "1", 'position' => 60, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"active" => array("type" => "integer", "label" => "Active", "enabled" => "1", 'position' => 65, 'notnull' => 1, "visible" => "-1", "alwayseditable" => "1",),
-		"topic" => array("type" => "text", "label" => "Topic", "enabled" => "1", 'position' => 70, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"content" => array("type" => "mediumtext", "label" => "Content", "enabled" => "1", 'position' => 75, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')", 'position' => 80, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"enabled" => array("type" => "varchar(255)", "label" => "Enabled", "enabled" => "1", 'position' => 85, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"joinfiles" => array("type" => "varchar(255)", "label" => "Joinfiles", "enabled" => "1", 'position' => 90, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"email_from" => array("type" => "varchar(255)", "label" => "Emailfrom", "enabled" => "1", 'position' => 95, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"email_to" => array("type" => "varchar(255)", "label" => "Emailto", "enabled" => "1", 'position' => 100, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"email_tocc" => array("type" => "varchar(255)", "label" => "Emailtocc", "enabled" => "1", 'position' => 105, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"email_tobcc" => array("type" => "varchar(255)", "label" => "Emailtobcc", "enabled" => "1", 'position' => 110, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
-		"defaultfortype" => array("type" => "smallint(6)", "label" => "Defaultfortype", "enabled" => "1", 'position' => 115, 'notnull' => 0, "visible" => "-1", "alwayseditable" => "1",),
+		"rowid" => array("type" => "integer", "label" => "TechnicalID", 'enabled' => 1, 'position' => 10, 'notnull' => 1, 'visible' => -1,),
+		"module" => array("type" => "varchar(32)", "label" => "Module", 'enabled' => 1, 'position' => 20, 'notnull' => 0, 'visible' => -1,),
+		"type_template" => array("type" => "varchar(32)", "label" => "Typetemplate", 'enabled' => 1, 'position' => 25, 'notnull' => 0, 'visible' => -1,),
+		"lang" => array("type" => "varchar(6)", "label" => "Lang", 'enabled' => 1, 'position' => 30, 'notnull' => 0, 'visible' => -1,),
+		"private" => array("type" => "smallint(6)", "label" => "Private", 'enabled' => 1, 'position' => 35, 'notnull' => 1, 'visible' => -1,),
+		"fk_user" => array("type" => "integer:User:user/class/user.class.php", "label" => "Fkuser", 'enabled' => 1, 'position' => 40, 'notnull' => 0, 'visible' => -1, "css" => "maxwidth500 widthcentpercentminusxx", "csslist" => "tdoverflowmax150",),
+		"datec" => array("type" => "datetime", "label" => "DateCreation", 'enabled' => 1, 'position' => 45, 'notnull' => 0, 'visible' => -1,),
+		"tms" => array("type" => "timestamp", "label" => "DateModification", 'enabled' => 1, 'position' => 50, 'notnull' => 1, 'visible' => -1,),
+		"label" => array("type" => "varchar(255)", "label" => "Label", 'enabled' => 1, 'position' => 55, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1, "css" => "minwidth300", "cssview" => "wordbreak", "csslist" => "tdoverflowmax150",),
+		"position" => array("type" => "smallint(6)", "label" => "Position", 'enabled' => 1, 'position' => 60, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"active" => array("type" => "integer", "label" => "Active", 'enabled' => 1, 'position' => 65, 'notnull' => 1, 'visible' => -1, 'alwayseditable' => 1,),
+		"topic" => array("type" => "text", "label" => "Topic", 'enabled' => 1, 'position' => 70, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"content" => array("type" => "mediumtext", "label" => "Content", 'enabled' => 1, 'position' => 75, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"content_lines" => array("type" => "text", "label" => "Contentlines", "enabled" => "getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')", 'position' => 80, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"enabled" => array("type" => "varchar(255)", "label" => "Enabled", 'enabled' => 1, 'position' => 85, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"joinfiles" => array("type" => "varchar(255)", "label" => "Joinfiles", 'enabled' => 1, 'position' => 90, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"email_from" => array("type" => "varchar(255)", "label" => "Emailfrom", 'enabled' => 1, 'position' => 95, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"email_to" => array("type" => "varchar(255)", "label" => "Emailto", 'enabled' => 1, 'position' => 100, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"email_tocc" => array("type" => "varchar(255)", "label" => "Emailtocc", 'enabled' => 1, 'position' => 105, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"email_tobcc" => array("type" => "varchar(255)", "label" => "Emailtobcc", 'enabled' => 1, 'position' => 110, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
+		"defaultfortype" => array("type" => "smallint(6)", "label" => "Defaultfortype", 'enabled' => 1, 'position' => 115, 'notnull' => 0, 'visible' => -1, 'alwayseditable' => 1,),
 	);
 	/**
 	 * @var int
@@ -2433,7 +2298,10 @@ class ModelMail extends CommonObject
 	 */
 	public function fetch($id, $ref = null, $noextrafields = 0, $nolines = 0)
 	{
-		$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		// The table llx_c_email_templates has no field ref. The field ref was named "label" instead. So we change the call to fetchCommon.
+		//$result = $this->fetchCommon($id, $ref, '', $noextrafields);
+		$result = $this->fetchCommon($id, '', " AND t.label = '".$this->db->escape($ref)."'", $noextrafields);
+
 		if ($result > 0 && !empty($this->table_element_line) && empty($nolines)) {
 			$this->fetchLines($noextrafields);
 		}

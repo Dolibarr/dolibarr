@@ -99,7 +99,6 @@ if ($cancel) {
  * View
  */
 
-$form = new Form($db);
 $v = new vCard();
 
 $company = $mysoc;
@@ -157,9 +156,20 @@ if (getDolUserInt('USER_PUBLIC_HIDE_USER_MOBILE', 0, $object)) {
 }
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 	$object->socialnetworks = [];
+} else {
+	// Show list of social networks for company
+	$listofnetworks = $object->socialnetworks;
+
+	if (!empty($listofnetworks)) {
+		foreach ($listofnetworks as $key => $networkVal) {
+			if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), 0, $object)) {
+				unset($object->socialnetworks[$key]);
+			}
+		}
+	}
 }
 
-// By default, personal address not visible
+// By default, personal birthdate and address is not visible
 if (!getDolUserInt('USER_PUBLIC_SHOW_BIRTH', 0, $object)) {
 	$object->birth = null;
 }
@@ -174,10 +184,32 @@ if (!getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object)) {
 if (getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	$company = null;
 }
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_EMAIL', 0, $object)) {
+	$mysoc->email = '';
+}
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_OFFICE_PHONE', 0, $object)) {
+	$mysoc->phone = '';
+}
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_OFFICE_FAX', 0, $object)) {
+	$mysoc->fax = '';
+}
+if (getDolUserInt('SOCIETE_PUBLIC_HIDE_URL', 0, $object)) {
+	$mysoc->url = '';
+}
 if (getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object) && is_object($company)) {
 	$company->socialnetworks = [];
-}
+} else {
+	// Show list of social networks for company
+	$listofnetworks = $mysoc->socialnetworks;
 
+	if (!empty($listofnetworks)) {
+		foreach ($listofnetworks as $key => $networkVal) {
+			if (getDolUserInt('SOCIETE_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), 0, $object)) {
+				unset($mysoc->socialnetworks[$key]);
+			}
+		}
+	}
+}
 
 // Output vcard
 if ($mode == 'vcard') {
@@ -220,7 +252,7 @@ $arrayofjs = array();
 $arrayofcss = array();
 
 $replacemainarea = (empty($conf->dol_hide_leftmenu) ? '<div>' : '').'<div>';
-llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, '', '', '', 'onlinepaymentbody'.(GETPOST('mode')=='preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
+llxHeader($head, $object->getFullName($langs).' - '.$langs->trans("PublicVirtualCard"), '', '', 0, 0, $arrayofjs, $arrayofcss, '', 'onlinepaymentbody'.(GETPOST('mode') == 'preview' ? ' scalepreview cursorpointer virtualcardpreview' : ''), $replacemainarea, 1, 1);
 
 print '
 <style>
@@ -242,6 +274,7 @@ print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
 
+
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
 print '<div class="logopublicpayment">';
@@ -260,14 +293,8 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	print '</div>';
 }
 
-
-
 print '</div>';
-/*if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-	print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-}*/
 print '</div>';
-
 
 if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';
@@ -311,7 +338,7 @@ if ($object->email && !getDolUserInt('USER_PUBLIC_HIDE_EMAIL', 0, $object)) {
 if ($object->url && !getDolUserInt('USER_PUBLIC_HIDE_URL', 0, $object)) {
 	$usersection .= '<div class="flexitemsmall">';
 	$usersection .= img_picto('', 'globe', 'class="pictofixedwidth"');
-	$usersection .= dol_print_url($object->url, '_blank', 0, 0, '');
+	$usersection .= dol_print_url($object->url ?? '', '_blank', 0, 0, '');
 	$usersection .= '</div>';
 }
 
@@ -351,11 +378,11 @@ if (getDolUserInt('USER_PUBLIC_SHOW_ADDRESS', 0, $object) && $object->address) {
 
 // Social networks
 if (!empty($object->socialnetworks) && is_array($object->socialnetworks)) {
-	if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS')) {
+	if (!getDolUserString('USER_PUBLIC_HIDE_SOCIALNETWORKS', 0, $object)) {
 		$listOfSocialNetworks = $object->socialnetworks;
 		foreach ($listOfSocialNetworks as $key => $value) {
-			if (getDolGlobalString('USER_SOCIALNETWORK_'.strtoupper($key))) {
-				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($key, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
+			if (!getDolUserString('USER_HIDE_SOCIALNETWORK_'.strtoupper($key), 0, $object)) {
+				$usersection .= '<div class="flexitemsmall">'.dol_print_socialnetworks($value, 0, $object->id, strtolower($key), $socialnetworksdict).'</div>';
 			}
 		}
 	}
@@ -424,9 +451,9 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 
 	// Social networks
 	if (!empty($mysoc->socialnetworks) && is_array($mysoc->socialnetworks) && count($mysoc->socialnetworks) > 0) {
-		if (!getDolGlobalInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0)) {
+		if (!getDolUserInt('USER_PUBLIC_HIDE_SOCIALNETWORKS_BUSINESS', 0, $object)) {
 			foreach ($mysoc->socialnetworks as $key => $value) {
-				if (getDolGlobalString('SOCIETE_PUBLIC_SOCIALNETWORKS_'.strtoupper($key))) {
+				if (!getDolUserInt('SOCIETE_PUBLIC_HIDE_SOCIALNETWORKS_'.strtoupper($key), 0, $object)) {
 					$companysection .= '<div class="flexitemsmall wordbreak">'.dol_print_socialnetworks($value, 0, $mysoc->id, $key, $socialnetworksdict).'</div>';
 				}
 			}

@@ -1,7 +1,7 @@
 <?php
 /*
  * Copyright (C) 2014-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,12 @@ class PrintingDriver
 	 * @var string Html string returned for print
 	 */
 	public $resprint;
+
+	/**
+	 * @var string Name of active driver ? ("Constant" in child class)
+	 */
+	public $active = "NOT_SET";
+
 
 	/**
 	 *  Constructor

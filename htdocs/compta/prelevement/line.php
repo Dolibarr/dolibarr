@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2009  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2010-2013  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,7 +93,7 @@ $error = 0;
 
 if ($action == 'confirm_rejet' && $permissiontoadd) {
 	if (GETPOST("confirm") == 'yes') {
-		$datarej = null;
+		$daterej = null;
 		if (GETPOSTINT('remonth')) {
 			$daterej = dol_mktime(0, 0, 0, GETPOSTINT('remonth'), GETPOSTINT('reday'), GETPOSTINT('reyear'));
 		}
@@ -118,7 +118,7 @@ if ($action == 'confirm_rejet' && $permissiontoadd) {
 			if ($lipre->fetch($id) == 0) {
 				$rej = new RejetPrelevement($db, $user, $type);
 
-				$result = $rej->create($user, $id, GETPOSTINT('motif'), $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
+				$result = $rej->create($user, $id, GETPOSTINT('motif'), (int) $daterej, $lipre->bon_rowid, GETPOSTINT('facturer'));
 
 				if ($result > 0) {
 					header("Location: line.php?id=".urlencode((string) ($id)).'&type='.urlencode((string) ($type)));
@@ -278,7 +278,7 @@ if ($id) {
 		if (is_object($bon) && $bon->statut == BonPrelevement::STATUS_CREDITED) {
 			if ($lipre->statut == 2) {
 				if ($user->hasRight('prelevement', 'bons', 'credit')) {
-					print '<a class="butActionDelete" href="line.php?action=rejet&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
+					print '<a class="butActionDelete" href="line.php?action=rejet&token='.newToken().'&type='.$type.'&id='.$lipre->id.'">'.$langs->trans("StandingOrderReject").'</a>';
 				} else {
 					print '<a class="butActionRefused classfortooltip" href="#" title="'.$langs->trans("NotAllowed").'">'.$langs->trans("StandingOrderReject").'</a>';
 				}

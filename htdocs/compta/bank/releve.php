@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro      <aspangaro@open-dsi.fr>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,12 +77,12 @@ $hookmanager->initHooks(array('bankaccountstatement', 'globalcard'));
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'dvnext' && !empty($dvid)) {
 	$al = new AccountLine($db);
-	$al->datev_next($dvid);
+	$al->datev_next((int) $dvid);
 }
 
 if ($user->hasRight('banque', 'consolidate') && $action == 'dvprev' && !empty($dvid)) {
 	$al = new AccountLine($db);
-	$al->datev_previous($dvid);
+	$al->datev_previous((int) $dvid);
 }
 
 
@@ -310,7 +310,7 @@ if (empty($numref)) {
 
 		print dol_get_fiche_end();
 
-
+		/* Moved as a tab
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
 			$titletoconciliatemanual = $langs->trans("Conciliate");
@@ -339,6 +339,7 @@ if (empty($numref)) {
 				}
 			}
 		}
+		*/
 
 		// List of mass actions available
 		$arrayofmassactions = array(
@@ -351,9 +352,9 @@ if (empty($numref)) {
 		$massactionbutton = $form->selectMassAction('', $arrayofmassactions);
 
 		$morehtml = '';
-		if ($action != 'addline' && $action != 'reconcile') {
-			$morehtml .= $buttonreconcile;
-		}
+		//if ($action != 'addline' && $action != 'reconcile') {
+		//	$morehtml .= $buttonreconcile;
+		//}
 
 		print '<form name="aaa" action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 		print '<input type="hidden" name="token" value="'.newToken().'">';
@@ -743,12 +744,11 @@ if (empty($numref)) {
     		var current = $(this);
     		current.click(function()
     		{
-				console.log("We click on ajaxforbankoperationchange");
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
     				current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;

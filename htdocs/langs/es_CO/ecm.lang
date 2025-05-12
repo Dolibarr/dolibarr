@@ -1,11 +1,16 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMNbOfDocs=No. de documentos en directorio
+ECMSectionAuto=Directorio de objetos
+ECMSectionsManual=Directorios manuales
+ECMSectionsAuto=Directorios de objetos
+ECMSectionsMedias=Directorios de medios públicos
 ECMRoot=Raíz ECM
 ECMAddSection=Agregar directorio
 ECMCreationDate=Fecha de creación
 ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
 ECMArea=Área DMS / ECM
 ECMAreaDesc=El área DMS / ECM (Document Management System / Electronic Content Management) permite guardar, compartir y buscar rápidamente todo tipo de documentos en Dolibarr.
+ECMAreaDesc3=* Los directorios públicos son archivos que se encuentran en el subdirectorio <b>/medias</b> del directorio de documentos, que pueden leer todos los usuarios de Internet sin necesidad de iniciar sesión ni compartir el archivo explícitamente. Se utilizan para almacenar archivos de imágenes para el módulo de correo electrónico o sitio web, por ejemplo.
 ECMSectionWasRemoved=El directorio <b> %s </b> ha sido eliminado.
 ECMSectionWasCreated=Se ha creado el directorio <b> %s </b>.
 ECMNoDirectoryYet=No se creó ningún directorio
@@ -22,5 +27,9 @@ FileNotYetIndexedInDatabase=El archivo aún no está indexado en la base de dato
 ExtraFieldsEcmFiles=Archivos Ecm de Extrafields
 ExtraFieldsEcmDirectories=Directorios de Extrafields Ecm
 ECMSetup=Configuración de ECM
+ConfirmGenerateImgWebp=Si confirma, generará una imagen en formato .webp para todas las imágenes que se encuentran actualmente en esta carpeta (no se incluyen las subcarpetas, no se generarán imágenes webp si el tamaño es mayor que el original)...
+ConfirmGenerateChosenImgWebp=Si confirmas, generarás una imagen en formato .webp para la imagen %s
+ConfirmChosenImgWebpCreation=Confirmar la duplicación de las imágenes elegidas
 SucessConvertImgWebp=Imágenes duplicadas con éxito
+SucessConvertChosenImgWebp=La imagen elegida se duplicó correctamente
 ECMParentDirectory=Directorio de padres

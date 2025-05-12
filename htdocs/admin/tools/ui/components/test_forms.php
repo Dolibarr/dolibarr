@@ -14,6 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
+
 define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 //define("NOLOGIN",1);        // This means this output page does not require to be logged.
 /*if (!defined('NOSESSION')) {
@@ -21,8 +22,17 @@ define("NOCSRFCHECK", 1); // We accept to go on this page from external web site
 }*/
 
 // Load Dolibarr environment
-require '../../main.inc.php';
+require '../../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+/**
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ *
+ * @var int $dolibarr_main_prod
+ */
 
 // Security
 if ($dolibarr_main_prod) {

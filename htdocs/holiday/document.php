@@ -87,6 +87,8 @@ $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+$permissiontoapprove = $user->hasRight('holiday', 'approve');
+
 if (($id > 0) || $ref) {
 	$object->fetch($id, $ref);
 
@@ -98,13 +100,16 @@ if (($id > 0) || $ref) {
 	if ($user->hasRight('holiday', 'read') && in_array($object->fk_user, $childids)) {
 		$canread = 1;
 	}
+	if ($permissiontoapprove && $object->fk_validator == $user->id && !getDolGlobalString('HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES')) {	// TODO HOLIDAY_CAN_APPROVE_ONLY_THE_SUBORDINATES not completely implemented
+		$canread = 1;
+	}
 	if (!$canread) {
 		accessforbidden();
 	}
 }
 
 
-$upload_dir = $conf->holiday->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, '');
+$upload_dir = $conf->holiday->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 1, $object, '');
 $modulepart = 'holiday';
 
 // Protection if external user
@@ -303,7 +308,7 @@ if ($object->id) {
 	$permissiontoadd = $user->hasRight('holiday', 'write');
 	$permtoedit = $user->hasRight('holiday', 'write');
 	$param = '&id='.$object->id;
-	$relativepathwithnofile = dol_sanitizeFileName($object->ref).'/';
+	$relativepathwithnofile = get_exdir(0, 0, 0, 1, $object, '').'/';
 	$savingdocmask = dol_sanitizeFileName($object->ref).'-__file__';
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_post_headers.tpl.php';

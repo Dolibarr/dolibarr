@@ -50,6 +50,8 @@ require_once '../../main.inc.php';
 /**
  * @var DoliDB $db
  * @var Translate $langs
+ *
+ * @var int $dolibarr_nocache
  */
 /*
  * View

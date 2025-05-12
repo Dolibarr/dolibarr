@@ -8,7 +8,7 @@
  * Copyright (C) 2016-2023	Charlene Benke          <charlene@patas-monkey.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2020       Pierre Ardoin           <mapiolca@me.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -228,7 +228,7 @@ class ProductFournisseur extends Product
 	public $fourn_barcode;
 
 	/**
-	 * @var string $supplier_barcode - Supplier barcode
+	 * @var string - Supplier barcode
 	 */
 	public $supplier_barcode;
 
@@ -240,7 +240,7 @@ class ProductFournisseur extends Product
 	public $fourn_fk_barcode_type;
 
 	/**
-	 * @var string $supplier_fk_barcode_type - Supplier barcode type
+	 * @var string - Supplier barcode type
 	 */
 	public $supplier_fk_barcode_type;
 
@@ -534,7 +534,7 @@ class ProductFournisseur extends Product
 			$sql .= " fk_availability = ".((int) $availability).",";
 			$sql .= " multicurrency_price = ".(isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 			$sql .= " multicurrency_unitprice = ".(isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
-			$sql .= " multicurrency_tx = ".(isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
+			$sql .= " multicurrency_tx = ".(isset($multicurrency_tx) ? "'".$this->db->escape((string) $multicurrency_tx)."'" : '1').",";
 			$sql .= " fk_multicurrency = ".(isset($fk_multicurrency) ? (int) $fk_multicurrency : 'null').",";
 			$sql .= " multicurrency_code = ".(isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 			$sql .= " entity = ".((int) $conf->entity).",";
@@ -550,7 +550,7 @@ class ProductFournisseur extends Product
 			$sql .= " delivery_time_days = ".($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
 			$sql .= " supplier_reputation = ".(empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 			$sql .= " barcode = ".(empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
-			$sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
+			$sql .= " fk_barcode_type = ".(empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape((string) $fk_barcode_type)."'");
 			if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
 				$sql .= ", packaging = ".(empty($packaging) ? 1 : $packaging);
 			}
@@ -586,7 +586,7 @@ class ProductFournisseur extends Product
 				}
 				// End call triggers
 				if (!$error && !getDolGlobalString('PRODUCT_PRICE_SUPPLIER_NO_LOG')) {
-					$result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
+					$result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, (float) $multicurrency_unitBuyPrice, $multicurrency_tx, (int) $fk_multicurrency, $multicurrency_code);
 					if ($result < 0) {
 						$error++;
 					}
@@ -621,8 +621,8 @@ class ProductFournisseur extends Product
 				$sql .= ") values(";
 				$sql .= (isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 				$sql .= (isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
-				$sql .= (isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
-				$sql .= (isset($fk_multicurrency) ? "'".$this->db->escape($fk_multicurrency)."'" : 'null').",";
+				$sql .= (isset($multicurrency_tx) ? "'".$this->db->escape((string) $multicurrency_tx)."'" : '1').",";
+				$sql .= (isset($fk_multicurrency) ? "'".$this->db->escape((string) $fk_multicurrency)."'" : 'null').",";
 				$sql .= (isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 				$sql .= " '".$this->db->idate($now)."',";
 				$sql .= " ".((int) $this->id).",";
@@ -644,9 +644,9 @@ class ProductFournisseur extends Product
 				$sql .= ($delivery_time_days != '' ? ((int) $delivery_time_days) : 'null').",";
 				$sql .= (empty($supplier_reputation) ? 'NULL' : "'".$this->db->escape($supplier_reputation)."'").",";
 				$sql .= (empty($barcode) ? 'NULL' : "'".$this->db->escape($barcode)."'").",";
-				$sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape($fk_barcode_type)."'");
+				$sql .= (empty($fk_barcode_type) ? 'NULL' : "'".$this->db->escape((string) $fk_barcode_type)."'");
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-					$sql .= ", ".(empty($this->packaging) ? '1' : "'".$this->db->escape($this->packaging)."'");
+					$sql .= ", ".(empty($this->packaging) ? '1' : "'".$this->db->escape((string) $this->packaging)."'");
 				}
 				$sql .= ")";
 
@@ -681,7 +681,7 @@ class ProductFournisseur extends Product
 				if (!$error && !getDolGlobalString('PRODUCT_PRICE_SUPPLIER_NO_LOG')) {
 					// Add record into log table
 					// $this->product_fourn_price_id must be set
-					$result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, $multicurrency_unitBuyPrice, $multicurrency_tx, $fk_multicurrency, $multicurrency_code);
+					$result = $this->logPrice($user, $now, $buyprice, $qty, $multicurrency_buyprice, (float) $multicurrency_unitBuyPrice, $multicurrency_tx, (int) $fk_multicurrency, $multicurrency_code);
 					if ($result < 0) {
 						$error++;
 					}
@@ -1025,7 +1025,7 @@ class ProductFournisseur extends Product
 						}
 					}
 
-					if ($fourn_unitprice < $min || $min == -1) {
+					if ($fourn_unitprice_with_discount < $min || $min == -1) {
 						$this->id                       = $prodid;
 						$this->product_fourn_price_id   = $record["product_fourn_price_id"];
 						$this->ref_supplier             = $record["ref_fourn"];
@@ -1050,7 +1050,7 @@ class ProductFournisseur extends Product
 						$this->fourn_multicurrency_id          = $record["fk_multicurrency"];
 						$this->fourn_multicurrency_code        = $record["multicurrency_code"];
 
-						$min = $fourn_unitprice;
+						$min = $fourn_unitprice_with_discount;
 					}
 				}
 			}
@@ -1128,13 +1128,13 @@ class ProductFournisseur extends Product
 	public function display_price_product_fournisseur($showunitprice = 1, $showsuptitle = 1, $maxlen = 0, $notooltip = 0, $productFournList = array())
 	{
 		// phpcs:enable
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$out = '';
 		$langs->load("suppliers");
 		if (count($productFournList) > 0) {
-			$out .= '<table class="nobordernopadding" width="100%">';
-			$out .= '<tr><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
+			$out .= '<table class="centpercent liste nomarginbottom">';
+			$out .= '<tr class="liste_titre"><td class="liste_titre right">'.($showunitprice ? $langs->trans("Price").' '.$langs->trans("HT") : '').'</td>';
 			$out .= '<td class="liste_titre right">'.($showunitprice ? $langs->trans("QtyMin") : '').'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("Supplier").'</td>';
 			$out .= '<td class="liste_titre">'.$langs->trans("SupplierRef").'</td></tr>';
@@ -1142,13 +1142,16 @@ class ProductFournisseur extends Product
 				$out .= '<tr><td class="right">'.($showunitprice ? price($productFourn->fourn_unitprice * (1 - $productFourn->fourn_remise_percent / 100) - $productFourn->fourn_remise) : '').'</td>';
 				$out .= '<td class="right">'.($showunitprice ? $productFourn->fourn_qty : '').'</td>';
 				$out .= '<td>'.$productFourn->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).'</td>';
-				$out .= '<td>'.$productFourn->fourn_ref.'<td></tr>';
+				$out .= '<td>'.dolPrintHTML($productFourn->fourn_ref).'</td></tr>';
 			}
 			$out .= '</table>';
 		} else {
-			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT").' &nbsp; <span class="opacitymedium">(</span>' : '');
-			$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
-			$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
+			$out = ($showunitprice ? price($this->fourn_unitprice * (1 - $this->fourn_remise_percent / 100) + $this->fourn_remise, 0, $langs, 1, -1, -1, $conf->currency).' '.$langs->trans("HT") : '');
+			if ($user->hasRight("fournisseur", "read")) {	// Without permission, never show the best supplier seller
+				$out .= ($showunitprice ? ' &nbsp; <span class="opacitymedium">(</span>' : '');
+				$out .= ($showsuptitle ? '<span class="opacitymedium">'.$langs->trans("Supplier").'</span>: ' : '').$this->getSocNomUrl(1, 'supplier', $maxlen, $notooltip).' / <span class="opacitymedium">'.$langs->trans("SupplierRef").'</span>: '.$this->ref_supplier;
+				$out .= ($showunitprice ? '<span class="opacitymedium">)</span>' : '');
+			}
 		}
 		return $out;
 	}
@@ -1417,9 +1420,9 @@ class ProductFournisseur extends Product
 		if (empty($notooltip)) {
 			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$label = $langs->trans("SupplierRef");
-				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose .= ' alt="'.dolPrintHTMLForAttribute($label).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose .= ' title="'.dolPrintHTMLForAttribute($label).'"';
 			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
 		} else {
 			$linkclose = ($morecss ? ' class="'.$morecss.'"' : '');
@@ -1519,8 +1522,8 @@ class ProductFournisseur extends Product
 		$sql .= "values(";
 		$sql .= (isset($multicurrency_buyprice) ? "'".$this->db->escape(price2num($multicurrency_buyprice))."'" : 'null').",";
 		$sql .= (isset($multicurrency_unitBuyPrice) ? "'".$this->db->escape(price2num($multicurrency_unitBuyPrice))."'" : 'null').",";
-		$sql .= (isset($multicurrency_tx) ? "'".$this->db->escape($multicurrency_tx)."'" : '1').",";
-		$sql .= (isset($fk_multicurrency) ? "'".$this->db->escape($fk_multicurrency)."'" : 'null').",";
+		$sql .= (isset($multicurrency_tx) ? "'".$this->db->escape((string) $multicurrency_tx)."'" : '1').",";
+		$sql .= (isset($fk_multicurrency) ? "'".$this->db->escape((string) $fk_multicurrency)."'" : 'null').",";
 		$sql .= (isset($multicurrency_code) ? "'".$this->db->escape($multicurrency_code)."'" : 'null').",";
 		$sql .= "'".$this->db->idate($datec)."',";
 		$sql .= " ".((int) $this->product_fourn_price_id).",";

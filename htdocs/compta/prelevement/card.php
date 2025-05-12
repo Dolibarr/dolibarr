@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +112,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	if ($action == 'setbankaccount' && $permissiontoadd) {
-		$object->oldcopy = dol_clone($object, 2);
+		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
 		$object->fk_bank_account = GETPOSTINT('fk_bank_account');
 
 		$object->update($user);
@@ -149,7 +150,7 @@ if (empty($reshook)) {
 			$mesg='BadFile';
 		}*/
 
-		$error = $object->set_infotrans($user, $dt, GETPOST('methode', 'alpha'));
+		$error = $object->set_infotrans($user, $dt, GETPOSTINT('methode'));
 
 		if ($error) {
 			header("Location: card.php?id=".$id."&error=$error");
@@ -245,7 +246,7 @@ if ($id > 0 || $ref) {
 			print '<form name="setdate_trans" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.newToken().'">';
 			print '<input type="hidden" name="action" value="setdate_trans">';
-			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, "setdate_trans");
+			print $form->selectDate($object->date_trans ? $object->date_trans : -1, 'date_trans', 0, 0, 0, "setdate_trans");
 			print '<input type="submit" class="button button-edit smallpaddingimp valign middle" value="'.$langs->trans('Modify').'">';
 			print '</form>';
 		} else {
@@ -314,9 +315,9 @@ if ($id > 0 || $ref) {
 	print '</tr></table>';
 	print '</td><td>';
 	if ($action == 'editfkbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'fk_bank_account', 0);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $fk_bank_account, 'fk_bank_account', 0);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $fk_bank_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $fk_bank_account, 'none');
 	}
 	print "</td>";
 	print '</tr>';
@@ -564,12 +565,14 @@ if ($id > 0 || $ref) {
 			if (!$salaryBonPl) {
 				$thirdparty = new Societe($db);
 				$thirdparty->fetch($obj->socid);
+				$name = $thirdparty->getNomUrl(1);
 			} else {
 				$userSalary = new User($db);
 				$userSalary->fetch($obj->fk_user);
+				$name = $userSalary->getNomUrl(-1);
 			}
 			print '<td class="tdoverflowmax150">';
-			print(!$salaryBonPl ? $thirdparty->getNomUrl(1) : $userSalary->getNomUrl(-1));
+			print($name);
 			print "</td>\n";
 
 			print '<td class="right"><span class="amount">'.price($obj->amount)."</span></td>\n";

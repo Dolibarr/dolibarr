@@ -33,6 +33,9 @@ class box_graph_nb_ticket_last_x_days extends ModeleBoxes
 {
 	public $boxcode = "box_graph_nb_ticket_last_x_days";
 	public $boximg  = "ticket";
+	/**
+	 * @var string
+	 */
 	public $boxlabel;
 	public $depends = array("ticket");
 

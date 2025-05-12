@@ -1,10 +1,11 @@
 <?php
+
 /* Copyright (C) 2015-2017  Laurent Destailleur  	<eldy@users.sourceforge.net>
  * Copyright (C) 2018-2021  Nicolas ZABOURI	        <info@inovea-conseil.com>
  * Copyright (C) 2018 	    Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2019 	    Ferran Marcet           <fmarcet@2byte.es>
- * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,7 @@
  * @var User $user
  *
  * @var string $dolibarr_main_url_root
+ * @var ?string $permissiontoadd
  * @var ?string $permissiontoread
  * @var ?string $permissiontodelete
  * @var ?string $permissiontoclose
@@ -54,11 +56,15 @@
  * @var ?string $diroutputmassaction
  * @var ?string $objectlabel
  * @var ?string $option
- * @var ?int $deliveryreceipt
+ * @var int $deliveryreceipt
+ * @var string $action
  * @var string $massaction
  * @var string $objectclass
  * @var string $uploaddir
  * @var string $confirm
+ * @var string $month
+ * @var string $year
+ * @var int $error
  */
 '
 @phan-var-force ?string $permissiontoread
@@ -69,7 +75,7 @@
 @phan-var-force ?string $diroutputmassaction
 @phan-var-force ?string $objectlabel
 @phan-var-force ?string $option
-@phan-var-force ?string $deliveryreceipt
+@phan-var-force int $deliveryreceipt
 ';
 
 
@@ -103,7 +109,7 @@ if (!empty($permtodelete) && empty($permissiontodelete)) {
 }
 
 // Mass actions. Controls on number of lines checked.
-$maxformassaction = (!getDolGlobalString('MAIN_LIMIT_FOR_MASS_ACTIONS') ? 1000 : $conf->global->MAIN_LIMIT_FOR_MASS_ACTIONS);
+$maxformassaction = getDolGlobalInt('MAIN_LIMIT_FOR_MASS_ACTIONS', 1000);
 if ($massaction && is_array($toselect) && count($toselect) < 1) {
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
@@ -545,6 +551,11 @@ if (!$error && $massaction == 'confirm_presend') {
 					$substitutionarray['__EMAIL__'] = $thirdparty->email;
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag=undefined&securitykey='.dol_hash(getDolGlobalString('MAILING_EMAIL_UNSUBSCRIBE_KEY')."-undefined", 'md5').'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
+					if ($oneemailperrecipient) {
+						$substitutionarray['__ONLINE_PAYMENT_URL__'] = '';
+						$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = '';
+					}
+
 					$parameters = array('mode' => 'formemail');
 
 					if (!empty($listofobjectthirdparties)) {
@@ -562,7 +573,7 @@ if (!$error && $massaction == 'confirm_presend') {
 					$attachedfiles = array('paths' => array(), 'names' => array(), 'mimes' => array());
 					if ($oneemailperrecipient) {
 						// if "one email per recipient" is check we must collate $attachedfiles by thirdparty
-						if (is_array($attachedfilesThirdpartyObj[$thirdparty->id]) && count($attachedfilesThirdpartyObj[$thirdparty->id])) {
+						if (is_array($attachedfilesThirdpartyObj[$thirdparty->id]) && count($attachedfilesThirdpartyObj[$thirdparty->id])) {	// @phpstan-ignore-line
 							foreach ($attachedfilesThirdpartyObj[$thirdparty->id] as $keyObjId => $objAttachedFiles) {
 								// Create form object
 								$attachedfiles = array(
@@ -628,7 +639,7 @@ if (!$error && $massaction == 'confirm_presend') {
 
 					// Send mail (substitutionarray must be done just before this)
 					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
-					$mailfile = new CMailFile($subjectreplaced, $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
+					$mailfile = new CMailFile($subjectreplaced, (string) $sendto, $from, $messagereplaced, $filepath, $mimetype, $filename, $sendtocc, $sendtobcc, (int) $deliveryreceipt, -1, '', '', $trackid, '', $sendcontext, '', $upload_dir_tmp);
 					if ($mailfile->error) {
 						$resaction .= '<div class="error">'.$mailfile->error.'</div>';
 					} else {
@@ -653,7 +664,7 @@ if (!$error && $massaction == 'confirm_presend') {
 								if ($objectclass == 'CommandeFournisseur') $actiontypecode='AC_SUP_ORD';
 								if ($objectclass == 'FactureFournisseur') $actiontypecode='AC_SUP_INV';*/
 
-								$actionmsg = $langs->transnoentities('MailSentByTo', $from, $sendto);
+								$actionmsg = $langs->transnoentities('MailSentByTo', $from, (string) $sendto);
 								if ($message) {
 									if ($sendtocc) {
 										$actionmsg = dol_concatdesc($actionmsg, $langs->transnoentities('Bcc').": ".$sendtocc);
@@ -722,12 +733,12 @@ if (!$error && $massaction == 'confirm_presend') {
 						} else {
 							$langs->load("other");
 							if ($mailfile->error) {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto);
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto);
 								$resaction .= '<br><div class="error">'.$mailfile->error.'</div>';
 							} elseif (getDolGlobalString('MAIN_DISABLE_ALL_MAILS')) {
 								$resaction .= '<div class="warning">No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS</div>';
 							} else {
-								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, $sendto) . '<br><div class="error">(unhandled error)</div>';
+								$resaction .= $langs->trans('ErrorFailedToSendMail', $from, (string) $sendto) . '<br><div class="error">(unhandled error)</div>';
 							}
 						}
 					}
@@ -846,7 +857,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 	// Define output language (Here it is not used because we do only merging existing PDF)
 	$outputlangs = $langs;
 	$newlang = '';
-	if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+	if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 		$newlang = GETPOST('lang_id', 'aZ09');
 	}
 	//elseif (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && is_object($objecttmp->thirdparty)) {		// On massaction, we can have several values for $objecttmp->thirdparty
@@ -862,7 +873,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		dol_mkdir($diroutputmassaction);
 
 		// Defined name of merged file
-		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities((string) $objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
 		// Save merged file
@@ -923,6 +934,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 			$pdf->SetCompression(false);
 		}
 
+		$pagecount = 0;
 		// Add all others
 		foreach ($files as $file) {
 			// Charge un document PDF depuis un fichier.
@@ -939,7 +951,7 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 		dol_mkdir($diroutputmassaction);
 
 		// Defined name of merged file
-		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities($objectlabel)));
+		$filename = strtolower(dol_sanitizeFileName($langs->transnoentities((string) $objectlabel)));
 		$filename = preg_replace('/\s/', '_', $filename);
 
 
@@ -951,10 +963,10 @@ if (!$error && $massaction == "builddoc" && $permissiontoread && !GETPOST('butto
 				$filename .= '_'.strtolower(dol_sanitizeFileName($langs->transnoentities("Unpaid")));
 			}
 		}
-		if ($year) {
+		if (!empty($year)) {
 			$filename .= '_'.$year;
 		}
-		if ($month) {
+		if (!empty($month)) {
 			$filename .= '_'.$month;
 		}
 		if ($pagecount) {
@@ -1052,7 +1064,7 @@ if (!$error && $massaction == 'validate' && $permissiontoadd) {
 					if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
 						$outputlangs = $langs;
 						$newlang = '';
-						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+						if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 							$newlang = GETPOST('lang_id', 'aZ09');
 						}
 						if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && property_exists($objecttmp, 'thirdparty')) {
@@ -1215,7 +1227,7 @@ EOPHAN;
 			$outputlangs = $langs;
 			$newlang = '';
 
-			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && GETPOST('lang_id', 'aZ09')) {
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
 				$newlang = GETPOST('lang_id', 'aZ09');
 			}
 			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang) && isset($objecttmp->thirdparty->default_lang)) {
@@ -1347,18 +1359,36 @@ if (!$error && ($action == 'updateprice' && $confirm == 'yes') && $permissiontoa
 				$result = $object->fetch($toselectid);
 				//var_dump($contcats);exit;
 				if ($result > 0) {
-					if ($obj->price_base_type == 'TTC') {
-						$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min_ttc;
-					} else {
-						$newprice = $object->price * (100 + $pricepercentage) / 100;
-						$minprice = $object->price_min;
-					}
-					$res = $object->updatePrice($newprice, $obj->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
-					if ($res > 0) {
-						$nbok++;
-					} else {
-						setEventMessages($object->error, $object->errors, 'errors');
+					if (getDolGlobalString('PRODUCT_PRICE_UNIQ')
+							|| getDolGlobalString('PRODUIT_CUSTOMER_PRICES')) {
+						if ($object->price_base_type == 'TTC') {
+							$newprice = $object->price_ttc * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min_ttc;
+						} else {
+							$newprice = $object->price * (100 + $pricepercentage) / 100;
+							$minprice = $object->price_min;
+						}
+						$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, 0, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+						if ($res > 0) {
+							$nbok++;
+						} else {
+							setEventMessages($object->error, $object->errors, 'errors');
+						}
+					} elseif (getDolGlobalString('PRODUIT_MULTIPRICES')) {
+						$maxlevel = getDolGlobalInt('PRODUIT_MULTIPRICES_LIMIT');
+						for ($level = 1; $level <= $maxlevel; $level++) {
+							if ($object->price_base_type == 'TTC') {
+								$newprice = $object->multiprices_ttc[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min_ttc[$level];
+							} else {
+								$newprice = $object->multiprices[$level] * (100 + $pricepercentage) / 100;
+								$minprice = $object->multiprices_min[$level];
+							}
+							$res = $object->updatePrice($newprice, $object->price_base_type, $user, $object->tva_tx, $minprice, $level, $object->tva_npr, 0, 0, array(), $object->default_vat_code);
+							if ($res > 0) {
+								$nbok++;
+							}
+						}
 					}
 				} else {
 					setEventMessages($object->error, $object->errors, 'errors');
@@ -1421,7 +1451,7 @@ if (!$error && ($action == 'affectuser' && $confirm == 'yes') && $permissiontoad
 	$nbok = 0;
 	$db->begin();
 
-	$usertoaffect = GETPOST('usertoaffect');
+	$usertoaffect = GETPOSTINT('usertoaffect');
 	$projectrole = GETPOST('projectrole');
 	$tasksrole = GETPOST('tasksrole');
 	if (!empty($usertoaffect)) {
@@ -1792,7 +1822,7 @@ if (!$error && ($massaction == 'increaseholiday' || ($action == 'increaseholiday
 	$db->begin();
 	$objecttmp = new $objectclass($db);
 	$nbok = 0;
-	$typeholiday = GETPOST('typeholiday', 'alpha');
+	$typeholiday = GETPOSTINT('typeholiday');
 	$nbdaysholidays = GETPOSTFLOAT('nbdaysholidays');	// May be 1.5
 
 	if ($nbdaysholidays <= 0) {
@@ -1924,13 +1954,14 @@ if (!$error && ($massaction == 'clonetasks' || ($action == 'clonetasks' && $conf
 }
 
 if (empty($toselect)) {
-	$toselect=[];
+	$toselect = [];
 }
 $parameters['toselect'] = &$toselect;
 $parameters['uploaddir'] = $uploaddir;
 $parameters['massaction'] = $massaction;
 $parameters['diroutputmassaction'] = isset($diroutputmassaction) ? $diroutputmassaction : null;
 
+// @phan-suppress-next-line PhanTypeMismatchArgumentNullable
 $reshook = $hookmanager->executeHooks('doMassActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');

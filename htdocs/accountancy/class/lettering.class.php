@@ -3,7 +3,7 @@
  * Copyright (C) 2013       Olivier Geffroy         <jeff@jeffinfo.com>
  * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -292,7 +292,6 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @param	bool		$partial		Partial lettering
@@ -434,7 +433,6 @@ class Lettering extends BookKeeping
 	}
 
 	/**
-	 *
 	 * @param	int[]		$ids			ids array
 	 * @param	int			$notrigger		no trigger
 	 * @return	int							Nb of affectd rows or <0 if error
@@ -769,8 +767,8 @@ class Lettering extends BookKeeping
 	/**
 	 * Get all bank ids from list of document ids of a type
 	 *
-	 * @param	array<string,int[]>		$document_ids	List of document id
-	 * @param	string			$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
+	 * @param	int[]		$document_ids	List of document id
+	 * @param	string		$doc_type		Type of document ('customer_invoice' or 'supplier_invoice', ...)
 	 * @return	array<int,int>|int<-1,-1>	Return integer <0 if error otherwise all all bank ids from list of document ids of a type
 	 */
 	public function getBankLinesFromFkDocAndDocType($document_ids, $doc_type)
@@ -864,14 +862,14 @@ class Lettering extends BookKeeping
 				$sql = "SELECT DISTINCT tl2.fk_link, tl2.fk_doc";
 				$sql .= " FROM (";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent'])." IS NOT NULL", "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX .$this->db->sanitize($linked_info['table'])." AS tl";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table_link_line']) . " AS tll ON tll.".$this->db->sanitize($linked_info['fk_table_link_line']) . " = tl.".$this->db->sanitize($linked_info['fk_line_link']);
 				$sql .= ") AS tl";
 				$sql .= " LEFT JOIN (";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
-				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
+				$sql .= "   SELECT DISTINCT " . $this->db->ifsql("tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent'])." IS NOT NULL", "tll.".$this->db->sanitize($linked_info['fk_table_link_line_parent']), "tl.".$this->db->sanitize($linked_info['fk_link']))." AS fk_link, tl.".$this->db->sanitize($linked_info['fk_doc'])." AS fk_doc";
 				$sql .= "   FROM " . MAIN_DB_PREFIX .$this->db->sanitize($linked_info['table'])." AS tl";
 				// @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$sql .= "   LEFT JOIN " . MAIN_DB_PREFIX . $this->db->sanitize($linked_info['table_link_line']) . " AS tll ON tll.".$this->db->sanitize($linked_info['fk_table_link_line']) . " = tl.".$this->db->sanitize($linked_info['fk_line_link']);
@@ -954,7 +952,7 @@ class Lettering extends BookKeeping
 
 				// Set element id on the current group for each link key of the element
 				foreach ($link_keys as $key) {
-					$this->getGroupElements($link_by_element, $element_by_link, $key, $current_group);
+					$this->getGroupElements($link_by_element, $element_by_link, (string) $key, $current_group);
 				}
 			}
 

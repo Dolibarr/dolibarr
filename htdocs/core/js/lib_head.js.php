@@ -148,6 +148,24 @@ if ($thousand == 'Space') {
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
+
+// To start/stop Block UI
+function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
+	const block = document.getElementById('dol-block-ui');
+	if (block != null) {
+		const msgDiv = block.querySelector('.message');
+		if (msgDiv != null) {
+			msgDiv.innerText = message;
+			msgDiv.style.backgroundImage = `url('${indicatorUrl}')`;
+			block.style.display = 'flex';
+		}
+	}
+}
+function dolUnblockUI() {
+	document.getElementById('dol-block-ui').style.display = 'none';
+}
+
+
 // For jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
@@ -222,37 +240,58 @@ function getObjectFromID(id){
 	return theObject;
 }
 
-// Called after selection of a date to save details into detailed fields
+// Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	//showDP.datefieldID=dateFieldID;
 	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
-	var thefield=getObjectFromID(dateFieldID);
-	var thefieldday=getObjectFromID(dateFieldID+"day");
-	var thefieldmonth=getObjectFromID(dateFieldID+"month");
-	var thefieldyear=getObjectFromID(dateFieldID+"year");
+	var thefield = getObjectFromID(dateFieldID);
+	var thefieldday = getObjectFromID(dateFieldID+"day");
+	var thefieldmonth = getObjectFromID(dateFieldID+"month");
+	var thefieldyear = getObjectFromID(dateFieldID+"year");
 
-	var date=getDateFromFormat(thefield.value, format);
+	var date = getDateFromFormat(thefield.value, format);
 	//console.log(date);
 	if (date)
 	{
-		thefieldday.value=date.getDate();
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value=date.getMonth()+1;
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value=date.getFullYear();
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+		thefieldday.value = date.getDate();
+		if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+		thefieldmonth.value = date.getMonth()+1;
+		if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+		thefieldyear.value = date.getFullYear();
+		if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+		return 1;
 	}
-	else
-	{
-		thefieldday.value='';
-		if(thefieldday.onchange) thefieldday.onchange.call(thefieldday);
-		thefieldmonth.value='';
-		if(thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
-		thefieldyear.value='';
-		if(thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	// Replace yyyy into yy
+	newformat = format.replace(/yyyy/g, 'yy');
+	if (newformat != format) {
+		console.log("dpChangeDay, we try now from format = "+newformat);
+
+		var date = getDateFromFormat(thefield.value, newformat);
+		//console.log(date);
+		if (date)
+		{
+			thefieldday.value = date.getDate();
+			if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+			thefieldmonth.value = date.getMonth()+1;
+			if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+			thefieldyear.value = date.getFullYear();
+			if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+			return 2;
+		}
 	}
+
+	thefieldday.value = '';
+	if (thefieldday.onchange) thefieldday.onchange.call(thefieldday);
+	thefieldmonth.value = '';
+	if (thefieldmonth.onchange) thefieldmonth.onchange.call(thefieldmonth);
+	thefieldyear.value = '';
+	if (thefieldyear.onchange) thefieldyear.onchange.call(thefieldyear);
+
+	return 0;
 }
 
 /*
@@ -337,13 +376,13 @@ function formatDate(date,format)
  * Licence: GPL
  * ==================================================================
  */
-function getDateFromFormat(val,format)
+function getDateFromFormat(val, format)
 {
 	// alert('getDateFromFormat val='+val+' format='+format);
 
 	// Force parameters en chaine
-	val=val+"";
-	format=format+"";
+	val = val+"";
+	format = format+"";
 
 	if (val == '') return 0;
 
@@ -356,17 +395,14 @@ function getDateFromFormat(val,format)
 	var seconde=now.getSeconds();
 
 	var i=0;
-	var d=0;    // -d- follows the date string while -i- follows the format
-				// string
+	var d=0;    // -d- follows the date string while -i- follows the format string
 
 	while (i < format.length)
 	{
 		c=format.charAt(i);	// Recupere char du format
 		substr="";
 		j=i;
-		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char
-																// successif
-																// identiques
+		while ((format.charAt(j)==c) && (j < format.length))	// Get successive similar characters
 		{
 			substr += format.charAt(j++);
 		}
@@ -1050,11 +1086,11 @@ function document_preview(file, type, title)
 
 		};
 		img.src = file;
-
 	}
 
+	/* This function is local to document_preview. Variables like file, type, title, object_width and object_height are global inside this function */
 	function show_preview(mode) {
-		/* console.log("mode="+mode+" file="+file+" type="+type+" width="+width+" height="+height); */
+		/* console.log("mode="+mode+" file="+file+" type="+type+" title=title+" width="+width+" height="+height); */
 		var newElem = '<object name="objectpreview" data="'+file+'" type="'+type+'" width="'+object_width+'" height="'+object_height+'" param="noparam"></object>';
 
 		optionsbuttons = {}
@@ -1103,11 +1139,17 @@ function getParameterByName(name, valueifnotfound)
 }
 
 /**
- * Get the list of operators for a given field type
+ * Get the list of possible operators for a given field type that we can use in the generic filter.
  */
-function getOperatorsForFieldType(type) {
+function getOperatorsForFieldType(type, maybenull = 0) {
+	console.log('Get list of operators for type='+type);
+
 	// Define the list of operators for each general field category
 	const operatorList = {
+		selectlink: {
+			Is: '<?php print dol_escape_js($langs->trans('Is')); ?>',
+			IsNot: '<?php print dol_escape_js($langs->trans('IsNot')); ?>',
+		},
 		text: {
 			Contains: '<?php print dol_escape_js($langs->trans('Contains')); ?>',
 			DoesNotContain: '<?php print dol_escape_js($langs->trans('DoesNotContain')); ?>',
@@ -1137,13 +1179,12 @@ function getOperatorsForFieldType(type) {
 		}
 	};
 
-
 	// Determine the general category for the given type using regex
 	let generalType = "";
 
-	console.log('Get list of operators for type='+type);
-
-	if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar)$/i.test(type)) {
+	if (/^select$/i.test(type) || /^link$/i.test(type)) {
+		generalType = "selectlink";
+	} else if (/^(varchar|char|text|blob|nchar|mediumtext|longtext)\(\d+\)$/i.test(type) || /^(varchar|mail|phone|ip)$/i.test(type)) {
 		generalType = "text";
 	} else if (/^(int|integer|float|double|decimal|numeric)(\(\d+,\d+\))?$/i.test(type)) {
 		generalType = "number";
@@ -1155,7 +1196,14 @@ function getOperatorsForFieldType(type) {
 		generalType = "html";
 	} else {
 		// Handle unknown or unsupported types
+		console.log("The type of field "+type+" is not supported");
 		return [];
+	}
+
+	// If maybenull is true, then append the "IsDefined" and "IsNotDefined" operators
+	if (maybenull === 1) {
+		operatorList[generalType]["IsDefined"] = '<?php print dol_escape_js($langs->trans('IsDefined')); ?>';
+		operatorList[generalType]["IsNotDefined"] = '<?php print dol_escape_js($langs->trans('IsNotDefined')); ?>';
 	}
 
 	// Return the operators for the general type, or an empty array if not found
@@ -1167,6 +1215,8 @@ function getOperatorsForFieldType(type) {
  */
 function generateFilterString(column, operator, context, fieldType) {
 	let filter = "";
+
+	console.log("generateFilterString column="+column+" operator="+operator+" context="+context+" fieldType="+fieldType);
 
 	switch (operator) {
 		case "Contains":
@@ -1186,6 +1236,12 @@ function generateFilterString(column, operator, context, fieldType) {
 			break;
 		case "EndsWith":
 			filter = column + " like \'%" + context + "\'";
+			break;
+		case "IsDefined":
+			filter = column + ":isnot:null";
+			break;
+		case "IsNotDefined":
+			filter = column + ":is:null";
 			break;
 		case "=":
 			filter = column + " = \'" + context + "\'";
@@ -1438,7 +1494,7 @@ $(document).ready(function() {
 
 jQuery(document).ready(function() {
 	// Force to hide menus when page is inside an iFrame so we can show any page into a dialog popup
-	if (window.location && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
+	if (window.location && window.location.pathname.indexOf("core/frames.php") == -1 && window.location.pathname.indexOf("externalsite/frametop.php") == -1 && window.location !== window.parent.location ) {
 		console.log("Page is detected to be into an iframe, we hide by CSS the menus");
 		// The page is in an iframe
 		jQuery(".side-nav-vert, .side-nav, .websitebar").hide();
@@ -1446,12 +1502,12 @@ jQuery(document).ready(function() {
 
 	}
 
+
 	// Code to set tooltip on search field
 	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
-});
 
 
-jQuery(document).ready(function() {
+	// Code to toggle dropdown components
 	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		let parentHolder = jQuery(event.target).parent();
@@ -1475,22 +1531,23 @@ jQuery(document).ready(function() {
 		let viewportBottom = $(window).scrollTop() + $(window).height();
 
 		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
-		if(parentHolder.hasClass('open')
+		if (parentHolder.hasClass('open')
 			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
 			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
-		){
+		) {
 			parentHolder.addClass("--up");
-		}else{
+		} else {
 			parentHolder.removeClass("--up");
 		}
 
 		// Change dropdown left/right offset if dropdown is close to left viewport
-		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+		if (parentHolder.hasClass('open') && dropDownContentLeft < 0) {
 			parentHolder.addClass("--left");
-		}else{
+		} else {
 			parentHolder.removeClass("--left");
 		}
 	});
+
 
 	// Close drop down
 	jQuery(document).on("click", function(event) {
@@ -1504,7 +1561,37 @@ jQuery(document).ready(function() {
 			}
 		}
 	});
+
+
 });
+
+
+// Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
+function showOptions(child_list, parent_list) {
+		   var val = $("select[name="+parent_list+"]").val();
+		   var parentVal = parent_list + ":" + val;
+		if(val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").hide();
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+		} else {
+			$("select[name=\""+child_list+"\"] option").show();
+		}
+}
+function setListDependencies() {
+		console.log("setListDependencies");
+		jQuery("select option[parent]").parent().each(function() {
+			var child_list = $(this).attr("name");
+			var parent = $(this).find("option[parent]:first").attr("parent");
+			var infos = parent.split(":");
+			var parent_list = infos[0];
+			showOptions(child_list, parent_list);
+
+			/* Activate the handler to call showOptions on each future change */
+			$("select[name=\""+parent_list+"\"]").change(function() {
+				showOptions(child_list, parent_list);
+			});
+		});
+}
 
 
 <?php
@@ -1512,18 +1599,20 @@ if (!getDolGlobalString('MAIN_DISABLE_SELECT2_FOCUS_PROTECTION') && !defined('DI
 	?>
 /*
  * Hacky fix for a bug in select2 with jQuery 3.6.4's new nested-focus "protection"
- * This fix needs to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
+ * This fix the need to click a second time when clicking into a combo with ajax (see Test4d and Test5a in test_forms.php
  * see: https://github.com/select2/select2/issues/5993
  * see: https://github.com/jquery/jquery/issues/4382
  *
  * TODO: Recheck with the select2 GH issue and remove once this is fixed on their side
  */
 $(document).on('select2:open', (e) => {
-	console.log("Execute the focus (click on combo or use space when on component");
+	console.log("Execute the focus (click on combo or use space when on component)");
 	const target = $(e.target);
 	if (target && target.length) {
 		let id = target[0].id || target[0].name;
-		if (id.substr(-2) == "[]") id = id.substr(0,id.length-2);
+		if (id.substr(-2) == "[]") {
+			id = id.substr(0,id.length-2);
+		}
 		document.querySelector('input[aria-controls*='+id+']').focus();
 	}
 });

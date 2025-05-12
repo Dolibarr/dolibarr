@@ -117,6 +117,7 @@ if ($action == 'update' && !$cancel) {
 	}
 
 	if (!$error) {
+		setEventMessage($langs->trans("RecordSaved"));
 		$db->close();
 
 		// We make a header redirect because we need to change menu NOW.

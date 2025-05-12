@@ -3,6 +3,7 @@
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,10 @@
  * @var string $confirm
  * @var	string $forceFullTextIndexation
  */
+'
+@phan-var-force string $upload_dir
+@phan-var-force string $forceFullTextIndexation
+';
 
 // Protection to understand what happen when submitting files larger than post_max_size
 if (GETPOSTINT('uploadform') && empty($_POST) && empty($_FILES)) {
@@ -212,6 +217,14 @@ if ($action == 'confirm_deletefile' && $confirm == 'yes' && !empty($permissionto
 			$link->url = 'http://'.$link->url;
 		}
 		$link->label = GETPOST('label', 'alphanohtml');
+
+		$shareenabled = GETPOST('shareenabled', 'alpha');
+		if ($shareenabled) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
+			$link->share = getRandomPassword(true);
+		} else {
+			$link->share = '';
+		}
 		$res = $link->update($user);
 		if (!$res) {
 			setEventMessages($langs->trans("ErrorFailedToUpdateLink", $link->label), null, 'mesgs');

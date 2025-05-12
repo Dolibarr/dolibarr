@@ -44,6 +44,7 @@ PropalClosedRefusedInDolibarr=الإقتراح%s تم رفضة
 PropalValidatedInDolibarr=اقتراح %s التحقق من صحة
 PropalBackToDraftInDolibarr=الاقتراح %s يعود إلى حالة المسودة
 PropalClassifiedBilledInDolibarr=الإقتراح%s تصنف تم دفعة
+InvoiceCreatedInDolibarr=تم إنشاء الفاتورة %s
 InvoiceValidatedInDolibarr=تم التحقق من صحة الفاتورة %s
 InvoiceValidatedInDolibarrFromPos=الفاتورة%s تم التأكد من صلاحيتها من نقاط البيع
 InvoiceBackToDraftInDolibarr=الفاتورة %s تم إعادتها إلى حالة المسودة
@@ -134,14 +135,14 @@ AgendaModelModule=نماذج المستندات للحدث
 DateActionStart=تاريخ البدء
 DateActionEnd=تاريخ النهاية
 AgendaUrlOptions1=يمكنك أيضا إضافة المعايير التالية لتصفية النتائج :
-AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
+AgendaUrlOptions3=<b>logina=%s</b> لتقييد المخرجات بالإجراءات المملوكة للمستخدم <b>%s</b> (استخدم <b>logina=!%s</b> للأحداث التي لا يملكها المستخدم).
 AgendaUrlOptions4=<b>لوجينت =%s</b> لتقييد الإخراج على الإجراءات المعينة للمستخدم <b>%s</b> (المالك والآخرين).
 AgendaUrlOptionsProject= مشروع <b> = __ PROJECT_ID__ </b> لتقييد الإخراج بالإجراءات المرتبطة بالمشروع <b> __PROJECT_ID__ </b>.
-AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
-AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
+AgendaUrlOptionsType=<b>actiontype=%s</b> للحصول على أحداث تلقائية أو يدوية
+AgendaUrlOptionsCode=<b>actioncode=%s</b> للحصول على الأحداث التي تحتوي على رمز معين فقط
 AgendaUrlOptionsIncludeHolidays= <b> تشمل الإجازات = 1 </b> لتضمين أحداث الأعياد.
-AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
-AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> للحد من الأحداث في آخر %s أيام/يومًا (إفتراضياً %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> للحد من أحدث 50 حدثًا (الحد الأقصى الافتراضي و هو %s).
 AgendaShowBirthdayEvents=أعياد ميلاد جهات الاتصال
 AgendaHideBirthdayEvents=إخفاء تواريخ ميلاد جهات الإتصال
 Busy=مشغول
@@ -203,5 +204,5 @@ BookingSuccessfullyBooked=لقد تم حفظ حجزك
 BookingReservationHourAfter=نؤكد حجز اجتماعنا في التاريخ %s
 BookcalBookingTitle=موعد عبر الإنترنت
 Transparency = الشفافية
-ReadMore = Read more
-ReadLess = Read less
+ReadMore = اقرأ المزيد
+ReadLess = اقرأ أقل

@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2021  Open-Dsi  <support@open-dsi.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2021       Open-Dsi                <support@open-dsi.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,7 @@
  * @var Form $form
  * @var HookManager $hookmanager
  * @var AssetDepreciationOptions $assetdepreciationoptions
+ * @var Translate $langs
  */
 '
 @phan-var-force ?Form $form
@@ -67,7 +68,7 @@ if ($reshook < 0) {
 
 if (empty($reshook)) {
 	$class_type = get_class($object) == 'Asset' ? 0 : 1;
-	print '<br>';
+
 	foreach ($assetdepreciationoptions->deprecation_options_fields as $mode_key => $mode_info) {
 		if (!empty($mode_info['enabled_field'])) {
 			$info = explode(':', $mode_info['enabled_field']);

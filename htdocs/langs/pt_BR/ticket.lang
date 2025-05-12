@@ -113,7 +113,6 @@ TicketNewEmailBodyAdmin=<p>O ticket acabou de ser criado com a ID #%s, consulte 
 TicketPublicInterfaceForbidden=A interface pública dos tickets não foi ativada
 ErrorEmailOrTrackingInvalid=Valor ruim para o ID ou o e-mail de rastreamento
 OldUser=Usuário antigo
-NewUser=Novo usuário
 NumberOfTicketsByMonth=Número de tickets por mês
 NbOfTickets=Número de tickets
 TicketNotificationEmailSubject=Bilhete %s atualizado

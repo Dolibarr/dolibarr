@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2006-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025 MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024      Frédéric France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,6 +226,13 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float
 	 */
 	public $subprice;
+
+	/**
+	 * Unit price including taxes
+	 * @var float
+	 */
+	public $subprice_ttc;
+
 	/**
 	 * @var float|string
 	 */
@@ -242,9 +249,14 @@ abstract class CommonObjectLine extends CommonObject
 	public $multicurrency_code;
 
 	/**
-	 * @var float Multicurrency subprice
+	 * @var float Multicurrency subprice without taxes
 	 */
 	public $multicurrency_subprice;
+
+	/**
+	 * @var float Multicurrency subprice including taxes
+	 */
+	public $multicurrency_subprice_ttc;
 
 	/**
 	 * @var float Multicurrency total without tax
@@ -255,6 +267,16 @@ abstract class CommonObjectLine extends CommonObject
 	 * @var float Multicurrency total vat
 	 */
 	public $multicurrency_total_tva;
+
+	/**
+	 * @var float|string Multicurrency total localtax1
+	 */
+	public $multicurrency_total_localtax1;	// not in database
+
+	/**
+	 * @var float|string Multicurrency total localtax2
+	 */
+	public $multicurrency_total_localtax2;	// not in database
 
 	/**
 	 * @var float Multicurrency total with tax
@@ -332,7 +354,7 @@ abstract class CommonObjectLine extends CommonObject
 	}
 
 	/**
-	 * Return clicable link of object line (with eventually picto)
+	 * Return clickable link of object line (optionally with picto)
 	 * May (should) also return information about the associated "parent" object.
 	 * To overload
 	 *

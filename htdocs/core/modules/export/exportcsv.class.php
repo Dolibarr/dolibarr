@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -235,7 +235,7 @@ class ExportCsv extends ModeleExports
 	 *  Output record line into file
 	 *
 	 *  @param	array<string,string>	$array_selected_sorted	Array with list of field to export
-	 *  @param	Resource				$objp					A record from a fetch with all fields from select
+	 *  @param	Resource|Object			$objp					A record from a fetch with all fields from select
 	 *  @param	Translate				$outputlangs			Object lang to translate values
 	 *  @param	array<string,string>	$array_types			Array with types of fields
 	 * 	@return	int												Return integer <0 if KO, >0 if OK

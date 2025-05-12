@@ -12,7 +12,7 @@
  * Copyright (C) 2015-2024  Ferran Marcet           <fmarcet@2byte.es>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,6 +70,7 @@ $massaction = GETPOST('massaction', 'alpha');
 $confirm = GETPOST('confirm', 'alpha'); // Result of a confirmation
 $mode = GETPOST('mode', 'aZ09');
 $optioncss = GETPOST('optioncss', 'alpha');
+$backtopage = GETPOST('backtopage');
 $contextpage = GETPOST('contextpage', 'aZ09');
 
 $id = $rowid = (GETPOSTINT('id') ? GETPOSTINT('id') : GETPOSTINT('rowid'));
@@ -252,6 +253,9 @@ if (isModEnabled('eventorganization') && $user->hasRight('eventorganization', 'r
 if (isModEnabled('partnership') && $user->hasRight('partnership', 'read')) {
 	$elementList['partnership_send'] = img_picto('', 'partnership', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('MailToPartnership'));
 }
+if (isModEnabled('product') && !empty($user->rights->produit->lire)) {
+	$elementList['product_send'] = img_picto('', 'product', 'class="pictofixedwidth"').dol_escape_htmltag($langs->trans('Product'));
+}
 
 $parameters = array('elementList' => $elementList);
 $reshook = $hookmanager->executeHooks('emailElementlist', $parameters); // Note that $action and $object may have been modified by some hooks
@@ -287,15 +291,21 @@ if ($rowid > 0) {
  * Actions
  */
 
-if (GETPOST('cancel', 'alpha')) {
+if (GETPOST('cancel', 'alpha') || GETPOST('actioncancel', 'alpha')) {
 	$action = 'list';
 	$massaction = '';
+
+	if (!empty($backtopage)) {
+		header("Location: ".$backtopage);
+		exit(1);
+	}
 }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') {
 	$massaction = '';
 }
 
 $parameters = array();
+$object = null;
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -439,6 +449,11 @@ if (empty($reshook)) {
 			if ($result) {	// Add is ok
 				setEventMessages($langs->transnoentities("RecordSaved"), null, 'mesgs');
 				$_POST = array('id' => 25); // Clean $_POST array, we keep only id
+
+				if (!empty($backtopage)) {
+					header("Location: ".$backtopage);
+					exit(1);
+				}
 			} else {
 				if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 					setEventMessages($langs->transnoentities("ErrorRecordAlreadyExists"), null, 'errors');
@@ -495,6 +510,9 @@ if (empty($reshook)) {
 					}
 					if ($field == 'content_lines') {
 						$_POST['content_lines'] = GETPOST('content_lines-'.$rowid, 'restricthtml');
+					}
+					if ($field == 'email_from') {
+						$_POST['email_from'] = GETPOST('email_from-'.$rowid, 'restricthtml');
 					}
 
 					if ($i) {
@@ -690,7 +708,7 @@ $titlepicto = 'title_setup';
 
 $url = DOL_URL_ROOT.'/admin/mails_templates.php?action=create';
 $newcardbutton = '';
-$newcardbutton .= dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', $permissiontoadd);
+$newcardbutton .= dolGetButtonTitle($langs->trans('NewEMailTemplate'), '', 'fa fa-plus-circle', $url, '', (int) $permissiontoadd);
 
 
 if (!empty($user->admin) && (empty($_SESSION['leftmenu']) || $_SESSION['leftmenu'] != 'email_templates')) {
@@ -737,6 +755,7 @@ if ($action == 'create') {
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="from" value="'.dol_escape_htmltag(GETPOST('from', 'alpha')).'">';
+	print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder centpercent">';
@@ -973,7 +992,7 @@ foreach ($fieldlist as $field => $value) {
 		print '</td>';
 	} elseif ($value == 'fk_user') {
 		print '<td class="liste_titre">';
-		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), 0, 0, 0, '', 0, '', 'maxwidth100', 1);
+		print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'maxwidth100', 1);
 		print '</td>';
 	} elseif ($value == 'topic') {
 		print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
@@ -1138,6 +1157,10 @@ if ($num) {
 				if (getDolGlobalString('MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES')) {
 					$fieldsforcontent[] = 'content_lines';
 				}
+
+				$parameters = array('fieldsforcontent' => &$fieldsforcontent, 'tabname' => $tabname[$id]);
+				$hookmanager->executeHooks('editEmailTemplateFieldsForContent', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+
 				foreach ($fieldsforcontent as $tmpfieldlist) {
 					$showfield = 1;
 					$css = "left";
@@ -1405,7 +1428,7 @@ function fieldList($fieldlist, $obj = null, $tabname = '', $context = '')
 		} elseif ($value == 'fk_user') {
 			print '<td>';
 			if ($user->admin && $context != 'preview') {
-				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), 0, 0, 0, '', 0, '', 'minwidth75 maxwidth100');
+				print $form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : (empty($obj->$value) ? '' : $obj->$value), 'fk_user', 1, array(), 0, ($user->admin ? '' : 'hierarchyme'), array(), '0', 0, 0, '', 0, '', 'minwidth75 maxwidth100');
 			} else {
 				if ($context == 'add') {	// I am not admin and we show the add form
 					print $user->getNomUrl(-1); // Me

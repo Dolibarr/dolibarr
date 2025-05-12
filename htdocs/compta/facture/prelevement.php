@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2014  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2017       Ferran Marcet			<fmarcet@2byte.es>
  * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,6 +75,7 @@ if ($type == 'bank-transfer') {
 }
 
 // Load object
+$isdraft = 1;
 if ($id > 0 || !empty($ref)) {
 	$ret = $object->fetch($id, $ref);
 	$isdraft = (($object->status == FactureFournisseur::STATUS_DRAFT) ? 1 : 0);
@@ -130,7 +131,7 @@ if (empty($reshook)) {
 			// Get chosen iban id
 			$iban = GETPOSTINT('accountcustomerid');
 			$amount = GETPOST('withdraw_request_amount', 'alpha');
-			$result = $object->demande_prelevement($user, price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
+			$result = $object->demande_prelevement($user, (float) price2num($amount), $newtype, $sourcetype, 0, $iban ?? 0);
 
 			if ($result > 0) {
 				$db->commit();
@@ -299,7 +300,6 @@ if ($object->id > 0) {
 	if ($object->paid) {
 		$resteapayer = 0;
 	}
-	$resteapayeraffiche = $resteapayer;
 
 	if ($type == 'bank-transfer') {
 		if (getDolGlobalString('FACTURE_SUPPLIER_DEPOSITS_ARE_JUST_PAYMENTS')) {	// Not recommended
@@ -310,8 +310,8 @@ if ($object->id > 0) {
 			$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
 		}
 
-		$absolute_discount = $object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
-		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+		$absolute_discount = $object->thirdparty->getAvailableDiscounts(null, $filterabsolutediscount, 0, 1);
+		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts(null, $filtercreditnote, 0, 1);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	} else {
@@ -323,8 +323,8 @@ if ($object->id > 0) {
 			$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
 		}
 
-		$absolute_discount = $object->thirdparty->getAvailableDiscounts('', $filterabsolutediscount);
-		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts('', $filtercreditnote);
+		$absolute_discount = $object->thirdparty->getAvailableDiscounts(null, $filterabsolutediscount);
+		$absolute_creditnote = $object->thirdparty->getAvailableDiscounts(null, $filtercreditnote);
 		$absolute_discount = price2num($absolute_discount, 'MT');
 		$absolute_creditnote = price2num($absolute_creditnote, 'MT');
 	}
@@ -332,7 +332,7 @@ if ($object->id > 0) {
 	$author = new User($db);
 	if (!empty($object->user_creation_id)) {
 		$author->fetch($object->user_creation_id);
-	} elseif (!empty($object->fk_user_author)) {
+	} elseif (!empty($object->fk_user_author)) {	// For backward compatibility
 		$author->fetch($object->fk_user_author);
 	}
 
@@ -347,28 +347,8 @@ if ($object->id > 0) {
 	$numclosed = 0;
 
 	// How many Direct debit or Credit transfer open requests ?
-
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande as date_demande";
-	$sql .= " , pfd.date_traite as date_traite";
-	$sql .= " , pfd.amount";
-	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
-	if ($type == 'bank-transfer') {
-		$sql .= " WHERE fk_facture_fourn = ".((int) $object->id);
-	} else {
-		$sql .= " WHERE fk_facture = ".((int) $object->id);
-	}
-	$sql .= " AND pfd.traite = 0";
-	$sql .= " AND pfd.type = 'ban'";
-	$sql .= " ORDER BY pfd.date_demande DESC";
-
-	$resql = $db->query($sql);
-	if ($resql) {
-		$num = $db->num_rows($resql);
-		$numopen = $num;
-	} else {
-		dol_print_error($db);
-	}
-
+	$listofopendirectdebitorcredittransfer = $object->getListOfOpenDirectDebitOrCreditTransfer($type);
+	$numopen = count($listofopendirectdebitorcredittransfer);
 
 	print dol_get_fiche_head($head, 'standingorders', $title, -1, ($type == 'bank-transfer' ? 'supplier_invoice' : 'bill'));
 
@@ -408,7 +388,7 @@ if ($object->id > 0) {
 			if ($action != 'classify') {
 				$morehtmlref .= '<a class="editfielda" href="'.$_SERVER['PHP_SELF'].'?action=classify&token='.newToken().'&id='.$object->id.'">'.img_edit($langs->transnoentitiesnoconv('SetProject')).'</a> ';
 			}
-			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
+			$morehtmlref .= $form->form_project($_SERVER['PHP_SELF'].'?id='.$object->id, $object->socid, (string) $object->fk_project, ($action == 'classify' ? 'projectid' : 'none'), 0, 0, 0, 1, '', 'maxwidth300');
 		} else {
 			if (!empty($object->fk_project)) {
 				$proj = new Project($db);
@@ -459,17 +439,19 @@ if ($object->id > 0) {
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("CorrectInvoice", $facusing->getNomUrl(1)).'</span>';
 	}
 
-	$facidavoir = $object->getListIdAvoirFromInvoice();
-	if (count($facidavoir) > 0) {
+	// Retrieve credit note ids
+	$object->getListIdAvoirFromInvoice();
+
+	if (!empty($object->creditnote_ids)) {
 		$invoicecredits = array();
-		foreach ($facidavoir as $facid) {
+		foreach ($object->creditnote_ids as $invoiceid) {
 			if ($type == 'bank-transfer') {
-				$facavoir = new FactureFournisseur($db);
+				$creditnote = new FactureFournisseur($db);
 			} else {
-				$facavoir = new Facture($db);
+				$creditnote = new Facture($db);
 			}
-			$facavoir->fetch($facid);
-			$invoicecredits[] = $facavoir->getNomUrl(1);
+			$creditnote->fetch($invoiceid);
+			$invoicecredits[] = $creditnote->getNomUrl(1);
 		}
 		print ' <span class="opacitymediumbycolor paddingleft">'.$langs->transnoentities("InvoiceHasAvoir");
 		print ' '. (count($invoicecredits) ? ' ' : '') . implode(',', $invoicecredits);
@@ -546,9 +528,9 @@ if ($object->id > 0) {
 	print '</td><td colspan="3">';
 	if ($object->type != $object::TYPE_CREDIT_NOTE) {
 		if ($action == 'editconditions') {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'cond_reglement_id', 0, $type);
 		} else {
-			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->cond_reglement_id, 'none');
+			$form->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->cond_reglement_id, 'none');
 		}
 	} else {
 		print '&nbsp;';
@@ -599,9 +581,9 @@ if ($object->id > 0) {
 		$filtertype = 'DBIT';
 	}
 	if ($action == 'editmode') {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'mode_reglement_id', $filtertype, 1, 0, $type);
 	} else {
-		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, $object->mode_reglement_id, 'none');
+		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->mode_reglement_id, 'none');
 	}
 	print '</td></tr>';
 
@@ -616,9 +598,9 @@ if ($object->id > 0) {
 	print '</tr></table>';
 	print '</td><td colspan="3">';
 	if ($action == 'editbankaccount') {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'fk_account', 1);
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'fk_account', 1);
 	} else {
-		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, $object->fk_account, 'none');
+		$form->formSelectAccount($_SERVER['PHP_SELF'].'?id='.$object->id, (string) $object->fk_account, 'none');
 	}
 	print '</td>';
 	print '</tr>';
@@ -739,7 +721,49 @@ if ($object->id > 0) {
 
 
 	// For which amount ?
+	// Note: The 2 following SQL requests are wrong but it works because we have one record into pfd for one record into pl and for into p for the same fk_facture_fourn.
+	// The table prelevement and prelevement_lignes and must be removed in future and merged into prelevement_demande
+	// Step 1: Move field fk_... of llx_prelevement into llx_prelevement_lignes
+	// Step 2: Move field fk_... + status into prelevement_demande.
+	$pending = 0;
+	// Get pending requests open with no transfer receipt yet
+	$sql = "SELECT SUM(pfd.amount) as amount";
+	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
+	if ($type == 'bank-transfer') {
+		$sql .= " WHERE pfd.fk_facture_fourn = ".((int) $object->id);
+	} else {
+		$sql .= " WHERE pfd.fk_facture = ".((int) $object->id);
+	}
+	$sql .= " AND pfd.traite = 0";
+	//$sql .= " AND pfd.type = 'ban'";
+	$resql = $db->query($sql);
+	if ($resql) {
+		$obj = $db->fetch_object($resql);
+		if ($obj) {
+			$pending += (float) $obj->amount;
+		}
+	} else {
+		dol_print_error($db);
+	}
+	// Get pending request with a transfer receipt generated but not yet processed
+	$sqlPending = "SELECT SUM(pl.amount) as amount";
+	$sqlPending .= " FROM ".$db->prefix()."prelevement_lignes as pl";
+	$sqlPending .= " INNER JOIN ".$db->prefix()."prelevement as p ON p.fk_prelevement_lignes = pl.rowid";
+	if ($type == 'bank-transfer') {
+		$sqlPending .= " WHERE p.fk_facture_fourn = ".((int) $object->id);
+	} else {
+		$sqlPending .= " WHERE p.fk_facture = ".((int) $object->id);
+	}
+	$sqlPending .= " AND (pl.statut IS NULL OR pl.statut = 0)";
+	$resPending = $db->query($sqlPending);
+	if ($resPending) {
+		if ($objPending = $db->fetch_object($resPending)) {
+			$pending += (float) $objPending->amount;
+		}
+	}
+	$db->free($resPending);
 
+	/*
 	$sql = "SELECT SUM(pfd.amount) as amount";
 	$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_demande as pfd";
 	if ($type == 'bank-transfer') {
@@ -754,12 +778,12 @@ if ($object->id > 0) {
 	if ($resql) {
 		$obj = $db->fetch_object($resql);
 		if ($obj) {
-			$pending = $obj->amount;
+			$pendingAmount = $obj->amount;
 		}
 	} else {
 		dol_print_error($db);
 	}
-
+	*/
 
 	/*
 	 * Buttons
@@ -785,6 +809,7 @@ if ($object->id > 0) {
 					$title = $langs->trans("NewPaymentByBankTransfer");
 				}
 
+				print '<!-- form to select BAN -->';
 				print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 				print '<input type="hidden" name="token" value="'.newToken().'" />';
 				print '<input type="hidden" name="id" value="'.$object->id.'" />';
@@ -793,11 +818,7 @@ if ($object->id > 0) {
 
 				print '<div class="center formconsumeproduce">';
 
-				//print '<table class="">';
-				//print '<tr><td class="left">'.
 				print $langs->trans('CustomerIBAN').' ';
-				//print '</td>';
-				//print '<td class="left nowraponall">';
 
 				// if societe rib in model invoice, we preselect it
 				$selectedRib = '';
@@ -821,19 +842,19 @@ if ($object->id > 0) {
 						print img_warning('Error on default bank number for IBAN : '.$langs->trans($companyBankAccount->error));
 					}
 				} elseif ($numopen || ($type != 'bank-transfer' && $object->mode_reglement_code == 'PRE') || ($type == 'bank-transfer' && $object->mode_reglement_code == 'VIR')) {
-						print img_warning($langs->trans("NoDefaultIBANFound"));
+					print img_warning($langs->trans("NoDefaultIBANFound"));
 				}
 
-				//print '</td></tr>';
 
 				// Bank Transfer Amount
-				//print '<tr><td class="nowrap left">';
-				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">'.$langs->trans('BankTransferAmount').'</label>';
-				//print '</td><td class="left">';
+				print ' &nbsp; &nbsp; <label for="withdraw_request_amount">';
+				if ($type == 'bank-transfer') {
+					print $langs->trans('BankTransferAmount');
+				} else {
+					print $langs->trans("WithdrawRequestAmount");
+				}
+				print '</label> ';
 				print '<input type="text" class="right width75" id="withdraw_request_amount" name="withdraw_request_amount" value="'.$remaintopaylesspendingdebit.'">';
-				//print '</td></tr>';
-
-				//print '</table>';
 
 				// Button
 				print '<br><br>';
@@ -847,7 +868,7 @@ if ($object->id > 0) {
 				if (getDolGlobalString('STRIPE_SEPA_DIRECT_DEBIT_SHOW_OLD_BUTTON')) {	// This is hidden, prefer to use mode enabled with STRIPE_SEPA_DIRECT_DEBIT
 					// TODO Replace this with a checkbox for each payment mode: "Send request to XXX immediately..."
 					print "<br>";
-					//add stripe sepa button
+					// Add stripe sepa button
 					$buttonlabel = $langs->trans("MakeWithdrawRequestStripe");
 					print '<form method="POST" action="">';
 					print '<input type="hidden" name="token" value="'.newToken().'" />';
@@ -952,7 +973,7 @@ if ($object->id > 0) {
 
 		$tmpuser = new User($db);
 
-		$num = $db->num_rows($result);
+		$num = $db->num_rows($resql);
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 
@@ -989,7 +1010,7 @@ if ($object->id > 0) {
 
 			// Iban
 			print '<td class="center"><span class="iban">';
-			print $obj->iban;
+			print dolDecrypt($obj->iban);
 			if ($obj->iban && $obj->bic) {
 				print " / ";
 			}
@@ -1060,7 +1081,7 @@ if ($object->id > 0) {
 
 	// Past requests
 
-	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount,";
+	$sql = "SELECT pfd.rowid, pfd.traite, pfd.date_demande, pfd.date_traite, pfd.fk_prelevement_bons, pfd.amount, pfd.fk_societe_rib, pfd.ext_payment_id, pfd.ext_payment_site,";
 	$sql .= " pb.ref, pb.date_trans, pb.method_trans, pb.credite, pb.date_credit, pb.datec, pb.statut as status, pb.fk_bank_account, pb.amount as pb_amount,";
 	$sql .= " u.rowid as user_id, u.email, u.lastname, u.firstname, u.login, u.statut as user_status, u.photo as user_photo,";
 	$sql .= " sr.iban_prefix as iban, sr.bic as bic";
@@ -1075,6 +1096,7 @@ if ($object->id > 0) {
 	}
 	$sql .= " AND pfd.traite = 1";
 	$sql .= " AND pfd.type = 'ban'";
+	//$sql .= " AND pfd.entity IN (".getEntity('prelevement_demande').")";	// Disabled because the filter on fk_facture... should be enough.
 	$sql .= " ORDER BY pfd.date_demande DESC";
 
 	$resql = $db->query($sql);
@@ -1106,7 +1128,7 @@ if ($object->id > 0) {
 			}
 
 			// Date
-			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_date($db->jdate($obj->date_demande), 'day', 'tzuserrel')."</td>\n";
 
 			// User
 			print '<td class="tdoverflowmax125">';
@@ -1118,7 +1140,7 @@ if ($object->id > 0) {
 
 			// Iban
 			print '<td class="center"><span class="iban">';
-			print $obj->iban;
+			print dolDecrypt($obj->iban);
 			if ($obj->iban && $obj->bic) {
 				print " / ";
 			}
@@ -1150,7 +1172,7 @@ if ($object->id > 0) {
 				// Show the bank account
 				$fk_bank_account = $withdrawreceipt->fk_bank_account;
 				if (empty($fk_bank_account)) {
-					$fk_bank_account = ($object->type == 'bank-transfer' ? $conf->global->PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT : $conf->global->PRELEVEMENT_ID_BANKACCOUNT);
+					$fk_bank_account = ($object->type == 'bank-transfer' ? getDolGlobalInt('PAYMENTBYBANKTRANSFER_ID_BANKACCOUNT') : getDolGlobalInt('PRELEVEMENT_ID_BANKACCOUNT'));
 				}
 				if ($fk_bank_account > 0) {
 					$bankaccount = new Account($db);
@@ -1159,6 +1181,11 @@ if ($object->id > 0) {
 						print ' - ';
 						print $bankaccount->getNomUrl(1);
 					}
+				}
+				if (!empty($obj->ext_payment_id) || !empty($obj->ext_payment_site)) {
+					print ' - <span class="small opacitymedium">';
+					print $obj->ext_payment_id.'/'.$obj->ext_payment_site;
+					print '</span>';
 				}
 			}
 			print "</td>\n";

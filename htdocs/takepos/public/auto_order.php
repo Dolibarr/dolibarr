@@ -35,7 +35,7 @@ if (!defined('NOBROWSERNOTIF')) {
 require '../../main.inc.php';
 
 if (!getDolGlobalString('TAKEPOS_AUTO_ORDER')) {
-	accessforbidden('Auto order is not allwed'); // If Auto Order is disabled never allow access to this page (that is a NO LOGIN access)
+	accessforbidden('Auto order is not allowed'); // If Auto Order is disabled never allow access to this page (that is a NO LOGIN access)
 }
 
 $_SESSION["basiclayout"] = 1;	// For the simple layout for public submission
@@ -43,9 +43,9 @@ $_SESSION["takeposterminal"] = getDolGlobalInt('TAKEPOS_TERMINAL_NB_FOR_PUBLIC',
 
 define('INCLUDE_PHONEPAGE_FROM_PUBLIC_PAGE', 1);
 if (GETPOSTISSET("mobilepage")) {
-	require DOL_URL_ROOT.'/takepos/invoice.php';
+	require DOL_DOCUMENT_ROOT.'/takepos/invoice.php';
 } elseif (GETPOSTISSET("genimg")) {
 	require DOL_DOCUMENT_ROOT.'/takepos/genimg/index.php';
 } else {
-	require DOL_URL_ROOT.'/takepos/phone.php';
+	require DOL_DOCUMENT_ROOT.'/takepos/phone.php';
 }

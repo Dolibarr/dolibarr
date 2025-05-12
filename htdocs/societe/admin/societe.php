@@ -4,7 +4,7 @@
  * Copyright (C) 2005-2011  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@inodbox.com>
  * Copyright (C) 2011-2012  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,7 +43,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("admin", "companies", "other"));
+$langs->loadLangs(array("admin", "accountancy", "companies", "other"));
 
 $action = GETPOST('action', 'aZ09');
 $value = GETPOST('value', 'alpha');
@@ -329,9 +329,11 @@ if ($action == 'setprofidmandatory') {
 }
 
 //Activate ProfId invoice mandatory
-if ($action == 'setprofidinvoicemandatory') {
+if ($action == 'setprofidinvoicemandatory' || $action == 'setprofidinvoicemandatoryeeconly') {
 	$status = GETPOST('status', 'alpha');
-
+	if ($status == '1' && $action == 'setprofidinvoicemandatoryeeconly') {
+		$status = 'eeconly';
+	}
 	$idprof = "SOCIETE_".$value."_INVOICE_MANDATORY";
 	$result = dolibarr_set_const($db, $idprof, $status, 'chaine', 0, '', $conf->entity);
 	if ($result <= 0) {
@@ -438,7 +440,7 @@ foreach ($dirsociete as $dirroot) {
 }
 
 $arrayofmodules = dol_sort_array($arrayofmodules, 'position');
-'@phan-var-force array<string,ModeleThirdPartyCode> $arrayofmodules';  // Repeat type because of dol_sort_array
+// '@phan-var-force array<string,ModeleThirdPartyCode> $arrayofmodules';  // Repeat type because of dol_sort_array
 
 foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<tr class="oddeven">'."\n";
@@ -446,7 +448,7 @@ foreach ($arrayofmodules as $file => $modCodeTiers) {
 	print '<td>'.$modCodeTiers->info($langs).'</td>'."\n";
 	print '<td class="nowrap">'.$modCodeTiers->getExample($langs).'</td>'."\n";
 
-	if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file") {
+	if ($conf->global->SOCIETE_CODECLIENT_ADDON == (string) $file) {
 		print '<td class="center">'."\n";
 		print img_picto($langs->trans("Activated"), 'switch_on');
 		print "</td>\n";
@@ -659,7 +661,7 @@ foreach ($dirsociete as $dirroot) {
 					$htmltooltip .= '<br>'.$langs->trans("WatermarkOnDraft").': '.yn((isset($module->option_draft_watermark) ? $module->option_draft_watermark : ''), 1, 1);
 
 					print '<td class="center nowrap">';
-					print $form->textwithpicto('', $htmltooltip, 1, 0);
+					print $form->textwithpicto('', $htmltooltip, 1, 'info');
 					print '</td>';
 
 					// Preview
@@ -667,7 +669,7 @@ foreach ($dirsociete as $dirroot) {
 					if ($module->type == 'pdf') {
 						$linkspec = '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?action=specimen&token='.newToken().'&module='.$name.'">'.img_object($langs->trans("Preview"), 'pdf').'</a>';
 					} else {
-						$linkspec = img_object($langs->trans("PreviewNotAvailable"), 'generic');
+						$linkspec = img_object($langs->transnoentitiesnoconv("PreviewNotAvailable"), 'generic');
 					}
 					print $linkspec;
 					print '</td>';
@@ -777,31 +779,52 @@ print '<td colspan="2">'.$langs->trans('VATIntra')."</td>\n";
 $key = 'VAT_INTRA';
 if (getDolGlobalString('SOCIETE_VAT_INTRA_UNIQUE')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle"');
 	print '</a></td>';
 } else {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofid&token='.newToken().'&value='.$key.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle"');
 	print '</a></td>';
 }
 if (getDolGlobalString('SOCIETE_VAT_INTRA_MANDATORY')) {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle"');
 	print '</a></td>';
 } else {
 	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidmandatory&token='.newToken().'&value='.$key.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle"');
 	print '</a></td>';
 }
-if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY')) {
-	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=0">';
-	print img_picto($langs->trans("Activated"), 'switch_on');
-	print '</a></td>';
+print '<td class="center">';
+if (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY') == 'eeconly') {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatoryeeconly&token='.newToken().'&value='.$key.'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("SaleEEC").'<br>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Activated"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("AnySale");
+} elseif (getDolGlobalString('SOCIETE_VAT_INTRA_INVOICE_MANDATORY')) {
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatoryeeconly&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Activated"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("SaleEEC").'<br>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=0">';
+	print img_picto($langs->trans("Activated"), 'switch_on', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("AnySale");
 } else {
-	print '<td class="center"><a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
-	print img_picto($langs->trans("Disabled"), 'switch_off');
-	print '</a></td>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatoryeeconly&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("SaleEEC").'<br>';
+	print '<a class="reposition" href="'.$_SERVER['PHP_SELF'].'?action=setprofidinvoicemandatory&token='.newToken().'&value='.$key.'&status=1">';
+	print img_picto($langs->trans("Disabled"), 'switch_off', 'class="valignmiddle paddingrightonly"');
+	print '</a>';
+	print $langs->trans("AnySale");
 }
+print '</td>';
 print "</tr>\n";
 
 print "</table>\n";
@@ -837,11 +860,11 @@ if (!$conf->use_javascript_ajax) {
 } else {
 	print '<td width="60" class="right">';
 	$arrval = array('0' => $langs->trans("No"),
-	'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-	'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-	'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+	'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+	'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
 	);
-	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray("activate_COMPANY_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('COMPANY_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth400');
 	print '</td><td class="right">';
 	print '<input type="submit" class="button small reposition" name="COMPANY_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -858,11 +881,11 @@ if (!$conf->use_javascript_ajax) {
 } else {
 	print '<td width="60" class="right">';
 	$arrval = array('0' => $langs->trans("No"),
-	'1' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 1).')',
-	'2' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 2).')',
-	'3' => $langs->trans("Yes").' ('.$langs->trans("NumberOfKeyToSearch", 3).')',
+	'1' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 1).'</span>',
+	'2' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 2).'</span>',
+	'3' => $langs->trans("Yes").' - <span class="opacitymedium">'.$langs->trans("NumberOfKeyToSearch", 3).'</span>',
 	);
-	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp');
+	print $form->selectarray("activate_CONTACT_USE_SEARCH_TO_SELECT", $arrval, getDolGlobalString('CONTACT_USE_SEARCH_TO_SELECT'), 0, 0, 0, '', 0, 0, 0, '', 'minwidth75imp maxwidth400');
 	print '</td><td class="right">';
 	print '<input type="submit" class="button small reposition" name="CONTACT_USE_SEARCH_TO_SELECT" value="'.$langs->trans("Modify").'">';
 	print "</td>";
@@ -965,7 +988,7 @@ if (!getDolGlobalString('SOCIETE_DISABLE_PROSPECTSCUSTOMERS')) {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("DefaultCustomerType").'</td>';
 	print '<td>';
-	print $formcompany->selectProspectCustomerType(getDolGlobalString('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
+	print $formcompany->selectProspectCustomerType(getDolGlobalInt('THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT'), 'defaultcustomertype', 'defaultcustomertype', 'admin');
 	print '</td>';
 	print '<td class="center">';
 	print '<input type="submit" class="button small reposition" name="THIRDPARTY_CUSTOMERTYPE_BY_DEFAULT" value="'.$langs->trans("Modify").'">';

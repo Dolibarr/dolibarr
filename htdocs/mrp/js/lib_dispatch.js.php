@@ -76,14 +76,14 @@ if (empty($dolibarr_nocache)) {
  *
  * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
- * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
+ * @param	mode	string	If mode is 'qtymissing' the split button will create a new line with qty missing, If 'lessone' it will keep 1 in old line and the rest in new one
  */
 function addDispatchLine(index, type, mode)
 {
 	mode = mode || 'qtymissing'
 
 	console.log("mrp/js/lib_dispatch.js.php Split line type="+type+" index="+index+" mode="+mode);
-	if(mode == 'qtymissingconsume' || mode == 'allmissingconsume') {
+	if (mode == 'qtymissingconsume' || mode == 'allmissingconsume') {
 		var inputId = 'qtytoconsume';
 		var warehouseId = 'idwarehouse';
 	}
@@ -94,7 +94,10 @@ function addDispatchLine(index, type, mode)
 	var nbrTrs = $("tr[name^='"+type+"_"+index+"']").length; 				// position of line for batch
 	var $row = $("tr[name='"+type+'_'+index+"_1']").clone(true); 				// clone last batch line to jQuery object
 	var	qtyOrdered = parseFloat($("#qty_ordered_"+index).val()); 	// Qty ordered is same for all rows
-	var	qty = parseFloat($("#"+inputId+"-"+index+"-"+nbrTrs).val());
+	var	qty = parseFloat($("#"+inputId+"-"+index+"-"+nbrTrs).val());		// qty entered in field to consume
+
+	console.log("#"+inputId+"-"+index+"-"+nbrTrs+" => "+qty);
+
 	var	qtyDispatched;
 
 	if (mode === 'lessone')
@@ -103,21 +106,22 @@ function addDispatchLine(index, type, mode)
 	}
 	else
 	{
-		qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + qty;
 		console.log($("#qty_dispatched_"+index).val());
+		qtyDispatched = parseFloat($("#qty_dispatched_"+index).val()) + qty;
 		// If user did not reduced the qty to dispatch on old line, we keep only 1 on old line and the rest on new line
 		if (qtyDispatched == qtyOrdered && qtyDispatched > 1) {
 			qtyDispatched = parseFloat($("#qty_dispatched_" + index).val()) + 1;
-
 		}
-		if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
-				var qtymax = parseFloat($($row).data('max-qty'));
-				if(qtymax === 'undefined') qtymax = 1;
+		if (mode == 'allmissingconsume' || mode == 'alltoproduce') {
+			var qtymax = parseFloat($($row).data('max-qty'));
+			if (qtymax === 'undefined') {
+				qtymax = 1;
+			}
 		}
 	}
 
 
-	if(mode == 'allmissingconsume' || mode == 'alltoproduce') {
+	if (mode == 'allmissingconsume' || mode == 'alltoproduce') {
 		var count = 0;
 		var qtyalreadyused = 0;
 		var error = 0;
@@ -141,11 +145,12 @@ function addDispatchLine(index, type, mode)
 			$row = $("tr[name='" + type + '_' + index + "_1']").clone(true);
 		}
 
-		if(error === 0) {
+		if (error === 0) {
 			addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, '', mode, $row);
 		}
+	} else {
+		addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row);
 	}
-	else addDispatchTR(qtyOrdered, qtyDispatched, index, nbrTrs, warehouseId, inputId, type, qty, mode, $row)
 
 }
 

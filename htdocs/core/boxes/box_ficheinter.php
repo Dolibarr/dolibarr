@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013 Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015 Frederic France	<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France	<frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,13 +83,13 @@ class box_ficheinter extends ModeleBoxes
 			$sql .= ", s.code_client, s.code_compta, s.client";
 			$sql .= ", s.logo, s.email, s.entity";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			}
 			$sql .= ", ".MAIN_DB_PREFIX."fichinter as f";
 			$sql .= " WHERE f.fk_soc = s.rowid ";
 			$sql .= " AND f.entity = ".$conf->entity;
-			if (!$user->hasRight('societe', 'client', 'voir')) {
+			if (empty($user->socid) && !$user->hasRight('societe', 'client', 'voir')) {
 				$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
 			}
 			if ($user->socid) {
@@ -111,7 +111,7 @@ class box_ficheinter extends ModeleBoxes
 					$datec = $this->db->jdate($objp->datec);
 					$datem = $this->db->jdate($objp->datem);
 
-					$ficheinterstatic->statut = $objp->status;
+					$ficheinterstatic->statut = $objp->status;	// deprecated
 					$ficheinterstatic->status = $objp->status;
 					$ficheinterstatic->id = $objp->rowid;
 					$ficheinterstatic->ref = $objp->ref;

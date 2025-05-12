@@ -307,6 +307,7 @@ class FormTicket
 		}
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
+
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		if (!empty($object->id)) {
@@ -460,7 +461,7 @@ class FormTicket
 
 		// Type of Ticket
 		print '<tr><td class="titlefield"><span class="fieldrequired"><label for="selecttype_code">'.$langs->trans("TicketTypeRequest").'</span></label></td><td>';
-		$this->selectTypesTickets($type_code, 'type_code', '', 2, 1, 0, 0, 'minwidth200 maxwidth500');
+		$this->selectTypesTickets($type_code, 'type_code', '', 2, 'ifone', 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
 
 		// Group => Category
@@ -469,12 +470,12 @@ class FormTicket
 		if ($public) {
 			$filter = '(public:=:1)';
 		}
-		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 1, 0, 0, 'minwidth200 maxwidth500');
+		$this->selectGroupTickets($category_code, 'category_code', $filter, 2, 'ifone', 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
 
 		// Severity => Priority
 		print '<tr><td><span class="fieldrequired"><label for="selectseverity_code">'.$langs->trans("TicketSeverity").'</span></label></td><td>';
-		$this->selectSeveritiesTickets($severity_code, 'severity_code', '', 2, 1, 0, 0, 'minwidth200 maxwidth500');
+		$this->selectSeveritiesTickets($severity_code, 'severity_code', '', 2, 'ifone', 0, 0, 'minwidth200 maxwidth500');
 		print '</td></tr>';
 
 		if (isModEnabled('knowledgemanagement')) {
@@ -837,7 +838,7 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br>';
+		print '<br><br>';
 
 		if ($mode == 'create') {
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
@@ -869,8 +870,8 @@ class FormTicket
 	 *      @param  string|int[]	$selected		Id of preselected field or array of Ids
 	 *      @param  string			$htmlname		Nom de la zone select
 	 *      @param  string			$filtertype		To filter on field type in llx_c_ticket_type (array('code'=>xx,'label'=>zz))
-	 *      @param  int				$format			0=id+libelle, 1=code+code, 2=code+libelle, 3=id+code
-	 *      @param  int				$empty			1=peut etre vide, 0 sinon
+	 *      @param  int				$format			0=id+label, 1=code+code, 2=code+label, 3=id+code
+	 *      @param  int|string		$empty      	1 = can be empty or 'string' to show the string as the empty value, 0 = can't be empty, 'ifone' = can be empty but autoselected if there is one only
 	 *      @param  int				$noadmininfo	0=Add admin info, 1=Disable admin info
 	 *      @param  int				$maxlength		Max length of label
 	 *      @param	string			$morecss		More CSS
@@ -895,8 +896,8 @@ class FormTicket
 		$ticketstat->loadCacheTypesTickets();
 
 		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.($multiselect ? '[]' : '').'"'.($multiselect ? ' multiple' : '').'>';
-		if ($empty) {
-			print '<option value="">&nbsp;</option>';
+		if ($empty && !$multiselect) {
+			print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 		}
 
 		if (is_array($ticketstat->cache_types_tickets) && count($ticketstat->cache_types_tickets)) {
@@ -932,7 +933,9 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif (in_array($id, $selected)) {
 					print ' selected="selected"';
-				} elseif ($arraytypes['use_default'] == "1" && empty($selected)) {
+				} elseif ($arraytypes['use_default'] == "1" && empty($selected) && !$multiselect) {
+					print ' selected="selected"';
+				} elseif (count($ticketstat->cache_types_tickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 					print ' selected="selected"';
 				}
 
@@ -968,7 +971,7 @@ class FormTicket
 	 *      @param  string 		$htmlname   		Name of select component
 	 *      @param  string 		$filtertype 		To filter on some properties in llx_c_ticket_category ('public = 1'). This parameter must not come from input of users.
 	 *      @param  int    		$format     		0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
-	 *      @param  int    		$empty      		1 = can be empty, 0 = or can't be empty
+	 *      @param  int|string	$empty      		1 = can be empty or 'string' to show the string as the empty value, 0 = can't be empty, 'ifone' = can be empty but autoselected if there is one only
 	 *      @param  int    		$noadmininfo		0 = ddd admin info, 1 = disable admin info
 	 *      @param  int    		$maxlength  		Max length of label
 	 *      @param	string		$morecss			More CSS
@@ -992,14 +995,14 @@ class FormTicket
 		$ticketstat = new Ticket($this->db);
 		$ticketstat->loadCacheCategoriesTickets($publicgroups ? 1 : -1);	// get list of active ticket groups
 
-		if ($use_multilevel <= 0) {
+		if ($use_multilevel <= 0) {	// Only one combo list to select the group of ticket (default)
 			print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 			if ($empty) {
-				print '<option value="">&nbsp;</option>';
+				print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 			}
 
-			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
-				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
+			if (is_array($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
+				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
@@ -1040,9 +1043,9 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif (isset($selected) && $selected == $id) {
 						print ' selected="selected"';
-					} elseif ($arraycategories['use_default'] == "1" && empty($selected)) {
+					} elseif ($arraycategories['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 						print ' selected="selected"';
-					} elseif (count($ticketstat->cache_category_tickets) == 1) {	// If only 1 choice, we autoselect it
+					} elseif (count($conf->cache['category_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1075,7 +1078,7 @@ class FormTicket
 			}
 
 			print ajax_combobox('select'.$htmlname);
-		} elseif ($htmlname != '') {
+		} elseif ($htmlname != '') {	// complexe mode using selection of group using a combo for each level (when using a hierarchy of groups).
 			$selectedgroups = array();
 			$groupvalue = "";
 			$groupticket = GETPOST($htmlname, 'aZ09');
@@ -1320,14 +1323,14 @@ class FormTicket
 	/**
 	 *      Return html list of ticket severitys (priorities)
 	 *
-	 *      @param  string  $selected    Id severity pre-selected
-	 *      @param  string  $htmlname    Name of the select area
-	 *      @param  string  $filtertype  To filter on field type in llx_c_ticket_severity (array('code'=>xx,'label'=>zz))
-	 *      @param  int     $format      0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
-	 *      @param  int     $empty       1 = can be empty, 0 = or not
-	 *      @param  int     $noadmininfo 0 = add admin info, 1 = disable admin info
-	 *      @param  int     $maxlength   Max length of label
-	 *      @param  string  $morecss     More CSS
+	 *      @param  string  	$selected    	Id severity pre-selected
+	 *      @param  string  	$htmlname    	Name of the select area
+	 *      @param  string  	$filtertype  	To filter on field type in llx_c_ticket_severity (array('code'=>xx,'label'=>zz))
+	 *      @param  int     	$format      	0 = id+label, 1 = code+code, 2 = code+label, 3 = id+code
+	 *      @param  int|string	$empty      	1 = can be empty or 'string' to show the string as the empty value, 0 = can't be empty, 'ifone' = can be empty but autoselected if there is one only
+	 *      @param  int     	$noadmininfo 	0 = add admin info, 1 = disable admin info
+	 *      @param  int     	$maxlength   	Max length of label
+	 *      @param  string  	$morecss     	More CSS
 	 *      @return void
 	 */
 	public function selectSeveritiesTickets($selected = '', $htmlname = 'ticketseverity', $filtertype = '', $format = 0, $empty = 0, $noadmininfo = 0, $maxlength = 0, $morecss = '')
@@ -1348,7 +1351,7 @@ class FormTicket
 
 		print '<select id="select'.$htmlname.'" class="flat minwidth100'.($morecss ? ' '.$morecss : '').'" name="'.$htmlname.'">';
 		if ($empty) {
-			print '<option value="">&nbsp;</option>';
+			print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 		}
 
 		if (is_array($conf->cache['severity_tickets']) && count($conf->cache['severity_tickets'])) {
@@ -1384,7 +1387,9 @@ class FormTicket
 					print ' selected="selected"';
 				} elseif (isset($selected) && $selected == $id) {
 					print ' selected="selected"';
-				} elseif ($arrayseverities['use_default'] == "1" && empty($selected)) {
+				} elseif ($arrayseverities['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
+					print ' selected="selected"';
+				} elseif (count($conf->cache['severity_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 					print ' selected="selected"';
 				}
 
@@ -1493,7 +1498,12 @@ class FormTicket
 				$model_id = (int) $this->param["models_id"];
 			}
 
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+			// If $model_id is empty, preselect the first one
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
+			if (isset($arraydefaultmessage->id) && empty($model_id)) {
+				$model_id = $arraydefaultmessage->id;
+				$this->param['models_id']=$model_id;
+			}
 		}
 
 		// Define list of attached files
@@ -1608,9 +1618,8 @@ class FormTicket
 		$model_id = 0;
 		if (array_key_exists('models_id', $this->param)) {
 			$model_id = $this->param["models_id"];
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
 		}
-
 		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
 		if ($result < 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
@@ -1804,7 +1813,7 @@ class FormTicket
 
 		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
-			$defaultmessage = $arraydefaultmessage->content;
+			$defaultmessage = (string) $arraydefaultmessage->content;
 		}
 		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 

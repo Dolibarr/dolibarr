@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2008-2020	Laurent Destailleur			<eldy@users.sourceforge.net>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2008-2020	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,10 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 
 	dol_syslog("getURLContent postorget=".$postorget." URL=".$url." param=".$param);
 
+	if (!function_exists('curl_init')) {
+		return array('http_code' => 500, 'content' => '', 'curl_error_no' => 1, 'curl_error_msg' => 'PHP curl library must be installed');
+	}
+
 	//setting the curl parameters.
 	$ch = curl_init();
 
@@ -73,7 +78,8 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	// By default use the TLS version decided by PHP.
 	// You can force, if supported a version like TLSv1 or TLSv1.2
 	if (getDolGlobalString('MAIN_CURL_SSLVERSION')) {
-		curl_setopt($ch, CURLOPT_SSLVERSION, $conf->global->MAIN_CURL_SSLVERSION);
+		$sslversion = is_numeric(getDolGlobalString('MAIN_CURL_SSLVERSION')) ? getDolGlobalInt('MAIN_CURL_SSLVERSION') : constant(getDolGlobalString('MAIN_CURL_SSLVERSION'));
+		curl_setopt($ch, CURLOPT_SSLVERSION, (int) $sslversion);
 	}
 	//curl_setopt($ch, CURLOPT_SSLVERSION, 6); for tls 1.2
 
@@ -114,13 +120,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, getDolGlobalInt('MAIN_USE_CONNECT_TIMEOUT', 5));
 	curl_setopt($ch, CURLOPT_TIMEOUT, getDolGlobalInt('MAIN_USE_RESPONSE_TIMEOUT', 30));
 
-	// limit size of downloaded files. TODO Add MAIN_SECURITY_MAXFILESIZE_DOWNLOADED
+	// limit size of downloaded files.
 	$maxsize = getDolGlobalInt('MAIN_SECURITY_MAXFILESIZE_DOWNLOADED');
 	if ($maxsize && defined('CURLOPT_MAXFILESIZE_LARGE')) {
-		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal
+		curl_setopt($ch, CURLOPT_MAXFILESIZE_LARGE, $maxsize * 1024);  // @phan-suppress-current-line PhanTypeMismatchArgumentNullableInternal
 	}
 	if ($maxsize && defined('CURLOPT_MAXFILESIZE')) {
-		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize);
+		curl_setopt($ch, CURLOPT_MAXFILESIZE, $maxsize * 1024);
 	}
 
 	//curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);	// PHP 5.5
@@ -237,7 +243,7 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 		*/
 
 		// Getting response from server
-		$response = curl_exec($ch);
+		$response = curl_exec($ch);		// return false on error, result on success
 
 		$info = curl_getinfo($ch); // Reading of request must be done after sending request
 		$http_code = $info['http_code'];
@@ -265,9 +271,13 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	$rep = array();
 	if (curl_errno($ch)) {
 		// Add keys to $rep
-		$rep['content'] = $response;
+		if ($response) {
+			$rep['content'] = (string) $response;
+		} else {
+			$rep['content'] = '';
+		}
 
-		// moving to display page to display curl errors
+		$rep['http_code'] = 0;
 		$rep['curl_error_no'] = curl_errno($ch);
 		$rep['curl_error_msg'] = curl_error($ch);
 
@@ -275,23 +285,30 @@ function getURLContent($url, $postorget = 'GET', $param = '', $followlocation = 
 	} else {
 		//$info = curl_getinfo($ch);
 
-		// Add keys to $rep
+		// Return all fields found into $info.
 		$rep = $info;
-		//$rep['header_size']=$info['header_size'];
-		//$rep['http_code']=$info['http_code'];
+		//$rep['header_size'] = $info['header_size'];
+		//$rep['http_code'] = $info['http_code'];
+		//$rep['content_type'] = $info['http_code'];
+
 		dol_syslog("getURLContent http_code=".$rep['http_code']);
 
 		// Add more keys to $rep
 		if ($response) {
-			$rep['content'] = $response;
+			$rep['content'] = (string) $response;
+		} else {
+			$rep['content'] = '';
 		}
-		$rep['curl_error_no'] = '';
+
+		$rep['curl_error_no'] = 0;
 		$rep['curl_error_msg'] = '';
 	}
 
 	//closing the curl
 	curl_close($ch);
 
+	// We must exclude phpstant wwarning, because all fields found in result of curl_getinfo may not be all defined into description of this method.
+	// @phpstan-ignore-next-line
 	return $rep;
 }
 

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012 Regis Houssin          <regis.houssin@inodbox.com>
  * Copyright (C) 2018      Laurent Destailleur    <eldy@users.sourceforge.net>
- * Copyright (C) 2024	   MDW					  <mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					  <mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Frédéric France        <frederic.france@free.fr>
  * Copyright (C) 2024	    Nick Fragoulis
  *
@@ -199,7 +199,7 @@ class pdf_baleine extends ModelePDFProjects
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
 				$default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
-				$pdf->SetAutoPageBreak(1, 0);
+				$pdf->setAutoPageBreak(true, 0);
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = getDolGlobalInt('MAIN_PDF_FREETEXT_HEIGHT', 5); // Height reserved to output the free text on last page
@@ -299,7 +299,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pdf->SetTextColor(0, 0, 0);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					// Description of line
@@ -321,7 +321,7 @@ class pdf_baleine extends ModelePDFProjects
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 						// Label
 						$pdf->SetXY($this->posxlabel, $curY);
 						$posybefore = $pdf->GetY();
@@ -353,7 +353,7 @@ class pdf_baleine extends ModelePDFProjects
 							if ($forcedesconsamepage) {
 								$pdf->rollbackTransaction(true);
 								$pageposafter = $pageposbefore;
-								$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 								$pdf->AddPage('', '', true);
 								if (!empty($tplidx)) {
@@ -367,7 +367,7 @@ class pdf_baleine extends ModelePDFProjects
 								$pdf->MultiCell(0, 3, ''); // Set interline to 3
 								$pdf->SetTextColor(0, 0, 0);
 
-								$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+								$pdf->setPageOrientation('', true, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 								$curY = $tab_top_newpage + $heightoftitleline + 1;
 
 								// Label
@@ -388,7 +388,7 @@ class pdf_baleine extends ModelePDFProjects
 					$pageposafter = $pdf->getPage();
 					$pdf->setPage($pageposbefore);
 					$pdf->setTopMargin($this->marge_haute);
-					$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 
 					// We suppose that a too long description is moved completely on next page
 					if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
@@ -439,7 +439,7 @@ class pdf_baleine extends ModelePDFProjects
 						$this->_pagefoot($pdf, $object, $outputlangs, 1);
 						$pagenb++;
 						$pdf->setPage($pagenb);
-						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', true, 0); // The only function to edit the bottom margin of current page to set it.
 						if (!getDolGlobalInt('MAIN_PDF_DONOTREPEAT_HEAD')) {
 							$this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
@@ -524,8 +524,6 @@ class pdf_baleine extends ModelePDFProjects
 	 */
 	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0)
 	{
-		global $conf, $mysoc;
-
 		$heightoftitleline = 10;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
@@ -547,6 +545,8 @@ class pdf_baleine extends ModelePDFProjects
 		$pdf->SetXY($this->posxlabel, $tab_top + 1);
 		$pdf->MultiCell($this->posxworkload - $this->posxlabel, 3, $outputlangs->transnoentities("Description"), 0, 'L');
 
+		$pdf->SetFont('', '', $default_font_size - 1);
+
 		$pdf->SetXY($this->posxworkload, $tab_top + 1);
 		$pdf->MultiCell($this->posxprogress - $this->posxworkload, 3, $outputlangs->transnoentities("PlannedWorkloadShort"), 0, 'R');
 
@@ -555,11 +555,11 @@ class pdf_baleine extends ModelePDFProjects
 
 		// Date start
 		$pdf->SetXY($this->posxdatestart, $tab_top + 1);
-		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->trans("Start"), 0, 'C');
+		$pdf->MultiCell($this->posxdateend - $this->posxdatestart, 3, $outputlangs->transnoentities("DateStart"), 0, 'C');
 
 		// Date end
 		$pdf->SetXY($this->posxdateend, $tab_top + 1);
-		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $outputlangs->trans("End"), 0, 'C');
+		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxdateend, 3, $outputlangs->transnoentities("DateEnd"), 0, 'C');
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

@@ -8,9 +8,9 @@
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017-2019  Alexandre Spangaro   <aspangaro@open-dsi.fr>
  * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
- * Copyright (C) 2018-2024  Frédéric France      <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France      <frederic.france@free.fr>
  * Copyright (C) 2021       Gauthier VERDOL      <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,9 +129,7 @@ if ($id > 0 || !empty($ref)) {
 	$search_account = $object->id; // Force the search field on id of account
 
 	if (!($object->id > 0)) {
-		$langs->load("errors");
-		print($langs->trans('ErrorRecordNotFound'));
-		exit;
+		recordNotFound('', 0);
 	}
 }
 
@@ -158,21 +156,21 @@ $extrafields->fetch_name_optionals_label($extrafieldsobjectkey);
 $search_array_options = $extrafields->getOptionalsFromPost($extrafieldsobjectkey, '', 'search_');
 
 $arrayfields = array(
-	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => 1,'position' => 10),
-	'b.label' => array('label' => $langs->trans("Description"), 'checked' => 1,'position' => 20),
-	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => -1,'position' => 30),
-	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => 1,'position' => 40),
-	'type' => array('label' => $langs->trans("Type"), 'checked' => 1,'position' => 50),
-	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => 0,'position' => 60),
-	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => 0, 'position' => 65),
-	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => 1, 'position' => 70),
-	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? 0 : 1), 'position' => 80),
-	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => 1, 'position' => 90),
-	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => 1, 'position' => 100),
-	'balancebefore' => array('label' => $langs->trans("BalanceBefore"), 'checked' => 0, 'position' => 110),
-	'balance' => array('label' => $langs->trans("Balance"), 'checked' => 1, 'position' => 120),
-	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => 1, 'position' => 130),
-	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => $object->rappro, 'checked' => ($action == 'reconcile' ? 1 : 0), 'position' => 140),
+	'b.rowid' => array('label' => $langs->trans("Ref"), 'checked' => '1','position' => 10),
+	'b.label' => array('label' => $langs->trans("Description"), 'checked' => '1','position' => 20),
+	'b.dateo' => array('label' => $langs->trans("DateOperationShort"), 'checked' => '-1','position' => 30),
+	'b.datev' => array('label' => $langs->trans("DateValueShort"), 'checked' => '1','position' => 40),
+	'type' => array('label' => $langs->trans("Type"), 'checked' => '1','position' => 50),
+	'b.num_chq' => array('label' => $langs->trans("Numero"), 'checked' => '0','position' => 60),
+	'b.fk_bordereau' => array('label' => $langs->trans("ChequeNumber"), 'checked' => '0', 'position' => 65),
+	'bu.label' => array('label' => $langs->trans("ThirdParty").'/'.$langs->trans("User"), 'checked' => '1', 'position' => 70),
+	'ba.ref' => array('label' => $langs->trans("BankAccount"), 'checked' => (($id > 0 || !empty($ref)) ? '0' : '1'), 'position' => 80),
+	'b.debit' => array('label' => $langs->trans("Debit"), 'checked' => '1', 'position' => 90),
+	'b.credit' => array('label' => $langs->trans("Credit"), 'checked' => '1', 'position' => 100),
+	'balancebefore' => array('label' => $langs->trans("BalanceBefore"), 'checked' => '0', 'position' => 110),
+	'balance' => array('label' => $langs->trans("Balance"), 'checked' => '1', 'position' => 120),
+	'b.num_releve' => array('label' => $langs->trans("AccountStatement"), 'checked' => '1', 'position' => 130),
+	'b.conciliated' => array('label' => $langs->trans("BankLineReconciled"), 'enabled' => (string) (int) $object->rappro, 'checked' => ($action == 'reconcile' ? '1' : '0'), 'position' => 140),
 );
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_array_fields.tpl.php';
@@ -271,7 +269,7 @@ if ((GETPOST('confirm_savestatement', 'alpha') || GETPOST('confirm_reconcile', '
 				if ($row > 0) {
 					$result = $bankline->fetch($row);
 					$bankline->num_releve = $num_releve; // GETPOST("num_releve");
-					$result = $bankline->update_conciliation($user, GETPOST("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
+					$result = $bankline->update_conciliation($user, GETPOSTINT("cat"), GETPOST('confirm_reconcile', 'alpha') ? 1 : 0); // If we confirm_reconcile, we set flag 'rappro' to 1.
 					if ($result < 0) {
 						setEventMessages($bankline->error, $bankline->errors, 'errors');
 						$error++;
@@ -391,7 +389,7 @@ if (GETPOST('save') && !$cancel && $user->hasRight('banque', 'modifier')) {
 	if (!$error && getDolGlobalString('BANK_USE_OLD_VARIOUS_PAYMENT')) {
 		$objecttmp = new Account($db);
 		$objecttmp->fetch($bankaccountid);
-		$insertid = $objecttmp->addline($dateop, $operation, $label, $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
+		$insertid = $objecttmp->addline((int) $dateop, $operation, $label, (float) $amount, $num_chq, ($cat1 > 0 ? $cat1 : 0), $user, '', '', $search_accountancy_code);
 		if ($insertid > 0) {
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			header("Location: ".$_SERVER['PHP_SELF'].($id ? "?id=".$id : ''));
@@ -554,7 +552,11 @@ if ($id > 0 || !empty($ref)) {
 
 	// Bank card
 	$head = bank_prepare_head($object);
-	print dol_get_fiche_head($head, 'journal', $langs->trans("FinancialAccount"), 0, 'account');
+	$activetab = 'journal';
+	if ($action == 'reconcile') {
+		$activetab = 'reconcile';
+	}
+	print dol_get_fiche_head($head, $activetab, $langs->trans("FinancialAccount"), 0, 'account');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -566,7 +568,7 @@ if ($id > 0 || !empty($ref)) {
 	/*
 	 * Buttons actions
 	 */
-
+	/* Moved into tab
 	if ($action != 'reconcile') {
 		if ($object->canBeConciliated() > 0) {
 			$allowautomaticconciliation = false; // TODO
@@ -598,15 +600,16 @@ if ($id > 0 || !empty($ref)) {
 			}
 		}
 	}
+	*/
 }
 
 $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro as conciliated, b.num_releve, b.num_chq,";
 $sql .= " b.fk_account, b.fk_type, b.fk_bordereau,";
 $sql .= " ba.rowid as bankid, ba.ref as bankref";
 // Add fields from extrafields
-if (!empty($extrafields->attributes[$object->table_element]['label'])) {
-	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
-		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	foreach ($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val) {
+		$sql .= ($extrafields->attributes[$extrafieldsobjectkey]['type'][$key] != 'separate' ? ", ef.".$key." as options_".$key : '');
 	}
 }
 // Add fields from hooks
@@ -619,8 +622,8 @@ if ($search_bid > 0) {
 }
 $sql .= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql .= " ".MAIN_DB_PREFIX."bank as b";
-if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (b.rowid = ef.fk_object)";
+if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX.$extrafieldsobjectkey."_extrafields as ef on (b.rowid = ef.fk_object)";
 }
 
 // Add fields from hooks
@@ -895,7 +898,7 @@ if ($resql) {
 	}
 
 	// Code to adjust value date with plus and less picto using an Ajax call instead of a full reload of page
-	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?token='.currentToken();
+	$urlajax = DOL_URL_ROOT.'/core/ajax/bankconciliate.php?format=dayreduceformat&token='.currentToken();
 	print '
     <script type="text/javascript">
     $(function() {
@@ -904,10 +907,10 @@ if ($resql) {
     		current.click(function()
     		{
 				var url = "'.$urlajax.'&"+current.attr("href").split("?")[1];
+				console.log("We click on ajaxforbankoperationchange url="+url);
     			$.get(url, function(data)
     			{
-    			    console.log(url)
-					console.log(data)
+					console.log(data);
 					current.parent().parent().find(".spanforajaxedit").replaceWith(data);
     			});
     			return false;
@@ -1032,8 +1035,8 @@ if ($resql) {
 		print '<input type="submit" class="button" name="confirm_reconcile" value="'.$langs->trans("Conciliate").'">';
 		print ' <span class="opacitymedium">'.$langs->trans("otherwise").'</span> ';
 		print '<input type="submit" class="button small" name="confirm_savestatement" value="'.$langs->trans("SaveStatementOnly").'">';
-		print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
-		print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
+		//print ' <span class="opacitymedium">'.$langs->trans("or").'</span> ';
+		//print '<input type="submit" name="cancel" class="button button-cancel small" value="'.$langs->trans("Cancel").'">';
 		print '</div>';
 
 		print '<br>';
@@ -1658,7 +1661,9 @@ if ($resql) {
 		// Date ope
 		if (!empty($arrayfields['b.dateo']['checked'])) {
 			print '<td class="nowraponall center">';
-			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">'.dol_print_date($db->jdate($objp->do), "dayreduceformat")."</span>";
+			print '<span class="spanforajaxedit" id="dateoperation_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->do), "day").'">';
+			print dol_print_date($db->jdate($objp->do), "dayreduceformat");
+			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=doprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1675,7 +1680,9 @@ if ($resql) {
 		// Date value
 		if (!empty($arrayfields['b.datev']['checked'])) {
 			print '<td class="nowraponall center">';
-			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">'.dol_print_date($db->jdate($objp->dv), "dayreduceformat")."</span>";
+			print '<span class="spanforajaxedit" id="datevalue_'.$objp->rowid.'" title="'.dol_print_date($db->jdate($objp->dv), "day").'">';
+			print dol_print_date($db->jdate($objp->dv), "dayreduceformat");
+			print "</span>";
 			print '&nbsp;';
 			print '<span class="inline-block">';
 			print '<a class="ajaxforbankoperationchange" href="'.$_SERVER['PHP_SELF'].'?action=dvprev&amp;account='.$objp->bankid.'&amp;rowid='.$objp->rowid.'">';
@@ -1905,6 +1912,7 @@ if ($resql) {
 		}
 
 		// Extra fields
+		$obj = $objp; // Because extrafield template use $obj and not $objp as object variable name
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
 		$parameters = array('arrayfields' => $arrayfields, 'object' => $object, 'obj' => $objp, 'i' => $i, 'totalarray' => &$totalarray);

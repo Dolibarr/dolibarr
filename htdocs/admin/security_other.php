@@ -76,6 +76,7 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	$res3 = 1;
 	$res4 = 1;
 	$res5 = 1;
+	$res6 = 1;
 	if (GETPOSTISSET('MAIN_APPLICATION_TITLE')) {
 		$res1 = dolibarr_set_const($db, "MAIN_APPLICATION_TITLE", GETPOST("MAIN_APPLICATION_TITLE", 'alphanohtml'), 'chaine', 0, '', $conf->entity);
 	}
@@ -91,7 +92,10 @@ if (preg_match('/set_([a-z0-9_\-]+)/i', $action, $reg)) {
 	if (GETPOSTISSET('MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS')) {
 		$res5 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", GETPOST("MAIN_SECURITY_MAX_ATTACHMENT_ON_FORMS", 'alphanohtml'), 'int', 0, '', $conf->entity);
 	}
-	if ($res1 && $res2 && $res3 && $res4 && $res5) {
+	if (GETPOSTISSET('MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH')) {
+		$res6 = dolibarr_set_const($db, "MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", GETPOST("MAIN_SECURITY_MAX_NUMBER_FAILED_AUTH", 'alphanohtml'), 'int', 0, '', $conf->entity);
+	}
+	if ($res1 && $res2 && $res3 && $res4 && $res5 && $res6) {
 		setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
 	}
 }
@@ -167,7 +171,8 @@ if (!getDolGlobalString('MAIN_SESSION_TIMEOUT')) {
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("SessionTimeOut").'</td><td class="right">';
 if (ini_get("session.gc_probability") == 0) {
-	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", ini_get("session.gc_maxlifetime")));
+	// For external cleaning of session, the delay used may be the one into the ini file, so get_cfg_var("session.gc_maxlifetime"), not the one overloaded in runtime.
+	print $form->textwithpicto('', $langs->trans("SessionsPurgedByExternalSystem", get_cfg_var("session.gc_maxlifetime")));
 } else {
 	print $form->textwithpicto('', $langs->trans("SessionExplanation", ini_get("session.gc_probability"), ini_get("session.gc_divisor"), ini_get("session.gc_maxlifetime")));
 }

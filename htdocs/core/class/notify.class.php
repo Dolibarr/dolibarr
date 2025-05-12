@@ -952,8 +952,12 @@ class Notify
 							$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $labeltouse);
 						}
 						if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
+							if (method_exists($object, 'fetch_thirdparty') && empty($object->thirdparty)) {
+								$object->fetch_thirdparty();
+							}
 							$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 							complete_substitutions_array($substitutionarray, $outputlangs, $object);
+							// Note the substitution array should contains __REF__, __NEWREF__ ....
 							$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
 							$message = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
 						} else {
@@ -1277,11 +1281,18 @@ class Notify
 					$emailTemplate = $formmail->getEMailTemplate($this->db, $object_type.'_send', $user, $outputlangs, 0, 1, $mailTemplateLabel);
 				}
 				if (!empty($mailTemplateLabel) && is_object($emailTemplate) && $emailTemplate->id > 0) {
-					if (property_exists($object, 'thirdparty') && $object->thirdparty instanceof Societe && $object->thirdparty->default_lang && $object->thirdparty->default_lang != $langs->defaultlang) {
-						$outputlangs = new Translate('', $conf);
-						$outputlangs->setDefaultLang($object->thirdparty->default_lang);
-						$outputlangs->loadLangs(array('main', 'other'));
+					if (property_exists($object, 'thirdparty')) {
+						if (!($object->thirdparty instanceof Societe)) {
+							$object->fetch_thirdparty();
+						}
+
+						if ($object->thirdparty instanceof Societe && $object->thirdparty->default_lang && $object->thirdparty->default_lang != $langs->defaultlang) {
+							$outputlangs = new Translate('', $conf);
+							$outputlangs->setDefaultLang($object->thirdparty->default_lang);
+							$outputlangs->loadLangs(array('main', 'other'));
+						}
 					}
+
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);

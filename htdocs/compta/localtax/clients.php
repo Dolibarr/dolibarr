@@ -57,6 +57,7 @@ if (empty($year)) {
 }
 $date_start = dol_mktime(0, 0, 0, GETPOSTINT("date_startmonth"), GETPOSTINT("date_startday"), GETPOSTINT("date_startyear"));
 $date_end = dol_mktime(23, 59, 59, GETPOSTINT("date_endmonth"), GETPOSTINT("date_endday"), GETPOSTINT("date_endyear"));
+$q = 0;
 // Quarter
 if (empty($date_start) || empty($date_end)) { // We define date_start and date_end
 	$q = GETPOST("q");
@@ -124,7 +125,12 @@ if (empty($local)) {
 	accessforbidden('Parameter localTaxType is missing');
 }
 
+$builddate = dol_now();
 $calc = 0;
+$calcmode = "Unknown";
+$find = '';
+$replace = '';
+$period = '';
 /*
  * View
  */
@@ -203,6 +209,9 @@ $vatsup = $langs->transcountry($local == 1 ? "LT1" : "LT2", $mysoc->country_code
 print '<div class="div-table-responsive">';
 print '<table class="liste noborder centpercent">';
 
+$x_coll_sum = 0;  // Initialize value
+$x_paye_sum = 0;  // Initialize value
+
 // IRPF that the customer has retained me
 if ($calc == 0 || $calc == 2) {
 	print '<tr class="liste_titre">';
@@ -231,11 +240,11 @@ if ($calc == 0 || $calc == 2) {
 		$total = 0;
 		$totalamount = 0;
 		$i = 1;
-		foreach ($coll_list as $coll) {
-			if (($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local == 1 ? $coll->localtax1 : $coll->localtax2) != 0) {
-				$intra = str_replace($find, $replace, $coll->tva_intra);
+		foreach ($coll_list as $coll_obj) {
+			if (($min == 0 || ($min > 0 && $coll_obj->amount > $min)) && ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2) != 0) {
+				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
 				if (empty($intra)) {
-					if ($coll->assuj == '1') {
+					if ($coll_obj->assuj == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -243,16 +252,16 @@ if ($calc == 0 || $calc == 2) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll->socid;
-				$company_static->name = $coll->name;
+				$company_static->id = $coll_obj->socid;
+				$company_static->name = $coll_obj->name;
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra.'</td>';
-				print '<td class="nowrap right">'.price($coll->amount).'</td>';
-				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount += $coll->amount;
-				$total += ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				print '<td class="nowrap right">'.price($coll_obj->amount).'</td>';
+				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2).'</td>';
+				$totalamount += $coll_obj->amount;
+				$total += ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2);
 				print "</tr>\n";
 				$i++;
 			}
@@ -296,11 +305,11 @@ if ($calc == 0 || $calc == 1) {
 		$total = 0;
 		$totalamount = 0;
 		$i = 1;
-		foreach ($coll_list as $coll) {
-			if (($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local == 1 ? $coll->localtax1 : $coll->localtax2) != 0) {
-				$intra = str_replace($find, $replace, $coll->tva_intra);
+		foreach ($coll_list as $coll_obj) {
+			if (($min == 0 || ($min > 0 && $coll_obj->amount > $min)) && ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2) != 0) {
+				$intra = str_replace($find, $replace, $coll_obj->tva_intra);
 				if (empty($intra)) {
-					if ($coll->assuj == '1') {
+					if ($coll_obj->assuj == '1') {
 						$intra = $langs->trans('Unknown');
 					} else {
 						$intra = '';
@@ -308,16 +317,16 @@ if ($calc == 0 || $calc == 1) {
 				}
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">'.$i."</td>";
-				$company_static->id = $coll->socid;
-				$company_static->name = $coll->name;
+				$company_static->id = $coll_obj->socid;
+				$company_static->name = $coll_obj->name;
 				print '<td class="nowrap">'.$company_static->getNomUrl(1).'</td>';
 				$find = array(' ', '.');
 				$replace = array('', '');
 				print '<td class="nowrap">'.$intra."</td>";
-				print '<td class="nowrap right">'.price($coll->amount).'</td>';
-				print '<td class="nowrap right">'.price($local == 1 ? $coll->localtax1 : $coll->localtax2).'</td>';
-				$totalamount += $coll->amount;
-				$total += ($local == 1 ? $coll->localtax1 : $coll->localtax2);
+				print '<td class="nowrap right">'.price($coll_obj->amount).'</td>';
+				print '<td class="nowrap right">'.price($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2).'</td>';
+				$totalamount += $coll_obj->amount;
+				$total += ($local == 1 ? $coll_obj->localtax1 : $coll_obj->localtax2);
 				print "</tr>\n";
 				$i++;
 			}

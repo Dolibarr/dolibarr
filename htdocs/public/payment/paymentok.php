@@ -5,7 +5,8 @@
  * Copyright (C) 2021-2023	Waël Almoman			<info@almoman.com>
  * Copyright (C) 2021		Maxime Demarest			<maxime@indelog.fr>
  * Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +44,10 @@ if (!defined('NOBROWSERNOTIF')) {
 	define('NOBROWSERNOTIF', '1');
 }
 
+if (!defined('XFRAMEOPTIONS_ALLOWALL')) {
+	define('XFRAMEOPTIONS_ALLOWALL', '1');
+}
+
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
@@ -55,16 +60,19 @@ if (is_numeric($entity)) {
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 if (isModEnabled('paypal')) {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 }
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
  * @var HookManager $hookmanager
  * @var Societe $mysoc
  * @var Translate $langs
+ * @var User $user
  *
  * @var string $dolibarr_main_url_root
  */
@@ -77,31 +85,17 @@ $hookmanager->initHooks(array('newpayment'));
 $langs->loadLangs(array("main", "other", "dict", "bills", "companies", "paybox", "paypal", "stripe"));
 
 // Clean parameters
+$PAYPAL_API_USER = "";
+$PAYPAL_API_PASSWORD = "";
+$PAYPAL_API_SIGNATURE = "";
+$PAYPAL_API_SANDBOX = "";
+$PAYPALTOKEN = "";
+$PAYPALPAYERID = "";
 if (isModEnabled('paypal')) {
-	$PAYPAL_API_USER = "";
-	if (getDolGlobalString('PAYPAL_API_USER')) {
-		$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
-	}
-	$PAYPAL_API_PASSWORD = "";
-	if (getDolGlobalString('PAYPAL_API_PASSWORD')) {
-		$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
-	}
-	$PAYPAL_API_SIGNATURE = "";
-	if (getDolGlobalString('PAYPAL_API_SIGNATURE')) {
-		$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
-	}
-	$PAYPAL_API_SANDBOX = "";
-	if (getDolGlobalString('PAYPAL_API_SANDBOX')) {
-		$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
-	}
-	/*$PAYPAL_API_OK = "";
-	if ($urlok) {
-		$PAYPAL_API_OK = $urlok;
-	}
-	$PAYPAL_API_KO = "";
-	if ($urlko) {
-		$PAYPAL_API_KO = $urlko;
-	}*/
+	$PAYPAL_API_USER = getDolGlobalString('PAYPAL_API_USER');
+	$PAYPAL_API_PASSWORD = getDolGlobalString('PAYPAL_API_PASSWORD');
+	$PAYPAL_API_SIGNATURE = getDolGlobalString('PAYPAL_API_SIGNATURE');
+	$PAYPAL_API_SANDBOX = getDolGlobalString('PAYPAL_API_SANDBOX');
 
 	$PAYPALTOKEN = GETPOST('TOKEN');
 	if (empty($PAYPALTOKEN)) {
@@ -139,9 +133,10 @@ if (empty($paymentmethod)) {
 dol_syslog("***** paymentok.php is called paymentmethod=".$paymentmethod." FULLTAG=".$FULLTAG." REQUEST_URI=".$_SERVER["REQUEST_URI"], LOG_DEBUG, 0, '_payment');
 
 // Detect $ws
+$reg_ws = array();
 $ws = preg_match('/WS=([^\.]+)/', $FULLTAG, $reg_ws) ? $reg_ws[1] : 0;
 if ($ws) {
-	dol_syslog("Paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
+	dol_syslog("paymentok.php page is invoked from a website with ref ".$ws.". It performs actions and then redirects back to this website. A page with ref paymentok must be created for this website.", LOG_DEBUG, 0, '_payment');
 }
 
 $validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
@@ -173,20 +168,35 @@ $object = new stdClass(); // For triggers
 
 $error = 0;
 
-
-/*
- * Actions and view
- */
-
 // Check if we have redirtodomain to do.
+$ws_virtuelhost = null;
+$ws_id = 0;
+$doactionsthenredirect = 0;
 if ($ws) {
 	$doactionsthenredirect = 1;
+	include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
+	$website = new Website($db);
+	$result = $website->fetch(0, $ws);
+	if ($result > 0) {
+		$ws_virtuelhost = $website->virtualhost;
+		$ws_id = $website->id;
+	}
 }
 
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
 
 $now = dol_now();
 
-dol_syslog("Callback url when a payment was done. query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : dol_escape_htmltag($_SERVER["QUERY_STRING"]))." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : dol_escape_htmltag($_SERVER["SCRIPT_URI"])), LOG_DEBUG, 0, '_payment');
+dol_syslog("Callback url when a payment was done. doactionsthenredirect=".$doactionsthenredirect." query_string=".(empty($_SERVER["QUERY_STRING"]) ? '' : dol_escape_htmltag($_SERVER["QUERY_STRING"]))." script_uri=".(empty($_SERVER["SCRIPT_URI"]) ? '' : dol_escape_htmltag($_SERVER["SCRIPT_URI"])), LOG_DEBUG, 0, '_payment');
 dol_syslog("_SERVER[SERVER_NAME] = ".(empty($_SERVER["SERVER_NAME"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_NAME"])), LOG_DEBUG, 0, '_payment');
 dol_syslog("_SERVER[SERVER_ADDR] = ".(empty($_SERVER["SERVER_ADDR"]) ? '' : dol_escape_htmltag($_SERVER["SERVER_ADDR"])), LOG_DEBUG, 0, '_payment');
 
@@ -197,13 +207,16 @@ foreach ($_POST as $k => $v) {
 	}
 }
 dol_syslog("POST=".$tracepost, LOG_DEBUG, 0, '_payment');
+
 $tracesession = "";
 foreach ($_SESSION as $k => $v) {
-	if (is_scalar($k) && is_scalar($v)) {
+	if (is_scalar($k) && is_scalar($v) && in_array($k, array('currencyCodeType', 'errormessage', 'FinalPaymentAmt', 'ipaddress', 'onlinetoken', 'payerID', 'paymentType', 'TRANSACTIONID', 'paymentoksessionkey', 'paymentkosessionkey'))) {
 		$tracesession .= "$k - $v\n";
 	}
 }
 dol_syslog("SESSION=".$tracesession, LOG_DEBUG, 0, '_payment');
+
+dol_syslog("paymentoksessioncode=".GETPOST('paymentoksessioncode')." SESSION['paymentoksessioncode']=".$_SESSION['paymentoksessioncode'], LOG_DEBUG, 0, '_payment');
 
 $head = '';
 if (getDolGlobalString('ONLINE_PAYMENT_CSS_URL')) {
@@ -276,19 +289,21 @@ if (empty($doactionsthenredirect)) {
 }
 
 
-// Another step to validate the payment (for payment modes like Paypal that need another step after the callback return for this).
+// Add steps to validate payment is complete when we enter this page
+
+
+// For Paypal: validate the payment (Paypal need another step after the callback return to validate the payment).
 if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this page only if payment is ok on payment system
-	if ($PAYPALTOKEN) {
+	if (!empty($PAYPALTOKEN)) {
 		// Get on url call
 		$onlinetoken        = $PAYPALTOKEN;
 		$fulltag            = $FULLTAG;
-		$payerID            = $PAYPALPAYERID;
+		$payerID 			= !empty($PAYPALPAYERID) ? $PAYPALPAYERID : '';
 		// Set by newpayment.php
+		$ipaddress          = $_SESSION['ipaddress'];
 		$currencyCodeType   = $_SESSION['currencyCodeType'];
 		$FinalPaymentAmt    = $_SESSION["FinalPaymentAmt"];
 		$paymentType        = $_SESSION['PaymentType'];			// Value can be 'Mark', 'Sole', 'Sale' for example
-		// From env
-		$ipaddress          = $_SESSION['ipaddress'];
 
 		dol_syslog("Call paymentok with token=".$onlinetoken." paymentType=".$paymentType." currencyCodeType=".$currencyCodeType." payerID=".$payerID." ipaddress=".$ipaddress." FinalPaymentAmt=".$FinalPaymentAmt." fulltag=".$fulltag, LOG_DEBUG, 0, '_payment');
 
@@ -355,6 +370,7 @@ if (isModEnabled('paypal') && $paymentmethod === 'paypal') {	// We call this pag
 	}
 }
 
+// For Paybox
 if (isModEnabled('paybox')) {
 	if ($paymentmethod === 'paybox') {
 		// TODO Add a check to validate that payment is ok.
@@ -362,37 +378,38 @@ if (isModEnabled('paybox')) {
 	}
 }
 
+// For Stripe
 if (isModEnabled('stripe')) {
 	if ($paymentmethod === 'stripe') {
-		// TODO Add a check to validate that payment is ok. We can request Stripe with payment_intent and payment_intent_client_secret
-		$ispaymentok = true; // We call this page only if payment is ok on payment system
+		// Check we are coming from the newpaymentpage
+		if (GETPOST('paymentoksessionkey') == $_SESSION['paymentoksessionkey']) {
+			// We can also request Stripe with payment_intent and payment_intent_client_secret the sameway we do in newpayment after comment "// Get here amount and currency used for payment".
+			$ispaymentok = true; // We call this page only if payment is ok on payment system
+		} else {
+			$ispaymentok = false; // We call this page only if payment is ok on payment system
+		}
 	}
 }
 
-// Check status of the object to verify if it is paid by external payment modules
-$action = '';
-$parameters = [
-	'paymentmethod' => $paymentmethod,
-];
-$reshook = $hookmanager->executeHooks('isPaymentOK', $parameters, $object, $action);
-if ($reshook >= 0) {
-	if (isset($hookmanager->resArray['ispaymentok'])) {
-		dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
-		$ispaymentok = $hookmanager->resArray['ispaymentok'];
+// For other payment modules
+if (!in_array($paymentmethod, array('paypal', 'paybox', 'stripe'))) {
+	// Check status of the object to verify if it is paid by external payment modules
+	$action = '';
+	$parameters = [
+		'paymentmethod' => $paymentmethod,
+	];
+	$reshook = $hookmanager->executeHooks('isPaymentOK', $parameters, $object, $action);
+	if ($reshook >= 0) {
+		if (isset($hookmanager->resArray['ispaymentok'])) {
+			dol_syslog('ispaymentok overwrite by hook return with value='.$hookmanager->resArray['ispaymentok'], LOG_DEBUG, 0, '_payment');
+			$ispaymentok = $hookmanager->resArray['ispaymentok'];
+		}
 	}
 }
 
-
-// If data not provided into callback url, search them into the session env
+// Get variable into the session env
 if (empty($ipaddress)) {
 	$ipaddress = $_SESSION['ipaddress'];
-}
-if (empty($TRANSACTIONID)) {
-	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' :$_SESSION['TRANSACTIONID'];	// pi_... or ch_...
-	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
-		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
-		$TRANSACTIONID   = GETPOST('payment_intent', 'alphanohtml');
-	}
 }
 if (empty($FinalPaymentAmt)) {
 	$FinalPaymentAmt = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
@@ -400,9 +417,16 @@ if (empty($FinalPaymentAmt)) {
 if (empty($currencyCodeType)) {
 	$currencyCodeType = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
 }
-// Seems used only by Paypal
-if (empty($paymentType)) {
+if (empty($paymentType)) {	// Seems used only by Paypal
 	$paymentType = empty($_SESSION["paymentType"]) ? '' : $_SESSION["paymentType"];
+}
+
+if (empty($TRANSACTIONID)) {
+	$TRANSACTIONID = empty($_SESSION['TRANSACTIONID']) ? '' : $_SESSION['TRANSACTIONID'];	// pi_... or ch_...
+	if (empty($TRANSACTIONID) && GETPOST('payment_intent', 'alphanohtml')) {
+		// For the case we use STRIPE_USE_INTENT_WITH_AUTOMATIC_CONFIRMATION = 2
+		$TRANSACTIONID = GETPOST('payment_intent', 'alphanohtml');
+	}
 }
 
 $fulltag = $FULLTAG;
@@ -418,6 +442,7 @@ $appli = $mysoc->name;
 
 // Make complementary actions (post payment actions if payment is ok)
 $ispostactionok = 0;
+$paymentTypeId = 0;
 $postactionmessages = array();
 if ($ispaymentok) {
 	// Set permission for the anonymous user
@@ -459,7 +484,6 @@ if ($ispaymentok) {
 		dol_syslog("We have to process member with id=".$tmptag['MEM']." result1=".$result1." result2=".$result2, LOG_DEBUG, 0, '_payment');
 
 		if ($result1 > 0 && $result2 > 0) {
-			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
 				$paymentTypeId = getDolGlobalInt('PAYBOX_PAYMENT_MODE_FOR_PAYMENTS');
 			}
@@ -569,7 +593,7 @@ if ($ispaymentok) {
 					$datesubscription = dol_get_first_day((int) dol_print_date($datesubscription, "%Y"));
 				}
 
-				$datesubend = null;
+				$datesubend = 0;
 				if ($datesubscription && $defaultdelay && $defaultdelayunit) {
 					$datesubend = dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit);
 					// the new end date of subscription must be in futur
@@ -582,7 +606,7 @@ if ($ispaymentok) {
 
 				// Set output language
 				$outputlangs = new Translate('', $conf);
-				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+				$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $object->thirdparty->default_lang);
 				$paymentdate = $now;
 				$amount = $FinalPaymentAmt;
 				$formatteddate = dol_print_date($paymentdate, 'dayhour', 'auto', $outputlangs);
@@ -636,6 +660,7 @@ if ($ispaymentok) {
 					$option = 'none';
 				}
 				$sendalsoemail = 1;
+				$crowid = 0;
 
 				// Record the subscription then complementary actions
 				$db->begin();
@@ -656,10 +681,12 @@ if ($ispaymentok) {
 					}
 				}
 
+				$autocreatethirdparty = 0;
+
 				if (!$error) {
 					dol_syslog("Call ->subscriptionComplementaryActions option=".$option, LOG_DEBUG, 0, '_payment');
 
-					$autocreatethirdparty = 1; // will create thirdparty if member not yet linked to a thirdparty
+					$autocreatethirdparty = 1; // will create third party if member not yet linked to a thirdparty
 
 					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty, $TRANSACTIONID, $service);
 					if ($result < 0) {
@@ -701,7 +728,7 @@ if ($ispaymentok) {
 							$service = 'StripeLive';
 							$servicestatus = 1;
 						}
-						$stripeacc = null; // No Oauth/connect use for public pages
+						$stripeacc = ''; // No Oauth/connect use for public pages
 
 						$thirdparty = new Societe($db);
 						$thirdparty->fetch($thirdparty_id);
@@ -740,7 +767,7 @@ if ($ispaymentok) {
 										}
 									} else {
 										$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_account (fk_soc, login, key_account, site, site_account, status, entity, date_creation, fk_user_creat)";
-										$sql .= " VALUES (".$thirdparty_id.", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
+										$sql .= " VALUES (".((int) $thirdparty_id).", '', '".$db->escape($stripecu)."', 'stripe', '".$db->escape($stripearrayofkeysbyenv[$servicestatus]['publishable_key'])."', ".((int) $servicestatus).", ".((int) $conf->entity).", '".$db->idate(dol_now())."', 0)";
 										$resql = $db->query($sql);
 										if (!$resql) {	// should not happen
 											$error++;
@@ -1021,6 +1048,8 @@ if ($ispaymentok) {
 		$object = new Commande($db);
 		$result = $object->fetch((int) $tmptag['ORD']);
 		if ($result) {
+			dol_syslog("We have loaded the order id=".$object->id." to use to create the invoice", LOG_DEBUG, 0, '_payment');
+
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
 			$paymentTypeId = 0;
@@ -1049,16 +1078,30 @@ if ($ispaymentok) {
 				}
 			}
 
+			dol_syslog("The payment type id to use is paymentTypeId=".$paymentTypeId." and FinalPaymentAmt=".$FinalPaymentAmt, LOG_DEBUG, 0, '_payment');
+
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+					$db->begin();
+
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
 					$result = $invoice->createFromOrder($object, $user);
 					if ($result > 0) {
-						$object->classifyBilled($user);
-						$invoice->validate($user);
-						// Creation of payment line
+						if ($FinalPaymentAmt != $object->total_ttc) {
+							// The amount paid can be lower than the order only if the user tried to modified the amount from the payment page. A payment has been received but it is a hack attempt
+							// We can add a line to reduce the amount of the invoice but with which vat ?
+							// TODO Test if vat on line is the same everywhere, if yes we can add
+							// $invoice->addline('Fix amount of invoice', $FinalPaymentAmt - $object->total_ttc, 1, $txtva);
+							// TODO Send a warning email.
+						}
+
+						$object->classifyBilled($user);		// The invoice has been create from the order so total is the same, so we can classify order to billed (even if payment may be partial).
+
+						$invoice->validate($user);			// This may re-classify all linked orders to billed (done previously) if amount of invoice is ok by triggers, depending on the workflow module setup.
+
+						// Creation of payment line (warning: if amount has been modified on page, the payment may be partial)
 						include_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 						$paiement = new Paiement($db);
 						$paiement->datepaye = $now;
@@ -1130,15 +1173,16 @@ if ($ispaymentok) {
 								$error++;
 							}
 						}
-
-						if (!$error) {
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
 					} else {
 						$postactionmessages[] = 'Failed to create invoice form order ' . $tmptag['ORD'] . '.';
 						$ispostactionok = -1;
+						$error++;
+					}
+
+					if (!$error) {
+						$db->commit();
+					} else {
+						$db->rollback();
 					}
 				} else {
 					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of order ' . $tmptag['ORD'] . '. May be payment was already recorded.';
@@ -1221,6 +1265,7 @@ if ($ispaymentok) {
 						$ispostactionok = 1;
 
 						if ($totalpaid >= $don->getRemainToPay()) {
+							$don->valid_promesse($don->id, $user->id); /** @phan-suppress-current-line PhanPluginSuspiciousParamPosition */
 							$don->setPaid($don->id);
 						}
 					}
@@ -1287,7 +1332,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($ref);
+		$result = $object->fetch((int) $ref);  // @phan-suppress-curren-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$paymentTypeId = 0;
 			if ($paymentmethod == 'paybox') {
@@ -1428,20 +1473,20 @@ if ($ispaymentok) {
 						$thirdparty = new Societe($db);
 						$resultthirdparty = $thirdparty->fetch($attendeetovalidate->fk_soc);
 						if ($resultthirdparty < 0) {
-							setEventMessages($resultthirdparty->error, $resultthirdparty->errors, "errors");
+							setEventMessages($thirdparty->error, $thirdparty->errors, "errors");
 						} else {
 							require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 							include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 							$formmail = new FormMail($db);
 							// Set output language
 							$outputlangs = new Translate('', $conf);
-							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? $mysoc->default_lang : $thirdparty->default_lang);
+							$outputlangs->setDefaultLang(empty($thirdparty->default_lang) ? (string) $mysoc->default_lang : (string) $thirdparty->default_lang);
 							// Load traductions files required by page
 							$outputlangs->loadLangs(array("main", "members", "eventorganization"));
 							// Get email content from template
 							$arraydefaultmessage = null;
 
-							$idoftemplatetouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');	// Email to send for Event organization registration
+							$idoftemplatetouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT');	// Email to send for Event organization registration
 
 							if (!empty($idoftemplatetouse)) {
 								$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
@@ -1464,7 +1509,7 @@ if ($ispaymentok) {
 							$sendto = $attendeetovalidate->email;
 							$cc = '';
 							if ($thirdparty->email) {
-								$cc = $thirdparty->email;
+								$cc = $thirdparty->email ?? '';
 							}
 							if ($attendeetovalidate->email_company && $attendeetovalidate->email_company != $thirdparty->email) {
 								$cc = ($cc ? ', ' : '').$attendeetovalidate->email_company;
@@ -1518,7 +1563,7 @@ if ($ispaymentok) {
 		require_once DOL_DOCUMENT_ROOT.'/eventorganization/class/conferenceorbooth.class.php';
 		include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 		$object = new Facture($db);
-		$result = $object->fetch($ref);
+		$result = $object->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
 		if ($result) {
 			$FinalPaymentAmt = $_SESSION["FinalPaymentAmt"];
 
@@ -1643,21 +1688,23 @@ if ($ispaymentok) {
 						} else {
 							$booth->status = ConferenceOrBooth::STATUS_SUGGESTED;
 							$resultboothupdate = $booth->update($user);
-							if ($resultboothupdate<0) {
-								// Finding the thirdparty by getting the invoice
+							if ($resultboothupdate < 0) {
+								// Finding the third party by getting the invoice
 								$invoice = new Facture($db);
-								$resultinvoice = $invoice->fetch($ref);
-								if ($resultinvoice<0) {
+								$resultinvoice = $invoice->fetch((int) $ref);  // @phan-suppress-current-line PhanPluginSuspiciousParamPosition
+								if ($resultinvoice < 0) {
 									$postactionmessages[] = 'Could not find the associated invoice.';
 									$ispostactionok = -1;
 									$error++;
 								} else {
 									$thirdparty = new Societe($db);
 									$resultthirdparty = $thirdparty->fetch($invoice->socid);
-									if ($resultthirdparty<0) {
+									if ($resultthirdparty < 0) {
 										$error++;
 										setEventMessages(null, $thirdparty->errors, "errors");
 									} else {
+										// TODO Move the send of email out of the db transaction
+
 										// Sending mail
 										require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 										include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
@@ -1670,7 +1717,7 @@ if ($ispaymentok) {
 										// Get email content from template
 										$arraydefaultmessage = null;
 
-										$idoftemplatetouse = getDolGlobalString('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH');	// Email sent after registration for a Booth
+										$idoftemplatetouse = getDolGlobalInt('EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH');	// Email sent after registration for a Booth
 
 										if (!empty($idoftemplatetouse)) {
 											$arraydefaultmessage = $formmail->getEMailTemplate($db, 'conferenceorbooth', $user, $outputlangs, $idoftemplatetouse, 1, '');
@@ -1764,6 +1811,8 @@ if ($ispaymentok) {
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (isModEnabled('invoice')) {
 				if (!empty($FinalPaymentAmt) && $paymentTypeId > 0) {
+					$db->begin();
+
 					include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 					$invoice = new Facture($db);
 					$result = $invoice->createFromContract($object, $user, array((int) $contract_lines));
@@ -1842,19 +1891,20 @@ if ($ispaymentok) {
 								$error++;
 							}
 						}
-
-						if (!$error) {
-							$db->commit();
-						} else {
-							$db->rollback();
-						}
 					} else {
 						$msg = 'Failed to create invoice form contract ' . $tmptag['CON'];
-						if (!empty($cols)) {
-							$msg .= ' and col '. $cols .'.';
+						if (!empty($tmptag['COL'])) {
+							$msg .= ' and col '. $tmptag['COL'] .'.';
 						}
 						$postactionmessages[] = $msg;
 						$ispostactionok = -1;
+						$error++;
+					}
+
+					if (!$error) {
+						$db->commit();
+					} else {
+						$db->rollback();
 					}
 				} else {
 					$postactionmessages[] = 'Failed to get a valid value for "amount paid" (' . $FinalPaymentAmt . ') or "payment type id" (' . $paymentTypeId . ') to record the payment of contract ' . $tmptag['CON'] .'. Maybe payment was already recorded.';
@@ -1866,7 +1916,7 @@ if ($ispaymentok) {
 			}
 		} else {
 			$msg = 'Contract paid ' . $tmptag['CON'] . ' was not found';
-			if (!empty($cols)) {
+			if (!empty($tmptag['COL'])) {
 				$msg .= ' for col '.$tmptag['COL'] .'.';
 			}
 			$postactionmessages[] = $msg;
@@ -1877,16 +1927,19 @@ if ($ispaymentok) {
 	}
 }
 
+dol_syslog("ispaymentok=".$ispaymentok." ispostactionok=".$ispostactionok." doactionsthenredirect=".$doactionsthenredirect, LOG_DEBUG, 0, '_payment');
+
 if ($ispaymentok) {
 	// Get on url call
 	$onlinetoken        = empty($PAYPALTOKEN) ? $_SESSION['onlinetoken'] : $PAYPALTOKEN;
 	$payerID            = empty($PAYPALPAYERID) ? $_SESSION['payerID'] : $PAYPALPAYERID;
 	// Set by newpayment.php
 	$currencyCodeType   = empty($_SESSION['currencyCodeType']) ? '' : $_SESSION['currencyCodeType'];
-	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '': $_SESSION["FinalPaymentAmt"];
+	$FinalPaymentAmt    = empty($_SESSION["FinalPaymentAmt"]) ? '' : $_SESSION["FinalPaymentAmt"];
 	$paymentType        = empty($_SESSION['PaymentType']) ? '' : $_SESSION['PaymentType'];	// Seems used by paypal only
 
 	if (is_object($object) && method_exists($object, 'call_trigger')) {
+		'@phan-var-force CommonObject $object';
 		// Call trigger
 		$result = $object->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
 		if ($result < 0) {
@@ -1894,7 +1947,7 @@ if ($ispaymentok) {
 		}
 		// End call triggers
 	} elseif (get_class($object) == 'stdClass') {
-		//In some case $object is not instantiate (for paiement on custom object) We need to deal with payment
+		//In some cases $object is not instantiated (for payment on custom object) We need to deal with payment
 		include_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 		$paiement = new Paiement($db);
 		$result = $paiement->call_trigger('PAYMENTONLINE_PAYMENT_OK', $user);
@@ -1947,12 +2000,20 @@ if ($ispaymentok) {
 
 	// Send an email to the admins
 	if ($sendemail) {
+		// Get default language to use for the company for supervision emails
+		$myCompanyDefaultLang = (string) $mysoc->default_lang;
+		if (empty($myCompanyDefaultLang) || $myCompanyDefaultLang === 'auto') {
+			// We must guess the language from the company country. We must not use the language of the visitor. This is a technical email for supervision
+			// so it must always be into the same language.
+			$myCompanyDefaultLang = (string) getLanguageCodeFromCountryCode($mysoc->country_code);
+		}
+
 		$companylangs = new Translate('', $conf);
-		$companylangs->setDefaultLang($mysoc->default_lang);
+		$companylangs->setDefaultLang($myCompanyDefaultLang);
 		$companylangs->loadLangs(array('main', 'members', 'bills', 'paypal', 'paybox', 'stripe'));
 
 		$sendto = $sendemail;
-		$from = getDolGlobalString('MAILING_EMAIL_FROM') ? $conf->global->MAILING_EMAIL_FROM : getDolGlobalString("MAIN_MAIL_EMAIL_FROM");
+		$from = getDolGlobalString('MAIN_MAIL_EMAIL_FROM');
 		// Define $urlwithroot
 		$urlwithouturlroot = preg_replace('/'.preg_quote(DOL_URL_ROOT, '/').'$/i', '', trim($dolibarr_main_url_root));
 		$urlwithroot = $urlwithouturlroot.DOL_URL_ROOT; // This is to use external domain name found into config file
@@ -2017,6 +2078,7 @@ if ($ispaymentok) {
 			$content .= "ErrorSeverityCode = ".$ErrorSeverityCode."<br>\n";
 		}
 
+		dol_syslog("Content of email: ".$content, LOG_DEBUG, 0, '_payment');
 
 		$ishtml = dol_textishtml($content); // May contain urls
 		$trackid = '';
@@ -2104,7 +2166,7 @@ unset($_SESSION["TRANSACTIONID"]);
 if (empty($doactionsthenredirect)) {
 	print "\n</div>\n";
 
-	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag($paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
+	print "<!-- Info for payment: FinalPaymentAmt=".dol_escape_htmltag($FinalPaymentAmt)." paymentTypeId=".dol_escape_htmltag((string) $paymentTypeId)." currencyCodeType=".dol_escape_htmltag($currencyCodeType)." -->\n";
 }
 
 
@@ -2123,13 +2185,33 @@ $db->close();
 if (!empty($doactionsthenredirect)) {
 	if ($ispaymentok) {
 		// Redirect to a success page
+		$randomseckey = getRandomPassword(true, null, 20);
+		$_SESSION['paymentoksessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentok of the website.
+
 		// Paymentok page must be created for the specific website
-		$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
-		print "<script>window.top.location.href = '".dol_escape_js($ext_urlok) ."';</script>";
+		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+			$ext_urlok = $ws_virtuelhost . '/paymentok.php?paymentoksessioncode='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
+		} else {
+			$ext_urlok = DOL_URL_ROOT.'/public/website/index.php?paymentoksessioncode='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentok&fulltag='.$FULLTAG;
+		}
+
+		dol_syslog("Now do a redirect using a Location: ".$ext_urlok, LOG_DEBUG, 0, '_payment');
+		header("Location: ".$ext_urlok);
+		exit;
 	} else {
 		// Redirect to an error page
+		$randomseckey = getRandomPassword(true, null, 20);
+		$_SESSION['paymentkosessioncode'] = $randomseckey;		// key between paymentok.php to another page like a paymentko of the website.
+
 		// Paymentko page must be created for the specific website
-		$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
-		print "<script>window.top.location.href = '".dol_escape_js($ext_urlko)."';</script>";
+		if (!defined('USEDOLIBARRSERVER') && !empty($ws_virtuelhost)) {
+			$ext_urlko = $ws_virtuelhost . '/paymentko.php?paymentkosessioncode='.urlencode($randomseckey).'&fulltag='.$FULLTAG;
+		} else {
+			$ext_urlko = DOL_URL_ROOT.'/public/website/index.php?paymentkosessioncode='.urlencode($randomseckey).'&website='.urlencode($ws).'&pageref=paymentko&fulltag='.$FULLTAG;
+		}
+
+		dol_syslog("Now do a redirect using a Location:".$ext_urlko, LOG_DEBUG, 0, '_payment');
+		header("Location: ".$ext_urlko);
+		exit;
 	}
 }

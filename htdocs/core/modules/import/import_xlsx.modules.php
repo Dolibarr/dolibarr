@@ -268,7 +268,6 @@ class ImportXlsx extends ModeleImports
 	public function import_open_file($file)
 	{
 		// phpcs:enable
-		global $langs;
 		$ret = 1;
 
 		dol_syslog(get_class($this) . "::open_file file=" . $file);
@@ -1013,6 +1012,7 @@ class ImportXlsx extends ModeleImports
 									if ($num_rows == 1) {
 										$res = $this->db->fetch_object($resql);
 										$lastinsertid = $res->rowid;
+										$keyfield = 'rowid';
 										if ($is_table_category_link) {
 											$lastinsertid = 'linktable';
 										} // used to apply update on tables like llx_categorie_product and avoid being blocked for all file content if at least one entry already exists
@@ -1037,11 +1037,10 @@ class ImportXlsx extends ModeleImports
 								// may already exists. So we rescan the extrafield table to know if record exists or not for the rowid.
 								// Note: For extrafield tablename, we have in importfieldshidden_array an entry 'extra.fk_object'=>'lastrowid-tableparent' so $keyfield is 'fk_object'
 								$sqlSelect = "SELECT rowid FROM " . $tablename;
-
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlSelect .= " WHERE ".$keyfield." = ".((int) $lastinsertid);
 
 								if (!empty($tablewithentity_cache[$tablename])) {
@@ -1083,10 +1082,10 @@ class ImportXlsx extends ModeleImports
 									$set[] = $key." = ".$val;	// $val was escaped/sanitized previously
 								}
 								$sqlstart .= " SET " . implode(', ', $set) . ", import_key = '" . $this->db->escape($importid) . "'";
-
 								if (empty($keyfield)) {
 									$keyfield = 'rowid';
 								}
+
 								$sqlend = " WHERE " . $keyfield . " = ".((int) $lastinsertid);
 
 								if ($is_table_category_link) {

@@ -53,6 +53,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $action = GETPOST('action', 'aZ09');
 
+$format = GETPOST('format');
+
 // Security check
 // Checks are done later
 
@@ -72,7 +74,7 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 	$al->datev_next(GETPOSTINT('rowid'));
 	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, ($format ? $format : "day")).'</span>';
 
 	exit;
 }
@@ -83,7 +85,7 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 	$al->datev_previous(GETPOSTINT('rowid'));
 	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, "day").'</span>';
+	print '<span class="spanforajaxedit" id="datevalue_'.$al->id.'">'.dol_print_date($al->datev, ($format ? $format : "day")).'</span>';
 
 	exit;
 }
@@ -94,7 +96,7 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 	$al->dateo_next(GETPOSTINT('rowid'));
 	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, ($format ? $format : "day")).'</span>';
 
 	exit;
 }
@@ -105,7 +107,7 @@ if (($user->hasRight('banque', 'modifier') || $user->hasRight('banque', 'consoli
 	$al->dateo_previous(GETPOSTINT('rowid'));
 	$al->fetch(GETPOSTINT('rowid'));
 
-	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, "day").'</span>';
+	print '<span class="spanforajaxedit" id="dateoperation_'.$al->id.'">'.dol_print_date($al->dateo, ($format ? $format : "day")).'</span>';
 
 	exit;
 }

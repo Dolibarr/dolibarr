@@ -1,19 +1,35 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
 }
 /**
  * @var Conf $conf
+ * @var User $user
  *
  * @var int $dol_optimize_smallscreen
  * @var string $colortextlink
  * @var string $butactionbg
  * @var string $textbutaction
+ * @var string $fontlist
+ * @var string $left
+ * @var string $right
  */
+'
+@phan-var-force string $butactionbg
+@phan-var-force string $colortextlink
+@phan-var-force int $dol_optimize_smallscreen
+@phan-var-force string $fontlist
+@phan-var-force string $left
+@phan-var-force int $nbtopmenuentries
+@phan-var-force string $right
+@phan-var-force string $textbutaction
+';
 ?>
-/* <style type="text/css" > */
+
+/* IDE Hack <style type="text/css"> */
 
 :root {
 			--btncolortext:rgb(<?php print $colortextlink; ?>);
@@ -142,9 +158,7 @@ span.butAction, span.butActionDelete {
 	border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	border: 1px solid #bbbbbb;
 	border-bottom-color: #a2a2a2;
-	-webkit-border-radius: 2px;
 	border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
@@ -157,19 +171,7 @@ span.butAction, span.butActionDelete {
 	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
 	cursor: pointer;
-	/* color: #ffffff !important; */
-	/* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
-	-webkit-border-radius: 2px;
 	border-radius: 2px;
-	/* -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); */
-	/* background-color: #006dcc;
-	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
-	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
-	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
-	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x; */
 }
 a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
@@ -229,11 +231,9 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	font-size: 1.5em;
 	border: none;
 	box-shadow: none;
-	-webkit-box-shadow: none;
 }
 
 .butAction:hover   {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), inset 0px 0px 200px rgba(60,60,60,0.1);
 }
 .butActionNew:hover   {
@@ -249,7 +249,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 }
 
 .butActionDelete:hover {
-	-webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 	box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
 
@@ -289,7 +288,6 @@ span.butActionNewRefused>span.fa, span.butActionNewRefused>span.fa:hover
 	color: #999 !important;
 	padding-top: 0.2em;
 	box-shadow: none !important;
-	-webkit-box-shadow: none !important;
 }
 
 .butActionTransparent {
@@ -397,28 +395,31 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	border-color: #ddd;
 }
 
-/* The buttonplus isgrowing on hover (don't know why). This is to avoid to have the cellegrowing too */
+/* The buttonplus is growing on hover (don't know why). This is to avoid to have the cell growing too */
 .btnTitlePlus:hover {
-	max-width: 24px;
-	max-height: 40px;
+	/* max-width: 24px; */ /* max width is a problem when the button has a text under */
+	max-height: 42px;
 }
 
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
+{
+	.btnTitle, a.btnTitle {
+		min-width: 40px;
+	}
+}
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC2'); ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
 	}
-	.btnTitle, a.btnTitle {
-		display: inline-block;
-		padding: 4px 4px 4px 4px;
-		min-width: unset;
-	}
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC3'); ?>px)	/* reduction 3 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.9em;
@@ -430,6 +431,16 @@ div.pagination .btnTitle:hover .btnTitle-label{
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.85em;
+	}
+
+	/* for small screen, we reduce the min with of button */
+	.btnTitle, a.btnTitle {
+		display: inline-block;
+		padding: 4px 4px 4px 4px;
+		min-width: unset;	/* if we unset the min-width here, we must also unset the font-size on .paginationafterarrows a.btnTitlePlus:hover span:before to avoid page content move */
+	}
+	.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+		font-size: unset !important;
 	}
 }
 

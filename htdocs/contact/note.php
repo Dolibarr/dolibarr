@@ -96,7 +96,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-societe page-contact
 
 if ($id > 0) {
 	/*
-	 * Affichage onglets
+	 * Show tabs
 	 */
 	if (isModEnabled('notification')) {
 		$langs->load("mails");
