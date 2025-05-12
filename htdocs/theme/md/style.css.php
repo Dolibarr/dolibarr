@@ -8629,6 +8629,17 @@ table.jPicker {
 		max-width: <?php echo max(34, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
+	div.tmenucenter a.tmenulabel span.mainmenuaspan {
+		display: inline-block;
+		overflow: hidden;
+		max-width: 30px;
+	}
+	a.tmenulabel:link, a.tmenulabel:visited, a.tmenulabel:hover, a.tmenulabel:active {
+		padding-left: 2px;
+		padding-right: 2px;
+		max-width: 30px;
+	}
+
 	.menuhider div.tmenucenter {
 		max-width: 28px;
 	}
@@ -8640,6 +8651,12 @@ table.jPicker {
 	.topmenuimage {
 		background-size: 20px auto;
 		margin-top: 2px;
+	}
+	div.login_block a .atoploginusername {
+		display: none;
+	}
+	div.login_block_tools > div {
+		right: 53px !important;
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
