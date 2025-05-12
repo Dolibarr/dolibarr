@@ -17,6 +17,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $fontsize
  * @var string $left
  * @var string $right
+ * @var int<0,max> $nbtopmenuentries
  */
 '
 @phan-var-force string $butactionbg
@@ -28,6 +29,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 @phan-var-force int $nbtopmenuentries
 @phan-var-force string $right
 @phan-var-force string $textbutaction
+@phan-var-force int<0,max> $nbtopmenuentries
 ';
 ?>
 
