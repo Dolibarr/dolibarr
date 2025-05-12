@@ -252,7 +252,7 @@ if (empty($reshook) && !empty($object->table_element) && isset($extrafields->att
 									url: "'. DOL_URL_ROOT.'/core/ajax/updateextrafield.php",
 									data: {"token": "'.currentToken().'", "objectType": "'.$object->element.'", "objectId": "'.$object->id.'", "field": "'.$tmpkeyextra.'", "value": value},
 									success: function(response) {
-										console.log("Extrafield "+'.$tmpkeyextra.'+" sucessfully updated");
+										console.log("Extrafield "+'.$tmpkeyextra.'+" successfully updated");
 									},
 								});
 							});
