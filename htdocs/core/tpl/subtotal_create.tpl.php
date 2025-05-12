@@ -37,7 +37,6 @@
 ';
 
 $depth_array = $depth_array ?? array();
-var_dump($depth_array);
 $titles = $titles ?? array();
 
 if ($type == 'subtotal' && empty($titles)) {
