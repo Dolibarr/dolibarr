@@ -5,7 +5,7 @@
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2018		Ferran Marcet				<fmarcet@2byte.es>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
  * Copyright (C) 2022-2023	Solution Libre SAS			<contact@solution-libre.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
@@ -1342,14 +1342,14 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 				if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 					$menutoshow = $langs->trans("ProspectsCategoriesShort");
 				}
-				if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+				if (!getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 					$langs->load("categories");
 					$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=2", $menutoshow, 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat', 3);
 				}
 			}
 			// Categories suppliers
 			if (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+				if (!getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 					$langs->load("categories");
 					$newmenu->add("/categories/categorie_list.php?leftmenu=catfournish&type=1", $langs->trans("SuppliersCategoriesShort"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'catsupplier', 4);
 				}
