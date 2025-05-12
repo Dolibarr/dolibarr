@@ -14,6 +14,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $butactionbg
  * @var string $textbutaction
  * @var string $fontlist
+ * @var string $fontsize
  * @var string $left
  * @var string $right
  */
@@ -22,6 +23,7 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
 @phan-var-force string $colortextlink
 @phan-var-force int $dol_optimize_smallscreen
 @phan-var-force string $fontlist
+@phan-var-force string $fontsize
 @phan-var-force string $left
 @phan-var-force int $nbtopmenuentries
 @phan-var-force string $right
