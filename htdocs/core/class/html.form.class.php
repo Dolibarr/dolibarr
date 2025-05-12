@@ -940,7 +940,7 @@ class Form
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$langs->load("dict");
 
@@ -9472,13 +9472,13 @@ class Form
 	 * @param 	int<0,1> 	$translate 		Translate and encode value
 	 * @param 	int|string 	$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
 	 * @param 	string 		$moreattrib 	Add more options on select component. Example: 'disabled'
-	 * @param 	string 		$elemtype 		Type of element we show ('category', ...). Will execute a formatting function on it. To use in readonly mode if js component support HTML formatting.
+	 * @param 	string 		$nu		 		Not used
 	 * @param 	string 		$placeholder 	String to use as placeholder
 	 * @param 	int<-1,1> 	$addjscombo 	Add js combo
 	 * @return 	string                      HTML multiselect string
 	 * @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
-	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
+	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $nu = '', $placeholder = '', $addjscombo = -1)
 	{
 		global $conf, $langs;
 		$out = '';
@@ -9497,6 +9497,8 @@ class Form
 				$useenhancedmultiselect = 1;	// Use the js multiselect in one line. Possible only if $addjscombo not 0.
 			}
 		}
+
+		$out .= '<span class="multiselectarray'.$htmlname.'">';
 
 		// We need a hidden field because when using the multiselect, if we unselect all, there is no
 		// variable submitted at all, so no way to make a difference between variable not submitted and variable
@@ -9544,35 +9546,38 @@ class Form
 		}
 		$out .= '</select>' . "\n";
 
+		$out .= '</span>';
+
 		// Add code for jquery to use multiselect
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n" . '<!-- JS CODE TO ENABLE select for id ' . $htmlname . ', addjscombo=' . $addjscombo . ' -->';
 			$out .= "\n" . '<script nonce="' . getNonce() . '">' . "\n";
 			if ($addjscombo == 1) {
-				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
-				$out .= 'function formatResult(record, container) {' . "\n";
+				$tmpplugin = getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT', (defined('REQUIRE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : 'select2'));
+
 				// If property data-html set, we decode html entities and use this.
 				// Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, '', 0, 1) when building the select option.
+				// TODO Move this into common js ?
+				$out .= 'function formatResult(record, container) {' . "\n";
 				$out .= '	if ($(record.element).attr("data-html") != undefined && typeof htmlEntityDecodeJs === "function") {';
-				//$out .= '		console.log("aaa");';
 				$out .= '		return htmlEntityDecodeJs($(record.element).attr("data-html"));';
 				$out .= '	}'."\n";
 				$out .= '	return record.text;';
 				$out .= '}' . "\n";
+
 				$out .= 'function formatSelection(record) {' . "\n";
-				if ($elemtype == 'category') {
-					$out .= 'return \'<span><img src="' . DOL_URL_ROOT . '/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
-				} else {
-					$out .= 'return record.text;';
-				}
+				$out .= '	return record.text;';
 				$out .= '}' . "\n";
+
+				// Load the select2 enhancer
+				//$out .= 'console.log(\'addjscombo=1 for htmlname=' . dol_escape_js($htmlname) . '\');';
 				$out .= '$(document).ready(function () {
 							$(\'#' . dol_escape_js($htmlname) . '\').' . $tmpplugin . '({';
 				if ($placeholder) {
 					$out .= '
 								placeholder: {
 								    id: \'-1\',
-								    text: \'' . dol_escape_js($placeholder) . '\'
+								    text: \''.dol_escape_js($placeholder).'\'
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
@@ -9580,7 +9585,7 @@ class Form
 								dropdownCssClass: \'' . dol_escape_js($morecss) . '\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
-							 	templateResult: formatResult,		/* For 4.0 */
+								templateResult: formatResult,		/* For 4.0 */
 								escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 								// Specify format function for selected item
 								formatSelection: formatSelection,
@@ -9588,7 +9593,7 @@ class Form
 							 	language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage
 							});
 
-							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are shown dynamically after load, because select2 set
 								 the size only if component is not hidden by default on load */
 							$(\'#' . dol_escape_js($htmlname) . ' + .select2\').addClass(\'' . dol_escape_js($morecss) . '\');
 						});' . "\n";

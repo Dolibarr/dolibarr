@@ -424,10 +424,12 @@ $head[$h][1] = $langs->trans("WebSites");
 $head[$h][2] = 'website';
 $h++;
 
+/* disable, no option for the moment
 $head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
 $head[$h][1] = $langs->trans("Options");
 $head[$h][2] = 'options';
 $h++;
+*/
 
 print dol_get_fiche_head($head, 'website', '', -1);
 

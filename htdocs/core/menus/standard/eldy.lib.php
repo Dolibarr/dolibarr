@@ -1264,7 +1264,7 @@ function get_left_menu_home($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 				$newmenu->add("/user/card.php?leftmenu=users&action=create", $langs->trans("NewUser"), 2, (int) (($user->hasRight("user", "user", "write") || $user->admin) && !(isModEnabled('multicompany') && !empty($user->entity) && getDolGlobalString('MULTICOMPANY_TRANSVERSE_MODE'))), '', 'home');
 				$newmenu->add("/user/list.php?leftmenu=users", $langs->trans("ListOfUsers"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
 				$newmenu->add("/user/hierarchy.php?leftmenu=users", $langs->trans("HierarchicView"), 2, (int) ($user->hasRight('user', 'user', 'read') || $user->admin));
-				if (isModEnabled('category')) {
+				if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 					$langs->load("categories");
 					$newmenu->add("/categories/categorie_list.php?leftmenu=users&type=7", $langs->trans("UsersCategoriesShort"), 2, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
 				}
@@ -1342,11 +1342,17 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 				if (getDolGlobalString('SOCIETE_DISABLE_CUSTOMERS')) {
 					$menutoshow = $langs->trans("ProspectsCategoriesShort");
 				}
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=2", $menutoshow, 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat', 3);
+				if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+					$langs->load("categories");
+					$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=2", $menutoshow, 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat', 3);
+				}
 			}
 			// Categories suppliers
 			if (isModEnabled('supplier_proposal') || isModEnabled('supplier_order') || isModEnabled('supplier_invoice')) {
-				$newmenu->add("/categories/categorie_list.php?leftmenu=catfournish&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'catsupplier', 4);
+				if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+					$langs->load("categories");
+					$newmenu->add("/categories/categorie_list.php?leftmenu=catfournish&type=1", $langs->trans("SuppliersCategoriesShort"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'catsupplier', 4);
+				}
 			}
 		}
 
@@ -1368,10 +1374,10 @@ function get_left_menu_thridparties($mainmenu, &$newmenu, $usemenuhider = 1, $le
 		//$newmenu->add("/contact/list.php?userid=$user->id", $langs->trans("MyContacts"), 1, $user->hasRight('societe',  'contact', 'lire'));
 
 		// Categories
-		if (isModEnabled('category')) {
+		if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 			$langs->load("categories");
 			// Categories Contact
-			$newmenu->add("/categories/categorie_list.php?leftmenu=catcontact&amp;type=4", $langs->trans("ContactCategoriesShort"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+			$newmenu->add("/categories/categorie_list.php?leftmenu=catcontact&type=4", $langs->trans("ContactCategoriesShort"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 		}
 	}
 }
@@ -1436,9 +1442,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			}
 
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=16", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=16", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1479,9 +1485,9 @@ function get_left_menu_commercial($mainmenu, &$newmenu, $usemenuhider = 1, $left
 			}
 
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=20", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=20", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1558,9 +1564,9 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add("/compta/facture/stats/index.php?leftmenu=customers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('facture', 'lire'), '', $mainmenu, 'customers_bills_stats');
 
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=17", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=17", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
 			}
 		}
 
@@ -1588,9 +1594,9 @@ function get_left_menu_billing($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 			$newmenu->add("/compta/facture/stats/index.php?mode=supplier&amp;leftmenu=suppliers_bills_stats", $langs->trans("Statistics"), 1, $user->hasRight('fournisseur', 'facture', 'lire'), '', $mainmenu, 'suppliers_bills_stats');
 
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=21", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=21", $langs->trans("Categories"), 1, $user->rights->categorie->lire, '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2111,7 +2117,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
 			$newmenu->add("/compta/bank/transfer.php", $langs->trans("MenuBankInternalTransfer"), 1, $user->hasRight('banque', 'transfer'));
 		}
 
-		if (isModEnabled('category')) {
+		if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 			$langs->load("categories");
 			$newmenu->add("/categories/categorie_list.php?type=5", $langs->trans("Rubriques"), 1, $user->hasRight('categorie', 'creer'), '', $mainmenu, 'tags');
 			$newmenu->add("/categories/categorie_list.php?type=8", $langs->trans("RubriquesTransactions"), 1, $user->hasRight('banque', 'configurer'), '', $mainmenu, 'tags');
@@ -2200,10 +2206,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			}
 
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
-				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/list.php", $langs->trans("List"), 1, $user->hasRight('categorie',  'lire'));
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2223,10 +2228,9 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 				$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=1", $langs->trans("Statistics"), 1, $user->hasRight('service', 'read'));
 			}
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
-				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/list.php", $langs->trans("List"), 1, $user->hasRight('categorie',  'lire'));
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=0", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2245,8 +2249,8 @@ function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/product/stock/stockatdate.php", $langs->trans("StockAtDate"), 1, (int) ($user->hasRight('product', 'read') && $user->hasRight('stock', 'lire')));
 
 			// Categories for warehouses
-			if (isModEnabled('category')) {
-				$newmenu->add("/categories/categorie_list.php?leftmenu=stock&amp;type=9", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+				$newmenu->add("/categories/categorie_list.php?leftmenu=stock&type=9", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 		}
 
@@ -2398,9 +2402,9 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
 			$newmenu->add("/projet/stats/index.php?leftmenu=projects", $langs->trans("Statistics"), 1, $user->hasRight('projet', 'lire'));
 
 			// Categories
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=6", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=6", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'lire'), '', $mainmenu, 'cat');
 			}
 
 			if (!getDolGlobalString('PROJECT_HIDE_TASKS')) {
@@ -2540,7 +2544,7 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 	global $user, $langs;
 
 	if ($mainmenu == 'tools') {
-		if (isModEnabled('category')) {
+		if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 			$titleindex = $langs->trans("Categories");
 			$newmenu->add("/categories/index.php?leftmenu=category", $titleindex, 0, $user->hasRight('category', 'read'), '', $mainmenu, 'category', 5, '', '', '', img_picto('', 'category', 'class="paddingright pictofixedwidth"'));
 		}
@@ -2620,9 +2624,9 @@ function get_left_menu_members($mainmenu, &$newmenu, $usemenuhider = 1, $leftmen
 
 			$newmenu->add("/adherents/cartes/carte.php?leftmenu=export", $langs->trans("MembersCards"), 1, $user->hasRight('adherent', 'export'));
 
-			if (isModEnabled('category')) {
+			if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 				$langs->load("categories");
-				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&amp;type=3", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
+				$newmenu->add("/categories/categorie_list.php?leftmenu=cat&type=3", $langs->trans("Categories"), 1, $user->hasRight('categorie', 'read'), '', $mainmenu, 'cat');
 			}
 
 			$newmenu->add("/adherents/index.php?leftmenu=members&amp;mainmenu=members", $langs->trans("Subscriptions"), 0, $user->hasRight('adherent', 'cotisation', 'read'), '', $mainmenu, 'members', 0, '', '', '', img_picto('', 'payment', 'class="paddingright pictofixedwidth"'));
