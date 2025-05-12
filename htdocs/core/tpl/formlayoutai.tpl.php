@@ -41,13 +41,8 @@ if (empty($conf) || !is_object($conf)) {
 	exit(1);
 }
 
-
 if (empty($langs)) {
 	print 'Parameter langs not defined.';
-	exit(1);
-}
-if (empty($object)) {
-	print 'Parameter object not defined.';
 	exit(1);
 }
 if (empty($htmlname)) {
@@ -163,7 +158,7 @@ if ($showlinktoai) {
 	if (empty($onlyenhancements)) {
 		$onlyenhancements = '';
 	}
-	if (!empty($aiprompt)) {
+	if (!empty($aiprompt) && !empty($object)) {
 		$formai->setSubstitFromObject($object, $langs);
 		$aiprompt = make_substitutions($aiprompt, $formai->substit);
 	}
