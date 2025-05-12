@@ -2753,12 +2753,12 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$jsonopen			Some JS code to execute on click/open of popup
- *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
+ *  @param	string	$jsonclose			Some JS code to execute on close of popup
  *  									Value is 'keyforpopupid:Name_of_html_component_to_set_with id,Name_of_html_component_to_set_with_label'
  *  @param	string	$accesskey			A key to use shortcut
  * 	@return	string						HTML component with button
  */
-function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $jsonopen = '', $backtopagejsfields = '', $accesskey = '')
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $jsonopen = '', $jsonclose = '', $accesskey = '')
 {
 	global $conf;
 
@@ -2770,23 +2770,26 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	$out = '';
 
+	/* canceled
 	$backtopagejsfieldsid = '';
 	$backtopagejsfieldslabel = '';
+	$backtopagejsfieldshtml = '';
 	if ($backtopagejsfields) {
 		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
 		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
-			$backtopagejsfields = $name.":".$backtopagejsfields;
 			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[0]);
 		} else {
 			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[1]);
 		}
 		$backtopagejsfieldsid = empty($tmp2backtopagejsfields[0]) ? '' : $tmp2backtopagejsfields[0];
 		$backtopagejsfieldslabel = empty($tmp2backtopagejsfields[1]) ? '' : $tmp2backtopagejsfields[1];
+		$backtopagejsfieldshtml = empty($tmp2backtopagejsfields[2]) ? '' : $tmp2backtopagejsfields[2];
 		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
 	}
+	*/
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<!-- a link for button to open url into a dialog popup -->';
 	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer reposition button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
@@ -2798,12 +2801,15 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	$out .= '>'.$buttonstring.'</a>';
 
 	if (!empty($conf->use_javascript_ajax)) {
-		// Add code to open url using the popup. Add also hidden field to retrieve the returned variables
+		// Add code to open url using the popup.
 		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for dialog' : '').'</div>';
+		/* canceled
+		// Add also hidden field to retrieve the returned variables
 		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned id' : '').'</div>';
 		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned label' : '').'</div>';
-
+		$out .= '<div id="varforreturndialoghtml'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned html' : '').'</div>';
+		*/
 		$out .= '<!-- Add js code to open dialog popup on dialog -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function () {
@@ -2821,15 +2827,24 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
 	       						},
 								close: function (event, ui) {
+									console.log("Popup is closed.");
+									/* to remove
 									var returnedid = jQuery("#varforreturndialogid'.$name.'").text();
 									var returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
+									var returnedhtml = jQuery("#varforreturndialoghtml'.$name.'").text();
+									console.log("popup has been closed.");
+									console.log("returnedid="+returnedid+", returnedlabel="+returnedlabel+", returnedhtml="+returnedhtml+". We save this value into main page.");
 									if (returnedid != "" && returnedid != "div for returned id") {
 										jQuery("#'.(empty($backtopagejsfieldsid) ? "none" : $backtopagejsfieldsid).'").val(returnedid);
 									}
 									if (returnedlabel != "" && returnedlabel != "div for returned label") {
 										jQuery("#'.(empty($backtopagejsfieldslabel) ? "none" : $backtopagejsfieldslabel).'").val(returnedlabel);
 									}
+									if (returnedhtml != "" && returnedhtml != "div for returned html") {
+										jQuery("#'.(empty($backtopagejsfieldshtml) ? "none" : $backtopagejsfieldshtml).'").val(returnedlabel);
+									}
+									*/
+									'.(empty($jsonclose) ? '' : $jsonclose.';').'
 								}
 							});
 
