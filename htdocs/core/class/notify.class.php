@@ -1292,6 +1292,7 @@ class Notify
 							$outputlangs->loadLangs(array('main', 'other'));
 						}
 					}
+
 					$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$subject = make_substitutions($emailTemplate->topic, $substitutionarray, $outputlangs);

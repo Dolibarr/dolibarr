@@ -124,9 +124,8 @@ print $langs->trans("EnableBarOrRestaurantFeatures");
 print ajax_constantonoff("TAKEPOS_BAR_RESTAURANT", array(), $conf->entity, 0, 0, 1, 0);
 print '</center>';
 
-print '<br>';
-
 if (getDolGlobalInt('TAKEPOS_BAR_RESTAURANT')) {
+	print '<br>';
 	print '<br>';
 	print '<a href="" onclick="Floors(); return false;"><span class="fa fa-glass-cheers"></span> '.$langs->trans("DefineTablePlan").'</a><br>';
 	print '<br><br>';

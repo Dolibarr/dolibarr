@@ -1885,12 +1885,6 @@ parameters:
 			path: ../../../htdocs/ai/admin/setup.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to method DolibarrApi\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/api/class/api.class.php
-
-		-
 			message: '#^Call to function is_object\(\) with ActionComm\|Adherent\|Commande\|CommandeFournisseur\|Contact\|Contrat\|ExpenseReport\|Facture\|FactureFournisseur\|Fichinter\|Mo\|Product\|Project\|Propal\|Task will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
@@ -2191,12 +2185,6 @@ parameters:
 			path: ../../../htdocs/asset/model/card.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/asset/model/card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$entity \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
@@ -2411,12 +2399,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: ../../../htdocs/bom/class/bom.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/bom/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -3763,12 +3745,6 @@ parameters:
 			path: ../../../htdocs/comm/propal/note.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/comm/propal/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -3997,12 +3973,6 @@ parameters:
 			path: ../../../htdocs/commande/list.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/commande/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 3
@@ -4055,12 +4025,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/commande/note.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/commande/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -4629,7 +4593,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
-			count: 5
+			count: 4
 			path: ../../../htdocs/compta/facture/class/api_invoices.class.php
 
 		-
@@ -5009,12 +4973,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/compta/facture/stats/index.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/compta/facture/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -6385,12 +6343,6 @@ parameters:
 			path: ../../../htdocs/contact/list.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/contact/list.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -6609,12 +6561,6 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between \-1 and 1 will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/contrat/list.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/contrat/list.php
 
@@ -8647,12 +8593,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 2
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Variable \$more in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -10000,12 +9940,6 @@ parameters:
 			message: '#^Strict comparison using \!\=\= between string and false will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 2
-			path: ../../../htdocs/core/lib/modulebuilder.lib.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
 			path: ../../../htdocs/core/lib/modulebuilder.lib.php
 
 		-
@@ -12667,12 +12601,6 @@ parameters:
 			path: ../../../htdocs/delivery/class/delivery.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/delivery/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -12803,12 +12731,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/don/info.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/don/list.php
 
 		-
 			message: '#^Variable \$projectstatic might not be defined\.$#'
@@ -14237,12 +14159,6 @@ parameters:
 			identifier: booleanAnd.rightAlwaysFalse
 			count: 1
 			path: ../../../htdocs/fichinter/note.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/fichinter/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -15973,12 +15889,6 @@ parameters:
 			path: ../../../htdocs/hrm/skill_card.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/hrm/skill_card.php
-
-		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
 			identifier: empty.variable
 			count: 1
@@ -15995,12 +15905,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/hrm/skill_document.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/hrm/skill_list.php
 
 		-
 			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
@@ -16861,12 +16765,6 @@ parameters:
 			path: ../../../htdocs/modulebuilder/index.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/modulebuilder/index.php
-
-		-
 			message: '#^Variable \$class might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -17013,12 +16911,6 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/modulebuilder/template/class/api_mymodule.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to method MyModuleApi\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/modulebuilder/template/class/api_mymodule.class.php
 
@@ -17623,12 +17515,6 @@ parameters:
 			path: ../../../htdocs/mrp/mo_production.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/mrp/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$action might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -18081,12 +17967,6 @@ parameters:
 		-
 			message: '#^Parameter \#1 \$object of method Products\:\:_cleanObjectDatas\(\) expects object, array\<ProductFournisseur\>\|int given\.$#'
 			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/product/class/api_products.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to method Products\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/product/class/api_products.class.php
 
@@ -19603,12 +19483,6 @@ parameters:
 			path: ../../../htdocs/projet/class/api_tasks.class.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to method Tasks\:\:_cleanObjectDatas\(\)$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/projet/class/api_tasks.class.php
-
-		-
 			message: '#^Call to function method_exists\(\) with \$this\(Project\) and ''getLibStatut'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -20315,12 +20189,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/projet/tasks/time.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/projet/tasks/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -21611,12 +21479,6 @@ parameters:
 			identifier: if.alwaysFalse
 			count: 1
 			path: ../../../htdocs/reception/note.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/reception/tpl/linkedobjectblock.tpl.php
 
 		-
 			message: '#^Variable \$object might not be defined\.$#'
@@ -23551,12 +23413,6 @@ parameters:
 			path: ../../../htdocs/ticket/messaging.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/ticket/tpl/linkedobjectblock.tpl.php
-
-		-
 			message: '#^Variable \$object might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -24025,12 +23881,6 @@ parameters:
 			path: ../../../htdocs/variants/list.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../htdocs/variants/list.php
-
-		-
 			message: '#^Call to function is_numeric\(\) with int will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -24195,12 +24045,6 @@ parameters:
 		-
 			message: '#^Result of && is always false\.$#'
 			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function dol_sort_array$#'
-			identifier: argument.templateType
 			count: 1
 			path: ../../../htdocs/webportal/class/html.formlistwebportal.class.php
 
@@ -24733,12 +24577,6 @@ parameters:
 			path: ../../../scripts/members/sync_members_dolibarr2ldap.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to function array_values$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../scripts/members/sync_members_ldap2dolibarr.php
-
-		-
 			message: '#^Variable \$user might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
@@ -24785,9 +24623,3 @@ parameters:
 			identifier: equal.alwaysTrue
 			count: 1
 			path: ../../../scripts/user/migrate_picture_path.php
-
-		-
-			message: '#^Unable to resolve the template type T in call to function array_values$#'
-			identifier: argument.templateType
-			count: 1
-			path: ../../../scripts/user/sync_users_ldap2dolibarr.php

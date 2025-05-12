@@ -78,6 +78,11 @@ if (empty($object) || !is_object($object)) {
 @phan-var-force Object $objp
 ';
 
+// Handle subtotals line view
+if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+	return require DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_view.tpl.php';
+}
+
 global $mysoc;
 global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 

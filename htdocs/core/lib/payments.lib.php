@@ -156,7 +156,7 @@ function payment_supplier_prepare_head(Paiement $object)
  * Return array of valid payment mode
  *
  * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', 'stripe', ...)
- * @param	string	$mode				0=Return array with key, 1=Return array with more information like label
+ * @param	int		$mode				0=Return array with key, 1=Return array with more information like label
  * @return	array<string,string>		Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod = '', $mode = 0)

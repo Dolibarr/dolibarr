@@ -327,7 +327,69 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
 		$tplcontent .= '<body id="bodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+
+		// Import necessary environment for the config page
+		if ($objectpage->type_container == 'setup') {
+			$content = '';
+			$content .= '<?php'."\n";
+			$content .= 'require_once DOL_DOCUMENT_ROOT.\'/core/class/html.formsetup.class.php\';'."\n";
+			$content .= '$formSetup = new FormSetup($db);'."\n";
+			$content .= '?>'."\n";
+			$tplcontent .= $content."\n";
+		}
+
 		$tplcontent .= $objectpage->content."\n";
+
+		// Add logic to handle view and actions for managing parameters in the config page
+		if ($objectpage->type_container == 'setup') {
+			$content = '<div id="websitetemplateconfigpage">'."\n";
+			$content .= '<?php'."\n";
+			$content .= '/*' . "\n";
+			$content .= ' * Actions' . "\n";
+			$content .= ' */' . "\n";
+			$content .= '$websitetemplateconf = GETPOSTINT(\'websitetemplateconf\');' . "\n";
+			$content .= 'include DOL_DOCUMENT_ROOT.\'/core/actions_setmoduleoptions.inc.php\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '/*' . "\n";
+			$content .= ' * View' . "\n";
+			$content .= ' */' . "\n";
+			$content .= 'print load_fiche_titre($langs->trans(\'SetupAndProperties\'), \'\', \'title_setup\');' . "\n";
+			$content .= '' . "\n";
+			$content .= 'if (!empty($message)) {' . "\n";
+			$content .= '    print $message;' . "\n";
+			$content .= '}' . "\n";
+			$content .= '' . "\n";
+			$content .= 'if (!empty($formSetup->items)) {' . "\n";
+			$content .= '    $html = \'\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '    $html .= \'<form action="config.php" method="POST">\';' . "\n";
+			$content .= '    // Generate hidden values from $formSetup->formHiddenInputs' . "\n";
+			$content .= '    if (!empty($formSetup->formHiddenInputs) && is_array($formSetup->formHiddenInputs)) {' . "\n";
+			$content .= '        foreach ($formSetup->formHiddenInputs as $hiddenKey => $hiddenValue) {' . "\n";
+			$content .= '            $html .= \'<input type="hidden" name="\' . dol_escape_htmltag($hiddenKey) . \'" value="\' . dol_escape_htmltag($hiddenValue) . \'">\';' . "\n";
+			$content .= '        }' . "\n";
+			$content .= '    }' . "\n";
+			$content .= '' . "\n";
+			$content .= '    // Generate output table' . "\n";
+			$content .= '    $html .= $formSetup->generateTableOutput(true);' . "\n";
+			$content .= '' . "\n";
+			$content .= '    // Submit button' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="action" value="save">\';' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="websitetemplateconf" value="1">\';' . "\n";
+			$content .= '    $html .= \'<br>\';' . "\n";
+			$content .= '    $html .= \'<div class="form-setup-button-container center">\';' . "\n";
+			$content .= '    $html .= \'<input class="button button-submit" type="submit" value="\' . $langs->trans("Save") . \'">\';' . "\n";
+			$content .= '    $html .= \'</div>\';' . "\n";
+			$content .= '    $html .= \'</form>\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '    print $html;' . "\n";
+			$content .= '}' . "\n";
+			$content .= '?>' . "\n";
+			$content .= '</div>' . "\n";
+			$tplcontent .= $content."\n";
+		}
+
+
 		$tplcontent .= '</body>'."\n";
 		$tplcontent .= '</html>'."\n";
 

@@ -2,6 +2,7 @@
 /* Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
  * Copyright (C) 2019-2024  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		William Mead				<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,8 @@ use Luracast\Restler\RestException;
 
 /**
  * API class for contacts
+ *
+ * @since	3.8.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}

@@ -372,11 +372,23 @@ class ExpeditionLigne extends CommonObjectLine
 		global $langs;
 		$error = 0;
 
+		$skip_check_parameters = false;
+
+		// Handling parent line subtotal line
+		if (!empty($this->element_type)
+			&& !empty($this->fk_elementdet)
+			&& $this->element_type == 'commande') {
+			$objectsrc_line = new OrderLine($this->db);
+			$objectsrc_line->fetch($this->fk_elementdet);
+			$skip_check_parameters = $objectsrc_line->special_code == SUBTOTALS_SPECIAL_CODE;
+		}
+
 		// Check parameters
-		if (empty($this->fk_expedition)
+		if ((empty($this->fk_expedition)
 			|| empty($this->fk_product) // product id is mandatory
 			|| (empty($this->fk_elementdet) && empty($this->fk_parent)) // at least origin line id of parent line id is set
-			|| !is_numeric($this->qty)) {
+			|| !is_numeric($this->qty))
+			&& !$skip_check_parameters) {
 			$langs->load('errors');
 			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 			return -1;

@@ -185,7 +185,6 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public $packaging;
 
-
 	/**
 	 *      Constructor
 	 *
