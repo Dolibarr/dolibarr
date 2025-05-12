@@ -848,4 +848,66 @@ class Categories extends DolibarrApi
 
 		return $cleaned_objects;
 	}
+
+	/**
+	 * Get the list of objects in a category.
+	 *
+	 * @param string     $label      Label of category
+	 * @param string     $type       Type of category ('member', 'customer', 'supplier', 'product', 'contact', 'project')
+	 * @param int        $onlyids    Return only ids of objects (consume less memory)
+	 *
+	 * @return mixed
+	 *
+	 * @url GET label/{label}/objects
+	 */
+	public function getLabelObjects($label, $type, $onlyids = 0)
+	{
+		dol_syslog("getObjects($label, $type, $onlyids)", LOG_DEBUG);
+
+		if (!DolibarrApiAccess::$user->hasRight('categorie', 'lire')) {
+			throw new RestException(403);
+		}
+
+		if (empty($type)) {
+			throw new RestException(500, 'The "type" parameter is required.');
+		}
+
+		$result = $this->category->fetch(0, $label);
+		if (!$result) {
+			throw new RestException(404, 'category not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('categorie', $this->category->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$result = $this->category->getObjectsInCateg($type, $onlyids);
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieving objects list : '.$this->category->error);
+		}
+
+		$objects = $result;
+		$cleaned_objects = array();
+		$objects_api = null;
+		if ($type == 'member') {
+			$objects_api = new Members();
+		} elseif ($type == 'customer' || $type == 'supplier') {
+			$objects_api = new Thirdparties();
+		} elseif ($type == 'product') {
+			$objects_api = new Products();
+		} elseif ($type == 'contact') {
+			$objects_api = new Contacts();
+		} elseif ($type == 'project') {
+			$objects_api = new Projects();
+		}
+
+		if (is_object($objects_api)) {
+			foreach ($objects as $obj) {
+				$cleaned_objects[] = $objects_api->_cleanObjectDatas($obj);
+			}
+		}
+
+		return $cleaned_objects;
+	}
 }
