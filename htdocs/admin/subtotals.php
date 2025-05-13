@@ -71,9 +71,9 @@ $conditions = array(
 	'COMMANDE' => (isModEnabled("order")),
 	'FACTURE' => (isModEnabled("invoice")),
 	'FACTUREREC' => (isModEnabled("invoice")),
-	'SUPPLIER_PROPOSAL' => (isModEnabled("supplier_proposal")),
-	'SUPPLIER_ORDER' => (isModEnabled("supplier_order")),
-	'SUPPLIER_INVOICE' => (isModEnabled("supplier_order")),
+	'SUPPLIER_PROPOSAL' => isModEnabled("supplier_proposal"),
+	'SUPPLIER_ORDER' => isModEnabled("supplier_order"),
+	'SUPPLIER_INVOICE' => isModEnabled("supplier_invoice"),
 );
 
 $max_depth = 0;
