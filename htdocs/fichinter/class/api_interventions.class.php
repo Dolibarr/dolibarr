@@ -130,7 +130,7 @@ class Interventions extends DolibarrApi
 	 * @param	string	$thirdparty_ids			Thirdparty ids to filter orders of (example '1' or '1,2,3') {@pattern /^[0-9,]*$/i}
 	 * @param	string	$sqlfilters				Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @param	string	$properties				Restrict the data returned to these properties. Ignored if empty. Comma separated list of property names
-	 * @param	string	$contact_type			{@choice '',thirdparty,internal,external} Type of contacts
+	 * @param	string	$contact_type			Type of contacts: thirdparty, internal or external
 	 * @param	bool	$pagination_data		If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array							Array of order objects
 	 * @phan-return array<object>

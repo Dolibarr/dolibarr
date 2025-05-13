@@ -14,18 +14,22 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $butactionbg
  * @var string $textbutaction
  * @var string $fontlist
+ * @var string $fontsize
  * @var string $left
  * @var string $right
+ * @var int<0,max> $nbtopmenuentries
  */
 '
 @phan-var-force string $butactionbg
 @phan-var-force string $colortextlink
 @phan-var-force int $dol_optimize_smallscreen
 @phan-var-force string $fontlist
+@phan-var-force string $fontsize
 @phan-var-force string $left
 @phan-var-force int $nbtopmenuentries
 @phan-var-force string $right
 @phan-var-force string $textbutaction
+@phan-var-force int<0,max> $nbtopmenuentries
 ';
 ?>
 
@@ -401,7 +405,7 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	max-height: 42px;
 }
 
-/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?> ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
 @media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
 {

@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -2765,7 +2765,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 						// Add html code to add the edit button and go back
 						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
-						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Rubriques"), img_picto('', 'add', 'class="editfielda"'), '/categories/categorie_list.php?type='.Categorie::TYPE_CUSTOMER, '', '', '', $jsonclose);
+						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), '/categories/categorie_list.php?type='.Categorie::TYPE_CUSTOMER, '', '', '', $jsonclose);
 						print $s;
 						// Add js code to add the edit button and go back
 						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
