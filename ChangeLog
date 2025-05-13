@@ -12,6 +12,7 @@ NEW: Subtotal module (#33502) - development
 NEW: shipment kits with dispatcher v2 (#33750)
 NEW: ticket : display files linked to actioncomm (#32325)
 NEW: Support of monthly or weekly recurring events
+NEW: AI feature to autofill extrafields
 NEW: #22848
 NEW: #32706 - Treasury accountancy (#33701)
 NEW: #33506 Add a constant to apply a ratio to resize images in ODT templates (#33543)
@@ -109,7 +110,6 @@ NEW: Use the packaging feature to round the quantities to some given multiples f
 NEW: Use the PhpZipProxy handler to generate ODT files (avoid corrupted ODT with recent version of Libre Office).
 NEW: vcard (vcf) download for third party (#31957)
 NEW: Web pages of websites are protected by the WAF
-NEW: AI feature to autofill extrafields
 NEW: Add constant to show stock in products combo
 
 For developers:

@@ -17,6 +17,7 @@
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2365,6 +2366,7 @@ class Product extends CommonObject
 		$pu_ht = $this->price;
 		$pu_ttc = $this->price_ttc;
 		$price_min = $this->price_min;
+		$price_min_ttc = $this->price_min_ttc;
 		$price_base_type = $this->price_base_type;
 
 		// if price by customer / level
@@ -2386,6 +2388,7 @@ class Product extends CommonObject
 							$pricebycustomerexist = true;
 							$pu_ht = price($custprice_line->price);
 							$price_min = price($custprice_line->price_min);
+							$price_min_ttc = price($custprice_line->price_min_ttc);
 							$pu_ttc = price($custprice_line->price_ttc);
 							$price_base_type = $custprice_line->price_base_type;
 							$tva_tx = $custprice_line->tva_tx;
@@ -2406,6 +2409,7 @@ class Product extends CommonObject
 				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+				$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
 				$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
 				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 					// using this option is a bug. kept for backward compatibility
@@ -2424,6 +2428,7 @@ class Product extends CommonObject
 			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+			$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
 			$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
 			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 				if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
@@ -2452,6 +2457,7 @@ class Product extends CommonObject
 						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 							$pu_ht = price($custprice_line->price);
 							$price_min = price($custprice_line->price_min);
+							$price_min_ttc = price($custprice_line->price_min_ttc);
 							$pu_ttc = price($custprice_line->price_ttc);
 							$price_base_type = $custprice_line->price_base_type;
 							$tva_tx = $custprice_line->tva_tx;
@@ -2505,7 +2511,7 @@ class Product extends CommonObject
 			}
 		}
 
-		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
+		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_min_ttc' => $price_min_ttc, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
