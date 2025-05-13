@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2004-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@inodbox.com>
- * Copyright (C) 2012-2013	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2019		Christophe Battarel <christophe@altairis.fr>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2004-2011	Laurent Destailleur	    <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012	Regis Houssin		    <regis.houssin@inodbox.com>
+ * Copyright (C) 2012-2013	Juanjo Menent		    <jmenent@2byte.es>
+ * Copyright (C) 2019		Christophe Battarel     <christophe@altairis.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,9 @@ $modules = array(
 	'COMMANDE' => array('lang' => 'orders', 'key' => 'CustomerOrder', 'old_pdf' => '(einstein model)'),
 	'FACTURE' => array('lang' => 'bills', 'key' => 'CustomerInvoice', 'old_pdf' => '(crabe model)'),
 	'FACTUREREC' => array('lang' => 'bills', 'key' => 'RecurringInvoiceTemplate'),
+	'SUPPLIER_PROPOSAL' => array('lang' => 'supplier_proposal', 'key' => 'SupplierProposal', 'old_pdf' => '(aurore model)'),
+	'SUPPLIER_ORDER' => array('lang' => 'orders', 'key' => 'SupplierOrder', 'old_pdf' => '(muscadet model)'),
+	'SUPPLIER_INVOICE' => array('lang' => 'bills', 'key' => 'SupplierInvoice'),
 );
 // Conditions for the option to be offered
 $conditions = array(
@@ -68,6 +71,9 @@ $conditions = array(
 	'COMMANDE' => (isModEnabled("order")),
 	'FACTURE' => (isModEnabled("invoice")),
 	'FACTUREREC' => (isModEnabled("invoice")),
+	'SUPPLIER_PROPOSAL' => (isModEnabled("supplier_proposal")),
+	'SUPPLIER_ORDER' => (isModEnabled("supplier_order")),
+	'SUPPLIER_INVOICE' => (isModEnabled("supplier_order")),
 );
 
 $max_depth = 0;
