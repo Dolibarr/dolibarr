@@ -19,6 +19,7 @@
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2025		Lenin Rivas					<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3055,6 +3056,7 @@ if (empty($reshook)) {
 			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
+			$price_base_type = $product->price_base_type;
 
 			// Check price is not lower than minimum (check is done only for standard or replacement invoices)
 			if ($usermustrespectpricemin && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT)) {
