@@ -211,7 +211,7 @@ if (is_array($object->lines) && (count($object->lines) > 0)) {
 			// if we switch to a different entity, we have to reset the $extrafields global var to
 			// make sure the extrafield definitions from this entity are properly loaded
 			if (($line->entity ?: 1) != $conf->entity && isset($extrafields) && !empty($extrafields->attributes)) {
-				$extrafields = new Extrafields($db);
+				$extrafields = new ExtraFields($db);
 			}
 			$conf->entity = (empty($line->entity) ? 1 : $line->entity);
 			$conf->setValues($db); // This make also the $mc->setValues($conf); that reload $mc->sharings
