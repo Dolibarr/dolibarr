@@ -1630,6 +1630,7 @@ if (empty($reshook)) {
 			}
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
+			$price_base_type = $product->price_base_type;
 
 			// Check price is not lower than minimum
 			if ($usermustrespectpricemin) {
