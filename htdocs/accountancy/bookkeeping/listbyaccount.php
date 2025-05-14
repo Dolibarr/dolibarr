@@ -451,12 +451,31 @@ if (empty($reshook)) {
 		$param = '&type='.$type.$param;
 	}
 
-	// Mass actions
-	$objectclass = 'Bookkeeping';
-	$objectlabel = 'Bookkeeping';
+	// Permissions
 	$permissiontoread = $user->hasRight('societe', 'lire');
 	$permissiontodelete = $user->hasRight('societe', 'supprimer');
 	$permissiontoadd = $user->hasRight('societe', 'creer');
+
+	// Actions
+	if ($action === 'exporttopdf' && $permissiontoadd) {
+		$object->fetchAllByAccount($sortorder, $sortfield, 0, 0, $filter);
+		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_ledger.modules.php';
+		$pdf = new pdf_ledger($db);
+		$pdf->fromDate = $search_date_start;
+		$pdf->toDate = $search_date_end;
+		$result = $pdf->write_file($object, $langs);
+
+		if ($result < 0) {
+			setEventMessage($pdf->error, "errors");
+		} else {
+			// Generated PDF is directly sent to the browser
+			exit;
+		}
+	}
+
+	// Mass actions
+	$objectclass = 'Bookkeeping';
+	$objectlabel = 'Bookkeeping';
 	$uploaddir = $conf->societe->dir_output;
 
 	global $error;
@@ -815,6 +834,9 @@ if (empty($reshook)) {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 			$newcardbutton .= dolGetButtonTitle($langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/listbyaccount.php?type=sub&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
+
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'] . '?action=exporttopdf&' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
+
 		$newcardbutton .= dolGetButtonTitleSeparator();
 	}
 	$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type) ? '&type=sub' : '').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);

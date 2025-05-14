@@ -221,12 +221,8 @@ if (empty($reshook)) {
 	}
 }
 
-if ($action == 'export_csv' && $user->hasRight('accounting', 'mouvements', 'lire')) {
-	$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
-
-	$filename = 'balance';
-	$type_export = 'balance';
-	include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
+if ($action == 'export' && $user->hasRight('accounting', 'mouvements', 'lire')) {
+	$exportType = GETPOST('export_type');
 
 	if ($type == 'sub') {
 		$result = $object->fetchAllBalance($sortorder, $sortfield, $limit, 0, $filter, 'AND', 1);
@@ -237,21 +233,48 @@ if ($action == 'export_csv' && $user->hasRight('accounting', 'mouvements', 'lire
 		setEventMessages($object->error, $object->errors, 'errors');
 	}
 
-	foreach ($object->lines as $line) {
-		if ($type == 'sub') {
-			print '"' . length_accounta($line->subledger_account) . '"' . $sep;
-			print '"' . $line->subledger_label . '"' . $sep;
-		} else {
-			print '"' . length_accountg($line->numero_compte) . '"' . $sep;
-			print '"' . $object->get_compte_desc($line->numero_compte) . '"' . $sep;
-		}
-		print '"'.price($line->debit).'"'.$sep;
-		print '"'.price($line->credit).'"'.$sep;
-		print '"'.price($line->debit - $line->credit).'"'.$sep;
-		print "\n";
-	}
+	if ($exportType === 'csv') {
+		$sep = getDolGlobalString('ACCOUNTING_EXPORT_SEPARATORCSV');
+		$filename = 'balance';
+		$type_export = 'balance';
+		include DOL_DOCUMENT_ROOT.'/accountancy/tpl/export_journal.tpl.php';
 
-	exit;
+		foreach ($object->lines as $line) {
+			if ($type == 'sub') {
+				print '"' . length_accounta($line->subledger_account) . '"' . $sep;
+				print '"' . $line->subledger_label . '"' . $sep;
+			} else {
+				print '"' . length_accountg($line->numero_compte) . '"' . $sep;
+				print '"' . $object->get_compte_desc($line->numero_compte) . '"' . $sep;
+			}
+			print '"'.price($line->debit).'"'.$sep;
+			print '"'.price($line->credit).'"'.$sep;
+			print '"'.price($line->debit - $line->credit).'"'.$sep;
+			print "\n";
+		}
+		exit;
+	} else {
+		require_once DOL_DOCUMENT_ROOT . '/core/modules/accountancy/doc/pdf_balance.modules.php';
+		$pdf = new pdf_balance($db);
+		$pdf->fromDate = dol_mktime(12, 0, 0, GETPOSTINT('search_date_startmonth'), GETPOSTINT('search_date_startday'), GETPOSTINT('search_date_startyear'));
+		if (empty($pdf->fromDate)) {
+			$pdf->fromDate = dol_mktime(12, 0, 0, GETPOSTINT('date_startmonth'), GETPOSTINT('date_startday'), GETPOSTINT('date_startyear'));
+		}
+		$pdf->toDate = dol_mktime(12, 0, 0, GETPOSTINT('search_date_endmonth'), GETPOSTINT('search_date_endday'), GETPOSTINT('search_date_endyear'));
+		if (empty($pdf->toDate)) {
+			$pdf->toDate = dol_mktime(12, 0, 0, GETPOSTINT('date_endmonth'), GETPOSTINT('date_endday'), GETPOSTINT('date_endyear'));
+		}
+		$pdf->balanceType = $type;
+
+		$result = $pdf->write_file($object, $langs);
+
+		if ($result < 0) {
+			setEventMessage($pdf->error, "errors");
+		} else {
+			// Generated PDF is directly sent to the browser
+			exit;
+		}
+	}
 }
 
 
@@ -270,7 +293,7 @@ $help_url = 'EN:Module_Double_Entry_Accounting|FR:Module_Comptabilit&eacute;_en_
 llxHeader('', $title_page, $help_url, '', 0, 0, '', '', '', 'mod-accountancy accountancy-consultation page-'.(($type == 'sub') ? 'sub' : '').'balance');
 
 
-if ($action != 'export_csv') {
+if ($action != 'export') {
 	// List
 	$nbtotalofrecords = '';
 	if (!getDolGlobalInt('MAIN_DISABLE_FULL_SCANLIST')) {
@@ -298,6 +321,7 @@ if ($action != 'export_csv') {
 	print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" id="action" value="list">';
+	print '<input type="hidden" name="export_type" id="export_type" value="">';
 	if ($optioncss != '') {
 		print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	}
@@ -324,10 +348,12 @@ if ($action != 'export_csv') {
 
 		print '<script type="text/javascript">
 		jQuery(document).ready(function() {
-			jQuery("#exportcsvbutton").click(function(event) {
+			jQuery("#exportcsvbutton, #exportpdfbutton").click(function(event) {
 				event.preventDefault();
-				console.log("Set action to export_csv");
-				jQuery("#action").val("export_csv");
+				const exportType = this.id === "exportcsvbutton" ? "csv" : "pdf";
+				console.log("Set action to export, export_type to " + exportType);
+				jQuery("#action").val("export");
+				jQuery("#export_type").val(exportType);
 				jQuery("#searchFormList").submit();
 				jQuery("#action").val("list");
 			});
@@ -341,6 +367,9 @@ if ($action != 'export_csv') {
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupByAccountAccounting'), '', 'fa fa-stream paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?' . $url_param, '', 1, array('morecss' => 'marginleftonly btnTitleSelected'));
 			$newcardbutton .= dolGetButtonTitle($langs->trans('AccountBalance')." - ".$langs->trans('GroupBySubAccountAccounting'), '', 'fa fa-align-left vmirror paddingleft imgforviewmode', DOL_URL_ROOT . '/accountancy/bookkeeping/balance.php?type=sub' . $url_param, '', 1, array('morecss' => 'marginleftonly'));
 		}
+
+		$newcardbutton .= dolGetButtonTitle($langs->trans('ExportToPdf'), '', 'fa fa-file-pdf paddingleft', $_SERVER['PHP_SELF'], 'exportpdfbutton', 1, array('morecss' => 'marginleftonly'));
+
 		$newcardbutton .= dolGetButtonTitleSeparator();
 		$newcardbutton .= dolGetButtonTitle($langs->trans('NewAccountingMvt'), '', 'fa fa-plus-circle paddingleft', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=create'.(!empty($type)?'&type=sub':'').'&backtopage='.urlencode($_SERVER['PHP_SELF']), '', $permissiontoadd);
 	}
