@@ -3038,6 +3038,13 @@ if (empty($reshook)) {
 
 		$remise_percent = price2num(GETPOST('remise_percent'), '', 2);
 
+		$price_base_type = 'HT';
+		$pu = $pu_ht;
+		if (empty($pu) && !empty($pu_ttc)) {
+			$pu = $pu_ttc;
+			$price_base_type = 'TTC';
+		}
+
 		// Check minimum price
 		$productid = GETPOSTINT('productid');
 		if (!empty($productid)) {
@@ -3132,13 +3139,6 @@ if (empty($reshook)) {
 						break;
 					}
 				}
-			}
-
-			$price_base_type = 'HT';
-			$pu = $pu_ht;
-			if (empty($pu) && !empty($pu_ttc)) {
-				$pu = $pu_ttc;
-				$price_base_type = 'TTC';
 			}
 
 			$result = $object->updateline(

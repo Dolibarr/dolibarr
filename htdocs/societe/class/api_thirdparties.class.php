@@ -7,6 +7,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ class Thirdparties extends DolibarrApi
 	 * @param	string	$sortorder			Sort order
 	 * @param	int		$limit				List limit
 	 * @param	int		$page				Page number
-	 * @param	int		$mode				Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers {@choice 1,2,3,4}
+	 * @param	int		$mode				Set to 0 to show all thirdparties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers {@choice 0,1,2,3,4}
 	 * @param	int		$category			Use this param to filter the list by category
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names

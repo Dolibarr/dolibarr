@@ -898,7 +898,7 @@ class CommandeFournisseur extends CommonOrder
 	 */
 	public function getLibStatut($mode = 0)
 	{
-		return $this->LibStatut($this->status, $mode, $this->billed);
+		return $this->LibStatut(isset($this->status) ? $this->status : $this->statut, $mode, $this->billed);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
