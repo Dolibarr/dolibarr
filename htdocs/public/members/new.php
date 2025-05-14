@@ -54,7 +54,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
 // if (is_numeric($entity)) { // $entity is casted to int
 define("DOLENTITY", $entity);
 // }
@@ -91,6 +91,17 @@ $error = 0;
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
+
+if(isModEnabled('multicompany')) {
+	if($entity===0){
+		httponly_accessforbidden('Multiadmin environment, no entity id provided');
+	}
+	force_switch_entity($entity);
+} else {
+	$entity = 1;
+}
+
+
 // Security check
 if (!isModEnabled('member')) {
 	httponly_accessforbidden('Module Membership not enabled');
@@ -109,6 +120,16 @@ $object = new Adherent($db);
 
 $user->loadDefaultValues();
 
+// Force switching conf of entity, even if user is connected
+// Fox example when trying to go on public form of an other entity
+function force_switch_entity($newEntity)
+{
+	global $db, $conf;
+	if ($newEntity != $conf->entity) {
+		$conf->entity = $newEntity;
+		$conf->setValues($db);
+	}
+}
 
 /**
  * Show header for new member
