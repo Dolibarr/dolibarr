@@ -335,7 +335,7 @@ if (!empty($force_install_noedit)) {
 	if (!isset($dolibarr_main_db_user)) {
 		$dolibarr_main_db_user = "";
 	}
-	
+
 	?>
 	<tr>
 		<!-- Driver type -->
