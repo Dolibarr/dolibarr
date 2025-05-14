@@ -1,4 +1,4 @@
-# Dolibarr language file - Source file is en_US - trips
+# Dolibarr language file - Source file is en_US - trips.lang
 AUTHOR=تم تسجيلها عن طريق
 AUTHORPAIEMENT=يتحملها
 AddTrip=إنشاء تقرير حساب
@@ -13,6 +13,8 @@ byEX_EXP=عن طريق السطر (الحصر لـ %s)
 byEX_MON=حسب الشهر (الحصر لـ %s)
 byEX_YEA=حسب السنة (قيود على %s)
 CANCEL_USER=حذف من قبل
+ACCOUNTING_ACCOUNT_EXPENSEREPORT=Account (from the Chart of Account) used by default for "users" on expense reports
+ACCOUNTING_ACCOUNT_EXPENSEREPORT_Desc=The dedicated account defined on the user card will be used for Subledger accounting only. This one will be used for General Ledger, and also as the default value of Subledger accounting if no dedicated accounting account is not defined on the user.
 CarCategory=فئة السيارة
 ClassifyRefunded=تصنيف "ردها"
 CompanyVisited=زيارة الشركة / المنظمة
@@ -39,7 +41,7 @@ expenseReportCoef=معامل في الرياضيات او درجة
 expenseReportCoefUndefined=(القيمة غير محددة)
 expenseReportOffset=ويقابل
 expenseReportPrintExample=الإزاحة + (d x coef) = %s
-expenseReportRangeDisabled=النطاق معطل - راجع c_exp_tax_range dictionay
+expenseReportRangeDisabled=تم تعطيل النطاق - راجع قاموس c_exp_tax_range
 expenseReportRangeFromTo=من %d إلى %d
 expenseReportRangeMoreThan=أكثر من %d
 expenseReportTotalForFive=مثال مع <u> d </u> = 5
@@ -91,9 +93,9 @@ nolimitbyEX_EXP=عن طريق السطر (بلا حدود)
 nolimitbyEX_MON=حسب الشهر (بلا حدود)
 nolimitbyEX_YEA=حسب السنة (بلا قيود)
 NoTripsToExportCSV=أي تقرير نفقة لتصدير لهذه الفترة.
-NOT_AUTHOR=أنت لست صاحب هذا التقرير حساب. إلغاء العملية.
+NOT_AUTHOR=أنت لست مؤلف هذا تقرير المصروفات. تم إلغاء العملية.
 OnExpense=خط المصاريف
-PDFStandardExpenseReports=قالب قياسي لتوليد وثيقة PDF لتقرير حساب
+PDFStandardExpenseReports=Standard template to generate a PDF document for an expense report
 PaidTrip=دفع تقرير مصروفات
 REFUSEUR=نفتها
 RangeIk=نطاق الأميال
@@ -103,10 +105,10 @@ ShowExpenseReport=عرض تقرير حساب
 ShowTrip=عرض تقرير حساب
 TripCard=حساب بطاقة تقرير
 TripId=تقرير حساب الهوية
-TripNDF=المعلومات تقرير حساب
+TripNDF=المعلومات تقرير المصروفات
 TripSociete=شركة المعلومات
 Trips=تقارير المصاريف
-TripsAndExpenses=تقارير النفقات
+TripsAndExpenses=تقارير المصاريف
 TripsAndExpensesStatistics=إحصاءات تقارير المصاريف
 TypeFees=أنواع الرسوم
 UploadANewFileNow=قم بتحميل مستند جديد الآن
@@ -115,6 +117,10 @@ VALIDOR=التي وافقت عليها
 ValidateAndSubmit=التحقق من صحة ويقدم للموافقة عليها
 ValidatedWaitingApproval=التحقق من صحة (في انتظار الموافقة)
 ValideTrip=الموافقة على تقرير النفقات
+ExpenseReportPayments=Expense report payments
+TaxUndefinedForThisCategory = Tax is undefined for this category
+errorComputeTtcOnMileageExpense=Error on computing mileage expense
+ErrorOnlyDraftStatusCanBeDeletedInMassAction=Only elements in draft status can be deleted in mass action
 
 ## Dictionary
 EX_BRE=إفطار

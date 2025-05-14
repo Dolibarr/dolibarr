@@ -1,23 +1,23 @@
 # Dolibarr language file - Source file is en_US - help
 CommunitySupport=Forum/Wiki support
 EMailSupport=Emails support
-RemoteControlSupport=Online real time / remote support
+RemoteControlSupport=অনলাইন রিয়েল-টাইম / দূরবর্তী সমর্থন
 OtherSupport=Other support
 ToSeeListOfAvailableRessources=To contact/see available resources:
-HelpCenter=Help center
-DolibarrHelpCenter=Dolibarr Help and Support Center
-ToGoBackToDolibarr=Otherwise, <a href="%s">click here to continue to use Dolibarr</a>.
-TypeOfSupport=Type of support
+HelpCenter=সাহায্য কেন্দ্র
+DolibarrHelpCenter=ডলিবার হেল্প অ্যান্ড সাপোর্ট সেন্টার
+ToGoBackToDolibarr=অন্যথায়, <a href="%s">Dolibarr ব্যবহার চালিয়ে যেতে এখানে ক্লিক করুন</a>।
+TypeOfSupport=সমর্থনের ধরন
 TypeSupportCommunauty=Community (free)
 TypeSupportCommercial=Commercial
 TypeOfHelp=Type
-NeedHelpCenter=Need help or support?
+NeedHelpCenter=সমর্থন প্রয়োজন?
 Efficiency=Efficiency
 TypeHelpOnly=Help only
 TypeHelpDev=Help+Development
-TypeHelpDevForm=Help+Development+Training
-BackToHelpCenter=Otherwise, <a href="%s">go back to Help center home page</a>.
-LinkToGoldMember=You can call one of the trainers preselected by Dolibarr for your language (%s) by clicking their Widget (status and maximum price are automatically updated):
+TypeHelpDevForm=সাহায্য+উন্নয়ন+প্রশিক্ষণ
+BackToHelpCenter=অন্যথায়, <a href="%s">সহায়তা কেন্দ্রের হোম পেজে ফিরে যান</a>।
+LinkToGoldMember=আপনি আপনার ভাষার জন্য Dolibarr দ্বারা পূর্বনির্বাচিত একজন প্রশিক্ষককে কল করতে পারেন (%s) তাদের উইজেটে ক্লিক করে (স্থিতি এবং সর্বোচ্চ মূল্য স্বয়ংক্রিয়ভাবে আপডেট হয়):
 PossibleLanguages=Supported languages
-SubscribeToFoundation=Help the Dolibarr project, subscribe to the foundation
-SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank">%s</a></b>
+SubscribeToFoundation=Dolibarr প্রকল্পে সাহায্য করুন, ফাউন্ডেশনের সদস্যতা নিন
+SeeOfficalSupport=For official Dolibarr support in your language: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

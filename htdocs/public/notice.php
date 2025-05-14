@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016-2021	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,9 @@
 /**
  *	\file       htdocs/public/notice.php
  *	\brief      Dolibarr public page to show a notice.
- *              Default notice is a message to say network connection is off. Some parameters can be used to show another message.
- *              You can call this page with URL:
- *                /public/notice.php?lang=xx_XX&transkey=translation_key  		(key must be inside file main.lang, error.lang or other.lang)
- *                /public/notice.php?transphrase=url_encoded_sentence_to_show
+ *              Default notice is a message to say network connection is off. Some parameters can be used to show another message:
+ *              /public/notice.php?lang=xx_XX&transkey=translation_key  		(key must be inside file main.lang, error.lang or other.lang)
+ *              /public/notice.php?transphrase=sentence_to_show
  */
 
 if (!defined('NOLOGIN')) {
@@ -42,14 +42,17 @@ if (!defined('NOBROWSERNOTIF')) {
 
 // Load Dolibarr environment
 require '../main.inc.php';
-
+/**
+ * @var DoliDB $db
+ * @var Translate $langs
+ */
 
 /**
  * View
  */
 
 if (!GETPOST('transkey', 'alphanohtml') && !GETPOST('transphrase', 'alphanohtml')) {
-	print 'Sorry, it seems your internet connexion is off.<br>';
+	print 'Sorry, it seems your internet connection is off.<br>';
 	print 'You need to be connected to network to use this software.<br>';
 } else {
 	$langs->loadLangs(array("error", "other"));

@@ -1,0 +1,3 @@
+# Dolibarr language file - Source file is en_US - banks
+TransfertOnlyConciliatedBankLine=Transfert only reconciled lines from bank
+TransfertAllBankLines=Transfert all lines from bank even if there are not reconciled

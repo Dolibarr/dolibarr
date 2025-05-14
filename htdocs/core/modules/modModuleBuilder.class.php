@@ -19,11 +19,12 @@
 /**
  * 	\defgroup   modulebuilder   Module ModuleBuilder
  *  \brief      Add a log into a block chain for some actions.
- *  \file       htdocs/core/modules/modBlockedLog.class.php
- *  \ingroup    blockedlog
+ *  \file       htdocs/core/modules/modModuleBuilder.class.php
+ *  \ingroup    modulebuilder
  *  \brief      Description and activation file for the module ModuleBuilder
  */
 include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+
 
 /**
  *	Class to describe a ModuleBuilder module
@@ -48,7 +49,7 @@ class modModuleBuilder extends DolibarrModules
 		$this->module_position = '90';
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i', '', get_class($this));
-		$this->description = "A RAD (Rapid Application Development) tool to help developers to build their own module.";
+		$this->description = "A RAD (Rapid Application Development - low-code and no-code) tool to help developers or advanced users to build their own module/application.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)

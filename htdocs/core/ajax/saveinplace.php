@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2011-2012 Regis Houssin  <regis.houssin@inodbox.com>
+/* Copyright (C) 2011-2012  Regis Houssin           <regis.houssin@inodbox.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +19,7 @@
 
 /**
  *       \file       htdocs/core/ajax/saveinplace.php
- *       \brief      File to save field value
+ *       \brief      File to load field value. used only when option "Edit In Place" is set (MAIN_USE_JQUERY_JEDITABLE).
  */
 
 if (!defined('NOTOKENRENEWAL')) {
@@ -36,11 +38,19 @@ if (!defined('NOREQUIRESOC')) {
 // Load Dolibarr environment
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 $field = GETPOST('field', 'alpha', 2);
 $element = GETPOST('element', 'alpha', 2);
 $table_element = GETPOST('table_element', 'alpha', 2);
 $fk_element = GETPOST('fk_element', 'alpha', 2);
+$id = $fk_element;
 
 /* Example:
 field:editval_ref_customer (8 first chars will removed to know name of property)
@@ -53,6 +63,35 @@ loadmethod:
 savemethod:
 savemethodname:
 */
+
+// Load object according to $id and $element
+$element_ref = '';
+if (is_numeric($fk_element)) {
+	$id = (int) $fk_element;
+} else {
+	$element_ref = $fk_element;
+	$id = 0;
+}
+$object = fetchObjectByElement($id, $element, $element_ref);
+
+$module = $object->module;
+$element = $object->element;
+$usesublevelpermission = ($module != $element ? $element : '');
+if ($usesublevelpermission && !$user->hasRight($module, $element)) {	// There is no permission on object defined, we will check permission on module directly
+	$usesublevelpermission = '';
+}
+
+//print $object->id.' - '.$object->module.' - '.$object->element.' - '.$object->table_element.' - '.$usesublevelpermission."\n";
+
+// Security check
+$result = restrictedArea($user, $object->module, $object, $object->table_element, $usesublevelpermission, 'fk_soc', 'rowid', 0, 1);	// Call with mode return
+if (!$result) {
+	httponly_accessforbidden('Not allowed by restrictArea');
+}
+
+if (!getDolGlobalString('MAIN_USE_JQUERY_JEDITABLE')) {
+	httponly_accessforbidden('Can be used only when option MAIN_USE_JQUERY_JEDITABLE is set');
+}
 
 
 /*
@@ -74,6 +113,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	$savemethod = GETPOST('savemethod', 'alpha', 2);
 	$savemethodname = (!empty($savemethod) ? $savemethod : 'setValueFrom');
 	$newelement = $element;
+	$subelement = null;
 
 	$view = '';
 	$format = 'text';
@@ -103,7 +143,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 		$newelement = $element;
 	}
 
-	$_POST['action'] = 'update'; // Hack so restrictarea will test permissions on write too
+	$_POST['action'] = 'update'; // Keep this. It is a hack so restrictarea will test permissions on write too
 
 	$feature = $newelement;
 	$feature2 = $subelement;
@@ -124,7 +164,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 	}
 	//var_dump(GETPOST('action','aZ09'));
 	//var_dump($newelement.'-'.$subelement."-".$feature."-".$object_id);
-	$check_access = restrictedArea($user, $feature, $object_id, '', $feature2);
+	$check_access = restrictedArea($user, $feature, $object_id, '', (string) $feature2);
 	//var_dump($user->rights);
 	/*
 	if (!empty($user->rights->$newelement->creer) || !empty($user->rights->$newelement->create) || !empty($user->rights->$newelement->write)
@@ -146,7 +186,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				$return['error'] = $langs->trans('ErrorBadValue');
 			}
 		} elseif ($type == 'datepicker') {
-			$timestamp = GETPOST('timestamp', 'int', 2);
+			$timestamp = GETPOSTINT('timestamp', 2);
 			$format = 'date';
 			$newvalue = ($timestamp / 1000);
 		} elseif ($type == 'select') {
@@ -179,6 +219,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 				dol_include_once('/'.$module.'/class/actions_'.$subelement.'.class.php');
 				$classname = 'Actions'.ucfirst($subelement);
 				$object = new $classname($db);
+				'@phan-var-force CommonHookActions $object';
 				$ret = $object->$loadmethodname();
 				if ($ret > 0) {
 					$loadcache = $object->$loadcachename;
@@ -207,7 +248,7 @@ if (!empty($field) && !empty($element) && !empty($table_element) && !empty($fk_e
 			$object->fk_element = $fk_element;
 			$object->element = $element;
 
-			$ret = $object->$savemethodname($field, $newvalue, $table_element, $fk_element, $format);
+			$ret = $object->$savemethodname($field, $newvalue, $table_element, (int) $fk_element, $format);
 			if ($ret > 0) {
 				if ($type == 'numeric') {
 					$value = price($newvalue);

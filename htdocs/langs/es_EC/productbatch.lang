@@ -11,7 +11,6 @@ printEatby=Entrega: %s
 printSellby=Vendido-por: %s
 printQty=Cantidad: %d
 AddDispatchBatchLine=Agregar una línea para el envío de la vida útil
-WhenProductBatchModuleOnOptionAreForced=Cuando el módulo Lote/Serial está activado, la disminución automática de stock se ve obligada a "Disminuir existencias reales en la validación de envío" y el modo de aumento automático se fuerza a "Aumentar las existencias reales en el envío manual a los almacenes" y no se puede editar. Se pueden definir otras opciones como desee.
 ProductDoesNotUseBatchSerial=Este producto no utiliza el número de lote/serie
 ProductLotSetup=Configuración del módulo lote/serie
 ShowCurrentStockOfLot=Mostrar el stock actual de producto/lote

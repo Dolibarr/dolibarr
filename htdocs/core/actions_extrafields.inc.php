@@ -1,5 +1,7 @@
 <?php
-/* Copyright (C) 2011-2020 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2011-2020  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +25,21 @@
  *  \brief			Code for actions on extrafields admin pages
  */
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var ExtraFields $extrafields
+ * @var Translate $langs
+ *
+ * @var int $error
+ * @var string $action
+ * @var string $elementtype
+ * @var string $value
+ */
 $maxsizestring = 255;
 $maxsizeint = 10;
-$mesg = array();
+$mesg = '';
+$mesgs = array();
 
 $extrasize = GETPOST('size', 'intcomma');
 $type = GETPOST('type', 'alphanohtml');
@@ -33,6 +47,7 @@ $param = GETPOST('param', 'alphanohtml');
 $css = GETPOST('css', 'alphanohtml');
 $cssview = GETPOST('cssview', 'alphanohtml');
 $csslist = GETPOST('csslist', 'alphanohtml');
+$confirm = GETPOST('confirm', 'alpha');
 
 if ($type == 'double' && strpos($extrasize, ',') === false) {
 	$extrasize = '24,8';
@@ -47,6 +62,19 @@ if ($type == 'select') {
 	$extrasize = '';
 }
 
+// List of reserved words for databases
+$listofreservedwords = array(
+	'ADD', 'ALL', 'ALTER', 'ANALYZE', 'AND', 'AS', 'ASENSITIVE', 'BEFORE', 'BETWEEN', 'BINARY', 'BLOB', 'BOTH', 'CALL', 'CASCADE', 'CASE', 'CHANGE', 'CHAR', 'CHARACTER', 'CHECK', 'COLLATE', 'COLUMN', 'CONDITION', 'CONSTRAINT', 'CONTINUE', 'CONVERT', 'CREATE', 'CROSS', 'CURRENT_DATE', 'CURRENT_TIME', 'CURRENT_TIMESTAMP', 'CURRENT_USER',
+	'CURSOR', 'DATABASE', 'DATABASES', 'DAY_HOUR', 'DAY_MICROSECOND', 'DAY_MINUTE', 'DAY_SECOND', 'DECIMAL', 'DECLARE', 'DEFAULT', 'DELAYED', 'DELETE', 'DESC', 'DESCRIBE', 'DETERMINISTIC', 'DISTINCT', 'DISTINCTROW', 'DOUBLE', 'DROP', 'DUAL',
+	'EACH', 'ELSE', 'ELSEIF', 'ENCLOSED', 'ESCAPED', 'EXISTS', 'EXPLAIN', 'FALSE', 'FETCH', 'FLOAT', 'FLOAT4', 'FLOAT8', 'FORCE', 'FOREIGN', 'FULLTEXT', 'GRANT', 'GROUP', 'HAVING', 'HIGH_PRIORITY', 'HOUR_MICROSECOND', 'HOUR_MINUTE', 'HOUR_SECOND',
+	'IGNORE', 'IGNORE_SERVER_IDS', 'INDEX', 'INFILE', 'INNER', 'INOUT', 'INSENSITIVE', 'INSERT', 'INT', 'INTEGER', 'INTERVAL', 'INTO', 'ITERATE',
+	'KEYS', 'KEYWORD', 'LEADING', 'LEAVE', 'LEFT', 'LIKE', 'LIMIT', 'LINES', 'LOCALTIME', 'LOCALTIMESTAMP', 'LONGBLOB', 'LONGTEXT', 'MASTER_SSL_VERIFY_SERVER_CERT', 'MATCH', 'MEDIUMBLOB', 'MEDIUMINT', 'MEDIUMTEXT', 'MIDDLEINT', 'MINUTE_MICROSECOND', 'MINUTE_SECOND', 'MODIFIES', 'NATURAL', 'NOT', 'NO_WRITE_TO_BINLOG', 'NUMERIC',
+	'OFFSET', 'ON', 'OPTION', 'OPTIONALLY', 'OUTER', 'OUTFILE', 'OVER',
+	'PARTITION', 'POSITION', 'PRECISION', 'PRIMARY', 'PROCEDURE', 'PURGE', 'RANGE', 'READS', 'READ_WRITE', 'REAL', 'REFERENCES', 'REGEXP', 'RELEASE', 'RENAME', 'REPEAT', 'REQUIRE', 'RESTRICT', 'RETURN', 'REVOKE', 'RIGHT', 'RLIKE',
+	'SCHEMAS', 'SECOND_MICROSECOND', 'SENSITIVE', 'SEPARATOR', 'SIGNAL', 'SMALLINT', 'SPATIAL', 'SPECIFIC', 'SQLEXCEPTION', 'SQLSTATE', 'SQLWARNING', 'SQL_BIG_RESULT', 'SQL_CALC_FOUND_ROWS', 'SQL_SMALL_RESULT', 'SSL', 'STARTING', 'STRAIGHT_JOIN',
+	'TABLE', 'TERMINATED', 'TINYBLOB', 'TINYINT', 'TINYTEXT', 'TRAILING', 'TRIGGER', 'UNDO', 'UNIQUE', 'UNSIGNED', 'UPDATE', 'USAGE', 'USING', 'UTC_DATE', 'UTC_TIME', 'UTC_TIMESTAMP', 'VALUES', 'VARBINARY', 'VARCHAR', 'VARYING',
+	'WHEN', 'WHERE', 'WHILE', 'WRITE', 'XOR', 'YEAR_MONTH', 'ZEROFILL'
+);
 
 // Add attribute
 if ($action == 'add') {
@@ -55,55 +83,61 @@ if ($action == 'add') {
 		if (!$type) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			$action = 'create';
 		}
 		if ($type == 'varchar' && $extrasize <= 0) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
 			$action = 'edit';
 		}
 		if ($type == 'varchar' && $extrasize > $maxsizestring) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
 			$action = 'create';
 		}
 		if ($type == 'int' && $extrasize > $maxsizeint) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$action = 'create';
+		}
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesgs[] = $langs->trans("ErrorSizeForStarsType");
 			$action = 'create';
 		}
 		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectType");
 			$action = 'create';
 		}
 		if ($type == 'sellist' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectListType");
 			$action = 'create';
 		}
 		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForCheckBoxType");
+			$mesgs[] = $langs->trans("ErrorNoValueForCheckBoxType");
 			$action = 'create';
 		}
 		if ($type == 'link' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForLinkType");
+			$mesgs[] = $langs->trans("ErrorNoValueForLinkType");
 			$action = 'create';
 		}
 		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForRadioType");
+			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'create';
 		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
@@ -116,13 +150,13 @@ if ($action == 'add') {
 						if (count($matches[0]) > 1) {
 							$error++;
 							$langs->load("errors");
-							$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+							$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 							$action = 'create';
 						}
 					} else {
 						$error++;
 						$langs->load("errors");
-						$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+						$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 						$action = 'create';
 					}
 				}
@@ -133,17 +167,17 @@ if ($action == 'add') {
 			if (strlen(GETPOST('attrname', 'aZ09')) < 3) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
+				$mesgs[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
 				$action = 'create';
 			}
 		}
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'int', 'integer', 'float', 'double', 'real', 'position'))) {
+			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords)) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
+				$mesgs[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
 				$action = 'create';
 			}
 		}
@@ -159,14 +193,19 @@ if ($action == 'add') {
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
-						$params['options'] = array($parameters=>null);
+						$params['options'] = array($parameters => null);
 					}
 				} else {
 					// Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						list($key, $value) = explode(',', $param_ligne);
-						if (!array_key_exists('options', $params)) {
-							$params['options'] = array();
+						if (strpos($param_ligne, ',') !== false) {
+							list($key, $value) = explode(',', $param_ligne);
+							if (!array_key_exists('options', $params)) {
+								$params['options'] = array();
+							}
+						} else {
+							$key = $param_ligne;
+							$value = null;
 						}
 						$params['options'][$key] = $value;
 					}
@@ -174,7 +213,7 @@ if ($action == 'add') {
 
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 
@@ -182,7 +221,7 @@ if ($action == 'add') {
 					GETPOST('attrname', 'aZ09'),
 					GETPOST('label', 'alpha'),
 					$type,
-					GETPOST('pos', 'int'),
+					GETPOSTINT('pos'),
 					$extrasize,
 					$elementtype,
 					(GETPOST('unique', 'alpha') ? 1 : 0),
@@ -196,10 +235,11 @@ if ($action == 'add') {
 					GETPOST('computed_value', 'alpha'),
 					(GETPOST('entitycurrentorall', 'alpha') ? 0 : ''),
 					GETPOST('langfile', 'alpha'),
-					1,
+					'1',
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					GETPOSTINT('printable'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt")
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -208,17 +248,18 @@ if ($action == 'add') {
 				} else {
 					$error++;
 					$mesg = $extrafields->error;
-					setEventMessages($mesg, null, 'errors');
+					$mesgs = array_merge($mesgs, $extrafields->errors);
+					setEventMessages($mesg, $mesgs, 'errors');
 				}
 			} else {
 				$error++;
 				$langs->load("errors");
 				$mesg = $langs->trans("ErrorFieldCanNotContainSpecialNorUpperCharacters", $langs->transnoentities("AttributeCode"));
-				setEventMessages($mesg, null, 'errors');
+				setEventMessages($mesg, $mesgs, 'errors');
 				$action = 'create';
 			}
 		} else {
-			setEventMessages($mesg, null, 'errors');
+			setEventMessages($mesg, $mesgs, 'errors');
 		}
 	}
 }
@@ -230,49 +271,55 @@ if ($action == 'update') {
 		if (!$type) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Type"));
 			$action = 'edit';
 		}
 		if ($type == 'varchar' && $extrasize <= 0) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
+			$mesgs[] = $langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Size"));
 			$action = 'edit';
 		}
 		if ($type == 'varchar' && $extrasize > $maxsizestring) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForVarcharType", $maxsizestring);
 			$action = 'edit';
 		}
 		if ($type == 'int' && $extrasize > $maxsizeint) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
+			$mesgs[] = $langs->trans("ErrorSizeTooLongForIntType", $maxsizeint);
 			$action = 'edit';
 		}
 		if ($type == 'select' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectType");
 			$action = 'edit';
 		}
 		if ($type == 'sellist' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForSelectListType");
+			$mesgs[] = $langs->trans("ErrorNoValueForSelectListType");
+			$action = 'edit';
+		}
+		if ($type == 'stars' && ($extrasize < 1 || $extrasize > 10)) {
+			$error++;
+			$langs->load("errors");
+			$mesgs[] = $langs->trans("ErrorSizeForStarsType");
 			$action = 'edit';
 		}
 		if ($type == 'checkbox' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForCheckBoxType");
+			$mesgs[] = $langs->trans("ErrorNoValueForCheckBoxType");
 			$action = 'edit';
 		}
 		if ($type == 'radio' && !$param) {
 			$error++;
 			$langs->load("errors");
-			$mesg[] = $langs->trans("ErrorNoValueForRadioType");
+			$mesgs[] = $langs->trans("ErrorNoValueForRadioType");
 			$action = 'edit';
 		}
 		if ((($type == 'radio') || ($type == 'checkbox')) && $param) {
@@ -285,13 +332,13 @@ if ($action == 'update') {
 						if (count($matches[0]) > 1) {
 							$error++;
 							$langs->load("errors");
-							$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+							$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 							$action = 'edit';
 						}
 					} else {
 						$error++;
 						$langs->load("errors");
-						$mesg[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
+						$mesgs[] = $langs->trans("ErrorBadFormatValueList", $param_ligne);
 						$action = 'edit';
 					}
 				}
@@ -299,27 +346,27 @@ if ($action == 'update') {
 		}
 
 		if (!$error) {
-			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (strlen(GETPOST('attrname', 'aZ09')) < 3 && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
+				$mesgs[] = $langs->trans("ErrorValueLength", $langs->transnoentitiesnoconv("AttributeCode"), 3);
 				$action = 'edit';
 			}
 		}
 
 		// Check reserved keyword with more than 3 characters
 		if (!$error) {
-			if (in_array(GETPOST('attrname', 'aZ09'), array('and', 'keyword', 'table', 'index', 'integer', 'float', 'double', 'position')) && empty($conf->global->MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE)) {
+			if (in_array(strtoupper(GETPOST('attrname', 'aZ09')), $listofreservedwords) && !getDolGlobalString('MAIN_DISABLE_EXTRAFIELDS_CHECK_FOR_UPDATE')) {
 				$error++;
 				$langs->load("errors");
-				$mesg[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
+				$mesgs[] = $langs->trans("ErrorReservedKeyword", GETPOST('attrname', 'aZ09'));
 				$action = 'edit';
 			}
 		}
 
 		if (!$error) {
 			if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST('attrname', 'aZ09')) && !is_numeric(GETPOST('attrname', 'aZ09'))) {
-				$pos = GETPOST('pos', 'int');
+				$pos = GETPOSTINT('pos');
 				// Construct array for parameter (value of select list)
 				$parameters = $param;
 				$parameters_array = explode("\r\n", $parameters);
@@ -327,12 +374,16 @@ if ($action == 'update') {
 				//In sellist we have only one line and it can have come to do SQL expression
 				if ($type == 'sellist' || $type == 'chkbxlst') {
 					foreach ($parameters_array as $param_ligne) {
-						$params['options'] = array($parameters=>null);
+						$params['options'] = array($parameters => null);
 					}
 				} else {
-					//Esle it's separated key/value and coma list
+					//Else it's separated key/value and coma list
 					foreach ($parameters_array as $param_ligne) {
-						list($key, $value) = explode(',', $param_ligne);
+						$tmp = explode(',', $param_ligne);
+						$key = $tmp[0];
+						if (!empty($tmp[1])) {
+							$value = $tmp[1];
+						}
 						if (!array_key_exists('options', $params)) {
 							$params['options'] = array();
 						}
@@ -340,9 +391,11 @@ if ($action == 'update') {
 					}
 				}
 
+				// $params['options'][$key] can be 'Facture:/compta/facture/class/facture.class.php' => '/custom'
+
 				// Visibility: -1=not visible by default in list, 1=visible, 0=hidden
 				$visibility = GETPOST('list', 'alpha');
-				if ($type == 'separate') {
+				if (in_array($type, ['separate', 'point', 'linestrg', 'polygon'])) {
 					$visibility = 3;
 				}
 
@@ -360,7 +413,7 @@ if ($action == 'update') {
 					$pos,
 					$params,
 					(GETPOST('alwayseditable', 'alpha') ? 1 : 0),
-					(GETPOST('perms', 'alpha') ?GETPOST('perms', 'alpha') : ''),
+					(GETPOST('perms', 'alpha') ? GETPOST('perms', 'alpha') : ''),
 					$visibility,
 					GETPOST('help', 'alpha'),
 					GETPOST('default_value', 'alpha'),
@@ -369,8 +422,9 @@ if ($action == 'update') {
 					GETPOST('langfile'),
 					GETPOST('enabled', 'nohtml'),
 					(GETPOST('totalizable', 'alpha') ? 1 : 0),
-					GETPOST('printable', 'alpha'),
-					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist)
+					GETPOSTINT('printable'),
+					array('css' => $css, 'cssview' => $cssview, 'csslist' => $csslist),
+					GETPOST("ai_prompt")
 				);
 				if ($result > 0) {
 					setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
@@ -379,7 +433,8 @@ if ($action == 'update') {
 				} else {
 					$error++;
 					$mesg = $extrafields->error;
-					setEventMessages($mesg, null, 'errors');
+					$mesgs = array_merge($mesgs, $extrafields->errors);
+					setEventMessages($mesg, $mesgs, 'errors');
 				}
 			} else {
 				$error++;
@@ -388,24 +443,97 @@ if ($action == 'update') {
 				setEventMessages($mesg, null, 'errors');
 			}
 		} else {
-			setEventMessages($mesg, null, 'errors');
+			setEventMessages($mesg, $mesgs, 'errors');
 		}
 	}
 }
 
 // Delete attribute
-if ($action == 'delete') {
+if ($action == 'confirm_delete' && $confirm == "yes") {
 	if (GETPOSTISSET("attrname") && preg_match("/^\w[a-zA-Z0-9-_]*$/", GETPOST("attrname", 'aZ09'))) {
-		$result = $extrafields->delete(GETPOST("attrname", 'aZ09'), $elementtype);
+		$attributekey = GETPOST('attrname', 'aZ09');
+
+		$result = $extrafields->delete($attributekey, $elementtype);
 		if ($result >= 0) {
+			setEventMessages($langs->trans("ExtrafieldsDeleted", $attributekey), null, 'mesgs');
+
 			header("Location: ".$_SERVER["PHP_SELF"]);
 			exit;
 		} else {
 			$mesg = $extrafields->error;
+			$mesgs = array_merge($mesgs, $extrafields->errors);
 		}
 	} else {
 		$error++;
 		$langs->load("errors");
 		$mesg = $langs->trans("ErrorFieldCanNotContainSpecialCharacters", $langs->transnoentities("AttributeCode"));
+	}
+}
+
+// Recrypt data password
+if ($action == 'encrypt') {
+	// Load $extrafields->attributes
+	$extrafields->fetch_name_optionals_label($elementtype);
+	$attributekey = GETPOST('attrname', 'aZ09');
+
+	if (!empty($extrafields->attributes[$elementtype]['type'][$attributekey]) && $extrafields->attributes[$elementtype]['type'][$attributekey] == 'password') {
+		if (!empty($extrafields->attributes[$elementtype]['param'][$attributekey]['options'])) {
+			if (array_key_exists('dolcrypt', $extrafields->attributes[$elementtype]['param'][$attributekey]['options'])) {
+				// We can encrypt data with dolCrypt()
+				$arrayofelement = getElementProperties($elementtype);
+				if (!empty($arrayofelement['table_element'])) {
+					if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity || empty($extrafields->attributes[$elementtype]['entityid'][$attributekey])) {
+						dol_syslog("Loop on each extafields of table ".$arrayofelement['table_element']);
+
+						$sql  = "SELECT te.rowid, te.".$attributekey;
+						$sql .= " FROM ".MAIN_DB_PREFIX.$arrayofelement['table_element']." as t, ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields as te';
+						$sql .= " WHERE te.fk_object = t.rowid";
+						$sql .= " AND te.".$attributekey." NOT LIKE 'dolcrypt:%'";
+						$sql .= " AND te.".$attributekey." IS NOT NULL";
+						$sql .= " AND te.".$attributekey." <> ''";
+						if ($extrafields->attributes[$elementtype]['entityid'][$attributekey] == $conf->entity) {
+							$sql .= " AND t.entity = ".getEntity($arrayofelement['table_element'], 0);
+						}
+
+						//print $sql;
+						$nbupdatedone = 0;
+						$resql = $db->query($sql);
+						if ($resql) {
+							$num_rows = $db->num_rows($resql);
+							$i = 0;
+							while ($i < $num_rows) {
+								$objtmp = $db->fetch_object($resql);
+								$id = $objtmp->rowid;
+								$pass = $objtmp->$attributekey;
+								if ($pass) {
+									$newpassword = dolEncrypt($pass);
+
+									$sqlupdate = "UPDATE ".MAIN_DB_PREFIX.$arrayofelement['table_element'].'_extrafields';
+									$sqlupdate .= " SET ".$attributekey." = '".$db->escape($newpassword)."'";
+									$sqlupdate .= " WHERE rowid = ".((int) $id);
+
+									$resupdate = $db->query($sqlupdate);
+									if ($resupdate) {
+										$nbupdatedone++;
+									} else {
+										setEventMessages($db->lasterror(), null, 'errors');
+										$error++;
+										break;
+									}
+								}
+
+								$i++;
+							}
+						}
+
+						if ($nbupdatedone > 0) {
+							setEventMessages($langs->trans("PasswordFieldEncrypted", $nbupdatedone), null, 'mesgs');
+						} else {
+							setEventMessages($langs->trans("PasswordFieldEncrypted", $nbupdatedone), null, 'warnings');
+						}
+					}
+				}
+			}
+		}
 	}
 }

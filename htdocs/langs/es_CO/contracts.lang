@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - contracts
 ContractsArea=Área de contratos
 ListOfContracts=Lista de contratos
-ContractCard=Tarjeta de contrato
 ContractStatusNotRunning=Inactivo
 ServiceStatusRunning=Corriendo
 ServiceStatusNotLate=Corriendo, no caducado

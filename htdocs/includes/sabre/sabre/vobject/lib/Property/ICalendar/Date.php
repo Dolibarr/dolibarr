@@ -13,6 +13,6 @@ namespace Sabre\VObject\Property\ICalendar;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-class Date extends DateTime {
-
+class Date extends DateTime
+{
 }

@@ -81,15 +81,19 @@ $(document).ready(function() {
 
 	$('#refreshbutton').click( function() {
 		console.log("Click on refreshbutton");
-		$.pleaseBePatient("<?php echo $langs->trans('PleaseBePatient'); ?>");
+
+		dolBlockUI("<?php echo $langs->trans('PleaseBePatient'); ?>");
+
 		$.get("<?php echo DOL_URL_ROOT.'/ecm/ajax/ecmdatabase.php'; ?>", {
 			action: 'build',
 			token: '<?php echo newToken(); ?>',
 			element: 'ecm'
-		},
-		function(response) {
-			$.unblockUI();
-			location.href='<?php echo $_SERVER['PHP_SELF']; ?>';
+		}, function(response) {
+			setTimeout(() => {
+				  dolUnblockUI();
+
+				  location.href='<?php echo $_SERVER['PHP_SELF']; ?>';
+			}, 1000); // delai 1s
 		});
 	});
 });
@@ -102,7 +106,7 @@ function loadandshowpreview(filedirname,section)
 
 	$('#ecmfileview').empty();
 
-	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo (empty($paramwithoutsection) ? '' : "+'".$paramwithoutsection."'"); ?>;
+	var url = '<?php echo dol_buildpath('/core/ajax/ajaxdirpreview.php', 1); ?>?action=preview&module=<?php echo $module; ?>&section='+section+'&file='+urlencode(filedirname)<?php echo(empty($paramwithoutsection) ? '' : "+'".$paramwithoutsection."'"); ?>;
 	$.get(url, function(data) {
 		//alert('Load of url '+url+' was performed : '+data);
 		pos=data.indexOf("TYPE=directory",0);

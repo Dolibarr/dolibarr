@@ -2,9 +2,6 @@
 ECMNbOfDocs=Cantidad de documentos en la carpeta
 ECMSection=Carpeta
 ECMSectionManual=Carpeta manual
-ECMSectionAuto=Carpeta automática
-ECMSectionsManual=Arbol Manual
-ECMSectionsAuto=Arbol automático
 ECMSections=Carpetas
 ECMRoot=Raíz ACE
 ECMNewSection=Crear Carpeta

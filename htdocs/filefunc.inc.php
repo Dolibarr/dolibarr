@@ -9,6 +9,8 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +32,38 @@
  *  \brief      File that include conf.php file and commons lib like functions.lib.php
  */
 
+/**
+ * @var ?string $dolibarr_font_DOL_DEFAULT_TTF
+ * @var ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
+ * @var ?string $dolibarr_js_CKEDITOR
+ * @var ?string $dolibarr_js_JQUERY
+ * @var ?string $dolibarr_js_JQUERY_UI
+ * @var ?string $dolibarr_lib_NUSOAP_PATH
+ * @var ?string $dolibarr_lib_ODTPHP_PATH
+ * @var ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
+ * @var ?string $dolibarr_lib_PHPEXCELNEW_PATH
+ * @var ?string $dolibarr_lib_TCPDF_PATH
+ * @var ?string $dolibarr_lib_TCPDI_PATH
+ */
+'
+@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF
+@phan-var-force ?string $dolibarr_font_DOL_DEFAULT_TTF_BOLD
+@phan-var-force ?string $dolibarr_js_CKEDITOR
+@phan-var-force ?string $dolibarr_js_JQUERY
+@phan-var-force ?string $dolibarr_js_JQUERY_UI
+@phan-var-force ?string $dolibarr_lib_NUSOAP_PATH
+@phan-var-force ?string $dolibarr_lib_ODTPHP_PATH
+@phan-var-force ?string $dolibarr_lib_ODTPHP_PATHTOPCLZIP
+@phan-var-force ?string $dolibarr_lib_PHPEXCELNEW_PATH
+@phan-var-force ?string $dolibarr_lib_TCPDF_PATH
+@phan-var-force ?string $dolibarr_lib_TCPDI_PATH
+';
+
 if (!defined('DOL_APPLICATION_TITLE')) {
 	define('DOL_APPLICATION_TITLE', 'Dolibarr');
 }
 if (!defined('DOL_VERSION')) {
-	define('DOL_VERSION', '17.0.4'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
+	define('DOL_VERSION', '22.0.0-beta'); // a.b.c-alpha, a.b.c-beta, a.b.c-rcX or a.b.c
 }
 
 if (!defined('EURO')) {
@@ -62,8 +91,65 @@ if (defined('DOL_INC_FOR_VERSION_ERROR')) {
 }
 
 
-// Define vars
-$conffiletoshowshort = "conf.php";
+/**
+ * Replace session_start()
+ *
+ * @return void
+ */
+function dol_session_start()
+{
+	session_start();
+}
+
+/**
+ * Replace session_regenerate_id()
+ *
+ * @return bool True if success, false if failed
+ */
+function dol_session_regenerate_id()
+{
+	return session_regenerate_id();
+}
+
+/**
+ * Destroy and recreate a new session without losing content.
+ * Not used yet.
+ *
+ * @param  string	$sessionname	Session name
+ * @return void
+ */
+function dol_session_rotate($sessionname = '')
+{
+	$oldsessionid = session_id();
+
+	// Backup the current session
+	$session_backup = $_SESSION;
+
+	// Set current session to expire in 1 minute
+	$_SESSION['OBSOLETE'] = true;
+	$_SESSION['EXPIRES'] = time() + 60;
+
+	// Close the current session
+	session_write_close();
+
+	// Set a new session id and start the session
+	session_name($sessionname);
+	dol_session_start();
+
+	// Restore the previous session backup
+	$_SESSION = $session_backup;
+
+	// Clean up
+	unset($session_backup);
+	unset($_SESSION['OBSOLETE']);
+	unset($_SESSION['EXPIRES']);
+
+	$newsessionid = session_id();
+	//var_dump("oldsessionid=".$oldsessionid." - newsessionid=".$newsessionid);
+}
+
+
+
 // Define localization of conf file
 // --- Start of part replaced by Dolibarr packager makepack-dolibarr
 $conffile = "conf/conf.php";
@@ -76,9 +162,27 @@ $conffiletoshow = "htdocs/conf/conf.php";
 // Include configuration
 // --- End of part replaced by Dolibarr packager makepack-dolibarr
 
-
 // Include configuration
-$result = @include_once $conffile; // Keep @ because with some error reporting this break the redirect done when file not found
+// @phpstan-ignore-next-line
+$result = @include_once $conffile; // Keep @ because with some error reporting mode, this breaks the redirect done when file is not found
+
+// Disable some not used PHP stream
+$listofwrappers = stream_get_wrappers();
+// We need '.phar' for geoip2. TODO Replace phar in geoip with exploded files so we can disable phar by default.
+// phar stream does not auto unserialize content (possible code execution) since PHP 8.1
+// zip stream is necessary by excel import module
+$arrayofstreamtodisable = array('compress.zlib', 'compress.bzip2', 'ftp', 'ftps', 'glob', 'data', 'expect', 'ogg', 'rar', 'zlib');
+if (!empty($dolibarr_main_stream_to_disable) && is_array($dolibarr_main_stream_to_disable)) {
+	$arrayofstreamtodisable = $dolibarr_main_stream_to_disable;
+}
+foreach ($arrayofstreamtodisable as $streamtodisable) {
+	if (!empty($listofwrappers) && in_array($streamtodisable, $listofwrappers)) {
+		/*if (!empty($dolibarr_main_stream_do_not_disable) && is_array($dolibarr_main_stream_do_not_disable) && in_array($streamtodisable, $dolibarr_main_stream_do_not_disable)) {
+			continue;	// We do not disable this stream
+		}*/
+		stream_wrapper_unregister($streamtodisable);
+	}
+}
 
 if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not done and we are in a web session
 	if (!empty($_SERVER["CONTEXT_PREFIX"])) {    // CONTEXT_PREFIX and CONTEXT_DOCUMENT_ROOT are not defined on all apache versions
@@ -126,10 +230,19 @@ if (!$result && !empty($_SERVER["GATEWAY_INTERFACE"])) {    // If install not do
 }
 
 // Force PHP error_reporting setup (Dolibarr may report warning without this)
-if (!empty($dolibarr_strict_mode)) {
-	error_reporting(E_ALL | E_STRICT);
+if (version_compare(phpversion(), '8.4', '<')) {
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL | E_STRICT);
+	} else {
+		error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	}
 } else {
-	error_reporting(E_ALL & ~(E_STRICT | E_NOTICE | E_DEPRECATED));
+	// E_STRICT is deprecated since PHP 8.4
+	if (!empty($dolibarr_strict_mode)) {
+		error_reporting(E_ALL);
+	} else {
+		error_reporting(E_ALL & ~(E_NOTICE | E_DEPRECATED));
+	}
 }
 
 // Disable php display errors
@@ -138,13 +251,13 @@ if (!empty($dolibarr_main_prod)) {
 }
 
 // Clean parameters
-$dolibarr_main_data_root = trim($dolibarr_main_data_root);
-$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', $dolibarr_main_url_root));
+$dolibarr_main_data_root = (empty($dolibarr_main_data_root) ? '' : trim($dolibarr_main_data_root));
+$dolibarr_main_url_root = trim(preg_replace('/\/+$/', '', empty($dolibarr_main_url_root) ? '' : $dolibarr_main_url_root));
 $dolibarr_main_url_root_alt = (empty($dolibarr_main_url_root_alt) ? '' : trim($dolibarr_main_url_root_alt));
-$dolibarr_main_document_root = trim($dolibarr_main_document_root);
+$dolibarr_main_document_root = (empty($dolibarr_main_document_root) ? '' : trim($dolibarr_main_document_root));
 $dolibarr_main_document_root_alt = (empty($dolibarr_main_document_root_alt) ? '' : trim($dolibarr_main_document_root_alt));
 
-if (empty($dolibarr_main_db_port)) {
+if (!isset($dolibarr_main_db_port)) {
 	$dolibarr_main_db_port = 3306; // For compatibility with old configs, if not defined, we take 'mysql' type
 }
 if (empty($dolibarr_main_db_type)) {
@@ -189,9 +302,9 @@ if (empty($dolibarr_strict_mode)) {
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root); // Filesystem core php (htdocs)
 
 if (!file_exists(DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php")) {
-	print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Error: Dolibarr config file content seems to be not correctly defined (file ".DOL_DOCUMENT_ROOT."/core/lib/functions.lib.php not found).<br>\n";
 	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
-	exit;
+	exit(1);
 }
 
 
@@ -221,8 +334,8 @@ if (!defined('NOCSRFCHECK') && isset($dolibarr_nocsrfcheck) && $dolibarr_nocsrfc
 		if ($csrfattack) {
 			//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
 			// Note: We can't use dol_escape_htmltag here to escape output because lib functions.lib.ph is not yet loaded.
-			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"])?'':$_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referer).", LOG_WARNING);
-			print "Access refused by CSRF protection in main.inc.php. Referer of form (".htmlentities($_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
+			dol_syslog("--- Access to ".(empty($_SERVER["REQUEST_METHOD"]) ? '' : $_SERVER["REQUEST_METHOD"].' ').$_SERVER["PHP_SELF"]." refused by CSRF protection (Bad referrer).", LOG_WARNING);
+			print "Access refused by CSRF protection in main.inc.php. Referrer of form (".htmlentities(empty($_SERVER['HTTP_REFERER']) ? '' : $_SERVER['HTTP_REFERER'], ENT_COMPAT, 'UTF-8').") is outside the server that serve this page (with method = ".htmlentities($_SERVER['REQUEST_METHOD'], ENT_COMPAT, 'UTF-8').").\n";
 			print "If you access your server behind a proxy using url rewriting, you might check that all HTTP headers are propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file to remove this security check).\n";
 			die;
 		}
@@ -266,6 +379,7 @@ if (!empty($_SERVER["DOCUMENT_ROOT"])) {
 $paths = explode('/', str_replace('\\', '/', $_SERVER["SCRIPT_NAME"])); // C) Value reported by web server, to say full path on filesystem of a file. Ex: /dolibarr/htdocs/admin/system/phpinfo.php
 // Try to detect if $_SERVER["DOCUMENT_ROOT"]+start of $_SERVER["SCRIPT_NAME"] is $dolibarr_main_document_root. If yes, relative url to add before dol files is this start part.
 $concatpath = '';
+$tmp3 = '';
 foreach ($paths as $tmppath) {	// We check to find (B+start of C)=A
 	if (empty($tmppath)) {
 		continue;
@@ -286,8 +400,9 @@ if (!$found) {
 	// There is no subdir that compose the main url root or autodetect fails (Ie: when using apache alias that point outside default DOCUMENT_ROOT).
 	$tmp = $dolibarr_main_url_root;
 } else {
-	$tmp = 'http'.(((empty($_SERVER["HTTPS"]) || $_SERVER["HTTPS"] != 'on') && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
+	$tmp = 'http'.((!isHTTPS() && (empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] != 443)) ? '' : 's').'://'.$_SERVER["SERVER_NAME"].((empty($_SERVER["SERVER_PORT"]) || $_SERVER["SERVER_PORT"] == 80 || $_SERVER["SERVER_PORT"] == 443) ? '' : ':'.$_SERVER["SERVER_PORT"]).($tmp3 ? (preg_match('/^\//', $tmp3) ? '' : '/').$tmp3 : '');
 }
+
 //print "tmp1=".$tmp1." tmp2=".$tmp2." tmp3=".$tmp3." tmp=".$tmp."\n";
 if (!empty($dolibarr_main_force_https)) {
 	$tmp = preg_replace('/^http:/i', 'https:', $tmp);
@@ -295,8 +410,8 @@ if (!empty($dolibarr_main_force_https)) {
 define('DOL_MAIN_URL_ROOT', $tmp); // URL absolute root (https://sss/dolibarr, ...)
 $uri = preg_replace('/^http(s?):\/\//i', '', constant('DOL_MAIN_URL_ROOT')); // $uri contains url without http*
 $suburi = strstr($uri, '/'); // $suburi contains url without domain:port
-if ($suburi == '/') {
-	$suburi = ''; // If $suburi is /, it is now ''
+if (empty($suburi) || $suburi === '/') {
+	$suburi = ''; // If $suburi is null or /, it is now ''
 }
 if (!defined('DOL_URL_ROOT')) {
 	define('DOL_URL_ROOT', $suburi); // URL relative root ('', '/dolibarr', ...)
@@ -309,26 +424,26 @@ define('MAIN_DB_PREFIX', $dolibarr_main_db_prefix);
 
 /*
  * Define PATH to external libraries
- * To use other version than embeded libraries, define here constant to path. Use '' to use include class path autodetect.
+ * To use other version than embedded libraries, define here constant to path. Use '' to use include class path autodetect.
  */
 // Path to root libraries
 if (!defined('TCPDF_PATH')) {
-	define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/');
+	define('TCPDF_PATH', (empty($dolibarr_lib_TCPDF_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/tecnickcom/tcpdf/' : $dolibarr_lib_TCPDF_PATH.'/');
 }
 if (!defined('TCPDI_PATH')) {
-	define('TCPDI_PATH', (empty($dolibarr_lib_TCPDI_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/tcpdi/' : $dolibarr_lib_TCPDI_PATH.'/');
+	define('TCPDI_PATH', (empty($dolibarr_lib_TCPDI_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/tcpdi/' : $dolibarr_lib_TCPDI_PATH.'/');
 }
 if (!defined('NUSOAP_PATH')) {
-	define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/'));
+	define('NUSOAP_PATH', (!isset($dolibarr_lib_NUSOAP_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/nusoap/lib/' : (empty($dolibarr_lib_NUSOAP_PATH) ? '' : $dolibarr_lib_NUSOAP_PATH.'/'));
 }
 if (!defined('PHPEXCELNEW_PATH')) {
-	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
+	define('PHPEXCELNEW_PATH', (!isset($dolibarr_lib_PHPEXCELNEW_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/phpoffice/phpspreadsheet/src/PhpSpreadsheet/' : (empty($dolibarr_lib_PHPEXCELNEW_PATH) ? '' : $dolibarr_lib_PHPEXCELNEW_PATH.'/'));
 }
 if (!defined('ODTPHP_PATH')) {
-	define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/'));
+	define('ODTPHP_PATH', (!isset($dolibarr_lib_ODTPHP_PATH)) ? DOL_DOCUMENT_ROOT.'/includes/odtphp/' : (empty($dolibarr_lib_ODTPHP_PATH) ? '' : $dolibarr_lib_ODTPHP_PATH.'/'));
 }
 if (!defined('ODTPHP_PATHTOPCLZIP')) {
-	define('ODTPHP_PATHTOPCLZIP', (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP)) ?DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/' : (empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP) ? '' : $dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'));
+	define('ODTPHP_PATHTOPCLZIP', (!isset($dolibarr_lib_ODTPHP_PATHTOPCLZIP)) ? DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/' : (empty($dolibarr_lib_ODTPHP_PATHTOPCLZIP) ? '' : $dolibarr_lib_ODTPHP_PATHTOPCLZIP.'/'));
 }
 if (!defined('JS_CKEDITOR')) {
 	define('JS_CKEDITOR', (!isset($dolibarr_js_CKEDITOR)) ? '' : (empty($dolibarr_js_CKEDITOR) ? '' : $dolibarr_js_CKEDITOR.'/'));
@@ -341,10 +456,10 @@ if (!defined('JS_JQUERY_UI')) {
 }
 // Other required path
 if (!defined('DOL_DEFAULT_TTF')) {
-	define('DOL_DEFAULT_TTF', (!isset($dolibarr_font_DOL_DEFAULT_TTF)) ?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF) ? '' : $dolibarr_font_DOL_DEFAULT_TTF));
+	define('DOL_DEFAULT_TTF', (!isset($dolibarr_font_DOL_DEFAULT_TTF)) ? DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF) ? '' : $dolibarr_font_DOL_DEFAULT_TTF));
 }
 if (!defined('DOL_DEFAULT_TTF_BOLD')) {
-	define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD)) ?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD) ? '' : $dolibarr_font_DOL_DEFAULT_TTF_BOLD));
+	define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD)) ? DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf' : (empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD) ? '' : $dolibarr_font_DOL_DEFAULT_TTF_BOLD));
 }
 
 
@@ -357,7 +472,7 @@ if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_
 	if (!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) {
 		$dolibarr_main_db_pass = preg_replace('/crypted:/i', '', $dolibarr_main_db_pass);
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_pass);
-		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially crypted
+		$dolibarr_main_db_encrypted_pass = $dolibarr_main_db_pass; // We need to set this so we can use it later to know the password was initially encrypted
 	} else {
 		$dolibarr_main_db_pass = dol_decode($dolibarr_main_db_encrypted_pass);
 	}

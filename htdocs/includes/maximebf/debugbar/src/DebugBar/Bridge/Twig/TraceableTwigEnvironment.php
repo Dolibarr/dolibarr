@@ -24,6 +24,8 @@ use Twig_TokenStream;
 
 /**
  * Wrapped a Twig Environment to provide profiling features
+ * 
+ * @deprecated
  */
 class TraceableTwigEnvironment extends Twig_Environment
 {

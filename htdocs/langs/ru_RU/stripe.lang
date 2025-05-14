@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL для предложения с�
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL для предложения страницы онлайн-платежей %s на любую сумму без существующего объекта
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL-адрес страницы онлайн-оплаты %s для подписки на членство
 ToOfferALinkForOnlinePaymentOnDonation=URL-адрес страницы онлайн-платежа %s для оплаты пожертвования
-YouCanAddTagOnUrl=Вы также можете добавить параметр URL <b> & tag = <i>, значение </i> </b> к любому из этих URL (обязательно только для платежа, не связанного с объектом), чтобы добавить свой собственный тег комментария к платежу. <br> Для URL-адреса платежей без существующего объекта вы также можете добавить параметр <strong> & noidempotency = 1 </strong>, чтобы одну и ту же ссылку с одним и тем же тегом можно было использовать несколько раз (в некоторых режимах оплаты может быть ограничен платеж до 1 для каждой ссылки без этого параметр)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Настройте Stripe с URL-адресом <b> %s </b>, чтобы платеж создавался автоматически при подтверждении Stripe.
 AccountParameter=Счет параметры
 UsageParameter=Использование параметров
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Живой ключ Webhook
 ONLINE_PAYMENT_WAREHOUSE=Запасы, используемые для уменьшения запасов при онлайн-оплате <br> (TODO Когда опция уменьшения запасов выполняется для действия со счетом-фактурой, и онлайн-платеж генерирует счет-фактуру самостоятельно?)
 StripeLiveEnabled=Полоса в реальном времени включена (в противном случае тестовый режим / режим песочницы)
 StripeImportPayment=Платежи Import Stripe
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Пример кредитной карты для тестового платежа: %s => действителен, %s => ошибка CVC, %s => срок действия истек, %s => списание не выполнено
+ExampleOfTestBankAcountForSEPA=Пример из банковский счёт БАН за Прямой дебет тест: %s
 StripeGateways=Stripe-шлюзы
 OAUTH_STRIPE_TEST_ID=Идентификатор клиента Stripe Connect (ca _...)
 OAUTH_STRIPE_LIVE_ID=Идентификатор клиента Stripe Connect (ca _...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe аккаунт
 StripeChargeList=Список начислений Stripe
 StripeTransactionList=Список транзакций Stripe
 StripeCustomerId=Идентификатор клиента Stripe
+StripePaymentId=Полоса платеж ID
 StripePaymentModes=Режимы оплаты Stripe
 LocalID=Локальный идентификатор
 StripeID=Идентификатор полосы
@@ -62,7 +64,7 @@ DeleteACard=Удалить карту
 ConfirmDeleteCard=Вы действительно хотите удалить эту кредитную или дебетовую карту?
 CreateCustomerOnStripe=Создать клиента на Stripe
 CreateCardOnStripe=Создать карту на Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=создать банк на Stripe
 ShowInStripe=Показать в полосе
 StripeUserAccountForActions=Учетная запись пользователя, используемая для уведомления по электронной почте о некоторых событиях Stripe (выплаты Stripe)
 StripePayoutList=Список выплат Stripe
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Ссылка на настройку Stripe WebHook �
 ToOfferALinkForLiveWebhook=Ссылка на настройку Stripe WebHook для вызова IPN (режим реального времени)
 PaymentWillBeRecordedForNextPeriod=Выплата будет записана за следующий период.
 ClickHereToTryAgain=<a href="%s"> Нажмите здесь, чтобы попробовать еще раз ... </a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Из-за правил строгой аутентификации клиентов создание карты должно производиться из бэк-офиса Stripe. Вы можете щелкнуть здесь, чтобы включить запись клиента Stripe: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=В соответствии с строгими правилами клиент Аутентификация создание карты должно выполняться из бэк-офиса Stripe. Вы можете нажать здесь, чтобы включить запись Stripe клиент: %s
+STRIPE_CARD_PRESENT=Наличие карты для терминалов Stripe
+TERMINAL_LOCATION=Расположение (адрес) терминалов Stripe
+RequestDirectDebitWithStripe=Запрос Прямой дебет с помощью Stripe
+RequesCreditTransferWithStripe=Request Credit Transfer with Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Включите платежи Прямой дебет через Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Режим полосового подключения
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

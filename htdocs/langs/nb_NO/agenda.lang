@@ -8,8 +8,6 @@ LocalAgenda=Standard kalender
 ActionsOwnedBy=Hendelse tilhører
 ActionsOwnedByShort=Eier
 AffectedTo=Tildelt
-Event=Hendelse
-Events=Hendelser
 EventsNb=Antall hendelser
 ListOfActions=Oversikt over hendelser
 EventReports=Hendelsesrapporter
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mine avsluttede handlinger
 ListOfEvents=Liste over hendelser (standardkalender)
 ActionsAskedBy=Handlinger registrert av
 ActionsToDoBy=Handlinger tildelt
-ActionsDoneBy=Handlinger utført av
 ActionAssignedTo=Hendelse tilordnet
 ViewCal=Månedsvisning
 ViewDay=Dagsvisning
@@ -62,7 +59,7 @@ MemberSubscriptionAddedInDolibarr=Abonnement %s for medlem %s lagt til
 MemberSubscriptionModifiedInDolibarr=Abonnement %s for medlem %s endret
 MemberSubscriptionDeletedInDolibarr=Abonnement %s for medlem %s slettet
 ShipmentValidatedInDolibarr=Leveranse %s validert
-ShipmentClassifyClosedInDolibarr=Forsendelse %s klassifisert fakturert
+ShipmentClassifyClosedInDolibarr=Forsendelse %s klassifisert stengt
 ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassifisert gjenåpnet
 ShipmentBackToDraftInDolibarr=Sett levering %s tilbake til utkaststatus
 ShipmentDeletedInDolibarr=Leveranse %s slettet
@@ -89,6 +86,8 @@ ShippingSentByEMail=Forsendelse %s sendt via epost
 ShippingValidated= Forsendelse %s validert
 InterventionSentByEMail=Intervensjon %s sendt via epost
 ProjectSentByEMail=Prosjekt %s sendt på e-post
+ProjectDeletedInDolibarr=Prosjekt %s slettet
+ProjectClosedInDolibarr=Prosjekt %s stengt
 ProposalDeleted=Tilbud slettet
 OrderDeleted=Ordre slettet
 InvoiceDeleted=Faktura slettet
@@ -128,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO produsert
 MRP_MO_DELETEInDolibarr=MO slettet
 MRP_MO_CANCELInDolibarr=MO kansellert
 PAIDInDolibarr=%s betalt
+ENABLEDISABLEInDolibarr=Brukeraktivert eller -deaktivert
+CANCELInDolibarr=Kansellert
 ##### End agenda events #####
 AgendaModelModule=Dokumentmaler for hendelse
 DateActionStart=Startdato
 DateActionEnd=Sluttdato
 AgendaUrlOptions1=Du kan også bruke følgende parametere til å filtrere listen:
-AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet av en bruker <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger som ikke eies av brukeren <b>%s</b>.
+AgendaUrlOptions3=<b>logina=%s</b> for å begrense utdata til handlinger som eies av en bruker <b>%s</b> (bruk logina=!%s</b> for arrangementer som ikke eies av brukeren).
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
 AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatiske hendelser.
+AgendaUrlOptionsType=<b>actiontype=%s</b> for å få enten automatiske eller manuelle hendelser
+AgendaUrlOptionsCode=<b>actioncode=%s</b> for kun å få hendelser med en gitt kode
 AgendaUrlOptionsIncludeHolidays= <b> includeholidays=1 </b> for å inkludere hendelser i ferie.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> for å begrense til hendelser siste %s dager (standard er %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> for å begrense til de siste 50 hendelsene (standard og maks er%s).
 AgendaShowBirthdayEvents=Kontakters fødselsdag
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt
@@ -180,3 +183,25 @@ BrowserPush=Varsling om nettleser-popup
 Reminders=Påminnelser
 ActiveByDefault=Aktivert som standard
 Until=til
+DataFromWasMerged=Data fra %s ble slått sammen
+AgendaShowBookcalCalendar=Bestillingskalender: %s
+MenuBookcalIndex=Online avtale
+BookcalLabelAvailabilityHelp=Etikett for tilgjengelighetsområdet. For eksempel:<br>Generell tilgjengelighet<br>Tilgjengelighet i juleferien
+DurationOfRange=Varighet av intervaller
+BookCalSetup = Oppsett av Online avtale
+BookCalSetupPage = Side for oppsett av Online avtale
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Grensesnitt tittel
+BookCalAbout = Om BookCal
+BookCalAboutPage = BookCal om side
+Calendars=Kalendre
+Availabilities=Tilgjengelighet
+NewAvailabilities=Nye tilgjengeligheter
+NewCalendar=Ny kalender
+ThirdPartyBookCalHelp=Begivenhet som er booket i denne kalenderen vil automatisk bli knyttet til denne tredjeparten.
+AppointmentDuration = Avtalevarighet : %s
+BookingSuccessfullyBooked=Bookingen din er lagret
+BookingReservationHourAfter=Vi bekrefter reservasjonen av møtet på datoen %s
+BookcalBookingTitle=Online avtale
+Transparency = Åpenhet
+ReadMore = Les mer
+ReadLess = Les mindre

@@ -1,4 +1,5 @@
 <?php
+
 //============================================================+
 // File name   : example_016.php
 // Begin       : 2008-03-04
@@ -21,10 +22,11 @@
 
 /**
  * Creates an example PDF TEST document using TCPDF
- * @package com.tecnick.tcpdf
+ *
+ * @package  com.tecnick.tcpdf
  * @abstract TCPDF - Example: Document Encryption / Security
- * @author Nicola Asuni
- * @since 2008-03-04
+ * @author   Nicola Asuni
+ * @since    2008-03-04
  */
 
 require_once '../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php';

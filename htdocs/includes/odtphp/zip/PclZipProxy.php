@@ -1,5 +1,7 @@
 <?php
-if (! defined('ODTPHP_PATHTOPCLZIP')) define('ODTPHP_PATHTOPCLZIP','pclzip/');
+if (! defined('ODTPHP_PATHTOPCLZIP')) {
+	define('ODTPHP_PATHTOPCLZIP', DOL_DOCUMENT_ROOT.'/includes/odtphp/zip/pclzip/');
+}
 require_once ODTPHP_PATHTOPCLZIP.'pclzip.lib.php';
 require_once 'ZipInterface.php';
 class PclZipProxyException extends Exception
@@ -39,7 +41,7 @@ class PclZipProxy implements ZipInterface
 	 * Open a Zip archive
 	 *
 	 * @param string $filename the name of the archive to open
-	 * @return true if openning has succeeded
+	 * @return bool true if openning has succeeded
 	 */
 	public function open($filename)
 	{
@@ -56,7 +58,7 @@ class PclZipProxy implements ZipInterface
 	 * Retrieve the content of a file within the archive from its name
 	 *
 	 * @param string $name the name of the file to extract
-	 * @return the content of the file in a string
+	 * @return string the content of the file in a string
 	 */
 	public function getFromName($name)
 	{
@@ -77,7 +79,7 @@ class PclZipProxy implements ZipInterface
 	 *
 	 * @param string $localname the local path to the file in the archive
 	 * @param string $contents the content of the file
-	 * @return true if the file has been successful added
+	 * @return bool true if the file has been successful added
 	 */
 	public function addFromString($localname, $contents)
 	{
@@ -87,13 +89,14 @@ class PclZipProxy implements ZipInterface
 		if (file_exists($this->filename) && !is_writable($this->filename)) {
 			return false;
 		}
+
 		$localname = preg_replace("/(?:\.|\/)*(.*)/", "\\1", $localname);
 		$localpath = dirname($localname);
 		$tmpfilename = $this->tmpdir . '/' . basename($localname);
 		if (false !== file_put_contents($tmpfilename, $contents)) {
 			//print "tmpfilename=".$tmpfilename;
 			//print "localname=".$localname;
-			$res=$this->pclzip->delete(PCLZIP_OPT_BY_NAME, $localname);
+			$res = $this->pclzip->delete(PCLZIP_OPT_BY_NAME, $localname);		// after this with pclzip handler, the odt/zip file is ocrrupted. No way to edit the zip with file roller.
 			$add = $this->pclzip->add($tmpfilename,
 				PCLZIP_OPT_REMOVE_PATH, $this->tmpdir,
 				PCLZIP_OPT_ADD_PATH, $localpath);
@@ -110,7 +113,7 @@ class PclZipProxy implements ZipInterface
 	 *
 	 * @param string $filename the path to the file we want to add
 	 * @param string $localname the local path to the file in the archive
-	 * @return true if the file has been successful added
+	 * @return bool true if the file has been successful added
 	 */
 	public function addFile($filename, $localname = null)
 	{
@@ -144,7 +147,7 @@ class PclZipProxy implements ZipInterface
 
 	/**
 	 * Close the Zip archive
-	 * @return true
+	 * @return bool true
 	 */
 	public function close()
 	{
@@ -156,5 +159,3 @@ class PclZipProxy implements ZipInterface
 		return true;
 	}
 }
-
-?>

@@ -1,7 +1,9 @@
 <?php
-/* Copyright (C) 2013-2014 Olivier Geffroy       <jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro    <aspangaro@open-dsi.fr>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
+/* Copyright (C) 2013-2014  Olivier Geffroy         <jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Alexandre Spangaro      <aspangaro@open-dsi.fr>
+ * Copyright (C) 2013-2014  Florian Henry           <florian.henry@open-concept.pro>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +28,7 @@
 /**
  * Class to manage accountancy systems
  */
-class AccountancySystem
+class AccountancySystem extends CommonObject
 {
 	/**
 	 * @var DoliDB Database handler.
@@ -39,39 +41,42 @@ class AccountancySystem
 	public $error = '';
 
 	/**
+	 * @var string[] Array of Errors code (or messages)
+	 */
+	public $errors = array();
+
+	/**
 	 * @var int ID
+	 */
+	public $id;
+
+	/**
+	 * @var int ID
+	 * @deprecated
+	 * @see $id
 	 */
 	public $rowid;
 
 	/**
-	 * @var int ID
+	 * @var string 		Accountancy system code
 	 */
-	public $fk_pcg_version;
+	public $pcg_version;
 
 	/**
-	 * @var string pcg type
+	 * @var string 		Ref of accountancy system. Duplicate property with ->pcg_version.
+	 * @see $pcg_version
 	 */
-	public $pcg_type;
+	public $ref;
 
 	/**
-	 * @var string Accountancy System numero
+	 * @var int active
 	 */
-	public $numero;
+	public $active;
 
 	/**
 	 * @var string Accountancy System label
 	 */
 	public $label;
-
-	/**
-	 * @var string account number
-	 */
-	public $account_number;
-
-	/**
-	 * @var string account parent
-	 */
-	public $account_parent;
 
 	/**
 	 * Constructor
@@ -89,7 +94,7 @@ class AccountancySystem
 	 *
 	 * @param 	int 	$rowid 				   Id
 	 * @param 	string 	$ref             	   ref
-	 * @return 	int                            <0 if KO, Id of record if OK and found
+	 * @return 	int                            Return integer <0 if KO, Id of record if OK and found
 	 */
 	public function fetch($rowid = 0, $ref = '')
 	{
@@ -142,8 +147,13 @@ class AccountancySystem
 		$now = dol_now();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."accounting_system";
-		$sql .= " (date_creation, fk_user_author, numero, label)";
-		$sql .= " VALUES ('".$this->db->idate($now)."',".((int) $user->id).",'".$this->db->escape($this->numero)."','".$this->db->escape($this->label)."')";
+		$sql .= " (date_creation, fk_user_author, label, pcg_version, active)";
+		$sql .= " VALUES ('"
+			. $this->db->idate($now)                    ."',"
+			. ((int) $user->id)                         .",'"
+			. $this->db->escape($this->label)           ."','"
+			. $this->db->escape($this->pcg_version)     ."',"
+			. ((int) $this->active)                      .")";
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -151,16 +161,17 @@ class AccountancySystem
 			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."accounting_system");
 
 			if ($id > 0) {
+				$this->id = $id;
 				$this->rowid = $id;
 				$result = $this->rowid;
 			} else {
 				$result = - 2;
-				$this->error = "AccountancySystem::Create Error $result";
+				$this->error = "AccountancySystem::Create Error $result: " . $this->db->lasterror();
 				dol_syslog($this->error, LOG_ERR);
 			}
 		} else {
 			$result = - 1;
-			$this->error = "AccountancySystem::Create Error $result";
+			$this->error = "AccountancySystem::Create Error $result: " . $this->db->lasterror();
 			dol_syslog($this->error, LOG_ERR);
 		}
 

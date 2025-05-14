@@ -11,7 +11,7 @@ TypeOfSupport=Destek türü
 TypeSupportCommunauty=Topluluk (ücretsiz)
 TypeSupportCommercial=Ticari
 TypeOfHelp=Tür
-NeedHelpCenter=Yardım veya desteğe mi ihtiyacınız var?
+NeedHelpCenter=Desteğe mi ihtiyacınız var?
 Efficiency=Verim
 TypeHelpOnly=Sadece yardım
 TypeHelpDev=Yardım + Geliştirme
@@ -20,4 +20,4 @@ BackToHelpCenter=Aksi takdirde, <a href="%s">Yardım Merkezi ana sayfasına geri
 LinkToGoldMember=Dolibar tarafından diliniz (%s) için önceden belirlenmiş eğitmenlerden birini onların ekran etiketlerine tıklayarak arayabilirsiniz (durum ve maksimum fiyat otomatik olarak güncellenir):
 PossibleLanguages=Desteklenen diller
 SubscribeToFoundation=Dolibarr projesine yardımcı olun, vakfa abone olun
-SeeOfficalSupport=Kendi dilinizde Dolibarr desteği için: <br><b><a href="%s" target="_blank">%s</a></b>
+SeeOfficalSupport=Kendi dilinizde resmi Dolibarr desteği için: <br><b><a href="%s" target="_blank" rel="noopener noreferrer">%s</a></b>

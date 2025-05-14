@@ -3,6 +3,8 @@
  * Copyright (C) 2011-2017  Juanjo Menent       <jmenent@2byte.es>
  * Copyright (C) 2021       Nicolas ZABOURI     <info@inovea-conseil.com>
  * Copyright (C) 2022       Alexandre Spangaro  <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,11 +36,19 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/takepos.lib.php";
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 // If socid provided by ajax company selector
-if (!empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id'])) {
+if (GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha')) {
 	$_GET['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_POST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 	$_REQUEST['CASHDESK_ID_THIRDPARTY'] = GETPOST('CASHDESK_ID_THIRDPARTY_id', 'alpha');
 }
+
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
 
 // Security check
 if (!$user->admin) {
@@ -131,7 +141,7 @@ $formproduct = new FormProduct($db);
 
 $help_url = 'EN:Module_Point_of_sale_(TakePOS)';
 
-llxHeader('', $langs->trans("CashDeskSetup"), $help_url);
+llxHeader('', $langs->trans("CashDeskSetup"), $help_url, '', 0, 0, '', '', '', 'mod-takepos page-admin_setup');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("CashDeskSetup").' (TakePOS)', $linkback, 'title_setup');
@@ -144,6 +154,7 @@ $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
 
 print load_fiche_titre($langs->trans('CashDeskRefNumberingModules'), '', '');
 
+print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
 print '<table class="noborder centpercent">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name")."</td>\n";
@@ -169,19 +180,20 @@ foreach ($dirmodels as $reldir) {
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file();
+					'@phan-var-force ModeleNumRefTakepos $module';
 
 					// Show modules according to features level
-					if ($module->version == 'development' && $conf->global->MAIN_FEATURES_LEVEL < 2) {
+					if ($module->version == 'development' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
 						continue;
 					}
-					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) {
+					if ($module->version == 'experimental' && getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1) {
 						continue;
 					}
 
 					if ($module->isEnabled()) {
-						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
-						print $module->info();
+						print '<tr class="oddeven"><td>'.$module->getName($langs)."</td><td>\n";
+						print $module->info($langs);
 						print '</td>';
 
 						// Show example of numbering module
@@ -198,7 +210,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if (getDolGlobalString('TAKEPOS_REF_ADDON') == "$file") {
+						if (getDolGlobalString('TAKEPOS_REF_ADDON', 'mod_takepos_ref_simple') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&token='.newToken().'&value='.urlencode($file).'">';
@@ -211,7 +223,7 @@ foreach ($dirmodels as $reldir) {
 						$invoice = new Facture($db);
 						$invoice->date = $now;
 						$invoice->module_source = 'takepos';
-						$invoice->pos_source = 1;
+						$invoice->pos_source = '1';
 
 						// Info
 						$htmltooltip = '';
@@ -230,7 +242,7 @@ foreach ($dirmodels as $reldir) {
 						}
 
 						print '<td align="center">';
-						print $form->textwithpicto('', $htmltooltip, 1, 0);
+						print $form->textwithpicto('', $htmltooltip, 1, 'info');
 						print '</td>';
 
 						print "</tr>\n";
@@ -241,9 +253,14 @@ foreach ($dirmodels as $reldir) {
 		}
 	}
 }
-print "</table><br>\n";
+print "</table>\n";
+print '</div>';
+print "\n";
 
 print '<br>';
+
+
+print load_fiche_titre($langs->trans('Options'), '', '');
 
 // Mode
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -254,21 +271,21 @@ print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
-print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td>'.$langs->trans("Value").'</td>';
+print '<td class="notitlefield">'.$langs->trans("Parameters").'</td><td></td>';
 print "</tr>\n";
 
 // Terminals
 print '<tr class="oddeven"><td>';
 print $langs->trans("NumberOfTerminals");
-print '<td colspan="2">';
-print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" value="' . (empty($conf->global->TAKEPOS_NUM_TERMINALS) ? '1' : $conf->global->TAKEPOS_NUM_TERMINALS)  . '">';
+print '<td>';
+print '<input type="number" name="TAKEPOS_NUM_TERMINALS" min="1" class="width50" value="' . getDolGlobalString('TAKEPOS_NUM_TERMINALS', '1') . '">';
 print "</td></tr>\n";
 
 // Services
 if (isModEnabled("service")) {
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("CashdeskShowServices");
-	print '<td colspan="2">';
+	print '<td>';
 	print ajax_constantonoff("CASHDESK_SERVICES", array(), $conf->entity, 0, 0, 1, 0);
 	//print $form->selectyesno("CASHDESK_SERVICES", $conf->global->CASHDESK_SERVICES, 1);
 	print "</td></tr>\n";
@@ -277,23 +294,23 @@ if (isModEnabled("service")) {
 // Root category for products
 print '<tr class="oddeven"><td>';
 print $form->textwithpicto($langs->trans("RootCategoryForProductsToSell"), $langs->trans("RootCategoryForProductsToSellDesc"));
-print '<td colspan="2">';
-print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0);
+print '<td>';
+print img_object('', 'category', 'class="paddingright"').$form->select_all_categories(Categorie::TYPE_PRODUCT, getDolGlobalInt('TAKEPOS_ROOT_CATEGORY_ID'), 'TAKEPOS_ROOT_CATEGORY_ID', 64, 0, 0, 0, 'maxwidth500 widthcentpercentminusx');
 print ajax_combobox('TAKEPOS_ROOT_CATEGORY_ID');
 print "</td></tr>\n";
 
 // Sort product
 print '<tr class="oddeven"><td>';
 print $langs->trans("SortProductField");
-print '<td colspan="2">';
+print '<td>';
 $prod = new Product($db);
 $array = array('rowid' => 'ID', 'ref' => 'Ref', 'label' => 'Label', 'datec' => 'DateCreation', 'tms' => 'DateModification');
-print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, (empty($conf->global->TAKEPOS_SORTPRODUCTFIELD) ? 'rowid' : $conf->global->TAKEPOS_SORTPRODUCTFIELD), 0, 0, 0, '', 1);
+print $form->selectarray('TAKEPOS_SORTPRODUCTFIELD', $array, getDolGlobalString('TAKEPOS_SORTPRODUCTFIELD', 'rowid'), 0, 0, 0, '', 1);
 print "</td></tr>\n";
 
 print '<tr class="oddeven"><td>';
 print $langs->trans('TakeposGroupSameProduct');
-print '<td colspan="2">';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_GROUP_SAME_PRODUCT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
@@ -308,9 +325,9 @@ $htmltext .= '</i>';
 // Payment numpad
 print '<tr class="oddeven"><td>';
 print $langs->trans("Paymentnumpad");
-print '<td colspan="2">';
-$array = array(0=>$langs->trans("Numberspad"), 1=>$langs->trans("BillsCoinsPad"));
-print $form->selectarray('TAKEPOS_NUMPAD', $array, (empty($conf->global->TAKEPOS_NUMPAD) ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
+print '<td>';
+$array = array(0 => $langs->trans("Numberspad"), 1 => $langs->trans("BillsCoinsPad"));
+print $form->selectarray('TAKEPOS_NUMPAD', $array, (!getDolGlobalString('TAKEPOS_NUMPAD') ? '0' : $conf->global->TAKEPOS_NUMPAD), 0);
 print "</td></tr>\n";
 
 // Numpad use payment icons
@@ -324,7 +341,7 @@ print "</td></tr>\n";
 // Direct Payment
 print '<tr class="oddeven"><td>';
 print $langs->trans('DirectPaymentButton');
-print '<td colspan="2">';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_DIRECT_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
 //print $form->selectyesno("TAKEPOS_DIRECT_PAYMENT", $conf->global->TAKEPOS_DIRECT_PAYMENT, 1);
 print "</td></tr>\n";
@@ -340,7 +357,7 @@ print "</td></tr>\n";
 // Email template for send invoice
 print '<tr class="oddeven"><td>';
 print $langs->trans('EmailTemplate');
-print '<td colspan="2">';
+print '<td>';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 $formmail = new FormMail($db);
 $nboftemplates = $formmail->fetchAllEMailTemplate('facture_send', $user, null, -1); // We set lang=null to get in priority record with no lang
@@ -358,42 +375,49 @@ if (is_array($formmail->lines_model)) {
 }
 //var_dump($arraydefaultmessage);
 //var_dump($arrayofmessagename);
-print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, $conf->global->TAKEPOS_EMAIL_TEMPLATE_INVOICE, 'None', 1, 0, '', 0, 0, 0, '', '', 1);
+print $form->selectarray('TAKEPOS_EMAIL_TEMPLATE_INVOICE', $arrayofmessagename, getDolGlobalString('TAKEPOS_EMAIL_TEMPLATE_INVOICE'), 'None', 1, 0, '', 0, 0, 0, '', 'maxwidth500 widthcentpercentminusx', 1);
 print "</td></tr>\n";
 
 // Control cash box at opening pos
 print '<tr class="oddeven"><td>';
 print $langs->trans('ControlCashOpening');
-print '<td colspan="2">';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_CONTROL_CASH_OPENING", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Gift receipt
 print '<tr class="oddeven"><td>';
 print $langs->trans('GiftReceiptButton');
-print '<td colspan="2">';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_GIFT_RECEIPT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Delayed Pay Button
 print '<tr class="oddeven"><td>';
 print $langs->trans('AllowDelayedPayment');
-print '<td colspan="2">';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_DELAYED_PAYMENT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Show price without vat
 print '<tr class="oddeven"><td>';
 print $langs->trans('ShowPriceHT');
-print '<td colspan="2">';
+print '<td>';
 print ajax_constantonoff("TAKEPOS_SHOW_HT", array(), $conf->entity, 0, 0, 1, 0);
+print "</td></tr>\n";
+
+// Use price excl. taxes (HT) and not price incl. taxes (TTC)
+print '<tr class="oddeven"><td>';
+print $langs->trans('UsePriceHT');
+print '</td><td>';
+print ajax_constantonoff("TAKEPOS_CHANGE_PRICE_HT", array(), $conf->entity, 0, 0, 1, 0);
 print "</td></tr>\n";
 
 // Barcode rule to insert product
 if (isModEnabled('barcode')) {
 	print '<tr class="oddeven"><td>';
-	print $form->textwithpicto($langs->trans("TakeposBarcodeRuleToInsertProduct"), $langs->trans("TakeposBarcodeRuleToInsertProductDesc"));
-	print '<td colspan="2">';
+	print $form->textwithpicto($langs->trans("TakeposBarcodeRuleToInsertProduct"), $langs->trans("TakeposBarcodeRuleToInsertProductDesc"), 1, 'help', '', 0, 3, 'barcoderuleonsmartphone');
+	print '<td>';
 	print '<input type="text" name="TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT" value="' . (getDolGlobalString('TAKEPOS_BARCODE_RULE_TO_INSERT_PRODUCT')) . '">';
 	print "</td></tr>\n";
 }
@@ -467,25 +491,23 @@ if (getDolGlobalInt('TAKEPOS_ENABLE_SUMUP')) {
 	print '<table class="noborder centpercent">';
 
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td>'.$langs->trans("Value").'</td>';
+	print '<td class="titlefield">'.$langs->trans("Sumup").'</td><td></td>';
 	print "</tr>\n";
 
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SumupAffiliate");
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="'.$conf->global->TAKEPOS_SUMUP_AFFILIATE.'"></input>';
+	print '<input type="text" name="TAKEPOS_SUMUP_AFFILIATE" value="' . getDolGlobalString('TAKEPOS_SUMUP_AFFILIATE').'"></input>';
 	print "</td></tr>\n";
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("SumupAppId");
 	print '<td colspan="2">';
-	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="'.$conf->global->TAKEPOS_SUMUP_APPID.'"></input>';
+	print '<input type="text" name="TAKEPOS_SUMUP_APPID" value="' . getDolGlobalString('TAKEPOS_SUMUP_APPID').'"></input>';
 	print "</td></tr>\n";
 
 	print '</table>';
 	print '</div>';
 }
-
-print '<br>';
 
 print $form->buttonsSaveCancel("Save", '');
 

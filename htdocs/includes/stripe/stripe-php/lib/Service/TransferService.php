@@ -16,7 +16,7 @@ class TransferService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\Transfer>
      */
     public function all($params = null, $opts = null)
     {
@@ -36,25 +36,11 @@ class TransferService extends \Stripe\Service\AbstractService
      *
      * @throws \Stripe\Exception\ApiErrorException if the request fails
      *
-     * @return \Stripe\Collection
+     * @return \Stripe\Collection<\Stripe\TransferReversal>
      */
     public function allReversals($parentId, $params = null, $opts = null)
     {
         return $this->requestCollection('get', $this->buildPath('/v1/transfers/%s/reversals', $parentId), $params, $opts);
-    }
-
-    /**
-     * @param string $id
-     * @param null|array $params
-     * @param null|array|\Stripe\Util\RequestOptions $opts
-     *
-     * @throws \Stripe\Exception\ApiErrorException if the request fails
-     *
-     * @return \Stripe\Transfer
-     */
-    public function cancel($id, $params = null, $opts = null)
-    {
-        return $this->request('post', $this->buildPath('/v1/transfers/%s/cancel', $id), $params, $opts);
     }
 
     /**

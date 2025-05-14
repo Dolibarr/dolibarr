@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Baca pekerjaan terjadwal
 Permission23102 = Buat/perbarui pekerjaan yang Dijadwalkan
 Permission23103 = Hapus pekerjaan terjadwal
@@ -13,8 +12,8 @@ KeyForCronAccess=Kunci keamanan untuk URL untuk meluncurkan pekerjaan cron
 FileToLaunchCronJobs=Baris perintah untuk memeriksa dan meluncurkan pekerjaan cron yang berkualitas
 CronExplainHowToRunUnix=Pada lingkungan Unix Anda harus menggunakan entri crontab berikut untuk menjalankan baris perintah setiap 5 menit
 CronExplainHowToRunWin=Pada lingkungan Microsoft (tm) Windows Anda dapat menggunakan alat Tugas Terjadwal untuk menjalankan baris perintah setiap 5 menit
-CronMethodDoesNotExists=Kelas %s tidak mengandung metode apa pun %s
-CronMethodNotAllowed=Metode %s dari kelas %s ada dalam daftar hitam metode terlarang
+CronMethodDoesNotExists=Kelas %s tidak berisi metode apa pun %s
+CronMethodNotAllowed=Metode %s dari kelas %s ada dalam daftar blokir metode terlarang
 CronJobDefDesc=Profil pekerjaan Cron didefinisikan ke dalam file deskriptor modul. Ketika modul diaktifkan, mereka dimuat dan tersedia sehingga Anda dapat mengelola pekerjaan dari menu alat admin %s.
 CronJobProfiles=Daftar profil pekerjaan cron yang telah ditentukan
 # Menu
@@ -26,11 +25,12 @@ CronCommand=Perintah
 CronList=Pekerjaan terjadwal
 CronDelete=Hapus pekerjaan terjadwal
 CronConfirmDelete=Anda yakin ingin menghapus pekerjaan terjadwal ini?
-CronExecute=Launch now
+CronExecute=Luncurkan sekarang
 CronConfirmExecute=Apakah Anda yakin ingin menjalankan pekerjaan terjadwal ini sekarang?
 CronInfo=Modul pekerjaan terjadwal memungkinkan untuk menjadwalkan pekerjaan untuk melaksanakannya secara otomatis. Pekerjaan juga dapat dimulai secara manual.
 CronTask=Pekerjaan
-CronNone=Tidak ada
+CronNone=Jalankan tugas terjadwal berikutnya
+CronNotYetRan=Tidak pernah dieksekusi
 CronDtStart=Tidak sebelum
 CronDtEnd=Tidak setelahnya
 CronDtNextLaunch=Eksekusi selanjutnya
@@ -49,8 +49,8 @@ CronEach=Setiap
 JobFinished=Pekerjaan diluncurkan dan selesai
 Scheduled=Terjadwal
 #Page card
-CronAdd= Tambahkan pekerjaan
-CronEvery=Jalankan pekerjaan masing-masing
+CronAdd=Tambahkan pekerjaan
+CronEvery=Jalankan pekerjaan setiap
 CronObject=Instance/Obyek untuk dibuat
 CronArgs=Parameter
 CronSaveSucess=Berhasil menyimpan
@@ -58,7 +58,7 @@ CronNote=Komentar
 CronFieldMandatory=Bidang %s wajib diisi
 CronErrEndDateStartDt=Tanggal akhir tidak boleh sebelum tanggal mulai
 StatusAtInstall=Status pada pemasangan modul
-CronStatusActiveBtn=Enable scheduling
+CronStatusActiveBtn=Aktifkan penjadwalan
 CronStatusInactiveBtn=Nonaktifkan
 CronTaskInactive=Pekerjaan ini dinonaktifkan (tidak dijadwalkan)
 CronId=Indo
@@ -67,7 +67,7 @@ CronModuleHelp=Nama direktori modul Dolibarr (juga berfungsi dengan modul Doliba
 CronClassFileHelp=Path relatif dan nama file yang akan dimuat (path relatif ke direktori root server web). <BR> Sebagai contoh untuk memanggil metode mengambil dari Dolibarr objek Produk htdocs/produk/kelas/<u> product.class.php </u>, nilai untuk nama file kelas adalah a0342fccfda19b0c08produk08produk0b008p08p03p03b003b003b008
 CronObjectHelp=Nama objek untuk memuat. <BR> Misalnya untuk memanggil metode pengambilan objek Produk Dolibarr /htdocs/product/class/product.class.php, nilai untuk nama file kelas adalah <br> <i> Produk a0ae64758bacz0
 CronMethodHelp=Metode objek untuk memulai. <BR> Misalnya untuk memanggil metode pengambilan objek Produk Dolibarr /htdocs/product/class/product.class.php, nilai untuk metode adalah <br> <i> fetch a0ae64758bac330
-CronArgsHelp=Argumen metode. <BR> Sebagai contoh untuk memanggil metode pengambilan objek Produk Dolibarr /htdocs/product/class/product.class.php, nilai untuk parameter dapat<br>a049271e8181f0800, ProductRef a0ae0808758758b08
+CronArgsHelp=Argumen metode. <BR> Misalnya untuk memanggil metode pengambilan objek Produk Dolibarr /htdocs/product/class/product.class.php, nilai parameternya bisa<br><i>0, ProductRef</i>
 CronCommandHelp=Baris perintah sistem untuk mengeksekusi.
 CronCreateJob=Buat Pekerjaan Terjadwal baru
 CronFrom=Dari
@@ -82,19 +82,20 @@ UseMenuModuleToolsToAddCronJobs=Buka menu "<a href="%s"> Beranda - Alat Admin - 
 JobDisabled=Pekerjaan dinonaktifkan
 MakeLocalDatabaseDumpShort=Pencadangan basis data lokal
 MakeLocalDatabaseDump=Buat dump basis data lokal. Parameternya adalah: kompresi ('gz' atau 'bz' atau 'tidak ada'), jenis cadangan ('mysql', 'pgsql', 'auto'), 1, 'otomatis' atau nama file yang akan dibuat, jumlah file cadangan yang akan disimpan
-MakeSendLocalDatabaseDumpShort=Send local database backup
-MakeSendLocalDatabaseDump=Send local database backup by email. Parameters are: to, from, subject, message, filename (Name of file sent), filter ('sql' for backup of database only)
-BackupIsTooLargeSend=Sorry, last backup file is too large to be send by email
-CleanUnfinishedCronjobShort=Clean unfinished cronjob
-CleanUnfinishedCronjob=Clean cronjob stuck in processing when the process is no longer running
+MakeSendLocalDatabaseDumpShort=Kirim cadangan basis data lokal
+MakeSendLocalDatabaseDump=Kirim cadangan basis data lokal melalui email. Parameternya adalah: ke, dari, subjek, pesan, nama file (Nama file yang dikirim), filter ('sql' untuk cadangan database saja)
+BackupIsTooLargeSend=Maaf, file cadangan terakhir terlalu besar untuk dikirim melalui email
+CleanUnfinishedCronjobShort=Bersihkan cronjob yang belum selesai
+CleanUnfinishedCronjob=Bersihkan cronjob yang terjebak dalam pemrosesan saat proses tidak lagi berjalan
 WarningCronDelayed=Perhatian, untuk tujuan kinerja, apa pun tanggal berikutnya pelaksanaan pekerjaan yang diaktifkan, pekerjaan Anda mungkin tertunda hingga maksimum %s jam, sebelum dijalankan.
 DATAPOLICYJob=Pembersih data dan penganonim
 JobXMustBeEnabled=Pekerjaan %s harus diaktifkan
-EmailIfError=Email for warning on error
-ErrorInBatch=Error when running the job %s
+EmailIfError=Email untuk peringatan kesalahan
+JobNotFound=Pekerjaan %s tidak ditemukan dalam daftar pekerjaan (coba nonaktifkan/aktifkan modul)
+ErrorInBatch=Kesalahan saat menjalankan pekerjaan %s
 
 # Cron Boxes
 LastExecutedScheduledJob=Pekerjaan terjadwal yang terakhir dieksekusi
 NextScheduledJobExecute=Pekerjaan terjadwal berikutnya untuk dieksekusi
 NumberScheduledJobError=Jumlah pekerjaan terjadwal yang ada kesalahan
-NumberScheduledJobNeverFinished=Number of scheduled jobs never finished
+NumberScheduledJobNeverFinished=Jumlah pekerjaan yang dijadwalkan tidak pernah selesai

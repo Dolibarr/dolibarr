@@ -8,8 +8,6 @@ LocalAgenda=Odatiy taqvim
 ActionsOwnedBy=Tadbir
 ActionsOwnedByShort=Egasi
 AffectedTo=Tayinlangan
-Event=Tadbir
-Events=Tadbirlar
 EventsNb=Tadbirlar soni
 ListOfActions=Tadbirlar ro'yxati
 EventReports=Voqealar haqida hisobotlar
@@ -23,7 +21,6 @@ MenuDoneMyActions=Mening tugatilgan voqealarim
 ListOfEvents=Voqealar ro'yxati (standart taqvim)
 ActionsAskedBy=Xabar bergan voqealar
 ActionsToDoBy=Belgilangan tadbirlar
-ActionsDoneBy=Hodisalar
 ActionAssignedTo=Tadbir tayinlangan
 ViewCal=Oylik ko'rinish
 ViewDay=Kunduzgi ko'rinish
@@ -57,16 +54,18 @@ MemberValidatedInDolibarr=%s a'zosi tasdiqlangan
 MemberModifiedInDolibarr=%s a'zosi o'zgartirildi
 MemberResiliatedInDolibarr=%s a'zosi tugatildi
 MemberDeletedInDolibarr=%s a'zosi o'chirildi
+MemberExcludedInDolibarr=%s a'zosi chiqarib tashlandi
 MemberSubscriptionAddedInDolibarr=%s a'zosi uchun %s obunasi qo'shildi
 MemberSubscriptionModifiedInDolibarr=%s a'zosi uchun obuna %s o'zgartirildi
 MemberSubscriptionDeletedInDolibarr=%s a'zosi uchun %s obunasi o'chirildi
 ShipmentValidatedInDolibarr=%s jo'natmasi tasdiqlangan
-ShipmentClassifyClosedInDolibarr=%s jo'natmasi tasniflangan
+ShipmentClassifyClosedInDolibarr=Yuklash %s yopiq tasniflangan
 ShipmentUnClassifyCloseddInDolibarr=%s jo'natmasi qayta ochilgan
 ShipmentBackToDraftInDolibarr=%s jo'natmasi qoralama holatiga qaytadi
 ShipmentDeletedInDolibarr=%s jo'natmasi o'chirildi
 ShipmentCanceledInDolibarr=%s yetkazib berish bekor qilindi
 ReceptionValidatedInDolibarr=%s qabul qilish tasdiqlangan
+ReceptionDeletedInDolibarr=%s qabuli oʻchirib tashlandi
 ReceptionClassifyClosedInDolibarr=Qabul %s yopiq tasniflangan
 OrderCreatedInDolibarr=%s buyurtmasi yaratildi
 OrderValidatedInDolibarr=%s buyurtmasi tasdiqlangan
@@ -86,6 +85,9 @@ SupplierInvoiceSentByEMail=Sotuvchi hisob-fakturasi %s elektron pochta orqali yu
 ShippingSentByEMail=%s jo'natmasi elektron pochta orqali yuborilgan
 ShippingValidated= %s jo'natmasi tasdiqlangan
 InterventionSentByEMail=Elektron pochta orqali yuborilgan aralashuv %s
+ProjectSentByEMail=%s loyihasi elektron pochta orqali yuborilgan
+ProjectDeletedInDolibarr=%s loyihasi oʻchirib tashlandi
+ProjectClosedInDolibarr=%s loyihasi yopildi
 ProposalDeleted=Taklif o'chirildi
 OrderDeleted=Buyurtma o'chirildi
 InvoiceDeleted=Hisob-faktura o'chirildi
@@ -125,17 +127,21 @@ MRP_MO_PRODUCEDInDolibarr=MO ishlab chiqarilgan
 MRP_MO_DELETEInDolibarr=MO o'chirildi
 MRP_MO_CANCELInDolibarr=MO bekor qilindi
 PAIDInDolibarr=%s to'langan
+ENABLEDISABLEInDolibarr=Foydalanuvchi yoqilgan yoki o'chirilgan
+CANCELInDolibarr=Bekor qilingan
 ##### End agenda events #####
 AgendaModelModule=Hodisa uchun hujjat shablonlari
 DateActionStart=Boshlanish vaqti
 DateActionEnd=Tugash sanasi
 AgendaUrlOptions1=Chiqishni filtrlash uchun siz quyidagi parametrlarni qo'shishingiz mumkin:
-AgendaUrlOptions3= <b> logina = %s </b> <b> %s </b> foydalanuvchisiga tegishli harakatlar bilan chiqishni cheklash.
-AgendaUrlOptionsNotAdmin= <b> logina =! %s </b> foydalanuvchi <b> %s </b> foydalanuvchiga tegishli bo'lmagan harakatlarga cheklash uchun.
+AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b> (use <b>logina=!%s</b> for events not owned by the user).
 AgendaUrlOptions4= <b> logint = %s </b> foydalanuvchi <b> %s </b> (egasi va boshqalar) ga tayinlangan harakatlar bilan chiqishni cheklash uchun.
 AgendaUrlOptionsProject= <b> project = __ PROJECT_ID__ </b> loyihani <b> __PROJECT_ID__ </b> loyihasi bilan bog'liq harakatlar bilan cheklash.
-AgendaUrlOptionsNotAutoEvent= <b> notactiontype = avtomatik hodisalarni istisno qilish uchun systemauto </b>.
+AgendaUrlOptionsType=<b>actiontype=%s</b> to get either automatic or manual events
+AgendaUrlOptionsCode=<b>actioncode=%s</b> to get only events with a given code
 AgendaUrlOptionsIncludeHolidays= <b> dam olish kunlarini o'z ichiga oladi = 1 </b> ta'til tadbirlarini o'z ichiga oladi.
+AgendaUrlOptionsLimitDays=<b>notolderthan=%s</b> to limit to events in the last %s days (default is %s).
+AgendaUrlOptionsLimit=<b>limit=50</b> to limit to the latest 50 events (default and max is %s).
 AgendaShowBirthdayEvents=Kontaktlarning tug'ilgan kunlari
 AgendaHideBirthdayEvents=Kontaktlarning tug'ilgan kunlarini yashirish
 Busy=Band
@@ -159,6 +165,7 @@ DateActionBegin=Tadbirni boshlash sanasi
 ConfirmCloneEvent=Hodisani <b> %s </b> klonlashni xohlaysizmi?
 RepeatEvent=Voqeani takrorlang
 OnceOnly=Faqat bir marta
+EveryDay=Har kuni
 EveryWeek=Har hafta
 EveryMonth=Har oy
 DayOfMonth=Oy kuni
@@ -173,4 +180,28 @@ ReminderType=Qayta qo'ng'iroq turi
 AddReminder=Ushbu tadbir uchun avtomatik eslatma xabarnomasini yarating
 ErrorReminderActionCommCreation=Ushbu voqea uchun eslatma bildirishnomasini yaratishda xatolik yuz berdi
 BrowserPush=Brauzerning popup-xabarnomasi
+Reminders=Eslatmalar
 ActiveByDefault=Odatiy bo'lib yoqilgan
+Until=qadar
+DataFromWasMerged=%s maʼlumotlari birlashtirildi
+AgendaShowBookcalCalendar=Bandlov taqvimi: %s
+MenuBookcalIndex=Onlayn uchrashuv
+BookcalLabelAvailabilityHelp=Mavjudlik oralig'i yorlig'i. Masalan:<br>Umumiy mavjudlik<br>Rojdestvo bayramlarida mavjudlik
+DurationOfRange=Diapazonlarning davomiyligi
+BookCalSetup = Onlayn uchrashuvni sozlash
+BookCalSetupPage = Onlayn uchrashuvni sozlash sahifasi
+BOOKCAL_PUBLIC_INTERFACE_TOPIC = Interfeys sarlavhasi
+BookCalAbout = BookCal haqida
+BookCalAboutPage = BookCal sahifa haqida
+Calendars=Kalendarlar
+Availabilities=Mavjudligi
+NewAvailabilities=Yangi imkoniyatlar
+NewCalendar=Yangi kalendar
+ThirdPartyBookCalHelp=Ushbu taqvimda band qilingan tadbir avtomatik ravishda ushbu uchinchi tomon bilan bog'lanadi.
+AppointmentDuration = Uchrashuv davomiyligi : %s
+BookingSuccessfullyBooked=Bandlovingiz saqlandi
+BookingReservationHourAfter=%s sanasida uchrashuvimiz band qilinganligini tasdiqlaymiz
+BookcalBookingTitle=Onlayn uchrashuv
+Transparency = Shaffoflik
+ReadMore = Read more
+ReadLess = Read less

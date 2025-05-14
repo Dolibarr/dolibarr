@@ -33,10 +33,11 @@ CREATE TABLE llx_menu
     fk_mainmenu   varchar(100),								--
     fk_leftmenu   varchar(100),								--
 	position      integer NOT NULL,							-- Sort order of entry
-	url           varchar(255) NOT NULL,					-- Relative (or absolute) url to go
+	url           TEXT NOT NULL,							-- Relative (or absolute) url to go
+	showtopmenuinframe integer DEFAULT 0,                   -- 1=If url is an external url, can show the URL inside a frame
 	target        varchar(100) NULL,						-- Target of Url link
 	titre         varchar(255) NOT NULL,					-- Key for menu translation
-	prefix        varchar(255) NULL,					    -- prefix
+	prefix        varchar(255) NULL,					    -- picto
 	langs         varchar(100),								-- Lang file to load for translation
 	level         smallint,									-- Deprecated. Not used.
 	perms         text,										-- Condition to show enabled or disabled

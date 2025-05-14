@@ -1,40 +1,38 @@
-Module68000Name = Intracomm report
-Module68000Desc = Intracomm report management (Support for French DEB/DES format)
-IntracommReportSetup = Intracommreport module setup
-IntracommReportAbout = About intracommreport
+IntraCommReport=Intracomm jelentés
+IntraCommReports=Intracomm reports
+
+Module68000Name = Intracomm jelentés
+Module68000Desc = Intracomm jelentéskezelés (a francia DEB/DES formátum támogatása)
+IntracommReportSetup = Intracommreport modul beállítása
+IntracommReportAbout = Az intracommreportról
 
 # Setup
-INTRACOMMREPORT_NUM_AGREMENT=Numéro d'agrément (délivré par le CISD de rattachement)
-INTRACOMMREPORT_TYPE_ACTEUR=Type d'acteur
-INTRACOMMREPORT_ROLE_ACTEUR=Rôle joué par l'acteur
-INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Niveau d'obligation sur les introductions
-INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=Niveau d'obligation sur les expéditions
-INTRACOMMREPORT_CATEG_FRAISDEPORT=Catégorie de services de type "Frais de port"
-
-INTRACOMMREPORT_NUM_DECLARATION=Numéro de déclarant
-
+INTRACOMMREPORT_NUM_AGREMENT=Akkreditációs szám (a mellékelt CISD-től)
+INTRACOMMREPORT_TYPE_ACTEUR=A színész típusa
+INTRACOMMREPORT_ROLE_ACTEUR=A színész által játszott szerep
+INTRACOMMREPORT_NIV_OBLIGATION_INTRODUCTION=Kötelezettségi szint a bemutatkozásnál
+INTRACOMMREPORT_NIV_OBLIGATION_EXPEDITION=A szállítmányokra vonatkozó kötelezettség szintje
+INTRACOMMREPORT_CATEG_FRAISDEPORT=A "Szállítás" típusú szolgáltatások kategóriája
+INTRACOMMREPORT_NUM_DECLARATION=Bejelentő száma
 # Menu
-MenuIntracommReport=Intracomm report
-MenuIntracommReportNew=Új bevallás
+MenuIntracommReport=Intracomm jelentés
+MenuIntracommReportNew=Új deklaráció
 MenuIntracommReportList=Lista
-
 # View
-NewDeclaration=Új bevallás
-Declaration=Bevallás
-AnalysisPeriod=Vizsgált időszak
-TypeOfDeclaration=Bevallás típusa
-DEB=Termékek forgalmának bevallása (DEB)
-DES=Szolgáltatások forgalmának bevallása (DES)
-
+NewDeclaration=Új nyilatkozat
+Declaration=Nyilatkozat
+AnalysisPeriod=Elemzési időszak
+TypeOfDeclaration=Deklaráció típusa
+DEB=Árucsere nyilatkozat (DEB)
+DES=Szolgáltatáscsere nyilatkozat (DES)
 # Export page
-IntracommReportTitle=XML fájl készítése ProDouane formátumban
-
+IntracommReportTitle=XML fájl elkészítése ProDouane formátumban
 # List
-IntracommReportList=A generált bevallások listája
-IntracommReportNumber=Bevallás azonosítója
-IntracommReportPeriod=Vizsgálat időszaka
-IntracommReportTypeDeclaration=Bevallás típusa
+IntracommReportList=A generált deklarációk listája
+IntracommReportNumber=Deklaráció száma
+IntracommReportPeriod=Az elemzés időszaka
+IntracommReportTypeDeclaration=Deklaráció típusa
 IntracommReportDownload=XML fájl letöltése
-
 # Invoice
-IntracommReportTransportMode=Szállítás módja
+IntracommReportTransportMode=A szállítás módja
+DeleteIntraCommReport=Delete IntraComm report

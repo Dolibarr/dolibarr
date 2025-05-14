@@ -1,12 +1,14 @@
 <?php
-/* Copyright (c) 2005       Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2005-2018	Laurent Destailleur	 <eldy@users.sourceforge.net>
- * Copyright (c) 2005-2018	Regis Houssin		 <regis.houssin@inodbox.com>
- * Copyright (C) 2012		Florian Henry		 <florian.henry@open-concept.pro>
- * Copyright (C) 2014		Juanjo Menent		 <jmenent@2byte.es>
- * Copyright (C) 2014		Alexis Algoud		 <alexis@atm-consulting.fr>
- * Copyright (C) 2018       Nicolas ZABOURI		 <info@inovea-conseil.com>
+/* Copyright (c) 2005       Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (c) 2005-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (c) 2005-2018	Regis Houssin			<regis.houssin@inodbox.com>
+ * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2014		Alexis Algoud			<alexis@atm-consulting.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  * Copyright (C) 2019       Abbes Bahfir            <dolipar@dolipar.org>
+ * Copyright (C) 2023-2024  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +30,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-if (!empty($conf->ldap->enabled)) {
+if (isModEnabled('ldap')) {
 	require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 }
 
@@ -49,12 +51,6 @@ class UserGroup extends CommonObject
 	public $table_element = 'usergroup';
 
 	/**
-	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
-	 * @var int
-	 */
-	public $ismultientitymanaged = 1;
-
-	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
 	public $picto = 'group';
@@ -66,7 +62,7 @@ class UserGroup extends CommonObject
 
 	/**
 	 * @var string
-	 * @deprecated
+	 * @deprecated Use $name
 	 * @see $name
 	 */
 	public $nom;
@@ -76,43 +72,67 @@ class UserGroup extends CommonObject
 	 */
 	public $name; // Name of group
 
+	/**
+	 * @var int<0,1> global group  Does not seem to be used
+	 */
 	public $globalgroup; // Global group
+
+	/**
+	 * @var array<int>		Entity in table llx_user_group
+	 * @deprecated			Seems not used.
+	 */
+	public $usergroup_entity;
 
 	/**
 	 * Date creation record (datec)
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	public $datec;
-
-	/**
-	 * Date modification record (tms)
-	 *
-	 * @var integer
-	 */
-	public $datem;
 
 	/**
 	 * @var string Description
 	 */
 	public $note;
 
-	public $members = array(); // Array of users
+	/**
+	 * @var User[]  Array of users
+	 */
+	public $members = array();
 
-	public $nb_rights; // Number of rights granted to the user
+	/**
+	 * @var int Number of rights granted to the user
+	 */
+	public $nb_rights;
 
+	/**
+	 * @var int Number of users in the group
+	 */
+	public $nb_users;
+
+	/**
+	 * @var stdClass Permissions of the group
+	 */
+	public $rights;
+
+	/**
+	 * @var array<string,int> Cache array of already loaded permissions
+	 */
 	private $_tab_loaded = array(); // Array of cache of already loaded permissions
 
-	public $oldcopy; // To contains a clone of this when we need to save old properties of object
+	/**
+	 * @var int all_permissions_are_loaded
+	 */
+	public $all_permissions_are_loaded;
 
 	public $fields = array(
-		'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1, 'index'=>1, 'position'=>1, 'comment'=>'Id'),
-		'entity' => array('type'=>'integer', 'label'=>'Entity', 'enabled'=>1, 'visible'=>0, 'notnull'=> 1, 'default'=>1, 'index'=>1, 'position'=>5),
-		'nom'=>array('type'=>'varchar(180)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1, 'notnull'=>1, 'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Group name'),
-		'note' => array('type'=>'html', 'label'=>'Description', 'enabled'=>1, 'visible'=>1, 'position'=>20, 'notnull'=>-1,),
-		'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-2, 'position'=>50, 'notnull'=>1,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'position'=>60, 'notnull'=>1,),
-		'model_pdf' =>array('type'=>'varchar(255)', 'label'=>'ModelPDF', 'enabled'=>1, 'visible'=>0, 'position'=>100),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id'),
+		'entity' => array('type' => 'integer', 'label' => 'Entity', 'enabled' => 1, 'visible' => 0, 'notnull' => 1, 'default' => '1', 'index' => 1, 'position' => 5),
+		'nom' => array('type' => 'varchar(180)', 'label' => 'Name', 'enabled' => 1, 'visible' => 1, 'notnull' => 1, 'showoncombobox' => 1, 'index' => 1, 'position' => 10, 'searchall' => 1, 'comment' => 'Group name'),
+		'note' => array('type' => 'html', 'label' => 'Description', 'enabled' => 1, 'visible' => 1, 'position' => 20, 'notnull' => -1, 'searchall' => 1),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 50, 'notnull' => 1,),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'position' => 60, 'notnull' => 1,),
+		'model_pdf' => array('type' => 'varchar(255)', 'label' => 'ModelPDF', 'enabled' => 1, 'visible' => 0, 'position' => 100),
 	);
 
 	/**
@@ -121,40 +141,40 @@ class UserGroup extends CommonObject
 	public $fk_element = 'fk_usergroup';
 
 	/**
-	 * @var array	List of child tables. To test if we can delete object.
+	 * @var array<string, array<string>>	List of child tables. To test if we can delete object.
 	 */
 	protected $childtables = array();
 
 	/**
-	 * @var array	List of child tables. To know object to delete on cascade.
+	 * @var string[]	List of child tables. To know object to delete on cascade.
 	 */
 	protected $childtablesoncascade = array('usergroup_rights', 'usergroup_user');
 
 
 	/**
-	 *    Constructor de la classe
+	 *    Class constructor
 	 *
-	 *    @param   DoliDb  $db     Database handler
+	 *    @param   DoliDB  $db     Database handler
 	 */
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 1;
 		$this->nb_rights = 0;
 	}
 
 
 	/**
-	 *  Charge un objet group avec toutes ses caracteristiques (except ->members array)
+	 *  Load a group object with all properties (except ->members array that is array of users in group)
 	 *
 	 *	@param      int		$id				Id of group to load
 	 *	@param      string	$groupname		Name of group to load
 	 *  @param		boolean	$load_members	Load all members of the group
-	 *	@return		int						<0 if KO, >0 if OK
+	 *	@return		int						Return integer <0 if KO, >0 if OK
 	 */
-	public function fetch($id = '', $groupname = '', $load_members = true)
+	public function fetch($id = 0, $groupname = '', $load_members = false)
 	{
-		global $conf;
-
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		if (!empty($groupname)) {
 			$result = $this->fetchCommon(0, '', ' AND nom = \''.$this->db->escape($groupname).'\'');
@@ -166,7 +186,8 @@ class UserGroup extends CommonObject
 
 		if ($result) {
 			if ($load_members) {
-				$this->members = $this->listUsersForGroup();
+				$excludefilter = '';
+				$this->members = $this->listUsersForGroup($excludefilter, 0);	// This make a request to get list of users but may also do subrequest to fetch each users on some versions
 			}
 
 			return 1;
@@ -180,9 +201,9 @@ class UserGroup extends CommonObject
 	/**
 	 *  Return array of groups objects for a particular user
 	 *
-	 *  @param		int		$userid 		User id to search
-	 *  @param		boolean	$load_members	Load all members of the group
-	 *  @return		array     				Array of groups objects
+	 *  @param		int			$userid 			User id to search
+	 *  @param		boolean		$load_members		Load all members of the group
+	 *  @return		array<int,UserGroup>|int<-1,-1>	Array of groups objects
 	 */
 	public function listGroupsForUser($userid, $load_members = true)
 	{
@@ -211,8 +232,11 @@ class UserGroup extends CommonObject
 					$newgroup->fetch($obj->rowid, '', $load_members);
 					$ret[$obj->rowid] = $newgroup;
 				}
-
-				$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+				if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+					$ret[$obj->rowid]->usergroup_entity = array();
+				}
+				// $ret[$obj->rowid] is instance of UserGroup
+				$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 			}
 
 			$this->db->free($result);
@@ -227,9 +251,9 @@ class UserGroup extends CommonObject
 	/**
 	 * 	Return array of User objects for group this->id (or all if this->id not defined)
 	 *
-	 * 	@param	string	$excludefilter		Filter to exclude. Do not use here a string coming from user input.
-	 *  @param	int		$mode				0=Return array of user instance, 1=Return array of users id only
-	 * 	@return	mixed						Array of users or -1 on error
+	 * 	@param	string		$excludefilter		Filter to exclude. Do not use here a string coming from user input.
+	 *  @param	int<0,1>	$mode				0=Return array of user instance, 1=Return array of users id only
+	 * 	@return	array<int,User>|array<int,int>|int<-1,-1>	Array of users or -1 on error
 	 */
 	public function listUsersForGroup($excludefilter = '', $mode = 0)
 	{
@@ -237,7 +261,7 @@ class UserGroup extends CommonObject
 
 		$ret = array();
 
-		$sql = "SELECT u.rowid";
+		$sql = "SELECT u.rowid, u.login, u.lastname, u.firstname, u.photo, u.fk_soc, u.entity, u.employee, u.email, u.statut as status";
 		if (!empty($this->id)) {
 			$sql .= ", ug.entity as usergroup_entity";
 		}
@@ -263,19 +287,35 @@ class UserGroup extends CommonObject
 
 		dol_syslog(get_class($this)."::listUsersForGroup", LOG_DEBUG);
 		$resql = $this->db->query($sql);
+
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
 				if (!array_key_exists($obj->rowid, $ret)) {
 					if ($mode != 1) {
 						$newuser = new User($this->db);
-						$newuser->fetch($obj->rowid);
+						//$newuser->fetch($obj->rowid);		// We are inside a loop, no subrequests inside a loop
+						$newuser->id = $obj->rowid;
+						$newuser->login = $obj->login;
+						$newuser->photo = $obj->photo;
+						$newuser->lastname = $obj->lastname;
+						$newuser->firstname = $obj->firstname;
+						$newuser->email = $obj->email;
+						$newuser->socid = $obj->fk_soc;
+						$newuser->entity = $obj->entity;
+						$newuser->employee = $obj->employee;
+						$newuser->status = $obj->status;
+
 						$ret[$obj->rowid] = $newuser;
 					} else {
 						$ret[$obj->rowid] = $obj->rowid;
 					}
 				}
 				if ($mode != 1 && !empty($obj->usergroup_entity)) {
-					$ret[$obj->rowid]->usergroup_entity[] = $obj->usergroup_entity;
+					// $ret[$obj->rowid] is instance of User
+					if (!is_array($ret[$obj->rowid]->usergroup_entity)) {
+						$ret[$obj->rowid]->usergroup_entity = array();
+					}
+					$ret[$obj->rowid]->usergroup_entity[] = (int) $obj->usergroup_entity;
 				}
 			}
 
@@ -390,7 +430,7 @@ class UserGroup extends CommonObject
 
 			if (!$error) {
 				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
+				$this->context = array('audit' => $langs->trans("PermissionsAdd").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
@@ -434,7 +474,7 @@ class UserGroup extends CommonObject
 		if (!empty($rid)) {
 			$module = $perms = $subperms = '';
 
-			// Si on a demande supression d'un droit en particulier, on recupere
+			// Si on a demande suppression d'un droit en particulier, on recupere
 			// les caracteristiques module, perms et subperms de ce droit.
 			$sql = "SELECT module, perms, subperms";
 			$sql .= " FROM ".$this->db->prefix()."rights_def";
@@ -465,7 +505,7 @@ class UserGroup extends CommonObject
 			}
 
 			// Pour compatibilite, si lowid = 0, on est en mode suppression de tout
-			// TODO A virer quand sera gere par l'appelant
+			// TODO To remove when this will be implemented by the caller
 			//if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
 		} else {
 			// Add permission of the list $wherefordel
@@ -519,7 +559,7 @@ class UserGroup extends CommonObject
 
 			if (!$error) {
 				$langs->load("other");
-				$this->context = array('audit'=>$langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
+				$this->context = array('audit' => $langs->trans("PermissionsDelete").($rid ? ' (id='.$rid.')' : ''));
 
 				// Call trigger
 				$result = $this->call_trigger('USERGROUP_MODIFY', $user);
@@ -539,30 +579,42 @@ class UserGroup extends CommonObject
 		}
 	}
 
-
 	/**
-	 *  Charge dans l'objet group, la liste des permissions auquels le groupe a droit
+	 *  Load the list of permissions for the user into the group object
 	 *
 	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
-	 *	@return     int						<0 if KO, >0 if OK
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 *  @deprecated
+	 *  TODO Remove this method. It has a name conflict with getRights() in CommonObject and was replaced in v20 with loadRights()
+	 *
+	 *  @phpstan-ignore-next-line
 	 */
 	public function getrights($moduletag = '')
+	{
+		return $this->loadRights($moduletag);
+	}
+
+	/**
+	 *  Load the list of permissions for the user into the group object
+	 *
+	 *  @param      string	$moduletag	 	Name of module we want permissions ('' means all)
+	 *  @return     int						Return integer <0 if KO, >=0 if OK
+	 */
+	public function loadRights($moduletag = '')
 	{
 		global $conf;
 
 		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag]) {
 			// Rights for this module are already loaded, so we leave
-			return;
+			return 0;
 		}
 
 		if (!empty($this->all_permissions_are_loaded)) {
 			// We already loaded all rights for this group, so we leave
-			return;
+			return 0;
 		}
 
-		/*
-		 * Recuperation des droits
-		 */
+		// Load permission from group
 		$sql = "SELECT r.module, r.perms, r.subperms ";
 		$sql .= " FROM ".$this->db->prefix()."usergroup_rights as u, ".$this->db->prefix()."rights_def as r";
 		$sql .= " WHERE r.id = u.fk_id";
@@ -632,7 +684,7 @@ class UserGroup extends CommonObject
 	 *	Delete a group
 	 *
 	 *	@param	User	$user		User that delete
-	 *	@return int    				<0 if KO, > 0 if OK
+	 *	@return int    				Return integer <0 if KO, > 0 if OK
 	 */
 	public function delete(User $user)
 	{
@@ -643,7 +695,7 @@ class UserGroup extends CommonObject
 	 *	Create group into database
 	 *
 	 *	@param		int		$notrigger	0=triggers enabled, 1=triggers disabled
-	 *	@return     int					<0 if KO, >=0 if OK
+	 *	@return     int					Return integer <0 if KO, >=0 if OK
 	 */
 	public function create($notrigger = 0)
 	{
@@ -665,7 +717,7 @@ class UserGroup extends CommonObject
 	 *		Update group into database
 	 *
 	 *      @param      int		$notrigger	    0=triggers enabled, 1=triggers disabled
-	 *    	@return     int						<0 if KO, >=0 if OK
+	 *    	@return     int						Return integer <0 if KO, >=0 if OK
 	 */
 	public function update($notrigger = 0)
 	{
@@ -680,9 +732,41 @@ class UserGroup extends CommonObject
 
 
 	/**
-	 *  Return label of status of user (active, inactive)
+	 *	Return full name (civility+' '+name+' '+lastname)
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@param	Translate	$langs			Language object for translation of civility (used only if option is 1)
+	 *	@param	int			$option			0=No option, 1=Add civility
+	 * 	@param	int			$nameorder		-1=Auto, 0=Lastname+Firstname, 1=Firstname+Lastname, 2=Firstname, 3=Firstname if defined else lastname, 4=Lastname, 5=Lastname if defined else firstname
+	 * 	@param	int			$maxlen			Maximum length
+	 * 	@return	string						String with full name
+	 */
+	public function getFullName($langs, $option = 0, $nameorder = -1, $maxlen = 0)
+	{
+		//print "lastname=".$this->lastname." name=".$this->name." nom=".$this->nom."<br>\n";
+		$lastname = $this->lastname;
+		$firstname = $this->firstname;
+		if (empty($lastname)) {
+			$lastname = (isset($this->lastname) ? $this->lastname : (isset($this->name) ? $this->name : (isset($this->nom) ? $this->nom : (isset($this->societe) ? $this->societe : (isset($this->company) ? $this->company : '')))));
+		}
+
+		$ret = '';
+		if (!empty($option) && !empty($this->civility_code)) {
+			if ($langs->transnoentitiesnoconv("Civility".$this->civility_code) != "Civility".$this->civility_code) {
+				$ret .= $langs->transnoentitiesnoconv("Civility".$this->civility_code).' ';
+			} else {
+				$ret .= $this->civility_code.' ';
+			}
+		}
+
+		$ret .= dolGetFirstLastname($firstname, $lastname, $nameorder);
+
+		return dol_trunc($ret, $maxlen);
+	}
+
+	/**
+	 *  Return the label of the status
+	 *
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
@@ -692,11 +776,11 @@ class UserGroup extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
 	public function LibStatut($status, $mode = 0)
 	{
@@ -707,7 +791,33 @@ class UserGroup extends CommonObject
 	}
 
 	/**
-	 *  Return a link to the user card (with optionaly the picto)
+	 * getTooltipContentArray
+	 * @param array<string,mixed> $params params to construct tooltip data
+	 * @since v18
+	 * @return array{picto?:string,ref?:string,refsupplier?:string,label?:string,date?:string,date_echeance?:string,amountht?:string,total_ht?:string,totaltva?:string,amountlt1?:string,amountlt2?:string,amountrevenustamp?:string,totalttc?:string}|array{optimize:string}
+	 */
+	public function getTooltipContentArray($params)
+	{
+		global $conf, $langs, $menumanager;
+
+		$option = $params['option'] ?? '';
+
+		$datas = [];
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
+			$langs->load("users");
+			return ['optimize' => $langs->trans("ShowGroup")];
+		}
+		$datas['divopen'] = '<div class="centpercent">';
+		$datas['picto'] = img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
+		$datas['name'] = '<b>'.$langs->trans('Name').':</b> '.$this->name;
+		$datas['description'] = '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
+		$datas['divclose'] = '</div>';
+
+		return $datas;
+	}
+
+	/**
+	 *  Return a link to the user card (with optionally the picto)
 	 *  Use this->id,this->lastname, this->firstname
 	 *
 	 *  @param  int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
@@ -720,20 +830,26 @@ class UserGroup extends CommonObject
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
 	{
 		global $langs, $conf, $db, $hookmanager;
-		global $dolibarr_main_authentication, $dolibarr_main_demo;
-		global $menumanager;
 
-		if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpicto) {
+		if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER') && $withpicto) {
 			$withpicto = 0;
 		}
 
-		$result = ''; $label = '';
-
-		$label .= '<div class="centpercent">';
-		$label .= img_picto('', 'group').' <u>'.$langs->trans("Group").'</u><br>';
-		$label .= '<b>'.$langs->trans('Name').':</b> '.$this->name;
-		$label .= '<br><b>'.$langs->trans("Description").':</b> '.$this->note;
-		$label .= '</div>';
+		$result = '';
+		$params = [
+			'id' => $this->id,
+			'objecttype' => $this->element,
+			'option' => $option,
+		];
+		$classfortooltip = 'classfortooltip';
+		$dataparams = '';
+		if (getDolGlobalInt('MAIN_ENABLE_AJAX_TOOLTIP')) {
+			$classfortooltip = 'classforajaxtooltip';
+			$dataparams = ' data-params="'.dol_escape_htmltag(json_encode($params)).'"';
+			$label = '';
+		} else {
+			$label = implode($this->getTooltipContentArray($params));
+		}
 
 		if ($option == 'permissions') {
 			$url = DOL_URL_ROOT.'/user/group/perms.php?id='.$this->id;
@@ -744,7 +860,7 @@ class UserGroup extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -754,13 +870,13 @@ class UserGroup extends CommonObject
 
 		$linkclose = "";
 		if (empty($notooltip)) {
-			if (!empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+			if (getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 				$langs->load("users");
 				$label = $langs->trans("ShowGroup");
 				$linkclose .= ' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose .= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
-			$linkclose .= ' class="classfortooltip'.($morecss ? ' '.$morecss : '').'"';
+			$linkclose .= ($label ? ' title="'.dolPrintHTMLForAttribute($label).'"' : ' title="tocomplete"');
+			$linkclose .= $dataparams.' class="'.$classfortooltip.($morecss ? ' '.$morecss : '').'"';
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -769,7 +885,7 @@ class UserGroup extends CommonObject
 
 		$result = $linkstart;
 		if ($withpicto) {
-			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip ? 0 : 1);
+			$result .= img_object(($notooltip ? '' : $label), ($this->picto ? $this->picto : 'generic'), ($notooltip ? (($withpicto != 2) ? 'class="paddingright"' : '') : 'class="'.(($withpicto != 2) ? 'paddingright ' : '').'"'), 0, 0, $notooltip ? 0 : 1);
 		}
 		if ($withpicto != 2) {
 			$result .= $this->name;
@@ -778,7 +894,7 @@ class UserGroup extends CommonObject
 
 		global $action;
 		$hookmanager->initHooks(array('groupdao'));
-		$parameters = array('id'=>$this->id, 'getnomurl' => &$result);
+		$parameters = array('id' => $this->id, 'getnomurl' => &$result);
 		$reshook = $hookmanager->executeHooks('getNomUrl', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) {
 			$result = $hookmanager->resPrint;
@@ -794,11 +910,11 @@ class UserGroup extends CommonObject
 	/**
 	 *	Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
 	 *
-	 *	@param		array	$info		Info array loaded by _load_ldap_info
-	 *	@param		int		$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+	 *	@param	array<string,mixed>	$info	Info array loaded by _load_ldap_info
+	 *	@param	int<0,2>	$mode		0=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
 	 *									1=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
 	 *									2=Return key only (uid=qqq)
-	 *	@return		string				DN
+	 *	@return	string				DN
 	 */
 	public function _load_ldap_dn($info, $mode = 0)
 	{
@@ -806,13 +922,13 @@ class UserGroup extends CommonObject
 		global $conf;
 		$dn = '';
 		if ($mode == 0) {
-			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')]."," . getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 1) {
-			$dn = $conf->global->LDAP_GROUP_DN;
+			$dn = getDolGlobalString('LDAP_GROUP_DN');
 		}
 		if ($mode == 2) {
-			$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS];
+			$dn = getDolGlobalString('LDAP_KEY_GROUPS') . "=".$info[getDolGlobalString('LDAP_KEY_GROUPS')];
 		}
 		return $dn;
 	}
@@ -823,7 +939,7 @@ class UserGroup extends CommonObject
 	/**
 	 *	Initialize the info array (array of LDAP values) that will be used to call LDAP functions
 	 *
-	 *	@return		array		Tableau info des attributs
+	 *	@return		array<string,mixed>		Tableau info des attributes
 	 */
 	public function _load_ldap_info()
 	{
@@ -833,17 +949,17 @@ class UserGroup extends CommonObject
 		$info = array();
 
 		// Object classes
-		$info["objectclass"] = explode(',', $conf->global->LDAP_GROUP_OBJECT_CLASS);
+		$info["objectclass"] = explode(',', getDolGlobalString('LDAP_GROUP_OBJECT_CLASS'));
 
 		// Champs
-		if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_FULLNAME)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_FULLNAME] = $this->name;
+		if ($this->name && getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')) {
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_FULLNAME')] = $this->name;
 		}
 		//if ($this->name && !empty($conf->global->LDAP_GROUP_FIELD_NAME)) $info[$conf->global->LDAP_GROUP_FIELD_NAME] = $this->name;
-		if ($this->note && !empty($conf->global->LDAP_GROUP_FIELD_DESCRIPTION)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 2);
+		if ($this->note && getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')) {
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_DESCRIPTION')] = dol_string_nohtmltag($this->note, 2);
 		}
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS)) {
+		if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')) {
 			$valueofldapfield = array();
 			foreach ($this->members as $key => $val) {    // This is array of users for group into dolibarr database.
 				$muser = new User($this->db);
@@ -851,10 +967,10 @@ class UserGroup extends CommonObject
 				$info2 = $muser->_load_ldap_info();
 				$valueofldapfield[] = $muser->_load_ldap_dn($info2);
 			}
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPMEMBERS] = (!empty($valueofldapfield) ? $valueofldapfield : '');
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPMEMBERS')] = (!empty($valueofldapfield) ? $valueofldapfield : '');
 		}
-		if (!empty($conf->global->LDAP_GROUP_FIELD_GROUPID)) {
-			$info[$conf->global->LDAP_GROUP_FIELD_GROUPID] = $this->id;
+		if (getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')) {
+			$info[getDolGlobalString('LDAP_GROUP_FIELD_GROUPID')] = $this->id;
 		}
 		return $info;
 	}
@@ -865,13 +981,13 @@ class UserGroup extends CommonObject
 	 *  Used to build previews or test instances.
 	 *	id must be 0 if object instance is a specimen.
 	 *
-	 *  @return	void
+	 *  @return int
 	 */
 	public function initAsSpecimen()
 	{
 		global $conf, $user, $langs;
 
-		// Initialise parametres
+		// Initialise parameters
 		$this->id = 0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen = 1;
@@ -879,12 +995,14 @@ class UserGroup extends CommonObject
 		$this->name = 'DOLIBARR GROUP SPECIMEN';
 		$this->note = 'This is a note';
 		$this->datec = time();
-		$this->datem = time();
+		$this->tms = time();
 
 		// Members of this group is just me
 		$this->members = array(
 			$user->id => $user
 		);
+
+		return 1;
 	}
 
 	/**
@@ -892,10 +1010,10 @@ class UserGroup extends CommonObject
 	 *
 	 * 	@param	    string		$modele			Force model to use ('' to not force)
 	 * 	@param		Translate	$outputlangs	Object langs to use for output
-	 *  @param      int			$hidedetails    Hide details of lines
-	 *  @param      int			$hidedesc       Hide description
-	 *  @param      int			$hideref        Hide ref
-	 *  @param      null|array  $moreparams     Array to provide more information
+	 *  @param      int<0,1>	$hidedetails    Hide details of lines
+	 *  @param      int<0,1>	$hidedesc       Hide description
+	 *  @param      int<0,1>	$hideref        Hide ref
+	 *  @param      ?array<string,mixed>  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
@@ -906,8 +1024,8 @@ class UserGroup extends CommonObject
 
 		// Positionne le modele sur le nom du modele a utiliser
 		if (!dol_strlen($modele)) {
-			if (!empty($conf->global->USERGROUP_ADDON_PDF)) {
-				$modele = $conf->global->USERGROUP_ADDON_PDF;
+			if (getDolGlobalString('USERGROUP_ADDON_PDF')) {
+				$modele = getDolGlobalString('USERGROUP_ADDON_PDF');
 			} else {
 				$modele = 'grass';
 			}
@@ -916,5 +1034,40 @@ class UserGroup extends CommonObject
 		$modelpath = "core/modules/usergroup/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 *	Return clickable link of object (with eventually picto)
+	 *
+	 *	@param	string	    			$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array<string,mixed>	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		global $langs;
+
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">'.(method_exists($this, 'getNomUrl') ? $this->getNomUrl() : $this->ref).'</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'members')) {
+			$return .= '<br><span class="info-box-status opacitymedium">'.(empty($this->nb_users) ? 0 : $this->nb_users).' '.$langs->trans('Users').'</span>';
+		}
+		if (property_exists($this, 'nb_rights')) {
+			$return .= '<br><div class="info-box-status margintoponly opacitymedium">'.$langs->trans('NbOfPermissions').' : '.(empty($this->nb_rights) ? 0 : $this->nb_rights).'</div>';
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

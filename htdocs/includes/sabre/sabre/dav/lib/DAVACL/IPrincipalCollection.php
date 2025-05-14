@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAVACL;
 
 use Sabre\DAV;
@@ -14,8 +16,8 @@ use Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface IPrincipalCollection extends DAV\ICollection {
-
+interface IPrincipalCollection extends DAV\ICollection
+{
     /**
      * This method is used to search for principals matching a set of
      * properties.
@@ -35,11 +37,11 @@ interface IPrincipalCollection extends DAV\ICollection {
      * This method should simply return a list of 'child names', which may be
      * used to call $this->getChild in the future.
      *
-     * @param array $searchProperties
      * @param string $test
+     *
      * @return array
      */
-    function searchPrincipals(array $searchProperties, $test = 'allof');
+    public function searchPrincipals(array $searchProperties, $test = 'allof');
 
     /**
      * Finds a principal by its URI.
@@ -55,8 +57,8 @@ interface IPrincipalCollection extends DAV\ICollection {
      * principal was not found or you refuse to find it.
      *
      * @param string $uri
+     *
      * @return string
      */
-    function findByUri($uri);
-
+    public function findByUri($uri);
 }

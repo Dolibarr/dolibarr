@@ -1,0 +1,168 @@
+BackToDolibarr=Go back to Dolibarr
+WelcomeToDocumentation=Welcome to the Dolibarr UI/UX documentation !
+WelcomeToDocumentationDescription=This document aims to guide you through the different components of the Dolibarr user interface and help you use them effectively. Feel free to explore the different chapters of this documentation to discover the components of the Dolibarr interface and to learn how to use them effectively.
+DocumentationHome=UI Documentation
+DocBasicUsage=Basic usage
+DocLinkSectionResources=Resources
+DocHowContribute=How to contribute ?
+DocHowContributeDescription=This documentation is currently being written. Learn how to contribute and enrich this documentation
+DocListLinks=List of links - %s
+DocGroupIndexDescription= This page brings together all the links from the "%s" section.
+DocCodeForMenuOrModuleBuilder=Image code to use for menu setup or fields in modulebuilder
+DocExampleForPHPCode=Example of code to use in PHP
+
+# Components
+DocComponentsTitle=Components
+DocComponentsMainDescription=Components section description is under development
+
+# Badges
+DocBadgeTitle=Badges
+DocBadgeMainDescription=Documentation and examples for badges, our small count and labeling component.
+DocBadgeScaleDescription=Badges scale to match the size of the immediate parent element by using relative font sizing and em units.
+DocBadgeUseOnLinksOrButtons=Badges can be used as part of links or buttons to provide a counter.
+DocBadgeWarningAriaHidden1=Note that depending on how they are used, badges may be confusing for users of screen readers and similar assistive technologies. While the styling of badges provides a visual cue as to their purpose, these users will simply be presented with the content of the badge. Depending on the specific situation, these badges may seem like random additional words or numbers at the end of a sentence, link, or button.
+DocBadgeWarningAriaHidden2=Unless the context is clear (as with the “Notifications” example, where it is understood that the “4” is the number of notifications), consider including additional context with a visually hidden piece of additional text.
+DocBadgeWarningAriaHidden3=Remember to use aria-label attribute for accessibility in Dolibarr. Don't forget to use aria-hidden on icons included in badges
+DocBadgeContextualVariations=Contextual variations
+DocBadgeContextualVariationsDescription=Add any of the below mentioned modifier classes to change the appearance of a badge.
+DocBadgeContextualVariationsWarning1=Conveying meaning to assistive technologies
+DocBadgeContextualVariationsWarning2=Using color to add meaning only provides a visual indication, which will not be conveyed to users of assistive technologies – such as screen readers. Ensure that information denoted by the color is either obvious from the content itself (e.g. the visible text), or is included through alternative means, such as additional text hidden with the .sr-only class.
+DocBadgeDefaultStatus=Default status
+DocBadgeDefaultStatusDescription=Add any of the below mentioned modifier classes to change the appearance of a badge to be linked to a default status.
+DocBadgePillBadges=Pill badges
+DocBadgePillBadgesDescription=Use the .badge-pill modifier class to make badges more rounded (with a larger border-radius and additional horizontal padding).
+DocBadgeDotBadges=Dot badges
+DocBadgeDotBadgesDescription=.badge-dot modifier class to make badges circle.
+DocBadgeLinks=Links
+DocBadgeLinksDescription=Using the contextual .badge-* classes on an <a> element quickly provide actionable badges with hover and focus states.
+DocBadgeHelper=Use badge helper function
+DocBadgeHelperDescription=Using the dolGetBadge function provide in core/lib/functions.lib.php. <br><b>This function is recommended for code uniformisation and easy maintain</b>
+
+# Buttons
+DocButtonsTitle=Buttons for action
+DocButtonsMainDescription=Documentation and examples for buttons.
+DocButtonBasicUsageDescription=Display a button depending on the action to be performed and user rights
+DocButtonModal=Buttons with confirm dialog
+DocButtonModalDescription=You can add a confirm dialog on all types of buttons but it will not work if user has no rights
+DocButtonSubmenu=Dropdown Buttons
+DocButtonSubmenuDescription=Fill the $url parameter with an array of url in order to create a dropdown button.
+
+#Tables
+DocTableTitle=Tables
+DocTableMainDescription=Documentation and examples for tables.
+DocTableMainDescriptionNote=<b>Note:</b> we recommend always adding a unique “id” identifier to the table, which will enable integrators to easily interact with css and/or js.
+DocTableBasic=Basic usage
+DocTableBasicDescription=Here is a template for creating a basic data table.
+DocTableWithFilters=Filters row
+DocTableWithFiltersDescription=You can add a filters row using the following syntax. Your table must be into a form tag. <br>In order to show inputs, you can use the Form Class (see <a href="%s">#Inputs</a>) <br><span class="opacitylow"><i>Look at a list file to see how to use dynamic fields, not functionnal here.</i></span>
+DocTableBeforeFilters=Use a custom line before cols filters
+DocTableBeforeFiltersDescription=You can add a line before filters with this syntax. <br>Don't forget to use listwithfilterbefore class in your data table.
+DocTableCSSClass=Using CSS Classes
+DocTableCSSClassDescription=There are many classes for tables in Dolibarr, below is a non-exhaustive list.
+DocTableTRCSSClassDescription=<b><u>Class for row element:</u></b>
+DocTableTABLECSSClassDescription=<b><u>Class for table element:</u></b>
+DocTableCSSClass_tagtable=<b>tagtable:</b> Use diplay table
+DocTableCSSClass_liste=<b>liste:</b> Prepare the table for a list
+DocTableCSSClass_listwithfilterbefore=<b>listwithfilterbefore:</b> Useful class to hide top border and border radius if elements are placed before filters
+DocTableCSSClass_liste_titre=<b>liste_titre:</b> Used for table headers
+DocTableCSSClass_liste_titre_filter=<b>liste_titre_filter:</b> Used for table filters row
+DocTableCSSClass_liste_total=<b>liste_total:</b> Used for table footers
+DocTableCSSClass_oddeven=<b>oddeven / nooddeven:</b> This class allows you to slightly differentiate the color of the lines of a table (or to hide)
+
+#Progress bars
+DocProgressBarsTitle = Progress bars
+DocProgressBarsMainDescription = Documentation and examples for using progress bars featuring support for stacked bars, animated backgrounds, and text labels.
+DocProgressBarsDescription = Progress components are built with two HTML elements, some CSS to set the width, and a few attributes. We don’t use the HTML5 <progress> element, ensuring you can stack progress bars, animate them, and place text labels over them.
+DocProgressCanBeSpaced = You can add space separation by adding class .spaced
+DocColorVariants = Colors
+DocColorVariantsDesc = Use color utility classes to change the appearance of individual progress bars.
+DocStripedVariants = Striped
+DocStripedVariantsDesc = Add .progress-bar-striped to any .progress-bar to apply a stripe via CSS gradient over the progress bar’s background color.
+DocOtherVariants = Other
+DocOtherVariantsDesc =
+
+# Set Event Message
+DocSetEventMessageTitle = Event Message
+DocSetEventMessageMainDescription = Documentation and examples for event message
+DocSetEventMessageContextualVariationsDescription = Fill the parameter "style" of function to change color of event message
+DocSetEventMessageContextualVariations = Contextual variations
+DocSetEventMessageDescription = Display one message or several messages
+DocSetEventMessageDisplayMessage = Display message
+DocSetEventMessageDisplayMessages = Display messages
+DocSetEventMessageDisplayOKMessage = Display "OK" message
+DocSetEventMessageDisplayWarningMessage = Display "Warning" message
+DocSetEventMessageDisplayErrorMessage = Display "Error" message
+DocSetEventMessageOK = OK Message
+DocSetEventMessageWarning = Warning Message
+DocSetEventMessageError = Error Message
+DocSetEventMessageUnique = Unique Message
+DocSetEventMessage = Message #%s
+
+DocButtonIconsLowEmphasis = Low emphasis icon buttons
+DocButtonIconsDescriptionLowEmphasis = An icon button with low emphasis is typically a button that includes only an icon (no accompanying text) and has minimal styling to make it unobtrusive. Icon buttons with low emphasis are ideal for secondary or tertiary actions, like clear field, fill field, bookmarking, or sharing, especially in interfaces that have more prominent primary actions (like "Submit" or "Continue").
+DocButtonIconsForTitle = Buttons for list title
+
+# Fontawesome icons
+DocIconsTitle = Icons used by Dolibarr
+DocIconsList = List of usable icons
+DocIconsListImgPicto = List of usable icons with img_picto function
+DocIconsListFontAwesome = List of usable icons with Font Awesome
+DocIconsMainDescription = Dolibarr use a part of fontawesome 5 icons
+DocIconsFontAwesomeList = List of usable fontawesome icons
+
+#Input
+DocClassicInputsDescription = Classic input to enter string values, integer values...
+DocCheckboxInputsDescription = Checkbox input to enter boolean values
+DocRadioInputsDescription = Radio input to enter boolean values
+DocHelperFunctionsInputUsage = Helper functions usage
+DocHelperFunctionsGetSearchFilterToolInput = Helper functions for search input + dynamic js filter
+DocSelectInputsDescription = Select input to enter one value
+DocMultiSelectInputsDescription = Multiselect input to enter several values
+DocEditorInputsDescription = Editor input to enter text with HTML
+DocDateSelectInputsDescription = Date input to enter a date with or without hours
+DocInputsMainDescription = Documentation and examples for inputs
+DocInputsTitle = Inputs
+DocSearchInputUsage = Helper functions for search input + dynamic js filter
+DocSearchInputUsageDescription = The attribute values `data-search-tool-target`, `data-counter-target`, and `data-no-item-target` are CSS selectors, allowing you to target multiple search areas. Example: `data-search-tool-target=".zone01, .zone02, .zone03"`
+
+#Contributing
+DocContributeStep1=Create your documentation page
+DocContributeStep1Description=In order to create your page, you can copy the template/documentation_page.php file into the folder of your choice (Components, Content, ...) or you can copy/paste the code below into a new file.
+DocContributeStep2=Set menu and summary
+DocContributeStep2Description=The various menus (sidebar, summary) and the breadcrumbs are automatically populated by the menu defined in the Documentation class. In order to display your menu, you must fill in the menu array in <b>setMenu()</b> function. You can also use the setMenu hook.
+DocContributeAddMenuEntry=<b><u>Here is an example to add a menu entry in "Components" by the setMenu() function:</u></b>
+DocContributeStep3=Breadcrumb
+DocContributeStep3Description=In order to correctly configure the breadcrumbs of your page, you must correctly fill $documentation->view in your view. <br><b>You must precise all levels of your page.</b> Let's take the previous example, we added MyComponent in the component section.
+DocExampleError=Example error message
+DocExampleGreen=Example green/success message
+DocExampleInfo=Example info message
+DocExampleWarning=Example warning message
+
+#Template
+DocMyPageTitle=My page title
+DocMyPageDescription=Main description for your page
+DocMySectionTitle=Title of my section
+DocMySectionText=A line of text to describe my component
+DocMySectionText2=You can add more lines of text
+DocMySectionExample=Here you can put an example of your component
+
+#ExperimentalUx
+ExperimentalUx = Experimental UX
+ExperimentalUxTitle = UX Experiments in Dolibarr
+ExperimentalUxIntroductionTitle = Introduction
+ExperimentalUxIntroductionMenu = Introduction
+ExperimentalUxIntroductionTxt01 = This section gathers UX experiments that are not yet integrated into Dolibarr but are available only on these dedicated pages. They allow testing different approaches before a possible integration into the <code>develop</code> branch.
+ExperimentalUxIntroductionTxt02 = Each experiment is isolated within a well-defined file structure, making future integration easier.
+ExperimentalUxIntroductionTxt03 = <b>Note:</b> To avoid polluting the translation files with temporary text, the documentation for these experiments will be written in English only, without using Dolibarr’s translation system or language files.
+
+ExperimentalUxContributionTitle = UX Experiments in Dolibarr
+ExperimentalUxContributionTxt01 = Each experiment is grouped into a folder corresponding to its specific action. If a UX experiment concerns action "A", it will be stored in the following directory:
+ExperimentalUxContributionTxt02 = The different variants of this experiment will be stored in the assets/ subfolder, following this naming convention:
+ExperimentalUxContributionTxt03 = In some cases, variants may be incompatible with each other. It is often challenging to make different behaviors coexist when they are based on the same interaction. For this reason, it may be necessary to separate the demos in such situations.
+ExperimentalUxContributionEnd = This structure ensures a clear and modular organization of UX experiments, making testing and future integration more efficient.
+
+# Start experiements menu title
+ExperimentalUxFreezeTooltip = Tooltip freeze
+ExperimentalUxInputAjaxFeedback = Input feedback
+ExperimentalUxIntuitiveSelect = Intuitive table lines selection
+# End experiements manu tyile

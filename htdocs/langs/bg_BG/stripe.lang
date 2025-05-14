@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Настройка на модула Stripe
-StripeDesc=Offer your customers an online payment page for payments with credit/debit cards via <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a>. This can be used to allow your customers to make ad-hoc payments or for payments related to a particular Dolibarr object (invoice, order, ...)
+StripeDesc=Предложете на клиентите си онлайн плащане страница за плащания с кредитни/дебитни карти чрез <a href="https://www.stripe.com" target="_blank" rel="noopener noreferrer external">Stripe</a> . Това може да се използва, за да позволи на вашите клиенти да извършват ad hoc плащания или за плащания, свързани с конкретен обект на Dolibarr (фактура, поръчка, ...)
 StripeOrCBDoPayment=Плащане с кредитна карта или Stripe
 FollowingUrlAreAvailableToMakePayments=Следните URL адреси са налични, за да осигурят достъп на клиент, за да извърши плащане по Dolibarr обекти.
 PaymentForm=Формуляр за плащане
@@ -22,7 +22,8 @@ ToOfferALinkForOnlinePaymentOnContractLine=URL адрес, предлагащ %s
 ToOfferALinkForOnlinePaymentOnFreeAmount=URL адрес, предлагащ %s страница за онлайн плащане на свободна сума без съществуващ обект
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL адрес, предлагащ %s страница за онлайн плащане на абонамент за членство
 ToOfferALinkForOnlinePaymentOnDonation=URL адрес, предлагащ %s страница за онлайн плащане като дарение
-YouCanAddTagOnUrl=Може също да добавите URL параметър <b>&tag=<i>стойност</i> </b> към който и да е от тези URL адреси (задължително само за плащане, което не е свързано с обект), за да добавите собствен таг за плащане.<br>Към URL адреса за плащания без съществуващ обект може също да добавите параметъра <strong>&noidempotency=1</strong>, така че една и съща връзка да се използва няколко пъти със същият таг (някои начини за плащане могат да ограничат плащането до едно за всяка различна връзка без този параметър)
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=value</b> to any of those URL (mandatory only for payment not linked to an object) to add your own payment comment tag.<br>For the URL of payments with no existing object, you may also add the parameter <strong>&noidempotency=1</strong> so the same link with same tag can be used several times (some payment mode may limit the payment to 1 for each different link without this parameter)
+YouCanEmbedOnWebsite=If you want to integrate the payment page into a Dolibarr website, you can include the parameter: <b>&ws=website_ref</b>.<br>Additionally, two pages named <b>paymentok</b> and <b>paymentko</b> must be created in the website to receive the redirect after a successful of failed online payment.
 SetupStripeToHavePaymentCreatedAutomatically=Настройте Stripe с URL <b>%s</b>, за да се създава автоматично плащане след като бъде потвърдено от Stripe.
 AccountParameter=Параметри на акаунта
 UsageParameter=Параметри за използване
@@ -41,8 +42,8 @@ STRIPE_LIVE_WEBHOOK_KEY=Работен Webhook ключ
 ONLINE_PAYMENT_WAREHOUSE=Склад, който да се използва за намаляване на наличности, когато се извършва онлайн плащане<br>(Да се направи, когато възможността за намаляване на наличности се извършва при действие върху фактура и онлайн плащането генерира фактурата?)
 StripeLiveEnabled=Активиран е работен режим на Stripe (в противен случай тестов режим / пясъчник)
 StripeImportPayment=Импортиране на Stripe плащания
-ExampleOfTestCreditCard=Example of credit card for SEPA test: %s => valid, %s => error CVC, %s => expired, %s => charge fails
-ExampleOfTestBankAcountForSEPA=Example of bank account BAN for direct debit test: %s
+ExampleOfTestCreditCard=Пример за кредитна карта за тест плащане: %s => валидна, %s => грешка CVC, %s => изтекъл, %s => таксуването е неуспешно
+ExampleOfTestBankAcountForSEPA=Пример за БАН за банкова сметка за тест за директен дебит: %s
 StripeGateways=Stripe шлюзове
 OAUTH_STRIPE_TEST_ID=Тестов Stripe Connect Client ID (ca_...)
 OAUTH_STRIPE_LIVE_ID=Реален Stripe Connect Client ID (ca_...)
@@ -51,6 +52,7 @@ StripeAccount=Stripe акаунт
 StripeChargeList=Списък със Stripe таксувания
 StripeTransactionList=Списък със Stripe транзакции
 StripeCustomerId=Stripe customer id
+StripePaymentId=Ивица плащане id
 StripePaymentModes=Stripe начини на плащане
 LocalID=Локален ID
 StripeID=Stripe ID
@@ -62,7 +64,7 @@ DeleteACard=Изтриване на карта
 ConfirmDeleteCard=Сигурни ли сте, че искате да изтриете тази кредитна или дебитна карта?
 CreateCustomerOnStripe=Създаване на клиент в Stripe
 CreateCardOnStripe=Създаване на карта в Stripe
-CreateBANOnStripe=Create bank on Stripe
+CreateBANOnStripe=Създайте банка на Stripe
 ShowInStripe=Показване в Stripe
 StripeUserAccountForActions=Потребителски акаунт, който да се използва за известяване по имейл при някои Stripe събития (Stripe изплащания)
 StripePayoutList=Списък със Stripe изплащания
@@ -70,9 +72,19 @@ ToOfferALinkForTestWebhook=Връзка към настройка на Stripe We
 ToOfferALinkForLiveWebhook=Връзка към настройка на Stripe WebHook за извикване на IPN (реален режим)
 PaymentWillBeRecordedForNextPeriod=Плащането ще бъде регистрирано за следващия период.
 ClickHereToTryAgain=<a href="%s">Кликнете тук, за да опитате отново ...</a>
-CreationOfPaymentModeMustBeDoneFromStripeInterface=Due to Strong Customer Authentication rules, creation of a card must be done from Stripe backoffice. You can click here to switch on Stripe customer record: %s
-STRIPE_CARD_PRESENT=Card Present for Stripe Terminals
-TERMINAL_LOCATION=Location (address) for Stripe Terminals
-RequestDirectDebitWithStripe=Request Direct Debit with Stripe
-STRIPE_SEPA_DIRECT_DEBIT=Enable the Direct Debit payments through Stripe
-
+CreationOfPaymentModeMustBeDoneFromStripeInterface=Поради строгите правила за Клиент удостоверяване, създаването на карта трябва да се извърши от бек офиса на Stripe. Можете да щракнете тук, за да включите записа на Stripe Клиент: %s
+STRIPE_CARD_PRESENT=Налична карта за Stripe терминали
+TERMINAL_LOCATION=Местоположение (адрес) за Stripe терминали
+RequestDirectDebitWithStripe=Искане Директен дебит със Stripe
+RequesCreditTransferWithStripe=Искане Кредитен превод със Stripe
+STRIPE_SEPA_DIRECT_DEBIT=Активирайте плащанията с директен дебит чрез Stripe
+STRIPE_KLARNA=Enable the payments using Klarna
+STRIPE_BANCONTACT=Enable the payments using BANCONTACT
+STRIPE_IDEAL=Enable the payments using IDEAL
+STRIPE_GIROPAY=Enable the payments using GIROPAY
+STRIPE_SOFORT=Enable the payments using SOFORT
+StripeConnect_Mode=Режим Stripe Connect
+ExampleOnlyForBECustomers=Only for belgium customers
+ExampleOnlyForDECustomers=Only for german customers
+ExampleOnlyForNLCustomers=Only for dutch customers
+ExampleOnlyForATBEDEITNLESCustomers=Only for customers from Austria, Belgium, Germany, Italy, Netherlands, Spain

@@ -1,0 +1,22 @@
+# Dolibarr language file - Source file is en_US - ecm
+ECMNbOfDocs=No. de documentos en directorio
+ECMCreationDate=Fecha de creación
+ECMNbOfFilesInSubDir=Número de archivos en subdirectorios
+ECMArea=Área de DMS / ECM
+ECMAreaDesc=El área de SAD/ACE (Sistema de Administración de Documentos / Administración de Contenido Electrónico) te permite guardar, compartir y rápidamente buscar todo tipo de documentos en Dolibarr.
+ECMAreaDesc2a=Los directorios manuales se pueden usar para guardar documentos con una organización libre de la estructura del árbol
+ECMSectionWasRemoved=El directorio <b>%s</b> ha sido borrado.
+ECMNoDirectoryYet=Ningún directorio creado
+DeleteSection=Eliminar directorio
+ConfirmDeleteSection=¿Puedes confirmar que quieres borrar el directorio <b>%s</b>?
+ECMDirectoryForFiles=Directorio relativo de archivos
+CannotRemoveDirectoryContainsFilesOrDirs=No se puede eliminar porque contiene algunos archivos o sub-carpetas
+CannotRemoveDirectoryContainsFiles=No se puede eliminar porque contiene algunos archivos
+ECMFileManager=Administrador de archivos
+ECMSelectASection=Seleccione una carpeta del árbol...
+DirNotSynchronizedSyncFirst=Esta carpeta parece haberse creado o modificado por fuera del módulo de ECM. Deberás primero presionar el botón Re-sincronizar para sincronizar el disco y la base de datos para obtener el contenido de esta carpeta
+ReSyncListOfDir=Re-sincronizar lista de carpetas
+HashOfFileContent=Hash del contenido del archivo
+FileNotYetIndexedInDatabase=El archivo no se ha indizado todavía en la base de datos (intenta volver a cargarlo)
+ConfirmGenerateImgWebp=Si confirma, usted va a generar una imagen en formato .webp para todas las imágenes recientes dentro de esta carpeta (subcarpetas no están incluidas, webp imágenes no serán generadas si el tamaño es más grande que la original) ...
+ConfirmGenerateChosenImgWebp=Si usted confirma, va a generar una imagen en. web format for the image %s

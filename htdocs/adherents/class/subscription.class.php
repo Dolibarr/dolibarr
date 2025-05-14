@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,11 +43,6 @@ class Subscription extends CommonObject
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'subscription';
-
-	/**
-	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by fk_soc, 'field@table'=Test with link by field@table
-	 */
-	public $ismultientitymanaged = 'fk_adherent@adherent';
 
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
@@ -96,23 +93,26 @@ class Subscription extends CommonObject
 	public $amount;
 
 	/**
-	 * @var int ID
+	 * @var int 	ID of bank in llx_bank
 	 */
 	public $fk_bank;
 
+	/**
+	 * @var array<string,array{type:string,label:string,enabled:int<0,2>|string,position:int,notnull?:int,visible:int<-6,6>|string,alwayseditable?:int<0,1>,noteditable?:int<0,1>,default?:string,index?:int,foreignkey?:string,searchall?:int<0,1>,isameasure?:int<0,1>,css?:string,csslist?:string,help?:string,showoncombobox?:int<0,4>,disabled?:int<0,1>,arrayofkeyval?:array<int|string,string>,autofocusoncreate?:int<0,1>,comment?:string,copytoclipboard?:int<1,2>,validate?:int<0,1>,showonheader?:int<0,1>}>  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields = array(
-		'rowid' =>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>10),
-		'tms' =>array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'visible'=>-1, 'notnull'=>1, 'position'=>15),
-		'datec' =>array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'visible'=>-1, 'position'=>20),
-		'fk_adherent' =>array('type'=>'integer', 'label'=>'Member', 'enabled'=>1, 'visible'=>-1, 'position'=>25),
-		'dateadh' =>array('type'=>'datetime', 'label'=>'DateSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>30),
-		'datef' =>array('type'=>'datetime', 'label'=>'DateEndSubscription', 'enabled'=>1, 'visible'=>-1, 'position'=>35),
-		'subscription' =>array('type'=>'double(24,8)', 'label'=>'Amount', 'enabled'=>1, 'visible'=>-1, 'position'=>40, 'isameasure'=>1),
-		'fk_bank' =>array('type'=>'integer', 'label'=>'BankId', 'enabled'=>1, 'visible'=>-1, 'position'=>45),
-		'note' =>array('type'=>'text', 'label'=>'Note', 'enabled'=>1, 'visible'=>-1, 'position'=>50),
-		'fk_type' =>array('type'=>'integer', 'label'=>'MemberType', 'enabled'=>1, 'visible'=>-1, 'position'=>55),
-		'fk_user_creat' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'visible'=>-2, 'position'=>60),
-		'fk_user_valid' =>array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValidation', 'enabled'=>1, 'visible'=>-1, 'position'=>65),
+		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 10),
+		'tms' => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -1, 'notnull' => 1, 'position' => 15),
+		'datec' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -1, 'position' => 20),
+		'fk_adherent' => array('type' => 'integer', 'label' => 'Member', 'enabled' => 1, 'visible' => -1, 'position' => 25),
+		'dateadh' => array('type' => 'datetime', 'label' => 'DateSubscription', 'enabled' => 1, 'visible' => -1, 'position' => 30),
+		'datef' => array('type' => 'datetime', 'label' => 'DateEndSubscription', 'enabled' => 1, 'visible' => -1, 'position' => 35),
+		'subscription' => array('type' => 'double(24,8)', 'label' => 'Amount', 'enabled' => 1, 'visible' => -1, 'position' => 40, 'isameasure' => 1),
+		'fk_bank' => array('type' => 'integer', 'label' => 'BankId', 'enabled' => 1, 'visible' => -1, 'position' => 45),
+		'note' => array('type' => 'html', 'label' => 'Note', 'enabled' => 1, 'visible' => -1, 'position' => 50),
+		'fk_type' => array('type' => 'integer', 'label' => 'MemberType', 'enabled' => 1, 'visible' => -1, 'position' => 55),
+		'fk_user_creat' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'position' => 60),
+		'fk_user_valid' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserValidation', 'enabled' => 1, 'visible' => -1, 'position' => 65),
 	);
 
 
@@ -124,17 +124,19 @@ class Subscription extends CommonObject
 	public function __construct($db)
 	{
 		$this->db = $db;
+
+		$this->ismultientitymanaged = 'fk_adherent@adherent';
 	}
 
 
 	/**
-	 *	Function who permitted cretaion of the subscription
+	 *	Function who permitted creation of the subscription
 	 *
 	 *	@param	User	$user			User that create
-	 *	@param  bool 	$notrigger 		false=launch triggers after, true=disable triggers
-	 *	@return	int						<0 if KO, Id subscription created if OK
+	 *	@param  int 	$notrigger 		0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, Id subscription created if OK
 	 */
-	public function create($user, $notrigger = false)
+	public function create($user, $notrigger = 0)
 	{
 		global $langs;
 
@@ -151,10 +153,7 @@ class Subscription extends CommonObject
 			$this->datec = $now;
 		}
 
-
 		$this->db->begin();
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note)";
 
 		require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 		$member = new Adherent($this->db);
@@ -165,11 +164,15 @@ class Subscription extends CommonObject
 		} else {
 			$type = $this->fk_type;
 		}
-		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape($type)."', '".$this->db->idate($now)."',";
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."subscription (fk_adherent, fk_type, datec, dateadh, datef, subscription, note, fk_user_creat)";
+		$sql .= " VALUES (".((int) $this->fk_adherent).", '".$this->db->escape((string) $type)."', '".$this->db->idate($now)."',";
 		$sql .= " '".$this->db->idate($this->dateh)."',";
 		$sql .= " '".$this->db->idate($this->datef)."',";
 		$sql .= " ".((float) $this->amount).",";
-		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."')";
+		$sql .= " '".$this->db->escape($this->note_public ? $this->note_public : $this->note)."',";
+		$sql .= " ".((int) ($this->user_creation_id > 0 ? $this->user_creation_id : $user->id));
+		$sql .= ")";
 
 		$resql = $this->db->query($sql);
 		if (!$resql) {
@@ -180,6 +183,32 @@ class Subscription extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
 			$this->fk_type = $type;
+		}
+
+		if (!empty($this->linkedObjectsIds) && empty($this->linked_objects)) {	// To use new linkedObjectsIds instead of old linked_objects
+			$this->linked_objects = $this->linkedObjectsIds; // TODO Replace linked_objects with linkedObjectsIds
+		}
+
+		// Add object linked
+		if (!$error && $this->id && !empty($this->linked_objects) && is_array($this->linked_objects)) {
+			foreach ($this->linked_objects as $origin => $tmp_origin_id) {
+				if (is_array($tmp_origin_id)) {       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+					foreach ($tmp_origin_id as $origin_id) {
+						$ret = $this->add_object_linked($origin, $origin_id);
+						if (!$ret) {
+							$this->error = $this->db->lasterror();
+							$error++;
+						}
+					}
+				} else { // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+					$origin_id = $tmp_origin_id;
+					$ret = $this->add_object_linked($origin, $origin_id);
+					if (!$ret) {
+						$this->error = $this->db->lasterror();
+						$error++;
+					}
+				}
+			}
 		}
 
 		if (!$error && !$notrigger) {
@@ -207,7 +236,7 @@ class Subscription extends CommonObject
 	 *  Method to load a subscription
 	 *
 	 *  @param	int		$rowid		Id subscription
-	 *  @return	int					<0 if KO, =0 if not found, >0 if OK
+	 *  @return	int					Return integer <0 if KO, =0 if not found, >0 if OK
 	 */
 	public function fetch($rowid)
 	{
@@ -217,7 +246,7 @@ class Subscription extends CommonObject
 		$sql .= " datef,";
 		$sql .= " subscription, note as note_public, fk_bank";
 		$sql .= " FROM ".MAIN_DB_PREFIX."subscription";
-		$sql .= "	WHERE rowid=".((int) $rowid);
+		$sql .= " WHERE rowid = ".((int) $rowid);
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -254,7 +283,7 @@ class Subscription extends CommonObject
 	 *
 	 *	@param	User	$user			User who updated
 	 *	@param 	int		$notrigger		0=Disable triggers
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int						Return integer <0 if KO, >0 if OK
 	 */
 	public function update($user, $notrigger = 0)
 	{
@@ -274,11 +303,11 @@ class Subscription extends CommonObject
 		$sql = "UPDATE ".MAIN_DB_PREFIX."subscription SET ";
 		$sql .= " fk_type = ".((int) $this->fk_type).",";
 		$sql .= " fk_adherent = ".((int) $this->fk_adherent).",";
-		$sql .= " note=".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
-		$sql .= " subscription = ".price2num($this->amount).",";
-		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
-		$sql .= " datef='".$this->db->idate($this->datef)."',";
-		$sql .= " datec='".$this->db->idate($this->datec)."',";
+		$sql .= " note = ".($this->note_public ? "'".$this->db->escape($this->note_public)."'" : 'null').",";
+		$sql .= " subscription = ".(float) price2num($this->amount).",";
+		$sql .= " dateadh = '".$this->db->idate($this->dateh)."',";
+		$sql .= " datef = '".$this->db->idate($this->datef)."',";
+		$sql .= " datec = '".$this->db->idate($this->datec)."',";
 		$sql .= " fk_bank = ".($this->fk_bank ? ((int) $this->fk_bank) : 'null');
 		$sql .= " WHERE rowid = ".((int) $this->id);
 
@@ -291,7 +320,7 @@ class Subscription extends CommonObject
 			$result = $member->update_end_date($user);
 
 			if (!$error && !$notrigger) {
-				$this->context = array('member'=>$member);
+				$this->context = array('member' => $member);
 				// Call triggers
 				$result = $this->call_trigger('MEMBER_SUBSCRIPTION_MODIFY', $user);
 				if ($result < 0) {
@@ -317,11 +346,11 @@ class Subscription extends CommonObject
 	/**
 	 *	Delete a subscription
 	 *
-	 *	@param	User	$user		User that delete
-	 *	@param 	bool 	$notrigger  false=launch triggers after, true=disable triggers
-	 *	@return	int					<0 if KO, 0 if not found, >0 if OK
+	 *	@param	User		$user		User that delete
+	 *	@param 	int<0,1>	$notrigger  0=launch triggers after, 1=disable triggers
+	 *	@return	int						Return integer <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function delete($user, $notrigger = false)
+	public function delete($user, $notrigger = 0)
 	{
 		$error = 0;
 
@@ -330,6 +359,8 @@ class Subscription extends CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 			$accountline = new AccountLine($this->db);
 			$result = $accountline->fetch($this->fk_bank);
+		} else {
+			$accountline = null;
 		}
 
 		$this->db->begin();
@@ -393,7 +424,7 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Return clicable name (with picto eventually)
+	 *  Return clickable name (with picto eventually)
 	 *
 	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
 	 *  @param	int  	$notooltip					1=Disable tooltip
@@ -427,7 +458,7 @@ class Subscription extends CommonObject
 		if ($option != 'nolink') {
 			// Add param to save lastsearch_values or not
 			$add_save_lastsearch_values = ($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
+			if ($save_lastsearch_value == -1 && isset($_SERVER["PHP_SELF"]) && preg_match('/list\.php/', $_SERVER["PHP_SELF"])) {
 				$add_save_lastsearch_values = 1;
 			}
 			if ($add_save_lastsearch_values) {
@@ -452,10 +483,10 @@ class Subscription extends CommonObject
 
 
 	/**
-	 *  Retourne le libelle du statut d'une adhesion
+	 *  Return the label of the status
 	 *
-	 *  @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
-	 *  @return string				Label
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return	string 			       Label of status
 	 */
 	public function getLibStatut($mode = 0)
 	{
@@ -464,16 +495,18 @@ class Subscription extends CommonObject
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	/**
-	 *  Renvoi le libelle d'un statut donne
+	 *  Return the label of a given status
 	 *
-	 *  @param	int			$status      			Id status
-	 *  @return string      						Label
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
-	public function LibStatut($status)
+	public function LibStatut($status, $mode = 0)
 	{
 		// phpcs:enable
-		global $langs;
-		$langs->load("members");
+
+		//$langs->load("members");
+
 		return '';
 	}
 
@@ -485,8 +518,7 @@ class Subscription extends CommonObject
 	 */
 	public function info($id)
 	{
-		$sql = 'SELECT c.rowid, c.datec,';
-		$sql .= ' c.tms as datem';
+		$sql = 'SELECT c.rowid, c.datec, c.tms as datem, c.fk_user_creat';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'subscription as c';
 		$sql .= ' WHERE c.rowid = '.((int) $id);
 
@@ -498,11 +530,57 @@ class Subscription extends CommonObject
 
 				$this->date_creation = $this->db->jdate($obj->datec);
 				$this->date_modification = $this->db->jdate($obj->datem);
+
+				$this->user_creation_id = $obj->fk_user_creat;
 			}
 
 			$this->db->free($resql);
 		} else {
 			dol_print_error($this->db);
 		}
+	}
+
+	/**
+	 *	Return clickable link of object (with eventually picto)
+	 *
+	 *	@param	string					$option		Where point the link (0=> main card, 1,2 => shipment, 'nolink'=>No link)
+	 *  @param	?array{selected?:int|bool,adherent_type?:AdherentType,member?:Adherent,bank?:Account}	$arraydata	Array of data
+	 *  @return	string								HTML Code for Kanban thumb.
+	 */
+	public function getKanbanView($option = '', $arraydata = null)
+	{
+		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
+
+		$return = '<div class="box-flex-item box-flex-grow-zero">';
+		$return .= '<div class="info-box info-box-sm">';
+		$return .= '<span class="info-box-icon bg-infobox-action">';
+		$return .= img_picto('', $this->picto);
+		$return .= '</span>';
+
+		$return .= '<div class="info-box-content">';
+		$return .= '<span class="info-box-ref inline-block tdoverflowmax150 valignmiddle">';
+		$return .= $this->getNomUrl(0);
+		$return .= '</span>';
+		if ($selected >= 0) {
+			$return .= '<input id="cb'.$this->id.'" class="flat checkforselect fright" type="checkbox" name="toselect[]" value="'.$this->id.'"'.($selected ? ' checked="checked"' : '').'>';
+		}
+		if (property_exists($this, 'dateh') || property_exists($this, 'datef')) {
+			$return .= '<br><span class="info-box-status opacitymedium small">'.dol_print_date($this->dateh, 'day').' - '.dol_print_date($this->datef, 'day').'</span>';
+		}
+
+		if (!empty($arraydata['member']) && is_object($arraydata['member'])) {
+			$return .= '<br><div class="inline-block tdoverflowmax150">'.$arraydata['member']->getNomUrl(-4).'</div>';
+		}
+
+		if (property_exists($this, 'amount')) {
+			$return .= '<br><span class="amount inline-block">'.price($this->amount).'</span>';
+			if (!empty($arraydata['bank'])) {
+				$return .= ' &nbsp; <span class="info-box-label ">'.$arraydata['bank']->getNomUrl(-1).'</span>';
+			}
+		}
+		$return .= '</div>';
+		$return .= '</div>';
+		$return .= '</div>';
+		return $return;
 	}
 }

@@ -1,22 +1,24 @@
-# Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Huidige pagina als favoriet opslaan
-Bookmark=Internetfavoriet
-Bookmarks=Internetfavorieten
-ListOfBookmarks=Internetfavourietenlijst
-EditBookmarks=Overzicht/bewerk favorieten
-NewBookmark=Nieuwe weblink
-ShowBookmark=Toon weblink
-OpenANewWindow=Open een nieuw tabblad
-ReplaceWindow=Huidige tabblad vervangen
-BookmarkTargetNewWindowShort=Nieuw tabblad
-BookmarkTargetReplaceWindowShort=Huidig tabblad
-BookmarkTitle=Bladwijzernaam
-UrlOrLink=URL
-BehaviourOnClick=Gedrag als een favoriete URL is geselecteerd
-CreateBookmark=Maak weblink
-SetHereATitleForLink=Stel een naam in voor de bladwijzer
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Use an external/absolute link (https://externalurl.com) or an internal/relative link (/mypage.php). You can also use phone like tel:0123456.
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Kies of de gekoppelde pagina moet worden geopend in het huidige tabblad of een nieuw tabblad
-BookmarksManagement=Internetfavorietenbeheer
-BookmarksMenuShortCut=Ctrl + shift + m
-NoBookmarks=No bookmarks defined
+# Dolibarr language file - Source file is en_US - marque pages / bookmarks
+
+AddThisPageToBookmarks = Huidige pagina als favoriet opslaan
+BehaviourOnClick = Gedrag als een favoriete URL is geselecteerd
+Bookmark = Internetfavoriet
+Bookmarks = Internetfavorieten
+BookmarkTargetNewWindowShort = Nieuw tabblad
+BookmarkTargetReplaceWindowShort = Huidig tabblad
+BookmarkTitle = Bladwijzernaam
+BookmarksManagement = Internetfavorietenbeheer
+BookmarksMenuShortCut = Ctrl + shift + m
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark = Kies of de gekoppelde pagina moet worden geopend in het huidige tabblad of een nieuw tabblad
+CreateBookmark = Maak weblink
+EditBookmarks = Overzicht/bewerk favorieten
+ListOfBookmarks = Internetfavourietenlijst
+NewBookmark = Nieuwe weblink
+NoBookmarkFound = Geen bladwijzer gevonden
+NoBookmarks = Geen bladwijzers gedefinieerd
+OpenANewWindow = Open een nieuw tabblad
+ReplaceWindow = Huidige tabblad vervangen
+SetHereATitleForLink = Stel een naam in voor de bladwijzer
+ShowBookmark = Toon weblink
+UrlOrLink = URL
+UseAnExternalHttpLinkOrRelativeDolibarrLink = Gebruik een externe/absolute link (https://externalurl.com) of een interne/relatieve link (/mypage.php). U kunt ook een telefoon gebruiken zoals tel: 0123456. 

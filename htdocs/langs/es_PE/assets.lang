@@ -1,2 +1,16 @@
 # Dolibarr language file - Source file is en_US - assets
-DeleteType=Borrar
+MenuListAssets=Lista
+MenuListAssetModels=Lista
+AssetReversalAmountHT=Importe de amortización (sin IGV)
+AssetAcquisitionValueHT=Monto de adquisición (sin IGV)
+AssetRecoveredVAT=IGV recuperado
+AssetDisposalSubjectToVat=Disposición sujeta a IGV
+AssetDepreciationOptionAmountBaseDepreciationHT=Base de amortización (sin IGV)
+AssetDepreciationOptionAmountBaseDeductibleHT=Base deducible (sin IGV)
+AssetDepreciationOptionTotalAmountLastDepreciationHT=Importe total última amortización (sin IGV)
+AssetAccountancyCodeVatCollected=IGV recaudado
+AssetAccountancyCodeVatDeductible=IGV recuperado sobre activos
+AssetBaseDepreciationHT=Base de amortización (sin IGV)
+AssetDepreciationHT=Amortización (sin IGV)
+AssetCumulativeDepreciationHT=Amortización acumulada (sin IGV)
+AssetResidualHT=Valor residual (sin IGV)

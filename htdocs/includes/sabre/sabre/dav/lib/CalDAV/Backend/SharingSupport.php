@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\CalDAV\Backend;
 
 /**
@@ -20,16 +22,15 @@ namespace Sabre\CalDAV\Backend;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-interface SharingSupport extends BackendInterface {
-
+interface SharingSupport extends BackendInterface
+{
     /**
      * Updates the list of shares.
      *
-     * @param mixed $calendarId
+     * @param mixed                           $calendarId
      * @param \Sabre\DAV\Xml\Element\Sharee[] $sharees
-     * @return void
      */
-    function updateInvites($calendarId, array $sharees);
+    public function updateInvites($calendarId, array $sharees);
 
     /**
      * Returns the list of people whom this calendar is shared with.
@@ -44,17 +45,16 @@ interface SharingSupport extends BackendInterface {
      *   $properties
      *
      * @param mixed $calendarId
+     *
      * @return \Sabre\DAV\Xml\Element\Sharee[]
      */
-    function getInvites($calendarId);
+    public function getInvites($calendarId);
 
     /**
-     * Publishes a calendar
+     * Publishes a calendar.
      *
      * @param mixed $calendarId
-     * @param bool $value
-     * @return void
+     * @param bool  $value
      */
-    function setPublishStatus($calendarId, $value);
-
+    public function setPublishStatus($calendarId, $value);
 }

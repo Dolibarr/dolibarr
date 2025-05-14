@@ -1,4 +1,5 @@
 <?php
+
 // This source file must be UTF-8 encoded
 /*
 $filename='filewithé';
@@ -38,13 +39,14 @@ print 'Files has been created. Check its name from your explorer'."\n";
 
 /**
  * Creates an example PDF TEST document using TCPDF
- * @package com.tecnick.tcpdf
- * @abstract TCPDF - Example: CID-0 CJK unembedded font
- * @author Nicola Asuni
+ *
+ * @package   com.tecnick.tcpdf
+ * @abstract  TCPDF - Example: CID-0 CJK unembedded font
+ * @author    Nicola Asuni
  * @copyright 2004-2009 Nicola Asuni - Tecnick.com S.r.l (www.tecnick.com) Via Della Pace, 11 - 09044 - Quartucciu (CA) - ITALY - www.tecnick.com - info@tecnick.com
- * @link http://tcpdf.org
- * @license https://www.gnu.org/copyleft/lesser.html LGPL
- * @since 2008-09-15
+ * @link      http://tcpdf.org
+ * @license   https://www.gnu.org/copyleft/lesser.html LGPL
+ * @since     2008-09-15
  */
 
 require_once '../../htdocs/includes/tecnickcom/tcpdf/config/tcpdf_config.php';

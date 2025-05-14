@@ -183,9 +183,35 @@ class MessagesCollector extends AbstractLogger implements DataCollectorInterface
      * @param $message
      * @param array $context
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()): void
     {
+        // For string messages, interpolate the context following PSR-3
+        if (is_string($message)) {
+            $message = $this->interpolate($message, $context);
+        }
         $this->addMessage($message, $level);
+    }
+
+    /**
+     * Interpolates context values into the message placeholders.
+     *
+     * @param $message
+     * @param array $context
+     * @return string
+     */
+    function interpolate($message, array $context = array())
+    {
+        // build a replacement array with braces around the context keys
+        $replace = array();
+        foreach ($context as $key => $val) {
+            // check that the value can be cast to string
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace['{' . $key . '}'] = $val;
+            }
+        }
+
+        // interpolate replacement values into the message and return
+        return strtr($message, $replace);
     }
 
     /**

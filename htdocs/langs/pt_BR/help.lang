@@ -5,9 +5,7 @@ RemoteControlSupport=Suporte online em tempo real/remoto
 OtherSupport=Outros suportes
 ToSeeListOfAvailableRessources=Entrar em contato com/consulte os recursos disponíveis:
 HelpCenter=Central de ajuda
-NeedHelpCenter=PRecisa de ajuda ou suporte?
 Efficiency=eficiência
 TypeHelpOnly=Somente ajuda
 TypeHelpDev=Ajuda+Desenvolvimento
 PossibleLanguages=Os idiomas suportados
-SeeOfficalSupport=Para obter suporte oficial do Dolibarr no seu idioma:  <br><b><a href="%s" target="_blank">%s</a></b>

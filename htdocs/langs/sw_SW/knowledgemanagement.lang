@@ -4,51 +4,42 @@
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see .
 
-#
 # Generic
-#
-
 # Module label 'ModuleKnowledgeManagementName'
-ModuleKnowledgeManagementName = Knowledge Management System
+ModuleKnowledgeManagementName = Mfumo wa Usimamizi wa Maarifa
 # Module description 'ModuleKnowledgeManagementDesc'
-ModuleKnowledgeManagementDesc=Manage a Knowledge Management (KM) or Help-Desk base
-
-#
+ModuleKnowledgeManagementDesc=Dhibiti Usimamizi wa Maarifa (KM) au msingi wa Dawati la Usaidizi
 # Admin page
-#
-KnowledgeManagementSetup = Knowledge Management System setup
-Settings = Settings
-KnowledgeManagementSetupPage = Knowledge Management System setup page
-
-
-#
+KnowledgeManagementSetup = Usanidi wa Mfumo wa Usimamizi wa Maarifa
+KnowledgeManagementSetupPage = Ukurasa wa kuanzisha Mfumo wa Usimamizi wa Maarifa
 # About page
-#
-About = About
-KnowledgeManagementAbout = About Knowledge Management
-KnowledgeManagementAboutPage = Knowledge Management about page
-
-KnowledgeManagementArea = Knowledge Management
-MenuKnowledgeRecord = Knowledge base
-ListKnowledgeRecord = List of articles
-NewKnowledgeRecord = New article
-ValidateReply = Validate solution
-KnowledgeRecords = Articles
-KnowledgeRecord = Article
-KnowledgeRecordExtraFields = Extrafields for Article
-GroupOfTicket=Group of tickets
-YouCanLinkArticleToATicketCategory=You can link an article to a ticket group (so the article will be suggested during qualification of new tickets)
-SuggestedForTicketsInGroup=Suggested for tickets when group is
-
-SetObsolete=Set as obsolete
-ConfirmCloseKM=Do you confirm the closing of this article as obsolete ?
-ConfirmReopenKM=Do you want to restore this article to status "Validated" ?
+KnowledgeManagementAbout = Kuhusu Usimamizi wa Maarifa
+KnowledgeManagementAboutPage = Usimamizi wa Maarifa kuhusu ukurasa
+KnowledgeManagementArea = Usimamizi wa Maarifa
+MenuKnowledgeRecord = Msingi wa maarifa
+MenuKnowledgeRecordShort = Knowledge base
+ListKnowledgeRecord = Orodha ya makala
+NewKnowledgeRecord = Makala mpya
+ValidateReply = Thibitisha suluhisho
+KnowledgeRecords = Makala
+KnowledgeRecord = Kifungu
+KnowledgeRecordExtraFields = Sehemu za Ziada za Kifungu
+GroupOfTicket=Kikundi cha tikiti
+YouCanLinkArticleToATicketCategory=Unaweza kuunganisha makala kwa kikundi cha tikiti (ili makala yaangaziwa kwenye tikiti zozote katika kikundi hiki)
+SuggestedForTicketsInGroup=Suggested on tickets creation
+SetObsolete=Weka kama ya kizamani
+ConfirmCloseKM=Je, unathibitisha kufungwa kwa makala haya kuwa ya kizamani?
+ConfirmReopenKM=Je, ungependa kurejesha makala haya kwa hali ya "Iliyothibitishwa" ?
+BoxLastKnowledgerecordDescription=Mwisho %s makala
+BoxLastKnowledgerecord=Makala za mwisho
+BoxLastKnowledgerecordContent=Makala za mwisho
+BoxLastKnowledgerecordModifiedContent=Makala ya mwisho kurekebishwa
+BoxLastModifiedKnowledgerecordDescription=Mwisho %s makala iliyorekebishwa
+BoxLastModifiedKnowledgerecord=Makala ya mwisho kurekebishwa

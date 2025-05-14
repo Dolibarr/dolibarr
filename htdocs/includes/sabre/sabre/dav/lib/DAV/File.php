@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Sabre\DAV;
 
 /**
- * File class
+ * File class.
  *
  * This is a helper class, that should aid in getting file classes setup.
  * Most of its methods are implemented, and throw permission denied exceptions
@@ -12,8 +14,8 @@ namespace Sabre\DAV;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
-abstract class File extends Node implements IFile {
-
+abstract class File extends Node implements IFile
+{
     /**
      * Replaces the contents of the file.
      *
@@ -32,25 +34,24 @@ abstract class File extends Node implements IFile {
      * return an ETag, and just return null.
      *
      * @param string|resource $data
+     *
      * @return string|null
      */
-    function put($data) {
-
+    public function put($data)
+    {
         throw new Exception\Forbidden('Permission denied to change data');
-
     }
 
     /**
-     * Returns the data
+     * Returns the data.
      *
      * This method may either return a string or a readable stream resource
      *
      * @return mixed
      */
-    function get() {
-
+    public function get()
+    {
         throw new Exception\Forbidden('Permission denied to read this file');
-
     }
 
     /**
@@ -58,14 +59,13 @@ abstract class File extends Node implements IFile {
      *
      * @return int
      */
-    function getSize() {
-
+    public function getSize()
+    {
         return 0;
-
     }
 
     /**
-     * Returns the ETag for a file
+     * Returns the ETag for a file.
      *
      * An ETag is a unique identifier representing the current version of the file. If the file changes, the ETag MUST change.
      * The ETag is an arbitrary string, but MUST be surrounded by double-quotes.
@@ -74,23 +74,20 @@ abstract class File extends Node implements IFile {
      *
      * @return string|null
      */
-    function getETag() {
-
+    public function getETag()
+    {
         return null;
-
     }
 
     /**
-     * Returns the mime-type for a file
+     * Returns the mime-type for a file.
      *
      * If null is returned, we'll assume application/octet-stream
      *
      * @return string|null
      */
-    function getContentType() {
-
+    public function getContentType()
+    {
         return null;
-
     }
-
 }

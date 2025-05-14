@@ -66,15 +66,15 @@ class modFckeditor extends DolibarrModules
 		$this->disabled = (defined('JS_CKEDITOR') && in_array(constant('JS_CKEDITOR'), array('disabled', 'disabled/')));
 		$this->depends = array();
 		$this->requiredby = array('modWebsites');
+		$this->enabled_bydefault = true; // Will be enabled during install
 
 		// Constants
 		$this->const = array();
-		$this->const[0] = array("FCKEDITOR_ENABLE_SOCIETE", "yesno", "1", "WYSIWIG for the fields descriptions of elements (except products/services)");
-		$this->const[2] = array("FCKEDITOR_ENABLE_DETAILS", "yesno", "1", "WYSIWIG for products details lines for all entities");
-		$this->const[3] = array("FCKEDITOR_ENABLE_USERSIGN", "yesno", "1", "WYSIWIG for user signature");
-		$this->const[4] = array("FCKEDITOR_ENABLE_MAILING", "yesno", "1", "WYSIWIG for mass emailings");
-		$this->const[5] = array("FCKEDITOR_ENABLE_MAIL", "yesno", "1", "WYSIWIG for products details lines for all entities");
-		$this->const[6] = array("FCKEDITOR_SKIN", "string", "moono-lisa", "Skin by default for fckeditor");
+		$this->const[0] = array("FCKEDITOR_ENABLE_SOCIETE", "yesno", "1", "WYSIWYG for the fields descriptions of elements (except products/services)");
+		$this->const[2] = array("FCKEDITOR_ENABLE_DETAILS", "yesno", "1", "WYSIWYG for products details lines for all entities");
+		$this->const[3] = array("FCKEDITOR_ENABLE_USERSIGN", "yesno", "1", "WYSIWYG for user signature");
+		$this->const[4] = array("FCKEDITOR_ENABLE_MAILING", "yesno", "1", "WYSIWYG for mass emailings");
+		$this->const[5] = array("FCKEDITOR_ENABLE_MAIL", "yesno", "1", "WYSIWYG for products details lines for all entities");
 
 		// Boxes
 		$this->boxes = array();

@@ -158,7 +158,7 @@ CountryMX=Meksiko
 CountryFM=Micronesia
 CountryMD=Moldavija
 CountryMN=Mongolia
-CountryMS=Monserrat
+CountryMS=Montserrat
 CountryMZ=Mozambik
 CountryMM=Mijanmar (Burma)
 CountryNA=Nambija
@@ -247,6 +247,7 @@ CountryJE=Jersey
 CountryME=Crna Gora
 CountryBL=Saint Barthelemy
 CountryMF=Saint Martin
+CountryXK=Kosovo
 
 ##### Civilities #####
 CivilityMME=Gđa.
@@ -294,8 +295,8 @@ CurrencyXPF=CFP Francs
 CurrencySingXPF=CFP Franc
 CurrencyCentEUR=centi
 CurrencyCentSingEUR=Cent
-CurrencyCentINR=paisa
-CurrencyCentSingINR=paise
+CurrencyCentINR=paise
+CurrencyCentSingINR=paisa
 CurrencyThousandthSingTND=tisućuti
 #### Input reasons #####
 DemandReasonTypeSRC_INTE=Internet

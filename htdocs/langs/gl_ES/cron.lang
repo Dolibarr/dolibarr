@@ -1,6 +1,5 @@
 # Dolibarr language file - Source file is en_US - cron
-# About page
-# Right
+# Permissions
 Permission23101 = Consultar. tarefa programada
 Permission23102 = Crear/actualizar. tarefa programada
 Permission23103 = Borrar tarefa programada
@@ -30,7 +29,8 @@ CronExecute=Inicia agora
 CronConfirmExecute=Está certo de querer executar estas tarefas programadas agora?
 CronInfo=O módulo de tarefas programadas permite programar tarefas para executalas automaticamente. As tarefas tamén se poden iniciar manualmente.
 CronTask=Tarefa
-CronNone=Ningún
+CronNone=Próxima execución da tarefa programada
+CronNotYetRan=Nunca executado
 CronDtStart=Non antes
 CronDtEnd=Non despois
 CronDtNextLaunch=Próxima execución
@@ -49,8 +49,8 @@ CronEach=Todo
 JobFinished=Tarefa iniciada e finalizada
 Scheduled=Programada
 #Page card
-CronAdd= Axuntar tarefas
-CronEvery=Executar cada tarefa
+CronAdd=Axuntar tarefas
+CronEvery=Executar traballo cada
 CronObject=Instancia/obxecto a crear
 CronArgs=Parámetros
 CronSaveSucess=Gardar correctamente
@@ -91,6 +91,7 @@ WarningCronDelayed=Atención, para fins de rendemento, calquera que sexa a próx
 DATAPOLICYJob=Limpar datos e anonimizar
 JobXMustBeEnabled=Tarefa %s debe ser activada
 EmailIfError=Correo electrónico para avisar de erros
+JobNotFound=Non se atopou o traballo %s na lista de traballos (tente desactivar/activar o módulo)
 ErrorInBatch=Erro ao executar o traballo %s
 
 # Cron Boxes

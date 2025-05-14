@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@open-dsi.fr>
+ * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,17 +29,26 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT . '/asset/class/assetdepreciationoptions.class.php';
 
+/**
+ * @var Conf $conf
+ * @var DoliDB $db
+ * @var HookManager $hookmanager
+ * @var Translate $langs
+ * @var User $user
+ */
+
 // Load translation files required by the page
 $langs->loadLangs(array("assets", "companies"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id = GETPOSTINT('id');
 $ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
+$backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');	// if not set, $backtopage will be used
 
-// Initialize technical objects
+// Initialize a technical objects
 $object = new Asset($db);
 $assetdepreciationoptions = new AssetDepreciationOptions($db);
 $extrafields = new ExtraFields($db);
@@ -48,19 +58,25 @@ $hookmanager->initHooks(array('assetdepreciationoptions', 'globalcard')); // Not
 $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
+include DOL_DOCUMENT_ROOT . '/core/actions_fetchobject.inc.php'; // Must be 'include', not 'include_once'. Include fetch and fetch_thirdparty but not fetch_optionals
 if ($id > 0 || !empty($ref)) {
-	$upload_dir = $conf->asset->multidir_output[$object->entity] . "/" . $object->id;
+	$upload_dir = $conf->asset->multidir_output[isset($object->entity) ? $object->entity : 1] . "/" . $object->id;
 }
 
-$permissiontoadd = $user->rights->asset->write; // Used by the include of actions_addupdatedelete.inc.php
+$permissiontoadd = $user->hasRight('asset', 'write'); // Used by the include of actions_addupdatedelete.inc.php
 
 // Security check (enable the most restrictive one)
-if ($user->socid > 0) accessforbidden();
+if ($user->socid > 0) {
+	accessforbidden();
+}
 $isdraft = (($object->status == $object::STATUS_DRAFT) ? 1 : 0);
 restrictedArea($user, $object->element, $object->id, $object->table_element, '', 'fk_soc', 'rowid', $isdraft);
-if (!isModEnabled('asset')) accessforbidden();
-if (!empty($object->not_depreciated)) accessforbidden();
+if (!isModEnabled('asset')) {
+	accessforbidden();
+}
+if (!empty($object->not_depreciated)) {
+	accessforbidden();
+}
 
 $object->asset_depreciation_options = &$assetdepreciationoptions;
 $result = $assetdepreciationoptions->fetchDeprecationOptions($object->id);
@@ -73,7 +89,8 @@ if ($result < 0) {
  * Actions
  */
 
-$reshook = $hookmanager->executeHooks('doActions', array(), $object, $action); // Note that $action and $object may have been modified by some hooks
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) {
 	setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 }
@@ -102,9 +119,11 @@ if (empty($reshook)) {
 		$action = '';
 	}
 
-	if ($action == "update") {
+	if ($action == "update" && $permissiontoadd) {
 		$result = $assetdepreciationoptions->setDeprecationOptionsFromPost();
-		if ($result > 0) $result = $assetdepreciationoptions->updateDeprecationOptions($user, $object->id);
+		if ($result > 0) {
+			$result = $assetdepreciationoptions->updateDeprecationOptions($user, $object->id);
+		}
 		if ($result < 0) {
 			setEventMessages($assetdepreciationoptions->error, $assetdepreciationoptions->errors, 'errors');
 			$action = 'edit';
@@ -124,7 +143,7 @@ if (empty($reshook)) {
 $form = new Form($db);
 
 $help_url = '';
-llxHeader('', $langs->trans('Asset'), $help_url);
+llxHeader('', $langs->trans('Asset'), $help_url, '', 0, 0, '', '', '', 'mod-asset page-card_depreciation_options');
 
 if ($id > 0 || !empty($ref)) {
 	$head = assetPrepareHead($object);
@@ -132,7 +151,7 @@ if ($id > 0 || !empty($ref)) {
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="'.DOL_URL_ROOT.'/asset/list.php?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/asset/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
 	$morehtmlref .= '</div>';
@@ -142,6 +161,8 @@ if ($id > 0 || !empty($ref)) {
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 	print '</div>';
+
+	print '<br>';
 
 	if ($action == 'edit') {
 		print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '">';
@@ -154,11 +175,7 @@ if ($id > 0 || !empty($ref)) {
 			print '<input type="hidden" name="backtopageforcancel" value="' . $backtopageforcancel . '">';
 		}
 
-		print dol_get_fiche_head(array(), '');
-
 		include DOL_DOCUMENT_ROOT . '/asset/tpl/depreciation_options_edit.tpl.php';
-
-		print dol_get_fiche_end();
 
 		print $form->buttonsSaveCancel();
 

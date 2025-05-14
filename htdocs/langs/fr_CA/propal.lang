@@ -13,6 +13,7 @@ NoProposal=Pas de propositions
 ProposalsStatistics=Statistiques de la proposition commerciale
 PropalsOpened=Ouverte
 PropalStatusNotSigned=Non signée (close)
+PropalStatusValidatedShort=Ouverte
 PropalsToClose=Propositions commerciales à clôturer
 ListOfProposals=Liste des propositions commerciales
 ActionsOnPropal=Événements sur proposition

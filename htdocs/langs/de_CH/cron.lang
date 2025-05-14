@@ -1,5 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-CronMethodDoesNotExists=Klasse %s hat keine %s Methode
+Permission23101 =geplante Aufgabe einsehen
+Permission23102 =Erstelle/ändere geplanten Job
+KeyForCronAccess=Sicherheitsschlüssel für URL zum Starten von Cronjobs
+CronList=Geplante Aufträge
 CronDelete=cronjobs löschen
 CronPriority=Rang
 JobFinished=Job gestarted und beendet
