@@ -329,8 +329,13 @@ if (!empty($force_install_noedit)) {
 	if (!isset($dolibarr_main_db_host)) {
 		$dolibarr_main_db_host = "localhost";
 	}
-	$dolibarr_main_db_port = "";
-	$dolibarr_main_db_user = "";
+	if (!isset($dolibarr_main_db_port)) {
+		$dolibarr_main_db_port = "";
+	}
+	if (!isset($dolibarr_main_db_user)) {
+		$dolibarr_main_db_user = "";
+	}
+	
 	?>
 	<tr>
 		<!-- Driver type -->
