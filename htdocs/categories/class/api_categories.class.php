@@ -270,8 +270,9 @@ class Categories extends DolibarrApi
 	/**
 	 * Delete category
 	 *
-	 * @param int $id   Category ID
-	 * @return array
+	 * @param 	int 	$id   Category ID
+	 * @return 	array
+	 *
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
@@ -464,9 +465,9 @@ class Categories extends DolibarrApi
 	/**
 	 * Link an object to a category by ref
 	 *
-	 * @param int $id  ID of category
-	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-	 * @param string   $object_ref Reference of object
+	 * @param int 		$id  		ID of category
+	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -628,9 +629,9 @@ class Categories extends DolibarrApi
 	/**
 	 * Unlink an object from a category by ref
 	 *
-	 * @param int      $id         ID of category
-	 * @param string   $type Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string   $object_ref Reference of the object
+	 * @param int      $id         	ID of category
+	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
+	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}

@@ -411,7 +411,7 @@ class FormAI extends Form
 						console.log('Add response into field \'#'+htmlname+'\': '+response);
 
 						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
-						jQuery('#'+htmlname).html(response);	// If #htmlContent is a div
+						jQuery('#'+htmlname).html(response).trigger('change');	// If #htmlContent is a div and trigger event change for extrafield update
 						//jQuery('#'+htmlname+'preview').val(response);
 
 						if (CKEDITOR.instances) {

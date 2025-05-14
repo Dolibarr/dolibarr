@@ -59,7 +59,7 @@ include '../../main.inc.php';
 $objectType = GETPOST('objectType', 'aZ09');
 $objectId = GETPOST('objectId', 'aZ09');
 $field = GETPOST('field', 'aZ09');
-$value = GETPOST('value', 'aZ09');
+$value = GETPOST('value', 'alpha');
 
 $module = getElementProperties($objectType)['module'];
 $element_ref = '';

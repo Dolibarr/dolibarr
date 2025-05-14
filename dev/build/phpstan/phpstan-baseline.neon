@@ -3523,20 +3523,8 @@ parameters:
 			path: ../../../htdocs/comm/propal/card.php
 
 		-
-			message: '#^Loose comparison using \=\= between ''HT''\|null and ''TTC'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/comm/propal/card.php
-
-		-
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
-			count: 1
-			path: ../../../htdocs/comm/propal/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: ../../../htdocs/comm/propal/card.php
 
@@ -3757,27 +3745,9 @@ parameters:
 			path: ../../../htdocs/commande/agenda.php
 
 		-
-			message: '#^Loose comparison using \=\= between null and ''HT'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between null and ''TTC'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
 			count: 1
-			path: ../../../htdocs/commande/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
 			path: ../../../htdocs/commande/card.php
 
 		-
@@ -4513,18 +4483,6 @@ parameters:
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
-			message: '#^Loose comparison using \=\= between '''' and ''HT'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
-			message: '#^Loose comparison using \=\= between '''' and ''TTC'' will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
 			message: '#^Loose comparison using \=\= between 0 and 0 will always evaluate to true\.$#'
 			identifier: equal.alwaysTrue
 			count: 1
@@ -4552,12 +4510,6 @@ parameters:
 			message: '#^Property CommonObject\:\:\$fk_project \(int\) in isset\(\) is not nullable\.$#'
 			identifier: isset.property
 			count: 1
-			path: ../../../htdocs/compta/facture/card.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 2
 			path: ../../../htdocs/compta/facture/card.php
 
 		-
@@ -4924,12 +4876,6 @@ parameters:
 			message: '#^Ternary operator condition is always false\.$#'
 			identifier: ternary.alwaysFalse
 			count: 2
-			path: ../../../htdocs/compta/facture/list.php
-
-		-
-			message: '#^Variable \$contextpage in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
 			path: ../../../htdocs/compta/facture/list.php
 
 		-
@@ -21045,7 +20991,7 @@ parameters:
 		-
 			message: '#^Variable \$conf might not be defined\.$#'
 			identifier: variable.undefined
-			count: 3
+			count: 2
 			path: ../../../htdocs/public/webportal/webportal.main.inc.php
 
 		-
@@ -23057,12 +23003,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/theme/eldy/style.css.php
-
-		-
-			message: '#^Variable \$nbtopmenuentries might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: ../../../htdocs/theme/md/btn.inc.php
 
 		-
 			message: '#^Variable \$left might not be defined\.$#'

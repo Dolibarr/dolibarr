@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2014-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -441,6 +441,7 @@ trait CommonSubtotal
 
 		foreach ($this->lines as $line) {
 			'@phan-var-force CommonObjectLine $line';
+			/** @var CommonObjectLine $line */
 			if ($line->id == $lineid) {
 				$line->extraparams["subtotal"] = $options;
 				$line->setExtraParameters();
@@ -670,7 +671,7 @@ trait CommonSubtotal
 		$depth_array = array();
 		$max_depth = getDolGlobalString('SUBTOTAL_'.strtoupper($this->element).'_MAX_DEPTH', 2);
 		for ($i = 0; $i < $max_depth; $i++) {
-			$depth_array[$i + 1] = $langs->trans("Level", $i + 1);
+			$depth_array[$i + 1] = $langs->trans("SubtotalLevel", $i + 1);
 		}
 		return $depth_array;
 	}

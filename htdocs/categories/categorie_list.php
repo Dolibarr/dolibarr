@@ -83,7 +83,7 @@ $pagenext = $page + 1;
 // Initialize technical objects
 $object = new Categorie($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction = $conf->categories->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputmassaction = $conf->category->dir_output.'/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array($contextpage)); 	// Note that conf->hooks_modules contains array of activated contexes
 
 // Fetch optionals attributes and labels

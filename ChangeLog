@@ -7,11 +7,134 @@ English Dolibarr ChangeLog
 
 For users:
 ----------
-
+NEW: Module WebPortal is moved as stable
+NEW: Subtotal module (#33502) - development
+NEW: shipment kits with dispatcher v2 (#33750)
+NEW: ticket : display files linked to actioncomm (#32325)
+NEW: Support of monthly or weekly recurring events
+NEW: AI feature to autofill extrafields
+NEW: #22848
+NEW: #32706 - Treasury accountancy (#33701)
+NEW: #33506 Add a constant to apply a ratio to resize images in ODT templates (#33543)
+NEW: Accountancy - Add centralized account (SQL & migration part) (#33384) (#33577)
+NEW: Accountancy - Add filter on chart of accounts (#33656)
+NEW: Accountancy - Centralized account are highlighted (#33648)
+NEW: Accountancy - Define fiscal year by default
+NEW: Accountancy - Show subledger account in thirdparty
+NEW: Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
+NEW: Add also start date fill buttons for salary clone
+NEW: Add a test mode for AI setup
+NEW: Add DateMaxPayment option on selectDate (#33601)
+NEW: Add/enhance the popup for preview of icons
+NEW: Add field usenewcurrencyrate
+NEW: Add globale MAIN_DISABLE_PDF_AUTO_DOWNLOAD_AFTER_CONVERT_FROM_ODT to disable the auto download after auto convert odt to pdf (#33511)
+NEW: add home box mrp (#33549)
+NEW: Add invoice tags
+NEW: Add ip into table of website accounts
+NEW: Add knowledgebase info on box_dolibarr_state_board.php (#33960)
+NEW: Add link to create shipment on picto
+NEW: Add link to picto help page on module builder
+NEW: Add management of date begin/end and discount for a customer price (Code + SQL)
+NEW: add new permissions to read supplier prices (#33598)
+NEW: Add option MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL
+NEW: Add option MAIN_MAIL_EMAIL_FROM_PASSWORDRESET
+NEW: Add options on intervention clone popup to clone or not contact and notes
+NEW: Add options PDF_XXX_SHOW_PRICE_INCL_TAX into PDF setup
+NEW: add option to not prefill qty line at shipment creation
+NEW: Add page list for categories.
+NEW: Add parameters for the hook selectProductsListWhere (#33718)
+NEW: add phone_mobile to export of thirdparty (#33893)
+NEW: Add public page for donation module (#33978)
+NEW: add setasnumber for forms (#33845)
+NEW: Add Shared links on links in attachments (#33459)
+NEW: Add tags / category on supplier invoice (#33490)
+NEW: Add the possibility to merge PDF from the product list (#33723)
+NEW: allow stock management by product (#32326)
+NEW: attendee status Used - to ensure that only one attendee gets in on a ticket (#33987)
+NEW: auto-detect country from code in creation	(follow-up)
+NEW: autofix mysqldump command for backup when path is wrong
+NEW: Better presentation of list of user approver.
+NEW: Can define a different PDF for concatenation for proposal, order and invoices
+NEW: Can filter on field "Refuse emailing" in list of thirdparties.
+NEW: Can filter on public/private notes in list sale orders thirdparties
+NEW: Can filter on string with spaces if search criteria is inside quote.
+NEW: Can force the tooltip before the text on column title.
+NEW: Can link member subscription/contribution with proposal, order and invoice (#33647)
+NEW: Can set a specific permission on an extrafields
+NEW: cash control: add hidden setting to show total including taxed in detail by vat rate
+NEW: Closing task
+NEW: CONSTANT: ORDER_TYPE_CONTACT_DEFAULT
+NEW: const PREVIEW_PICTO_ON_LEFT_OF_NAME for icon to preview documents (#33519)
+NEW: Dictionary - Manage countries of SEPA Area
+NEW: Dolibarr#22848 Add order tags
+NEW: Filter on date creation/date modification in invoice list
+NEW: fix #33456 (#33458)
+NEW: force Extrafields values when constants THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_(ORDER|INVOICE) are set (#33954)
+NEW: input reason for customer invoice (#33599)
+NEW: Invoice - Add constant to prevent modification of an invoice (#33455)
+NEW: Loan - Add total on each payment to see the global amount off the reimbursement
+NEW: login page: button to toggle the visibility of the password (#33698)
+NEW: Look and feel - Checkboxes and radio buttons are larger
+NEW: Allow user to define the number of email sent by batch directly from mailing config page (#32750)
+NEW: Mass action delete on donation list
+NEW: Merge surface and volume in one line on product card.
+NEW: Module external website is deprecated. Replaced with menu editor.
+NEW: Move right from advance to normal for thirdparty information payment page (#33885)d
+NEW: delays conf for supplier proposals (#33800)
+NEW: new option in invoice setup to limit options of deposit invoice (#33468)
+NEW: No auto open keyboard on smartphone when opening list of columns
+NEW: On list, see complete ref customer/supplier with constant MAIN_SHOW_GLOBAL_REF_CUSTOMER_SUPPLIER (#33373)
+NEW: Option MAIN_RESTRICTHTML_ONLY_VALID_HTML and MAIN_RESTRICTHTML_ONLY_VALID_HTML_TIDY are on by default
+NEW: Option MAIN_SECURITY_MAXFILESIZE_DOWNLOADED become official
+NEW: Order - Add drag & drop file (#33848)
+NEW: reopen for interventions API (#33982)
+NEW: Rounding unit price - line discount before applying quantity - option MAIN_APPLY_DISCOUNT_ON_UNIT_PRICE_THEN_ROUND_BEFORE_MULTIPLICATION_BY_QTY (#33690)
+NEW: shipment with product in cache
+NEW: shipment with warehouse in cache
+NEW: Show code of stripe hooks supported in setup page
+NEW: Show country flag in list of chart of account
+NEW: Show IP of previous connection and date of last password change in the "Connection" widget.
+NEW: Some trans keys to prepare a new website template (#33886)
+NEW: SUBMIT_FOR_ALL_MARK_RESPAWN (#32101)
+NEW: Supplier orders - Add tags/categories (#33386)
+NEW: takepos cash control: add vat taxless total
+NEW: The closing reason of invoice appear on tooltip of invoice status
+NEW: The link "In accountancy" is now clickable to reach bookkeeping
+NEW: The public media browser is now a stable feature
+NEW: The signature is on the good page even if another module add pages
+NEW: Toggle Display of Supplier Invoices and Credit Notes on Payment Page (#33856)
+NEW: Try to set the tooltip as ajax call by default.
+NEW: Update of currency supports also apilayer (not only currencylayer)
+NEW: use specific landing page to home menu entry
+NEW: Use the packaging feature to round the quantities to some given multiples for the sale
+NEW: Use the PhpZipProxy handler to generate ODT files (avoid corrupted ODT with recent version of Libre Office).
+NEW: vcard (vcf) download for third party (#31957)
+NEW: Web pages of websites are protected by the WAF
+NEW: Add constant to show stock in products combo
 
 For developers:
 ----------
-
+NEW: Add an API endpoint to get properties of a single line of an order (#34045)
+NEW: add const to not include default CSS in top_htmlhead with DISABLE_CSS_DEFAULT_THEME
+NEW: add const to not include default lib_head.js in top_htmlhead with DISABLE_LIB_HEAD_JS
+NEW: add const to not include JQuery UI in top_htmlhead DISABLE_JQUERY_UI
+NEW: add create category project link via api (#34016)
+NEW: add creditnotelist var in fetch
+NEW: add hook 'addMoreInformationsBlock'
+NEW: Add hook on API call (#33501)
+NEW: add hooks to modify select_produits_fournisseurs_list sql query
+NEW: Adding API endpoints for event attendee handling (#33932)
+NEW: Add internal contact of proposal, order and invoice on api call (#34009)
+NEW: Add option to create simple shipment of non origin. SQL part (#34071)
+NEW: add settodraft to the supplier invoice API (#34064)
+NEW: Can set isMandatory property in generic setup framework
+NEW: endpoints DELETE event atteendee by ID or REF (#33986)
+NEW: endpoints GET event attendee by ID or REF (#33984)
+NEW: endpoints PUT (update) event atteendee by ID or REF (#33985)
+NEW: hidden conf for api contrat putLine endpoint to only return the line (#33809)
+NEW: introduce method dolSetCookie
+NEW: Invoice - Document - Add hook on action
+NEW: Pagination data for intervention APi
 
 WARNING:
 --------
