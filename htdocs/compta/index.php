@@ -125,6 +125,8 @@ if (isModEnabled('invoice')) {
 if (isModEnabled('fournisseur') || isModEnabled('supplier_invoice')) {
 	print getNumberInvoicesPieChart('suppliers');
 	print '<br>';
+	print getCustomerInvoicePieChart();
+	print '<br>';
 }
 
 if (isModEnabled('invoice')) {
