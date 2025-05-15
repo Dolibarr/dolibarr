@@ -842,7 +842,7 @@ if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 }
 //massaction clone
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
-	$arrayofmassactions['preclonebookkeepingwriting'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Cloner");
+	$arrayofmassactions['preclonebookkeepingwriting'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 }
 
 //massaction assignaccount
