@@ -72,6 +72,13 @@ if ($tmp) {
 	print $tmp;
 	print '<br>';
 }
+
+$tmp =	print getCustomerInvoicePieChart();
+if ($tmp) {
+	print $tmp;
+	print '<br>';
+}
+
 $tmp = getCustomerInvoiceDraftTable($maxDraftCount, $socid);
 if ($tmp) {
 	print $tmp;
