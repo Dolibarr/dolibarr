@@ -37,6 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/lettering.class.php';
 
+echo '<link rel="stylesheet" href="'.DOL_URL_ROOT.'/includes/jquery/css/base/jquery-ui.css">';
+echo '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery-ui.js"></script>';
+echo '<script type="text/javascript" src="'.DOL_URL_ROOT.'/includes/jquery/js/jquery.js"></script>';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -439,6 +443,47 @@ if (empty($reshook)) {
 
 			header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?noreset=1');
 			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+
+		//clone action
+
+	if ($action == 'clonebookkeepingwriting' && $permissiontoadd) {
+		$piece_num = GETPOST('piece_num', 'alpha');
+		$formaccounting = new FormAccounting($db);
+
+		$form = new Form($db);
+		$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
+		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
+		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
+
+
+		if(getDolGlobalString('INPUT_JOURNAL_CLONE')) {
+			$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
+		}else{
+			$champJournal = null;
+		}
+		$formquestion = array(
+			array('type' => 'other', 'name' => 'piece_num_hidden', 'label' => '', 'value' => $inputHidden),
+			array('type' => 'other', 'name' => 'doc_date', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1),
+			$champJournal,
+		);
+		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassCloneBookkeepingWriting"), $langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)), "preclonebookkeepingwriting", $formquestion, '', 1,  300, 1000);
+	}
+
+	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
+		$result = $object->newClone();
+
+		if($result == -1){
+			$error++;
+		}
+
+		if (!$error) {
+			$db->commit();
+			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . $object->getNextNumMvt() - 1);
+			exit();
 		} else {
 			$db->rollback();
 		}
@@ -865,6 +910,7 @@ if ($action == 'create') {
 					if ($permissiontodelete) {
 						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
 							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
+							print dolGetButtonAction('', $langs->trans('Cloner'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
 						}
 					}
 				}
