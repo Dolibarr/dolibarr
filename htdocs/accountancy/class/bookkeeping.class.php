@@ -3385,7 +3385,15 @@ class BookKeeping extends CommonObject
 
 			foreach ($toselect as $id) {
 				if($bookkeeping->fetch($id)){
-					if(strpos($bookkeeping->numero_compte, getDolGlobalString ('ACCOUNTING_ACCOUNT_CUSTOMER')) === 0 || strpos($bookkeeping->numero_compte, getDolGlobalString ('ACCOUNTING_ACCOUNT_SUPPLIER')) === 0){
+					if ( !getDolGlobalString ('ACCOUNTING_ACCOUNT_CUSTOMER')){
+						$accountcustcode = '411';
+					} else $accountcustcode = getDolGlobalString ('ACCOUNTING_ACCOUNT_CUSTOMER');
+
+					if ( !getDolGlobalString ('ACCOUNTING_ACCOUNT_SUPPLIER')){
+						$accountsuppcode = '401';
+					} else $accountsuppcode = getDolGlobalString ('ACCOUNTING_ACCOUNT_SUPPLIER');
+
+					if(strpos($bookkeeping->numero_compte, $accountcustcode) === 0 || strpos($bookkeeping->numero_compte, $accountsuppcode) === 0){
 						$echecT[]=$bookkeeping->numero_compte;
 						continue;
 					}
