@@ -5391,7 +5391,7 @@ img.boxhandle, img.boxclose {
 .star-selection {
 	font-size: 1rem;
 	cursor: pointer;
-	display: inline-block;
+	display: flex;
 	white-space: nowrap;
 }
 .star {

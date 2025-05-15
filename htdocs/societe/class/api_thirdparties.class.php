@@ -7,6 +7,7 @@
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024      Jon Bendtsen             <jon.bendtsen.github@jonb.dk>
  * Copyright (C) 2025		William Mead			<william@m34d.com>
+ * Copyright (C) 2025		Charlene Benke			<charlene@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +136,7 @@ class Thirdparties extends DolibarrApi
 	 * @param	string	$sortorder			Sort order
 	 * @param	int		$limit				List limit
 	 * @param	int		$page				Page number
-	 * @param	int		$mode				Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers {@choice 1,2,3,4}
+	 * @param	int		$mode				Set to 0 to show all third parties, Set to 1 to show only customers, 2 for prospects, 3 for neither customer or prospect, 4 for suppliers
 	 * @param	int		$category			Use this param to filter the list by category
 	 * @param	string	$sqlfilters			Other criteria to filter answers separated by a comma. Syntax example "((t.nom:like:'TheCompany%') or (t.name_alias:like:'TheCompany%')) and (t.datec:<:'20160101')"
 	 * @param	string	$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
@@ -249,7 +250,24 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(503, 'Error when retrieve thirdparties : '.$this->db->lasterror());
 		}
 		if (!count($obj_ret)) {
-			throw new RestException(404, 'Thirdparties not found');
+			$message = '';
+			switch ($mode) {
+				case 0:
+					$message = 'No third parties found';
+					break;
+				case 1:
+					$message = 'No customers found';
+					break;
+				case 2:
+					$message = 'No prospects found';
+					break;
+				case 3:
+					$message = 'No other third parties found';
+					break;
+				case 4:
+					$message = 'No suppliers found';
+			}
+			throw new RestException(404, $message);
 		}
 
 		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)

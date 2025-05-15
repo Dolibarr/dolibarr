@@ -229,9 +229,9 @@ class Commande extends CommonOrder
 	public $remise_percent;
 
 	/**
-	 * @var int
+	 * @var ?int		Order mode. How we received the sale order (by phone, by email, ...)
 	 */
-	public $source; // Order mode. How we received order (by phone, by email, ...)
+	public $source;
 
 	/**
 	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)

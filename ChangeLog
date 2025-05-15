@@ -111,6 +111,7 @@ NEW: Use the PhpZipProxy handler to generate ODT files (avoid corrupted ODT with
 NEW: vcard (vcf) download for third party (#31957)
 NEW: Web pages of websites are protected by the WAF
 NEW: Add constant to show stock in products combo
+NEW: Can edit the module_source and pos_source field.
 
 For developers:
 ----------
@@ -790,7 +791,7 @@ NEW: fetch object by element for website account card
 NEW: filter on sale representative in contact list
 NEW: Filter shipments by selecting multiple shipping methods (#28376)
 NEW: Font param Look and Feel (#29302)
-NEW: functionality for stock configuration prompt in AI module (#28030)
+NEW: functionality for configuration of post and pre prompt in AI module (#28030)
 NEW: functionality to delete contact of company list
 NEW: functionality to display codebar on pdf files  (#29623)
 NEW: functionality to list event for user

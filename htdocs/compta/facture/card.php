@@ -208,6 +208,7 @@ $result = restrictedArea($user, 'facture', $object->id, '', '', 'fk_soc', 'rowid
 /*
  * Actions
  */
+
 $error = 0;
 
 $parameters = array('socid' => $socid);
@@ -480,6 +481,14 @@ if (empty($reshook)) {
 	} elseif ($action == 'classin' && $usercancreate) {
 		$object->fetch($id);
 		$object->setProject(GETPOSTINT('projectid'));
+	} elseif ($action == 'setposinfo' && $usercancreate) {
+		$object->fetch($id);
+		$object->module_source = GETPOST('posmodule');
+		$object->pos_source = GETPOST('posterminal');
+		$result = $object->update($user);
+		if ($result < 0) {
+			dol_print_error($db, $object->error);
+		}
 	} elseif ($action == 'setmode' && $usercancreate) {
 		$object->fetch($id);
 		$result = $object->setPaymentMethods(GETPOSTINT('mode_reglement_id'));
@@ -1061,9 +1070,15 @@ if (empty($reshook)) {
 					$discount->amount_ht = abs((float) $amount_ht[$tva_tx]);
 					$discount->amount_tva = abs((float) $amount_tva[$tva_tx]);
 					$discount->amount_ttc = abs((float) $amount_ttc[$tva_tx]);
+					$discount->total_ht = abs((float) $amount_ht[$tva_tx]);
+					$discount->total_tva = abs((float) $amount_tva[$tva_tx]);
+					$discount->total_ttc = abs((float) $amount_ttc[$tva_tx]);
 					$discount->multicurrency_amount_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
 					$discount->multicurrency_amount_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
 					$discount->multicurrency_amount_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
+					$discount->multicurrency_total_ht = abs((float) $multicurrency_amount_ht[$tva_tx]);
+					$discount->multicurrency_total_tva = abs((float) $multicurrency_amount_tva[$tva_tx]);
+					$discount->multicurrency_total_ttc = abs((float) $multicurrency_amount_ttc[$tva_tx]);
 
 					// Clean vat code
 					$reg = array();
@@ -1855,6 +1870,9 @@ if (empty($reshook)) {
 										$discount->amount_ht = abs($lines[$i]->total_ht);
 										$discount->amount_tva = abs($lines[$i]->total_tva);
 										$discount->amount_ttc = abs($lines[$i]->total_ttc);
+										$discount->total_ht = abs($lines[$i]->total_ht);
+										$discount->total_tva = abs($lines[$i]->total_tva);
+										$discount->total_ttc = abs($lines[$i]->total_ttc);
 										$discount->tva_tx = $lines[$i]->tva_tx;
 										$discount->fk_user = $user->id;
 										$discount->description = $desc;
@@ -1862,6 +1880,9 @@ if (empty($reshook)) {
 										$discount->multicurrency_amount_ht = abs($lines[$i]->multicurrency_total_ht);
 										$discount->multicurrency_amount_tva = abs($lines[$i]->multicurrency_total_tva);
 										$discount->multicurrency_amount_ttc = abs($lines[$i]->multicurrency_total_ttc);
+										$discount->multicurrency_total_ht = abs($lines[$i]->multicurrency_total_ht);
+										$discount->multicurrency_total_tva = abs($lines[$i]->multicurrency_total_tva);
+										$discount->multicurrency_total_ttc = abs($lines[$i]->multicurrency_total_ttc);
 
 										$discountid = $discount->create($user);
 										if ($discountid > 0) {
@@ -5138,9 +5159,6 @@ if ($action == 'create') {
 		if ($object->subtype > 0) {
 			print ' '.$object->getSubtypeLabel('facture');
 		}
-		if ($object->module_source) {
-			print ' <span class="opacitymediumbycolor paddingleft">('.$langs->trans("POS").' '.dol_escape_htmltag(ucfirst($object->module_source)).' - '.$langs->trans("Terminal").' '.dol_escape_htmltag($object->pos_source).')</span>';
-		}
 		if ($object->type == Facture::TYPE_REPLACEMENT) {
 			$facreplaced = new Facture($db);
 			$facreplaced->fetch($object->fk_facture_source);
@@ -5206,6 +5224,33 @@ if ($action == 'create') {
 		}
 		print '</td></tr>';
 
+		// POS
+		if (isModEnabled('takepos') || $object->module_source || getDolGlobalString('INVOICE_ALLOW_POS_SOURCE_EDIT')) {
+			print '<tr><td class="fieldname_type">';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $form->textwithpicto($langs->trans('PointOfSale'), $langs->trans('POSInfo'));
+			print '</td>';
+			if ($action != 'editposinfo' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editposinfo&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetPOSInfo'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td class="valuefield fieldname_type">';
+			print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" name="formposinfo">';
+			print '<input type="hidden" name="action" value="setposinfo">';
+			print '<input type="hidden" name="token" value="' . newToken() . '">';
+			if ($action == 'editposinfo') {
+				print '<input type="text" class="maxwidth150" name="posmodule" placeholder="'.$langs->trans("POSModule").'" value="'.$object->module_source.'"> ';
+				print '<input type="text" class="maxwidth100" name="posterminal" placeholder="'.$langs->trans("Terminal").'" value="'.$object->pos_source.'">';
+				print '<input type="submit" class="button" name="submitposinfo" value="'.$langs->trans("Submit").'">';
+			} else {
+				if ($object->module_source) {
+					print '<span class="opacitymediumbycolor paddingleft">'.dolPrintHTML(ucfirst($object->module_source).' - '.$langs->transnoentitiesnoconv("Terminal").' '.$object->pos_source).'</span>';
+				}
+			}
+			print '</form>';
+			print '</td></tr>';
+		}
+
 		// Relative and absolute discounts
 		print '<!-- Discounts -->'."\n";
 		print '<tr><td>'.$langs->trans('DiscountStillRemaining').'</td>';
@@ -5226,7 +5271,6 @@ if ($action == 'create') {
 		}
 		print '</tr></table>';
 		print '</td><td>';
-
 		if ($action == 'editinvoicedate') {
 			$form->form_date($_SERVER['PHP_SELF'].'?facid='.$object->id, $object->date, 'invoicedate');
 		} else {

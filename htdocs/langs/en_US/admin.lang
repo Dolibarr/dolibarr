@@ -2674,3 +2674,4 @@ ShowTopMenuURLIntoAFrame=Include content of URL into a frame under the top menu
 SameWindow=Same window
 NewWindow=New window / New tab
 Synchronize=Synchronize
+ByDefault=By default

@@ -667,17 +667,19 @@ class Documents extends DolibarrApi
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
 	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submitted file into it)
-	 * @param   string  $subdir       			Subdirectory (Only if ref not provided)
+	 * @param   string  $subdir       			Subdirectory (Only if $ref is not provided)
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
-	 * @param   array   $array_options          array of options
+	 * @param   array   $array_options          Array for extrafields of ECM index table
+	 * @param	int		$generateThumbs			1=Will generate the small and mini thumbs if applicable
+	 * @return  string
+	 *
 	 * @phan-param   array<string,string>   $array_options
 	 * @phpstan-param   array<string,string>   $array_options
-	 * @return  string
 	 *
 	 * @url POST /upload
 	 *
@@ -686,7 +688,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [])
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0)
 	{
 		global $conf;
 
@@ -967,6 +969,13 @@ class Documents extends DolibarrApi
 			throw new RestException(500, "Failed to move file into '".$dest_file."'");
 		}
 
+		if (is_object($object) && $generateThumbs) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (image_format_supported($dest_file)) {
+				$object->addThumbs($dest_file);
+			}
+		}
+
 		return dol_basename($destfile);
 	}
 
@@ -989,7 +998,7 @@ class Documents extends DolibarrApi
 	 */
 	public function delete($modulepart, $original_file)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		if (empty($modulepart)) {
 			throw new RestException(400, 'bad value for parameter modulepart');
