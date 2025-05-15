@@ -3749,10 +3749,10 @@ class BookKeeping extends CommonObject
 
 							$createResult = $newBookKeeping->create($user);
 
-							if ($createResult == 0) {
+							if ($createResult > 0) {
 								$newBookKeeping->piece_num = $pieceNumNext;
-								$newBookKeeping->fk_doc = 0;
-								$newBookKeeping->fk_docdet = 0;
+								$newBookKeeping->fk_doc = $bookKeeping->fk_doc;
+								$newBookKeeping->fk_docdet = $bookKeeping->fk_docdet;
 								$result = $newBookKeeping->update($user);
 								setEventMessages($langs->trans("La transaction n\u{00B0} $bookKeeping->piece_num extournée"), null, 'mesgs');
 							} else {
