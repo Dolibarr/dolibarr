@@ -910,7 +910,7 @@ if ($action == 'create') {
 					if ($permissiontodelete) {
 						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
 							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
-							print dolGetButtonAction('', $langs->trans('Cloner'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
+							print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
 						}
 					}
 				}
