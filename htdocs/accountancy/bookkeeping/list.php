@@ -545,13 +545,10 @@ if (empty($reshook)) {
 
 	//massaction clone
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-
 				$result = $object->newCloneMass($toselect);
-
 				if($result == -1){
 					$error++;
 				}
-
 		if($error){
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
@@ -559,39 +556,28 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
-
 	}
 	//massaction assign new account
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-
-
-
 		$result = $object->assignAccountMass($toselect);
-
 		if($result == -1){
 			$error++;
 		}
-
 		if(!$error){
 			$db->commit();
-
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit();
-
 		} else {
 			$db->rollback();
 		}
-
 	}
 
 	//mass action return account
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newReturnAccount($toselect);
-
 		if($result == -1){
 			$error++;
 		}
-
 		if(!$error){
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
@@ -599,7 +585,6 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
-
 	}
 
 
