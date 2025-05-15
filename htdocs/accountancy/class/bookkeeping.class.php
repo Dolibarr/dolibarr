@@ -5,6 +5,8 @@
  * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
+ * Copyright (C) 2025		Nicolas Barrouillet <nicolas@pragma-tech.fr>
+ 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3347,6 +3349,414 @@ class BookKeeping extends CommonObject
 				}
 			}
 			$this->db->free($resql);
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	/**
+	 *  Mass account assignment
+	 *
+	 * @param 	int		$toselect		BookkeepingId
+	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 */
+	public function assignAccountMass($toselect){
+
+		global $langs, $user;
+
+		$error = 0;
+
+		$this->db->begin();
+
+		$bookkeeping = new BookKeeping($this->db);
+		$accountingaccount = new AccountingAccount($this->db);
+
+		if((int) GETPOST('account', 'alpha') > 1){
+			$accountingaccoutId = (int) GETPOST('account', 'alpha');
+			$accountingaccount->fetch($accountingaccoutId);
+			$echecT = [];
+			$nb = 0;
+
+			foreach ($toselect as $id) {
+				if($bookkeeping->fetch($id)){
+					if(strpos($bookkeeping->numero_compte, $conf->global->ACCOUNTING_ACCOUNT_CUSTOMER) === 0 || strpos($bookkeeping->numero_compte, $conf->global->ACCOUNTING_ACCOUNT_SUPPLIER) === 0){
+						$echecT[]=$bookkeeping->numero_compte;
+						continue;
+					}
+
+					$bookkeeping->numero_compte = $accountingaccount->account_number;
+					$bookkeeping->label_compte = $accountingaccount->label;
+
+					$result = $bookkeeping->update($user);
+
+					if ($result > 0) {
+						$nb++;
+					} else {
+						setEventMessages($bookkeeping->error, $bookkeeping->errors, 'errors');
+						$error++;
+						break;
+					}
+				}
+			}
+
+			$echecImplode = implode(",", $echecT);
+		}else{
+			setEventMessages($langs->trans('NoAccountSelected'), null, 'errors');
+			$error++;
+			$this->db->rollback();
+		}
+
+		if($nb > 1){
+			setEventMessages($nb ." " . $langs->trans('AssignAccountsSucces'), null, 'mesgs');
+		} elseif($nb > 0){
+			setEventMessages($nb ." " . $langs->trans('AssignAccountSucces'), null, 'mesgs');
+		}else {
+			setEventMessages($langs->trans('AssignAccountError'), null, 'errors');
+			$error++;
+		}
+
+		if (!empty($echecImplode)) {
+			$nbEchec = count(explode(',', $echecImplode));
+			setEventMessages($nbEchec == 1 ? $langs->trans('NoAccountChangedWithAccountNumber') . ' ' . $echecImplode : $langs->trans('NoAccountsChangedWithAccountNumber') . ' ' . $echecImplode, null, 'errors'
+			);
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+
+	}
+
+	/**
+	 *  Clone
+
+	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 */
+	public function newClone(){
+
+		global $langs;
+
+		$error = 0;
+
+		$doc_date = GETPOST('doc_date', 'alpha');
+		$piece_num_hidden = GETPOST('piece_num_hidden', 'alpha');
+
+		$accountingJournal = new AccountingJournal($this->db);
+		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
+
+		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
+
+		if($dateObj){
+			$formateDate = $dateObj->format('Y-m-d');
+			$timestamp = $dateObj->getTimestamp();
+		}
+
+		$bookKeepingValid = new BookKeeping($this->db);
+
+		$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
+		if ($periodeFiscal < 0) {
+			$error++;
+			return -1;
+		} elseif ($periodeFiscal == 0) {
+			if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+				setEventMessages($langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod'), null, 'errors');
+			} else {
+				setEventMessages($langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod'), null, 'errors');
+				header("Location: " . $_SERVER['HTTP_REFERER']);
+			}
+			$error++;
+			return -1;
+		}
+
+		if(!$error){
+			$this->db->begin();
+			$bookKeepingInstance = new BookKeeping($this->db);
+			$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
+
+			$cloneId = [];
+			$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $piece_num_hidden";
+			$resqlRowidClone = $this->db->query($sqlRowidClone);
+
+			if ($resqlRowidClone) {
+				while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
+					$cloneId[] = $objRowidClone->rowid;
+				}
+
+				foreach ($cloneId as $toselectid) {
+					$bookKeeping = new BookKeeping($this->db);
+					if ($bookKeeping->fetch($toselectid)) {
+						$code_journal = getDolGlobalString('INPUT_JOURNAL_CLONE') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+						$journal_label = getDolGlobalString('INPUT_JOURNAL_CLONE') ? $accountingJournal->label : $bookKeeping->journal_label;
+
+						$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant
+										FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping
+										WHERE rowid = " . $toselectid;
+						$resql = $this->db->query($sql);
+
+						if ($resql) {
+							while ($obj = $this->db->fetch_object($resql)) {
+								$labelOperation = "'" . $this->db->escape($obj->label_operation) . "'";
+								$labelCompte = "'" . $this->db->escape($obj->label_compte) . "'";
+								$fkDoc = (int)$obj->fk_doc;
+								$fkDocdet = (int)$obj->fk_docdet;
+								$docRef = "Duplicata de " . $obj->doc_ref;
+								$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping
+													   (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)
+													   VALUES
+													   ('" . $this->db->escape($pieceNumNext) . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . $fkDoc . ", " . $fkDocdet . ", " . (float)$obj->debit . ", " . (float)$obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float)$obj->montant . ")";
+								$resqlInsert = $this->db->query($sql_insert);
+
+								if ($resqlInsert) {
+									setEventMessages("Clonage réussi transaction : " . $pieceNumNext, null, 'mesgs');
+								} else {
+									setEventMessages("Clonage non réussi " . $this->db->lasterror(), null, 'errors');
+									$error++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+	}
+
+	
+	/**
+	 *  Mass clone
+	 *
+	 * @param 	int		$toselect		BookkeepingId
+
+	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 */
+	public function newCloneMass($toselect){
+
+		global $langs;
+
+		$error = 0;
+		$this->db->begin();
+
+		$idImplodeSelect = implode(',', $toselect);
+		$pieceNumT = [];
+
+		$sqlPieceNum = "SELECT DISTINCT(piece_num) FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN ($idImplodeSelect)";
+		$resqlPieceNum = $this->db->query($sqlPieceNum);
+
+		if ($resqlPieceNum) {
+			while ($objPieceNum = $this->db->fetch_object($resqlPieceNum)) {
+					$pieceNumT[] = $objPieceNum->piece_num;
+				}
+
+			foreach ($pieceNumT as $pieceNum) {
+
+				$doc_date = GETPOST('doc_date', 'alpha');
+				$accountingJournal = new AccountingJournal($this->db);
+				$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
+				$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
+				if($dateObj){
+					$formateDate = $dateObj->format('Y-m-d');
+					$timestamp = $dateObj->getTimestamp();
+				}
+				$bookKeepingValid = new BookKeeping($this->db);
+				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
+				if ($periodeFiscal < 0) {
+					$error++;
+				} elseif ($periodeFiscal == 0) {
+					if (getDolGlobalString('ACCOUNTANCY_FISCAL_PERIOD_MODE') == 'blockedonclosed') {
+							setEventMessages($langs->trans('ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod'), null, 'errors');
+					} else {
+							setEventMessages($langs->trans('ErrorBookkeepingDocDateNotOnActiveFiscalPeriod'), null, 'errors');
+							header("Location: " . $_SERVER['HTTP_REFERER']);
+					}
+					$error++;
+					}
+					$bookKeepingInstance = new BookKeeping($this->db);
+					$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
+
+					$cloneId = [];
+					$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
+					$resqlRowidClone = $this->db->query($sqlRowidClone);
+
+					if ($resqlRowidClone) {
+						while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
+							$cloneId[] = $objRowidClone->rowid;
+						}
+
+					foreach ($cloneId as $toselectid) {
+						$bookKeeping = new BookKeeping($this->db);
+						if ($bookKeeping->fetch($toselectid)) {
+							$code_journal = getDolGlobalString('INPUT_JOURNAL_CLONE') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+							$journal_label = getDolGlobalString('INPUT_JOURNAL_CLONE') ? $accountingJournal->label : $bookKeeping->journal_label;
+							$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant ";
+							$sql .= "FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid = " . $toselectid;
+
+							$resql = $this->db->query($sql);
+							if ($resql) {
+								while ($obj = $this->db->fetch_object($resql)) {
+									$labelOperation = "'" . $this->db->escape($obj->label_operation) . "'";
+									$labelCompte = "'" . $this->db->escape($obj->label_compte) . "'";
+									$subledger_account = "'" . $this->db->escape($obj->subledger_account) . "'";
+									$subledger_label = "'" . $this->db->escape($obj->subledger_label) . "'";
+									$fkDoc = (int)$obj->fk_doc;
+									$fkDocdet = (int)$obj->fk_docdet;
+									$docRef = "Duplicata de " . $obj->doc_ref;
+
+									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant) ";
+									$sql_insert .=	" VALUES ('" . $this->db->escape($pieceNumNext) . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate);
+									$sql_insert .= "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . $fkDoc . ", " . $fkDocdet . ", " . (float)$obj->debit;
+									$sql_insert .= ", " . (float)$obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float)$obj->montant . ")";
+									$resqlInsert = $this->db->query($sql_insert);
+
+									if ($resqlInsert) {
+										setEventMessages($langs->trans('ClonageSuccess'). ": "  . $pieceNumNext, null, 'mesgs');
+										} else {
+											setEventMessages($langs->trans('ClonageFailed') . $this->db->lasterror(), null, 'errors');
+											$error++;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+
+		if ($error) {
+			$this->db->rollback();
+			return -1;
+		} else {
+			$this->db->commit();
+			return 1;
+		}
+
+	}
+
+	/**
+	 *  Mass ReturnAccount
+	 *
+	 * @param 	int		$toselect		BookkeepingId
+
+	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 */
+	public function newReturnAccount($toselect){
+
+		global $langs, $user;
+
+		$doc_date = GETPOST('doc_date', 'alpha');
+
+		$accountingJournal = new AccountingJournal($this->db);
+		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
+		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
+
+		if($dateObj){
+			$formateDate = $dateObj->format('Y-m-d');
+			$timestamp = $dateObj->getTimestamp();
+		}
+
+		$this->db->begin();
+		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
+		$resqlAlreadyExtourne = $this->db->query($sqlAlreadyExtourne);
+		$alreadyExtourneT = array();
+		if($resqlAlreadyExtourne){
+			while($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)){
+				$alreadyExtourneT []= $obj4->piece_num;
+			}
+		}
+
+		$idImplode = implode(',', $toselect);
+		$sql1 = "SELECT distinct(piece_num) from " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid IN ($idImplode)";
+		$resql1 = $this->db->query($sql1);
+		$pieceNumT = [];
+
+		if ($resql1) {
+			while ($obj1 = $this->db->fetch_object($resql1)) {
+				$pieceNumT [] = $obj1->piece_num;
+			}
+
+			$i = mt_rand(0, 100);
+			foreach($pieceNumT as $pieceNum){
+				$newBookKeepingInstance = new BookKeeping($this->db);
+				$pieceNumNext = $newBookKeepingInstance->getNextNumMvt();
+				$extourneIds = [];
+				$sql2 = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
+				$resql2 = $this->db->query($sql2);
+
+				if ($resql2) {
+					while ($obj2 = $this->db->fetch_object($resql2)) {
+						$extourneIds [] = $obj2->rowid;
+					}
+
+					foreach ($extourneIds as $extourneId) {
+
+						$newBookKeeping = new BookKeeping($this->db);
+						$bookKeeping = new BookKeeping($this->db);
+
+						if ($bookKeeping->fetch($extourneId)) {
+							if(in_array($bookKeeping->piece_num, $alreadyExtourneT)){
+								setEventMessages($langs->trans("La transaction n\u{00B0} $bookKeeping->piece_num") . " " . $langs->trans("HasAlreadyBeenReversed") . $newBookKeeping->error, null, 'errors');
+							}else{
+								$newBookKeeping->debit = $bookKeeping->credit;
+								$newBookKeeping->credit = $bookKeeping->debit;
+								if ($bookKeeping->sens == 'D') {
+									$newBookKeeping->sens = 'C';
+								} else {
+									$newBookKeeping->sens = 'D';
+								}
+								$date = date('d/m/Y', dol_now());
+
+								$newBookKeeping->label_operation = "Extourne " . $bookKeeping->piece_num . " - " . $bookKeeping->numero_compte . " - " . $date . " - " . $i;
+
+								$newBookKeeping->numero_compte = $bookKeeping->numero_compte;
+								$newBookKeeping->label_compte = $bookKeeping->label_compte;
+								$newBookKeeping->doc_type = $bookKeeping->doc_type;
+								$newBookKeeping->code_journal = $bookKeeping->code_journal;
+								$newBookKeeping->doc_date = $timestamp;
+								$newBookKeeping->fk_user_author = $user->id;
+								$newBookKeeping->doc_ref = $bookKeeping->doc_ref;
+								$newBookKeeping->montant = $bookKeeping->montant;
+								$newBookKeeping->journal_label = $bookKeeping->journal_label;
+								$newBookKeeping->subledger_account = $bookKeeping->subledger_account;
+								$newBookKeeping->subledger_label = $bookKeeping->subledger_label;
+
+							}
+
+							$createResult = $newBookKeeping->create($user);
+
+							if ($createResult == 0) {
+								$newBookKeeping->piece_num = $pieceNumNext;
+								$newBookKeeping->fk_doc = 0;
+								$newBookKeeping->fk_docdet = 0;
+								$result = $newBookKeeping->update($user);
+								setEventMessages($langs->trans("La transaction n\u{00B0} $bookKeeping->piece_num extournée"), null, 'mesgs');
+							} else {
+								setEventMessages($langs->trans("ErrorWhileCreating"). " ". $newBookKeeping->error , null, 'errors');
+								$error++;
+							}
+						}
+
+						$i++;
+					}
+				}
+			}
 		}
 
 		if ($error) {
