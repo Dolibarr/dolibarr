@@ -209,7 +209,7 @@ print '<table class="noborder centpercent">';
 print '<tr class="liste_titre" height="24">';
 print '<td class="center">'.$langs->trans("Year").'</td>';
 print '<td class="right">'.$langs->trans("NbOfTickets").'</td>';
-print '<td class="right">%</td>';
+print '<td class="right opacitylow">%</td>';
 //print '<td class="right">'.$langs->trans("AmountTotal").'</td>';
 //print '<td class="right">%</td>';
 //print '<td class="right">'.$langs->trans("AmountAverage").'</td>';
