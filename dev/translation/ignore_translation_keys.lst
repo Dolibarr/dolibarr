@@ -157,7 +157,6 @@ Bookings
 BoxTitleLast
 BoxTitleLatest
 BoxTitleLatestModifiedMyObjects
-ByDefault
 Bzip2
 CLI
 CSS
@@ -166,7 +165,6 @@ CalcModeLT
 CalculatedFromProductsToConsume
 CancelReception
 Candidatures
-CantConvertToReducAnInvoiceOfThisType
 CardFichinter
 CardProduct
 CashDeskBankAccountForStripeTerminal
