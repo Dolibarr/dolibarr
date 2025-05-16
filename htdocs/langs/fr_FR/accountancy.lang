@@ -500,23 +500,4 @@ ExpenseReportJournal=Journal des notes de frais
 DocsAlreadyExportedAreIncluded=Les documents déjà exportés sont inclus
 ClickToShowAlreadyExportedLines=Cliquez pour afficher les lignes déjà exportées
 NAccounts=%s comptes
-## Mass Actions
-ConfirmMassCloneBookkeepingWritingQuestion=Cela clonera l'écriture comptable de la comptabilité (toutes les lignes liées à cette écriture comptable seront clonées). Êtes-vous sûr de vouloir cloner les %s enregistrements sélectionnés ?
-ConfirmMassCloneBookkeepingWriting=Confirmation de clonage en masse
-ConfirmMassReturnAccountBookkeepingWriting=Confirmation de l'extourne en masse
-ConfirmMassReturnAccountBookkeepingWritingQuestion=Cela extournera l'écriture comptable de la comptabilité (toutes les lignes liées à cette écriture comptable seront extournées). Êtes-vous sûr de vouloir extourner les %s enregistrements sélectionnés ?
-ConfirmMassAssignAccountBookkeepingWritingQuestion=Cela changera le compte de toutes les lignes sélectionnées.
-confirmMassAssignAccountBookkeepingWritingConfirm=Confirmation de changement de compte en masse
-ClonageSuccess=Clonage réussi transaction
-ClonageFailed=Clonage non réussi
-NoAccountSelected=Aucun compte sélectionné
-AssignAccountsSucces=transactions mises à jour
-AssignAccountSucces=transaction mise à jour
-AssignAccount=Changer compte
-AssignAccountError=Aucun compte changé
-NoAccountChangedWithAccountNumber=Transaction non mise à jour avec le numéro de compte:
-NoAccountsChangedWithAccountNumber=Transactions non mises à jour avec les numéros de compte:
-HasAlreadyBeenReversed=a déjà été extournée
-ErrorWhileCreating=Erreur lors de la création
-ReturnAccount=Extourner
-Clone=Cloner
+
