@@ -119,7 +119,7 @@ if ($action == 'add_payment') {
 
 			if (!$error) {
 				$result = $paiement->addPaymentToBank($user, 'payment_sc', '(SocialContributionPayment)', GETPOST('accountid', 'int'), '', '');
-				if ($result < 0) {
+				if ($result <= 0) {
 					$error++;
 					setEventMessages($paiement->error, $paiement->errors, 'errors');
 					$action = 'create';
