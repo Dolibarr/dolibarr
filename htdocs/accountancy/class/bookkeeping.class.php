@@ -3544,7 +3544,7 @@ class BookKeeping extends CommonObject
 			return 1;
 		}
 	}
-	
+
 	/**
 	 *  Mass clone
 	 *
@@ -3569,7 +3569,7 @@ class BookKeeping extends CommonObject
 		if ($resqlPieceNum) {
 			while ($objPieceNum = $this->db->fetch_object($resqlPieceNum)) {
 				$pieceNumT[] = $objPieceNum->piece_num;
-				}
+			}
 
 			foreach ($pieceNumT as $pieceNum) {
 				$doc_date = GETPOST('doc_date', 'alpha');
@@ -3592,18 +3592,18 @@ class BookKeeping extends CommonObject
 							header("Location: " . $_SERVER['HTTP_REFERER']);
 					}
 					$error++;
+				}
+				
+				$bookKeepingInstance = new BookKeeping($this->db);
+				$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
+				$cloneId = [];
+				$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
+				$resqlRowidClone = $this->db->query($sqlRowidClone);
+
+				if ($resqlRowidClone) {
+					while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
+						$cloneId[] = $objRowidClone->rowid;
 					}
-					$bookKeepingInstance = new BookKeeping($this->db);
-					$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
-
-					$cloneId = [];
-					$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $pieceNum";
-					$resqlRowidClone = $this->db->query($sqlRowidClone);
-
-					if ($resqlRowidClone) {
-						while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
-							$cloneId[] = $objRowidClone->rowid;
-						}
 
 					foreach ($cloneId as $toselectid) {
 						$bookKeeping = new BookKeeping($this->db);
@@ -3631,11 +3631,10 @@ class BookKeeping extends CommonObject
 									$resqlInsert = $this->db->query($sql_insert);
 
 									if ($resqlInsert) {
-										setEventMessages($langs->trans('ClonageSuccess',$pieceNumNext), null, 'mesgs');
+										setEventMessages($langs->trans('ClonageSuccess', $pieceNumNext), null, 'mesgs');
 									} else {
-										setEventMessages($langs->trans('ClonageFailed',$pieceNumNext), null, 'errors');
+										setEventMessages($langs->trans('ClonageFailed', $pieceNumNext), null, 'errors');
 										$error++;
-									}
 									}
 								}
 							}
@@ -3643,7 +3642,7 @@ class BookKeeping extends CommonObject
 					}
 				}
 			}
-
+		}
 
 		if ($error) {
 			$this->db->rollback();
@@ -3653,7 +3652,7 @@ class BookKeeping extends CommonObject
 			return 1;
 		}
 
-	}
+}
 
 	/**
 	 *  Mass ReturnAccount
@@ -3683,7 +3682,7 @@ class BookKeeping extends CommonObject
 		$resqlAlreadyExtourne = $this->db->query($sqlAlreadyExtourne);
 		$alreadyExtourneT = array();
 		if ($resqlAlreadyExtourne) {
-			while($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)) {
+			while ($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)) {
 				$alreadyExtourneT []= $obj4->piece_num;
 			}
 		}
@@ -3699,7 +3698,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$i = mt_rand(0, 100);
-			foreach($pieceNumT as $pieceNum) {
+			foreach ($pieceNumT as $pieceNum) {
 				$newBookKeepingInstance = new BookKeeping($this->db);
 				$pieceNumNext = $newBookKeepingInstance->getNextNumMvt();
 				$extourneIds = [];
@@ -3712,7 +3711,6 @@ class BookKeeping extends CommonObject
 					}
 
 					foreach ($extourneIds as $extourneId) {
-
 						$newBookKeeping = new BookKeeping($this->db);
 						$bookKeeping = new BookKeeping($this->db);
 
@@ -3744,7 +3742,6 @@ class BookKeeping extends CommonObject
 								$newBookKeeping->subledger_label = $bookKeeping->subledger_label;
 
 							}
-
 							$createResult = $newBookKeeping->create($user);
 
 							if ($createResult > 0) {
@@ -3754,7 +3751,7 @@ class BookKeeping extends CommonObject
 								$result = $newBookKeeping->update($user);
 								setEventMessages($langs->trans("SuccessReturnedAccount", $bookKeeping->piece_num), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error) , null, 'errors');
+								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error), null, 'errors');
 								$error++;
 							}
 						}
