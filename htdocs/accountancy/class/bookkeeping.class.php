@@ -3360,7 +3360,7 @@ class BookKeeping extends CommonObject
 	/**
 	 *  Mass account assignment
 	 *
-	 * @param 	int		$toselect		BookkeepingId
+	 * @param 	int[]		$toselect	Array of BookkeepingId
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
 	public function assignAccountMass($toselect)
