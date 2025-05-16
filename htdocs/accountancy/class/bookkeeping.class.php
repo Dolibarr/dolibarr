@@ -3570,7 +3570,6 @@ class BookKeeping extends CommonObject
 				$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
 				$formateDate = $dateObj->format('Y-m-d');
 				$timestamp = $dateObj->getTimestamp();
-				
 				$bookKeepingValid = new BookKeeping($this->db);
 				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
 				if ($periodeFiscal < 0) {
