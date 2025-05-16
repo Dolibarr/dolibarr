@@ -550,7 +550,6 @@ ConfirmMassAssignAccountBookkeepingWritingQuestion=This will change the account 
 confirmMassAssignAccountBookkeepingWritingConfirm=Confirm mass account change
 ClonageSuccess=Successful transaction cloning : %s
 ClonageFailed=Cloning unsuccessful
-NoAccountSelected=No account selected
 AssignAccountsSucces=updated transactions
 AssignAccountSucces=updated transaction
 AssignAccount=Change account
