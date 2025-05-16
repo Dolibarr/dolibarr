@@ -3634,9 +3634,9 @@ class BookKeeping extends CommonObject
 									$resqlInsert = $this->db->query($sql_insert);
 
 									if ($resqlInsert) {
-										setEventMessages($langs->trans('ClonageSuccess'). ": "  . $pieceNumNext, null, 'mesgs');
+										setEventMessages($langs->trans('ClonageSuccess',$pieceNumNext), null, 'mesgs');
 										} else {
-											setEventMessages($langs->trans('ClonageFailed') . $this->db->lasterror(), null, 'errors');
+											setEventMessages($langs->trans('ClonageFailed',$pieceNumNext), null, 'errors');
 											$error++;
 										}
 									}
@@ -3720,7 +3720,7 @@ class BookKeeping extends CommonObject
 
 						if ($bookKeeping->fetch($extourneId)) {
 							if(in_array($bookKeeping->piece_num, $alreadyExtourneT)){
-								setEventMessages($langs->trans("La transaction n\u{00B0} $bookKeeping->piece_num") . " " . $langs->trans("HasAlreadyBeenReversed") . $newBookKeeping->error, null, 'errors');
+								setEventMessages($langs->trans("AlreadyReturnedAccount", $bookKeeping->piece_num), null, 'errors');
 							}else{
 								$newBookKeeping->debit = $bookKeeping->credit;
 								$newBookKeeping->credit = $bookKeeping->debit;
@@ -3754,9 +3754,9 @@ class BookKeeping extends CommonObject
 								$newBookKeeping->fk_doc = $bookKeeping->fk_doc;
 								$newBookKeeping->fk_docdet = $bookKeeping->fk_docdet;
 								$result = $newBookKeeping->update($user);
-								setEventMessages($langs->trans("La transaction n\u{00B0} $bookKeeping->piece_num extournée"), null, 'mesgs');
+								setEventMessages($langs->trans("SuccessReturnedAccount", $bookKeeping->piece_num), null, 'mesgs');
 							} else {
-								setEventMessages($langs->trans("ErrorWhileCreating"). " ". $newBookKeeping->error , null, 'errors');
+								setEventMessages($langs->trans("ErrorWhileCreating", $newBookKeeping->error) , null, 'errors');
 								$error++;
 							}
 						}
