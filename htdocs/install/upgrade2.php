@@ -71,7 +71,7 @@ error_reporting(0);
 if (getDolGlobalString('MAIN_OVERRIDE_TIME_LIMIT')) {
 	@set_time_limit((int) $conf->global->MAIN_OVERRIDE_TIME_LIMIT);
 } else {
-	@set_time_limit(600);
+	@set_time_limit(3600);
 }
 error_reporting($err);
 
