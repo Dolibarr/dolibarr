@@ -919,7 +919,7 @@ if ($massaction == 'preunletteringauto') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeleteBookkeepingWriting"), $langs->trans("ConfirmMassDeleteBookkeepingWritingQuestion", count($toselect)), "deletebookkeepingwriting", null, '', 0, 200, 500, 1);
 } elseif ($massaction == 'preassignaccountbookkeepingwriting') {
 	$input = $formaccounting->select_account('', 'account', 1);
-	$formquestion = array(array('type' => 'other', 'name' => 'account', 'label' => '<span class="fieldrequired">' . $langs->trans("AccountAccountingShort	") . '</span>', 'value' => $input),);
+	$formquestion = array(array('type' => 'other', 'name' => 'account', 'label' => '<span class="fieldrequired">' . $langs->trans("AccountAccountingShort") . '</span>', 'value' => $input),);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("confirmMassAssignAccountBookkeepingWritingConfirm"), $langs->trans("ConfirmMassAssignAccountBookkeepingWritingQuestion", count($toselect)), "assignaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
 }  elseif ($massaction == 'preclonebookkeepingwriting') {
 	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
