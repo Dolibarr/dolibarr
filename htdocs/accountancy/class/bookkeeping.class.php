@@ -1826,11 +1826,9 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		// Call triggers
-		if (! $error && ! $notrigger) {
-			$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
-			if ($result < 0) {
-				$error++;
-			}
+		$result = $this->call_trigger('BOOKKEEPING_DELETE', $user);
+		if ($result < 0) {
+			$error++;
 		}
 
 		if (!$error) {
@@ -3375,13 +3373,12 @@ class BookKeeping extends CommonObject
 
 		$bookkeeping = new BookKeeping($this->db);
 		$accountingaccount = new AccountingAccount($this->db);
+		$nb = 0;
 
 		if ((int) GETPOST('account', 'alpha') > 1) {
 			$accountingaccoutId = (int) GETPOST('account', 'alpha');
 			$accountingaccount->fetch($accountingaccoutId);
 			$echecT = [];
-			$nb = 0;
-
 			foreach ($toselect as $id) {
 				if ($bookkeeping->fetch($id)) {
 					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
@@ -3462,11 +3459,8 @@ class BookKeeping extends CommonObject
 		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 
 		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
-
-		if ($dateObj) {
-			$formateDate = $dateObj->format('Y-m-d');
-			$timestamp = $dateObj->getTimestamp();
-		}
+		$formateDate = $dateObj->format('Y-m-d');
+		$timestamp = $dateObj->getTimestamp();
 
 		$bookKeepingValid = new BookKeeping($this->db);
 
@@ -3485,50 +3479,48 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		if (!$error) {
-			$this->db->begin();
-			$bookKeepingInstance = new BookKeeping($this->db);
-			$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
+		$this->db->begin();
+		$bookKeepingInstance = new BookKeeping($this->db);
+		$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 
-			$cloneId = [];
-			$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $piece_num_hidden";
-			$resqlRowidClone = $this->db->query($sqlRowidClone);
+		$cloneId = [];
+		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $piece_num_hidden";
+		$resqlRowidClone = $this->db->query($sqlRowidClone);
 
-			if ($resqlRowidClone) {
-				while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
-					$cloneId[] = $objRowidClone->rowid;
-				}
+		if ($resqlRowidClone) {
+			while ($objRowidClone = $this->db->fetch_object($resqlRowidClone)) {
+				$cloneId[] = $objRowidClone->rowid;
+			}
 
-				foreach ($cloneId as $toselectid) {
-					$bookKeeping = new BookKeeping($this->db);
-					if ($bookKeeping->fetch($toselectid)) {
-						$code_journal = getDolGlobalString('INPUT_JOURNAL_CLONE') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
-						$journal_label = getDolGlobalString('INPUT_JOURNAL_CLONE') ? $accountingJournal->label : $bookKeeping->journal_label;
+			foreach ($cloneId as $toselectid) {
+				$bookKeeping = new BookKeeping($this->db);
+				if ($bookKeeping->fetch($toselectid)) {
+					$code_journal = getDolGlobalString('INPUT_JOURNAL_CLONE') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+					$journal_label = getDolGlobalString('INPUT_JOURNAL_CLONE') ? $accountingJournal->label : $bookKeeping->journal_label;
 
-						$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant
-										FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping
-										WHERE rowid = " . $toselectid;
-						$resql = $this->db->query($sql);
+					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant
+									FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping
+									WHERE rowid = " . $toselectid;
+					$resql = $this->db->query($sql);
 
-						if ($resql) {
-							while ($obj = $this->db->fetch_object($resql)) {
-								$labelOperation = "'" . $this->db->escape($obj->label_operation) . "'";
-								$labelCompte = "'" . $this->db->escape($obj->label_compte) . "'";
-								$fkDoc = (int) $obj->fk_doc;
-								$fkDocdet = (int) $obj->fk_docdet;
-								$docRef = "Duplicata de " . $obj->doc_ref;
-								$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping
-													   (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)
-													   VALUES
-													   ('" . $this->db->escape($pieceNumNext) . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
-								$resqlInsert = $this->db->query($sql_insert);
+					if ($resql) {
+						while ($obj = $this->db->fetch_object($resql)) {
+							$labelOperation = "'" . $this->db->escape($obj->label_operation) . "'";
+							$labelCompte = "'" . $this->db->escape($obj->label_compte) . "'";
+							$fkDoc = (int) $obj->fk_doc;
+							$fkDocdet = (int) $obj->fk_docdet;
+							$docRef = "Duplicata de " . $obj->doc_ref;
+							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping
+												   (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)
+												   VALUES
+												   ('" . $this->db->escape($pieceNumNext) . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+							$resqlInsert = $this->db->query($sql_insert);
 
-								if ($resqlInsert) {
-									setEventMessages("Clonage réussi transaction : " . $pieceNumNext, null, 'mesgs');
-								} else {
-									setEventMessages("Clonage non réussi " . $this->db->lasterror(), null, 'errors');
-									$error++;
-								}
+							if ($resqlInsert) {
+								setEventMessages("Clonage réussi transaction : " . $pieceNumNext, null, 'mesgs');
+							} else {
+								setEventMessages("Clonage non réussi " . $this->db->lasterror(), null, 'errors');
+								$error++;
 							}
 						}
 					}
@@ -3548,7 +3540,7 @@ class BookKeeping extends CommonObject
 	/**
 	 *  Mass clone
 	 *
-	 * @param 	int		$toselect		BookkeepingId
+	 * @param 	array		$toselect		BookkeepingId
 
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
@@ -3576,10 +3568,9 @@ class BookKeeping extends CommonObject
 				$accountingJournal = new AccountingJournal($this->db);
 				$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 				$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
-				if ($dateObj) {
-					$formateDate = $dateObj->format('Y-m-d');
-					$timestamp = $dateObj->getTimestamp();
-				}
+				$formateDate = $dateObj->format('Y-m-d');
+				$timestamp = $dateObj->getTimestamp();
+				
 				$bookKeepingValid = new BookKeeping($this->db);
 				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
 				if ($periodeFiscal < 0) {
