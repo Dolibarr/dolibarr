@@ -462,7 +462,7 @@ if (empty($reshook)) {
 
 		if (getDolGlobalString('INPUT_JOURNAL_CLONE')) {
 			$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
-		}else{
+		} else {
 			$champJournal = null;
 		}
 		$formquestion = array(
