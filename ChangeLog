@@ -136,6 +136,7 @@ NEW: hidden conf for api contrat putLine endpoint to only return the line (#3380
 NEW: introduce method dolSetCookie
 NEW: Invoice - Document - Add hook on action
 NEW: Pagination data for intervention APi
+NEW: Add experimental Website Template for Association
 
 WARNING:
 --------

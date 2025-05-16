@@ -2463,7 +2463,7 @@ class DolibarrModules // Can not be abstract, because we need to instantiate it 
 						dol_delete_file($dest.'.zip');
 
 						// Compress it
-						global $errormsg;
+						global $errormsg;	// Used by dol_compress_dir
 						$errormsg = '';
 						$result = dol_compress_dir($src, $dest.'.zip', 'zip');
 						if ($result < 0) {

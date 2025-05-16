@@ -13117,12 +13117,6 @@ parameters:
 			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
 
 		-
-			message: '#^Variable \$permission might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: ../../../htdocs/eventorganization/conferenceorbooth_contact.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Project and ''fetchComments'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
