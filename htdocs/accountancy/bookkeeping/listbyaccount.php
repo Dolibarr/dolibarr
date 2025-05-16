@@ -541,7 +541,7 @@ if (empty($reshook)) {
 	//massaction clone
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newCloneMass($toselect);
-		if($result == -1){
+		if ($result == -1) {
 			$error++;
 		}
 		if (!$error) {
@@ -551,14 +551,14 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 		}
-}
+	}
 	//massaction assignaccount
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->assignAccountMass($toselect);
-		if($result == -1){
+		if ($result == -1) {
 			$error++;
 		}
-		if(!$error){
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit();
@@ -570,10 +570,10 @@ if (empty($reshook)) {
 	//massaction returnaccount
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newReturnAccount($toselect);
-		if($result == -1){
+		if ($result == -1) {
 			$error++;
 		}
-		if(!$error){
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit();
@@ -924,9 +924,9 @@ if ($massaction == 'preunletteringauto') {
 }  elseif ($massaction == 'preclonebookkeepingwriting') {
 	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
 	$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
-	if(getDolGlobalString('INPUT_JOURNAL_CLONE')) {
+	if (getDolGlobalString('INPUT_JOURNAL_CLONE')) {
 	$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
-	}else{
+	} else {
 		$champJournal = null;
 	}
 	$formquestion = array(array('type' => 'other', 'name' => 'doc_date', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1),$champJournal,);
