@@ -3593,7 +3593,7 @@ class BookKeeping extends CommonObject
 					}
 					$error++;
 				}
-				
+
 				$bookKeepingInstance = new BookKeeping($this->db);
 				$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 				$cloneId = [];
@@ -3651,8 +3651,7 @@ class BookKeeping extends CommonObject
 			$this->db->commit();
 			return 1;
 		}
-
-}
+	}
 
 	/**
 	 *  Mass ReturnAccount
@@ -3740,7 +3739,6 @@ class BookKeeping extends CommonObject
 								$newBookKeeping->journal_label = $bookKeeping->journal_label;
 								$newBookKeeping->subledger_account = $bookKeeping->subledger_account;
 								$newBookKeeping->subledger_label = $bookKeeping->subledger_label;
-
 							}
 							$createResult = $newBookKeeping->create($user);
 
