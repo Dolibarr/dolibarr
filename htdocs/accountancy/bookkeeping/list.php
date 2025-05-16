@@ -575,10 +575,10 @@ if (empty($reshook)) {
 	//mass action return account
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->newReturnAccount($toselect);
-		if($result == -1){
+		if ($result == -1) {
 			$error++;
 		}
-		if(!$error){
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit();
@@ -838,23 +838,16 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
-
 //massaction clone
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
-
 	$arrayofmassactions['preclonebookkeepingwriting'] = img_picto('', 'fa-clone', 'class="pictofixedwidth"').$langs->trans("Clone");
-
 }
-
 //massaction assign account
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
-
 	$arrayofmassactions['preassignaccountbookkeepingwriting'] = img_picto('', 'fa-exchange-alt', 'class="pictofixedwidth"').$langs->trans("AssignAccount");
 }
-
 //massaction return account
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
-
 	$arrayofmassactions['prereturnaccountbookkeepingwriting'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("ReturnAccount");
 }
 
@@ -917,7 +910,7 @@ if ($massaction == 'preunletteringauto') {
 } elseif ($massaction == 'preclonebookkeepingwriting') {
 	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
 	$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
-	if(getDolGlobalString('INPUT_JOURNAL_CLONE')) {
+	if (getDolGlobalString('INPUT_JOURNAL_CLONE')) {
 		$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
 	}else{
 		$champJournal = null;
