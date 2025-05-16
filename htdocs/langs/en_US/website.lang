@@ -448,3 +448,5 @@ SetupAndProperties=Setup And Properties
 DISABLE_EVENTS_SECTION=Disable Events Section
 DONATION_COUNTERS_ARE_PUBLIC=The total amount of valid donations is publicly visible
 SHOW_EVENT_GOAL_RAISED_AMOUNTS=Show goal and raised amounts for each event card
+WarningTemplatesFoundNotDeployedClickRefresh=Some templates provided with application are not yet deployed here
+WarningTemplatesFoundNotDeployedClickRefresh2=Click the following button Refresh to solve this.
