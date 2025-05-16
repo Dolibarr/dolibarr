@@ -3540,8 +3540,7 @@ class BookKeeping extends CommonObject
 	/**
 	 *  Mass clone
 	 *
-	 * @param 	array		$toselect		BookkeepingId
-
+	 * @param 	int[]		$toselect		array of BookkeepingId
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
 	public function newCloneMass($toselect)
