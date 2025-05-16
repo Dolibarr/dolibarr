@@ -562,3 +562,4 @@ ErrorWhileCreating=Error during creation %s
 ReturnAccount=Return
 Clone=Cloner
 AlreadyReturnedAccount=Entry n°%s has already been reversed
+SuccessReturnedAccount=Entry n°%s has been reversed
