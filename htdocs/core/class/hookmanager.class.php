@@ -136,35 +136,37 @@ class HookManager
 					$arrayhooks = explode(':', $hooks); // Old system (for backward compatibility)
 				}
 
-				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks)) {    // We instantiate action class only if initialized hook is handled by the module
-					// Include actions class overwriting hooks
-					if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
-						$path = '/'.$module.'/class/';
-						$actionfile = 'actions_'.$module.'.class.php';
+				if (!in_array($context, $arrayhooks) && !in_array('all', $arrayhooks)) {
+					// We instantiate action class only if initialized hook is handled by the module
+					// Hook was already initialized for this context and module
+					continue;
+				}
 
-						$resaction = dol_include_once($path.$actionfile);
-						if ($resaction) {
-							$controlclassname = 'Actions'.ucfirst($module);
+				// Include actions class overwriting hooks
+				if (empty($this->hooks[$context][$module]) || !is_object($this->hooks[$context][$module])) {	// If set to an object value, class was already loaded so we do nothing.
+					$path = '/'.$module.'/class/';
+					$actionfile = 'actions_'.$module.'.class.php';
 
-							$actionInstance = new $controlclassname($this->db);
-							'@phan-var-force CommonHookActions $actionInstance';
+					$resaction = dol_include_once($path.$actionfile);
+					if ($resaction) {
+						$controlclassname = 'Actions'.ucfirst($module);
 
-							// @phan-suppress-next-line PhanUndeclaredProperty
-							$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
+						$actionInstance = new $controlclassname($this->db);
+						'@phan-var-force CommonHookActions $actionInstance';
 
-							$this->hooks[$context][$module] = $actionInstance;
-							$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
+						// @phan-suppress-next-line PhanUndeclaredProperty
+						$priority = (!property_exists($actionInstance, 'priority') || empty($actionInstance->priority)) ? 50 : $actionInstance->priority;
 
-							$foundcontextmodule = true;
+						$this->hooks[$context][$module] = $actionInstance;
+						$this->hooksSorted[$context][$priority.':'.$module] = $actionInstance;
 
-							// Hook has been initialized with another couple $context/$module
-							$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
-							dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
-						} else {
-							dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
-						}
+						$foundcontextmodule = true;
+
+						// Hook has been initialized with another couple $context/$module
+						$stringtolog = 'context='.$context.'-path='.$path.$actionfile.'-priority='.$priority;
+						dol_syslog(get_class($this)."::initHooks Loading hooks: ".$stringtolog, LOG_DEBUG);
 					} else {
-						// Hook was already initialized for this context and module
+						dol_syslog(get_class($this)."::initHooks Failed to load hook in ".$path.$actionfile, LOG_WARNING);
 					}
 				}
 			}
