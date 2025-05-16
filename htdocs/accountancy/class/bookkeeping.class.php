@@ -3646,14 +3646,16 @@ class BookKeeping extends CommonObject
 	/**
 	 *  Mass ReturnAccount
 	 *
-	 * @param 	int		$toselect		BookkeepingId
+	 * @param 	int[]		$toselect		BookkeepingId
 
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newReturnAccount($toselect)
+	public function newReturnAccount(array $toselect)
 	{
 
 		global $langs, $user;
+
+		$error = 0;
 
 		$doc_date = GETPOST('doc_date', 'alpha');
 
@@ -3661,10 +3663,8 @@ class BookKeeping extends CommonObject
 		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
 
-		if ($dateObj) {
-			$formateDate = $dateObj->format('Y-m-d');
-			$timestamp = $dateObj->getTimestamp();
-		}
+		$formateDate = $dateObj->format('Y-m-d');
+		$timestamp = $dateObj->getTimestamp();
 
 		$this->db->begin();
 		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
