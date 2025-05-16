@@ -6,7 +6,6 @@
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
  * Copyright (C) 2025		Nicolas Barrouillet <nicolas@pragma-tech.fr>
- 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3366,8 +3365,8 @@ class BookKeeping extends CommonObject
 	 * @param 	int		$toselect		BookkeepingId
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function assignAccountMass($toselect){
-
+	public function assignAccountMass($toselect)
+	{
 		global $langs, $user;
 
 		$error = 0;
@@ -3377,23 +3376,23 @@ class BookKeeping extends CommonObject
 		$bookkeeping = new BookKeeping($this->db);
 		$accountingaccount = new AccountingAccount($this->db);
 
-		if((int) GETPOST('account', 'alpha') > 1){
+		if ((int) GETPOST('account', 'alpha') > 1) {
 			$accountingaccoutId = (int) GETPOST('account', 'alpha');
 			$accountingaccount->fetch($accountingaccoutId);
 			$echecT = [];
 			$nb = 0;
 
 			foreach ($toselect as $id) {
-				if($bookkeeping->fetch($id)){
-					if ( !getDolGlobalString ('ACCOUNTING_ACCOUNT_CUSTOMER')){
+				if ($bookkeeping->fetch($id)) {
+					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER')) {
 						$accountcustcode = '411';
-					} else $accountcustcode = getDolGlobalString ('ACCOUNTING_ACCOUNT_CUSTOMER');
+					} else $accountcustcode = getDolGlobalString('ACCOUNTING_ACCOUNT_CUSTOMER');
 
-					if ( !getDolGlobalString ('ACCOUNTING_ACCOUNT_SUPPLIER')){
+					if ( !getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER')) {
 						$accountsuppcode = '401';
-					} else $accountsuppcode = getDolGlobalString ('ACCOUNTING_ACCOUNT_SUPPLIER');
+					} else $accountsuppcode = getDolGlobalString('ACCOUNTING_ACCOUNT_SUPPLIER');
 
-					if(strpos($bookkeeping->numero_compte, $accountcustcode) === 0 || strpos($bookkeeping->numero_compte, $accountsuppcode) === 0){
+					if (strpos($bookkeeping->numero_compte, $accountcustcode) === 0 || strpos($bookkeeping->numero_compte, $accountsuppcode) === 0) {
 						$echecT[]=$bookkeeping->numero_compte;
 						continue;
 					}
@@ -3414,17 +3413,17 @@ class BookKeeping extends CommonObject
 			}
 
 			$echecImplode = implode(",", $echecT);
-		}else{
+		} else {
 			setEventMessages($langs->trans('NoAccountSelected'), null, 'errors');
 			$error++;
 			$this->db->rollback();
 		}
 
-		if($nb > 1){
+		if ($nb > 1) {
 			setEventMessages($nb ." " . $langs->trans('AssignAccountsSucces'), null, 'mesgs');
-		} elseif($nb > 0){
+		} elseif ($nb > 0) {
 			setEventMessages($nb ." " . $langs->trans('AssignAccountSucces'), null, 'mesgs');
-		}else {
+		} else {
 			setEventMessages($langs->trans('AssignAccountError'), null, 'errors');
 			$error++;
 		}
@@ -3450,7 +3449,8 @@ class BookKeeping extends CommonObject
 
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newClone(){
+	public function newClone()
+	{
 
 		global $langs;
 
@@ -3464,7 +3464,7 @@ class BookKeeping extends CommonObject
 
 		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
 
-		if($dateObj){
+		if ($dateObj) {
 			$formateDate = $dateObj->format('Y-m-d');
 			$timestamp = $dateObj->getTimestamp();
 		}
@@ -3486,7 +3486,7 @@ class BookKeeping extends CommonObject
 			return -1;
 		}
 
-		if(!$error){
+		if (!$error) {
 			$this->db->begin();
 			$bookKeepingInstance = new BookKeeping($this->db);
 			$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
@@ -3555,7 +3555,8 @@ class BookKeeping extends CommonObject
 
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newCloneMass($toselect){
+	public function newCloneMass($toselect)
+	{
 
 		global $langs;
 
@@ -3579,7 +3580,7 @@ class BookKeeping extends CommonObject
 				$accountingJournal = new AccountingJournal($this->db);
 				$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 				$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
-				if($dateObj){
+				if ($dateObj) {
 					$formateDate = $dateObj->format('Y-m-d');
 					$timestamp = $dateObj->getTimestamp();
 				}
@@ -3635,10 +3636,10 @@ class BookKeeping extends CommonObject
 
 									if ($resqlInsert) {
 										setEventMessages($langs->trans('ClonageSuccess',$pieceNumNext), null, 'mesgs');
-										} else {
-											setEventMessages($langs->trans('ClonageFailed',$pieceNumNext), null, 'errors');
-											$error++;
-										}
+									} else {
+										setEventMessages($langs->trans('ClonageFailed',$pieceNumNext), null, 'errors');
+										$error++;
+									}
 									}
 								}
 							}
@@ -3665,7 +3666,8 @@ class BookKeeping extends CommonObject
 
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newReturnAccount($toselect){
+	public function newReturnAccount($toselect)
+	{
 
 		global $langs, $user;
 
@@ -3675,7 +3677,7 @@ class BookKeeping extends CommonObject
 		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
 
-		if($dateObj){
+		if ($dateObj) {
 			$formateDate = $dateObj->format('Y-m-d');
 			$timestamp = $dateObj->getTimestamp();
 		}
@@ -3684,8 +3686,8 @@ class BookKeeping extends CommonObject
 		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
 		$resqlAlreadyExtourne = $this->db->query($sqlAlreadyExtourne);
 		$alreadyExtourneT = array();
-		if($resqlAlreadyExtourne){
-			while($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)){
+		if ($resqlAlreadyExtourne) {
+			while($obj4 = $this->db->fetch_object($resqlAlreadyExtourne)) {
 				$alreadyExtourneT []= $obj4->piece_num;
 			}
 		}
@@ -3701,7 +3703,7 @@ class BookKeeping extends CommonObject
 			}
 
 			$i = mt_rand(0, 100);
-			foreach($pieceNumT as $pieceNum){
+			foreach($pieceNumT as $pieceNum) {
 				$newBookKeepingInstance = new BookKeeping($this->db);
 				$pieceNumNext = $newBookKeepingInstance->getNextNumMvt();
 				$extourneIds = [];
@@ -3719,9 +3721,9 @@ class BookKeeping extends CommonObject
 						$bookKeeping = new BookKeeping($this->db);
 
 						if ($bookKeeping->fetch($extourneId)) {
-							if(in_array($bookKeeping->piece_num, $alreadyExtourneT)){
+							if (in_array($bookKeeping->piece_num, $alreadyExtourneT)) {
 								setEventMessages($langs->trans("AlreadyReturnedAccount", $bookKeeping->piece_num), null, 'errors');
-							}else{
+							} else {
 								$newBookKeeping->debit = $bookKeeping->credit;
 								$newBookKeeping->credit = $bookKeeping->debit;
 								if ($bookKeeping->sens == 'D') {
