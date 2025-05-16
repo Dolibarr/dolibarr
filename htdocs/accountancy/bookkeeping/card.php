@@ -460,7 +460,7 @@ if (empty($reshook)) {
 		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
 
 
-		if(getDolGlobalString('INPUT_JOURNAL_CLONE')) {
+		if (getDolGlobalString('INPUT_JOURNAL_CLONE')) {
 			$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
 		}else{
 			$champJournal = null;
@@ -476,7 +476,7 @@ if (empty($reshook)) {
 	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
 		$result = $object->newClone();
 
-		if($result == -1){
+		if ($result == -1) {
 			$error++;
 		}
 
