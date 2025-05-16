@@ -137,7 +137,7 @@ if (empty($page) || $page < 0) {
 	$page = 0;
 }
 
-//#32695 clone of bookkeeping entries 
+//#32695 clone of bookkeeping entries
 $journal_code = GETPOST('code_journal', 'alpha');
 
 $offset = $limit * $page;
@@ -545,11 +545,11 @@ if (empty($reshook)) {
 
 	//massaction clone
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-				$result = $object->newCloneMass($toselect);
-				if($result == -1){
-					$error++;
-				}
-		if($error){
+		$result = $object->newCloneMass($toselect);
+		if ($result == -1) {
+			$error++;
+		}
+		if ($error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit;
@@ -560,10 +560,10 @@ if (empty($reshook)) {
 	//massaction assign new account
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
 		$result = $object->assignAccountMass($toselect);
-		if($result == -1){
+		if ($result == -1) {
 			$error++;
 		}
-		if(!$error){
+		if (!$error) {
 			$db->commit();
 			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
 			exit();
@@ -912,7 +912,7 @@ if ($massaction == 'preunletteringauto') {
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassDeleteBookkeepingWriting"), $langs->trans("ConfirmMassDeleteBookkeepingWritingQuestion", count($toselect)), "deletebookkeepingwriting", null, '', 0, 200, 500, 1);
 } elseif ($massaction == 'preassignaccountbookkeepingwriting') {
 	$input = $formaccounting->select_account('', 'account', 1);
-	$formquestion = array(array('type' => 'other', 'name' => 'account', 'label' => '<span class="fieldrequired">' . $langs->trans("Compte") . '</span>', 'value' => $input),);
+	$formquestion = array(array('type' => 'other', 'name' => 'account', 'label' => '<span class="fieldrequired">' . $langs->trans("AccountAccountingShort") . '</span>', 'value' => $input),);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("confirmMassAssignAccountBookkeepingWritingConfirm"), $langs->trans("ConfirmMassAssignAccountBookkeepingWritingQuestion", count($toselect)), "assignaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
 } elseif ($massaction == 'preclonebookkeepingwriting') {
 	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
