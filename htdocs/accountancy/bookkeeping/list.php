@@ -912,13 +912,13 @@ if ($massaction == 'preunletteringauto') {
 	$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
 	if (getDolGlobalString('INPUT_JOURNAL_CLONE')) {
 		$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
-	}else{
+	} else {
 		$champJournal = null;
 	}
 	$formquestion = array(array('type' => 'other', 'name' => 'doc_date', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1),
 		$champJournal,);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassCloneBookkeepingWriting"), $langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)), "clonebookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
-}elseif ($massaction == 'prereturnaccountbookkeepingwriting') {
+} elseif ($massaction == 'prereturnaccountbookkeepingwriting') {
 	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
 	$formquestion = array(array('type' => 'other', 'name' => 'doc_date', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1));
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReturnAccountBookkeepingWriting"), $langs->trans("ConfirmMassReturnAccountBookkeepingWritingQuestion", count($toselect)), "returnaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
