@@ -135,6 +135,9 @@ if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_
 	$action = 'delbookkeepingyear';
 }
 
+//Needed for clone works with const INPUT_JOURNAL_CLONE
+$journal_code = GETPOST('code_journal', 'alpha');
+
 // Load variable for pagination
 $limit = GETPOSTINT('limit') ? GETPOSTINT('limit') : getDolGlobalString('ACCOUNTING_LIMIT_LIST_VENTILATION', $conf->liste_limit);
 $sortfield = GETPOST('sortfield', 'aZ09comma');
