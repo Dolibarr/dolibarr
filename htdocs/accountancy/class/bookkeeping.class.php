@@ -3419,9 +3419,9 @@ class BookKeeping extends CommonObject
 		}
 
 		if ($nb > 1) {
-			setEventMessages($nb ." " . $langs->trans('AssignAccountsSucces'), null, 'mesgs');
+			setEventMessages($nb ." " . $langs->trans('AssignAccountsSuccess'), null, 'mesgs');
 		} elseif ($nb > 0) {
-			setEventMessages($nb ." " . $langs->trans('AssignAccountSucces'), null, 'mesgs');
+			setEventMessages($nb ." " . $langs->trans('AssignAccountSuccess'), null, 'mesgs');
 		} else {
 			setEventMessages($langs->trans('AssignAccountError'), null, 'errors');
 			$error++;
@@ -3620,9 +3620,9 @@ class BookKeeping extends CommonObject
 									$resqlInsert = $this->db->query($sql_insert);
 
 									if ($resqlInsert) {
-										setEventMessages($langs->trans('ClonageSuccess', $pieceNumNext), null, 'mesgs');
+										setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 									} else {
-										setEventMessages($langs->trans('ClonageFailed', $pieceNumNext), null, 'errors');
+										setEventMessages($langs->trans('CloningFailed', $pieceNumNext), null, 'errors');
 										$error++;
 									}
 								}
