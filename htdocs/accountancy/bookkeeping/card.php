@@ -454,17 +454,32 @@ if (empty($reshook)) {
 		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
 		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
 
-		if (getDolGlobalInt('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
-			$champJournal = array('type' => 'other', 'name' => 'code_journal', 'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>', 'value' => $input2);
-		} else {
-			$champJournal = null;
-		}
 		$formquestion = array(
-			array('type' => 'other', 'name' => 'piece_num_hidden', 'label' => '', 'value' => $inputHidden),
-			array('type' => 'other', 'name' => 'doc_date', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1),
-			$champJournal,
+			array(
+				'type' => 'date',
+				'name' => 'doc_date',
+				'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+				'value' => $input1
+			)
 		);
-		print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassCloneBookkeepingWriting"), $langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)), "preclonebookkeepingwriting", $formquestion, '', 1,  300, 1000);
+
+		if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+			$formquestion[] = array(
+				'type' => 'text',
+				'name' => 'code_journal',
+				'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+				'value' => $input2
+			);
+		}
+
+		print $form->formconfirm(
+			$_SERVER["PHP_SELF"],
+			$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+			$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)),
+			"clonebookkeepingwriting",
+			$formquestion,
+			'', 0, 300, 1000, 1
+		);
 	}
 
 	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
