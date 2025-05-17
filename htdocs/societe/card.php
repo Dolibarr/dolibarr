@@ -2759,15 +2759,19 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						$arrayselected[] = $cat->id;
 					}
 					print img_picto('', 'category', 'class="pictofixedwidth"');
+					$categtype = Categorie::TYPE_CUSTOMER;
 					$htmlname = 'custcats';
 					print $form->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
 
 					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 						// Add html code to add the edit button and go back
 						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
-						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), '/categories/categorie_list.php?type='.Categorie::TYPE_CUSTOMER, '', '', '', $jsonclose);
+						$urltoopen = '/categories/categorie_list.php?type='.$categtype;
+
+						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
 						print $s;
 						// Add js code to add the edit button and go back
+						print '<!-- Add js code to open the popup for category/edit/add -->'."\n";
 						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
 							console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
 
@@ -2775,6 +2779,30 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 							// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
 
 							// Refresh select2 to take account of new values (enough for small change)
+
+					        $.ajax({
+					            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
+								data: {
+									action: \'getCategories\',
+									type: \''.dol_escape_htmltag($categtype).'\'
+								},
+					            type: \'GET\',
+					            dataType: \'json\',
+					            success: function (data) {
+					                var $select = $(\'#'.dol_escape_js($htmlname).'\');
+									var selectedValues = $select.val(); // This is an array of selected values
+									console.log(selectedValues);
+					                $select.empty();
+					                $.each(data, function (index, item) {
+					                    $select.append(\'<option value="\' + item.id + \'" data-html="\' + item.htmlforattribute + \'">\' + item.htmlforoption + \'</option>\');
+					                });
+									$select.val(selectedValues);
+					            },
+					            error: function (xhr, status, error) {
+					                alert("Error when loading ajax page : " + error);
+					            }
+					        });
+
 							$("#'.dol_escape_js($htmlname).'").trigger("change");
 							// Alternative if change in select is complex
 							/*
@@ -2940,7 +2968,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				)
 			);
 
-			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 300);
 		}
 
 		// Clone confirmation

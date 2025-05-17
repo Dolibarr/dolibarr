@@ -4677,7 +4677,7 @@ if ($action == 'importsite') {
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToLoad").'</span><br><br>';
 
 	// This will scan the dir /doctemplates/websites and show all templates.
-	showWebsiteTemplates($website, GETPOSTINT('importsite') == 2);
+	showWebsiteTemplates($website, GETPOSTINT('importsite') == 2 ? 1 : 0);
 
 	print dol_get_fiche_end();
 
