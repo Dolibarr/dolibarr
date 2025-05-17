@@ -3459,7 +3459,6 @@ class BookKeeping extends CommonObject
 		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 
 		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
-		$formateDate = $dateObj->format('Y-m-d');
 		$timestamp = $dateObj->getTimestamp();
 
 		$bookKeepingValid = new BookKeeping($this->db);
@@ -3515,8 +3514,8 @@ class BookKeeping extends CommonObject
 							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
 							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
 							$sql_insert .= " VALUES";
-							$sql_insert .= " ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
-							$sql_insert .= " ". $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+							$sql_insert .= " ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($timestamp) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
+							$sql_insert .= " ". $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($timestamp) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
 
 							$resqlInsert = $this->db->query($sql_insert);
 
@@ -3570,7 +3569,6 @@ class BookKeeping extends CommonObject
 				$accountingJournal = new AccountingJournal($this->db);
 				$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 				$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
-				$formateDate = $dateObj->format('Y-m-d');
 				$timestamp = $dateObj->getTimestamp();
 				$bookKeepingValid = new BookKeeping($this->db);
 				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
@@ -3617,7 +3615,7 @@ class BookKeeping extends CommonObject
 									$docRef = "Duplicata de " . $obj->doc_ref;
 
 									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
-									$sql_insert .=	" VALUES ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate);
+									$sql_insert .=	" VALUES ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($timestamp);
 
 									$resqlInsert = $this->db->query($sql_insert);
 
@@ -3661,8 +3659,6 @@ class BookKeeping extends CommonObject
 		$accountingJournal = new AccountingJournal($this->db);
 		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
 		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
-
-		$formateDate = $dateObj->format('Y-m-d');
 		$timestamp = $dateObj->getTimestamp();
 
 		$this->db->begin();
