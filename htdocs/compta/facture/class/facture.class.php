@@ -745,7 +745,7 @@ class Facture extends CommonInvoice
 		$sql .= ", ".($this->ref_customer ? "'".$this->db->escape($this->ref_customer)."'" : ($this->ref_client ? "'".$this->db->escape($this->ref_client)."'" : "null"));
 		$sql .= ", ".($this->fk_account > 0 ? $this->fk_account : 'NULL');
 		$sql .= ", ".($this->module_source ? "'".$this->db->escape($this->module_source)."'" : "null");
-		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape($this->pos_source)."'" : "null");
+		$sql .= ", ".($this->pos_source != '' ? "'".$this->db->escape((string) $this->pos_source)."'" : "null");
 		$sql .= ", ".($this->fk_fac_rec_source ? "'".$this->db->escape((string) $this->fk_fac_rec_source)."'" : "null");
 		$sql .= ", ".($this->fk_facture_source ? "'".$this->db->escape((string) $this->fk_facture_source)."'" : "null");
 		$sql .= ", ".($origin_user_author_id > 0 ? (int) $origin_user_author_id : "null");

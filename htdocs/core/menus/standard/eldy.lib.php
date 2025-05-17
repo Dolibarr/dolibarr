@@ -2182,7 +2182,7 @@ function get_left_menu_bank($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu =
  */
 function get_left_menu_products($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $conf, $langs;
+	global $user, $langs;
 
 	if ($mainmenu == 'products') {
 		// Products
@@ -2358,7 +2358,7 @@ function get_left_menu_mrp($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 
  */
 function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $conf, $langs;
+	global $user, $langs;
 
 	if ($mainmenu == 'project') {
 		if (isModEnabled('project')) {
@@ -2433,7 +2433,7 @@ function get_left_menu_projects($mainmenu, &$newmenu, $usemenuhider = 1, $leftme
  */
 function get_left_menu_hrm($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu = 'none', $type_user = 0)
 {
-	global $user, $conf, $langs;
+	global $user, $langs;
 
 	if ($mainmenu == 'hrm') {
 		// HRM module
@@ -2544,7 +2544,8 @@ function get_left_menu_tools($mainmenu, &$newmenu, $usemenuhider = 1, $leftmenu 
 	global $user, $langs;
 
 	if ($mainmenu == 'tools') {
-		if (isModEnabled('category') && !getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+		if (isModEnabled('category')) {
+			//if (isModEnabled('category') && getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
 			$titleindex = $langs->trans("Categories");
 			$newmenu->add("/categories/index.php?leftmenu=category", $titleindex, 0, $user->hasRight('category', 'read'), '', $mainmenu, 'category', 5, '', '', '', img_picto('', 'category', 'class="paddingright pictofixedwidth"'));
 		}
