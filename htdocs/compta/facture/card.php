@@ -5606,17 +5606,23 @@ if ($action == 'create') {
 			$creditnoteamount = 0;
 			$depositamount = 0;
 			$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-			$sql .= " re.description, re.fk_facture_source";
+			$sql .= " re.description, re.fk_facture_source, re.fk_invoice_supplier_source";
 			$sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as re";
 			$sql .= " WHERE fk_facture = ".((int) $object->id);
 			$resql = $db->query($sql);
 			if ($resql) {
 				$num = $db->num_rows($resql);
 				$i = 0;
-				$invoice = new Facture($db);
 				while ($i < $num) {
 					$obj = $db->fetch_object($resql);
-					$invoice->fetch($obj->fk_facture_source);
+					if (!empty($obj->fk_facture_source)) {
+						$invoice = new Facture($db);
+						$id = $obj->fk_facture_source;
+					} elseif (!empty($obj->fk_invoice_supplier_source)) {
+						$invoice = new FactureFournisseur($db);
+						$id = $obj->fk_invoice_supplier_source;
+					}
+					$invoice->fetch($id);
 					print '<tr><td colspan="'.$nbcols.'" class="right">';
 					print '<span class="opacitymedium">';
 					if ($invoice->type == Facture::TYPE_CREDIT_NOTE) {
