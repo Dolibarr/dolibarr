@@ -91,7 +91,7 @@ $error = 0;
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
-if (isModEnabled('multicompany') && $entity != 1) {
+if (isModEnabled('multicompany')) {
 	force_switch_entity($entity);
 }
 
