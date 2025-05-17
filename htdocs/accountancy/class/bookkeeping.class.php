@@ -3448,7 +3448,6 @@ class BookKeeping extends CommonObject
 	 */
 	public function newClone()
 	{
-
 		global $langs;
 
 		$error = 0;
@@ -3499,9 +3498,10 @@ class BookKeeping extends CommonObject
 					$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
 					$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 
-					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant
-									FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping
-									WHERE rowid = " . $toselectid;
+					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref,";
+					$sql .= " fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
+					$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+					$sql .= " WHERE rowid = " . $toselectid;
 					$resql = $this->db->query($sql);
 
 					if ($resql) {
@@ -3511,10 +3511,13 @@ class BookKeeping extends CommonObject
 							$fkDoc = (int) $obj->fk_doc;
 							$fkDocdet = (int) $obj->fk_docdet;
 							$docRef = "Duplicata de " . $obj->doc_ref;
-							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping
-												   (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)
-												   VALUES
-												   ('" . $this->db->escape($pieceNumNext) . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+							$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping";
+							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
+							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
+							$sql_insert .= " VALUES";
+							$sql_insert .= " ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
+							$sql_insert .= " ". $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($formateDate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+
 							$resqlInsert = $this->db->query($sql_insert);
 
 							if ($resqlInsert) {
@@ -3615,7 +3618,7 @@ class BookKeeping extends CommonObject
 									$docRef = "Duplicata de " . $obj->doc_ref;
 
 									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant) ";
-									$sql_insert .=	" VALUES ('" . $this->db->escape($pieceNumNext) . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate);
+									$sql_insert .=	" VALUES ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($formateDate);
 
 									$resqlInsert = $this->db->query($sql_insert);
 
@@ -3650,7 +3653,6 @@ class BookKeeping extends CommonObject
 	 */
 	public function newReturnAccount(array $toselect)
 	{
-
 		global $langs, $user;
 
 		$error = 0;
