@@ -92,8 +92,8 @@ $error = 0;
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
 
-if(isModEnabled('multicompany')) {
-	if($entity===0){
+if (isModEnabled('multicompany')) {
+	if ($entity === 0) {
 		httponly_accessforbidden('Multiadmin environment, no entity id provided');
 	}
 	force_switch_entity($entity);
