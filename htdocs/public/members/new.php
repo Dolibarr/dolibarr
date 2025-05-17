@@ -120,11 +120,17 @@ $object = new Adherent($db);
 
 $user->loadDefaultValues();
 
-// Force switching conf of entity, even if user is connected
-// Fox example when trying to go on public form of an other entity
+/**
+ * Force switching conf of entity, even if user is connected
+ * Fox example when trying to go on public form of an other entity
+ *
+ * @param 	int		$newEntity		New entity
+ * @return	void
+ */
 function force_switch_entity($newEntity)
 {
 	global $db, $conf;
+
 	if ($newEntity != $conf->entity) {
 		$conf->entity = $newEntity;
 		$conf->setValues($db);
