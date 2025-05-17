@@ -5473,10 +5473,10 @@ div.ok {
 }
 
 div.info, div.warning, div.error, div.green {
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-left: 10px;
 	padding-right: 4px;
-	padding-bottom: 8px;
+	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
 }
@@ -5811,6 +5811,21 @@ div#card-errors {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.ui-widget-header {
+	padding: 8px !important;
+	background: unset;
+	border: unset;
+	border-bottom: 1px solid #AAA;
+	margin-bottom: 12px;
+}
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+}
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	box-shadow: 5px 5px 20px #AAA;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */

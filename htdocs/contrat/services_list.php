@@ -581,7 +581,7 @@ if (isModEnabled('category') && ($user->hasRight('produit', 'lire') || $user->ha
 }
 // alert on late date
 $moreforfilter .= '<div class="divsearchfield">';
-$moreforfilter .= $langs->trans('Alert').' <input type="checkbox" name="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
+$moreforfilter .= '<label for="search_option">'.$langs->trans('Alert').'</label> <input type="checkbox" name="search_option" id="search_option" value="late"'.($search_option == 'late' ? ' checked' : '').'>';
 $moreforfilter .= '</div>';
 
 $parameters = array();

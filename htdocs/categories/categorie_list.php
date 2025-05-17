@@ -506,7 +506,10 @@ if ($mode == 'hierarchy') {
 		print '<tr class="oddeven">';
 		print '<td colspan="3"><table class="nobordernopadding"><tr class="nobordernopadding"><td>'.img_picto_common('', 'treemenu/branchbottom.gif').'</td>';
 		print '<td class="valignmiddle">';
-		print '<span class="opacitymedium">'.$langs->trans("NoCategoryYet").'</span>';
+		print '<span class="opacitymedium">'.$langs->trans("NoCategoryYet");
+		print '. ';
+		print $langs->trans("ClickOnPlusToCreateOne");
+		print '</span>';
 		print '</td>';
 		print '<td>&nbsp;</td>';
 		print '</table></td>';
@@ -928,7 +931,9 @@ if ($mode == 'hierarchy') {
 				$colspan++;
 			}
 		}
-		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">';
+		print $langs->trans("NoRecordFound");
+		print '</span></td></tr>';
 	}
 
 
