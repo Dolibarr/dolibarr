@@ -5690,7 +5690,7 @@ class Form
 						$add = '';
 					}
 
-					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"');
+					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth"'.(empty($cate_arbo[$key]['color']) ? '' : ' style="color: #' . $cate_arbo[$key]['color'] . '"'));
 					$labeltoshow .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
 
 					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];

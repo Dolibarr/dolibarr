@@ -137,7 +137,7 @@ if (GETPOST('editcontent', 'alpha')) {
 if (GETPOST('exportsite', 'alpha')) {
 	$action = 'exportsite';
 }
-if (GETPOSTINT('importsite')) {
+if (GETPOST('importsite')) {	// Can be a string when clicking on button "Import site"
 	$action = 'importsite';
 }
 if (GETPOST('createfromclone', 'alpha')) {
@@ -4677,7 +4677,7 @@ if ($action == 'importsite') {
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToLoad").'</span><br><br>';
 
 	// This will scan the dir /doctemplates/websites and show all templates.
-	showWebsiteTemplates($website, GETPOSTINT('importsite') == 2);
+	showWebsiteTemplates($website, GETPOSTINT('importsite') == 2 ? 1 : 0);
 
 	print dol_get_fiche_end();
 

@@ -730,6 +730,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 	// when module is enabled.
 	$dirthemes = array('/doctemplates/websites');
 
+	$warningtoshow = '';
 	$arrayoftemplatesfound = array();
 
 	if (count($dirthemes)) {
