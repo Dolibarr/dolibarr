@@ -3496,8 +3496,8 @@ class BookKeeping extends CommonObject
 			foreach ($cloneId as $toselectid) {
 				$bookKeeping = new BookKeeping($this->db);
 				if ($bookKeeping->fetch($toselectid)) {
-					$code_journal = getDolGlobalString('INPUT_JOURNAL_CLONE') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
-					$journal_label = getDolGlobalString('INPUT_JOURNAL_CLONE') ? $accountingJournal->label : $bookKeeping->journal_label;
+					$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+					$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 
 					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant
 									FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping
@@ -3598,8 +3598,8 @@ class BookKeeping extends CommonObject
 					foreach ($cloneId as $toselectid) {
 						$bookKeeping = new BookKeeping($this->db);
 						if ($bookKeeping->fetch($toselectid)) {
-							$code_journal = getDolGlobalString('INPUT_JOURNAL_CLONE') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
-							$journal_label = getDolGlobalString('INPUT_JOURNAL_CLONE') ? $accountingJournal->label : $bookKeeping->journal_label;
+							$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+							$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 							$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant ";
 							$sql .= "FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid = " . $toselectid;
 
