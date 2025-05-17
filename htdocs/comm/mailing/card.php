@@ -153,7 +153,7 @@ if (empty($reshook)) {
 		if (!GETPOST("clone_content", 'alpha') && !GETPOST("clone_receivers", 'alpha')) {
 			setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
 		} else {
-			$result = $object->createFromClone($user, $object->id, GETPOSTINT("clone_content"), GETPOSTINT("clone_receivers"));
+			$result = $object->createFromClone($user, $object->id, GETPOST("clone_content") ? 1 : 0, GETPOST("clone_receivers") ? 1 : 0);
 			if ($result > 0) {
 				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
 				exit;
