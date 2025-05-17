@@ -54,7 +54,7 @@ if (!defined('NOBROWSERNOTIF')) {
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
 // Because 2 entities can have the same ref.
-$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 0));
+$entity = (!empty($_GET['entity']) ? (int) $_GET['entity'] : (!empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 // if (is_numeric($entity)) { // $entity is casted to int
 define("DOLENTITY", $entity);
 // }
@@ -91,16 +91,9 @@ $error = 0;
 // Load translation files
 $langs->loadLangs(array("main", "members", "companies", "install", "other", "errors"));
 
-
-if (isModEnabled('multicompany')) {
-	if ($entity === 0) {
-		httponly_accessforbidden('Multiadmin environment, no entity id provided');
-	}
+if (isModEnabled('multicompany') && $entity != 1) {
 	force_switch_entity($entity);
-} else {
-	$entity = 1;
 }
-
 
 // Security check
 if (!isModEnabled('member')) {
