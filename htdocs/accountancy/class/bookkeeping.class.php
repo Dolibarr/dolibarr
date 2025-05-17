@@ -3624,7 +3624,7 @@ class BookKeeping extends CommonObject
 									if ($resqlInsert) {
 										setEventMessages($langs->trans('CloningSuccess', $pieceNumNext), null, 'mesgs');
 									} else {
-										setEventMessages($langs->trans('CloningFailed', $pieceNumNext), null, 'errors');
+										setEventMessages($langs->trans('CloningFailed'), null, 'errors');
 										$error++;
 									}
 								}
