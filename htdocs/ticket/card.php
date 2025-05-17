@@ -4,7 +4,7 @@
  * Copyright (C) 2018      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2021-2025  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2021      Alexandre Spangaro   <aspangaro@open-dsi.fr>
- * Copyright (C) 2022-2023 Charlene Benke       <charlene@patas-monkey.com>
+ * Copyright (C) 2022-2025 Charlene Benke       <charlene@patas-monkey.com>
  * Copyright (C) 2023      Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		<irvine.fleith@atm-consulting.fr>
@@ -1017,33 +1017,6 @@ if ($action == 'create' || $action == 'presend') {
 			}
 		}
 
-		// Contract
-		if (getDolGlobalString('TICKET_LINK_TO_CONTRACT_WITH_HARDLINK')) {
-			// Deprecated. Duplicate feature. Ticket can already be linked to contract with the generic "Link to" feature.
-			if (isModEnabled('contract')) {
-				$langs->load('contracts');
-				$morehtmlref .= '<br>';
-				if ($permissiontoedit) {
-					$morehtmlref .= img_picto($langs->trans("Contract"), 'contract', 'class="pictofixedwidth"');
-					if ($action == 'edit_contrat') {
-						$formcontract = new FormContract($db);
-						$morehtmlref .= $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
-					} else {
-						$morehtmlref .= '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
-						$morehtmlref .=  img_edit($langs->trans('SetContract'));
-						$morehtmlref .=  '</a>';
-					}
-				} else {
-					if (!empty($object->fk_contract)) {
-						$contratstatic = new Contrat($db);
-						$contratstatic->fetch($object->fk_contract);
-						//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
-						$morehtmlref .= $contratstatic->getNomUrl(0, 0, 1);
-					}
-				}
-			}
-		}
-
 		$morehtmlref .= '</div>';
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/ticket/list.php?restore_lastsearch_values=1"><strong>'.$langs->trans("BackToList").'</strong></a> ';
@@ -1085,22 +1058,31 @@ if ($action == 'create' || $action == 'presend') {
 		print '<span class="opacitymedium"> - '.$langs->trans("TimeElapsedSince").': <i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i></span>';
 		print '</td></tr>';
 
-		// Origin
-		/*
-		if ($object->email_msgid) {
-			$texttoshow = $langs->trans("CreatedByEmailCollector");
-		} elseif ($object->origin_email) {
-			$texttoshow = $langs->trans("FromPublicEmail");
-		}
-		if ($texttoshow) {
-			print '<tr><td class="titlefield fieldname_email_origin">';
-			print $langs->trans("Origin");
-			print '</td>';
-			print '<td class="valuefield fieldname_email_origin">';
-			print $texttoshow;
+		if (isModEnabled('contract')) {
+			$langs->load('contracts');
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td class="nowrap">';
+			print $langs->trans("Contract");
+			if ($permissiontoedit && $action != 'edit_contrat') {
+				print '</td><td class="right">';
+				print '<a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=edit_contrat&token='.newToken().'&id='.$object->id.'">';
+				print img_edit($langs->trans('SetContract'));
+				print '</a>';
+			}
+			print '</td></tr></table>';
+			print '</td><td>';
+
+			if ($permissiontoedit && $action == 'edit_contrat') {
+					$formcontract = new FormContract($db);
+					print $formcontract->formSelectContract($_SERVER["PHP_SELF"].'?id='.$object->id, $object->socid, $object->fk_contract, 'contratid', 0, 1, 1, 1);
+			} else {
+				$contratstatic = new Contrat($db);
+				$contratstatic->fetch($object->fk_contract);
+				//print '<a href="'.DOL_URL_ROOT.'/projet/card.php?id='.$selected.'">'.$projet->title.'</a>';
+				print $contratstatic->getNomUrl(1);
+			}
 			print '</td></tr>';
 		}
-		*/
 
 		// Read date
 		print '<tr><td>'.$langs->trans("TicketReadOn").'</td><td>';
