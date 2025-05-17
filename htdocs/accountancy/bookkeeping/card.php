@@ -907,7 +907,7 @@ if ($action == 'create') {
 						}
 					}
 					if ($permissiontoadd) {
-						print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT . '/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int)$object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
+						print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
 					}
 				}
 
