@@ -563,6 +563,15 @@ print '<td class="right">';
 print ajax_constantonoff('CONTRACT_ALLOW_EXTERNAL_DOWNLOAD', array(), null, 0, 0, 0, 2, 0, 1);
 print '</td>';
 print '</tr>';
+
+// Bill only active line
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("BillOnlyActiveLine").'</td>';
+print '<td class="right">';
+print ajax_constantonoff('CONTRACT_BILL_ONLY_ACTIVE_LINE', array(), null, 0, 0, 0, 2, 0, 1);
+print '</td>';
+print '</tr>';
+
 print '</table>';
 print '</div>';
 
