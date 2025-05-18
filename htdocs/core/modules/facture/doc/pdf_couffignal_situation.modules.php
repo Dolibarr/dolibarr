@@ -420,7 +420,7 @@ class pdf_couffignal_situation extends ModelePDFFactures
 					$cumulated_progress = (float)str_replace('%', '', pdf_getlineprogress($object, $i-$j, $outputlangs, $hidedetails));
 					$marg_prog = $cumulated_progress - $prev_prog_global;
 					$total_HT = $marg_prog == 0 ? price(0) : pdf_getlinetotalexcltax($object, $i-$j, $outputlangs, $hidedetails);
-					$sum += price2num($total_HT);
+					$sum += (float) price2num($total_HT);
 				}
 				$values['TotalHT'] = price(round($sum, 2));
 			}
@@ -2268,7 +2268,8 @@ class pdf_couffignal_situation extends ModelePDFFactures
 		);
 		$object->fetch_lines();
 		// Manage prorata on VAT
-		if ($object->total_ht > 0) {
+		$prorata_effective_rate = 1;
+		if ($object->total_ht != 0) {
 			$prorata_effective_rate = ($object->total_ht - $object->prorata_discount) / $object->total_ht;
 		}
 		for ($i=0; $i < count($object->lines); $i++) {
