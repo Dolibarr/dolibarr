@@ -4,7 +4,7 @@
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2021      Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2021      Alexandre Spangaro      <aspangaro@open-dsi.fr>
- * Copyright (C) 2023      Charlene Benke	       <charlene.r@patas-monkey.com>
+ * Copyright (C) 2023-2025 Charlene Benke	       <charlene.r@patas-monkey.com>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024	   Irvine FLEITH		   <irvine.fleith@atm-consulting.fr>
  *
@@ -771,7 +771,7 @@ class FormTicket
 				print '<tr><td><label for="contract"><span class="">'.$langs->trans("Contract").'</span></label></td><td>';
 				print img_picto('', 'contract', 'class="pictofixedwidth"');
 				// socid is for internal users null and not 0 or -1
-				print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contactid'), 'contractid', 0, 1, 1, 1);
+				print $formcontract->select_contract($user->socid ?? -1, GETPOSTINT('contractid'), 'contractid', 0, 1, 1, 1);
 				print '</td></tr>';
 			}
 		}
