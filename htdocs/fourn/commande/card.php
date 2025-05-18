@@ -88,6 +88,7 @@ $lineid    = GETPOST('lineid', 'int');
 $origin    = GETPOST('origin', 'alpha');
 $originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 $rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$same_project_filter = GETPOST('sameproject', 'string') == "on";
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -2782,7 +2783,7 @@ if ($action == 'create') {
 			$somethingshown = $formfile->numoffiles;
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('supplier_order', 'order_supplier'), $same_project_filter);
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			print '</div><div class="fichehalfright">';

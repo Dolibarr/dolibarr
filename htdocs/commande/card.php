@@ -92,6 +92,7 @@ $projectid =  GETPOST('projectid', 'int');
 $origin    =  GETPOST('origin', 'alpha');
 $originid  = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int'));    // For backward compatibility
 $rank      = (GETPOST('rank', 'int') > 0) ? GETPOST('rank', 'int') : -1;
+$same_project_filter = GETPOST('sameproject', 'string') == "on";
 
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (getDolGlobalString('MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS') ? 1 : 0));
@@ -3084,7 +3085,7 @@ if ($action == 'create' && $usercancreate) {
 
 
 			// Show links to link elements
-			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'));
+			$linktoelem = $form->showLinkToObjectBlock($object, null, array('order'), $same_project_filter);
 
 			$compatibleImportElementsList = false;
 			if ($usercancreate
