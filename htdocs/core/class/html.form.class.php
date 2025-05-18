@@ -4786,7 +4786,7 @@ class Form
 	 *
 	 * @return    string                     HTML select
 	 */
-	public function selectSituationInvoices($selected = '', $socid = 0)
+	public function selectSituationInvoices($selected = '', $socid = 0, $project = 0)
 	{
 		global $langs;
 
@@ -4799,6 +4799,9 @@ class Form
 		$sql .= ' AND situation_counter >= 1';
 		$sql .= ' AND fk_soc = ' . (int) $socid;
 		$sql .= ' AND type <> 2';
+		if ($project > 0) {
+			$sql .= ' AND fk_projet = ' . (int) $project;
+		}
 		$sql .= ' ORDER by situation_cycle_ref, situation_counter desc';
 		$resql = $this->db->query($sql);
 

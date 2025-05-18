@@ -3718,7 +3718,11 @@ if ($action == 'create') {
 				print '</div></div>';
 
 				// Next situation invoice
-				$opt = $form->selectSituationInvoices(GETPOST('originid', 'int'), $socid);
+				$filt_id = 0;
+				if (getDolGlobalString('NEXT_SITUATION_FILTER_ON_PROJECT')) {
+					$filt_id = $projectid;
+				}
+				$opt = $form->selectSituationInvoices(GETPOST('originid', 'int'), $socid, $filt_id);
 
 				print '<div class="tagtr listofinvoicetype"><div class="tagtd listofinvoicetype">';
 				$tmp = '<input type="radio" name="type" value="5"'.(GETPOST('type') == 5 && GETPOST('originid', 'int') ? ' checked' : '');
