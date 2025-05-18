@@ -10,7 +10,7 @@
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2023-2025  Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -2286,8 +2286,16 @@ if ($action == 'create') {
 					);
 				}
 				if (isModEnabled('invoice') && $object->status > 0 && $soc->client > 0) {
+					$url = '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id;
+					if (getDolGlobalString('CONTRACT_BILL_ONLY_ACTIVE_LINE')) {
+						foreach ($object->lines as $line) {
+							if ($line->statut == 4) {
+								$url .= '&toselect[]='.$line->id;
+							}
+						}
+					}
 					$arrayofcreatebutton[] = array(
-						'url' => '/compta/facture/card.php?action=create&origin='.$object->element.'&originid='.$object->id.'&socid='.$object->thirdparty->id,
+						'url' => $url,
 						'label' => $langs->trans('CreateBill'),
 						'lang' => 'bills',
 						'perm' => $user->hasRight('facture', 'creer') ? true : false,
