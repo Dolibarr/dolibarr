@@ -2827,7 +2827,7 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 									console.log("open popup name='.$name.'");
 	       						},
 								close: function (event, ui) {
-									console.log("Popup is closed, run jsonclose='.$jsonclose.');
+									console.log("Popup is closed, run jsonclose = '.$jsonclose.'");
 									'.(empty($jsonclose) ? '' : $jsonclose.';').'
 								}
 							});

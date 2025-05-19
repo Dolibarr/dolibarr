@@ -962,6 +962,7 @@ class Documents extends DolibarrApi
 		if (!empty($cover)) {
 			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
 		}
+		$moreinfo['gen_or_uploaded'] = 'api';
 
 		// Move the temporary file at its final emplacement
 		$result = dol_move($destfiletmp, $dest_file, '0', $overwriteifexists, 1, 1, $moreinfo);
