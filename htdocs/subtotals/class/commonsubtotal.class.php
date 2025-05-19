@@ -72,7 +72,7 @@ trait CommonSubtotal
 		}
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal');
+		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -261,7 +261,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal');
+		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -329,7 +329,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal');
+		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
@@ -494,7 +494,7 @@ trait CommonSubtotal
 	{
 		$current_module = $this->element;
 		// Ensure the object is one of the supported types
-		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal');
+		$allowed_types = array('propal', 'commande', 'facture', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice');
 		if (!in_array($current_module, $allowed_types)) {
 			if (isset($this->errors)) {
 				$this->errors[] = $langs->trans("UnsupportedModuleError");
