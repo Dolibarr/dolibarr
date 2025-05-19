@@ -9842,13 +9842,10 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 
 		$already_paied_all = 0;
 		if (is_object($object) && ($object instanceof Facture)) {
-			if (!isset($object->sumpayed) || !isset($object->sumdeposit) || !isset($object->sumcreditnote)) {
-				$totalallpayments = $object->getSommePaiement(0);
-				$totalallpayments += $object->getSumCreditNotesUsed(0);
-				$totalallpayments += $object->getSumDepositsUsed(0);
-				$already_paied_all = $totalallpayments;
-			} else {
+			if (isset($object->sumpayed, $object->sumdeposit, $object->sumcreditnote)) {
 				$already_paied_all = $object->sumpayed + $object->sumdeposit + $object->sumcreditnote;
+			} else {
+				$already_paied_all = $object->getSommePaiement(0) + $object->getSumCreditNotesUsed(0) + $object->getSumDepositsUsed(0);
 			}
 		}
 
