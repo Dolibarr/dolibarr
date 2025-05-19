@@ -205,7 +205,8 @@ trait CommonSubtotal
 				$rang,					// Rang @phpstan-ignore-line
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
-		} elseif ($current_module == 'supplier_proposal') {
+			$this->fetch_lines();
+		} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
 			/** @var SupplierProposal $this */
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline( // @phpstan-ignore-line
@@ -224,7 +225,6 @@ trait CommonSubtotal
 				$rang,					// Rang @phpstan-ignore-line
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
-			$this->fetch_lines();
 		}
 
 		if ($current_module != 'shipping') {
