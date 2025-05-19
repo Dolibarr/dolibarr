@@ -65,7 +65,7 @@ $page = $_SERVER["PHP_SELF"];
 
 if ($object->element == 'facture') {
 	$page .= '?facid=' . $object->id;
-} elseif (in_array($object->element, array('propal', 'commande', 'facturerec', 'shipping'))) {
+} elseif (in_array($object->element, array('propal', 'commande', 'facturerec', 'shipping', 'supplier_proposal', 'supplier_order', 'supplier_invoice'))) {
 	$page .= '?id=' . $object->id;
 }
 
