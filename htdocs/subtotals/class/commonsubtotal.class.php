@@ -206,8 +206,7 @@ trait CommonSubtotal
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
 			);
 			$this->fetch_lines();
-		} elseif ($current_module == 'supplier_proposal' && $this instanceof SupplierProposal) {
-			/** @var SupplierProposal $this */
+		} elseif ($current_module == 'supplier_proposal') {
 			$rang = $rang == -1 ? $rang : $rang-1;
 			$result = $this->addline( // @phpstan-ignore-line
 				$desc,					// Description @phpstan-ignore-line
@@ -459,6 +458,29 @@ trait CommonSubtotal
 				self::$PRODUCT_TYPE,	// Type @phpstan-ignore-line
 				$line_rang,				// Rang @phpstan-ignore-line
 				SUBTOTALS_SPECIAL_CODE	// Special code @phpstan-ignore-line
+			);
+		} elseif ($current_module == 'supplier_proposal') {
+			$objectline = new SupplierProposalLine($this->db);
+			$objectline->fetch($lineid);
+			$line_rang = $objectline->rang;
+			$result = $this->updateline( // @phpstan-ignore-line
+				$lineid,				// ID of line to change @phpstan-ignore-line
+				0,						// Unit price @phpstan-ignore-line
+				$depth,					// Quantity @phpstan-ignore-line
+				0,						// Discount percentage @phpstan-ignore-line
+				0,						// VAT rate @phpstan-ignore-line
+				0,						// Local tax 1 @phpstan-ignore-line
+				0,						// Local tax 2 @phpstan-ignore-line
+				$desc,					// Description @phpstan-ignore-line
+				'',						// Price base type @phpstan-ignore-line
+				0,						// Info bits @phpstan-ignore-line
+				SUBTOTALS_SPECIAL_CODE,	// Special code @phpstan-ignore-line
+				0,						// FK parent line @phpstan-ignore-line
+				0,						// @phpstan-ignore-line
+				0,						// @phpstan-ignore-line
+				0,						// @phpstan-ignore-line
+				'',						// @phpstan-ignore-line
+				self::$PRODUCT_TYPE		// Type @phpstan-ignore-line
 			);
 		}
 
