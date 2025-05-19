@@ -10,7 +10,7 @@
  * Copyright (C) 2014-2016	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
- * Copyright (C) 2023		Charlene Benke				<charlene@patas-monkey.com>
+ * Copyright (C) 2023-2025	Charlene Benke				<charlene@patas-monkey.com>
  * Copyright (C) 2023		Nick Fragoulis
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro			<alexandre@inovea-conseil.com>
@@ -1553,6 +1553,64 @@ if ($action == 'create') {
 
 		print "</table>";
 
+
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="fichehalfleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border tableforfield centpercent">';
+
+		// Qty by service status
+		print '<tr><td class="titlefield">'."".'</td>';
+		print '<td align=right>'.$langs->trans('Total').'</td>';
+		print '<td align=right>'.$staticcontratligne->LibStatut(0, 5, 0).'</td>';
+		print '<td align=right>'.$staticcontratligne->LibStatut(4, 5, 0).'</td>';
+		print '<td align=right>'.$staticcontratligne->LibStatut(4, 5, 1).'</td>';
+		print '<td align=right>'.$staticcontratligne->LibStatut(5, 5, 0).'</td>';
+		print '</tr>';
+		
+		$all= $object->get_totalized_lines(-1, 0);
+		$draft= $object->get_totalized_lines(0, 0);
+		$enabled= $object->get_totalized_lines(4, 0);
+		$expired= $object->get_totalized_lines(4, 1);
+		$close= $object->get_totalized_lines(5, 0);
+		print '<tr><td class="titlefield">'.$langs->trans("Qty").'</td>';
+		print '<td align=right nowrap>'.price($all['total_qty']).'</td>';
+		print '<td align=right>'.price($draft['total_qty']).'</td>';
+		print '<td align=right>'.price($enabled['total_qty']).'</td>';
+		print '<td align=right>'.price($expired['total_qty']).'</td>';
+		print '<td align=right>'.price($close['total_qty']).'</td>';
+		print '</tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("TotalHT").'</td>';
+		print '<td align=right nowrap>'.price($all['total_ht']).'</td>';
+		print '<td align=right>'.price($draft['total_ht']).'</td>';
+		print '<td align=right>'.price($enabled['total_ht']).'</td>';
+		print '<td align=right>'.price($expired['total_ht']).'</td>';
+		print '<td align=right>'.price($close['total_ht']).'</td>';
+		print '</tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("TotalVAT").'</td>';
+		print '<td align=right nowrap>'.price($all['total_tva']).'</td>';
+		print '<td align=right>'.price($draft['total_tva']).'</td>';
+		print '<td align=right>'.price($enabled['total_tva']).'</td>';
+		print '<td align=right>'.price($expired['total_tva']).'</td>';
+		print '<td align=right>'.price($close['total_tva']).'</td>';
+		print '</tr>';
+		print '<tr><td class="titlefield">'.$langs->trans("TotalTTC").'</td>';
+		print '<td align=right nowrap>'.price($all['total_ttc']).'</td>';
+		print '<td align=right>'.price($draft['total_ttc']).'</td>';
+		print '<td align=right>'.price($enabled['total_ttc']).'</td>';
+		print '<td align=right>'.price($expired['total_ttc']).'</td>';
+		print '<td align=right>'.price($close['total_ttc']).'</td>';
+		print '</tr>';
+
+
+		print "</table>";
+
+		print '</div>';
+		print '</div>';
+
+		print '<div class="clearboth"></div><br>';
 		print '</div>';
 
 		if ($object->status == $object::STATUS_DRAFT && $user->hasRight('contrat', 'creer')) {
