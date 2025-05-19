@@ -661,7 +661,8 @@ if ($result >= 0) {
 			print_barre_liste($langs->trans('Invoices'), 0, $_SERVER["PHP_SELF"], '', '', '', '', $num, $totalnboflines, 'bill', 0, $moreHtmlRight, '', 0, 0, 0, 1);
 
 			print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-			print '<table class="noborder centpercent">';
+			print '<table id="customer-invoices-paiments-list" class="noborder centpercent" data-display-all-invoices="' . (int) $displayAllInvoices . '" >';
+			print '<thead>';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$arraytitle.'</td>';
@@ -687,13 +688,14 @@ if ($result >= 0) {
 
 			print '<td align="right">&nbsp;</td>';
 			print "</tr>\n";
-
+			print '</thead>';
 			$total_ttc = 0;
 			$totalrecu = 0;
 			$totalrecucreditnote = 0;
 			$totalrecudeposits = 0;
 			$sign = 1;
 
+			print '<tbody>';
 			while ($i < $num) {
 				$objp = $db->fetch_object($resql);
 
@@ -736,7 +738,7 @@ if ($result >= 0) {
 				$tooltiponfullamount .= $langs->trans('AmountVAT') . ": " . price($objp->total_tva, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
 				$tooltiponfullamount .= $langs->trans('AmountTTC') . ": " . price($objp->total_ttc, 0, $langs, 0, -1, -1, $conf->currency) . "<br>";
 
-				print '<tr class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
+				print '<tr data-row-type="'.$objp->type.'" class="oddeven'.(($invoice->id == $facid) ? ' highlight' : '').'">';
 
 				print '<td class="nowraponall">';
 				print $invoice->getNomUrl(1, '');
@@ -925,6 +927,7 @@ if ($result >= 0) {
 				$totalrecudeposits += $deposits;
 				$i++;
 			}
+			print '</tbody>';
 
 			if ($i > 1) {
 				$colspan = 3;
@@ -935,6 +938,8 @@ if ($result >= 0) {
 				}
 
 				// Print total
+
+				print '<tfoot>';
 				print '<tr class="liste_total">';
 				print '<td colspan="'.$colspan.'" class="left">'.$langs->trans('TotalTTC').'</td>';
 				if (isModEnabled('multicurrency')) {
@@ -957,6 +962,7 @@ if ($result >= 0) {
 				print '<td class="right" id="result" style="font-weight: bold;"></td>'; // Autofilled
 				print '<td align="center">&nbsp;</td>';
 				print "</tr>\n";
+				print '</tfoot>';
 			}
 			print "</table>";
 			print "</div>\n";
