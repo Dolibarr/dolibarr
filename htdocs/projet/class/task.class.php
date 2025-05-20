@@ -2107,8 +2107,6 @@ class Task extends CommonObjectLine
 		$timespent->note = $this->timespent_note;
 		$timespent->invoice_id = $this->timespent_invoiceid;
 		$timespent->invoice_line_id = $this->timespent_invoicelineid;
-		$timespent->intervention_id = $this->intervention_id;
-		$timespent->intervention_line_id = $this->intervention_line_id;
 
 		dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
 		if ($timespent->update($user) > 0) {
