@@ -860,13 +860,14 @@ if ($action == 'confirm_generateinter') {
 
 				if ($lineid > 0) {
 					// Link timespent to intervention
-					$object->timespent_id = $timespent_id;
-					$object->intervention_id = $tmpinter->id;
-					$object->intervention_line_id = $lineid;
-					$result = $object->updateTimeSpent($user);
+					$timespent = new TimeSpent($db);
+					$timespent->fetch($timespent_id);
+					$timespent->intervention_id = $tmpinter->id;
+					$timespent->intervention_line_id = $lineid;
+					$result = $timespent->update($user);
 					if ($result < 0) {
 						$error++;
-						setEventMessages($object->error, $object->errors, 'errors');
+						setEventMessages($timespent->error, $timespent->errors, 'errors');
 					}
 				}
 			}
