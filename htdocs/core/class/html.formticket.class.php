@@ -1840,8 +1840,8 @@ class FormTicket
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
-				print '<input type="hidden" name="mail_signature" value="'.$mail_signature.'">';
-				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
+				print '<input type="hidden" name="mail_signature" value="'.htmlspecialchars($mail_signature, ENT_QUOTES) .'">';
+				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.htmlspecialchars($mail_signature, ENT_QUOTES);
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');
 		}

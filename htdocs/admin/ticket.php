@@ -231,7 +231,7 @@ if ($action == 'updateMask') {
 		$error++;
 	}
 
-	$mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'restricthtml');
+	$mail_signature = htmlspecialchars_decode(GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'restricthtml'));
 	$signature_description = "Signature of ticket replies sent from Dolibarr";
 	if (!empty($mail_signature)) {
 		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, $signature_description, $conf->entity);
