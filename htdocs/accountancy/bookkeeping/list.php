@@ -56,7 +56,7 @@ $langs->loadLangs(array("accountancy", "compta"));
 // Get Parameters
 $socid = GETPOSTINT('socid');
 $journal_code = GETPOST('code_journal', 'alpha');
-$account = GETPOST("account", 'alpha');
+$account = GETPOST("account", 'int');
 
 // action+display Parameters
 $action = GETPOST('action', 'aZ09');
