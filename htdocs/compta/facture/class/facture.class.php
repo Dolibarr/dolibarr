@@ -3487,6 +3487,7 @@ class Facture extends CommonInvoice
 	/**
 	 * Tag invoice as validated + call trigger BILL_VALIDATE
 	 * Object must have lines loaded with fetch_lines
+	 * This may rename files on disk because ref is modified but it does not generate any document.
 	 *
 	 * @param	User	$user           Object user that validate
 	 * @param   string	$force_number	Reference to force on invoice
@@ -3861,7 +3862,7 @@ class Facture extends CommonInvoice
 			}
 
 			if (!$error) {
-				// Rename directory if dir was a temporary ref
+				// Rename directory in index entry if dir was a temporary ref
 				if (preg_match('/^[\(]?PROV/i', $this->ref)) {
 					// Now we rename also files into index
 					$sql = 'UPDATE '.MAIN_DB_PREFIX."ecm_files set filename = CONCAT('".$this->db->escape($this->newref)."', SUBSTR(filename, ".(strlen($this->ref) + 1).")), filepath = 'facture/".$this->db->escape($this->newref)."'";
@@ -3923,7 +3924,8 @@ class Facture extends CommonInvoice
 			}
 		}
 
-		// Rename directory if dir was a temporary ref
+		// All database actions are now complete
+		// We rename the directory and files on disk if old dir was a temporary ref.
 		if (!$error && preg_match('/^[\(]?PROV/i', $this->oldref)) {
 			// We rename directory ($this->ref = old ref, $num = new ref) in order not to lose the attachments
 			$oldref = dol_sanitizeFileName($this->oldref);
@@ -3935,7 +3937,7 @@ class Facture extends CommonInvoice
 
 				if (@rename($dirsource, $dirdest)) {
 					dol_syslog("Rename ok");
-					// Rename docs starting with $oldref with $newref
+					// Rename also docs starting with $oldref with $newref
 					$listoffiles = dol_dir_list($conf->facture->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref, '/'));
 					foreach ($listoffiles as $fileentry) {
 						$dirsource = $fileentry['name'];
@@ -5729,8 +5731,6 @@ class Facture extends CommonInvoice
 	 */
 	public function generateDocument($modele, $outputlangs, $hidedetails = 0, $hidedesc = 0, $hideref = 0, $moreparams = null)
 	{
-		global $conf, $langs;
-
 		$outputlangs->loadLangs(array("bills", "products"));
 
 		if (!dol_strlen($modele)) {
