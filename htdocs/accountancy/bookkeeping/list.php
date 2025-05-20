@@ -559,7 +559,7 @@ if (empty($reshook)) {
 
 	// massaction assign new account
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		$result = $object->assignAccountMass($toselect, $account);
+		$result = $object->assignAccountMass($toselect, (int) $account);
 		if ($result == -1) {
 			$error++;
 		}
