@@ -270,8 +270,8 @@ if ($user->hasRight('ticket', 'read')) {
 	print $stringtoshow;
 
 	// don't display graph if no series
+	$totalnb = 0;
 	if (!empty($dataseries) && count($dataseries) > 1) {
-		$totalnb = 0;
 		foreach ($dataseries as $key => $value) {
 			$totalnb += $value['data'];
 		}
