@@ -52,6 +52,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 $langs->loadLangs(array("accountancy", "compta"));
 
 $journal_code = GETPOST('code_journal', 'alpha');
+$account = GETPOST("account", 'alpha');
 
 $action = GETPOST('action', 'aZ09');
 $socid = GETPOSTINT('socid');
@@ -540,6 +541,51 @@ if (empty($reshook)) {
 		}
 	}
 
+	// massaction cloning
+	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		$result = $object->newCloneMass($toselect);
+		if ($result == -1) {
+			$error++;
+		}
+		if ($error) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
+			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+
+	// massaction assign new account
+	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		$result = $object->assignAccountMass($toselect, $account);
+		if ($result == -1) {
+			$error++;
+		}
+		if (!$error) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
+			exit();
+		} else {
+			$db->rollback();
+		}
+	}
+
+	// mass action return account
+	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
+		$result = $object->newReturnAccount($toselect);
+		if ($result == -1) {
+			$error++;
+		}
+		if (!$error) {
+			$db->commit();
+			header("Location: ".$_SERVER["PHP_SELF"]."?noreset=1".($param ? '&'.$param : ''));
+			exit();
+		} else {
+			$db->rollback();
+		}
+	}
+
 	// others mass actions
 	if (!$error && getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING')) {
 		if ($massaction == 'letteringauto' && $permissiontoadd) {
@@ -795,9 +841,6 @@ if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accountin
 	}
 	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 }
-if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
-	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
-}
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
 	$arrayofmassactions['preclonebookkeepingwriting'] = img_picto('', 'clone', 'class="pictofixedwidth"').$langs->trans("Clone");
 }
@@ -806,6 +849,9 @@ if ($user->hasRight('accounting', 'mouvements', 'creer')) {
 }
 if ($user->hasRight('accounting', 'mouvements', 'creer')) {
 	$arrayofmassactions['prereturnaccountbookkeepingwriting'] = img_picto('', 'undo', 'class="pictofixedwidth"').$langs->trans("ReturnAccount");
+}
+if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
+	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
 }
 
 if (GETPOSTINT('nomassaction') || in_array($massaction, array('preunletteringauto', 'preunletteringmanual', 'predeletebookkeepingwriting', 'preclonebookkeepingwriting', 'preassignaccountbookkeepingwriting', 'prereturnaccountbookkeepingwriting'))) {
