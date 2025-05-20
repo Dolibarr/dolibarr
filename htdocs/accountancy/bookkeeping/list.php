@@ -56,6 +56,7 @@ $langs->loadLangs(array("accountancy", "compta"));
 // Get Parameters
 $socid = GETPOSTINT('socid');
 $journal_code = GETPOST('code_journal', 'alpha');
+$account = GETPOST("account", 'alpha');
 
 // action+display Parameters
 $action = GETPOST('action', 'aZ09');
@@ -558,7 +559,7 @@ if (empty($reshook)) {
 
 	// massaction assign new account
 	if (!$error && $action == 'assignaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		$result = $object->assignAccountMass($toselect);
+		$result = $object->assignAccountMass($toselect, $account);
 		if ($result == -1) {
 			$error++;
 		}

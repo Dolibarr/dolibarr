@@ -3362,10 +3362,11 @@ class BookKeeping extends CommonObject
 	/**
 	 *  Mass account assignment
 	 *
-	 * @param 	int[]		$toselect	Array of BookkeepingId
+	 * @param 	int[]		$toselect				Array of BookkeepingId
+	 * @param 	int			$accounting_account		ID of accounting account define for mass action
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function assignAccountMass($toselect)
+	public function assignAccountMass($toselect, $accounting_account = 0)
 	{
 		global $langs, $user;
 
@@ -3377,9 +3378,8 @@ class BookKeeping extends CommonObject
 		$accountingaccount = new AccountingAccount($this->db);
 		$nb = 0;
 
-		if ((int) GETPOST('account', 'alpha') > 1) {
-			$accountingaccoutId = (int) GETPOST('account', 'alpha');
-			$accountingaccount->fetch($accountingaccoutId);
+		if ((int) $accounting_account > 0) {
+			$accountingaccount->fetch($accounting_account);
 			$echecT = [];
 			foreach ($toselect as $id) {
 				if ($bookkeeping->fetch($id)) {
