@@ -13565,7 +13565,7 @@ function dolGetButtonTitle($label, $helpText = '', $iconClass = 'fa fa-file', $u
 
 	$attr = array(
 		'class' => $class,
-		'href' => empty($url) ? '' : $url
+		'href' => empty($url) ? '' : html_entity_decode($url)
 	);
 
 	if (!empty($helpText)) {
