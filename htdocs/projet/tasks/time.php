@@ -860,7 +860,6 @@ if ($action == 'confirm_generateinter') {
 
 				if ($lineid > 0) {
 					// Link timespent to intervention
-					//$object->fetchTimeSpent($timespent_id);
 					$object->timespent_id = $timespent_id;
 					$object->intervention_id = $tmpinter->id;
 					$object->intervention_line_id = $lineid;
