@@ -845,7 +845,7 @@ if ($action == 'confirm_generateinter') {
 				$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 				$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 				$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
-				$arrayoftasks[$object->timespent_id]['date'] = date('Y-m-d H:i:s', $object->timespent_datehour);
+				$arrayoftasks[$object->timespent_id]['date'] = $object->timespent_datehour;
 			}
 
 			foreach ($arrayoftasks as $timespent_id => $value) {
@@ -857,6 +857,19 @@ if ($action == 'confirm_generateinter') {
 
 				// Add lines
 				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . (!empty($value['note']) ? ' - ' . $value['note'] : ''), (int) $value['date'], $value['timespent']);
+
+				if ($lineid > 0) {
+					// Link timespent to intervention
+					//$object->fetchTimeSpent($timespent_id);
+					$object->timespent_id = $timespent_id;
+					$object->intervention_id = $tmpinter->id;
+					$object->intervention_line_id = $lineid;
+					$result = $object->updateTimeSpent($user);
+					if ($result < 0) {
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+				}
 			}
 		}
 
