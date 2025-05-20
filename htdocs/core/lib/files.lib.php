@@ -765,7 +765,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	dolChmod($newpathoftmpdestfile, $newmask);
 
 	// Rename
-	$moreinfo = array('gen_or_uploaded' => 'dolReplaceInFile');
+	$moreinfo = array('gen_or_uploaded' => 'unknown');
 	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase, $moreinfo);
 	if (!$result) {
 		dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
@@ -1146,7 +1146,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
 						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
 					} else {
-						$ecmfile->gen_or_uploaded = 'undefined';	// or 'generated', 'uploaded'
+						$ecmfile->gen_or_uploaded = 'unknown';	// 'generated', 'uploaded', 'api'
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
@@ -1273,7 +1273,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$moreinfo = array('gen_or_uploaded' => 'dol_move_dir');
+								$moreinfo = array('gen_or_uploaded' => 'unknown');
 								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase, $moreinfo);
 							}
 							if (!$res) {
