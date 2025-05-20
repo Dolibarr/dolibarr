@@ -28,7 +28,6 @@ class FactureTools
 		return array_map(static fn ($order) => ['ref_client' => $order->ref_client, 'total_ht' => $order->total_ht], $orders);
 	}
 
-
 	/**
 	 * Check the difference between the last situation price and the total orders.
 	 *
