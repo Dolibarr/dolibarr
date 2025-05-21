@@ -362,11 +362,7 @@ if ($result) {
 	}
 	$totalarray['val']['stockqty'] = price2num($totalStock, 'MS');
 	$totalarray['val']['estimatedvalue'] = price2num($total, 'MT');
-	if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$totalarray['val']['estimatedstockvaluesell'] = price2num($totalsell, 'MT');
-	} else {
-		$totalarray['val']['estimatedstockvaluesell'] = $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
-	}
+	$totalarray['val']['estimatedstockvaluesell'] = price2num($totalsell, 'MT');
 }
 
 // Count total nb of records
@@ -677,11 +673,7 @@ if (!empty($arrayfields["estimatedvalue"]['checked'])) {
 if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
-	if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
-		$totalarray['type'][$totalarray['nbfield']] = 'price';
-	} else {
-		$totalarray['type'][$totalarray['nbfield']] = 'string';
-	}
+	$totalarray['type'][$totalarray['nbfield']] = 'price';
 }
 
 // Extra fields
