@@ -295,7 +295,7 @@ class modKnowledgeManagement extends DolibarrModules
 			'prefix' => img_picto('', $this->picto, 'class="paddingright pictofixedwidth em092"'),
 			'mainmenu' => 'ticket',
 			'leftmenu' => 'knowledgemanagement_knowledgerecord',
-			'url' => '/knowledgemanagement/knowledgerecord_list.php',
+			'url' => '/knowledgemanagement/knowledgemanagementindex.php',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs' => 'knowledgemanagement',
 			'position' => 101,
