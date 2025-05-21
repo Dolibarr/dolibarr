@@ -499,7 +499,7 @@ if (empty($reshook)) {
 			$newobject->fetch_optionals();
 			$newobject->fetch_thirdparty(); // Load new object
 			$object = $newobject;
-			$action = 'view';
+			$action = 'edit';
 			$comefromclone = true;
 
 			setEventMessages($langs->trans("ProjectCreatedInDolibarr", $newobject->ref), "", 'mesgs');
