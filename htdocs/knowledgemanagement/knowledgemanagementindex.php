@@ -272,7 +272,6 @@ if ($resql) {
 	if ($num > 0) {
 		$i = 0;
 		while ($i < $num) {
-
 			$obj = $db->fetch_object($resql);
 			print '<tr class="oddeven"><td class="nowrap">';
 			$object->id=$obj->rowid;
