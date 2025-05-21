@@ -37,7 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
  * @var User $user
  */
 
-$langs->loadLangs(array("bills", "donations"));
+$langs->loadLangs(array("banks", "bills", "donations"));
 
 $chid = GETPOSTINT("rowid");
 $action = GETPOST('action', 'aZ09');
