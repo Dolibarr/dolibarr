@@ -205,7 +205,6 @@ if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 	$totalnb = 0;
 	// don't display graph if no series
 	if (!empty($dataseries) && count($dataseries) > 1) {
-
 		foreach ($dataseries as $key => $value) {
 			$totalnb += $value['data'];
 		}
