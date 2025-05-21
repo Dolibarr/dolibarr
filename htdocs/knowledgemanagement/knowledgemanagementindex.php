@@ -164,11 +164,11 @@ if ($result) {
 
 	$colorseries = array();
 
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->LibStatut(KnowledgeRecord::STATUS_DRAFT,1)), 'data' => round($tick['draft']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->LibStatut(KnowledgeRecord::STATUS_DRAFT, 1)), 'data' => round($tick['draft']));
 	$colorseries[KnowledgeRecord::STATUS_DRAFT] = '-'.$badgeStatus0;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->LibStatut(KnowledgeRecord::STATUS_CANCELED,1)), 'data' => round($tick['canceled']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->LibStatut(KnowledgeRecord::STATUS_CANCELED, 1)), 'data' => round($tick['canceled']));
 	$colorseries[KnowledgeRecord::STATUS_CANCELED] = $badgeStatus9;
-	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->LibStatut(KnowledgeRecord::STATUS_VALIDATED,1)), 'data' => round($tick['validated']));
+	$dataseries[] = array('label' => $langs->transnoentitiesnoconv($object->LibStatut(KnowledgeRecord::STATUS_VALIDATED, 1)), 'data' => round($tick['validated']));
 	$colorseries[KnowledgeRecord::STATUS_VALIDATED] = $badgeStatus6;
 } else {
 	dol_print_error($db);
@@ -244,15 +244,11 @@ if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 		} else {
 			print '<div class="error">'.$mesg.'</div>';
 		}
-
 	}
 	print '</td></tr>';
 	print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td class="right">'.$totalnb.'</td></tr>';
 	print "</table></div><br>";
-
 }
-
-
 
 
 
@@ -287,10 +283,8 @@ if ($resql) {
 			print '</td>';
 			print '<td class="left" class="nowrap">'.$obj->question.'</td></tr>';
 			$i++;
-
 		}
 	} else {
-
 		print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoKnowledgeRecord").'</td></tr>';
 	}
 	print "</table><br>";
