@@ -3278,6 +3278,19 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			continue;
 		}
 
+		$menuEntry = null;
+		foreach ($menumanager->tabMenu as $entry) {
+			if (!empty($entry['mainmenu']) && $entry['mainmenu'] === $val && $entry['type'] === 'top') {
+				$menuEntry = $entry;
+				break;
+			}
+		}
+
+		 if ($menuEntry && !empty($menuEntry['prefix'])) {
+			print "/* mainmenu $val uses a custom picto in prefix */\n";
+			continue;
+		}
+
 		$found = 0;
 		$url = '';
 		$constformoduleicon = 'MAIN_MODULE_'.strtoupper($val).'_ICON';
@@ -3292,8 +3305,8 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 		} else {
 			// Search img file in module dir
 			foreach ($conf->file->dol_document_root as $dirroot) {
-				if (file_exists($dirroot."/".$val."/img/".$val.".png")) {
-					$url = dol_buildpath('/'.$val.'/img/'.$val.'.png', 1);
+				if (file_exists($dirroot."/".$val."/img/object_".$val.".png")) {
+					$url = dol_buildpath('/'.$val.'/img/object_'.$val.'.png', 1);
 					$found = 1;
 					break;
 				}
@@ -3303,7 +3316,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 
 		// Output entry for menu icon in CSS
 		if (!$found) {
-			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/".$val.".png), so we use a generic one */\n";
+			print "/* A mainmenu entry was found but img file ".$val.".png not found (check /".$val."/img/object_".$val.".png), so we use a generic one */\n";
 			print 'div.mainmenu.'.$val.' span::before {'."\n";
 			print 'content: "\f249";'."\n";
 			print '}'."\n";
