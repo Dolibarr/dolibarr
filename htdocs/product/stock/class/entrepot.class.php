@@ -1044,6 +1044,8 @@ class Entrepot extends CommonObject
 	 */
 	public function getKanbanView($option = '', $arraydata = null)
 	{
+		global $langs;
+
 		$selected = (empty($arraydata['selected']) ? 0 : $arraydata['selected']);
 
 		$return = '<div class="box-flex-item box-flex-grow-zero">';
@@ -1059,9 +1061,10 @@ class Entrepot extends CommonObject
 		if (property_exists($this, 'lieu') && (!empty($this->lieu))) {
 			$return .= '<br><span class="info-box-label opacitymedium">'.$this->lieu.'</span>';
 		}
-		if (property_exists($this, 'sellvalue') && $this->sellvalue != 0) { // @phan-suppress-current-line PhanUndeclaredProperty
-			// @phan-suppress-next-line PhanUndeclaredProperty
-			$return .= '<br><span class="info-box-label amount">'.price($this->sellvalue).'</span>';
+		if ($arraydata['isMultiPrices']) {
+			$return .= '<br><span class="info-box-label opacitymedium">'.$langs->trans("Variable").'</span>';
+		} elseif ($arraydata['sellvalue'] != 0) {
+			$return .= '<br><span class="info-box-label amount">'.price($arraydata['sellvalue']).'</span>';
 		}
 		if (method_exists($this, 'getLibStatut')) {
 			$return .= '<br><div class="info-box-status">'.$this->getLibStatut(3).'</div>';

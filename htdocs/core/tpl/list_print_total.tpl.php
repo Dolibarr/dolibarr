@@ -49,12 +49,12 @@ if (!function_exists('printTotalValCell')) { // allow two list with total on sam
 		switch ($type) {
 			case 'duration':
 				print '<td class="right">';
-				print(!empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0);
+				print !empty($val) ? convertSecondToTime((int) $val, 'allhourmin') : 0;
 				print '</td>';
 				break;
-			case 'string':	// This type is no more used. type is now varchar(x)
+			case 'string':
 				print '<td class="left">';
-				print(!empty($val) ? $val : '');
+				print !empty($val) ? $val : '';
 				print '</td>';
 				break;
 			case 'stock':

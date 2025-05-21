@@ -362,7 +362,11 @@ if ($result) {
 	}
 	$totalarray['val']['stockqty'] = price2num($totalStock, 'MS');
 	$totalarray['val']['estimatedvalue'] = price2num($total, 'MT');
-	$totalarray['val']['estimatedstockvaluesell'] = price2num($totalsell, 'MT');
+	if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		$totalarray['val']['estimatedstockvaluesell'] = price2num($totalsell, 'MT');
+	} else {
+		$totalarray['val']['estimatedstockvaluesell'] = $form->textwithtooltip('<span class="opacitymedium">'.$langs->trans("Variable").'</span>', $htmltext);
+	}
 }
 
 // Count total nb of records
@@ -673,7 +677,11 @@ if (!empty($arrayfields["estimatedvalue"]['checked'])) {
 if (!empty($arrayfields["estimatedstockvaluesell"]['checked'])) {
 	print_liste_field_titre("EstimatedStockValueSell", $_SERVER["PHP_SELF"], "", '', $param, '', $sortfield, $sortorder, 'right ');
 	$totalarray['nbfield']++;
-	$totalarray['type'][$totalarray['nbfield']] = 'price';
+	if (!getDolGlobalString('PRODUIT_MULTIPRICES')) {
+		$totalarray['type'][$totalarray['nbfield']] = 'price';
+	} else {
+		$totalarray['type'][$totalarray['nbfield']] = 'string';
+	}
 }
 
 // Extra fields
@@ -714,7 +722,6 @@ while ($i < $imaxinloop) {
 	$warehouse->setVarsFromFetchObj($obj);
 
 	$warehouse->label = $warehouse->ref;
-	$warehouse->sellvalue = $obj->sellvalue;
 
 	$object = $warehouse;
 
@@ -731,7 +738,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => $selected));
+		print $object->getKanbanView('', array('selected' => $selected, 'sellvalue' => $obj->sellvalue, 'isMultiPrices' => getDolGlobalString('PRODUIT_MULTIPRICES')));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';
