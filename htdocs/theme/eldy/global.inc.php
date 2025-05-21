@@ -3286,7 +3286,7 @@ li.tmenu:hover .tmenuimage:not(.menuhider), li.tmenu:hover .tmenuimage:not(.menu
 			}
 		}
 
-		 if ($menuEntry && !empty($menuEntry['prefix'])) {
+		if ($menuEntry && !empty($menuEntry['prefix'])) {
 			print "/* mainmenu $val uses a custom picto in prefix */\n";
 			continue;
 		}
