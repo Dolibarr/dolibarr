@@ -189,7 +189,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
+	if (($action == 'add' && GETPOST('save', 'alpha') || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
 		$ifErrorAction = $action == 'add' ? 'create' : 'edit';
 		if ($action == 'add') $object->track_id = null;
 		$error = 0;
