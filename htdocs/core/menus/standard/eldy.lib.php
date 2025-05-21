@@ -417,7 +417,7 @@ function print_eldy_menu($db, $atarget, $type_user, &$tabMenu, &$menu, $noout = 
 	if (isModEnabled('ticket')) {
 		$link = '/ticket/index.php?mainmenu=ticket&amp;leftmenu=';
 	} else {
-		$link = '/knowledgemanagement/knowledgerecord_list.php?mainmenu=ticket&amp;leftmenu=';
+		$link = '/knowledgemanagement/knowledgemanagementindex.php?mainmenu=ticket&amp;leftmenu=';
 	}
 	$menu_arr[] = array(
 		'name' => 'Ticket',
