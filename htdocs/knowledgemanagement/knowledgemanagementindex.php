@@ -94,6 +94,7 @@ $param_shownb = 'DOLUSERCOOKIE_knowledge_by_status_shownb';
 $param_showtot = 'DOLUSERCOOKIE_knowledge_by_status_showtot';
 $autosetarray = preg_split("/[,;:]+/", GETPOST('DOL_AUTOSET_COOKIE'));
 $showtot = 0;
+$shownb = 0;
 if (in_array('DOLUSERCOOKIE_knowledge_by_status', $autosetarray)) {
 	$endyear = GETPOSTINT($param_year);
 	$shownb = GETPOST($param_shownb, 'alpha');
@@ -201,9 +202,10 @@ if ($user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 
 	print '<tr><td class="center" colspan="2">';
 	print $stringtoshow;
+	$totalnb = 0;
 	// don't display graph if no series
 	if (!empty($dataseries) && count($dataseries) > 1) {
-		$totalnb = 0;
+
 		foreach ($dataseries as $key => $value) {
 			$totalnb += $value['data'];
 		}
