@@ -591,13 +591,10 @@ class PropaleLigne extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$this->rowid = $this->db->last_insert_id(MAIN_DB_PREFIX.'propaldet');
-
-			if (!$error) {
-				$this->id = $this->rowid;
-				$result = $this->insertExtraFields();
-				if ($result < 0) {
-					$error++;
-				}
+			$this->id = $this->rowid;
+			$result = $this->insertExtraFields();
+			if ($result < 0) {
+				$error++;
 			}
 
 			if (!$error && !$notrigger) {
