@@ -544,7 +544,7 @@ if (empty($reshook)) {
 
 	// massaction cloning
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		$result = $object->newCloneMass($toselect);
+		$result = $object->newCloneMass($toselect, $journal_code);
 		if ($result == -1) {
 			$error++;
 		}
@@ -574,7 +574,7 @@ if (empty($reshook)) {
 
 	// mass action return account
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		$result = $object->newReturnAccount($toselect);
+		$result = $object->newReturnAccount($toselect, $journal_code);
 		if ($result == -1) {
 			$error++;
 		}

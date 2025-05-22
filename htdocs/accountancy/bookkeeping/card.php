@@ -64,6 +64,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $id = GETPOSTINT('id'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOSTINT("piece_num") ? GETPOSTINT("piece_num") : GETPOST('ref'); 	// id of transaction (several lines share the same transaction id)
+$clonedate = (int) GETPOSTINT('clonedate');
 
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
@@ -450,14 +451,14 @@ if (empty($reshook)) {
 		$formaccounting = new FormAccounting($db);
 
 		$form = new Form($db);
-		$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
+		$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "create_mvt", 1, 1);
 		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
 		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
 
 		$formquestion = array(
 			array(
 				'type' => 'date',
-				'name' => 'doc_date',
+				'name' => 'clonedate',
 				'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
 				'value' => $input1
 			)
@@ -483,7 +484,7 @@ if (empty($reshook)) {
 	}
 
 	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
-		$result = $object->newClone();
+		$result = $object->newClone($piece_num, $journal_code, $clonedate);
 
 		if ($result == -1) {
 			$error++;

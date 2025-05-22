@@ -3443,22 +3443,23 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 *  Clone
+	 * Clone accounting entry
+	 *
+	 * @param	string	$piecenum		Piece number to clone
+	 * @param	string	$code_journal	Accounting journal code
+	 * @param	int		$docdate		Date of the document
 	 * @return	int						int Return integer -1 if KO, 1 if OK
 	 */
-	public function newClone()
+	public function newClone($piecenum, $code_journal, $docdate)
 	{
 		global $langs;
 
 		$error = 0;
 
-		$doc_date = GETPOST('doc_date', 'alpha');
-		$piece_num_hidden = GETPOST('piece_num_hidden', 'alpha');
-
 		$accountingJournal = new AccountingJournal($this->db);
-		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
+		$accountingJournal->fetch(0, $code_journal);
 
-		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
+		$dateObj = DateTime::createFromFormat('d/m/Y', $docdate);
 		$timestamp = $dateObj->getTimestamp();
 
 		$bookKeepingValid = new BookKeeping($this->db);
@@ -3483,7 +3484,7 @@ class BookKeeping extends CommonObject
 		$pieceNumNext = $bookKeepingInstance->getNextNumMvt();
 
 		$cloneId = [];
-		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $piece_num_hidden";
+		$sqlRowidClone = "SELECT rowid FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE piece_num = $piecenum";
 		$resqlRowidClone = $this->db->query($sqlRowidClone);
 
 		if ($resqlRowidClone) {
@@ -3494,7 +3495,7 @@ class BookKeeping extends CommonObject
 			foreach ($cloneId as $toselectid) {
 				$bookKeeping = new BookKeeping($this->db);
 				if ($bookKeeping->fetch($toselectid)) {
-					$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+					$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $code_journal : $bookKeeping->code_journal;
 					$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 
 					$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref,";
@@ -3544,14 +3545,21 @@ class BookKeeping extends CommonObject
 	 *  Mass clone
 	 *
 	 * @param 	int[]		$toselect		array of BookkeepingId
-	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 * @param	string		$code_journal	Accounting journal code
+	 * @param	int			$docdate		Date of the document
+	 * @return	int							Return integer -1 if KO, 1 if OK
 	 */
-	public function newCloneMass($toselect)
+	public function newCloneMass($toselect, $code_journal, $docdate)
 	{
 		global $langs;
 
 		$error = 0;
 		$this->db->begin();
+
+		$now = dol_now();
+		if (empty($docdate)) {
+			$docdate = $now;
+		}
 
 		$idImplodeSelect = implode(',', $toselect);
 		$pieceNumT = [];
@@ -3565,10 +3573,9 @@ class BookKeeping extends CommonObject
 			}
 
 			foreach ($pieceNumT as $pieceNum) {
-				$doc_date = GETPOST('doc_date', 'alpha');
 				$accountingJournal = new AccountingJournal($this->db);
-				$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
-				$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
+				$accountingJournal->fetch(0, $code_journal);
+				$dateObj = DateTime::createFromFormat('d/m/Y', $docdate);
 				$timestamp = $dateObj->getTimestamp();
 				$bookKeepingValid = new BookKeeping($this->db);
 				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
@@ -3598,7 +3605,7 @@ class BookKeeping extends CommonObject
 					foreach ($cloneId as $toselectid) {
 						$bookKeeping = new BookKeeping($this->db);
 						if ($bookKeeping->fetch($toselectid)) {
-							$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? GETPOST('code_journal', 'restricthtml') : $bookKeeping->code_journal;
+							$code_journal = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $code_journal : $bookKeeping->code_journal;
 							$journal_label = getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL') ? $accountingJournal->label : $bookKeeping->journal_label;
 							$sql = "SELECT piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant ";
 							$sql .= "FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE rowid = " . $toselectid;
@@ -3646,19 +3653,25 @@ class BookKeeping extends CommonObject
 	 *  Mass ReturnAccount
 	 *
 	 * @param 	int[]		$toselect		BookkeepingId
-	 * @return	int						int Return integer -1 if KO, 1 if OK
+	 * @param	string		$code_journal	Accounting journal code
+	 * @param	int			$docdate		Date of the document
+	 * @return	int							int Return integer -1 if KO, 1 if OK
+ 	 *
 	 */
-	public function newReturnAccount(array $toselect)
+	public function newReturnAccount(array $toselect, $code_journal, $docdate)
 	{
 		global $langs, $user;
 
 		$error = 0;
 
-		$doc_date = GETPOST('doc_date', 'alpha');
+		$now = dol_now();
+		if (empty($docdate)) {
+			$docdate = $now;
+		}
 
 		$accountingJournal = new AccountingJournal($this->db);
-		$accountingJournal->fetch(0, GETPOST('code_journal', 'restricthtml'));
-		$dateObj = DateTime::createFromFormat('d/m/Y', $doc_date);
+		$accountingJournal->fetch(0, $code_journal);
+		$dateObj = DateTime::createFromFormat('d/m/Y', $docdate);
 		$timestamp = $dateObj->getTimestamp();
 
 		$this->db->begin();
