@@ -2005,7 +2005,7 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Return next movement number
+	 * Return next bookkeeping piece number
 	 *
 	 * @param	string	$mode		Mode
 	 * @return	int<1, max>|-1		Return next movement number or -1 if error
@@ -2014,7 +2014,7 @@ class BookKeeping extends CommonObject
 	{
 		global $conf;
 
-		$sql = "SELECT MAX(piece_num)+1 as max FROM ".$this->db->prefix().$this->table_element.$mode;
+		$sql = "SELECT MAX(piece_num) + 1 as max FROM ".$this->db->prefix().$this->table_element.$mode;
 		$sql .= " WHERE entity = " . ((int) $conf->entity); // Do not use getEntity for accounting features
 
 		dol_syslog(get_class($this)."::getNextNumMvt", LOG_DEBUG);
@@ -3509,7 +3509,7 @@ class BookKeeping extends CommonObject
 							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
 							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
 							$sql_insert .= " VALUES";
-							$sql_insert .= " ('" . $this->db->escape($pieceNumNext) . "', '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
+							$sql_insert .= " (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
 							$sql_insert .= " ". ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
 
 							$resqlInsert = $this->db->query($sql_insert);
@@ -3608,7 +3608,7 @@ class BookKeeping extends CommonObject
 									$docRef = "Duplicata de " . $obj->doc_ref;
 
 									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
-									$sql_insert .=	" VALUES ('" . $this->db->escape($pieceNumNext) . "', '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."'";
+									$sql_insert .=	" VALUES (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."'";
 									$sql_insert .= 'Bug here !!! code to forge sql_insert is not finished';
 
 									$resqlInsert = $this->db->query($sql_insert);
