@@ -2103,7 +2103,7 @@ while ($i < $imaxinloop) {
 		}
 		// Amount HT
 		if (!empty($arrayfields['p.total_ht']['checked'])) {
-			print '<td class="nowrap right">'.totalAmount(price($obj->total_ht))."</td>\n";
+			print '<td class="nowrap right">'.showTotalAmount(price($obj->total_ht))."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
