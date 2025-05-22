@@ -845,7 +845,7 @@ if ($action == 'confirm_generateinter') {
 				$arrayoftasks[$object->timespent_id]['timespent'] = $object->timespent_duration;
 				$arrayoftasks[$object->timespent_id]['totalvaluetodivideby3600'] = $object->timespent_duration * $object->timespent_thm;
 				$arrayoftasks[$object->timespent_id]['note'] = $object->timespent_note;
-				$arrayoftasks[$object->timespent_id]['date'] = date('Y-m-d H:i:s', $object->timespent_datehour);
+				$arrayoftasks[$object->timespent_id]['date'] = $object->timespent_datehour;
 			}
 
 			foreach ($arrayoftasks as $timespent_id => $value) {
@@ -857,6 +857,19 @@ if ($action == 'confirm_generateinter') {
 
 				// Add lines
 				$lineid = $tmpinter->addline($user, $tmpinter->id, $ftask->label . (!empty($value['note']) ? ' - ' . $value['note'] : ''), (int) $value['date'], $value['timespent']);
+
+				if ($lineid > 0) {
+					// Link timespent to intervention
+					$timespent = new TimeSpent($db);
+					$timespent->fetch($timespent_id);
+					$timespent->intervention_id = $tmpinter->id;
+					$timespent->intervention_line_id = $lineid;
+					$result = $timespent->update($user);
+					if ($result < 0) {
+						$error++;
+						setEventMessages($timespent->error, $timespent->errors, 'errors');
+					}
+				}
 			}
 		}
 
@@ -1627,7 +1640,7 @@ if (($id > 0 || !empty($ref)) || $projectidforalltimes > 0 || $allprojectforuser
 			$sql .= " AND pt.fk_projet IN (" . $db->sanitize((string) $projectidforalltimes) . ")";
 		} elseif (!empty($allprojectforuser)) {
 			// Limit on on user
-			if (empty($search_user)) {
+			if (empty($search_user) && !empty($arrayfields['author']['checked'])) {
 				$search_user = $user->id;
 			}
 			if ($search_user > 0) {

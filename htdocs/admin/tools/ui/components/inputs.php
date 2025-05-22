@@ -94,26 +94,28 @@ $documentation->showSidebar(); ?>
 			<!-- Checkbox input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocCheckboxInputsDescription'); ?></p>
 			<div class="documentation-example">
-				<span class="spannature paddinglarge marginrightonly nonature-back"><label for="prospectinput" class="valignmiddle">Prospect<input id="prospectinput2" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
-				<span  class="spannature paddinglarge marginrightonly nonature-back"><label for="customerinput" class="valignmiddle">Customer<input id="customerinput2" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
-				<span class="spannature paddinglarge marginrightonly nonature-back"><label for="supplierinput" class="valignmiddle">Supplier<input id="supplierinput2" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
+				<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="prospectinput" class="valignmiddle"><span class="valignmiddle">Prospect</span><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="1" checked></label></span>
+				<span  class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="customerinput" class="valignmiddle"><span class="valignmiddle">Customer</span><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>
+				<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="supplierinput" class="valignmiddle"><span class="valignmiddle">Supplier</span><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1" checked></label></span>
 			</div>
 			<?php
 			$lines = array(
-				'<span class="spannature paddinglarge marginrightonly nonature-back"><label for="prospectinput" class="valignmiddle">Prospect<input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
-				'<span class="spannature paddinglarge marginrightonly nonature-back"><label for="customerinput" class="valignmiddle">Customer<input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
-				'<span class="spannature paddinglarge marginrightonly nonature-back"><label for="supplierinput" class="valignmiddle">Supplier<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
+				'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="prospectinput" class="valignmiddle"><span class="valignmiddle">Prospect</span><input id="prospectinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="prospect" value="1" checked></label></span>',
+				'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="customerinput" class="valignmiddle"><span class="valignmiddle">Customer</span><input id="customerinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="customer" value="1" checked></label></span>',
+				'<span class="spannature paddinglarge marginrightonly nonature-back valignmiddle"><label for="supplierinput" class="valignmiddle"><span class="valignmiddle">Supplier</span><input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1" checked></label></span>',
 			);
 			echo $documentation->showCode($lines); ?>
 
 			<!-- Radio input -->
 			<p class="documentation-text"><?php echo $langs->trans('DocRadioInputsDescription'); ?></p>
 			<div class="documentation-example">
-				<input type="radio" name="radioinput" value="radioinput"> Radio Input
+				<input type="radio" id="idforradioinput1" name="radioinput" value="value1"><label for="idforradioinput1" class="marginrightonly"> Radio Input 1</label>
+				<input type="radio" id="idforradioinput2" name="radioinput" value="value2"><label for="idforradioinput2" class="marginrightonly"> Radio Input 2</label>
 			</div>
 			<?php
 			$lines = array(
-				'<input type="radio" name="radioinput" value="radioinput"> Radio Input'
+				'<input type="radio" id="idforradioinput1" name="radioinput" value="value1"><label for="idforradioinput1" class="marginrightonly"> Radio Input 1</label>',
+				'<input type="radio" id="idforradioinput2" name="radioinput" value="value2"><label for="idforradioinput2" class="marginrightonly"> Radio Input 2</label>'
 			);
 			echo $documentation->showCode($lines); ?>
 		</div>

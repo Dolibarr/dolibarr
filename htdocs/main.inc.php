@@ -1280,7 +1280,7 @@ if (empty($conf->browser->firefox)) {
 	define('ROWS_9', 8);
 }
 
-$heightforframes = 50;
+$heightforframes = 52;	// Used by frames.php page
 
 // Init menu manager
 if (!defined('NOREQUIREMENU')) {
@@ -2433,7 +2433,8 @@ function top_menu_user($hideloginname = 0, $urllogout = '')
 	// Defined the links for bottom of card
 	$profilLink = '<a accesskey="u" href="'.DOL_URL_ROOT.'/user/card.php?id='.$user->id.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("YourUserFile").' ('.$stringforfirstkey.' u)').'"><i class="fa fa-user"></i>  '.$langs->trans("Card").'</a>';
 	$urltovirtualcard = '/user/virtualcard.php?id='.((int) $user->id);
-	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").(is_object($user) ? ' - '.$user->getFullName($langs) : '').' ('.$stringforfirstkey.' v)', img_picto($langs->trans("PublicVirtualCardUrl").' ('.$stringforfirstkey.' v)', 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', "closeTopMenuLoginDropdown()", '', 'v');
+	$jsonopen = "closeTopMenuLoginDropdown()";
+	$virtuelcardLink = dolButtonToOpenUrlInDialogPopup('publicvirtualcardmenu', $langs->transnoentitiesnoconv("PublicVirtualCardUrl").(is_object($user) ? ' - '.$user->getFullName($langs) : '').' ('.$stringforfirstkey.' v)', img_picto($langs->trans("PublicVirtualCardUrl").' ('.$stringforfirstkey.' v)', 'card', ''), $urltovirtualcard, '', 'button-top-menu-dropdown marginleftonly nohover', $jsonopen, '', 'v');
 	$logoutLink = '<a accesskey="l" href="'.$urllogout.'" class="button-top-menu-dropdown" title="'.dol_escape_htmltag($langs->trans("Logout").' ('.$stringforfirstkey.' l)').'"><i class="fa fa-sign-out-alt pictofixedwidth"></i><span class="hideonsmartphone">'.$langs->trans("Logout").'</span></a>';
 
 	$profilName = $user->getFullName($langs).' ('.$user->login.')';
@@ -3158,7 +3159,7 @@ function top_menu_search()
  *                                                  Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage|DE:GermanPage
  *                                                  For other external page: http://server/url
  *  @param  string		$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
- *  @param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,level?:int,prefix:string}>	$menu_array_after           Table of menu entries to show after entries of menu handler
+ *  @param  array<array{rowid:string,fk_menu:string,langs:string,enabled:int<0,2>,type:string,fk_mainmenu:string,fk_leftmenu:string,url:string,titre:string,perms:string,target:string,mainmenu:string,leftmenu:string,position:int,showtopmenuinframe:int,level?:int,prefix:string}>	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int			$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
  *  @param  string		$title                      Title of web page
  *  @param  int<0,1>	$acceptdelayedhtml          1 if caller request to have html delayed content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
@@ -3749,6 +3750,11 @@ if (!function_exists("llxFooter")) {
 		// A div for the #dialogforpopup popup
 		print "\n<!-- A div to allow dialog popup by jQuery('#dialogforpopup').dialog() -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
+
+		// A div for the #uiblock
+		print "\n<!-- A div to allow uiblock by dolBlockUI(message) -->\n";
+		print '<div id="dol-block-ui" style="display: none;"><div class="message">Loading...</div></div>'."\n";
+
 
 		// Add code for the asynchronous anonymous first ping (for telemetry)
 		// You can use &forceping=1 in parameters to force the ping if the ping was already sent.

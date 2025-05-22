@@ -565,7 +565,7 @@ $viewmode .= '<span class="marginrightonly"></span>';	// To add a space before t
 $newparam = '';
 $newcardbutton = '';
 if ($user->hasRight('agenda', 'myactions', 'create') || $user->hasRight('agenda', 'allactions', 'create')) {
-	$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true);
+	$tmpforcreatebutton = dol_getdate(dol_now('tzuserrel'), true, 'gmt');
 
 	$newparam .= '&month='.((int) $month).'&year='.((int) $tmpforcreatebutton['year']).'&mode='.urlencode($mode);
 

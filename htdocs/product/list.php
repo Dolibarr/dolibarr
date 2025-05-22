@@ -49,6 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
+
 
 if (isModEnabled('workstation')) {
 	require_once DOL_DOCUMENT_ROOT.'/workstation/class/workstation.class.php';
@@ -173,6 +175,8 @@ $extrafields = new ExtraFields($db);
 $form = new Form($db);
 $formcompany = new FormCompany($db);
 $formproduct = new FormProduct($db);
+$formfile = new FormFile($db);
+
 
 // fetch optionals attributes and labels
 $extrafields->fetch_name_optionals_label($object->table_element);
@@ -241,7 +245,7 @@ $arraypricelevel = array();
 $arrayfields = array(
 	'p.rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => '1', 'visible' => -2, 'noteditable' => 1, 'notnull' => 1, 'index' => 1, 'position' => 1, 'comment' => 'Id', 'css' => 'left'),
 	'p.ref' => array('label' => 'ProductRef', 'checked' => '1', 'position' => 5),
-	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '1', 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
+	'p.ref_ext' => array('label' => 'RefExt', 'checked' => '-1', 'position' => 6, 'visible' => getDolGlobalInt('MAIN_LIST_SHOW_REF_EXT')),
 	//'pfp.ref_fourn'=>array('label'=>$langs->trans("RefSupplier"), 'checked'=>1, 'enabled'=>(isModEnabled('barcode'))),
 	'thumbnail' => array('label' => 'Photo', 'checked' => '0', 'position' => 10),
 	'p.description' => array('label' => 'Description', 'checked' => '0', 'position' => 10),
@@ -891,7 +895,7 @@ $param .= $hookmanager->resPrint;
 $arrayofmassactions = array(
 	'generate_doc' => img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("ReGeneratePDF"),
 	'edit_extrafields' => img_picto('', 'edit', 'class="pictofixedwidth"').$langs->trans("ModifyValueExtrafields"),
-	//'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
+	'builddoc'=>img_picto('', 'pdf', 'class="pictofixedwidth"').$langs->trans("PDFMerge"),
 	//'presend'=>img_picto('', 'email', 'class="pictofixedwidth"').$langs->trans("SendByMail"),
 );
 if ($user->hasRight($rightskey, 'creer')) {
@@ -2387,6 +2391,24 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
+
+$hidegeneratedfilelistifempty = 1;
+if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) {
+	$hidegeneratedfilelistifempty = 0;
+}
+
+// Show list of available documents
+$urlsource = $_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+$urlsource .= str_replace('&amp;', '&', $param);
+
+$filedir = $diroutputmassaction;
+$genallowed = $user->hasRight('product', 'lire');
+$delallowed = $user->hasRight('product', 'creer');
+
+$formfile = new FormFile($db);
+print $formfile->showdocuments('massfilesarea_product', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+
 
 // End of page
 llxFooter();

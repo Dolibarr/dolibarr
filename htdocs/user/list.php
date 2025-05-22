@@ -1029,7 +1029,7 @@ while ($i < $imaxinloop) {
 
 	$object->id = $obj->rowid;
 	$object->admin = $obj->admin;
-	$object->ref = $obj->rowid;
+	$object->ref = (string) $obj->rowid;
 	$object->login = $obj->login;
 	$object->statut = $obj->status;
 	$object->status = $obj->status;
@@ -1101,7 +1101,7 @@ while ($i < $imaxinloop) {
 		}
 		// TechnicalID
 		if (!empty($arrayfields['u.rowid']['checked'])) {
-			print '<td class="nowraponall">'.dol_escape_htmltag($obj->rowid).'</td>';
+			print '<td class="nowraponall">'.dolPrintHTML((string) $obj->rowid).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
@@ -1120,18 +1120,21 @@ while ($i < $imaxinloop) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Lastname
 		if (!empty($arrayfields['u.lastname']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->lastname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Fistname
 		if (!empty($arrayfields['u.firstname']['checked'])) {
 			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($obj->lastname).'">'.dol_escape_htmltag($obj->firstname).'</td>';
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}
 		}
+		// Gender
 		if (!empty($arrayfields['u.gender']['checked'])) {
 			print '<td class="center">';
 			if ($obj->gender) {
@@ -1194,6 +1197,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 
+		// Accountancy code
 		if (!empty($arrayfields['u.accountancy_code']['checked'])) {
 			print '<td>'.$obj->accountancy_code.'</td>';
 			if (!$i) {
@@ -1217,7 +1221,7 @@ while ($i < $imaxinloop) {
 		}
 		// Email
 		if (!empty($arrayfields['u.email']['checked'])) {
-			print '<td class="tdoverflowmax150">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($obj->email).'">'.dol_print_email($obj->email, $obj->rowid, $obj->fk_soc, 1, 0, 0, 1)."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

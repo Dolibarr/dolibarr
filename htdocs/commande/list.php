@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Christophe Battarel			<christophe.battarel@altairis.fr>
  * Copyright (C) 2013		Cédric Salvado				<csalvador@gpcsolutions.fr>
- * Copyright (C) 2015-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2015-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2015		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
  * Copyright (C) 2016-2023	Ferran Marcet				<fmarcet@2byte.es>
@@ -425,6 +425,7 @@ if (empty($reshook)) {
 				$objecttmp->type = $objecttmp::TYPE_STANDARD;
 				$objecttmp->cond_reglement_id = !empty($cmd->cond_reglement_id) ? $cmd->cond_reglement_id : $cmd->thirdparty->cond_reglement_id;
 				$objecttmp->mode_reglement_id = !empty($cmd->mode_reglement_id) ? $cmd->mode_reglement_id : $cmd->thirdparty->mode_reglement_id;
+				$objecttmp->demand_reason_id = !empty($cmd->demand_reason_id) ? $cmd->demand_reason_id : $cmd->thirdparty->demand_reason_id;
 
 				$objecttmp->fk_project = $cmd->fk_project;
 				$objecttmp->multicurrency_code = $cmd->multicurrency_code;
@@ -2223,6 +2224,7 @@ while ($i < $imaxinloop) {
 	$generic_commande->ref = $obj->ref;
 	$generic_commande->status = $obj->fk_statut;
 	$generic_commande->statut = $obj->fk_statut;
+	$generic_commande->status = $obj->fk_statut;
 	$generic_commande->billed = $obj->billed;
 	$generic_commande->date = $db->jdate($obj->date_commande);
 	$generic_commande->delivery_date = $db->jdate($obj->delivery_date);

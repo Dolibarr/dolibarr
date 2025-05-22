@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2021  Laurent Destailleur     <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2025  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2025       Frédéric France         <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +20,14 @@
  *	\file       htdocs/waf.inc.php
  *	\ingroup	core
  *	\brief      File with WAF controls
- *				WARNING: This file must have absolutely no dependency with Dolibarr code.
+ *				WARNING: This file must have absolutely no dependency with any other code.
  *				It should be usable in any project.
  */
 
 // To disable the WAF for GET and POST and PHP_SELF, uncomment this
 //define('NOSCANPHPSELFFORINJECTION', 1);
 //define('NOSCANGETFORINJECTION', 1);
-//define('NOSCANPOSTFORINJECTION', 1 or 2);
+//define('NOSCANPOSTFORINJECTION', 1 or array('param1', 'param2'...));
 
 
  /**
@@ -148,13 +149,14 @@ function testSqlAndScriptInject($val, $type)
 
 	// For SQL Injection (only GET are used to scan for such injection strings)
 	if ($type == 1 || $type == 3) {
-		// Note the \s+ is replaced into \s* because some spaces may have been modified in previous loop
-		$inj += preg_match('/delete\s*from/i', $val);
-		$inj += preg_match('/create\s*table/i', $val);
-		$inj += preg_match('/insert\s*into/i', $val);
-		$inj += preg_match('/select\s*from/i', $val);
-		$inj += preg_match('/into\s*(outfile|dumpfile)/i', $val);
-		$inj += preg_match('/user\s*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
+		// Note the \s+ is replaced into \s* because some spaces may have been modified or removed in previous loop
+		$inj += preg_match('/delete[\/\*\s]*from/i', $val);
+		$inj += preg_match('/create[\/\*\s]*table/i', $val);
+		$inj += preg_match('/insert[\/\*\s]*into/i', $val);
+		$inj += preg_match('/select[\/\*\s]*from/i', $val);
+		$inj += preg_match('/from[\/\*\s]*dual/i', $val);
+		$inj += preg_match('/into[\/\*\s]*(outfile|dumpfile)/i', $val);
+		$inj += preg_match('/user[\/\*\s]*\(/i', $val); // avoid to use function user() or mysql_user() that return current database login
 		$inj += preg_match('/information_schema/i', $val); // avoid to use request that read information_schema database
 		$inj += preg_match('/<svg/i', $val); // <svg can be allowed in POST
 		$inj += preg_match('/update[^&=\w].*set.+=/i', $val);	// the [^&=\w] test is to avoid error when request is like action=update&...set... or &updatemodule=...set...
@@ -189,12 +191,12 @@ function testSqlAndScriptInject($val, $type)
 	$inj += preg_match('/=data:/si', $val);
 
 	// List of dom events is on https://www.w3schools.com/jsref/dom_obj_event.asp and https://developer.mozilla.org/en-US/docs/Web/Events
-	$inj += preg_match('/on(mouse|drag|key|load|touch|pointer|select|transition)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
-	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(dblclick|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(lostpointercapture|offline|online|pagehide|pageshow)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
-	$inj += preg_match('/on(timeupdate|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(abort|after|animation|auxclick|before|blur|bounce|cancel|canplay|canplaythrough|change|click|close|content|contextmenu|cuechange|copy|cut)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(dblclick|drag|drop|durationchange|emptied|end|ended|error|focus|focusin|focusout|formdata|gotpointercapture|hashchange|input|invalid)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(key|load|lostpointercapture|mouse)[a-z]*\s*=/i', $val); // onmousexxx can be set on img or any html tag like <img title='...' onmouseover=alert(1)>
+	$inj += preg_match('/on(offline|online|pagehide|pageshow|pointer)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(paste|pause|play|playing|progress|ratechange|reset|resize|scroll|select|search|seeked|seeking|show|stalled|start|submit|suspend)[a-z]*\s*=/i', $val);
+	$inj += preg_match('/on(timeupdate|touch|transition|toggle|unload|volumechange|waiting|wheel)[a-z]*\s*=/i', $val);
 	// More not into the previous list
 	$inj += preg_match('/on(repeat|begin|finish)[a-z]*\s*=/i', $val);
 
@@ -219,7 +221,9 @@ function testSqlAndScriptInject($val, $type)
 	// For XSS Injection done by adding javascript closing html tags like with onmousemove, etc... (closing a src or href tag with not cleaned param)
 	if ($type == 1 || $type == 3) {
 		$val = str_replace('enclosure="', 'enclosure=X', $val); // We accept enclosure=" for the export/import module
-		$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
+		if (!defined("SECURITY_WAF_ALLOW_QUOTES_IN_GET") || !constant("SECURITY_WAF_ALLOW_QUOTES_IN_GET")) {
+			$inj += preg_match('/"/i', $val); // We refused " in GET parameters value.
+		}
 	}
 	if ($type == 2) {
 		$inj += preg_match('/[:;"\'<>\?\(\){}\$%]/', $val); // PHP_SELF is a file system (or url path without parameters). It can contains spaces.
@@ -232,7 +236,7 @@ function testSqlAndScriptInject($val, $type)
  * Return true if security check on parameters are OK, false otherwise.
  *
  * @param		string|array<int|string,string>	$var		Variable name
- * @param		int<0,2>		$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		int<0,3>		$type		0=POST, 1=GET, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @param		int<0,1>		$stopcode	0=No stop code, 1=Stop code (default) if injection found
  * @return		boolean						True if there is no injection.
  */
@@ -241,11 +245,12 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type, $stopcode = 1)
 	if (is_array($var)) {
 		foreach ($var as $key => $value) {	// Warning, $key may also be used for attacks
 			// Exclude check for some variable keys
-			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, constant('NOSCANPOSTFORINJECTION'))) {
+			if ($type === 0 && defined('NOSCANPOSTFORINJECTION') && is_array(constant('NOSCANPOSTFORINJECTION')) && in_array($key, (array) constant('NOSCANPOSTFORINJECTION'))) {
 				continue;
 			}
 
-			if (analyseVarsForSqlAndScriptsInjection($key, $type, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
+			// Test on both the key (we force type to 1 for test on key, we must accept key like "delete=1" blocked with type 3) and the value
+			if (analyseVarsForSqlAndScriptsInjection($key, 1, $stopcode) && analyseVarsForSqlAndScriptsInjection($value, $type, $stopcode)) {
 				//$var[$key] = $value;	// This is useless
 			} else {
 				http_response_code(403);

@@ -74,7 +74,7 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
 // Load translation files required by the page
 $langs->loadLangs(array("companies", "other", "compta", "banks", "bills", "donations", "loan", "accountancy", "trips", "salaries", "hrm", "members"));
 
-// Multi journal&search_status=-1
+// Multi journal
 $id_journal = GETPOSTINT('id_journal');
 
 $date_startmonth = GETPOSTINT('date_startmonth');
@@ -144,6 +144,8 @@ if (!GETPOSTISSET('date_startmonth') && (empty($date_start) || empty($date_end))
 	$date_end = dol_get_last_day((int) $pastmonthyear, (int) $pastmonth, false);
 }
 
+// Get all bank lines
+//-------------------------------------
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.amount_main_currency, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
 $sql .= " soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
@@ -161,19 +163,19 @@ if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
 $sql .= " u.accountancy_code_user_general, u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, u.statut as userstatus,";
 $sql .= " bu2.type as typeop_user,";
 $sql .= " bu3.type as typeop_payment, bu4.type as typeop_payment_supplier";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql .= " JOIN ".MAIN_DB_PREFIX."bank_account as ba on b.fk_account=ba.rowid";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='user'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu4 ON bu4.fk_bank = b.rowid AND bu4.type='payment_supplier'";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as soc on bu1.url_id=soc.rowid";
+$sql .= " FROM ".$db->prefix()."bank as b";
+$sql .= " JOIN ".$db->prefix()."bank_account as ba on b.fk_account = ba.rowid";
+$sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu1 ON bu1.fk_bank = b.rowid AND bu1.type='company'";
+$sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu2 ON bu2.fk_bank = b.rowid AND bu2.type='user'";
+$sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu3 ON bu3.fk_bank = b.rowid AND bu3.type='payment'";
+$sql .= " LEFT JOIN ".$db->prefix()."bank_url as bu4 ON bu4.fk_bank = b.rowid AND bu4.type='payment_supplier'";
+$sql .= " LEFT JOIN ".$db->prefix()."societe as soc on bu1.url_id=soc.rowid";
 if (getDolGlobalString('MAIN_COMPANY_PERENTITY_SHARED')) {
-	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe_perentity as spe ON spe.fk_soc = soc.rowid AND spe.entity = " . ((int) $conf->entity);
+	$sql .= " LEFT JOIN " . $db->prefix() . "societe_perentity as spe ON spe.fk_soc = soc.rowid AND spe.entity = " . ((int) $conf->entity);
 }
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."user as u on bu2.url_id=u.rowid";
+$sql .= " LEFT JOIN ".$db->prefix()."user as u on bu2.url_id=u.rowid";
 $sql .= " WHERE ba.fk_accountancy_journal=".((int) $id_journal);
-$sql .= ' AND b.amount <> 0 AND ba.entity IN ('.getEntity('bank_account', 0).')'; // We don't share object for accountancy
+$sql .= " AND b.amount <> 0 AND ba.entity IN (".getEntity('bank_account', 0).")"; // We don't share object for accountancy
 if ($date_start && $date_end) {
 	$sql .= " AND b.dateo >= '".$db->idate($date_start)."' AND b.dateo <= '".$db->idate($date_end)."'";
 }
@@ -183,10 +185,10 @@ if (getDolGlobalInt('ACCOUNTING_DATE_START_BINDING')) {
 }
 // Already in bookkeeping or not
 if ($in_bookkeeping == 'already') {
-	$sql .= " AND (b.rowid IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+	$sql .= " AND (b.rowid IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 }
 if ($in_bookkeeping == 'notyet') {
-	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
+	$sql .= " AND (b.rowid NOT IN (SELECT fk_doc FROM ".$db->prefix()."accounting_bookkeeping as ab  WHERE ab.doc_type='bank') )";
 }
 if ($only_rappro == 2) {
 	$sql .= " AND (b.rappro = '1')";
@@ -1137,7 +1139,7 @@ if (empty($action) || $action == 'view') {
 		'already' => $langs->trans("AlreadyInGeneralLedger")
 	);
 	$period = $form->selectDate($date_start ? $date_start : -1, 'date_start', 0, 0, 0, '', 1, 0).' - '.$form->selectDate($date_end ? $date_end : -1, 'date_end', 0, 0, 0, '', 1, 0);
-	$period .= ' -  '.$langs->trans("JournalizationInLedgerStatus").' '.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
+	$period .= '<span class="valignmiddle"> -  '.$langs->trans("JournalizationInLedgerStatus").' </span>'.$form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle');
 
 	$varlink = 'id_journal='.$id_journal;
 	$periodlink = '';
@@ -1147,7 +1149,7 @@ if (empty($action) || $action == 'view') {
 		1 => $langs->trans("TransfertAllBankLines"),
 		2 => $langs->trans("TransfertOnlyConciliatedBankLine")
 	);
-	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro)];
+	$moreoptions = [ "BankLineConciliated" => $form->selectarray('only_rappro', $listofchoices, $only_rappro, 0, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle')];
 
 	journalHead($nom, '', $period, $periodlink, $description, $builddate, $exportlink, array('action' => ''), '', $varlink, $moreoptions);
 
@@ -1414,21 +1416,21 @@ if (empty($action) || $action == 'view') {
 								if (!empty($tabcompany[$key]['code_compta'])) {
 									if (in_array($tabtype[$key], array('payment_various'))) {
 										// For such case, if subledger is not defined, we won't use subledger accounts.
-										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
+										$accounttoshowsubledger = '<span class="warning small twolinesmax">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored").'</span>';
 									} elseif (in_array($tabtype[$key], array('payment_salary'))) {
-										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2").'</span>';
+										$accounttoshowsubledger = '<span class="warning small twolinesmax">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownSubledgerIgnored2").'</span>';
 									} else {
-										$accounttoshowsubledger = '<span class="warning small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
+										$accounttoshowsubledger = '<span class="warning small twolinesmax">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknown", $tabcompany[$key]['code_compta']).'</span>';
 									}
 								} else {
-									$accounttoshowsubledger = '<span class="error small">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
+									$accounttoshowsubledger = '<span class="error small twolinesmax">'.$langs->trans("ThirdpartyAccountNotDefinedOrThirdPartyUnknownBlocking").'</span>';
 								}
 							}
 						} else {
 							$accounttoshowsubledger = '';
 						}
 					}
-					print '<td class="maxwidth300 nopaddingtopimp nopaddingbottomimp">';
+					print '<td class="maxwidth300 nopaddingtopimp nopaddingbottomimp" title="'.dolPrintHTMLForAttribute(dol_string_nohtmltag($accounttoshowsubledger)).'">';
 					print $accounttoshowsubledger;	// This is a html string
 					print "</td>";
 

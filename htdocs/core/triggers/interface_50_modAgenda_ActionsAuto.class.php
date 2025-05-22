@@ -1490,17 +1490,17 @@ class InterfaceActionsAuto extends DolibarrTriggers
 				}
 			}
 
-			// Concat note with data from context
-			if (!empty($object->context['actionmsgmore'])) {	// For description
-				$object->actionmsg = dol_concatdesc($object->actionmsg, $object->context['actionmsgmore']);
-			}
-			if (!empty($object->context['actionmsg2more'])) {	// For label
-				$object->actionmsg2 = dol_concatdesc($object->actionmsg2, $object->context['actionmsg2more']);
-			}
-
 			if (!isset($object->sendtoid) || !is_array($object->sendtoid)) {
 				$object->sendtoid = array();
 			}
+		}
+
+		// Concat note with data from context
+		if (!empty($object->context['actionmsgmore'])) {	// For description
+			$object->actionmsg = dol_concatdesc($object->actionmsg, $object->context['actionmsgmore']);
+		}
+		if (!empty($object->context['actionmsg2more'])) {	// For label
+			$object->actionmsg2 = dol_concatdesc($object->actionmsg2, $object->context['actionmsg2more']);
 		}
 
 		// If trackid is not defined, we set it.

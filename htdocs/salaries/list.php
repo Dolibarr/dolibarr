@@ -800,7 +800,7 @@ while ($i < $imaxinloop) {
 	$userstatic->photo = $obj->photo;
 
 	$salstatic->id = $obj->rowid;
-	$salstatic->ref = $obj->rowid;
+	$salstatic->ref = (string) $obj->rowid;
 	$salstatic->label = $obj->label;
 	$salstatic->paye = $obj->paye;
 	$salstatic->status = $obj->paye;

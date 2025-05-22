@@ -17,6 +17,7 @@
  * Copyright (C) 2019-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2023		Benjamin Falière		<benjamin.faliere@altairis.fr>
  * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Lenin Rivas				<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -870,8 +871,8 @@ class Product extends CommonObject
 		'datec'         => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 500),
 		'tms'           => array('type' => 'timestamp', 'label' => 'DateModification', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 501),
 		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
-		'fk_user_author' => array('type' => 'integer', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_user.rowid'),
-		'fk_user_modif' => array('type' => 'integer', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
+		'fk_user_author' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserAuthor', 'enabled' => 1, 'visible' => -2, 'notnull' => 1, 'position' => 510, 'foreignkey' => 'llx_user.rowid'),
+		'fk_user_modif' => array('type' => 'integer:User:user/class/user.class.php', 'label' => 'UserModif', 'enabled' => 1, 'visible' => -2, 'notnull' => -1, 'position' => 511),
 		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
 		'localtax1_tx' => array('type' => 'double(6,3)', 'label' => 'Localtax1tx', 'enabled' => 1, 'position' => 150, 'notnull' => 0, 'visible' => -1,),
 		'localtax1_type' => array('type' => 'varchar(10)', 'label' => 'Localtax1type', 'enabled' => 1, 'position' => 155, 'notnull' => 1, 'visible' => -1,),
@@ -1050,7 +1051,8 @@ class Product extends CommonObject
 		$this->mandatory_period = empty($this->mandatory_period) ? 0 : $this->mandatory_period;
 		// Check parameters
 		if (empty($this->label)) {
-			$this->error = 'ErrorMandatoryParametersNotProvided';
+			$langs->load('errors');
+			$this->errors[] = $langs->trans('ErrorMandatoryParametersNotProvided');
 			return -1;
 		}
 
@@ -2364,6 +2366,7 @@ class Product extends CommonObject
 		$pu_ht = $this->price;
 		$pu_ttc = $this->price_ttc;
 		$price_min = $this->price_min;
+		$price_min_ttc = $this->price_min_ttc;
 		$price_base_type = $this->price_base_type;
 
 		// if price by customer / level
@@ -2385,6 +2388,7 @@ class Product extends CommonObject
 							$pricebycustomerexist = true;
 							$pu_ht = price($custprice_line->price);
 							$price_min = price($custprice_line->price_min);
+							$price_min_ttc = price($custprice_line->price_min_ttc);
 							$pu_ttc = price($custprice_line->price_ttc);
 							$price_base_type = $custprice_line->price_base_type;
 							$tva_tx = $custprice_line->tva_tx;
@@ -2405,6 +2409,7 @@ class Product extends CommonObject
 				$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 				$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 				$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+				$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
 				$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
 				if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {
 					// using this option is a bug. kept for backward compatibility
@@ -2423,6 +2428,7 @@ class Product extends CommonObject
 			$pu_ht = $this->multiprices[$thirdparty_buyer->price_level];
 			$pu_ttc = $this->multiprices_ttc[$thirdparty_buyer->price_level];
 			$price_min = $this->multiprices_min[$thirdparty_buyer->price_level];
+			$price_min_ttc = $this->multiprices_min_ttc[$thirdparty_buyer->price_level];
 			$price_base_type = $this->multiprices_base_type[$thirdparty_buyer->price_level];
 			if (getDolGlobalString('PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL')) {  // using this option is a bug. kept for backward compatibility
 				if (isset($this->multiprices_tva_tx[$thirdparty_buyer->price_level])) {
@@ -2451,6 +2457,7 @@ class Product extends CommonObject
 						if ($custprice_line->date_begin <= $date_now && (empty($custprice_line->date_end) || $date_now <= $custprice_line->date_end)) {
 							$pu_ht = price($custprice_line->price);
 							$price_min = price($custprice_line->price_min);
+							$price_min_ttc = price($custprice_line->price_min_ttc);
 							$pu_ttc = price($custprice_line->price_ttc);
 							$price_base_type = $custprice_line->price_base_type;
 							$tva_tx = $custprice_line->tva_tx;
@@ -2504,7 +2511,7 @@ class Product extends CommonObject
 			}
 		}
 
-		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
+		return array('pu_ht' => $pu_ht, 'pu_ttc' => $pu_ttc, 'price_min' => $price_min, 'price_min_ttc' => $price_min_ttc, 'price_base_type' => $price_base_type, 'tva_tx' => $tva_tx, 'tva_npr' => $tva_npr);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -5741,6 +5748,9 @@ class Product extends CommonObject
 				if (isModEnabled('productbatch')) {
 					$langs->load("productbatch");
 					$datas['batchstatus'] = "<br><b>".$langs->trans("ManageLotSerial").'</b>: '.$this->getLibStatut(0, 2);
+					if ($this->status_batch) {
+						$datas['batchdlc'] = "<br><b>".$langs->trans("BatchSellOrEatByMandatoryList", $langs->transnoentitiesnoconv("SellByDate"), $langs->transnoentitiesnoconv("EatByDate")).'</b>: '.$this->getSellOrEatByMandatoryLabel();
+					}
 				}
 			}
 			if (isModEnabled('barcode')) {
@@ -6443,6 +6453,88 @@ class Product extends CommonObject
 		return 1;
 	}
 
+	/**
+	 * Load stock for components of virtual product (first level only)
+	 *
+	 * @param  	string 		$option					'' = Load all stock info, also from closed and internal warehouses, 'nobatch' = do not load batch detail, 'novirtual' = do no load virtual detail
+	 * @param 	int|float 	$qtyWish				[=1] Default quantity wish for the virtual product (1 by default or put qty ordered)
+	 * @return 	int                  				Return integer < 0 if KO, > 0 if OK
+	 */
+	public function loadStockForVirtualProduct($option = '', $qtyWish = 1)
+	{
+		$this->stock_warehouse = array();
+		$error = 0;
+
+		$this->get_sousproduits_arbo();
+		$prods_arbo = $this->get_arbo_each_prod($qtyWish, 1);
+		if (count($prods_arbo) > 0) {
+			$productCachedList = array();
+			$stockByComponentList = array();
+
+			foreach ($prods_arbo as $componentArr) {
+				$componentId = $componentArr['id'];
+				// only component whose manage stock
+				if ($componentArr['incdec'] == 1) {
+					if (!isset($productCachedList[$componentId])) {
+						$componentStatic = new self($this->db);
+						$componentStatic->fetch($componentId);
+						// check if it's a sub-kit
+						$childrenNb = $componentStatic->hasFatherOrChild(1);
+						if ($childrenNb == 0) {
+							$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+							if (!isset($stockByComponentList[$componentId])) {
+								$stockByComponentList[$componentId] = array(
+									'qty_need' => 0
+								);
+							}
+							$stockByComponentList[$componentId]['qty_need'] += $componentArr['nb_total'];
+						}
+						$productCachedList[$componentId] = $componentStatic;
+					}
+				}
+			}
+
+			if (!empty($stockByComponentList)) {
+				foreach ($stockByComponentList as $componentId => $stockByComponentArr) {
+					if (!isset($productCachedList[$componentId])) {
+						$componentStatic = new self($this->db);
+						$componentStatic->fetch($componentId);
+						$componentStatic->load_stock('nobatch,novirtual'); // Load stock to get true ->stock_reel
+						$productCachedList[$componentId] = $componentStatic;
+					}
+					$component = $productCachedList[$componentId];
+
+
+					if ($component->stock_reel < $stockByComponentArr['qty_need']) {
+						// not enough stock for this component to assemble this virtual product
+						$error++;
+						$this->error = 'Not enough component [id='.$componentId.'] in stock, real='.$component->stock_reel.' and need='.$stockByComponentArr['qty_need'];
+						$this->errors[] = $this->error;
+						dol_syslog(__METHOD__.' : '.$this->error, LOG_ERR);
+					} else {
+						if (!empty($component->stock_warehouse)) {
+							foreach ($component->stock_warehouse as $warehouseId => $warehouseObj) {
+								$kitWarehouseAvailable = new stdClass();
+								$kitWarehouseAvailable->id = $warehouseObj->id;
+								$kitWarehouseAvailable->real = $qtyWish;
+								$this->stock_warehouse[$warehouseId] = $kitWarehouseAvailable;
+							}
+						}
+					}
+
+					if ($error) {
+						break;
+					}
+				}
+			}
+		}
+
+		if ($error) {
+			return -1;
+		} else {
+			return 1;
+		}
+	}
 
 	/**
 	 *  Load existing information about a serial

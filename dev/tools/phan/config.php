@@ -161,6 +161,7 @@ $VALID_MODULE_MAPPING = array(
 	'stock' => 'Stock',
 	'stocktransfer' => 'StockTransfer',
 	'stripe' => 'Stripe',
+	'subtotals' => 'Subtotals',
 	'supplier_invoice' => null,  // Special case, uses invoice
 	'supplier_order' => null,  // Special case, uses invoice
 	'supplier_proposal' => 'SupplierProposal',

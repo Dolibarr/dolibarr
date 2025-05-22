@@ -239,7 +239,7 @@ These are features that Dolibarr does **not** yet fully support:
 Administrator, user, developer and translator's documentation are available along with other community resources in the [Wiki](https://wiki.dolibarr.org).
 
 
-## CONTRIBUTING
+## CONTRIBUTING AND RELEASE PROCESS
 
 This project exists thanks to all the people who contribute.
 Please read the instructions on how to contribute (report a bug/error, a feature request, send code, ...)  [[Contributing](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)]
@@ -247,6 +247,8 @@ Please read the instructions on how to contribute (report a bug/error, a feature
 A View on Contributors:
 
 [![Dolibarr](https://opencollective.com/dolibarr/contributors.svg?width=890&button=false)](https://github.com/Dolibarr/dolibarr/graphs/contributors)
+
+The release process is described into the file dev/build/makepack-howto.md
 
 
 ## CREDITS

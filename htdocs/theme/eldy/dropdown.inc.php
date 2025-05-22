@@ -23,6 +23,9 @@ include_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 @phan-var-force string $left
 @phan-var-force string $right
 ';
+
+$borderradius = getDolGlobalString('THEME_ELDY_USEBORDERONTABLE') ? getDolGlobalInt('THEME_ELDY_BORDER_RADIUS', 6) : 0;
+
 ?>
 
 /* IDE Hack <style type="text/css"> */
@@ -70,7 +73,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-bookmark {
@@ -93,7 +95,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-quickadd {
@@ -116,7 +117,6 @@ button.dropdown-item.global-search-item {
 	border: 1px solid #ccc;
 	border: 1px solid rgba(0,0,0,.15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 .dropdown-menu {
@@ -136,7 +136,6 @@ button.dropdown-item.global-search-item {
 	background-clip: padding-box;
 	border: 1px solid rgba(128, 128, 128, .15);
 	border-radius: 4px;
-	-webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
 
@@ -256,7 +255,7 @@ a.top-menu-dropdown-link {
 }
 
 .dropdown-menu .dropdown-header{
-	padding: 8px 8px 8px 8px;
+	padding: 8px 12px 8px 16px;
 }
 
 .dropdown-menu > .user-footer {
@@ -360,14 +359,11 @@ a.dropdown-item {
 	user-select: none;
 	background-image: none;
 	border: 1px solid transparent;
-	border-radius: 4px;
+	border-radius: 3px;
 }
 
 .user-footer .button-top-menu-dropdown {
 	color: #666666;
-	border-radius: 0;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	border-width: 1px;
 	background-color: #f4f4f4;
@@ -376,8 +372,6 @@ a.dropdown-item {
 
 .dropdown-menu a.top-menu-dropdown-link {
 	color: rgb(<?php print $colortextlink; ?>) !important;
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 	display: block;
 	margin: 5px 0px;
@@ -394,9 +388,6 @@ a.dropdown-item {
 	text-align: inherit;
 	background-color: transparent;
 	border: 0;
-
-	-webkit-box-shadow: none;
-	-moz-box-shadow: none;
 	box-shadow: none;
 }
 .dropdown-item.bookmark-item {
@@ -448,6 +439,7 @@ li.liinputsearch {
 	display: block;
 	top: 0;
 	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -463,6 +455,8 @@ li.liinputsearch {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .quickadd-item {
@@ -527,7 +521,7 @@ div.quickaddblock:focus {
 .dropdown-content {
 	display: none;
 	position: absolute;
-	z-index: 1;
+	z-index: 5;
 	width: 300px;
 	right:0;	/* will be set with js */
 	bottom: 0;
@@ -536,7 +530,6 @@ div.quickaddblock:focus {
 	background: #fff;
 	border: 1px solid #bbb;
 	text-align: <?php echo $left; ?>;
-	-webkit-box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 	box-shadow: 5px 5px 0px rgba(0,0,0,0.1);
 }
 
@@ -624,6 +617,9 @@ div.quickaddblock:focus {
 	left: 12px;
 }
 
+.dropdown-search-input {
+	border-radius: <?php print $borderradius; ?>px;
+}
 
 /* smartphone */
 @media only screen and (max-width: 767px)
@@ -651,7 +647,6 @@ div.quickaddblock:focus {
 	}
 	.dropdown-menu:not(.ai_dropdown) {
 		border: none;
-		-webkit-box-shadow: none;
 		box-shadow: none;
 	}
 

@@ -2,7 +2,7 @@
 /* Copyright (C) 2014-2017  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2015-2022  Alexandre Spangaro  <aspangaro@open-dsi.fr>
  * Copyright (C) 2015-2020  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Jose MARTINEZ	    <jose.martinez@pichinov.com>
  *
@@ -205,6 +205,11 @@ class BookKeeping extends CommonObject
 	 */
 	public static $can_modify_bookkeeping_sql_cached;
 
+	/**
+	 * @var string[]	Array of warnings
+	 */
+	public $warnings = array();
+
 
 	/**
 	 * Constructor
@@ -296,7 +301,7 @@ class BookKeeping extends CommonObject
 			$this->credit = 0.0;
 		}
 
-		$result = $this->validBookkeepingDate($this->doc_date);
+		$result = $this->validBookkeepingDate($this->doc_date);	// Check date according to ACCOUNTANCY_FISCAL_PERIOD_MODE.
 		if ($result < 0) {
 			return -1;
 		} elseif ($result == 0) {
@@ -500,6 +505,68 @@ class BookKeeping extends CommonObject
 			$this->db->commit();
 			return $result;
 		}
+	}
+
+	/**
+	 *	Create a line in database from values as parameters
+	 *
+	 * 	@param		int 			$doc_date				Date of source document, in db date NOT NULL
+	 * 	@param		string 			$doc_ref				Doc ref
+	 * 	@param 		string 			$doc_type				Doc type
+	 * 	@param 		int 			$fk_doc					Doc id
+	 * 	@param 		int 			$fk_docdet				Doc line id
+	 * 	@param 		string 			$numero_compte			Account number
+	 * 	@param 		string 			$label_compte			Account label
+	 * 	@param 		string 			$label_operation		Operation label
+	 * 	@param 		double 			$amount					Amount
+	 * 	@param 		string 			$code_journal			Journal code
+	 * 	@param 		string 			$journal_label			Journal label
+	 * 	@param 		string 			$subledger_account		Sub ledger account
+	 * 	@return		int				Return integer <0 if KO, O nothing done, created object id if OK
+	 */
+	public function createFromValues($doc_date, $doc_ref, $doc_type, $fk_doc, $fk_docdet, $numero_compte, $label_compte, $label_operation, $amount, $code_journal, $journal_label, $subledger_account)
+	{
+		global $conf, $langs, $user;
+
+		$result = 0;
+
+		if (!empty($amount)) {
+			$this->doc_date = $doc_date;
+			$this->doc_ref = $doc_ref;
+			$this->doc_type = $doc_type;
+			$this->fk_doc = $fk_doc;
+			$this->fk_docdet = $fk_docdet;
+
+			$this->numero_compte = $numero_compte;
+			$this->label_compte = $label_compte;
+
+			$this->label_operation = $label_operation;
+			$this->subledger_account = $subledger_account;
+
+			$this->montant = $amount;
+			$this->sens = ($amount >= 0) ? 'D' : 'C';
+			$this->debit = ($amount >= 0 ? $amount : 0);
+			$this->credit = ($amount < 0 ? -$amount : 0);
+
+			$this->code_journal = $code_journal;
+			$this->journal_label = $journal_label;
+
+			$this->fk_user_author = $user->id;
+			$this->entity = $conf->entity;
+
+			$result = $this->create($user);
+			if ($result < 0) {
+				if ($this->error == 'BookkeepingRecordAlreadyExists') {
+					$warning = $langs->trans('WarningBookkeepingRecordAlreadyExists', $this->doc_type, $this->fk_doc, $this->fk_docdet);
+					$this->warnings[] = $warning;
+					dol_syslog(__METHOD__.' '.$warning, LOG_WARNING);
+				} else {
+					dol_syslog(__METHOD__.' '.$this->errorsToString(), LOG_ERR);
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
@@ -724,7 +791,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' '.(empty($this->code_journal) ? 'NULL' : "'".$this->db->escape($this->code_journal)."'").',';
 		$sql .= ' '.(empty($this->journal_label) ? 'NULL' : "'".$this->db->escape($this->journal_label)."'").',';
 		$sql .= ' '.(empty($this->piece_num) ? 'NULL' : $this->db->escape((string) $this->piece_num)).',';
-		$sql .= ' '.(empty($this->ref) ? '' : "'".$this->db->escape($this->ref)."'").',';
+		$sql .= ' '.(empty($this->ref) ? "''" : "'".$this->db->escape($this->ref)."'").',';
 		$sql .= ' '.(!isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
@@ -2435,7 +2502,7 @@ class BookKeeping extends CommonObject
 		dol_syslog(get_class($this)."::select_account", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
-			$obj = '';
+			$obj = (object) array('label' => '');
 			if ($this->db->num_rows($resql)) {
 				$obj = $this->db->fetch_object($resql);
 			}
@@ -2550,42 +2617,55 @@ class BookKeeping extends CommonObject
 	}
 
 	/**
-	 * Generate label operation when operation is transferred into accounting
+	 * Generate label operation when operation is transferred into accounting according to ACCOUNTING_LABEL_OPERATION_ON_TRANSFER
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 0, we concat thirdparty name, ref and label.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 1, we concat thirdparty name, ref.
+	 * If ACCOUNTING_LABEL_OPERATION_ON_TRANSFER is 2, we return just thirdparty name
 	 *
 	 * @param 	string  $thirdpartyname         Thirdparty name
 	 * @param 	string  $reference              Reference of the element
 	 * @param 	string  $labelaccount           Label of the accounting account
+	 * @param	int<0,1> $full					0=Default, 1=Keep label intact (no trunc so HTML content is not corrupted)
 	 * @return	string                          Label of the operation
 	 */
-	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount)
+	public function accountingLabelForOperation($thirdpartyname, $reference, $labelaccount, $full = 0)
 	{
-		global $conf;
-
 		$accountingLabelOperation = '';
 
-		if (!getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') || getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 0) {
+		if (!getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER')) {
 			$truncThirdpartyName = 16;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
 			if (!empty($labelaccount)) {
 				$accountingLabelOperation .= ' - '. $labelaccount;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 1) {
 			$truncThirdpartyName = 32;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 			if (!empty($reference)) {
 				$accountingLabelOperation .= ' - '. $reference;
 			}
-		} elseif (getDolGlobalString('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
+		} elseif (getDolGlobalInt('ACCOUNTING_LABEL_OPERATION_ON_TRANSFER') == 2) {
 			$truncThirdpartyName = 64;
 			// Avoid trunc with dot in accountancy for the compatibility with another accounting software
-			$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			if (empty($full)) {
+				$accountingLabelOperation = dol_trunc($thirdpartyname, $truncThirdpartyName, 'right', 'UTF-8', 1);
+			} else {
+				$accountingLabelOperation = $thirdpartyname;
+			}
 		}
-		dol_syslog('label'.$accountingLabelOperation, LOG_ERR);
 
 		return $accountingLabelOperation;
 	}

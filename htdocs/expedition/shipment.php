@@ -614,7 +614,7 @@ if ($order_id > 0 || !empty($ref)) {
 		$sql .= " cd.qty, cd.fk_unit, cd.rang,";
 		$sql .= ' cd.date_start,';
 		$sql .= ' cd.date_end,';
-		$sql .= ' cd.special_code,';
+		$sql .= ' cd.special_code, cd.extraparams,';
 		$sql .= ' p.rowid as prodid, p.label as product_label, p.entity, p.ref, p.fk_product_type as product_type, p.description as product_desc,';
 		$sql .= ' p.weight, p.weight_units, p.length, p.length_units, p.width, p.width_units, p.height, p.height_units,';
 		$sql .= ' p.surface, p.surface_units, p.volume, p.volume_units';
@@ -661,7 +661,7 @@ if ($order_id > 0 || !empty($ref)) {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 
-				if (empty($reshook)) {
+				if (empty($reshook) && $objp->special_code != SUBTOTALS_SPECIAL_CODE) {
 					// Show product and description
 					$type = isset($objp->type) ? $objp->type : $objp->product_type;
 
@@ -840,6 +840,9 @@ if ($order_id > 0 || !empty($ref)) {
 							}
 						}
 					}
+				} elseif (empty($reshook) && $objp->special_code == SUBTOTALS_SPECIAL_CODE) {
+					$line = $objp;
+					require dol_buildpath('/core/tpl/subtotal_expedition_view.tpl.php');
 				}
 				$i++;
 			}

@@ -152,9 +152,14 @@ abstract class CommonObject
 	public $array_languages = null; // Value is array() when load already tried
 
 	/**
-	 * @var array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>	 	To store result of ->liste_contact()
+	 * @var array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>	 	To store result of ->liste_contact() for external contacts
 	 */
 	public $contacts_ids;
+
+	/**
+	 * @var array<int,array{parentId:int,source:string,socid:int,id:int,nom:string,civility:string,lastname:string,firstname:string,email:string,login:string,photo:string,statuscontact:int,rowid:int,code:string,libelle:string,status:int,fk_c_type_contact:int}>	 	To store result of ->liste_contact() for internal contacts
+	 */
+	public $contacts_ids_internal;
 
 	/**
 	 * @var mixed		Array of linked objects, set and used when calling ->create() to be able to create links during the creation of object
@@ -905,7 +910,7 @@ abstract class CommonObject
 	{
 		global $db, $conf;
 
-		$sql = "SELECT rowid, ref, ref_ext";
+		$sql = "SELECT rowid";
 		$sql .= " FROM ".$db->prefix().$element;
 		$sql .= " WHERE entity IN (".getEntity($element).")";
 
@@ -1240,7 +1245,6 @@ abstract class CommonObject
 		// phpcs:enable
 		global $user, $langs;
 
-
 		dol_syslog(get_class($this)."::add_contact $fk_socpeople, $type_contact, $source, $notrigger");
 
 		// Check parameters
@@ -1255,6 +1259,26 @@ abstract class CommonObject
 			$this->error = $langs->trans("ErrorWrongValueForParameterX", "2");
 			dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
 			return -2;
+		}
+
+		if ($this->restrictiononfksoc && property_exists($this, 'socid') && !empty($this->socid) && !$user->hasRight('societe', 'client', 'voir')) {
+			$sql_allowed_contacts = 'SELECT COUNT(*) as cnt FROM '.$this->db->prefix().'societe_commerciaux as sc';
+			$sql_allowed_contacts.= ' WHERE sc.fk_soc = '.(int) $this->socid;
+			$sql_allowed_contacts.= ' AND sc.fk_user = '.(int) $user->id;
+
+			$resql_allowed_contacts = $this->db->query($sql_allowed_contacts);
+
+			if (!$resql_allowed_contacts) {
+				$this->errors[] = $this->db->lasterror();
+				return -3;
+			} elseif ($obj = $this->db->fetch_object($resql_allowed_contacts)) {
+				if ($obj->cnt == 0) {
+					$langs->load("companies");
+					$this->error = $langs->trans("ErrorCommercialNotAllowedForThirdparty", $user->admin);
+					dol_syslog(get_class($this)."::add_contact ".$this->error, LOG_ERR);
+					return -3;
+				}
+			}
 		}
 
 		$id_type_contact = 0;
@@ -1276,7 +1300,6 @@ abstract class CommonObject
 				}
 			}
 		}
-
 		if ($id_type_contact == 0) {
 			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
 			return 0;
@@ -2765,7 +2788,7 @@ abstract class CommonObject
 			$fieldname = 'multicurrency_tx';
 
 			$sql = 'UPDATE '.$this->db->prefix().$this->table_element;
-			$sql .= " SET ".$fieldname." = ".((float) $rate);
+			$sql .= " SET ".$this->db->sanitize($fieldname)." = ".((float) $rate);
 			$sql .= ' WHERE rowid='.((int) $this->id);
 
 			if ($this->db->query($sql)) {
@@ -2874,6 +2897,39 @@ abstract class CommonObject
 									$line->situation_percent,
 									$line->fk_unit,
 									$line->multicurrency_subprice
+								);
+								break;
+							case 'facturerec':
+								/** @var FactureRec $this */
+								/** @var FactureLigneRec $line */
+								'@phan-var-force FactureRec $this';
+								'@phan-var-force FactureLigneRec $line';
+								$this->updateline(
+									$line->id,
+									($line->description ? $line->description : $line->desc),
+									$line->subprice,
+									$line->qty,
+									$line->tva_tx,
+									$line->localtax1_tx,
+									$line->localtax2_tx,
+									$line->fk_product,
+									$line->remise_percent,
+									'HT',
+									$line->info_bits,
+									0,
+									0,
+									$line->product_type,
+									$line->rang,
+									$line->special_code,
+									$line->label,
+									$line->fk_unit,
+									$line->multicurrency_subprice,
+									0,
+									$line->date_start,
+									$line->date_end,
+									$line->fk_fournprice,
+									$line->pa_ht,
+									$line->fk_parent_line
 								);
 								break;
 							case 'supplier_proposal':
@@ -4854,8 +4910,6 @@ abstract class CommonObject
 	 */
 	public function getCanvas($id = 0, $ref = '')
 	{
-		global $conf;
-
 		if (empty($id) && empty($ref)) {
 			return 0;
 		}
@@ -5336,8 +5390,8 @@ abstract class CommonObject
 
 			print "<!-- begin printObjectLines() -->\n";
 			foreach ($this->lines as $line) {
-				//Line extrafield
-				$line->fetch_optionals();
+				// Line extrafield. TODO Remove this. extrafields should be already loaded.
+				//$line->fetch_optionals();
 
 				if (is_object($hookmanager)) {
 					if (empty($line->fk_parent_line)) {
@@ -5348,7 +5402,7 @@ abstract class CommonObject
 						$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 					}
 				}
-				if (empty($reshook) && $buyer !== null) {
+				if (empty($reshook)) {
 					$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 				}
 
@@ -5369,7 +5423,7 @@ abstract class CommonObject
 	 *	@param  int		    		$i					I
 	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
 	 *	@param  Societe	    		$seller            	Object of seller third party
-	 *	@param  Societe	    		$buyer             	Object of buyer third party
+	 *	@param  ?Societe	    	$buyer             	Object of buyer third party
 	 *	@param	int					$selected		   	ID line selected
 	 *  @param  ?ExtraFields		$extrafields		Object of extrafields
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
@@ -6299,6 +6353,7 @@ abstract class CommonObject
 	/**
 	 *  Function to get alternative languages of a data into $this->array_languages
 	 *  This method is NOT called by method fetch of objects but must be called separately.
+	 *  Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 *  @return	int<-1,1>					Return integer <0 if error, 0 if no values of alternative languages to find nor found, 1 if a value was found and loaded
 	 *  @see fetch_optionnals()
@@ -6329,7 +6384,6 @@ abstract class CommonObject
 		$sql .= " WHERE type_object = '".$this->db->escape($element)."'";
 		$sql .= " AND fk_object = ".((int) $this->id);
 
-		//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$numrows = $this->db->num_rows($resql);
@@ -6368,6 +6422,7 @@ abstract class CommonObject
 
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
+	 * Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 * @param	string	$onlykey		Only the following key is filled. When we make update of only one language field ($action = 'update_languages'), calling page must set this to avoid to have other languages being reset.
 	 * @return	int<-1,1>				1 if array_options set, 0 if no value, -1 if error (field required missing for example)
@@ -6652,7 +6707,7 @@ abstract class CommonObject
 	{
 		global $langs, $user;
 
-		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED')) {
+		if (getDolGlobalString('MAIN_EXTRAFIELDS_DISABLED') || empty($this->array_options)) {
 			return 0;
 		}
 
@@ -6662,356 +6717,326 @@ abstract class CommonObject
 
 		$error = 0;
 
-		if (!empty($this->array_options)) {
-			// Check parameters
-			$langs->load('admin');
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-			$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
+		// Check parameters
+		$langs->load('admin');
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$target_extrafields = $extrafields->fetch_name_optionals_label($this->table_element);
 
-			// Eliminate copied source object extra fields that do not exist in target object
-			$new_array_options = array();
-			foreach ($this->array_options as $key => $value) {
-				if (in_array(substr($key, 8), array_keys($target_extrafields))) {	// We remove the 'options_' from $key for test
-					$new_array_options[$key] = $value;
-				} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contain the 'options_' prefix
-					$new_array_options['options_'.$key] = $value;
+		// Eliminate copied source object extra fields that do not exist in target object
+		$new_array_options = array();
+		foreach ($this->array_options as $key => $value) {
+			if (in_array(substr($key, 8), array_keys($target_extrafields))) {	// We remove the 'options_' from $key for test
+				$new_array_options[$key] = $value;
+			} elseif (in_array($key, array_keys($target_extrafields))) {		// We test on $key that does not contain the 'options_' prefix
+				$new_array_options['options_'.$key] = $value;
+			}
+		}
+
+		foreach ($new_array_options as $key => $value) {
+			$attributeKey      = substr($key, 8); // Remove 'options_' prefix
+			$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			$attributeLabel    = $langs->transnoentities($extrafields->attributes[$this->table_element]['label'][$attributeKey]);
+			$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
+			$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
+			$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
+			$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
+
+			// If we clone, we have to clean unique extrafields to prevent duplicates.
+			// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
+			if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+				$new_array_options[$key] = null;
+			}
+
+			// If we create product combination, we have to clean unique extrafields to prevent duplicates.
+			// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
+			if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
+				$new_array_options[$key] = null;
+			}
+
+			// Similar code than into insertExtraFields
+			if ($attributeRequired) {
+				$v = $this->array_options[$key];
+				if (ExtraFields::isEmptyValue($v, $attributeType)) {
+					$langs->load("errors");
+					dol_syslog("Mandatory field '".$key."' is empty during create and set to required into definition of extrafields");
+					$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
+					return -1;
 				}
 			}
 
-			foreach ($new_array_options as $key => $value) {
-				$attributeKey      = substr($key, 8); // Remove 'options_' prefix
-				$attributeType     = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
-				$attributeLabel    = $langs->transnoentities($extrafields->attributes[$this->table_element]['label'][$attributeKey]);
-				$attributeParam    = $extrafields->attributes[$this->table_element]['param'][$attributeKey];
-				$attributeRequired = $extrafields->attributes[$this->table_element]['required'][$attributeKey];
-				$attributeUnique   = $extrafields->attributes[$this->table_element]['unique'][$attributeKey];
-				$attrfieldcomputed = $extrafields->attributes[$this->table_element]['computed'][$attributeKey];
-
-				// If we clone, we have to clean unique extrafields to prevent duplicates.
-				// This behaviour can be prevented by external code by changing $this->context['createfromclone'] value in createFrom hook
-				if (!empty($this->context['createfromclone']) && $this->context['createfromclone'] == 'createfromclone' && !empty($attributeUnique)) {
+			if (!empty($attrfieldcomputed)) {
+				if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
+					$value = dol_eval($attrfieldcomputed, 1, 0, '2');
+					dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
+					$new_array_options[$key] = $value;
+				} else {
 					$new_array_options[$key] = null;
 				}
+			}
 
-				// If we create product combination, we have to clean unique extrafields to prevent duplicates.
-				// This behaviour can be prevented by external code by changing $this->context['createproductcombination'] value in hook
-				if (!empty($this->context['createproductcombination']) && $this->context['createproductcombination'] == 'createproductcombination' && !empty($attributeUnique)) {
-					$new_array_options[$key] = null;
-				}
-
-				// Similar code than into insertExtraFields
-				if ($attributeRequired) {
-					$v = $this->array_options[$key];
-					if (ExtraFields::isEmptyValue($v, $attributeType)) {
-						$langs->load("errors");
-						dol_syslog("Mandatory field '".$key."' is empty during create and set to required into definition of extrafields");
-						$this->errors[] = $langs->trans('ErrorFieldRequired', $attributeLabel);
+			switch ($attributeType) {
+				case 'int':
+					if (!is_numeric($value) && $value != '') {
+						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
-					}
-				}
-
-				//dol_syslog("attributeLabel=".$attributeLabel, LOG_DEBUG);
-				//dol_syslog("attributeType=".$attributeType, LOG_DEBUG);
-
-				if (!empty($attrfieldcomputed)) {
-					if (getDolGlobalString('MAIN_STORE_COMPUTED_EXTRAFIELDS')) {
-						$value = dol_eval($attrfieldcomputed, 1, 0, '2');
-						dol_syslog($langs->trans("Extrafieldcomputed")." on ".$attributeLabel."(".$value.")", LOG_DEBUG);
-						$new_array_options[$key] = $value;
-					} else {
+					} elseif ($value == '') {
 						$new_array_options[$key] = null;
 					}
-				}
-
-				switch ($attributeType) {
-					case 'int':
-						if (!is_numeric($value) && $value != '') {
-							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
-							return -1;
-						} elseif ($value == '') {
-							$new_array_options[$key] = null;
-						}
-						break;
-					case 'price':
-					case 'double':
-						$value = price2num($value);
-						if (!is_numeric($value) && $value != '') {
-							dol_syslog($langs->trans("ExtraFieldHasWrongValue")." for ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
-							$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
-							return -1;
-						} elseif ($value == '') {
-							$value = null;
-						}
-						//dol_syslog("double value"." on ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
-						$new_array_options[$key] = $value;
-						break;
-						/*case 'select':	// Not required, we chose value='0' for undefined values
-						 if ($value=='-1')
-						 {
-						 $this->array_options[$key] = null;
-						 }
-						 break;*/
-					case 'password':
-						$algo = '';
-						if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
-							// If there is an encryption choice, we use it to encrypt data before insert
-							$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
-							$algo = reset($tmparrays);
-							if ($algo != '') {
-								//global $action;		// $action may be 'create', 'update', 'update_extras'...
-								//var_dump($action);
-								//var_dump($this->oldcopy);exit;
-								if (is_object($this->oldcopy)) {	// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
-									//var_dump('algo='.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
-									if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {
-										// If old value encrypted in database is same than submitted new value, it means we don't change it, so we don't update.
-										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
-											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
-												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
-											} else {
-												$new_array_options[$key] = $this->array_options[$key]; // Value is kept
-											}
+					break;
+				case 'price':
+				case 'double':
+					$value = price2num($value);
+					if (!is_numeric($value) && $value != '') {
+						dol_syslog($langs->trans("ExtraFieldHasWrongValue")." for ".$attributeLabel."(".$value."is not '".$attributeType."')", LOG_DEBUG);
+						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
+						return -1;
+					} elseif ($value == '') {
+						$value = null;
+					}
+					//dol_syslog("double value"." on ".$attributeLabel."(".$value." is '".$attributeType."')", LOG_DEBUG);
+					$new_array_options[$key] = $value;
+					break;
+					/*case 'select':	// Not required, we chose value='0' for undefined values
+					 if ($value=='-1')
+					 {
+					 $this->array_options[$key] = null;
+					 }
+					 break;*/
+				case 'password':
+					$algo = '';
+					if ($this->array_options[$key] != '' && is_array($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options'])) {
+						// If there is an encryption choice, we use it to encrypt data before insert
+						$tmparrays = array_keys($extrafields->attributes[$this->table_element]['param'][$attributeKey]['options']);
+						$algo = reset($tmparrays);
+						if ($algo != '') {
+							//global $action;		// $action may be 'create', 'update', 'update_extras'...
+							//var_dump($action);
+							//var_dump($this->oldcopy);exit;
+							if (is_object($this->oldcopy)) {	// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+								//var_dump('algo='.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
+								if (isset($this->oldcopy->array_options[$key]) && $this->array_options[$key] == $this->oldcopy->array_options[$key]) {
+									// If old value encrypted in database is same than submitted new value, it means we don't change it, so we don't update.
+									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+										if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+											$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
 										} else {
 											$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 										}
 									} else {
-										// If value has changed
-										if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
-											if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
-												$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
-											} else {
-												$new_array_options[$key] = $this->array_options[$key]; // Value is kept
-											}
-										} else {
-											$new_array_options[$key] = dol_hash($this->array_options[$key], $algo);
-										}
+										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 									}
 								} else {
-									//var_dump('jjj'.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
-									// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
-									if ($algo == 'dolcrypt' && !preg_match('/^dolcrypt:/', $this->array_options[$key])) {	// dolibarr reversible encryption
-										$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
+									// If value has changed
+									if ($algo == 'dolcrypt') {	// dolibarr reversible encryption
+										if (!preg_match('/^dolcrypt:/', $this->array_options[$key])) {
+											$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
+										} else {
+											$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+										}
 									} else {
-										$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+										$new_array_options[$key] = dol_hash($this->array_options[$key], $algo);
 									}
 								}
 							} else {
-								// No encryption
-								$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+								//var_dump('jjj'.$algo.' '.$this->oldcopy->array_options[$key].' -> '.$this->array_options[$key]);
+								// If this->oldcopy is not defined, we can't know if we change attribute or not, so we must keep value
+								if ($algo == 'dolcrypt' && !preg_match('/^dolcrypt:/', $this->array_options[$key])) {	// dolibarr reversible encryption
+									$new_array_options[$key] = dolEncrypt($this->array_options[$key]);	// warning, must be called when on the master
+								} else {
+									$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+								}
 							}
-						} else { // Common usage
+						} else {
+							// No encryption
 							$new_array_options[$key] = $this->array_options[$key]; // Value is kept
 						}
-						break;
-					case 'date':
-					case 'datetime':
-						// If data is a string instead of a timestamp, we convert it
-						if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
-							$this->array_options[$key] = strtotime($this->array_options[$key]);
-						}
-						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
-						break;
-					case 'datetimegmt':
-						// If data is a string instead of a timestamp, we convert it
-						if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
-							$this->array_options[$key] = strtotime($this->array_options[$key]);
-						}
-						$new_array_options[$key] = $this->db->idate($this->array_options[$key], 'gmt');
-						break;
-					case 'link':
-						$param_list = array_keys($attributeParam['options']);
-						// 0 : ObjectName
-						// 1 : classPath
-						$InfoFieldList = explode(":", $param_list[0]);
-						dol_include_once($InfoFieldList[1]);
-						if ($InfoFieldList[0] && class_exists($InfoFieldList[0])) {
-							if ($value == '-1') {	// -1 is key for no defined in combo list of objects
-								$new_array_options[$key] = '';
-							} elseif ($value) {
-								$object = new $InfoFieldList[0]($this->db);
-								'@phan-var-force CommonObject $object';
+					} else { // Common usage
+						$new_array_options[$key] = $this->array_options[$key]; // Value is kept
+					}
+					break;
+				case 'date':
+				case 'datetime':
+					// If data is a string instead of a timestamp, we convert it
+					if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+						$this->array_options[$key] = strtotime($this->array_options[$key]);
+					}
+					$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
+					break;
+				case 'datetimegmt':
+					// If data is a string instead of a timestamp, we convert it
+					if (!is_numeric($this->array_options[$key]) || $this->array_options[$key] != intval($this->array_options[$key])) {
+						$this->array_options[$key] = strtotime($this->array_options[$key]);
+					}
+					$new_array_options[$key] = $this->db->idate($this->array_options[$key], 'gmt');
+					break;
+				case 'link':
+					$param_list = array_keys($attributeParam['options']);
+					// 0 : ObjectName
+					// 1 : classPath
+					$InfoFieldList = explode(":", $param_list[0]);
+					dol_include_once($InfoFieldList[1]);
+					if ($InfoFieldList[0] && class_exists($InfoFieldList[0])) {
+						if ($value == '-1') {	// -1 is key for no defined in combo list of objects
+							$new_array_options[$key] = '';
+						} elseif ($value) {
+							$object = new $InfoFieldList[0]($this->db);
+							'@phan-var-force CommonObject $object';
 
-								$objectId = 0;
+							$objectId = 0;
 
-								$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
-								if (is_numeric($value)) {
-									$sqlFetchObject .= " WHERE rowid = " . (int) $value;
-								} else {
-									$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
-								}
-
-								$obj = $this->db->getRow($sqlFetchObject);
-
-								if ($obj !== false) {
-									$objectId = $obj->rowid;
-									$res = 1;
-								} else {
-									$res = -1;
-								}
-
-								if ($res > 0) {
-									$new_array_options[$key] = $objectId;
-								} else {
-									$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
-									return -1;
-								}
+							$sqlFetchObject = "SELECT rowid FROM ".$this->db->prefix().$object->table_element;
+							if (is_numeric($value)) {
+								$sqlFetchObject .= " WHERE rowid = " . (int) $value;
+							} else {
+								$sqlFetchObject .= " WHERE ref = '" . $this->db->escape($value) . "'";
 							}
-						} else {
-							dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+
+							$obj = $this->db->getRow($sqlFetchObject);
+
+							if ($obj !== false) {
+								$objectId = $obj->rowid;
+								$res = 1;
+							} else {
+								$res = -1;
+							}
+
+							if ($res > 0) {
+								$new_array_options[$key] = $objectId;
+							} else {
+								$this->error = "Id/Ref '".$value."' for object '".$object->element."' not found";
+								return -1;
+							}
 						}
-						break;
-					case 'checkbox':
-					case 'chkbxlst':
-						if (is_array($this->array_options[$key])) {
-							$new_array_options[$key] = implode(',', $this->array_options[$key]);
-						} else {
-							$new_array_options[$key] = $this->array_options[$key];
-						}
-						break;
+					} else {
+						dol_syslog('Error bad setup of extrafield', LOG_WARNING);
+					}
+					break;
+				case 'checkbox':
+				case 'chkbxlst':
+					if (is_array($this->array_options[$key])) {
+						$new_array_options[$key] = implode(',', $this->array_options[$key]);
+					} else {
+						$new_array_options[$key] = $this->array_options[$key];
+					}
+					break;
+			}
+		}
+
+		$sqlColumnValues = ['fk_object' => (int) $this->id]; // key-value pairs for the SQL INSERT or UPDATE query
+
+		foreach ($new_array_options as $key => $newValue) {
+			$attributeKey = substr($key, 8); // Remove 'options_' prefix
+			$attributeType = $extrafields->attributes[$this->table_element]['type'][$attributeKey];
+			if ($attributeType === 'separate') {
+				// separator extrafields don't have data per object so they don't have a comlumn in the database
+				continue;
+			}
+			$geoDataType = ExtraFields::$geoDataTypes[$attributeType] ?? null;
+			// Add field of attribute
+			if (! $geoDataType) {
+				// not a geodata type
+				if ($newValue != '') {
+					$sqlColumnValues[$attributeKey] = "'".$this->db->escape($newValue)."'";
+				} else {
+					$sqlColumnValues[$attributeKey] = 'null';
 				}
+				continue;
+			}
+			if (empty($newValue)) {
+				$sqlColumnValues[$attributeKey] = 'null';
+				continue;
+			}
+			if (preg_match('/error/i', $newValue)) {
+				dol_syslog(
+					'Bad syntax string for '.$geoDataType['shortname'].' '.$newValue.' to generate SQL request',
+					LOG_WARNING
+				);
+				$sqlColumnValues[$attributeKey] = 'null';
+				continue;
 			}
 
-			$this->db->begin();
+			// Geodata type: Text must be a WKT string. Examples:
+			// - point    => "POINT(15 20)"
+			// - multipts => "MULTIPOINT(0 0, 20 20, 60 60)"
+			// - linestrg => "LINESTRING(0 0, 10 10, 20 25, 50 60)"
+			// - polygon  => "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
+			$sqlColumnValues[$key] = $geoDataType['ST_Function']."('".$this->db->escape($newValue)."')";
+		}
 
-			$table_element = $this->table_element;
-			if ($table_element == 'categorie') {
-				$table_element = 'categories'; // For compatibility
-			}
+		$this->db->begin();
 
-			dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
+		$table_element = $this->table_element;
+		if ($table_element == 'categorie') {
+			$table_element = 'categories'; // For compatibility
+		}
+		$extrafieldsTable = $this->db->prefix() . $table_element . '_extrafields';
 
-			$sql_del = "DELETE FROM ".$this->db->prefix().$table_element."_extrafields WHERE fk_object = ".((int) $this->id);
-			$this->db->query($sql_del);
+		dol_syslog(get_class($this)."::insertExtraFields delete then insert", LOG_DEBUG);
 
-			$sql = "INSERT INTO ".$this->db->prefix().$table_element."_extrafields (fk_object";
-			foreach ($new_array_options as $key => $value) {
-				$attributeKey = substr($key, 8); // Remove 'options_' prefix
-				// Add field of attribute
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] != 'separate') { // Only for other type than separator
-					$sql .= ",".$attributeKey;
-				}
-			}
+		// if the extrafields row already exists for the object, we update it
+		if ($this->db->getRow("SELECT 1 FROM {$extrafieldsTable} WHERE fk_object = ".((int) $this->id))) {
+			array_shift($sqlColumnValues); // drop the 'fk_object' column because its value won't change
+			$sqlColumnValueString = implode(
+				',',
+				/**
+				 * @param string $key
+				 * @return string
+				 */
+				array_map(function ($key) use ($sqlColumnValues) {
+					return "{$key} = {$sqlColumnValues[$key]}";
+				}, array_keys($sqlColumnValues))
+			);
+			$sql = "UPDATE {$extrafieldsTable} SET {$sqlColumnValueString} WHERE fk_object = ".((int) $this->id);
+		} else {
 			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {    // If field not already added previously
-						$sql .= ",".$tmpkey;
-					}
+			$extrafieldsRequiredOnOtherEntities = $extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] ?? array();
+			foreach ($extrafieldsRequiredOnOtherEntities as $key => $extrafieldType) {
+				if (isset($sqlColumnValues[$key])) {
+					// extrafield value already provided: no need to add it
+					continue;
+				}
+				// default value: empty string, except for 'int', 'double' and 'price'
+				$sqlColumnValues[$key] = "''";
+				if (in_array($extrafieldType, array('int', 'double', 'price'))) {
+					$sqlColumnValues[$key] = 0;
 				}
 			}
-			$sql .= ") VALUES (".$this->id;
+			$sqlColumns = implode(',', array_keys($sqlColumnValues));
+			$sqlValues = implode(',', array_values($sqlColumnValues));
+			$sql = "INSERT INTO {$extrafieldsTable} ({$sqlColumns}) VALUES ({$sqlValues})";
+		}
 
-			foreach ($new_array_options as $key => $value) {
-				$attributeKey = substr($key, 8); // Remove 'options_' prefix
-				// Add field of attribute
-				if (!in_array($extrafields->attributes[$this->table_element]['type'][$attributeKey], ['separate', 'point', 'multipts', 'linestrg', 'polygon'])) { // Only for other type than separator)
-					if ($new_array_options[$key] != '' || $new_array_options[$key] == '0') {
-						$sql .= ",'".$this->db->escape($new_array_options[$key])."'";
-					} else {
-						$sql .= ",null";
-					}
-				}
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'point') { // for point type
-					if (!empty($new_array_options[$key])) {
-						if (!preg_match('/error/i', $new_array_options[$key])) {
-							// Text must be a WKT string, so "POINT(15 20)"
-							$sql .= ",ST_PointFromText('".$this->db->escape($new_array_options[$key])."')";
-						} else {
-							dol_syslog("Bad syntax string for point ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
-							$sql .= ",null";
-						}
-					} else {
-						$sql .= ",null";
-					}
-				}
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'multipts') { // for point type
-					if (!empty($new_array_options[$key])) {
-						if (!preg_match('/error/i', $new_array_options[$key])) {
-							// Text must be a WKT string, so "MULTIPOINT(0 0, 20 20, 60 60)"
-							$sql .= ",ST_MultiPointFromText('".$this->db->escape($new_array_options[$key])."')";
-						} else {
-							dol_syslog("Bad syntax string for multipoint ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
-							$sql .= ",null";
-						}
-					} else {
-						$sql .= ",null";
-					}
-				}
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'linestrg') { // for linestring type
-					if (!empty($new_array_options[$key])) {
-						if (!preg_match('/error/i', $new_array_options[$key])) {
-							// Text must be a WKT string, so "LINESTRING(0 0, 10 10, 20 25, 50 60)"
-							$sql .= ",ST_LineFromText('".$this->db->escape($new_array_options[$key])."')";
-						} else {
-							dol_syslog("Bad syntax string for line ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
-							$sql .= ",null";
-						}
-					} else {
-						$sql .= ",null";
-					}
-				}
-				if ($extrafields->attributes[$this->table_element]['type'][$attributeKey] == 'polygon') { // for polygon type
-					if (!empty($new_array_options[$key])) {
-						if (!preg_match('/error/i', $new_array_options[$key])) {
-							// Text must be a WKT string, so "POLYGON((0 0,10 0,10 10,0 10,0 0),(5 5,7 5,7 7,5 7, 5 5))"
-							$sql .= ",ST_PolyFromText('".$this->db->escape($new_array_options[$key])."')";
-						} else {
-							dol_syslog("Bad syntax string for polygon ".$new_array_options[$key]." to generate SQL request", LOG_WARNING);
-							$sql .= ",null";
-						}
-					} else {
-						$sql .= ",null";
-					}
-				}
-			}
-			// We must insert a default value for fields for other entities that are mandatory to avoid not null error
-			if (!empty($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities']) && is_array($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'])) {
-				foreach ($extrafields->attributes[$this->table_element]['mandatoryfieldsofotherentities'] as $tmpkey => $tmpval) {
-					if (!isset($extrafields->attributes[$this->table_element]['type'][$tmpkey])) {   // If field not already added previously
-						if (in_array($tmpval, array('int', 'double', 'price'))) {
-							$sql .= ", 0";
-						} else {
-							$sql .= ", ''";
-						}
-					}
-				}
-			}
+		$resql = $this->db->query($sql);
+		if (!$resql) {
+			$this->error = $this->db->lasterror();
+			$error++;
+		}
 
-			$sql .= ")";
-
-			$resql = $this->db->query($sql);
-			if (!$resql) {
-				$this->error = $this->db->lasterror();
+		if (!$error && $trigger) {
+			// Call trigger
+			$this->context = array('extrafieldaddupdate' => 1);
+			$result = $this->call_trigger($trigger, $userused);
+			if ($result < 0) {
 				$error++;
 			}
+			// End call trigger
+		}
 
-			if (!$error && $trigger) {
-				// Call trigger
-				$this->context = array('extrafieldaddupdate' => 1);
-				$result = $this->call_trigger($trigger, $userused);
-				if ($result < 0) {
-					$error++;
-				}
-				// End call trigger
-			}
-
-			if ($error) {
-				$this->db->rollback();
-				return -1;
-			} else {
-				$this->db->commit();
-				return 1;
-			}
+		if ($error) {
+			$this->db->rollback();
+			return -1;
 		} else {
-			return 0;
+			$this->db->commit();
+			return 1;
 		}
 	}
 
 	/**
-	 *	Add/Update all extra fields values for the current object.
-	 *  Data to describe values to insert/update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
-	 *  This function delete record with all extrafields and insert them again from the array $this->array_options.
+	 *	Add/Update all extra languages values for the current object.
+	 *  Data to describe values to insert/update are stored into $this->array_languages=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
+	 *  This function delete record with all languages and insert them again from the array $this->array_languages.
+	 *  Used for example when PDF_USE_ALSO_LANGUAGE_CODE is set to a language for the name of a thirdparty.
 	 *
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
@@ -7771,7 +7796,7 @@ abstract class CommonObject
 			}
 			$out .= '</div>';
 			$out .= '<script>
-				jQuery(function($) {
+				jQuery(function($) {	/* commonobject.class.php 1 */
 					let container = $("#'.$keyprefix.$key.$keysuffix.'_selection");
 					let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.'").val()) || 0;
 					container.find(".star").each(function() {
@@ -8588,7 +8613,7 @@ abstract class CommonObject
 			}
 			$value .= '</div>';
 			$value .= '<script>
-				$(document).ready(function() {
+				$(document).ready(function() {	/* commonobject.class.php 2 */
 						let container = $("#'.$keyprefix.$key.$keysuffix.$this->id.'_selection");
 						let selectedStars = parseInt($("#'.$keyprefix.$key.$keysuffix.$this->id.'").val()) || 0;
 						container.find(".star").each(function() {
@@ -9397,6 +9422,17 @@ abstract class CommonObject
 							}
 						}
 
+						// Expected behavior : if THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_XXX is set, when we change company,
+						// Then we use the extrafields of the object (they are filled in the card when constant THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_XXX is set)
+						$force_values_on_change_company = (
+							($this->element == 'facture' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_INVOICE'))
+							|| ($this->element == 'commande' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_ORDER'))
+							|| ($this->element == 'order_supplier' && getDolGlobalInt('THIRDPARTY_PROPAGATE_EXTRAFIELDS_TO_SUPPLIER_ORDER'))
+						);
+						if ($force_values_on_change_company && GETPOSTINT('changecompany')) {
+							$value = $this->array_options['options_'.$key] ?? $value;
+						}
+
 						// Convert date into timestamp format (value in memory must be a timestamp)
 						if (in_array($extrafields->attributes[$this->table_element]['type'][$key], array('date'))) {
 							$datenotinstring = null;
@@ -9865,7 +9901,7 @@ abstract class CommonObject
 		 $filearray=array_merge($filearray, $filearrayold);
 		 }*/
 
-		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir, $this);
 		'@phan-var-force array<array{name:string,path:string,level1name:string,relativename:string,fullname:string,date:string,size:int,perm:int,type:string,position_name:string,cover:string,keywords:string,acl:string,rowid:int,label:string,share:string}> $filearray';
 
 		if (count($filearray)) {
@@ -10695,11 +10731,10 @@ abstract class CommonObject
 					'@phan-var-force CommonObjectLine $newline';
 					$newline->setVarsFromFetchObj($obj);
 
-					// Note: extrafields load of line not yet supported
-					/*
-					 if (empty($noextrafields)) {
-					 // Load extrafields of line
-					 }*/
+					// Load also extrafields for the line
+					if (empty($noextrafields)) {
+						$newline->fetch_optionals();
+					}
 
 					$this->lines[] = $newline;
 				}
@@ -10889,6 +10924,7 @@ abstract class CommonObject
 					if (!empty($deleteFromObject[3])) {
 						$filter = $deleteFromObject[3];
 					}
+
 					if (dol_include_once($filePath)) {
 						$childObject = new $className($this->db);
 						if (method_exists($childObject, 'deleteByParentField')) {
@@ -10994,7 +11030,28 @@ abstract class CommonObject
 		$error = 0;
 		$deleted = 0;
 
+		//dol_syslog("deleteByParentField for ".$parentId.' '.$parentField);
+
 		if (!empty($parentId) && !empty($parentField)) {
+			if (empty($this->table_element)) {
+				$this->error = 'Property table_element for object is not defined';
+				$this->errors[] = $this->error;
+				$error++;
+				return -1;
+			}
+			if (!method_exists($this, 'fetch')) {
+				$this->error = 'Method fetch for object is not defined';
+				$this->errors[] = $this->error;
+				$error++;
+				return -1;
+			}
+			if (!method_exists($this, 'delete')) {
+				$this->error = 'Method delete for object is not defined';
+				$this->errors[] = $this->error;
+				$error++;
+				return -1;
+			}
+
 			$this->db->begin();
 
 			$sql = "SELECT rowid FROM ".$this->db->prefix().$this->table_element;

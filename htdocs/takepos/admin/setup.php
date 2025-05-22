@@ -210,7 +210,7 @@ foreach ($dirmodels as $reldir) {
 						print '</td>'."\n";
 
 						print '<td class="center">';
-						if (getDolGlobalString('TAKEPOS_REF_ADDON') == "$file") {
+						if (getDolGlobalString('TAKEPOS_REF_ADDON', 'mod_takepos_ref_simple') == $file) {
 							print img_picto($langs->trans("Activated"), 'switch_on');
 						} else {
 							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setrefmod&token='.newToken().'&value='.urlencode($file).'">';

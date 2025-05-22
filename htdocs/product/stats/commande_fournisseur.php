@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
+ * Copyright (C) 2024-2025  Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024       Charlene Benke             <charlene@patas-monkey.com>
  * Copyright (C) 2025		MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -279,7 +279,7 @@ if ($id > 0 || !empty($ref)) {
 
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
-						$supplierorderstatic->statut = $objp->status;
+						$supplierorderstatic->statut = $objp->status;	// deprecated
 						$supplierorderstatic->status = $objp->status;
 						$supplierorderstatic->billed = $objp->billed;
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2012		Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2012-2020	Philippe Grand				<philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
- * Copyright (C) 2018-2024	Frédéric France				<frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2021		Waël Almoman				<info@almoman.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
@@ -398,13 +398,13 @@ if (empty($reshook)) {
 					$object->setCategories($categories);
 
 					// Logo/Photo save
-					$dir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
+					$dir = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos';
 					$file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
 					if ($file_OK) {
 						if (GETPOST('deletephoto')) {
 							require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-							$fileimg = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
-							$dirthumbs = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
+							$fileimg = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/'.$object->photo;
+							$dirthumbs = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member').'/photos/thumbs';
 							dol_delete_file($fileimg);
 							dol_delete_dir_recursive($dirthumbs);
 						}
@@ -695,8 +695,8 @@ if (empty($reshook)) {
 				}
 
 				if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-					$subject = $arraydefaultmessage->topic;
-					$msg     = $arraydefaultmessage->content;
+					$subject = (string) $arraydefaultmessage->topic;
+					$msg     = (string) $arraydefaultmessage->content;
 				}
 
 				if (empty($labeltouse) || (int) $labeltouse === -1) {
@@ -763,8 +763,8 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
+						$subject = (string) $arraydefaultmessage->topic;
+						$msg     = (string) $arraydefaultmessage->content;
 					}
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
@@ -830,8 +830,8 @@ if (empty($reshook)) {
 					}
 
 					if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-						$subject = $arraydefaultmessage->topic;
-						$msg     = $arraydefaultmessage->content;
+						$subject = (string) $arraydefaultmessage->topic;
+						$msg     = (string) $arraydefaultmessage->content;
 					}
 
 					if (empty($labeltouse) || (int) $labeltouse === -1) {
@@ -910,7 +910,7 @@ if (empty($reshook)) {
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to build doc
-	$upload_dir = $conf->adherent->dir_output;
+	$upload_dir = $conf->member->dir_output;
 	$permissiontoadd = $user->hasRight('adherent', 'creer');
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
@@ -1059,7 +1059,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys = array();
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
+		$checkednature = GETPOST("morphy", 'alpha');
+
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
 		print '<span id="spannature2" class="nonature-back spannature paddinglarge marginrightonly"><label for="moralinput" class="valignmiddle">'.$morphys["mor"].'<input id="moralinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="mor"'.($checkednature == "mor" ? ' checked="checked"' : '').'></label></span>';
@@ -1615,8 +1616,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg = $arraydefaultmessage->content;
+				$subject = (string) $arraydefaultmessage->topic;
+				$msg	 = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1679,8 +1680,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$subject = (string) $arraydefaultmessage->topic;
+				$msg     = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -1740,8 +1741,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 			}
 
 			if (!empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0) {
-				$subject = $arraydefaultmessage->topic;
-				$msg     = $arraydefaultmessage->content;
+				$subject = (string) $arraydefaultmessage->topic;
+				$msg     = (string) $arraydefaultmessage->content;
 			}
 
 			$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
@@ -2123,7 +2124,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 
 			// Generated documents
 			$filename = dol_sanitizeFileName($object->ref);
-			$filedir = $conf->adherent->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member');
+			$filedir = $conf->member->dir_output.'/'.get_exdir(0, 0, 0, 1, $object, 'member');
 			$urlsource = $_SERVER['PHP_SELF'].'?id='.$object->id;
 			$genallowed = $user->hasRight('adherent', 'lire');
 			$delallowed = $user->hasRight('adherent', 'creer');
@@ -2173,7 +2174,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Presend form
 		$modelmail = 'member';
 		$defaulttopic = 'CardContent';
-		$diroutput = $conf->adherent->dir_output;
+		$diroutput = $conf->member->dir_output;
 		$trackid = 'mem'.$object->id;
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';

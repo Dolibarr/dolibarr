@@ -20,7 +20,8 @@
 /**
  *     	\file       htdocs/public/project/index.php
  *		\ingroup    core
- *		\brief      File to offer a way to suggest a conference or a booth for an event
+ *		\brief      Page to offer a way to suggest a conference or a booth for a given event.
+ *					Link of this page is given into the project card.
  */
 
 if (!defined('NOLOGIN')) {
@@ -53,8 +54,6 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-
-global $dolibarr_main_url_root;
 
 /**
  * @var Conf $conf
@@ -240,7 +239,7 @@ print '<input type="hidden" name="forcesandbox" value="'.GETPOSTINT('forcesandbo
 print "\n";
 
 
-print '<div align="center">';
+print '<div class="centergrid">';
 print '<div id="divsubscribe">';
 
 
@@ -248,10 +247,11 @@ print '<div id="divsubscribe">';
 print '<div class="center subscriptionformbanner subbanner justify margintoponly paddingtop marginbottomonly padingbottom">';
 print load_fiche_titre($langs->trans("NewRegistration"), '', '', 0, '', 'center');
 // Welcome message
+print '<br>';
 print '<span class="opacitymedium">'.$langs->trans("EvntOrgRegistrationWelcomeMessage").'</span>';
 print '<br>';
 // Title
-print '<span class="eventlabel large">'.dol_escape_htmltag($project->title . ' '. $conference->label).'</span><br>';
+print '<span class="eventlabel large">'.dol_escape_htmltag($project->title).'</span><br>';
 print '</div>';
 
 // Help text
@@ -293,16 +293,8 @@ print '<br>';
 
 print '<table id="dolsuggestboost" summary="Suggest a boost form" class="center">'."\n";
 
-print $text;
-
 // Output payment summary form
-print '<tr><td align="center">';
-
-$found = false;
-$error = 0;
-$var = false;
-
-$object = null;
+print '<tr><td class="center">';
 
 print "\n";
 
@@ -344,8 +336,9 @@ print '</div>'."\n";
 print '<br>';
 
 
+$suffix = '';
 
-htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $object);
+htmlPrintOnlineFooter($mysoc, $langs, 1, $suffix, $project);
 
 llxFooter('', 'public');
 

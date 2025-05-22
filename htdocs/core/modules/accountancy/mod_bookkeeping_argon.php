@@ -45,13 +45,18 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 */
 	public $name = 'Argon';
 
+	/**
+	 * @var int	position
+	 */
+	public $position = 50;
+
 
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		global $conf, $mysoc;
+		// Nothing
 	}
 
 	/**
@@ -87,7 +92,7 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	 */
 	public function canBeActivated($object): bool
 	{
-		global $conf, $langs, $db;
+		global $langs;
 
 		$max = '';
 
@@ -109,49 +114,36 @@ class mod_bookkeeping_argon extends ModeleNumRefBookkeeping
 	/**
 	 * 	Return next free value
 	 *
-	 *  @param  BookKeeping	$object		Object we need next value for
+	 *  @param	BookKeeping	$object		Object we need next value for
+	 * 	@param  string		$mode		'next' for next value or 'last' for last value
 	 *  @return string|int<-1,0>		Value if OK, -1 if KO
 	 */
-	public function getNextValue(BookKeeping $object)
+	public function getNextValue(BookKeeping $object, $mode = 'next')
 	{
-		global $db, $conf;
+		global $conf, $db;
 
-		$prefix = $this->getPrefix($object);
-		$posindice = strlen($prefix) + 1;
-		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM {$db->prefix()}accounting_bookkeeping";
-		$sql .= " WHERE ref LIKE '{$db->escape($prefix)}%'";
-		$sql .= " AND entity = ".getEntity($object->element);
+		// Get mask
+		$mask = '{yyyy}{jj}{0000@1}';
 
+		$where = '';
 
-		$resql = $db->query($sql);
-		if ($resql) {
-			$obj = $db->fetch_object($resql);
-			if ($obj) {
-				$max = intval($obj->max);
-			} else {
-				$max = 0;
-			}
-		} else {
-			dol_syslog("mod_bookkeeping_argon::getNextValue", LOG_DEBUG);
-			return -1;
-		}
-		if ($max >= (pow(10, 4) - 1)) {
-			$num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
-		} else {
-			$num = sprintf("%04d", $max + 1);
+		// Get entities
+		//$entity = getEntity('invoicenumber', 1, $object);
+		$entity = $conf->entity;	// In accountancy, we never share entities
+		$numFinal = get_next_value($db, $mask, 'accounting_bookkeeping', 'ref', $where, null, $object->doc_date, $mode, false, null, (string) $entity, $object);
+		if (!preg_match('/([0-9])+/', $numFinal)) {
+			$this->error = $numFinal;
 		}
 
-		dol_syslog("mod_bookkeeping_argon::getNextValue return {$prefix}{$num}");
-		return "{$prefix}{$num}";
+		return $numFinal;
 	}
 
 	/**
 	 * Returns the prefix for current Bookkeeping object
 	 * Year used in prefix is the beginning fiscal year.
 	 *
-	 * @param BookKeeping $object	Book keeping record
-	 * @return string Prefix for this bookkeeping object
+	 * @param 	BookKeeping $object		Book keeping record
+	 * @return 	string 					Prefix for this bookkeeping object
 	 */
 	private function getPrefix(BookKeeping $object): string
 	{

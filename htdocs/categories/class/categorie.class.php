@@ -78,7 +78,7 @@ class Categorie extends CommonObject
 
 
 	/**
-	 * @var array<string,int> 	Table of mapping between type string and ID used for field 'type' in table llx_categories
+	 * @var array<string,int> 	Table of mapping between type string and type ID used for field 'type' in table llx_categories
 	 */
 	public $MAP_ID = array(
 		'product'				=> 0,
@@ -193,13 +193,14 @@ class Categorie extends CommonObject
 		'user'					=> 'Users',
 		'account'				=> 'Accounts', // old for bank account
 		'bank_account'			=> 'BankAccounts',
+		'bank_line'				=> 'BankTransactions',
 		'project'				=> 'Projects',
 		'warehouse'				=> 'Warehouse',
 		'actioncomm'			=> 'AgendaEvents',
 		'website_page'			=> 'WebsitePages',
 		'ticket'				=> 'Tickets',
 		'knowledgemanagement'	=> 'KnowledgeRecords',
-		'fichinter'				=> 'Fichinters',
+		'fichinter'				=> 'Interventions',
 		'order'					=> 'Orders',
 		'invoice'				=> 'Invoices',
 		'supplier_order'		=> 'SuppliersOrders',
@@ -756,7 +757,7 @@ class Categorie extends CommonObject
 			'categorie_contact' => 'fk_categorie',
 			'categorie_fournisseur' => 'fk_categorie',
 			'categorie_knowledgemanagement' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('knowledgemanagement')),
-			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => isModEnabled('intervention')),
+			'categorie_fichinter' => array('field' => 'fk_categorie', 'enabled' => false ),  // not yet fully implemented (wait 22) isModEnabled('intervention')),
 			'categorie_member' => 'fk_categorie',
 			'categorie_user' => 'fk_categorie',
 			'categorie_product' => 'fk_categorie',
@@ -1560,11 +1561,11 @@ class Categorie extends CommonObject
 					$linkend = '</a>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} elseif ($url == 'none') {
-					$link = '<span class="'.($i < count($way) ? 'small ' : '').$forced_color.'">';
+					$link = '<span class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'">';
 					$linkend = '</span>';
 					$w[] = $link.(($addpicto && $i == 1) ? img_object('', 'category', 'class="paddingright"') : '').$cat->label.$linkend;
 				} else {
-					$w[] = '<a class="'.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
+					$w[] = '<a class="valignmiddle '.($i < count($way) ? 'small ' : '').$forced_color.'" href="'.DOL_URL_ROOT.'/'.$url.'?catid='.((int) $cat->id).'">'.($addpicto ? img_object('', 'category') : '').$cat->label.'</a>';
 				}
 			}
 			$newcategwithpath = preg_replace('/colortoreplace/', $forced_color, implode('<span class="inline-block valignmiddle paddingleft paddingright '.$forced_color.'">'.$sep.'</span>', $w));

@@ -274,6 +274,7 @@ print '<input type="hidden" name="securekey" value="'.$securekey.'">'."\n";
 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
 print "\n";
 
+
 // Output html code for logo
 print '<div class="backgreypublicpayment">';
 print '<div class="logopublicpayment">';
@@ -292,14 +293,8 @@ if (!getDolUserInt('USER_PUBLIC_HIDE_COMPANY', 0, $object)) {
 	print '</div>';
 }
 
-
-
 print '</div>';
-/*if (empty($conf->global->MAIN_HIDE_POWERED_BY)) {
-	print '<div class="poweredbypublicpayment opacitymedium right"><a class="poweredbyhref" href="https://www.dolibarr.org?utm_medium=website&utm_source=poweredby" target="dolibarr" rel="noopener">'.$langs->trans("PoweredBy").'<br><img class="poweredbyimg" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg" width="80px"></a></div>';
-}*/
 print '</div>';
-
 
 if (getDolGlobalString('USER_IMAGE_PUBLIC_INTERFACE')) {
 	print '<div class="backimagepublicrecruitment">';

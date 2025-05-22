@@ -32,6 +32,11 @@ function bomAdminPrepareHead()
 {
 	global $langs, $conf;
 
+	global $db;
+	$extrafields = new ExtraFields($db);
+	$extrafields->fetch_name_optionals_label('bom_bom');
+	$extrafields->fetch_name_optionals_label('bom_bomline');
+
 	$langs->load("mrp");
 
 	$h = 0;
@@ -44,11 +49,19 @@ function bomAdminPrepareHead()
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/bom_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFields");
+	$nbExtrafields = is_countable($extrafields->attributes['bom_bom']['label']) ? count($extrafields->attributes['bom_bom']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
 	$head[$h][2] = 'bom_extrafields';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT."/admin/bomline_extrafields.php";
 	$head[$h][1] = $langs->trans("ExtraFieldsLines");
+	$nbExtrafields = is_countable($extrafields->attributes['bom_bomline']['label']) ? count($extrafields->attributes['bom_bomline']['label']) : 0;
+	if ($nbExtrafields > 0) {
+		$head[$h][1] .= '<span class="badge marginleftonlyshort">' . $nbExtrafields . '</span>';
+	}
 	$head[$h][2] = 'bomline_extrafields';
 	$h++;
 

@@ -1029,7 +1029,6 @@ ErrorLanguageOfTranslatedPageIsSameThanThisPage
 ErrorLoginDisabled
 ErrorLoginDoesNotExists
 ErrorLoginHasNoEmail
-ErrorMandatoryParametersNotProvided
 ErrorMaxNumberReachForThisMask
 ErrorNewRefIsAlreadyUsed
 ErrorNoImagickReadimage
@@ -2993,7 +2992,6 @@ UserHideExternal
 UserHideNonEmployee
 UserID
 UserLogged
-UserLoginFailed
 UserLogoff
 UserMargins
 UserModif

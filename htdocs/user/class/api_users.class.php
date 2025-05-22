@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
- * Copyright (C) 2020   Thibault FOUCART		<support@ptibogxiv.net>
+ * Copyright (C) 2020-2025  Thibault FOUCART		<support@ptibogxiv.net>
  * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
@@ -22,6 +22,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 
 
 /**
@@ -732,6 +733,288 @@ class Users extends DolibarrApi
 				'message' => 'Ticket deleted'
 			)
 		);
+	}
+
+	/**
+	 * Get notifications for an user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of the user
+	 *
+	 * @return	array
+	 * @phan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
+	 * @phpstan-return array<array{id:int,socid:int,event:string,contact_id:int,datec:int,tms:string,type:string}>
+	 *
+	 * @url		GET		{id}/notifications
+	 *
+	 * @throws RestException
+	 */
+	public function getUserNotification($id)
+	{
+		if (empty($id)) {
+			throw new RestException(400, 'user ID is mandatory');
+		}
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'lire') && empty(DolibarrApiAccess::$user->admin)) {
+			throw new RestException(403);
+		}
+		if (!DolibarrApi::_checkAccessToResource('user', $id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		/**
+		 * We select all the records that match the socid
+		 */
+
+		$sql = "SELECT rowid as id, fk_action as event, fk_user, type, datec, tms";
+		$sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$sql .= " WHERE fk_user  = ".((int) $id);
+
+		$result = $this->db->query($sql);
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Notification not found');
+		}
+
+		$i = 0;
+
+		$notifications = array();
+
+		if ($result) {
+			$num = $this->db->num_rows($result);
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($result);
+				$notifications[] = $obj;
+				$i++;
+			}
+		} else {
+			throw new RestException(404, 'No notifications found');
+		}
+
+		$fields = array('id', 'fk_user', 'event', 'datec', 'tms', 'type');
+
+		$returnNotifications = array();
+
+		foreach ($notifications as $notification) {
+			$object = array();
+			foreach ($notification as $key => $value) {
+				if (in_array($key, $fields)) {
+					$object[$key] = $value;
+				}
+			}
+			$returnNotifications[] = $object;
+		}
+
+		// Too complex for phan ?: @phan-suppress-next-line PhanTypeMismatchReturn
+		return $returnNotifications;
+	}
+
+	/**
+	 * Create a notification for an user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the user
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				Notification of the user
+	 *
+	 * @url		POST	{id}/notifications
+	 *
+	 * @throws RestException
+	 */
+	public function createUserNotification($id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+		if ($this->useraccount->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+
+		$notification->fk_user = $id;
+
+		foreach ($request_data as $field => $value) {
+			$notification->$field = $value;
+		}
+
+		$event = $notification->event;
+		if (!$event) {
+			throw new RestException(500, 'Error creating User Notification, request_data missing event');
+		}
+		$fk_user = $notification->fk_user;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_user, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
+		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $fk_user)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_result) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
+		if ($notification->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating User Notification');
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Create a notification for an User using action trigger code
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of the user
+	 * @param	string	$code			Action Trigger code
+	 * @param	array	$request_data	Request data
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @return	array|mixed				Notification for the user
+	 * @phan-return Notify
+	 *
+	 * @url		POST	{id}/notificationsbycode/{code}
+	 *
+	 * @throws RestException
+	 */
+	public function createUserNotificationByCode($id, $code, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+		if ($this->useraccount->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating User Notification, User doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+		$notification->fk_user = $id;
+
+		$sql = "SELECT t.rowid as id FROM ".MAIN_DB_PREFIX."c_action_trigger as t";
+		$sql .= " WHERE t.code = '".$this->db->escape($code)."'";
+
+		$result = $this->db->query($sql);
+		if ($this->db->num_rows($result) == 0) {
+			throw new RestException(404, 'Action Trigger code not found');
+		}
+
+		$notification->event = $this->db->fetch_row($result)[0];
+		foreach ($request_data as $field => $value) {
+			if ($field === 'event') {
+				throw new RestException(500, 'Error creating User Notification, request_data contains event key');
+			}
+			if ($field === 'fk_action') {
+				throw new RestException(500, 'Error creating User Notification, request_data contains fk_action key');
+			}
+			$notification->$field = $value;
+		}
+
+		$event = $notification->event;
+		$fk_user = $notification->fk_user;
+
+		$exists_sql = "SELECT rowid, fk_action as event, fk_user, type, datec, tms as datem";
+		$exists_sql .= " FROM ".MAIN_DB_PREFIX."notify_def";
+		$exists_sql .= " WHERE fk_action = '".$this->db->escape((string) $event)."'";
+		$exists_sql .= " AND fk_user = '".$this->db->escape((string) $fk_user)."'";
+
+		$exists_result = $this->db->query($exists_sql);
+		if ($this->db->num_rows($exists_result) > 0) {
+			throw new RestException(403, 'Notification already exists');
+		}
+
+		if ($notification->create(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error creating User Notification, are request_data well formed?');
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
+	}
+
+	/**
+	 * Delete a notification attached to an user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the user
+	 * @param	int		$notification_id	ID of UserNotification
+	 *
+	 * @return	int							-1 if error, 1 if correct deletion
+	 *
+	 * @url		DELETE	{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
+	 */
+	public function deleteUserNotification($id, $notification_id)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+
+		$notification = new Notify($this->db);
+
+		$notification->fetch($notification_id);
+
+		$fk_user = (int) $notification->fk_user;
+
+		if ($fk_user == $id) {
+			return $notification->delete(DolibarrApiAccess::$user);
+		} else {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
+	}
+
+	/**
+	 * Update a notification for an user
+	 *
+	 * @since	22.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of the User
+	 * @param	int		$notification_id	ID of UserNotification
+	 * @param	array	$request_data		Request data
+	 * @return	array|mixed					Notification for the user
+	 *
+	 * @phan-param ?array<string,string> $request_data
+	 * @phpstan-param ?array<string,string> $request_data
+	 *
+	 * @url		PUT		{id}/notifications/{notification_id}
+	 *
+	 * @throws RestException
+	 */
+	public function updateUserNotification($id, $notification_id, $request_data = null)
+	{
+		if (!DolibarrApiAccess::$user->hasRight('user', 'user', 'creer')) {
+			throw new RestException(403, "User has no right to update users");
+		}
+		if ($this->useraccount->fetch($id) <= 0) {
+			throw new RestException(404, 'Error creating Notification, User doesn\'t exists');
+		}
+		$notification = new Notify($this->db);
+
+		// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
+		$notification->fetch($notification_id, $id);
+
+		if ($notification->fk_user != $id) {
+			throw new RestException(403, "Not allowed due to bad consistency of input data");
+		}
+
+		foreach ($request_data as $field => $value) {
+			$notification->$field = $value;
+		}
+
+		if ($notification->update(DolibarrApiAccess::$user) < 0) {
+			throw new RestException(500, 'Error updating values');
+		}
+
+		return $this->_cleanObjectDatas($notification);
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

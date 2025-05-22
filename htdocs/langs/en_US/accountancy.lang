@@ -74,7 +74,7 @@ AccountancyAreaDescActionFreq=The following actions are usually executed every m
 AccountancyAreaDescJournalSetup=STEP %s: Check content of your journal list from menu %s
 AccountancyAreaDescChartModel=STEP %s: Check that a model of chart of account exists or create one from menu %s
 AccountancyAreaDescChart=STEP %s: Select and|or complete your chart of account from menu %s
-AccountancyAreaDescFiscalPeriod=STEP %s: Define a fiscal year by default on which to integrate your accounting entries, from menu %s.
+AccountancyAreaDescFiscalPeriod=STEP %s: Define the fiscal period which determines the range of dates accepted for creating accounting entries. For this, use the menu entry %s.
 AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. For this, use the menu entry %s.
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of Expense report. For this, use the menu entry %s.
@@ -100,6 +100,7 @@ AccountAccounting=Accounting account
 AccountAccountingShort=Account
 SubledgerAccount=Subledger account
 SubledgerAccountLabel=Subledger account label
+LedgerAccount=Ledger account
 ShowAccountingAccount=Show accounting account
 ShowAccountingJournal=Show accounting journal
 ShowAccountingAccountInLedger=Show accounting account in ledger
@@ -160,7 +161,8 @@ ACCOUNTING_LENGTH_DESCRIPTION=Truncate product & services description in listing
 ACCOUNTING_LENGTH_DESCRIPTION_ACCOUNT=Truncate product & services account description form in listings after x chars (Best = 50)
 ACCOUNTING_LENGTH_GACCOUNT=Length of the general accounting accounts (If you set value to 6 here, the account '706' will appear like '706000' on screen)
 ACCOUNTING_LENGTH_AACCOUNT=Length of the third-party accounting accounts (If you set value to 6 here, the account '401' will appear like '401000' on screen)
-ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account. Needed by some countries (like Switzerland). If set to off (default), you can set the following two parameters to ask the application to add virtual zeros.
+ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zeros at the end of an accounting account instead of a fixed length account.
+ACCOUNTING_MANAGE_ZERO2=Needed by some countries (like Switzerland). If kept to off (default), you can set the following two parameters to ask the application to add virtual zeros.
 ACCOUNTING_BANK_CONCILIATED=Transfer into accounting only the lines reconciliated in bank statements (by default, could be unchecked on each transfer)
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
 ACCOUNTANCY_ER_DATE_RECORD=Use the end date of the period of an expense report as the date for the transfer to accounting, instead of the date of the expense
@@ -253,6 +255,7 @@ FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Payment of invoice customer
 ThirdPartyAccount=Third-party account
+AccountNotDefined=Account not defined
 NewAccountingMvt=New transaction
 NumMvts=Numero of transaction
 ListeMvts=List of movements
@@ -319,7 +322,7 @@ NotReconciled=Not reconciled
 WarningRecordWithoutSubledgerAreExcluded=Warning, all lines without subledger account defined are filtered and excluded from this view
 AccountRemovedFromCurrentChartOfAccount=Accounting account that does not exist in the current chart of accounts
 WarningThisPageContainsOnlyEntriesTransferredInAccounting=Warning, this page only contains entries transferred to the accounting system.
-BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyccnnnn where yyyy is the year and cc the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
+BookkeepingNumRefModelDesc = Returns the reference number in the format yyyyjjnnnn where yyyy is the year and jj the journal code, nnnn is a sequential auto-incrementing number depending on the year and journal code.
 BookkeepingNumberingModules = Bookkeeping numbering models
 ## Admin
 BindingOptions=Options for the transfer in accountancy
@@ -388,6 +391,30 @@ Modelcsv_Gestinumv3=Export for Gestinum (v3)
 Modelcsv_Gestinumv5=Export for Gestinum (v5)
 Modelcsv_charlemagne=Export for Aplim Charlemagne
 ChartofaccountsId=Chart of accounts Id
+ExportToPdf = Export to PDF
+PdfLedgerTitle = Ledger accounts
+PdfBalanceTitle = Ledger Balance
+PdfBookkeepingTitle = Journals
+AccountancyBalance = Accountancy balance
+AccountancyLedger = Accountancy ledger
+AccountancyBookkeeping = Accountancy bookkeeping
+PDFAccountancyBalanceDescription = A PDF model for accountancy balance
+PDFAccountancyBookkeepingDescription = A PDF model for accountancy bookkeeping
+PDFAccountancyLedgerDescription = A PDF model for accountancy ledger
+PrintDate = Print date
+PdfTitleAccountNb = Account
+DebitMovement = Debit movement
+CreditMovement = Credit movement
+BalanceAt = Balance at %s
+AccountancyGroupTHIRDPARTY = Third parties
+AccountancyGroupFINAN = Financial
+AccountancyGroupSTOCK = Inventories
+AccountancyGroupCAPIT = Capital
+AccountancyGroupIMMO = Fixed Assets
+AccountancyGroupEXPENSE = Expenses
+AccountancyGroupINCOME = Incomes
+GrandTotals = Grand Totals
+ErrorAccountancyDirectoryNotDefined = Accountancy directory is not defined
 ## Tools - Init accounting account on product / service
 InitAccountancy=Init accountancy
 InitAccountancyDesc=This page can be used to initialize an accounting account on products and services that does not have accounting account defined for sales and purchases.
@@ -463,6 +490,10 @@ ConfirmMassDeleteBookkeepingWriting=Bulk Delete confirmation
 ConfirmMassDeleteBookkeepingWritingQuestion=This will delete the transaction from the accounting (all line entries related to the same transaction will be deleted). Are you sure you want to delete the %s selected entries?
 AccountancyClosureConfirmClose=Are you sure you want to close the current fiscal period ? <span class="warning">You understand that closing the fiscal period is an irreversible action and will permanently block any modification or deletion of entries over this period</span>.
 AccountancyClosureConfirmAccountingReversal=Are you sure you want to record entries for the "Retained earnings" ?
+
+## Warning
+WarningBookkeepingRecordAlreadyExists=Transaction for (doc_type=%s, doc_id=%s, doc_det=%s) were already recorded
+
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=No accounting account group available for country %s (See %s - %s - %s)
@@ -484,7 +515,8 @@ ErrorNoFiscalPeriodActiveFound=No active fiscal period (with a start and end dat
 ErrorBookkeepingDocDateNotOnActiveFiscalPeriod=The bookkeeping doc date is not inside the active fiscal period
 ErrorBookkeepingDocDateIsOnAClosedFiscalPeriod=The bookkeeping doc date is inside a closed fiscal period
 Error_BOOKKEEPING_ADDON_NotDefined=Error, the rule for bookkeeping numbering ref is not defined into general setup of Accountancy module
-
+ErrorBookkeepingTryInsertNotBalancedTransactionAndCanceled=Try to insert a non balanced transaction in book for %s (Payment ID: %s). Canceled. Surely a bug.
+ProductUsage=Product or service usage
 ErrorDocDateNotFound=No bookkeeping doc date found
 ErrorAccountNotReconcilable=Account %s is not reconcilable. Use the <a href="%s">%s</a> page to set reconcilable accounts.
 
@@ -515,3 +547,7 @@ ExpenseReportJournal=Expense Report Journal
 DocsAlreadyExportedAreIncluded=Docs already exported are included
 ClickToShowAlreadyExportedLines=Click to show already exported lines
 NAccounts=%s accounts
+ACCOUNTING_USE_TREASURY_Desc=This is the mode for treasury accountancy. We are using the payments only and their date for doing the accountancy.
+ACCOUNTING_USE_NON_TREASURY_Desc=This is the mode for real accountancy. We are using both the invoices and payments for doing the accountancy.
+PieceDesc=The reference of the source document that generates this bank transaction (Invoice Ref, Expense report ref, ...)
+BankTransactionRef=A reference for the bank transaction (Optional, an automatic ID is already generated)

@@ -587,20 +587,20 @@ class Account extends CommonObject
 	/**
 	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
 	 *
-	 *  @param	int	        $date			Date operation
-	 *  @param	string		$oper			'VIR','PRE','LIQ','VAD','CB','CHQ'...
-	 *  @param	string		$label			Description
-	 *  @param	float		$amount			Amount
-	 *  @param	string		$num_chq		Numero cheque or transfer
-	 *  @param	int  		$categorie		Category id (optional)
-	 *  @param	User		$user			User that create
-	 *  @param	string		$emetteur		Name of cheque writer
-	 *  @param	string		$banque			Bank of cheque writer
-	 *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
-	 *  @param	int			$datev			Date value
-	 *  @param  string      $num_releve     Label of bank receipt for reconciliation
+	 *  @param	int	        $date					Date operation
+	 *  @param	string		$oper					'VIR','PRE','LIQ','VAD','CB','CHQ'...
+	 *  @param	string		$label					Description
+	 *  @param	float		$amount					Amount
+	 *  @param	string		$num_chq				Numero cheque or transfer
+	 *  @param	int  		$categorie				Category id (optional)
+	 *  @param	User		$user					User that create
+	 *  @param	string		$emetteur				Name of cheque writer
+	 *  @param	string		$banque					Bank of cheque writer
+	 *  @param	string		$accountancycode		When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *  @param	int			$datev					Date value
+	 *  @param  string      $num_releve     		Label of bank receipt for reconciliation
 	 *  @param	float		$amount_main_currency	Amount
-	 *  @return	int							Rowid of added entry, <0 if KO
+	 *  @return	int									Rowid of added entry, <0 if KO
 	 */
 	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
 	{
@@ -732,16 +732,19 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (empty($this->country_id)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (empty($this->ref)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (empty($this->date_solde)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateInitialBalance"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -750,6 +753,7 @@ class Account extends CommonObject
 		// Load libraries to check BAN
 		$balance = $this->balance;
 		if (empty($balance) && !empty($this->solde)) {
+			dol_syslog(get_class($this)."::create solde is deprecated use balance", LOG_NOTICE);
 			$balance = $this->solde;
 		}
 		if (empty($balance)) {
@@ -853,8 +857,7 @@ class Account extends CommonObject
 
 				if ($accline->insert() < 0) {
 					$error++;
-					$this->error = $accline->error;
-					$this->errors = $accline->errors;
+					$this->setErrorsFromObject($accline);
 				}
 
 				if (!$error) {
@@ -2856,15 +2859,17 @@ class AccountLine extends CommonObjectLine
 	/**
 	 *	Return if a bank line was dispatched into bookkeeping
 	 *
-	 *	@return     int         Return integer <0 if KO, 0=no, 1=yes
+	 *	@param		int		$mode		0=Return nb of record, 1=return the transaction ID (piece_num)
+	 *	@return     int         		Return integer <0 if KO, 0=no, 1=yes or ID transaction
 	 */
-	public function getVentilExportCompta()
+	public function getVentilExportCompta($mode = 0)
 	{
 		$alreadydispatched = 0;
 
 		$type = 'bank';
 
-		$sql = " SELECT COUNT(ab.rowid) as nb FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type='".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
+		$sql = " SELECT ".($mode ? 'DISTINCT piece_num' : 'COUNT(ab.rowid)')." as nb";
+		$sql .= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as ab WHERE ab.doc_type = '".$this->db->escape($type)."' AND ab.fk_doc = ".((int) $this->id);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$obj = $this->db->fetch_object($resql);
@@ -2877,7 +2882,7 @@ class AccountLine extends CommonObjectLine
 		}
 
 		if ($alreadydispatched) {
-			return 1;
+			return $alreadydispatched;
 		}
 		return 0;
 	}

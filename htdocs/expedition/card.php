@@ -400,6 +400,7 @@ if (empty($reshook)) {
 		}
 
 		if (($totalqty > 0 || getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS')) && !$error) {		// There is at least one thing to ship and no error
+			$selected_subtotal_lines = GETPOST('subtotal_toselect', 'array');
 			for ($i = 0; $i < $num; $i++) {
 				$qty = "qtyl".$i;
 
@@ -435,11 +436,21 @@ if (empty($reshook)) {
 								$error++;
 							}
 						}
+						if (isModEnabled('subtotals') && $objectsrc->lines[$i]->special_code == SUBTOTALS_SPECIAL_CODE && in_array($objectsrc->lines[$i]->id, $selected_subtotal_lines)) {
+							$object->addSubtotalLine($langs, $objectsrc->lines[$i]->desc, (int) $objectsrc->lines[$i]->qty, $objectsrc->lines[$i]->extraparams, $objectsrc->lines[$i]->id);
+						}
 					}
 				} else {
 					// batch mode
 					if ($batch_line[$i]['qty'] > 0 || ($batch_line[$i]['qty'] == 0 && getDolGlobalString('SHIPMENT_GETS_ALL_ORDER_PRODUCTS'))) {
-						$ret = $object->addline_batch($batch_line[$i], $array_options[$i]);
+						$origin_line_id = (int) $batch_line[$i]['ix_l'];
+						$origin_line = new OrderLine($db);
+						$res = $origin_line->fetch($origin_line_id);
+						if ($res <= 0) {
+							$error++;
+							setEventMessages($origin_line->error, $origin_line->errors, 'errors');
+						}
+						$ret = $object->addline_batch($batch_line[$i], $array_options[$i], $origin_line);
 						if ($ret < 0) {
 							setEventMessages($object->error, $object->errors, 'errors');
 							$error++;
@@ -471,6 +482,14 @@ if (empty($reshook)) {
 
 		if (!$error) {
 			$db->commit();
+			$object->fetch_lines();
+			foreach ($object->lines as $line) {
+				$objectsrc_line = new $objectsrc->class_element_line($db);
+				'@phan-var-force CommonObjectLine $objectsrc_line';
+				$objectsrc_line->fetch($line->origin_line_id);
+				$line->extraparams = $objectsrc_line->extraparams;
+				$line->setExtraParameters();
+			}
 			header("Location: card.php?id=".$object->id);
 			exit;
 		} else {
@@ -552,6 +571,34 @@ if (empty($reshook)) {
 		//		setEventMessages($object->error, $object->errors, 'errors');
 		//	}
 		//}
+	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $permissiontoadd) {
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user);
+		if ($result > 0) {
+			// reorder lines
+			$object->line_order(true, 'ASC', false);
+			// Define output language
+			$outputlangs = $langs;
+			$newlang = '';
+			if (getDolGlobalInt('MAIN_MULTILANGS') /* && empty($newlang) */ && GETPOST('lang_id', 'aZ09')) {
+				$newlang = GETPOST('lang_id', 'aZ09');
+			}
+			if (getDolGlobalInt('MAIN_MULTILANGS') && empty($newlang)) {
+				$newlang = $object->thirdparty->default_lang;
+			}
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+			}
+			if (!getDolGlobalString('MAIN_DISABLE_PDF_AUTOUPDATE')) {
+				$ret = $object->fetch($object->id); // Reload to get new records
+				$object->generateDocument($object->model_pdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+
+			header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+			exit;
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	} elseif ($action == 'setdate_livraison' && $user->hasRight('expedition', 'creer')) {
 		$datedelivery = dol_mktime(GETPOSTINT('liv_hour'), GETPOSTINT('liv_min'), 0, GETPOSTINT('liv_month'), GETPOSTINT('liv_day'), GETPOSTINT('liv_year'));
 
@@ -1189,9 +1236,27 @@ if ($action == 'create') {
 
 			$alreadyQtyBatchSetted = $alreadyQtySetted = array();
 
+			$title_lines_to_disable = array();
+
 			if ($numAsked) {
+				if (isModEnabled('subtotals')) {
+					if (!(getDolGlobalString('SHIPMENT_SUPPORTS_SERVICES') || getDolGlobalString('STOCK_SUPPORTS_SERVICES'))) {
+						$title_lines_to_disable = $object->getDisabledShippmentSubtotalLines();
+					}
+					foreach ($object->lines as $line) {
+						if ($line->special_code == SUBTOTALS_SPECIAL_CODE) {
+							$show_check_add_buttons = true;
+							break;
+						}
+					}
+				}
 				print '<tr class="liste_titre">';
-				print '<td>'.$langs->trans("Description").'</td>';
+				print '<td>';
+				if (isset($show_check_add_buttons)) {
+					print $form->showCheckAddButtons('checkforselect');
+				}
+				print $langs->trans("Description");
+				print '</td>';
 				print '<td class="center">'.$langs->trans("QtyOrdered").'</td>';
 				print '<td class="center">'.$langs->trans("QtyShipped").'</td>';
 				print '<td class="center">'.$langs->trans("QtyToShip");
@@ -1237,7 +1302,7 @@ if ($action == 'create') {
 					setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 				}
 
-				if (empty($reshook)) {
+				if (empty($reshook) && $line->special_code != SUBTOTALS_SPECIAL_CODE) {
 					// Show product and description
 					$type = $line->product_type ? $line->product_type : $line->fk_product_type;
 					// Try to enhance type detection using date_start and date_end for free lines where type
@@ -1252,13 +1317,22 @@ if ($action == 'create') {
 					print '<!-- line for order line '.$line->id.' -->'."\n";
 					print '<tr class="oddeven" id="row-'.$line->id.'">'."\n";
 
+					$qtyProdCom = $line->qty;
+					$productChildrenNb = 0;
 					// Product label
 					if ($line->fk_product > 0) {  // If predefined product
 						$res = $product->fetch($line->fk_product);
 						if ($res < 0) {
 							dol_print_error($db, $product->error, $product->errors);
 						}
-						$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+							$productChildrenNb = $product->hasFatherOrChild(1);
+						}
+						if ($productChildrenNb > 0) {
+							$product->loadStockForVirtualProduct('warehouseopen', $qtyProdCom);
+						} else {
+							$product->load_stock('warehouseopen'); // Load all $product->stock_warehouse[idwarehouse]->detail_batch
+						}
 						//var_dump($product->stock_warehouse[1]);
 
 						print '<td>';
@@ -1319,7 +1393,6 @@ if ($action == 'create') {
 					print '<td class="center">'.$line->qty;
 					print '<input name="qtyasked'.$indiceAsked.'" id="qtyasked'.$indiceAsked.'" type="hidden" value="'.$line->qty.'">';
 					print ''.$unit_order.'</td>';
-					$qtyProdCom = $line->qty;
 
 					// Qty already shipped
 					print '<td class="center">';
@@ -1391,10 +1464,14 @@ if ($action == 'create') {
 										if (getDolGlobalInt('STOCK_DISALLOW_NEGATIVE_TRANSFER')) {
 											$stockMin = 0;
 										}
-										if ($product->stockable_product == Product::ENABLED_STOCK) {
-											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+										if ($productChildrenNb > 0) {
+											print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, 0, '', 0, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
 										} else {
-											print img_warning().' '.$langs->trans('StockDisabled');
+											if ($product->stockable_product == Product::ENABLED_STOCK) {
+												print $formproduct->selectWarehouses($tmpentrepot_id, 'entl'.$indiceAsked, '', 1, 0, $line->fk_product, '', 1, 0, array(), 'minwidth200', array(), 1, $stockMin, 'stock DESC, e.ref');
+											} else {
+												print img_warning().' '.$langs->trans('StockDisabled');
+											}
 										}
 
 										if ($tmpentrepot_id > 0 && $tmpentrepot_id == $warehouse_id) {
@@ -1636,10 +1713,12 @@ if ($action == 'create') {
 									if (isModEnabled('stock')) {
 										print '<td class="left">';
 										if ($line->product_type == Product::TYPE_PRODUCT || getDolGlobalString('STOCK_SUPPORTS_SERVICES')) {
-											if ($product->stockable_product == Product::ENABLED_STOCK) {
+											if ($product->stockable_product == Product::ENABLED_STOCK || $productChildrenNb > 0) {
 												print $tmpwarehouseObject->getNomUrl(0).' ';
-												print '<!-- Show details of stock -->';
-												print '('.$stock.')';
+												if ($productChildrenNb <= 0) {
+													print '<!-- Show details of stock -->';
+													print '('.$stock.')';
+												}
 											} else {
 												print img_warning().' '.$langs->trans('StockDisabled');
 											}
@@ -1874,6 +1953,8 @@ if ($action == 'create') {
 
 						print $expLine->showOptionals($extrafields, 'edit', array('style' => 'class="drag drop oddeven"', 'colspan' => $colspan), (string) $indiceAsked, '', '1');
 					}
+				} elseif (empty($reshook) && $line->special_code == SUBTOTALS_SPECIAL_CODE && !in_array($line->id, $title_lines_to_disable)) {
+					require dol_buildpath('/core/tpl/subtotalline_select.tpl.php');
 				}
 
 				$indiceAsked++;
@@ -1942,6 +2023,20 @@ if ($action == 'create') {
 			0,
 			1
 		);
+	}
+
+	// Confirmation de la suppression d'une ligne subtotal
+	if ($action == 'ask_subtotal_deleteline') {
+		$lineid = GETPOSTINT('lineid');
+		$langs->load("subtotals");
+		$title = "DeleteSubtotalLine";
+		$question = "ConfirmDeleteSubtotalLine";
+		if (GETPOST('type') == 'title') {
+			$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0));
+			$title = "DeleteTitleLine";
+			$question = "ConfirmDeleteTitleLine";
+		}
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
 	}
 
 	// Confirmation validation
@@ -2382,7 +2477,7 @@ if ($action == 'create') {
 	// Get list of products already sent for same source object into $alreadysent
 	$alreadysent = array();
 	if ($origin && $origin_id > 0) {
-		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end";
+		$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.fk_unit, obj.date_start, obj.date_end, obj.special_code";
 		$sql .= ", ed.rowid as shipmentline_id, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_elementdet, ed.fk_entrepot";
 		$sql .= ", e.rowid as shipment_id, e.ref as shipment_ref, e.date_creation, e.date_valid, e.date_delivery, e.date_expedition";
 		//if (getDolGlobalInt('MAIN_SUBMODULE_DELIVERY')) $sql .= ", l.rowid as livraison_id, l.ref as livraison_ref, l.date_delivery, ld.qty as qty_received";
@@ -2433,7 +2528,7 @@ if ($action == 'create') {
 			setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 		}
 
-		if (empty($reshook)) {
+		if (empty($reshook) && $lines[$i]->product_type != "9") {
 			print '<!-- origin line id = '.$lines[$i]->origin_line_id.' -->'; // id of order line
 			print '<tr class="oddeven" id="row-'.$lines[$i]->id.'" data-id="'.$lines[$i]->id.'" data-element="'.$lines[$i]->element.'" >';
 
@@ -2686,6 +2781,34 @@ if ($action == 'create') {
 							}
 						}
 						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans("DetailWarehouseNumber"), $detail);
+					} elseif (count($lines[$i]->detail_children) > 1) {
+						$detail = '';
+						foreach ($lines[$i]->detail_children as $child_product_id => $child_stock_list) {
+							foreach ($child_stock_list as $warehouse_id => $total_qty) {
+								// get product from cache
+								$child_product_label = '';
+								if (!isset($conf->cache['product'][$child_product_id])) {
+									$child_product = new Product($db);
+									$child_product->fetch($child_product_id);
+									$conf->cache['product'][$child_product_id] = $child_product;
+								} else {
+									$child_product = $conf->cache['product'][$child_product_id];
+								}
+								$child_product_label = $child_product->ref . ' ' . $child_product->label;
+
+								// get warehouse from cache
+								if (!isset($conf->cache['warehouse'][$warehouse_id])) {
+									$child_warehouse = new Entrepot($db);
+									$child_warehouse->fetch($warehouse_id);
+									$conf->cache['warehouse'][$warehouse_id] = $child_warehouse;
+								} else {
+									$child_warehouse = $conf->cache['warehouse'][$warehouse_id];
+								}
+
+								$detail .= $langs->trans('DetailChildrenFormat', $child_product_label, $child_warehouse->label, price2num($total_qty, 'MS')).'<br>';
+							}
+						}
+						print $form->textwithtooltip(img_picto('', 'object_stock').' '.$langs->trans('DetailWarehouseNumber'), $detail);
 					}
 					print '</td>';
 				}
@@ -2746,9 +2869,25 @@ if ($action == 'create') {
 				print '<input type="submit" class="button button-cancel" id="cancellinebutton" name="cancel" value="'.$langs->trans("Cancel").'"><br>';
 				print '</td>';
 			} elseif ($object->status == Expedition::STATUS_DRAFT) {
+				$edit_url = $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id;
+				if (getDolGlobalInt('PRODUIT_SOUSPRODUITS')) {
+					$product_id = $lines[$i]->fk_product;
+					if (!isset($conf->cache['product'][$product_id])) {
+						$product = new Product($db);
+						$product->fetch($product_id);
+						$conf->cache['product'][$product_id] = $product;
+					} else {
+						$product = $conf->cache['product'][$product_id];
+					}
+
+					if ($product->hasFatherOrChild(1)) {
+						$edit_url = dol_buildpath('/expedition/dispatch.php?id='.$object->id, 1);
+					}
+				}
+
 				// edit-delete buttons
 				print '<td class="linecoledit center">';
-				print '<a class="editfielda reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=editline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_edit().'</a>';
+				print '<a class="editfielda reposition" href="'.$edit_url.'">'.img_edit().'</a>';
 				print '</td>';
 				print '<td class="linecoldelete" width="10">';
 				print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deleteline&token='.newToken().'&lineid='.$lines[$i]->id.'">'.img_delete().'</a>';
@@ -2786,6 +2925,13 @@ if ($action == 'create') {
 				} else {
 					print $lines[$i]->showOptionals($extrafields, 'view', array('colspan' => $colspan), !empty($indiceAsked) ? $indiceAsked : '', '', '', 'card');
 				}
+			}
+		} elseif (empty($reshook) && $lines[$i]->product_type == "9") {
+			$objectsrc = new OrderLine($db);
+			$objectsrc->fetch($lines[$i]->origin_line_id);
+			if ($objectsrc->special_code == SUBTOTALS_SPECIAL_CODE) {
+				$line = $lines[$i];
+				require dol_buildpath('/core/tpl/subtotal_expedition_view.tpl.php');
 			}
 		}
 	}

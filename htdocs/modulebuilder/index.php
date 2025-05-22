@@ -970,7 +970,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 			$destdir = $diroflang.'/langs/'.$newlangcode;
 
 			$arrayofreplacement = array();
-			if (!dol_is_dir($srcfile) || !dol_is_file($srcfile)) {
+			if (!dol_is_dir($srcdir) || !dol_is_file($srcfile)) {
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}
@@ -3185,7 +3185,7 @@ $text = $langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span>';
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development').'</span>';
 print '<br class="hideonsmartphone">';
 
 //print $textforlistofdirs;
@@ -3455,7 +3455,7 @@ if ($module == 'initmodule') {
 
 	print '<span class="opacitymedium small">';
 	print ' &nbsp; &nbsp; ';
-	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?displayMode=icon-only#img-picto-section-list', '', '');
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
 	print '</span>';
 
 	print '</div></div>';
@@ -4036,7 +4036,14 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="idpicto" value="fa-file" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+
 				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+				print '<span class="opacitymedium small">';
+				print ' &nbsp; &nbsp; ';
+				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+				print '</span>';
+
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';

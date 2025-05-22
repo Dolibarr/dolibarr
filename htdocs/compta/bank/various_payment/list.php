@@ -311,7 +311,7 @@ if ($search_bank_entry > 0) {
 if ($search_accountancy_account > 0) {
 	$sql .= " AND v.accountancy_code = ".((int) $search_accountancy_account);
 }
-if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX')) {
+if (getDolGlobalString('ACCOUNTANCY_COMBO_FOR_AUX') && ($search_accountancy_subledger > 0)) {
 	$sql .= " AND v.subledger_account = '".$db->escape($search_accountancy_subledger)."'";
 } else {
 	if ($search_accountancy_subledger != '' && $search_accountancy_subledger != '-1') {

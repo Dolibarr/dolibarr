@@ -300,9 +300,9 @@ if (!empty($object->ldap_sid) && $object->statut == 0) {
 	$addadmin = '';
 	if (property_exists($object, 'admin')) {
 		if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+			$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 		} elseif (!empty($object->admin)) {
-			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+			$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 		}
 	}
 	print showValueWithClipboardCPButton($object->login).$addadmin;
@@ -593,7 +593,7 @@ if ($result) {
 			print '<!-- perm is a perm allowed to any admin -->';
 			if ($caneditperms) {
 				print '<td class="center nowrap">';
-				print img_picto($langs->trans("AdministratorDesc"), 'star');
+				print img_picto($langs->trans("AdministratorDesc"), 'star', 'class="paddingleft valignmiddle"');
 				print '</td>';
 			} else {
 				print '<td class="center nowrap">';

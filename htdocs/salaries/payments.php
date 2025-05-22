@@ -614,7 +614,7 @@ while ($i < $imaxinloop) {
 	$salstatic->ref = $obj->id_salary;
 
 	$paymentsalstatic->id = $obj->rowid;
-	$paymentsalstatic->ref = $obj->rowid;
+	$paymentsalstatic->ref = (string) $obj->rowid;
 	$paymentsalstatic->amount = $obj->amount;
 	$paymentsalstatic->fk_typepayment = $obj->payment_code;
 	$paymentsalstatic->datec = $obj->dateep;

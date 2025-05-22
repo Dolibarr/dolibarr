@@ -327,12 +327,74 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		// Page content
 		$tplcontent .= '<!-- File content defined in Dolibarr website module editor -->'."\n";
 		$tplcontent .= '<body id="bodywebsite" class="bodywebsite bodywebpage-'.$objectpage->ref.'">'."\n";
+
+		// Import necessary environment for the config page
+		if ($objectpage->type_container == 'setup') {
+			$content = '';
+			$content .= '<?php'."\n";
+			$content .= 'require_once DOL_DOCUMENT_ROOT.\'/core/class/html.formsetup.class.php\';'."\n";
+			$content .= '$formSetup = new FormSetup($db);'."\n";
+			$content .= '?>'."\n";
+			$tplcontent .= $content."\n";
+		}
+
 		$tplcontent .= $objectpage->content."\n";
+
+		// Add logic to handle view and actions for managing parameters in the config page
+		if ($objectpage->type_container == 'setup') {
+			$content = '<div id="websitetemplateconfigpage">'."\n";
+			$content .= '<?php'."\n";
+			$content .= '/*' . "\n";
+			$content .= ' * Actions' . "\n";
+			$content .= ' */' . "\n";
+			$content .= '$websitetemplateconf = GETPOSTINT(\'websitetemplateconf\');' . "\n";
+			$content .= 'include DOL_DOCUMENT_ROOT.\'/core/actions_setmoduleoptions.inc.php\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '/*' . "\n";
+			$content .= ' * View' . "\n";
+			$content .= ' */' . "\n";
+			$content .= 'print load_fiche_titre($langs->trans(\'SetupAndProperties\'), \'\', \'title_setup\');' . "\n";
+			$content .= '' . "\n";
+			$content .= 'if (!empty($message)) {' . "\n";
+			$content .= '    print $message;' . "\n";
+			$content .= '}' . "\n";
+			$content .= '' . "\n";
+			$content .= 'if (!empty($formSetup->items)) {' . "\n";
+			$content .= '    $html = \'\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '    $html .= \'<form action="config.php" method="POST">\';' . "\n";
+			$content .= '    // Generate hidden values from $formSetup->formHiddenInputs' . "\n";
+			$content .= '    if (!empty($formSetup->formHiddenInputs) && is_array($formSetup->formHiddenInputs)) {' . "\n";
+			$content .= '        foreach ($formSetup->formHiddenInputs as $hiddenKey => $hiddenValue) {' . "\n";
+			$content .= '            $html .= \'<input type="hidden" name="\' . dol_escape_htmltag($hiddenKey) . \'" value="\' . dol_escape_htmltag($hiddenValue) . \'">\';' . "\n";
+			$content .= '        }' . "\n";
+			$content .= '    }' . "\n";
+			$content .= '' . "\n";
+			$content .= '    // Generate output table' . "\n";
+			$content .= '    $html .= $formSetup->generateTableOutput(true);' . "\n";
+			$content .= '' . "\n";
+			$content .= '    // Submit button' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="action" value="preview">\';' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="websitetemplateconf" value="1">\';' . "\n";
+			$content .= '    $html .= \'<br>\';' . "\n";
+			$content .= '    $html .= \'<div class="form-setup-button-container center">\';' . "\n";
+			$content .= '    $html .= \'<input class="button button-submit" type="submit" value="\' . $langs->trans("Save") . \'">\';' . "\n";
+			$content .= '    $html .= \'</div>\';' . "\n";
+			$content .= '    $html .= \'</form>\';' . "\n";
+			$content .= '' . "\n";
+			$content .= '    print $html;' . "\n";
+			$content .= '}' . "\n";
+			$content .= '?>' . "\n";
+			$content .= '</div>' . "\n";
+			$tplcontent .= $content."\n";
+		}
+
+
 		$tplcontent .= '</body>'."\n";
 		$tplcontent .= '</html>'."\n";
 
 		$tplcontent .= '<?php // BEGIN PHP'."\n";
-		$tplcontent .= '} catch(Exception $e) { print $e->getMessages(); }'."\n";
+		$tplcontent .= '} catch(Exception $e) { print $e->getMessage(); }'."\n";
 		$tplcontent .= '$tmp = ob_get_contents(); ob_end_clean();'."\n";	// replace with ob_get_clean ?
 
 		$tplcontent .= "// Now fix the content for SEO or multilanguage\n";
@@ -657,15 +719,93 @@ function dolSaveLicense($file, $content)
  * 	Show list of themes. Show all thumbs of themes/skins
  *
  *	@param	Website		$website		Object website to load the template into
+ *  @param	int			$refresh		1 = Recopy templates into sources not into documents
  * 	@return	void
  */
-function showWebsiteTemplates(Website $website)
+function showWebsiteTemplates(Website $website, int $refresh)
 {
 	global $conf, $langs, $form, $user;
 
 	// We want only one directory for dir of website templates. If an external module need to provide a template, the template must be copied into this directory
 	// when module is enabled.
 	$dirthemes = array('/doctemplates/websites');
+
+	$warningtoshow = '';
+	$arrayoftemplatesfound = array();
+
+	if (count($dirthemes)) {
+		$i = 0;
+		// Scan dir to get all deployed qualified templates
+		foreach ($dirthemes as $dir) {
+			$dirtheme = DOL_DATA_ROOT.$dir;
+
+			if (is_dir($dirtheme)) {
+				$handle = opendir($dirtheme);
+				if (is_resource($handle)) {
+					while (($subdir = readdir($handle)) !== false) {	// Scan files of directory
+						//var_dump($dirtheme.'/'.$subdir);
+						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
+							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
+							$subdirwithoutzipwithoutver = preg_replace('/(_exp|_dev)$/i', '', $subdirwithoutzip);
+
+							// Disable not stable themes (dir ends with _exp or _dev)
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $subdirwithoutzip)) {
+								continue;
+							}
+							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdirwithoutzip)) {
+								continue;
+							}
+
+							$arrayoftemplatesfound[$subdirwithoutzip] = array('id' => $subdirwithoutzip);
+							$i++;
+						}
+					}
+				}
+			}
+		}
+
+		// Now test if we found template available into source not copied into documents
+		$arrayofsourcetemplates = dol_dir_list(DOL_DOCUMENT_ROOT.'/install/doctemplates/websites', 'directories', 0, 'website_.*$');
+		$arrayofsourcetemplatesnotdeployed = array();
+		foreach ($arrayofsourcetemplates as $val) {
+			// Disable not stable themes (dir ends with _exp or _dev)
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2 && preg_match('/_dev$/i', $val['relativename'])) {
+				continue;
+			}
+			if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $val['relativename'])) {
+				continue;
+			}
+
+			if (empty($arrayoftemplatesfound[$val['relativename']])) {
+				// We found a template into sources that is not into documents
+				if ($refresh) {		// We copy it
+					$src = DOL_DOCUMENT_ROOT.'/install/doctemplates/websites/'.$val['name'];
+					$dest = DOL_DATA_ROOT.'/doctemplates/websites/'.$val['name'];
+
+					dol_delete_file($dest.'.zip');
+
+					// Compress it
+					global $errormsg;	// Used by dol_compress_dir
+					$errormsg = '';
+					$result = dol_compress_dir($src, $dest.'.zip', 'zip');
+					if ($result < 0) {
+						dol_syslog("Error in compress of dir ".$src, LOG_ERR);
+					}
+
+					$srcfile = DOL_DOCUMENT_ROOT.'/install/doctemplates/websites/'.preg_replace('/(_exp|_dev)$/', '', $val['name']).'.jpg';
+					$destfile = DOL_DATA_ROOT.'/doctemplates/websites/'.preg_replace('/(_exp|_dev)$/', '', $val['name']).'.jpg';
+
+					dol_copy($srcfile, $destfile);
+				} else {
+					$arrayofsourcetemplatesnotdeployed[$val['relativename']] = $val;
+				}
+			}
+		}
+
+		if (count($arrayofsourcetemplatesnotdeployed)) {
+			$warningtoshow = img_picto($langs->trans("WarningTemplatesFoundNotDeployedClickRefresh").': '.implode(', ', array_keys($arrayofsourcetemplatesnotdeployed)).'. '.$langs->trans("WarningTemplatesFoundNotDeployedClickRefresh2"), 'warning', 'class="valignmiddle paddingright"');
+		}
+	}
 
 	$colspan = 2;
 
@@ -676,12 +816,13 @@ function showWebsiteTemplates(Website $website)
 	print '<tr class="liste_titre"><th class="titlefield">';
 	print $form->textwithpicto($langs->trans("Templates"), $langs->trans("ThemeDir").' : '.implode(", ", $dirthemes));
 	print ' ';
-	print '<a href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=1" rel="noopener noreferrer external">';
-	print img_picto('', 'refresh');
+	print '<a class="valignmiddle" href="'.$_SERVER["PHP_SELF"].'?website='.urlencode($website->ref).'&importsite=2" rel="noopener noreferrer external">';
+	print $warningtoshow;
+	print img_picto($langs->trans("Refresh"), 'refresh', 'class="valignmiddle"');
 	print '</a>';
 	print '</th>';
 	print '<th class="right">';
-	$url = 'https://www.dolistore.com/43-web-site-templates';
+	$url = 'https://www.dolistore.com/index.php?cat=84';
 	print '<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">';
 	print img_picto('', 'globe', 'class="pictofixedwidth"').$langs->trans('DownloadMoreSkins');
 	print '</a>';
@@ -699,7 +840,7 @@ function showWebsiteTemplates(Website $website)
 			if (is_dir($dirtheme)) {
 				$handle = opendir($dirtheme);
 				if (is_resource($handle)) {
-					while (($subdir = readdir($handle)) !== false) {
+					while (($subdir = readdir($handle)) !== false) {	// Scan files of directory
 						//var_dump($dirtheme.'/'.$subdir);
 						if (dol_is_file($dirtheme."/".$subdir) && substr($subdir, 0, 1) != '.' && substr($subdir, 0, 3) != 'CVS' && preg_match('/\.zip$/i', $subdir)) {
 							$subdirwithoutzip = preg_replace('/\.zip$/i', '', $subdir);
@@ -712,6 +853,8 @@ function showWebsiteTemplates(Website $website)
 							if (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 1 && preg_match('/_exp$/i', $subdirwithoutzip)) {
 								continue;
 							}
+
+							$arrayoftemplatesfound[$subdirwithoutzip] = array('id' => $subdirwithoutzip);
 
 							print '<div class="inline-block center flex-item" style="min-width: 250px; max-width: 400px; margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
 
