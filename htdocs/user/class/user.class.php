@@ -3949,7 +3949,7 @@ class User extends CommonObject
 	{
 		global $conf, $user;
 
-		$sql = "SELECT t.rowid";
+		$sql = "SELECT DISTINCT t.rowid";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t ';
 
 		if ($entityfilter) {
