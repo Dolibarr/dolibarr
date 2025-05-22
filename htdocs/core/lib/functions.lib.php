@@ -7356,7 +7356,8 @@ function price2num($amount, $rounding = '', $option = 0)
  * @param	string|float			$amount			Amount value to format
  * @return  string                      			String to show amount with style of total
  */
-function totalAmount($amount) {
+function totalAmount($amount)
+{
 	return '<span class="amount">'.$amount.'</span>';
 }
 
