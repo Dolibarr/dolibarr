@@ -812,7 +812,7 @@ if ($object->fetch($id) >= 0) {
 		print '<tr class="liste_titre_filter">';
 
 		// Action column
-		if ($conf->main_checkbox_left_column) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons('left');
 			print $searchpicto;
@@ -855,7 +855,7 @@ if ($object->fetch($id) >= 0) {
 		print '</td>';
 
 		// Action column
-		if (empty($conf->main_checkbox_left_column)) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print '<td class="liste_titre maxwidthsearch">';
 			$searchpicto = $form->showFilterButtons();
 			print $searchpicto;
@@ -870,7 +870,7 @@ if ($object->fetch($id) >= 0) {
 
 		print '<tr class="liste_titre">';
 		// Action column
-		if ($conf->main_checkbox_left_column) {
+		if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			$totalarray['nbfield']++;
 		}
@@ -885,7 +885,7 @@ if ($object->fetch($id) >= 0) {
 		print_liste_field_titre("DateSending", $_SERVER["PHP_SELF"], "mc.date_envoi", $param, '', '', $sortfield, $sortorder, 'center ');
 		print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "mc.statut", $param, '', '', $sortfield, $sortorder, 'center ');
 		// Action column
-		if (!$conf->main_checkbox_left_column) {
+		if (!getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
 			print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"], '', '', '', '', $sortfield, $sortorder, 'center maxwidthsearch ')."\n";
 			$totalarray['nbfield']++;
 		}

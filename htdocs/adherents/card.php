@@ -1059,7 +1059,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys = array();
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
+		$checkednature = GETPOST("morphy", 'alpha');
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';

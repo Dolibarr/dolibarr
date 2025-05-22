@@ -39,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $conffile	defined into filefunc.inc.php
  */
 
 // If not defined, we select menu "home"
@@ -147,11 +149,16 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
-		$langs->load("errors");
-		//$langs->load("other");
-		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+	if (is_writable($conffile)) {
+		// Try to remove automatically write permission
+		$currentPerm = fileperms($conffile);
+		$newPerm = $currentPerm & ~0222;
+		//print $conffile.' '.decoct($currentPerm).' '.(string) decoct($newPerm).' '.substr(decoct($newPerm), -4);
+		dolChmod($conffile, decoct($newPerm));
+		if (is_writable($conffile)) {
+			$langs->load("errors");
+			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		}
 	}
 
 	$object = new stdClass();
