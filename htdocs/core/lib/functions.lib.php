@@ -7350,6 +7350,10 @@ function price2num($amount, $rounding = '', $option = 0)
 	return $amount;
 }
 
+function totalAmount($amount) {
+	return '<span class="amount">'.$amount.'</span>';
+}
+
 /**
  * Output a dimension with best unit
  *
