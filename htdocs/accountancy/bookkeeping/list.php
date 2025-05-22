@@ -57,6 +57,7 @@ $langs->loadLangs(array("accountancy", "compta"));
 $socid = GETPOSTINT('socid');
 $journal_code = GETPOST('code_journal', 'alpha');
 $account = GETPOST("account", 'int');
+$massdate = (int) GETPOSTINT('massdate');
 
 // action+display Parameters
 $action = GETPOST('action', 'aZ09');
@@ -544,7 +545,7 @@ if (empty($reshook)) {
 
 	// massaction cloning
 	if (!$error && $action == 'clonebookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		$result = $object->newCloneMass($toselect, $journal_code);
+		$result = $object->newCloneMass($toselect, $journal_code, $massdate);
 		if ($result == -1) {
 			$error++;
 		}
@@ -574,7 +575,7 @@ if (empty($reshook)) {
 
 	// mass action return account
 	if (!$error && $action == 'returnaccountbookkeepingwriting' && $confirm == "yes" && $user->hasRight('accounting', 'mouvements', 'creer')) {
-		$result = $object->newReturnAccount($toselect, $journal_code);
+		$result = $object->newReturnAccount($toselect, $journal_code, $massdate);
 		if ($result == -1) {
 			$error++;
 		}
@@ -904,12 +905,12 @@ if ($massaction == 'preunletteringauto') {
 	$formquestion = array(array('type' => 'other', 'name' => 'account', 'label' => '<span class="fieldrequired">' . $langs->trans("AccountAccountingShort") . '</span>', 'value' => $input),);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("confirmMassAssignAccountBookkeepingWritingConfirm"), $langs->trans("ConfirmMassAssignAccountBookkeepingWritingQuestion", count($toselect)), "assignaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
 } elseif ($massaction == 'preclonebookkeepingwriting') {
-	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
+	$input1 = $form->selectDate('', 'massdate', 0, 0, 0, "create_mvt", 1, 1);
 	$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1) . '</td>';
 	$formquestion = array(
 		array(
 			'type' => 'date',
-			'name' => 'doc_date',
+			'name' => 'massdate',
 			'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
 			'value' => $input1
 		)
@@ -933,8 +934,8 @@ if ($massaction == 'preunletteringauto') {
 		'', 0, 200, 500, 1
 	);
 } elseif ($massaction == 'prereturnaccountbookkeepingwriting') {
-	$input1 = $form->selectDate('', 'doc_date', 0, 0, 0, "create_mvt", 1, 1);
-	$formquestion = array(array('type' => 'other', 'name' => 'doc_date', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1));
+	$input1 = $form->selectDate('', 'massdate', 0, 0, 0, "create_mvt", 1, 1);
+	$formquestion = array(array('type' => 'other', 'name' => 'massdate', 'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>', 'value' => $input1));
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmMassReturnAccountBookkeepingWriting"), $langs->trans("ConfirmMassReturnAccountBookkeepingWritingQuestion", count($toselect)), "returnaccountbookkeepingwriting", $formquestion, '', 0, 200, 500, 1);
 }
 
