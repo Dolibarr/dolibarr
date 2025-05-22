@@ -128,7 +128,6 @@ $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
-$search_gl_lettering_code = GETPOST('search_gl_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 if (GETPOST("button_delmvt_x") || GETPOST("button_delmvt.x") || GETPOST("button_delmvt")) {
@@ -202,7 +201,6 @@ $arrayfields = array(
 	't.doc_ref' => array('label' => $langs->trans("Piece"), 'checked' => '1'),
 	't.label_operation' => array('label' => $langs->trans("Label"), 'checked' => '1'),
 	't.lettering_code' => array('label' => $langs->trans("Lettering"), 'checked' => '1'),
-	't.gl_lettering_code' => array('label' => $langs->trans("LetteringGL"), 'checked' => '1'),
 	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
 	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
 	't.balance' => array('label' => $langs->trans("Balance"), 'checked' => '1'),
@@ -214,9 +212,6 @@ $arrayfields = array(
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
-	unset($arrayfields['t.gl_lettering_code']);
-} elseif (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	unset($arrayfields['t.gl_lettering_code']);
 }
 
 if ($search_date_start && empty($search_date_startyear)) {
@@ -321,7 +316,6 @@ if (empty($reshook)) {
 		$search_date_due_end_year = '';
 		$search_date_due_end = '';
 		$search_lettering_code = '';
-		$search_gl_lettering_code = '';
 		$search_debit = '';
 		$search_credit = '';
 		$search_not_reconciled = '';
@@ -409,10 +403,6 @@ if (empty($reshook)) {
 	if (!empty($search_lettering_code)) {
 		$filter['t.lettering_code'] = $search_lettering_code;
 		$param .= '&search_lettering_code='.urlencode($search_lettering_code);
-	}
-	if (!empty($search_lettering_code)) {
-		$filter['t.gl_lettering_code'] = $search_gl_lettering_code;
-		$param .= '&search_gl_lettering_code='.urlencode($search_gl_lettering_code);
 	}
 	if (!empty($search_debit)) {
 		$filter['t.debit'] = $search_debit;
@@ -629,16 +619,6 @@ if (empty($reshook)) {
 				setEventMessages('', $lettering->errors, 'errors');
 			} else {
 				setEventMessages($langs->trans($result == 0 ? 'AccountancyNoUnletteringModified' : 'AccountancyOneUnletteringModifiedSuccessfully'), array(), 'mesgs');
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
-		} elseif ($action == 'generalledgerunletteringmanual' && $permissiontoadd && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->deleteGeneralLedgerLettering($toselect);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), [], 'mesgs');
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
@@ -1465,15 +1445,11 @@ while ($i < min($num, $limit)) {
 
 	// Lettering code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center classfortooltip" title="'.$langs->trans('LetteringYearTooltip', $line->lettering_year).'">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		$tooltipText = $langs->trans('LetteringYearTooltip', $line->lettering_year);
+		if (!empty($line->is_generalledger_lettering)) {
+			$tooltipText .= "<br /><strong>{$langs->trans('GeneralLedgerLettering')}</strong>";
 		}
-	}
-
-	// General ledger lettering code
-	if (!empty($arrayfields['t.gl_lettering_code']['checked'])) {
-		print '<td class="center classfortooltip" title="'.$langs->trans('LetteringYearTooltip', $line->gl_lettering_year).'">'.dol_escape_htmltag((string) $line->gl_lettering_code).'</td>';
+		print '<td class="center classfortooltip" title="'.$tooltipText.'">'.dol_escape_htmltag((string) $line->lettering_code).'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

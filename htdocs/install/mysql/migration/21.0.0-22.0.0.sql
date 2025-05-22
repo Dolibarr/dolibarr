@@ -286,10 +286,10 @@ ALTER TABLE llx_facture_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
 ALTER TABLE llx_facture_fourn_rec ADD COLUMN usenewcurrencyrate integer DEFAULT 0;
 
 ALTER TABLE llx_don ADD COLUMN ip varchar(250);
-
 ALTER TABLE llx_expeditiondet ADD COLUMN description text AFTER fk_entrepot;
-
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('setup', 'Setup screen', 1, 'system', 500, 'library', __ENTITY__);
 
 ALTER TABLE llx_accounting_bookkeeping ADD COLUMN lettering_year INTEGER UNSIGNED AFTER lettering_code;
 UPDATE llx_accounting_bookkeeping SET lettering_year = (CASE WHEN MONTH(doc_date) >= (SELECT IFNULL((SELECT IF(value = '', NULL, value) FROM llx_const WHERE name = 'SOCIETE_FISCAL_MONTH_START' AND entity = __ENTITY__), 1)) THEN YEAR(doc_date) ELSE YEAR(doc_date) - 1 END) WHERE lettering_code IS NOT NULL AND lettering_year IS NULL;
+ALTER TABLE llx_accounting_bookkeeping ADD COLUMN is_generalledger_lettering TINYINT(1) AFTER date_lettering;
+UPDATE llx_accounting_bookkeeping SET is_generalledger_lettering = 0 WHERE is_generalledger_lettering IS NULL AND lettering_code IS NOT NULL;

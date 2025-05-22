@@ -125,7 +125,6 @@ $search_debit = GETPOST('search_debit', 'alpha');
 $search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'array');
 $search_lettering_code = GETPOST('search_lettering_code', 'alpha');
-$search_gl_lettering_code = GETPOST('search_gl_lettering_code', 'alpha');
 $search_not_reconciled = GETPOST('search_not_reconciled', 'alpha');
 
 // Load variable for pagination
@@ -201,7 +200,6 @@ $arrayfields = array(
 	't.debit' => array('label' => $langs->trans("AccountingDebit"), 'checked' => '1'),
 	't.credit' => array('label' => $langs->trans("AccountingCredit"), 'checked' => '1'),
 	't.lettering_code' => array('label' => $langs->trans("LetteringCode"), 'checked' => '1'),
-	't.gl_lettering_code' => array('label' => $langs->trans("LetteringGL"), 'checked' => '1'),
 	't.date_creation' => array('label' => $langs->trans("DateCreation"), 'checked' => '0'),
 	't.tms' => array('label' => $langs->trans("DateModification"), 'checked' => '0'),
 	't.date_export' => array('label' => $langs->trans("DateExport"), 'checked' => '0'),
@@ -212,9 +210,6 @@ $arrayfields = array(
 
 if (!getDolGlobalString('ACCOUNTING_ENABLE_LETTERING')) {
 	unset($arrayfields['t.lettering_code']);
-	unset($arrayfields['t.gl_lettering_code']);
-} elseif (getDolGlobalInt('MAIN_FEATURES_LEVEL') < 2) {
-	unset($arrayfields['t.gl_lettering_code']);
 }
 
 $error = 0;
@@ -295,7 +290,6 @@ if (empty($reshook)) {
 		$search_debit = '';
 		$search_credit = '';
 		$search_lettering_code = '';
-		$search_gl_lettering_code = '';
 		$search_not_reconciled = '';
 		$search_import_key = '';
 		$toselect = array();
@@ -452,10 +446,6 @@ if (empty($reshook)) {
 	if (!empty($search_not_reconciled)) {
 		$filter['t.reconciled_option'] = $search_not_reconciled;
 		$param .= '&search_not_reconciled='.urlencode($search_not_reconciled);
-	}
-	if (!empty($search_gl_lettering_code)) {
-		$filter['t.gl_lettering_code'] = $search_gl_lettering_code;
-		$param .= '&search_gl_lettering_code='.urlencode($search_gl_lettering_code);
 	}
 	if (!empty($search_import_key)) {
 		$filter['t.import_key'] = $search_import_key;
@@ -624,16 +614,6 @@ if (empty($reshook)) {
 				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
 				exit();
 			}
-		} elseif ($action == 'generalledgerunletteringmanual' && $permissiontoadd && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
-			$lettering = new Lettering($db);
-			$nb_lettering = $lettering->deleteGeneralLedgerLettering($toselect);
-			if ($nb_lettering < 0) {
-				setEventMessages('', $lettering->errors, 'errors');
-			} else {
-				setEventMessages($langs->trans('AccountancyOneUnletteringModifiedSuccessfully'), [], 'mesgs');
-				header('Location: ' . $_SERVER['PHP_SELF'] . '?noreset=1' . $param);
-				exit();
-			}
 		}
 	}
 }
@@ -659,8 +639,7 @@ $sql .= " t.debit,";
 $sql .= " t.credit,";
 $sql .= " t.lettering_code,";
 $sql .= " t.lettering_year,";
-$sql .= " t.gl_lettering_code,";
-$sql .= " t.gl_lettering_year,";
+$sql .= " t.is_generalledger_lettering,";
 $sql .= " t.montant as amount,";
 $sql .= " t.sens,";
 $sql .= " t.fk_user_author,";
@@ -815,14 +794,13 @@ if ($limit > 0 && $limit != $conf->liste_limit) {
 // List of mass actions available
 $arrayofmassactions = array();
 if (getDolGlobalInt('ACCOUNTING_ENABLE_LETTERING') && $user->hasRight('accounting', 'mouvements', 'creer')) {
-	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
+	$arrayofmassactions['letteringauto'] = img_picto('', 'check', 	'class="pictofixedwidth"') . $langs->trans('LetteringAuto');
 	$arrayofmassactions['preunletteringauto'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringAuto');
 	$arrayofmassactions['letteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('LetteringManual');
-	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 	if (getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
 		$arrayofmassactions['generalledgerletteringmanual'] = img_picto('', 'check', 'class="pictofixedwidth"') . $langs->trans('GeneralLedgerLetteringManual');
-		$arrayofmassactions['pregeneralledgerunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('GeneralLedgerUnletteringManual');
 	}
+	$arrayofmassactions['preunletteringmanual'] = img_picto('', 'uncheck', 'class="pictofixedwidth"') . $langs->trans('UnletteringManual');
 }
 if ($user->hasRight('accounting', 'mouvements', 'supprimer')) {
 	$arrayofmassactions['predeletebookkeepingwriting'] = img_picto('', 'delete', 'class="pictofixedwidth"').$langs->trans("Delete");
@@ -1006,12 +984,6 @@ if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print '<br><span class="nowrap"><input type="checkbox" name="search_not_reconciled" value="notreconciled"'.($search_not_reconciled == 'notreconciled' ? ' checked' : '').'>'.$langs->trans("NotReconciled").'</span>';
 	print '</td>';
 }
-// General ledger lettering code
-if (!empty($arrayfields['t.gl_lettering_code']['checked'])) {
-	print '<td class="liste_titre center">';
-	print '<input type="text" size="3" class="flat" name="search_gl_lettering_code" value="'.dol_escape_htmltag($search_gl_lettering_code).'"/>';
-	print '</td>';
-}
 
 // Fields from hook
 $parameters = array('arrayfields' => $arrayfields);
@@ -1121,9 +1093,6 @@ if (!empty($arrayfields['t.credit']['checked'])) {
 if (!empty($arrayfields['t.lettering_code']['checked'])) {
 	print_liste_field_titre($arrayfields['t.lettering_code']['label'], $_SERVER['PHP_SELF'], "t.lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
 }
-if (!empty($arrayfields['t.gl_lettering_code']['checked'])) {
-	print_liste_field_titre($arrayfields['t.gl_lettering_code']['label'], $_SERVER['PHP_SELF'], "t.gl_lettering_code", "", $param, '', $sortfield, $sortorder, 'center ');
-}
 // Hook fields
 $parameters = array('arrayfields' => $arrayfields, 'param' => $param, 'sortfield' => $sortfield, 'sortorder' => $sortorder);
 $reshook = $hookmanager->executeHooks('printFieldListTitle', $parameters); // Note that $action and $object may have been modified by hook
@@ -1189,8 +1158,7 @@ while ($i < min($num, $limit)) {
 	$line->sens = $obj->sens;
 	$line->lettering_code = $obj->lettering_code;
 	$line->lettering_year = $obj->lettering_year;
-	$line->gl_lettering_code = $obj->gl_lettering_code;
-	$line->gl_lettering_year = $obj->gl_lettering_year;
+	$line->is_generalledger_lettering = $obj->is_generalledger_lettering;
 	$line->fk_user_author = $obj->fk_user_author;
 	$line->import_key = $obj->import_key;
 	$line->code_journal = $obj->code_journal;
@@ -1394,15 +1362,11 @@ while ($i < min($num, $limit)) {
 
 	// Lettering code
 	if (!empty($arrayfields['t.lettering_code']['checked'])) {
-		print '<td class="center classfortooltip" title="'.$langs->trans('LetteringYearTooltip', $line->lettering_year).'">'.$line->lettering_code.'</td>';
-		if (!$i) {
-			$totalarray['nbfield']++;
+		$tooltipText = $langs->trans('LetteringYearTooltip', $line->lettering_year);
+		if (!empty($line->is_generalledger_lettering)) {
+			$tooltipText .= "<br /><strong>{$langs->trans('GeneralLedgerLettering')}</strong>";
 		}
-	}
-
-	// General ledger lettering code
-	if (!empty($arrayfields['t.gl_lettering_code']['checked'])) {
-		print '<td class="center classfortooltip" title="'.$langs->trans('LetteringYearTooltip', $line->gl_lettering_year).'">'.$line->gl_lettering_code.'</td>';
+		print '<td class="center classfortooltip" title="'.$tooltipText.'">'.$line->lettering_code.'</td>';
 		if (!$i) {
 			$totalarray['nbfield']++;
 		}

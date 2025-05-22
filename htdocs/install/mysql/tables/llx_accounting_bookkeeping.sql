@@ -43,9 +43,7 @@ CREATE TABLE llx_accounting_bookkeeping
   lettering_code        varchar(255),				-- FEC:EcritureLet
   lettering_year        integer UNSIGNED,			-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  gl_lettering_code     varchar(255),				-- 					| General Ledger lettering code
-  gl_lettering_year     integer UNSIGNED,			-- 					| General Ledger lettering year
-  date_lettering_gl     datetime,					-- 					| General Ledger lettering year
+  is_generalledger_lettering TINYINT(1), 				--
   date_lim_reglement    datetime DEFAULT NULL,		-- FEC_suppl:DateLimitReglmt    | payment deadline
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change

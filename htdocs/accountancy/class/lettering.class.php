@@ -309,9 +309,9 @@ class Lettering extends BookKeeping
 		$letter = str_pad("", getDolGlobalInt('ACCOUNTING_LETTERING_NBLETTERS', 3), $partial ? 'a' : 'A');
 
 		// Get fiscal year range using the older doc date.
-		$sql = "SELECT doc_date FROM {$this->db->prefix()}accounting_bookkeeping " .
-			"WHERE rowid IN ({$this->db->sanitize(implode(',', $ids))}) " .
-			"ORDER BY doc_date";
+		$sql = "SELECT doc_date FROM {$this->db->prefix()}accounting_bookkeeping";
+		$sql .=	" WHERE rowid IN ({$this->db->sanitize(implode(',', $ids))})";
+		$sql .=	" ORDER BY doc_date";
 		$docDate = $this->db->getRow($sql)->doc_date ?? null;
 
 		if (!$docDate) {
@@ -348,6 +348,7 @@ class Lettering extends BookKeeping
 					$sql2 .= " lettering_code = NULL";
 					$sql2 .= ", lettering_year = NULL";
 					$sql2 .= ", date_lettering = NULL";
+					$sql2 .= ", is_generalledger_lettering = NULL";
 					$sql2 .= " WHERE entity IN (" . getEntity('accountancy') . ")";
 					$sql2 .= " AND lettering_code = '" . $this->db->escape($obj->lettering_code) . "'";
 					$sql2 .= " AND lettering_year = " . $this->db->escape($obj->lettering_year);
@@ -374,6 +375,7 @@ class Lettering extends BookKeeping
 			$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.subledger_account = ab.subledger_account";
 			$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
 			$sql .= " AND ab2.lettering_code != ''";
+			$sql .= " AND ab2.is_generalledger_lettering = 0";
 			$sql .= " AND ab2.doc_date BETWEEN '{$fiscalYearStart}' AND '{$fiscalYearEnd}'";
 			$sql .= " ORDER BY ab2.lettering_code DESC";
 
@@ -423,6 +425,7 @@ class Lettering extends BookKeeping
 				$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
 				$sql .= ", lettering_year = YEAR('{$this->db->escape($fiscalYearStart)}')";
 				$sql .= ", date_lettering = '" . $this->db->idate($now) . "'"; // todo correct date it's false
+				$sql .= ", is_generalledger_lettering = 0";
 				$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL AND subledger_account != ''";
 
 				dol_syslog(__METHOD__ . " - Update lettering code", LOG_DEBUG);
@@ -463,6 +466,7 @@ class Lettering extends BookKeeping
 		$sql .= " lettering_code = NULL";
 		$sql .= ", lettering_year = NULL";
 		$sql .= ", date_lettering = NULL";
+		$sql .= ", is_generalledger_lettering = NULL";
 		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
 		$sql .= " AND subledger_account != ''";
 
@@ -502,13 +506,13 @@ class Lettering extends BookKeeping
 
 		// Check for unreconcilable accounts
 		$pcgId = getDolGlobalInt('CHARTOFACCOUNTS');
-		$sql = "SELECT DISTINCT numero_compte FROM {$this->db->prefix()}accounting_bookkeeping AS ab " .
-			"LEFT JOIN ( " .
-    		"SELECT aa.rowid, aa.account_number FROM {$this->db->prefix()}accounting_account AS aa " .
-			"INNER JOIN {$this->db->prefix()}accounting_system AS asys ON asys.pcg_version = aa.fk_pcg_version " .
-			"WHERE asys.rowid = {$pcgId} AND aa.reconcilable " .
-			") AS reconciliable_accounts ON reconciliable_accounts.account_number = ab.numero_compte " .
-			"WHERE ab.rowid IN ({$this->db->sanitize(implode(',', $ids))}) AND reconciliable_accounts.rowid IS NULL";
+		$sql = "SELECT DISTINCT numero_compte FROM {$this->db->prefix()}accounting_bookkeeping AS ab";
+		$sql .=	" LEFT JOIN (";
+		$sql .= " SELECT aa.rowid, aa.account_number FROM {$this->db->prefix()}accounting_account AS aa";
+		$sql .= " INNER JOIN {$this->db->prefix()}accounting_system AS asys ON asys.pcg_version = aa.fk_pcg_version";
+		$sql .= " WHERE asys.rowid = {$pcgId} AND aa.reconcilable";
+		$sql .= " ) AS reconciliable_accounts ON reconciliable_accounts.account_number = ab.numero_compte";
+		$sql .= " WHERE ab.rowid IN ({$this->db->sanitize(implode(',', $ids))}) AND reconciliable_accounts.rowid IS NULL";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -529,9 +533,9 @@ class Lettering extends BookKeeping
 
 
 		// Get fiscal year range using the older doc date.
-		$sql = "SELECT doc_date FROM {$this->db->prefix()}accounting_bookkeeping " .
-			"WHERE rowid IN ({$this->db->sanitize(implode(',', $ids))}) " .
-			"ORDER BY doc_date";
+		$sql = "SELECT doc_date FROM {$this->db->prefix()}accounting_bookkeeping";
+		$sql .=	" WHERE rowid IN ({$this->db->sanitize(implode(',', $ids))})";
+		$sql .=	" ORDER BY doc_date";
 		$docDate = $this->db->getRow($sql)->doc_date ?? null;
 
 		if (!$docDate) {
@@ -543,20 +547,21 @@ class Lettering extends BookKeeping
 		$this->db->begin();
 
 		// Get next code
-		$sql = "SELECT DISTINCT ab2.gl_lettering_code";
+		$sql = "SELECT DISTINCT ab2.lettering_code";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_bookkeeping AS ab2 ON ab2.numero_compte = ab.numero_compte";
 		$sql .= " WHERE ab.rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ")";
-		$sql .= " AND ab2.gl_lettering_code != ''";
+		$sql .= " AND ab2.lettering_code != ''";
+		$sql .= " AND ab2.is_generalledger_lettering = 1";
 		$sql .= " AND ab2.doc_date BETWEEN '{$fiscalYearStart}' AND '{$fiscalYearEnd}'";
-		$sql .= " ORDER BY ab2.gl_lettering_code DESC";
+		$sql .= " ORDER BY ab2.lettering_code DESC";
 
 		dol_syslog(__METHOD__ . " - Get next code", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			while ($obj = $this->db->fetch_object($resql)) {
-				if (!empty($obj->gl_lettering_code) && preg_match('/^[A-Z]+$/', $obj->gl_lettering_code)) {
-					$letter = $obj->gl_lettering_code;
+				if (!empty($obj->lettering_code) && preg_match('/^[A-Z]+$/', $obj->lettering_code)) {
+					$letter = $obj->lettering_code;
 					$letter++;
 					break;
 				}
@@ -569,8 +574,8 @@ class Lettering extends BookKeeping
 
 		// Test amount integrity
 		if (!$error) {
-			$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM {$this->db->prefix()}accounting_bookkeeping WHERE " .
-				"rowid IN ({$this->db->sanitize(implode(',', $ids))}) AND gl_lettering_code IS NULL";
+			$sql = "SELECT SUM(ABS(debit)) as deb, SUM(ABS(credit)) as cred FROM {$this->db->prefix()}accounting_bookkeeping";
+			$sql .=	" WHERE rowid IN ({$this->db->sanitize(implode(',', $ids))}) AND lettering_code IS NULL";
 
 			dol_syslog(__METHOD__ . " - Test amount integrity", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -591,10 +596,11 @@ class Lettering extends BookKeeping
 		// Update lettering code
 		if (!$error) {
 			$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_bookkeeping SET";
-			$sql .= " gl_lettering_code='" . $this->db->escape($letter) . "'";
-			$sql .= ", gl_lettering_year = YEAR('{$this->db->escape($fiscalYearStart)}')";
-			$sql .= ", date_lettering_gl = '" . $this->db->idate($now) . "'";
-			$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND gl_lettering_code IS NULL";
+			$sql .= " lettering_code='" . $this->db->escape($letter) . "'";
+			$sql .= ", lettering_year = YEAR('{$this->db->escape($fiscalYearStart)}')";
+			$sql .= ", date_lettering = '" . $this->db->idate($now) . "'";
+			$sql .= ", is_generalledger_lettering = 1";
+			$sql .= "  WHERE rowid IN (" . $this->db->sanitize(implode(',', $ids)) . ") AND lettering_code IS NULL";
 
 			dol_syslog(__METHOD__ . " - Update gl lettering code", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -617,40 +623,6 @@ class Lettering extends BookKeeping
 		} else {
 			$this->db->commit();
 			return $affected_rows;
-		}
-	}
-
-	/**
-	 * Remove general ledger lettering for given bookkeeping ids
-	 * @param	int[]		$ids			ids array
-	 * @return	int							Nb of affected rows or <0 if error
-	 */
-	public function deleteGeneralLedgerLettering(array $ids)
-	{
-		$error = 0;
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."accounting_bookkeeping SET";
-		$sql .= " gl_lettering_code = NULL";
-		$sql .= ", gl_lettering_year = NULL";
-		$sql .= ", date_lettering_gl = NULL";
-		$sql .= " WHERE rowid IN (".$this->db->sanitize(implode(',', $ids)).")";
-
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if (!$resql) {
-			$error++;
-			$this->errors[] = "Error ".$this->db->lasterror();
-		}
-
-		// Commit or rollback
-		if ($error) {
-			foreach ($this->errors as $errmsg) {
-				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
-			}
-			return -1 * $error;
-		} else {
-			return $this->db->affected_rows($resql);
 		}
 	}
 
