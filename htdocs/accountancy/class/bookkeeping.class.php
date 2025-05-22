@@ -3459,12 +3459,9 @@ class BookKeeping extends CommonObject
 		$accountingJournal = new AccountingJournal($this->db);
 		$accountingJournal->fetch(0, $code_journal);
 
-		$dateObj = DateTime::createFromFormat('d/m/Y', $docdate);
-		$timestamp = $dateObj->getTimestamp();
-
 		$bookKeepingValid = new BookKeeping($this->db);
 
-		$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
+		$periodeFiscal = $bookKeepingValid->validBookkeepingDate($docdate);
 		if ($periodeFiscal < 0) {
 			$error++;
 			return -1;
@@ -3575,9 +3572,8 @@ class BookKeeping extends CommonObject
 			foreach ($pieceNumT as $pieceNum) {
 				$accountingJournal = new AccountingJournal($this->db);
 				$accountingJournal->fetch(0, $code_journal);
-				$timestamp = $docdate->getTimestamp();
 				$bookKeepingValid = new BookKeeping($this->db);
-				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
+				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($docdate);
 				if ($periodeFiscal < 0) {
 					$error++;
 				} elseif ($periodeFiscal == 0) {
@@ -3670,7 +3666,6 @@ class BookKeeping extends CommonObject
 
 		$accountingJournal = new AccountingJournal($this->db);
 		$accountingJournal->fetch(0, $code_journal);
-		$timestamp = $docdate->getTimestamp();
 
 		$this->db->begin();
 		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
@@ -3728,7 +3723,7 @@ class BookKeeping extends CommonObject
 								$newBookKeeping->label_compte = $bookKeeping->label_compte;
 								$newBookKeeping->doc_type = $bookKeeping->doc_type;
 								$newBookKeeping->code_journal = $bookKeeping->code_journal;
-								$newBookKeeping->doc_date = $timestamp;
+								$newBookKeeping->doc_date = $docdate;
 								$newBookKeeping->fk_user_author = $user->id;
 								$newBookKeeping->doc_ref = $bookKeeping->doc_ref;
 								$newBookKeeping->montant = $bookKeeping->montant;
