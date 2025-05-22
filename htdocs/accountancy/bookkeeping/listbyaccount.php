@@ -932,6 +932,21 @@ $sous_total_credit = 0;
 $totalarray['val']['totaldebit'] = 0;
 $totalarray['val']['totalcredit'] = 0;
 
+$colspan = 0;			// colspan before field 'label of operation'
+$colspanend = 3;		// colspan after debit/credit
+if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
+if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
+if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
+if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
+	$colspan++;
+	$colspanend--;
+}
+
 while ($i < min($num, $limit)) {
 	$line = $object->lines[$i];
 
@@ -944,21 +959,6 @@ while ($i < min($num, $limit)) {
 		$accountg = length_accountg($line->numero_compte);
 	}
 	//if (empty($accountg)) $accountg = '-';
-
-	$colspan = 0;			// colspan before field 'label of operation'
-	$colspanend = 3;		// colspan after debit/credit
-	if (!empty($arrayfields['t.piece_num']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.code_journal']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_date']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.doc_ref']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.label_operation']['checked'])) { $colspan++; }
-	if (!empty($arrayfields['t.date_export']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.date_validated']['checked'])) { $colspanend++; }
-	if (!empty($arrayfields['t.lettering_code']['checked'])) { $colspanend++; }
-	if (getDolGlobalString('MAIN_CHECKBOX_LEFT_COLUMN')) {
-		$colspan++;
-		$colspanend--;
-	}
 
 	// Is it a break ?
 	if ($accountg != $displayed_account_number || !isset($displayed_account_number)) {
@@ -1027,8 +1027,6 @@ while ($i < min($num, $limit)) {
 		//if (empty($displayed_account_number)) $displayed_account_number='-';
 		$sous_total_debit = 0;
 		$sous_total_credit = 0;
-
-		$colspan = 0;
 	}
 
 	print '<tr class="oddeven">';
