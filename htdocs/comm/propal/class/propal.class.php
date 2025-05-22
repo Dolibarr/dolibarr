@@ -4445,7 +4445,7 @@ class PropaleLigne extends CommonObjectLine
 
 			if (!$error) {
 				$this->db->commit();
-				return $this->id;
+				return 1;
 			}
 
 			foreach ($this->errors as $errmsg) {
