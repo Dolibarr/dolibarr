@@ -3575,8 +3575,7 @@ class BookKeeping extends CommonObject
 			foreach ($pieceNumT as $pieceNum) {
 				$accountingJournal = new AccountingJournal($this->db);
 				$accountingJournal->fetch(0, $code_journal);
-				$dateObj = DateTime::createFromFormat('d/m/Y', $docdate);
-				$timestamp = $dateObj->getTimestamp();
+				$timestamp = $docdate->getTimestamp();
 				$bookKeepingValid = new BookKeeping($this->db);
 				$periodeFiscal = $bookKeepingValid->validBookkeepingDate($timestamp);
 				if ($periodeFiscal < 0) {
@@ -3671,8 +3670,7 @@ class BookKeeping extends CommonObject
 
 		$accountingJournal = new AccountingJournal($this->db);
 		$accountingJournal->fetch(0, $code_journal);
-		$dateObj = DateTime::createFromFormat('d/m/Y', $docdate);
-		$timestamp = $dateObj->getTimestamp();
+		$timestamp = $docdate->getTimestamp();
 
 		$this->db->begin();
 		$sqlAlreadyExtourne = "SELECT DISTINCT(piece_num) FROM " .MAIN_DB_PREFIX. "accounting_bookkeeping WHERE label_operation LIKE '%Extourne%'";
