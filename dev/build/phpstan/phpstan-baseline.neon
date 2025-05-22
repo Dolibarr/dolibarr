@@ -16093,12 +16093,6 @@ parameters:
 			path: ../../../htdocs/includes/odtphp/odf.php
 
 		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
 			message: '#^Ternary operator condition is always true\.$#'
 			identifier: ternary.alwaysTrue
 			count: 1
@@ -16106,12 +16100,6 @@ parameters:
 
 		-
 			message: '#^Variable \$boxwork might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: ../../../htdocs/index.php
-
-		-
-			message: '#^Variable \$conffile might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: ../../../htdocs/index.php

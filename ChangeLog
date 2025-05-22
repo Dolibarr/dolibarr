@@ -112,6 +112,7 @@ NEW: vcard (vcf) download for third party (#31957)
 NEW: Web pages of websites are protected by the WAF
 NEW: Add constant to show stock in products combo
 NEW: Can edit the module_source and pos_source field.
+NEW: Accountancy - Add actions on entries (Cloning, assigning, returning)
 
 For developers:
 ----------
