@@ -251,7 +251,7 @@ if ($action == 'create' || $object->fetch($id, $ref) > 0) {
 			print '$(document).ready(function () {
                         $("#selectcountry_id").change(function() {
 							console.log("selectcountry_id change");
-                        	document.formresource.action.value="create";
+                        	document.formresource.action.value="' . ($action == 'create' ? 'create' : 'edit') . '";
                         	document.formresource.submit();
                         });
                      });';
