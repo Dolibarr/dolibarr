@@ -2390,7 +2390,7 @@ class Thirdparties extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login.'. No read permission on thirdparties.');
 		}
 
-		if ($rowid == 0) {
+		if ($rowid == 0 && !is_null($rowid)) {
 			$result = $this->company->initAsSpecimen();
 		} else {
 			$result = $this->company->fetch($rowid, $ref, $ref_ext, $barcode, $idprof1, $idprof2, $idprof3, $idprof4, $idprof5, $idprof6, $email, $ref_alias);
