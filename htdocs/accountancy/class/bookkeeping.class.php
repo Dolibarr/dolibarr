@@ -3512,8 +3512,8 @@ class BookKeeping extends CommonObject
 							$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref,";
 							$sql_insert .= " fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
 							$sql_insert .= " VALUES";
-							$sql_insert .= " ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($timestamp) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
-							$sql_insert .= " ". $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($timestamp) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
+							$sql_insert .= " ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate) . "', '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', ";
+							$sql_insert .= " ". $fkDoc . ", " . $fkDocdet . ", " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->idate($docdate) . "', '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant . ")";
 
 							$resqlInsert = $this->db->query($sql_insert);
 
@@ -3617,7 +3617,7 @@ class BookKeeping extends CommonObject
 									$docRef = "Duplicata de " . $obj->doc_ref;
 
 									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
-									$sql_insert .=	" VALUES ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($timestamp);
+									$sql_insert .=	" VALUES ('" . $pieceNumNext . "', " . $labelOperation . ", '" . $this->db->escape($obj->numero_compte) . "', " . $labelCompte . ", '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate);
 
 									$resqlInsert = $this->db->query($sql_insert);
 
