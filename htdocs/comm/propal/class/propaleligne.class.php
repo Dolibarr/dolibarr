@@ -611,7 +611,7 @@ class PropaleLigne extends CommonObjectLine
 			}
 
 			$this->db->commit();
-			return 1;
+			return (int) $this->id;
 		} else {
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
