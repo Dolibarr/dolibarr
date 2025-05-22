@@ -3656,7 +3656,7 @@ class BookKeeping extends CommonObject
 	 * @param	string		$code_journal	Accounting journal code
 	 * @param	int			$docdate		Date of the document
 	 * @return	int							int Return integer -1 if KO, 1 if OK
- 	 *
+	 *
 	 */
 	public function newReturnAccount(array $toselect, $code_journal, $docdate)
 	{
