@@ -2920,6 +2920,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
+	} elseif ($modulepart == 'propale') {
+		$modulepart = 'propal';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
