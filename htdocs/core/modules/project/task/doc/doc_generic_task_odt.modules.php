@@ -1,11 +1,12 @@
 <?php
+
 /* Copyright (C) 2010-2012 	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2012		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2013		Florian Henry		<florian.henry@ope-concept.pro>
  * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * Copyright (C) 2018-2024  Frédéric France     <frederic.france@free.fr>
  * Copyright (C) 2023      	Gauthier VERDOL     <gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -405,7 +406,7 @@ class doc_generic_task_odt extends ModelePDFTask
 
 		$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
 		$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-		$texte .= '<textarea class="flat" cols="60" name="value1">';
+		$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
 		$texte .= getDolGlobalString('PROJECT_TASK_ADDON_PDF_ODT_PATH');
 		$texte .= '</textarea>';
 		$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
@@ -457,7 +458,7 @@ class doc_generic_task_odt extends ModelePDFTask
 	/**
 	 *	Function to build a document on disk using the generic odt module.
 	 *
-	 *	@param	Project		$object					Object source to build document
+	 *	@param	Task		$object					Object source to build document
 	 *	@param	Translate	$outputlangs			Lang output object
 	 * 	@param	string		$srctemplatepath		Full path of source filename for generator using a template file
 	 *	@return	int<-1,1>							1 if OK, <=0 if KO
@@ -589,11 +590,18 @@ class doc_generic_task_odt extends ModelePDFTask
 				$tmparray = array_merge($substitutionarray, $array_object_from_properties, $array_user, $array_soc, $array_thirdparty, $array_objet, $array_other);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
 
+				// retrieve the constant to apply a ratio for image size or set the ratio to 1
+				if (getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO')) {
+					$ratio = floatval(getDolGlobalString('MAIN_DOC_ODT_IMAGE_RATIO'));
+				} else {
+					$ratio = 1;
+				}
+
 				foreach ($tmparray as $key => $value) {
 					try {
 						if (preg_match('/logo$/', $key)) { // Image
 							if (file_exists($value)) {
-								$odfHandler->setImage($key, $value);
+								$odfHandler->setImage($key, $value, $ratio);
 							} else {
 								$odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
 							}
@@ -604,6 +612,8 @@ class doc_generic_task_odt extends ModelePDFTask
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
 				}
+
+				/** @var Task $object */
 
 				// Replace tags of lines for tasks
 				try {
@@ -625,11 +635,11 @@ class doc_generic_task_odt extends ModelePDFTask
 
 					// Replace tags of lines for contacts task
 					$sourcearray = array('internal', 'external');
-					$contact_arrray = array();
+					$contact_array = array();
 					foreach ($sourcearray as $source) {
 						$contact_temp = $object->liste_contact(-1, $source);
 						if ((is_array($contact_temp) && count($contact_temp) > 0)) {
-							$contact_arrray = array_merge($contact_arrray, $contact_temp);
+							$contact_array = array_merge($contact_array, $contact_temp);
 						}
 					}
 					// Check for segment
@@ -641,8 +651,8 @@ class doc_generic_task_odt extends ModelePDFTask
 						$foundtagforlines = 0;
 						dol_syslog($e->getMessage(), LOG_INFO);
 					}
-					if ($foundtagforlines && (is_array($contact_arrray) && count($contact_arrray) > 0)) {
-						foreach ($contact_arrray as $contact) {
+					if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
+						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -654,8 +664,11 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_WARNING);
+								$objectdetail = null;
 							}
-							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
+							$contact['fullname'] = is_object($objectdetail) ? $objectdetail->getFullName($outputlangs, 1) : null;
 
 							$tmparray = $this->get_substitutionarray_tasksressource($contact, $outputlangs);
 
@@ -801,11 +814,11 @@ class doc_generic_task_odt extends ModelePDFTask
 
 				// Replace tags of lines for contacts
 				$sourcearray = array('internal', 'external');
-				$contact_arrray = array();
+				$contact_array = array();
 				foreach ($sourcearray as $source) {
 					$contact_temp = $project->liste_contact(-1, $source);
 					if ((is_array($contact_temp) && count($contact_temp) > 0)) {
-						$contact_arrray = array_merge($contact_arrray, $contact_temp);
+						$contact_array = array_merge($contact_array, $contact_temp);
 					}
 				}
 				// Check for segment
@@ -817,9 +830,9 @@ class doc_generic_task_odt extends ModelePDFTask
 					$foundtagforlines = 0;
 					dol_syslog($e->getMessage(), LOG_INFO);
 				}
-				if ($foundtagforlines && (is_array($contact_arrray) && count($contact_arrray) > 0)) {
+				if ($foundtagforlines && (is_array($contact_array) && count($contact_array) > 0)) {
 					try {
-						foreach ($contact_arrray as $contact) {
+						foreach ($contact_array as $contact) {
 							if ($contact['source'] == 'internal') {
 								$objectdetail = new User($this->db);
 								$objectdetail->fetch($contact['id']);
@@ -831,6 +844,9 @@ class doc_generic_task_odt extends ModelePDFTask
 								$soc = new Societe($this->db);
 								$soc->fetch($contact['socid']);
 								$contact['socname'] = $soc->name;
+							} else {
+								dol_syslog(get_class().'::'.__METHOD__.' Unexpected contact source:'.$contact['source'], LOG_ERR);
+								continue;
 							}
 							$contact['fullname'] = $objectdetail->getFullName($outputlangs, 1);
 

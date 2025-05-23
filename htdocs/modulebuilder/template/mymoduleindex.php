@@ -132,8 +132,8 @@ if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 
 	$sql = "SELECT c.rowid, c.ref, c.ref_client, c.total_ht, c.tva as total_tva, c.total_ttc, s.rowid as socid, s.nom as name, s.client, s.canvas";
 	$sql.= ", s.code_client";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
-	$sql.= ", ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " FROM ".$db->prefix()."commande as c";
+	$sql.= ", ".$db->prefix()."societe as s";
 	$sql.= " WHERE c.fk_soc = s.rowid";
 	$sql.= " AND c.fk_statut = 0";
 	$sql.= " AND c.entity IN (".getEntity('commande').")";
@@ -204,7 +204,7 @@ print '</div><div class="fichetwothirdright">';
 // Last modified myobject
 if (isModEnabled('mymodule') && $user->hasRight('mymodule', 'read')) {
 	$sql = "SELECT s.rowid, s.ref, s.label, s.date_creation, s.tms";
-	$sql.= " FROM ".MAIN_DB_PREFIX."mymodule_myobject as s";
+	$sql.= " FROM ".$db->prefix()."mymodule_myobject as s";
 	$sql.= " WHERE s.entity IN (".getEntity($myobjectstatic->element).")";
 	//if ($socid)	$sql.= " AND s.rowid = $socid";
 	$sql .= " ORDER BY s.tms DESC";

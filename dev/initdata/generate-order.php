@@ -180,7 +180,7 @@ for ($s = 0; $s < GEN_NUMBER_COMMANDE; $s++) {
 
 	$fuser = new User($db);
 	$fuser->fetch($listofuserid[mt_rand(0, 2)]);
-	$fuser->getRights();
+	$fuser->loadRights();
 
 	$db->begin();
 

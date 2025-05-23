@@ -8,8 +8,8 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * Copyright (C) 2021-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2021-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
-require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/dolistore.class.php';
+require_once DOL_DOCUMENT_ROOT.'/admin/remotestore/class/externalModules.class.php';
 
 '
 @phan-var-force string $dolibarr_main_url_root_alt
@@ -81,14 +81,18 @@ $search_version = GETPOST('search_version', 'alpha');
 
 
 // For remotestore search
-$options              = array();
-$options['per_page']  = 10;
-$options['categorie'] = ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
-$options['start']     = ((int) (GETPOSTINT('start') ? GETPOSTINT('start') : 0));
-$options['end']       = ((int) (GETPOSTINT('end') ? GETPOSTINT('end') : 0));
-$options['search']    = GETPOST('search_keyword', 'alpha');
+$options              		= array();
+$options['per_page']  		= 11;
+$options['no_page']   		= ((int) GETPOSTINT('no_page') ? GETPOSTINT('no_page') : 1);
+$options['categorie'] 		= ((int) (GETPOSTINT('categorie') ? GETPOSTINT('categorie') : 0));
+$options['search']    		= GETPOST('search_keyword', 'alpha');
 
-$remotestore            = new Dolistore(false);
+$options['search_source_dolistore']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE');
+$options['search_source_github']	= getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY');
+
+//$remotestore = new Dolistore(false);
+$remotestore = new ExternalModules();
+$remotestore->loadRemoteSources();
 
 
 if (!$user->admin) {
@@ -466,7 +470,6 @@ if ($action == 'set' && $user->admin) {
 
 
 
-
 /*
  * View
  */
@@ -797,7 +800,7 @@ if ($mode == 'common' || $mode == 'commonkanban') {
 
 	$moreforfilter = '';
 
-	print '<div class="clearboth"></div><br>';
+	print '<div class="clearboth"></div><br><br>';
 
 	$object = new stdClass();
 	$parameters = array();
@@ -1246,20 +1249,66 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	// Marketplace
+	print '<!-- summary of sources -->';
+
+	// Marketplace and community modules
 	print '<div class="div-table-responsive-no-min">';
 	print '<table summary="list_of_modules" class="noborder centpercent">'."\n";
 	print '<tr class="liste_titre">'."\n";
 	print '<td class="hideonsmartphone">'.$form->textwithpicto($langs->trans("Provider"), $langs->trans("WebSiteDesc")).'</td>';
 	print '<td></td>';
-	print '<td>'.$langs->trans("URL").'</td>';
+	print '<td>';
+	print '</td>';
+	print '<td></td>';
 	print '</tr>';
 
+	// Marketplace
 	print '<tr class="oddeven">'."\n";
 	$url = 'https://www.dolistore.com';
-	print '<td class="hideonsmartphone"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.png"></a></td>';
-	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span></td>';
-	print '<td><a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolistore_logo.svg"></a></td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("DoliStoreDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_DOLISTORE') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_DOLISTORE')) {
+		$messagetoadd = '<br><span class="small">';
+		if ($remotestore->dolistoreApiStatus <= 0) {
+			$messagetoadd = '<br>'.$remotestore->dolistoreApiError.'<br>Failed to get answer of remote API server<br>';
+		}
+
+		$messagetoadd .= '<br>Using Shop address MAIN_MODULE_DOLISTORE_SHOP_URL = '.$remotestore->shop_url;
+		$messagetoadd .= '<br>Using Remote API address MAIN_MODULE_DOLISTORE_API_URL = '.$remotestore->dolistore_api_url;
+		$messagetoadd .= '<br>Using API public key MAIN_MODULE_DOLISTORE_API_KEY = '.$remotestore->dolistore_api_key;
+		// Add basic auth if needed
+		$basicAuthLogin = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_LOGIN');
+		$basicAuthPassword = getDolGlobalString('MAIN_MODULE_DOLISTORE_BASIC_PASSWORD');
+		if ($basicAuthLogin) {
+			$messagetoadd .= '<br>Using basic auth login: base64('.$basicAuthLogin.':'.$basicAuthPassword.')';
+		}
+		$messagetoadd .= '</span>';
+
+		print $remotestore->libStatus($remotestore->dolistoreApiStatus, 2, $messagetoadd);
+	}
+	print '</td>';
+	print '</tr>';
+
+	// Community
+	print '<tr class="oddeven">'."\n";
+	$url = 'https://github.com/Dolibarr/dolibarr-community-modules';
+	print '<td class="hideonsmartphone center width150 nopaddingleftimp nopaddingrightimp"><a href="'.$url.'" target="_blank" rel="noopener noreferrer external"><img border="0" class="imgautosize imgmaxwidth100" src="'.DOL_URL_ROOT.'/theme/dolibarr_logo.svg"></a></td>';
+	print '<td><span class="opacitymedium">'.$langs->trans("CommunityModulesDesc").'</span><br>';
+	print img_picto('', 'url', 'class="pictofixedwidth"').'<a href="'.$url.'" target="_blank" rel="noopener noreferrer external">'.$url.'</a></td>';
+	print '<td>';
+	print ajax_constantonoff('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY', array(), null, 0, 0, 1);
+	print '</td>';
+	print '<td class="center">';
+	if (!getDolGlobalString('MAIN_DISABLE_EXTERNALMODULES_COMMUNITY') && getDolGlobalInt('MAIN_ENABLE_EXTERNALMODULES_COMMUNITY')) {
+		$messagetoadd = '<br><br><span class="small">Content of the repository index file '.$remotestore->file_source_url.' is in the local cache file '.$remotestore->cache_file.'</span>';
+		print $remotestore->libStatus($remotestore->githubFileStatus, 2, $messagetoadd);
+	}
+	print '</td>';
 	print '</tr>';
 
 	print "</table>\n";
@@ -1269,62 +1318,72 @@ if ($mode == 'marketplace') {
 
 	print '<br>';
 
-	$conf->global->MAIN_DISABLE_DOLISTORE_SEARCH = 1; // avoid warning with the new Dolistore website
-
-	if (!getDolGlobalString('MAIN_DISABLE_DOLISTORE_SEARCH') && getDolGlobalInt('MAIN_FEATURES_LEVEL') >= 2) {
+	if ($remotestore->numberOfProviders > 0) {
 		// $options is array with filter criteria
+		$nbmaxtoshow = $options['per_page'];
+		$options['per_page']++;
 
-		if (getDolGlobalInt('MAIN_ENANLE_OLD_DOLISTORE')) {
-			$nbmaxtoshow = $options['per_page'];
-			$options['per_page']++;
+		//$remotestore->getRemoteCategories();
+		//$remotestore->getRemoteProducts($options);
 
-			$remotestore->getRemoteCategories();
-			$remotestore->getRemoteProducts($options);
+		print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
 
-			print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+		$categories_tree = $remotestore->getCategories($options['categorie']);		// Call API to get the categories
 
-			$previouslink = $remotestore->get_previous_link();
-			$nextlink = $remotestore->get_next_link();
+		$products_list = $remotestore->getProducts($options);
 
-			print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">';
+		$previouslink = $remotestore->get_previous_link();
 
-			print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
-						<input type="hidden" name="token" value="<?php echo newToken(); ?>">
-						<input type="hidden" name="mode" value="marketplace">
-						<div class="divsearchfield">
-							<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>"><br>
-						</div>
-						<div class="divsearchfield">
-							<input class="button buttongen" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-							<a class="buttonreset" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
+		$nextlink = $remotestore->get_next_link();
 
-							&nbsp;
-						</div>
-			<?php
-			print $previouslink;
-			print $nextlink;
-			print '</form>';
 
-			print '</div></div>';
-			print '<div class="clearboth"></div>';
-			?>
+		print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="">';
 
+		print '<form method="POST" class="centpercent" id="searchFormList" action="'.$remotestore->url.'">'; ?>
+					<input type="hidden" name="token" value="<?php echo newToken(); ?>">
+					<input type="hidden" name="mode" value="marketplace">
+					<input type="hidden" name="page_y" value="">
+					<div class="divsearchfield">
+						<input name="search_keyword" placeholder="<?php echo $langs->trans('Keyword') ?>" id="search_keyword" type="text" class="minwidth200" value="<?php echo dol_escape_htmltag($options['search']) ?>">
+					</div>
+					<div class="divsearchfield">
+						<input class="button buttongen reposition" value="<?php echo $langs->trans('Search') ?>" type="submit">
+						<a class="buttonreset reposition" href="<?php echo $_SERVER["PHP_SELF"].'?mode=marketplace'; ?>"><?php echo $langs->trans('Reset') ?></a>
+
+						&nbsp;
+					</div>
+		<?php
+			$totalnboflines = '<span class="product-count opacitymedium paddingleft">';
+			$totalnboflines .= $langs->trans("itemFound", $remotestore->numberTotalOfProducts);
+			$totalnboflines .= '</span>';
+
+			print $totalnboflines;
+			print $remotestore->getPagination();
+		print '</form>';
+
+		print '</div></div>';
+		print '<div class="clearboth"></div>';
+		?>
+			<?php if (!empty($categories_tree)) { ?>
 				<div id="category-tree-left">
 					<ul class="tree">
-						<?php
-						echo $remotestore->get_categories();	// Do not use dol_escape_htmltag here, it is already a structured content?>
+					<?php
+						print $categories_tree; ?>
 					</ul>
 				</div>
+			<?php } ?>
 
-				<div id="listing-content">
-					<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
-						<tbody id="listOfModules">
-							<?php echo $remotestore->get_products($nbmaxtoshow); ?>
-						</tbody>
-					</table>
-				</div>
-			<?php
-		}
+			<div id="listing-content" <?php if (empty($categories_tree)) { ?>style="width:100%;"<?php } ?>>
+				<table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
+					<tbody id="listOfModules">
+						<?php //echo $remotestore->get_products($nbmaxtoshow); ?>
+						<?php print $products_list; ?>
+					</tbody>
+				</table>
+			</div>
+			<div style="clear: both;"></div>
+			<div><?php print $remotestore->getPagination(); ?></div>
+		<?php
 	}
 }
 

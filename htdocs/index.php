@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2021-2024  Frédéric France			<frederic.france@free.fr>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024		Alexandre Spangaro		<alexandre@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $conffile	defined into filefunc.inc.php
  */
 
 // If not defined, we select menu "home"
@@ -106,17 +108,16 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
-	if (getDolGlobalString('MAIN_MOTD')) {
-		$substitutionarray = getCommonSubstitutionArray($langs);
-		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
-		print "\n<!-- Start of welcome text -->\n";
-		print '<table class="centpercent notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($texttoshow);
-		print '</td></tr></table><br>';
-		print "\n<!-- End of welcome text -->\n";
-	}
+	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs);
+	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+
+	print "\n<!-- Start of welcome text -->\n";
+	print '<table class="centpercent notopnoleftnoright"><tr><td>';
+	print dol_htmlentitiesbr($texttoshow);
+	print '</td></tr></table><br>';
+	print "\n<!-- End of welcome text -->\n";
 }
 
 /*
@@ -147,11 +148,17 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
-		$langs->load("errors");
-		//$langs->load("other");
-		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+	if (is_writable($conffile)) {
+		// Try to remove automatically write permission
+		$currentPerm = fileperms($conffile);
+		$newPerm = $currentPerm & ~0222;
+		//print $conffile.' '.decoct($currentPerm).' '.(string) decoct($newPerm).' '.substr(decoct($newPerm), -4);
+		dolChmod($conffile, decoct($newPerm));
+		//  @phpstan-ignore-next-line
+		if (is_writable($conffile)) {
+			$langs->load("errors");
+			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		}
 	}
 
 	$object = new stdClass();
@@ -341,6 +348,12 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 		$dashboardlines[$board->element] = $board->load_board($user);
 	}
 
+	if (isModEnabled('mrp')) {
+		include_once DOL_DOCUMENT_ROOT.'/mrp/class/mo.class.php';
+		$board = new Mo($db);
+		$dashboardlines[$board->element] = $board->load_board($user);
+	}
+
 	$object = new stdClass();
 	$parameters = array();
 	$action = '';
@@ -353,7 +366,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	if ($reshook == 0) {
 		$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
 	}
-
 	/* Open object dashboard */
 	$dashboardgroup = array(
 		'action' =>
@@ -451,8 +463,14 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 				'stats' =>
 					array('holiday'),
 			),
+		'cubes' =>
+			array(
+				'groupName' => 'Mo',
+				'globalStatsKey' => 'mrp',
+				'stats' =>
+					array('mo'),
+			),
 	);
-
 	$object = new stdClass();
 	$parameters = array(
 		'dashboardgroup' => $dashboardgroup
@@ -475,7 +493,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 			$valid_dashboardlines[$workboardid] = $tmp;
 		}
 	}
-
 	// We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 	foreach ($valid_dashboardlines as $board) {
 		if (is_numeric($board->nbtodo) && is_numeric($board->nbtodolate) && $board->nbtodolate > 0) {
@@ -527,7 +544,6 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 	$openedDashBoard = '';
 	if (!empty($valid_dashboardlines)) {
 		$boxwork .= '<tr class="nobottom nohover"><td class="tdboxstats nohover flexcontainer centpercent"><div style="display: flex: flex-wrap: wrap">';
-
 		foreach ($dashboardgroup as $groupKey => $groupElement) {
 			$boards = array();
 
@@ -540,6 +556,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 				}
 			}
+
 
 			if (!empty($boards)) {
 				if (!empty($groupElement['lang'])) {
@@ -583,7 +600,20 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 					}
 
 					$textLateTitle = $langs->trans("NActionsLate", $board->nbtodolate);
-					$textLateTitle .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil(empty($board->warning_delay) ? 0 : $board->warning_delay) >= 0 ? '+' : '').ceil(empty($board->warning_delay) ? 0 : $board->warning_delay).' '.$langs->trans("days").')';
+
+					$dateOrder = '';
+					if ($board->id == 'mo') {
+						$dateOrder = $langs->trans("DateToday") . " > " . $langs->trans("DateReference");
+					} else {
+						$dateOrder = $langs->trans("DateReference") . " > " . $langs->trans("DateToday");
+					}
+					$warningDelay = ceil(empty($board->warning_delay) ? 0 : $board->warning_delay);
+					$sign = '';
+					if ($warningDelay >= 0) {
+						$sign = '+';
+					}
+
+					$textLateTitle .= " (" . $langs->trans("Late") . " = $dateOrder $sign$warningDelay " . $langs->trans("days") . ")";
 
 					if ($board->id == 'bank_account') {
 						$textLateTitle .= '<br><span class="opacitymedium">'.$langs->trans("IfYouDontReconcileDisableProperty", $langs->transnoentitiesnoconv("Conciliable")).'</span>';
@@ -677,7 +707,7 @@ if (!getDolGlobalString('MAIN_DISABLE_GLOBAL_WORKBOARD') && getDolGlobalInt('MAI
 			} else {
 				$weatherDashBoard .= '			<span class="info-box-number">'.$langs->transnoentitiesnoconv(
 					"NActionsLate",
-					$totalLateNumber
+					(string) $totalLateNumber
 				).'</span>'."\n";
 				if ($totallatePercentage > 0) {
 					$weatherDashBoard .= '			<span class="progress-description">'.$langs->trans(

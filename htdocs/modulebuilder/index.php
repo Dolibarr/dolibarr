@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2023 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019 Nicolas ZABOURI	<info@inovea-conseil.com>
  * Copyright (C) 2023      Alexandre Janniaux   <alexandre.janniaux@gmail.com>
- * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW					<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
  */
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors"));
+$langs->loadLangs(array("admin", "modulebuilder", "exports", "other", "cron", "errors", "uxdocumentation"));
 
 // GET Parameters
 $action  = GETPOST('action', 'aZ09');
@@ -66,8 +66,8 @@ $cancel  = GETPOST('cancel', 'alpha');
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'aZ09');
 
-$module = GETPOST('module', 'alpha');
-$tab = GETPOST('tab', 'aZ09');
+$module = (string) GETPOST('module', 'alpha');
+$tab = (string) GETPOST('tab', 'aZ09');
 $tabobj = GETPOST('tabobj', 'alpha');
 $tabdic = GETPOST('tabdic', 'alpha');
 $propertykey = GETPOST('propertykey', 'alpha');
@@ -77,6 +77,7 @@ if (empty($module)) {
 if (empty($tab)) {
 	$tab = 'description';
 }
+'@phan-var-force string $tab';  // Workaround 'empty()' bug of phan
 if (empty($tabobj)) {
 	$tabobj = 'newobjectifnoobj';
 }
@@ -89,12 +90,12 @@ $find = GETPOST('find', 'alpha');
 $modulename = dol_sanitizeFileName(GETPOST('modulename', 'alpha'));
 $objectname = dol_sanitizeFileName(GETPOST('objectname', 'alpha'));
 $dicname = dol_sanitizeFileName(GETPOST('dicname', 'alpha'));
-$editorname = GETPOST('editorname', 'alpha');
-$editorurl = GETPOST('editorurl', 'alpha');
-$version = GETPOST('version', 'alpha');
-$family = GETPOST('family', 'alpha');
-$picto = GETPOST('idpicto', 'alpha');
-$idmodule = GETPOST('idmodule', 'alpha');
+$editorname = (string) GETPOST('editorname', 'alpha');
+$editorurl = (string) GETPOST('editorurl', 'alpha');
+$version = (string) GETPOST('version', 'alpha');
+$family = (string) GETPOST('family', 'alpha');
+$picto = (string) GETPOST('idpicto', 'alpha');
+$idmodule = (string) GETPOST('idmodule', 'alpha');
 $format = '';  // Prevent undefined in css tab
 
 // Security check
@@ -417,7 +418,7 @@ if ($dirins && $action == 'initmodule' && $modulename && $user->hasRight("module
 			}
 
 			// @phan-suppress-next-line PhanPluginSuspiciousParamPosition
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -850,6 +851,7 @@ if ($dirins && $action == 'initcli' && !empty($module) && $user->hasRight("modul
 
 
 $moduledescriptorfile = '/not_set/';
+$modulelowercase = null;
 
 // init Doc
 if ($dirins && $action == 'initdoc' && !empty($module) && $user->hasRight("modulebuilder", "run")) {
@@ -968,7 +970,7 @@ if ($dirins && $action == 'addlanguage' && !empty($module) && $user->hasRight("m
 			$destdir = $diroflang.'/langs/'.$newlangcode;
 
 			$arrayofreplacement = array();
-			if (!dol_is_dir($srcfile) || !dol_is_file($srcfile)) {
+			if (!dol_is_dir($srcdir) || !dol_is_file($srcfile)) {
 				$srcdir = DOL_DOCUMENT_ROOT.'/modulebuilder/template/langs/en_US';
 				$arrayofreplacement = array('mymodule' => $modulelowercase);
 			}
@@ -1288,7 +1290,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 					$position = 900;
 				}
 				// $alwayseditable
-				$alwayseditable=0;
+				$alwayseditable = 0;
 				if ($fieldname == 'label') {
 					$alwayseditable = 1;
 				} else {
@@ -1653,7 +1655,7 @@ if ($dirins && $action == 'initobject' && $module && $objectname && $user->hasRi
 				$arrayreplacement['---Replace with your own copyright and developer email---'] = dol_print_date($now, '%Y').' ' . getDolGlobalString('MODULEBUILDER_SPECIFIC_AUTHOR');
 			}
 
-			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
+			$result = dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);  // @phpstan-ignore-line
 			//var_dump($result);
 			if ($result < 0) {
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
@@ -2347,15 +2349,12 @@ if ($dirins && $action == 'generatepackage' && $user->hasRight("modulebuilder", 
 
 		$dirofmodule = dol_buildpath($modulelowercase, 0).'/bin';
 		$outputfilezip = $dirofmodule.'/'.$FILENAMEZIP;
-		if ($dirofmodule) {
-			if (!dol_is_dir($dirofmodule)) {
-				dol_mkdir($dirofmodule);
-			}
-			// Note: We exclude /bin/ to not include the already generated zip
-			$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\/|\.git|\.old|\.back|\.ssh/', $modulelowercase);
-		} else {
-			$result = -1;
+
+		if (!dol_is_dir($dirofmodule)) {
+			dol_mkdir($dirofmodule);
 		}
+		// Note: We exclude /bin/ to not include the already generated zip
+		$result = dol_compress_dir($dir, $outputfilezip, 'zip', '/\/bin\/|\.git|\.old|\.back|\.ssh/', $modulelowercase);
 
 		if ($result > 0) {
 			setEventMessages($langs->trans("ZipFileGeneratedInto", $outputfilezip), null);
@@ -2706,12 +2705,9 @@ if ($action == 'set' && $user->admin && $user->hasRight("modulebuilder", "run"))
 	if ($module) {
 		$param .= '&module='.urlencode($module);
 	}
-	if ($tab) {
-		$param .= '&tab='.urlencode($tab);
-	}
-	if ($tabobj) {
-		$param .= '&tabobj='.urlencode($tabobj);
-	}
+
+	$param .= '&tab='.urlencode($tab);
+	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
 	$resarray = activateModule($value);
@@ -2744,12 +2740,8 @@ if ($action == 'reset' && $user->admin && $user->hasRight("modulebuilder", "run"
 	if ($module) {
 		$param .= '&module='.urlencode($module);
 	}
-	if ($tab) {
-		$param .= '&tab='.urlencode($tab);
-	}
-	if ($tabobj) {
-		$param .= '&tabobj='.urlencode($tabobj);
-	}
+	$param .= '&tab='.urlencode($tab);
+	$param .= '&tabobj='.urlencode($tabobj);
 
 	$value = GETPOST('value', 'alpha');
 	$result = unActivateModule($value);
@@ -3193,7 +3185,7 @@ $text = $langs->trans("ModuleBuilder");
 
 print load_fiche_titre($text, '', 'title_setup');
 
-print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development#Create_your_module').'</span>';
+print '<span class="opacitymedium hideonsmartphone">'.$langs->trans("ModuleBuilderDesc", 'https://wiki.dolibarr.org/index.php/Module_development').'</span>';
 print '<br class="hideonsmartphone">';
 
 //print $textforlistofdirs;
@@ -3305,20 +3297,17 @@ $h++;
 
 $linktoenabledisable = '';
 
-if (is_array($listofmodules) && count($listofmodules) > 0) {
+if (/* is_array($listofmodules) && */ count($listofmodules) > 0) {
 	// Define $linktoenabledisable
 	$modulelowercase = strtolower($module);
 
 	$param = '';
-	if ($tab) {
-		$param .= '&tab='.urlencode($tab);
-	}
 	if ($module) {
 		$param .= '&module='.urlencode($module);
 	}
-	if ($tabobj) {
-		$param .= '&tabobj='.urlencode($tabobj);
-	}
+
+	$param .= '&tab='.urlencode($tab);
+	$param .= '&tabobj='.urlencode($tabobj);
 
 	$urltomodulesetup = '<a href="'.DOL_URL_ROOT.'/admin/modules.php?search_keyword='.urlencode($module).'">'.$langs->trans('Home').'-'.$langs->trans("Setup").'-'.$langs->trans("Modules").'</a>';
 
@@ -3333,9 +3322,7 @@ if (is_array($listofmodules) && count($listofmodules) > 0) {
 		$objMod = $moduleobj;
 		$backtourlparam = '';
 		$backtourlparam .= ($backtourlparam ? '&' : '?').'module='.$module; // No urlencode here, done later
-		if ($tab) {
-			$backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
-		}
+		$backtourlparam .= ($backtourlparam ? '&' : '?').'tab='.$tab; // No urlencode here, done later
 		$backtourl = $_SERVER["PHP_SELF"].$backtourlparam;
 
 		$regs = array();
@@ -3393,6 +3380,7 @@ print dol_get_fiche_head($head, $module, '', -1, '', 0, $infomodulesfound, '', 8
 
 if ($module == 'initmodule') {
 	// New module
+	print '<!-- section init module -->'."\n";
 	print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="initmodule">';
@@ -3406,13 +3394,12 @@ if ($module == 'initmodule') {
 	print '<div class="tagtr"><div class="tagtd paddingright">';
 	print '<span class="opacitymedium">'.$langs->trans("IdModule").'</span>';
 	print '</div><div class="tagtd">';
-	print '<input type="text" name="idmodule" class="width75" value="500000" placeholder="'.dol_escape_htmltag($langs->trans("IdModule")).'">';
-	print '<span class="opacitymedium">';
-	print ' &nbsp; (';
-	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info', '', '');
+	print '<input type="number" min="100000" name="idmodule" class="width75" value="500000">';
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_modules_id', $langs->transnoentitiesnoconv("SeeIDsInUse"), $langs->transnoentitiesnoconv("SeeIDsInUse"), '/admin/system/modules.php?mainmenu=home&leftmenu=admintools_info&hidetitle=1', '', '');
 	print ' - ';
 	print '<a href="https://wiki.dolibarr.org/index.php/List_of_modules_id" target="_blank" rel="noopener noreferrer external">'.$langs->trans("SeeReservedIDsRangeHere").'</a>';
-	print ')';
 	print '</span>';
 	print '</div></div>';
 
@@ -3465,6 +3452,12 @@ if ($module == 'initmodule') {
 	print '</div><div class="tagtd">';
 	print '<input type="text" name="idpicto" value="'.(GETPOSTISSET('idpicto') ? GETPOST('idpicto') : getDolGlobalString('MODULEBUILDER_DEFAULTPICTO', 'fa-file')).'" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
 	print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+	print '<span class="opacitymedium small">';
+	print ' &nbsp; &nbsp; ';
+	print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+	print '</span>';
+
 	print '</div></div>';
 
 	print '<div class="tagtr"><div class="tagtd paddingright">';
@@ -3493,7 +3486,7 @@ if ($module == 'initmodule') {
 	print '<input type="text" name="module" placeholder="'.dol_escape_htmltag($langs->trans("ModuleKey")).'" value="" autofocus>';
 	print '<input type="submit" class="button smallpaddingimp" value="'.$langs->trans("Delete").'"'.($dirins ? '' : ' disabled="disabled"').'>';
 	print '</form>';
-} elseif (!empty($module) && isset($modulelowercase)) {
+} elseif (!empty($module) && $modulelowercase !== null) {
 	// Tabs for module
 	if (!$error) {
 		$dirread = $listofmodules[strtolower($module)]['moduledescriptorrootpath'];
@@ -3848,6 +3841,7 @@ if ($module == 'initmodule') {
 			} else {	// Edit text file
 				$fullpathoffile = dol_buildpath($file, 0, 1); // Description - level 2
 
+				$content = '';
 				if ($fullpathoffile) {
 					$content = file_get_contents($fullpathoffile);
 				}
@@ -4042,7 +4036,14 @@ if ($module == 'initmodule') {
 				print '<span class="opacitymedium">'.$langs->trans("Picto").'</span> &nbsp; ';
 				print '</div><div class="tagtd">';
 				print '<input type="text" name="idpicto" value="fa-file" placeholder="'.dol_escape_htmltag($langs->trans("Picto")).'">';
+
 				print $form->textwithpicto('', $langs->trans("Example").': fa-file, fa-globe, ... any font awesome code.<br>Advanced syntax is fa-fakey[_faprefix[_facolor[_fasize]]]');
+
+				print '<span class="opacitymedium small">';
+				print ' &nbsp; &nbsp; ';
+				print dolButtonToOpenUrlInDialogPopup('popup_picto_id', $langs->transnoentitiesnoconv("DocIconsList"), $langs->transnoentitiesnoconv("DocIconsList"), '/admin/tools/ui/components/icons.php?hidenavmenu=1&displayMode=icon-only#img-picto-section-list', '', '');
+				print '</span>';
+
 				print '</div></div>';
 
 				print '<div class="tagtr"><div class="tagtd">';
@@ -4377,7 +4378,7 @@ if ($module == 'initmodule') {
 								print $form->textwithpicto('', $langs->trans("InfoForApiFile"), 1, 'warning');
 								print ' &nbsp; ';
 								// Comparing to null (phan considers $modulelowercase can be null here)
-								if ($modulelowercase !== null && !isModEnabled($modulelowercase)) {	// If module is not activated
+								if (!isModEnabled($modulelowercase)) {	// If module is not activated
 									print '<a href="#" class="classfortooltip" target="apiexplorer" title="'.$langs->trans("ModuleMustBeEnabled", $module).'"><strike>'.$langs->trans("ApiExplorer").'</strike></a>';
 								} else {
 									print '<a href="'.DOL_URL_ROOT.'/api/index.php/explorer/" target="apiexplorer">'.$langs->trans("ApiExplorer").'</a>';
@@ -6418,7 +6419,7 @@ if ($module == 'initmodule') {
 						print '</td>';
 
 						print '<td>';
-						$texttoshow = null;
+						$texttoshow = '';
 						if ($cron['jobtype'] == 'method') {
 							$text = $langs->trans("CronClass");
 							$texttoshow = $langs->trans('CronModule').': '.$module.'<br>';
@@ -6658,7 +6659,7 @@ if ($module == 'initmodule') {
 			print '<br>';
 
 			print '<span class="fa fa-file"></span> '.$langs->trans("PathToModulePackage").' : ';
-			if (!dol_is_file($outputfilezip)) {
+			if ($outputfilezip === null || !dol_is_file($outputfilezip)) {
 				print '<span class="opacitymedium">'.$langs->trans("FileNotYetGenerated").'</span>';
 			} else {
 				$relativepath = $modulelowercase.'/bin/'.$FILENAMEZIP;

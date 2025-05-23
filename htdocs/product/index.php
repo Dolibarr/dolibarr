@@ -7,7 +7,7 @@
  * Copyright (C) 2019       Pierre Ardoin           <mapiolca@me.com>
  * Copyright (C) 2019-2024  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2019       Nicolas ZABOURI         <info@inovea-conseil.com>
- * Copyright (C) 2024		MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ print load_fiche_titre($transAreaType, $resultboxes['selectboxlist'], 'product')
 
 
 if (getDolGlobalString('MAIN_SEARCH_FORM_ON_HOME_AREAS')) {     // This may be useless due to the global search combo
-	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) {
+	if (!isset($listofsearchfields) || !is_array($listofsearchfields)) { // @phan-suppress-current-line PhanPluginUndeclaredVariableIsset
 		// Ensure $listofsearchfields is set and array
 		$listofsearchfields = array();
 	}
@@ -735,7 +735,7 @@ function activitytrim($product_type)
 	$yearofbegindate = (int) date('Y', dol_time_plus_duree(time(), -3, "y"));
 	$out = '';
 	// breakdown by quarter
-	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as Mnttot";
+	$sql = "SELECT DATE_FORMAT(p.datep,'%Y') as annee, DATE_FORMAT(p.datep,'%m') as mois, SUM(fd.total_ht) as mnttot";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= " , ".MAIN_DB_PREFIX."paiement as p,".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= " WHERE f.entity IN (".getEntity('invoice').")";
@@ -743,7 +743,7 @@ function activitytrim($product_type)
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND pf.fk_paiement = p.rowid";
 	$sql .= " AND fd.product_type = ".((int) $product_type);
-	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate), 1)."'";
+	$sql .= " AND p.datep >= '".$db->idate(dol_get_first_day($yearofbegindate, 1))."'";
 	$sql .= " GROUP BY annee, mois ";
 	$sql .= " ORDER BY annee, mois ";
 
@@ -797,19 +797,19 @@ function activitytrim($product_type)
 			}
 
 			if ($objp->mois == "01" || $objp->mois == "02" || $objp->mois == "03") {
-				$trim1 += $objp->Mnttot;
+				$trim1 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "04" || $objp->mois == "05" || $objp->mois == "06") {
-				$trim2 += $objp->Mnttot;
+				$trim2 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "07" || $objp->mois == "08" || $objp->mois == "09") {
-				$trim3 += $objp->Mnttot;
+				$trim3 += $objp->mnttot;
 			}
 
 			if ($objp->mois == "10" || $objp->mois == "11" || $objp->mois == "12") {
-				$trim4 += $objp->Mnttot;
+				$trim4 += $objp->mnttot;
 			}
 
 			$i++;

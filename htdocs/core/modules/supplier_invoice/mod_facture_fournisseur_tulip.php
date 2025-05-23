@@ -85,7 +85,9 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte .= '<input type="hidden" name="maskconstreplacement" value="SUPPLIER_REPLACEMENT_TULIP_MASK">';
 		$texte .= '<input type="hidden" name="maskconstcredit" value="SUPPLIER_CREDIT_TULIP_MASK">';
 		$texte .= '<input type="hidden" name="maskconstdeposit" value="SUPPLIER_DEPOSIT_TULIP_MASK">';
-		$texte .= '<table class="nobordernopadding" width="100%">';
+		$texte .= '<input type="hidden" name="page_y" value="">';
+
+		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Invoice"), $langs->transnoentities("Invoice"));
 		$tooltip .= $langs->trans("GenericMaskCodes2");
@@ -101,7 +103,7 @@ class mod_facture_fournisseur_tulip extends ModeleNumRefSuppliersInvoices
 		$texte .= ':</td>';
 		$texte .= '<td class="right">'.$form->textwithpicto('<input type="text" class="flat minwidth175" name="maskinvoice" value="'.getDolGlobalString("SUPPLIER_INVOICE_TULIP_MASK").'">', $tooltip, 1, 'help', '', 0, 3, 'tooltipstandardtulip').'</td>';
 
-		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button"value="'.$langs->trans("Modify").'"></td>';
+		$texte .= '<td class="left" rowspan="2">&nbsp; <input type="submit" class="button button-edit reposition smallpaddingimp" name="Button" value="'.$langs->trans("Save").'"></td>';
 
 		$texte .= '</tr>';
 

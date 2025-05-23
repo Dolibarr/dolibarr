@@ -93,7 +93,7 @@ if ($object->id > 0) {
 		$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write');
 		$permissiontodelete = isModEnabled('website') && $user->hasRight('website', 'delete');
 	} elseif ($object->site == 'dolibarr_portal') {
-		$permissiontocreate = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
+		$permissiontocreate = $permissiontodelete = isModEnabled('webportal') && $user->hasRight('webportal', 'write');
 	}
 } else {
 	$permissiontocreate = isModEnabled('website') && $user->hasRight('website', 'write') || isModEnabled('webportal') && $user->hasRight('webportal', 'write');

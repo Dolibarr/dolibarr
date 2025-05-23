@@ -307,6 +307,7 @@ class FormTicket
 		}
 
 		print '<form method="POST" '.($withdolfichehead ? '' : 'style="margin-bottom: 30px;" ').'name="ticket" id="form_create_ticket" enctype="multipart/form-data" action="'.(!empty($this->param["returnurl"]) ? $this->param["returnurl"] : $_SERVER['PHP_SELF']).'">';
+
 		print '<input type="hidden" name="token" value="'.newToken().'">';
 		print '<input type="hidden" name="action" value="'.$this->action.'">';
 		if (!empty($object->id)) {
@@ -837,7 +838,7 @@ class FormTicket
 			print dol_get_fiche_end();
 		}
 
-		print '<br>';
+		print '<br><br>';
 
 		if ($mode == 'create') {
 			print $form->buttonsSaveCancel(((isset($this->withreadid) && $this->withreadid > 0) ? "SendResponse" : "CreateTicket"), ($this->withcancel ? "Cancel" : ""));
@@ -1000,8 +1001,8 @@ class FormTicket
 				print '<option value="">'.((is_numeric($empty) || $empty == 'ifone') ? '&nbsp;' : $empty).'</option>';
 			}
 
-			if (is_array($ticketstat->cache_category_tickets) && count($ticketstat->cache_category_tickets)) {
-				foreach ($ticketstat->cache_category_tickets as $id => $arraycategories) {
+			if (is_array($conf->cache['category_tickets']) && count($conf->cache['category_tickets'])) {
+				foreach ($conf->cache['category_tickets'] as $id => $arraycategories) {
 					// Exclude some record
 					if ($publicgroups) {
 						if (empty($arraycategories['public'])) {
@@ -1044,7 +1045,7 @@ class FormTicket
 						print ' selected="selected"';
 					} elseif ($arraycategories['use_default'] == "1" && empty($selected) && (!$empty || $empty == 'ifone')) {
 						print ' selected="selected"';
-					} elseif (count($ticketstat->cache_category_tickets) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
+					} elseif (count($conf->cache['category_tickets']) == 1 && (!$empty || $empty == 'ifone')) {	// If only 1 choice, we autoselect it
 						print ' selected="selected"';
 					}
 
@@ -1497,7 +1498,12 @@ class FormTicket
 				$model_id = (int) $this->param["models_id"];
 			}
 
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id); // If $model_id is empty, preselect the first one
+			// If $model_id is empty, preselect the first one
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
+			if (isset($arraydefaultmessage->id) && empty($model_id)) {
+				$model_id = $arraydefaultmessage->id;
+				$this->param['models_id']=$model_id;
+			}
 		}
 
 		// Define list of attached files
@@ -1612,9 +1618,8 @@ class FormTicket
 		$model_id = 0;
 		if (array_key_exists('models_id', $this->param)) {
 			$model_id = $this->param["models_id"];
-			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id);
+			$arraydefaultmessage = $formmail->getEMailTemplate($this->db, $this->param["models"], $user, $outputlangs, $model_id, 1, '', 1);
 		}
-
 		$result = $formmail->fetchAllEMailTemplate(!empty($this->param["models"]) ? $this->param["models"] : "", $user, $outputlangs);
 		if ($result < 0) {
 			setEventMessages($this->error, $this->errors, 'errors');
@@ -1808,7 +1813,7 @@ class FormTicket
 
 		$defaultmessage = "";
 		if (is_object($arraydefaultmessage) && $arraydefaultmessage->content) {
-			$defaultmessage = $arraydefaultmessage->content;
+			$defaultmessage = (string) $arraydefaultmessage->content;
 		}
 		$defaultmessage = str_replace('\n', "\n", $defaultmessage);
 
@@ -1835,12 +1840,12 @@ class FormTicket
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO')) {
 				$mail_intro = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO'), $this->substit);
-				print '<input type="hidden" name="mail_intro" value="'.$mail_intro.'">';
+				print '<input type="hidden" name="mail_intro" value="'.dolPrintHTMLForAttribute($mail_intro).'">';
 				$texttooltip .= '<br><u>'.$langs->trans("TicketMessageMailIntro").'</u><br>'.$mail_intro;
 			}
 			if (getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE')) {
 				$mail_signature = make_substitutions(getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE'), $this->substit);
-				print '<input type="hidden" name="mail_signature" value="'.$mail_signature.'">';
+				print '<input type="hidden" name="mail_signature" value="'.dolPrintHTMLForAttribute($mail_signature).'">';
 				$texttooltip .= '<br><br><u>'.$langs->trans("TicketMessageMailFooter").'</u><br>'.$mail_signature;
 			}
 			print $form->textwithpicto('', $texttooltip, 1, 'help');
