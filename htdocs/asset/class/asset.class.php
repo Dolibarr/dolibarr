@@ -931,7 +931,7 @@ class Asset extends CommonObject
 				$sql = "DELETE FROM " . MAIN_DB_PREFIX . "asset_depreciation";
 				$sql .= " WHERE fk_asset = " . (int) $this->id;
 				$sql .= " AND depreciation_mode = '" . $this->db->escape($mode_key) . "'";
-				$sql .= " AND rowid NOT IN (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset')";
+				$sql .= " AND NOT EXISTS (SELECT fk_docdet FROM " . MAIN_DB_PREFIX . "accounting_bookkeeping WHERE doc_type = 'asset' AND fk_docdet = " . $this->db->prefix(). "asset_depreciation.rowid)";
 				if ($last_depreciation_date !== "") {
 					$sql .= " AND ref != ''";
 				}
