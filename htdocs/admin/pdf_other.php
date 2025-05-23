@@ -149,6 +149,9 @@ if ($action == 'update') {
 			setEventMessages($langs->trans("ErrorBadFormat"), null, 'errors');
 		} else {
 			$dirforterms = $conf->mycompany->dir_output.'/';
+			if (!is_dir($dirforterms)) {
+				dol_mkdir($dirforterms);
+			}
 			$original_file = $_FILES['termsofsale']["name"];
 			$result = dol_move_uploaded_file($_FILES['termsofsale']["tmp_name"], $dirforterms.$original_file, 1, 0, $_FILES['termsofsale']['error']);
 			if ($result) {
