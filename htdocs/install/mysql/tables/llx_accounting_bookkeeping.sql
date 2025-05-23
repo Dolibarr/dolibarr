@@ -20,7 +20,7 @@
 CREATE TABLE llx_accounting_bookkeeping
 (
   rowid                 integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  ref             		VARCHAR(30),				--
+  ref             		VARCHAR(30),				-- FEC:EcritureNum  | accounting transaction id. In future, will replace piece_num that is an ID, not a ref.
   entity                integer DEFAULT 1 NOT NULL,	-- 					| multi company id
   piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting transaction id
   doc_date              date NOT NULL,				-- FEC:PieceDate    | date of source document

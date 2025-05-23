@@ -4771,15 +4771,16 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  *
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
+ *  @param	int		$showname	1=Show reverse domain name instead of IP
  * 	@return string 				Formatted IP, with country if GeoIP module is enabled
  */
-function dol_print_ip($ip, $mode = 0)
+function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
-	global $conf, $langs;
+	global $conf;
 
 	$ret = '';
 	if (!isset($conf->cache['resolveips'])) {
-		$conf->cache['resolveips'] = [];
+		$conf->cache['resolveips'] = array();
 	}
 
 	if ($mode != 2) {
@@ -4798,11 +4799,14 @@ function dol_print_ip($ip, $mode = 0)
 	}
 
 	if (in_array($mode, [0, 2])) {
-		if (empty($conf->cache['resolveips'][$ip])) {
-			$domain = gethostbyaddr($ip);
-			$conf->cache['resolveips'][$ip] = $domain; // false or domain
-		} else {
-			$domain = $conf->cache['resolveips'][$ip];
+		$domain = '';
+		if ($showname) {
+			if (!array_key_exists($ip, $conf->cache['resolveips'])) {
+				$domain = gethostbyaddr($ip);
+				$conf->cache['resolveips'][$ip] = $domain; // false or domain
+			} else {
+				$domain = $conf->cache['resolveips'][$ip];
+			}
 		}
 		if ($domain) {
 			$ret .= $domain;
