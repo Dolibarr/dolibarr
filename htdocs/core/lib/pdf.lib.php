@@ -929,6 +929,10 @@ function pdf_bank(&$pdf, $outputlangs, $curx, $cury, $account, $onlynumber = 0, 
 					break;
 				}
 
+				if ($content == '') {
+					continue;
+				}
+
 				$pdf->MultiCell($tmplength, 3, $outputlangs->convToOutputCharset($content), 0, 'C', 0);
 				$pdf->SetXY($curx, $cury + 1);
 				$curx += $tmplength;
