@@ -1706,7 +1706,6 @@ class Commande extends CommonOrder
 
 				if ($result > 0) {
 					$this->db->commit();
-					$this->lines[] = $this->line;
 					return $this->line->id;
 				} else {
 					$this->db->rollback();
