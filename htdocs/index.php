@@ -107,7 +107,6 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 
 if (getDolGlobalString('MAIN_MOTD')) {
-
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
 
 	$substitutionarray = getCommonSubstitutionArray($langs);
@@ -155,7 +154,7 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 		$newPerm = $currentPerm & ~0222;
 		//print $conffile.' '.decoct($currentPerm).' '.(string) decoct($newPerm).' '.substr(decoct($newPerm), -4);
 		dolChmod($conffile, decoct($newPerm));
-    
+
 		//  @phpstan-ignore-next-line
 		if (is_writable($conffile)) {
 			$langs->load("errors");
