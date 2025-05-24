@@ -1,2 +1,161 @@
-# Dolibarr language file - Source file is en_US - eventorganization
-EvntOrgDraft =مسودة
+# Copyright (C) 2021		Florian Henry			<florian.henry@scopen.fr>
+# Copyright (C) 2021		Dorian Vabre			<dorian.vabre@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# Generic
+ModuleEventOrganizationName=تنظيم الفعاليات
+EventOrganizationDescription=تنظيم الفعاليات من خلال وحدة المشاريع
+EventOrganizationDescriptionLong=إدارة تنظيم فعالية مثل معرض أو مؤتمر، مع صفحات عامة لاقتراح المواضيع أو التصويت أو التسجيل
+EventOrganizationMenuLeft=الفعاليات المنظمة
+EventOrganizationConferenceOrBoothMenuLeft=مؤتمر أو جناح
+PaymentEvent=دفع رسوم الفعالية
+EventFee=رسوم الفعالية
+# Admin page
+NewRegistration=تسجيل جديد
+EventOrganizationSetup=إعداد تنظيم الفعاليات
+EventOrganization=تنظيم الفعالية
+EventOrganizationSetupPage=صفحة إعداد تنظيم الفعالية
+EVENTORGANIZATION_TASK_LABEL=تسمية المهام التي يتم إنشاؤها تلقائيا عند اعتماد المشروع
+EVENTORGANIZATION_TASK_LABELTooltip=عند اعتماد فعالية للتنظيم، يمكن إنشاء بعض المهام تلقائيا ضمن المشروع<br><br>مثال:<br>إرسال دعوة للمؤتمرات<br>إرسال دعوة للأجنحة<br>اعتماد اقتراحات المؤتمرات<br>اعتماد طلبات الأجنحة<br>فتح باب التسجيل في الفعالية للحضور<br>إرسال تذكير بالفعالية إلى المتحدثين<br>إرسال تذكير بالفعالية إلى مسؤولي الأجنحة<br>إرسال تذكير بالفعالية إلى الحضور
+EVENTORGANIZATION_TASK_LABELTooltip2=اتركه فارغا إذا لم تكن بحاجة لإنشاء مهام تلقائية
+EVENTORGANIZATION_CATEG_THIRDPARTY_CONF=الفئة التي تضاف تلقائيا إلى الجهات الخارجية التي تقترح مؤتمرا
+EVENTORGANIZATION_CATEG_THIRDPARTY_BOOTH=الفئة التي تضاف تلقائيا إلى الجهات الخارجية التي تقترح جناحا
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_CONF=نموذج البريد الإلكتروني المرسل بعد تلقي اقتراح مؤتمر
+EVENTORGANIZATION_TEMPLATE_EMAIL_ASK_BOOTH=نموذج البريد الإلكتروني المرسل بعد تلقي اقتراح جناح
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_BOOTH=نموذج البريد الإلكتروني المرسل بعد دفع التسجيل في جناح
+EVENTORGANIZATION_TEMPLATE_EMAIL_AFT_SUBS_EVENT=نموذج البريد الإلكتروني المرسل بعد دفع التسجيل في فعالية
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_SPEAKER=نموذج البريد الإلكتروني المستخدم عند إرسال بريد جماعي للمتحدثين
+EVENTORGANIZATION_TEMPLATE_EMAIL_BULK_ATTENDES=نموذج البريد الإلكتروني المستخدم عند إرسال بريد جماعي لقائمة الحضور
+EVENTORGANIZATION_FILTERATTENDEES_CAT=في نموذج إضافة الحضور، تقييد قائمة الجهات الخارجية على فئة معينة
+EVENTORGANIZATION_FILTERATTENDEES_TYPE=في نموذج إضافة الحضور، تقييد القائمة على نوع معين من الجهات الخارجية
+# Object
+OrganizedEvent=فعالية منظمة
+EventOrganizationConfOrBooth=مؤتمر أو جناح
+EventOrganizationConfOrBoothes=مؤتمرات أو أجنحة
+ManageOrganizeEvent=إدارة تنظيم فعالية
+ConferenceOrBooth=مؤتمر أو جناح
+ConferenceOrBoothTab=مؤتمر أو جناح
+AmountPaid=المبلغ المدفوع
+DateOfRegistration=تاريخ التسجيل
+ConferenceOrBoothAttendee=مشارك في مؤتمر أو جناح
+ApplicantOrVisitor=متقدم أو زائر
+Speaker=متحدث
+# Template Mail
+YourOrganizationEventConfRequestWasReceived=تم استلام طلب المؤتمر الخاص بك
+YourOrganizationEventBoothRequestWasReceived=تم استلام طلب الجناح الخاص بك
+EventOrganizationEmailAskConf=طلب مؤتمر
+EventOrganizationEmailAskBooth=طلب جناح
+EventOrganizationEmailBoothPayment=دفع رسوم الجناح الخاص بك
+EventOrganizationEmailRegistrationPayment=تسجيل في فعالية
+EventOrganizationMassEmailAttendees=مراسلة الحضور
+EventOrganizationMassEmailSpeakers=مراسلة المتحدثين
+ToSpeakers=إلى المتحدثين
+# Event
+AllowUnknownPeopleSuggestConf=السماح باقتراح المؤتمرات من أشخاص غير معروفين
+AllowUnknownPeopleSuggestConfHelp=السماح للأشخاص غير المعروفين باقتراح مؤتمر يرغبون في تقديمه
+AllowUnknownPeopleSuggestBooth=السماح بالتقديم على جناح من أشخاص غير معروفين
+AllowUnknownPeopleSuggestBoothHelp=السماح للأشخاص غير المعروفين بالتقديم على جناح
+PriceOfRegistration=رسوم التسجيل
+PriceOfRegistrationHelp=الرسوم المطلوب دفعها للتسجيل أو المشاركة في الفعالية
+PriceOfBooth=رسوم الاشتراك لجناح
+PriceOfBoothHelp=رسوم الاشتراك لجناح
+EventOrganizationICSLinkProject=رابط ICS للفعالية
+EventOrganizationICSLink=رابط ICS للمؤتمرات
+ConferenceOrBoothInformation=معلومات المؤتمر أو الجناح
+ConferenceOrBoothFormat=صيغة المؤتمر أو الجناح
+ConferenceOrBoothFormatID=معرف صيغة المؤتمر أو الجناح
+ConferenceOrBoothFormatCode=رمز صيغة المؤتمر أو الجناح
+ConferenceOrBoothFormatLabel=اسم صيغة المؤتمر أو الجناح
+Attendees=الحضور
+ListOfAttendeesOfEvent=قائمة الحضور لمشاريع الفعالية
+ListOfConfOrBoothOfEvent=قائمة المؤتمرات أو الأجنحة لمشاريع الفعالية
+DownloadICSLink=تحميل رابط ICS
+EVENTORGANIZATION_SECUREKEY=مفتاح أمان لتأمين الرابط العام لصفحة اقتراح مؤتمر
+SERVICE_BOOTH_LOCATION=الخدمة المستخدمة لسطر الفاتورة المتعلق بموقع الجناح
+SERVICE_CONFERENCE_ATTENDEE_SUBSCRIPTION=الخدمة المستخدمة لسطر الفاتورة المتعلق باشتراك الحضور في الفعالية
+NbVotes=عدد الأصوات
+# Status
+EvntOrgDraft=مسودة
+EvntOrgSuggested=تم الاقتراح
+EvntOrgConfirmed=تم التأكيد
+EvntOrgNotQualified=غير مؤهل
+EvntOrgDone=تم
+EvntOrgCancelled=تم الإلغاء
+# Other
+SuggestForm=صفحة الاقتراح
+SuggestOrVoteForConfOrBooth=صفحة الاقتراح أو التصويت
+EvntOrgRegistrationHelpMessage=يمكنك هنا التصويت لمؤتمر أو اقتراح مؤتمر جديد للفعالية كما يمكنك التقديم للحصول على جناح خلال الفعالية
+EvntOrgRegistrationConfHelpMessage=يمكنك هنا اقتراح مؤتمر جديد لتقديمه خلال الفعالية
+EvntOrgRegistrationBoothHelpMessage=يمكنك هنا التقديم للحصول على جناح خلال الفعالية
+ListOfSuggestedConferences=قائمة المؤتمرات المقترحة
+ListOfSuggestedBooths=الأجنحة المقترحة
+ListOfConferencesOrBooths=المؤتمرات أو الأجنحة لمشروع الفعالية
+SuggestConference=اقترح مؤتمرا جديدا
+SuggestBooth=اقترح جناحا
+ViewAndVote=عرض وتصويت على الفعاليات المقترحة
+PublicAttendeeSubscriptionGlobalPage=الرابط العام للتسجيل في الفعالية
+PublicAttendeeSubscriptionPage=الرابط العام للتسجيل في هذه الفعالية فقط
+MissingOrBadSecureKey=مفتاح الأمان غير صالح أو مفقود
+EvntOrgWelcomeMessage=يتيح لك هذا النموذج التسجيل كمشارك جديد في الفعالية
+EvntOrgDuration=يبدأ هذا المؤتمر في %s وينتهي في %s
+ConferenceAttendeeFee=رسوم حضور المؤتمر للفعالية: '%s' التي ستقام من %s إلى %s
+BoothLocationFee=رسوم موقع الجناح للفعالية: '%s' التي ستقام من %s إلى %s
+EventType=نوع الفعالية
+LabelOfBooth=اسم الجناح
+LabelOfconference=اسم المؤتمر
+ConferenceIsNotConfirmed=التسجيل غير متاح، المؤتمر لم يتم تأكيده بعد
+EventRegistrationAreClosed=تم إغلاق التسجيل في الفعالية
+DateMustBeBeforeThan=%s يجب أن يكون قبل %s
+DateMustBeAfterThan=%s يجب أن يكون بعد %s
+MaxNbOfAttendeesReached=تم الوصول إلى الحد الأقصى لعدد المشاركين
+NewSubscription=تسجيل
+OrganizationEventConfRequestWasReceived=تم استلام اقتراحك لتقديم مؤتمر
+OrganizationEventBoothRequestWasReceived=تم استلام طلبك للحصول على جناح
+OrganizationEventPaymentOfBoothWasReceived=تم تسجيل دفعتك للجناح
+OrganizationEventPaymentOfRegistrationWasReceived=تم تسجيل دفعتك لتسجيل الفعالية
+OrganizationEventBulkMailToAttendees=هذا تذكير بمشاركتك في الفعالية كمشارك
+OrganizationEventBulkMailToSpeakers=هذا تذكير بمشاركتك في الفعالية كمحاضر
+OrganizationEventLinkToThirdParty=رابط إلى جهة خارجية (عميل أو مورد أو شريك)
+OrganizationEvenLabelName=الاسم العام للمؤتمر أو الجناح
+NewSuggestionOfBooth=طلب للحصول على جناح
+NewSuggestionOfConference=طلب لتقديم مؤتمر
+EvntOrgRegistrationWelcomeMessage=مرحبا بك في صفحة اقتراح المؤتمر أو الجناح
+EvntOrgRegistrationConfWelcomeMessage=مرحبا بك في صفحة اقتراح المؤتمر
+EvntOrgRegistrationBoothWelcomeMessage=مرحبا بك في صفحة اقتراح الجناح
+EvntOrgVoteHelpMessage=يمكنك هنا عرض والتصويت على الفعاليات المقترحة للمشروع
+VoteOk=تم قبول تصويتك
+AlreadyVoted=لقد قمت بالتصويت لهذا الحدث من قبل
+VoteError=حدث خطأ أثناء التصويت، يرجى المحاولة مرة أخرى
+SubscriptionOk=تم تسجيلك بنجاح
+AmountOfRegistrationPaid=مبلغ التسجيل المدفوع
+ConfAttendeeSubscriptionConfirmation=تأكيد اشتراكك في الفعالية
+Attendee=مشارك
+PaymentConferenceAttendee=دفع رسوم حضور المؤتمر
+PaymentBoothLocation=دفع رسوم موقع الجناح
+DeleteConferenceOrBoothAttendee=إزالة المشارك
+RegistrationAndPaymentWereAlreadyRecorder=تم بالفعل تسجيل اشتراك ودفع باستخدام البريد الإلكتروني <b>%s</b>
+EmailAttendee=البريد الإلكتروني للمشارك
+EmailCompany=البريد الإلكتروني للشركة
+EmailCompanyForInvoice=البريد الإلكتروني للشركة (للفاتورة، إذا كان مختلفا عن بريد المشارك)
+ErrorSeveralCompaniesWithEmailContactUs=تم العثور على عدة شركات بنفس البريد الإلكتروني، لذلك لا يمكن تأكيد التسجيل تلقائيا. يرجى الاتصال بنا على %s لإجراء التحقق يدويا
+ErrorSeveralCompaniesWithNameContactUs=تم العثور على عدة شركات بنفس الاسم، لذلك لا يمكن تأكيد التسجيل تلقائيا. يرجى الاتصال بنا على %s لإجراء التحقق يدويا
+NoPublicActionsAllowedForThisEvent=لا توجد إجراءات عامة متاحة للجمهور لهذه الفعالية
+MaxNbOfAttendees=الحد الأقصى لعدد المشاركين
+DateStartEvent=تاريخ بدء الفعالية
+DateEndEvent=تاريخ نهاية الفعالية
+ModifyStatus=تعديل الحالة
+ConfirmModifyStatus=تأكيد تعديل الحالة
+ConfirmModifyStatusQuestion=هل أنت متأكد أنك تريد تعديل %s سجل(ات) محدد(ة)؟
+RecordsUpdated=تم تعديل %s سجل(ات)
+RecordUpdated=تم تعديل السجل
+NoRecordUpdated=لم يتم تعديل أي سجل
+ProfitPerValidatedAttendee=الربح لكل مشارك مؤكد
