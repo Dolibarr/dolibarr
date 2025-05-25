@@ -49,6 +49,16 @@ class Ccountry extends CommonDict
 	/**
 	 * @var string
 	 */
+	public $phone_code;
+
+	/**
+	 * @var string
+	 */
+	public $label;
+
+	/**
+	 * @var string
+	 */
 	public $eec;
 
 	/**
