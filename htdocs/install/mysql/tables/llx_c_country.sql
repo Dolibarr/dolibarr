@@ -25,6 +25,7 @@ create table llx_c_country
   code     		varchar(2)         NOT NULL,	-- the iso 2 alpha code
   code_iso 		varchar(3),						-- the iso 3 alpha code
   numeric_code 	varchar(3),						-- the iso numeric number
+  phone code	varchar(8),						-- the phone code
   label    		varchar(128)       NOT NULL,
   eec      		tinyint DEFAULT 0  NOT NULL,
   sepa     		tinyint DEFAULT 0  NOT NULL,
