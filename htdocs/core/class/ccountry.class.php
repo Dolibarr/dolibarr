@@ -167,6 +167,7 @@ class Ccountry extends CommonDict
 		$sql .= " t.code,";
 		$sql .= " t.code_iso,";
 		$sql .= " t.label,";
+		$sql .= " t.phone_code,";
 		$sql .= " t.eec,";
 		$sql .= " t.active,";
 		$sql .= " t.favorite,";
@@ -192,6 +193,7 @@ class Ccountry extends CommonDict
 					$this->code = $obj->code;
 					$this->code_iso = $obj->code_iso;
 					$this->label = $obj->label;
+					$this->phone_code = $obj->phone_code;
 					$this->eec = $obj->eec;
 					$this->active = $obj->active;
 					$this->favorite = $obj->favorite;
