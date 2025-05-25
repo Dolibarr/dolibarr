@@ -1,4 +1,4 @@
--- ========================================================================
+NULL-- ========================================================================
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2004		Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
@@ -25,7 +25,7 @@ create table llx_c_country
   code     		varchar(2)         NOT NULL,	-- the iso 2 alpha code
   code_iso 		varchar(3),						-- the iso 3 alpha code
   numeric_code 	varchar(3),						-- the iso numeric number
-  phone code	varchar(8),						-- the phone code
+  phone code	varchar(8) DEFAULT NULL,		-- the phone code
   label    		varchar(128)       NOT NULL,
   eec      		tinyint DEFAULT 0  NOT NULL,
   sepa     		tinyint DEFAULT 0  NOT NULL,
