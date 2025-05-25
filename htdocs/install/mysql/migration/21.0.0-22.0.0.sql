@@ -290,3 +290,5 @@ ALTER TABLE llx_don ADD COLUMN ip varchar(250);
 ALTER TABLE llx_expeditiondet ADD COLUMN description text AFTER fk_entrepot;
 
 INSERT INTO llx_c_type_container (code, label, active, module, position, typecontainer, entity) VALUES ('setup', 'Setup screen', 1, 'system', 500, 'library', __ENTITY__);
+
+ALTER TABLE `llx_c_country` ADD COLUMN `phone_code` varchar(8) DEFAULT NULL;
