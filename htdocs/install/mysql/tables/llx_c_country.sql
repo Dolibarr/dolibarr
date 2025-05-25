@@ -1,4 +1,4 @@
-NULL-- ========================================================================
+-- ========================================================================
 -- Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
 -- Copyright (C) 2004		Laurent Destailleur		<eldy@users.sourceforge.net>
 -- Copyright (C) 2014		Alexandre Spangaro		<aspangaro@open-dsi.fr>
