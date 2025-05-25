@@ -24,7 +24,11 @@ class CommandeTools
 		foreach ($listOrdersRowId as $orderRowId) {
 			$order = new Commande($db);
 			$order->fetch($orderRowId);
-			if ($order->statut == Commande::STATUS_VALIDATED) {
+			if (in_array($order->statut, [
+				Commande::STATUS_VALIDATED,
+				Commande::STATUS_SHIPMENTONPROCESS,
+				Commande::STATUS_ACCEPTED
+			])) {
 				$orders[] = $order;
 			}
 		}
