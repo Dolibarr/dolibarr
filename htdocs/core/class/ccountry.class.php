@@ -54,11 +54,6 @@ class Ccountry extends CommonDict
 	/**
 	 * @var string
 	 */
-	public $label;
-
-	/**
-	 * @var string
-	 */
 	public $eec;
 
 	/**
