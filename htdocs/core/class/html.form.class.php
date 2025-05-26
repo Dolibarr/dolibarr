@@ -6996,7 +6996,7 @@ class Form
 		$sql .= " AND t.active > 0";
 		$sql .= " AND t.entity IN (".getEntity('c_tva').")";
 		$sql .= " AND c.code IN (" . $this->db->sanitize($country_code, 1) . ")";
-		$sql .= " ORDER BY t.code ASC, t.taux ASC, t.recuperableonly ASC";
+		$sql .= " ORDER BY t.code ASC, t.taux DESC, t.recuperableonly ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
