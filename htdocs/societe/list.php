@@ -1328,9 +1328,9 @@ $userlist = $form->select_dolusers('', '', 0, null, 0, '', '', '0', 0, 0, 'u.sta
 $userlist[-2] = $langs->trans("NoSalesRepresentativeAffected");
 if ($user->hasRight("societe", "client", "voir") || $socid) {
 	$moreforfilter .= '<div class="divsearchfield">';
-	$tmptitle = $langs->trans('SalesRepresentatives');
+	$tmptitle = $langs->transnoentitiesnoconv('SalesRepresentatives');
 	$moreforfilter .= img_picto($tmptitle, 'user', 'class="pictofixedwidth"');
-	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->trans('SalesRepresentatives'), 1);
+	$moreforfilter .=  $form->multiselectarray('search_sale', $userlist, $search_sale, 0, 0, '', 0, 300, '', '', $langs->transnoentitiesnoconv('SalesRepresentatives'), 1);
 	$moreforfilter .= '</div>';
 }
 if (!empty($moreforfilter)) {
@@ -2177,7 +2177,7 @@ while ($i < $imaxinloop) {
 			}
 		}
 		if (!empty($arrayfields['s.phone_mobile']['checked'])) {
-			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'phone_mobile')."</td>\n";
+			print '<td class="nowraponall">'.dol_print_phone($obj->phone_mobile, $companystatic->country_code, 0, $obj->rowid, 'AC_TEL', ' ', 'mobile')."</td>\n";
 			if (!$i) {
 				$totalarray['nbfield']++;
 			}

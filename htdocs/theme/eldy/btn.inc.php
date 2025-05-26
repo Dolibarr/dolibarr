@@ -1,6 +1,19 @@
 <?php
-/* Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 if (!defined('ISLOADEDBYSTEELSHEET')) {
 	die('Must be call by steelsheet');
@@ -348,16 +361,12 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 	color: #aaa;
 }
 
+
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
 @media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
-	}
-	.btnTitle, a.btnTitle {
-		display: inline-block;
-		padding: 4px 4px 4px 4px;
-		min-width: unset;
 	}
 }
 
@@ -370,10 +379,21 @@ table.table-fiche-title tr.titre td.col-right a.btnTitle {
 }
 
 /* smartphone */
+
 @media only screen and (max-width: 767px)
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.85em;
+	}
+
+	/* for small screen, we reduce the min with of button */
+	.btnTitle, a.btnTitle {
+		display: inline-block;
+		padding: 4px 4px 4px 4px;
+		min-width: unset;	/* if we unset the min-width here, we must also unset the font-size on .paginationafterarrows a.btnTitlePlus:hover span:before to avoid page content move */
+	}
+	.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+		font-size: unset !important;
 	}
 }
 

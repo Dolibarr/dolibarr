@@ -201,7 +201,7 @@ class MyObject extends CommonObject
 	// public $table_element_line = 'mymodule_myobjectline';
 
 	// /**
-	//  * @var string    Field with ID of parent key if this object has a parent
+	//  * @var string    Field name with ID of parent key if this object has a parent, Or Field name of in child tables to link to this record.
 	//  */
 	// public $fk_element = 'fk_myobject';
 
@@ -217,8 +217,9 @@ class MyObject extends CommonObject
 
 	// /**
 	//  * @var array    List of child tables. To know object to delete on cascade.
-	//  *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
-	//  *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
+	//  *               If name matches '@ClassName:FilePathClass:ParentFkFieldName' (the recommended mode) it will
+	//  *               call method ClassName->deleteByParentField(parentId, 'ParentFkFieldName') to fetch and delete child object.
+	//  *               Using an array like childtables should not be implemented because a child may have other child, so we must only use the method that call deleteByParentField().
 	//  */
 	// protected $childtablesoncascade = array('mymodule_myobjectdet');
 

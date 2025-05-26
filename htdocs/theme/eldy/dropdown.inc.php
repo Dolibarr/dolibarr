@@ -439,6 +439,7 @@ li.liinputsearch {
 	display: block;
 	top: 0;
 	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -454,6 +455,8 @@ li.liinputsearch {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .quickadd-item {

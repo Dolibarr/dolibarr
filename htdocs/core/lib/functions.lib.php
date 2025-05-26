@@ -1052,6 +1052,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
+		$regreplace  = array();
 		$maxloop = 20;
 		$loopnb = 0; // Protection against infinite loop
 
@@ -1101,10 +1102,16 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			} elseif ($reg[1] == 'ID') {
 				$newout = '__ID__';     // We keep __ID__ we find into backtopage url
 			} else {
-				$newout = ''; // Key not found, we replace with empty string
+				$newout = 'REGREPLACE_'.$loopnb; // Key not found, we replace with temporary string to reload later
+				$regreplace[$loopnb] = $reg[0];
 			}
 			//var_dump('__'.$reg[1].'__ -> '.$newout);
 			$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
+		}
+		if (!empty($regreplace)) {
+			foreach ($regreplace as $key => $value) {
+				$out = preg_replace('/REGREPLACE_'.$key.'/', $value, $out);
+			}
 		}
 	}
 
@@ -1870,7 +1877,7 @@ function dol_sanitizeKeyCode($str)
 /**
  *	Clean a string from all accent characters to be used as ref, login or by dol_sanitizeFileName
  *
- *	@param	string	$str			String to clean
+ *	@param	string	$str			String to clean. Must be an ascii or utf8 string without any htmlentities.
  *	@return string   	       		Cleaned string
  *
  * 	@see    		dol_sanitizeFilename(), dol_string_nospecial()
@@ -2753,12 +2760,12 @@ function dolButtonToOpenExportDialog($name, $label, $buttonstring, $exportSiteNa
  *  @param	string	$disabled			Disabled text
  *  @param	string	$morecss			More CSS
  *  @param	string	$jsonopen			Some JS code to execute on click/open of popup
- *  @param	string	$backtopagejsfields	The back to page must be managed using javascript instead of a redirect.
+ *  @param	string	$jsonclose			Some JS code to execute on close of popup
  *  									Value is 'keyforpopupid:Name_of_html_component_to_set_with id,Name_of_html_component_to_set_with_label'
  *  @param	string	$accesskey			A key to use shortcut
  * 	@return	string						HTML component with button
  */
-function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $jsonopen = '', $backtopagejsfields = '', $accesskey = '')
+function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $disabled = '', $morecss = 'classlink button bordertransp', $jsonopen = '', $jsonclose = '', $accesskey = '')
 {
 	global $conf;
 
@@ -2770,23 +2777,26 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 
 	$out = '';
 
+	/* canceled
 	$backtopagejsfieldsid = '';
 	$backtopagejsfieldslabel = '';
+	$backtopagejsfieldshtml = '';
 	if ($backtopagejsfields) {
 		$tmpbacktopagejsfields = explode(':', $backtopagejsfields);
 		if (empty($tmpbacktopagejsfields[1])) {	// If the part 'keyforpopupid:' is missing, we add $name for it.
-			$backtopagejsfields = $name.":".$backtopagejsfields;
 			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[0]);
 		} else {
 			$tmp2backtopagejsfields = explode(',', $tmpbacktopagejsfields[1]);
 		}
 		$backtopagejsfieldsid = empty($tmp2backtopagejsfields[0]) ? '' : $tmp2backtopagejsfields[0];
 		$backtopagejsfieldslabel = empty($tmp2backtopagejsfields[1]) ? '' : $tmp2backtopagejsfields[1];
+		$backtopagejsfieldshtml = empty($tmp2backtopagejsfields[2]) ? '' : $tmp2backtopagejsfields[2];
 		$url .= '&backtopagejsfields='.urlencode($backtopagejsfields);
 	}
+	*/
 
 	//print '<input type="submit" class="button bordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("MediaFiles")).'" name="file_manager">';
-	$out .= '<!-- a link for button to open url into a dialog popup with backtopagejsfields = '.$backtopagejsfields.' -->';
+	$out .= '<!-- a link for button to open url into a dialog popup -->';
 	$out .= '<a '.($accesskey ? ' accesskey="'.$accesskey.'"' : '').' class="cursorpointer reposition button_'.$name.($morecss ? ' '.$morecss : '').'"'.$disabled.' title="'.dol_escape_htmltag($label).'"';
 	if (empty($conf->use_javascript_ajax)) {
 		$out .= ' href="'.DOL_URL_ROOT.$url.'" target="_blank"';
@@ -2798,12 +2808,15 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 	$out .= '>'.$buttonstring.'</a>';
 
 	if (!empty($conf->use_javascript_ajax)) {
-		// Add code to open url using the popup. Add also hidden field to retrieve the returned variables
+		// Add code to open url using the popup.
 		$out .= '<!-- code to open popup and variables to retrieve returned variables -->';
 		$out .= '<div id="idfordialog'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for dialog' : '').'</div>';
+		/* canceled
+		// Add also hidden field to retrieve the returned variables
 		$out .= '<div id="varforreturndialogid'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned id' : '').'</div>';
 		$out .= '<div id="varforreturndialoglabel'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned label' : '').'</div>';
-
+		$out .= '<div id="varforreturndialoghtml'.$name.'" class="hidden">'.(getDolGlobalInt('MAIN_OPTIMIZEFORTEXTBROWSER') < 2 ? 'div for returned html' : '').'</div>';
+		*/
 		$out .= '<!-- Add js code to open dialog popup on dialog -->';
 		$out .= '<script nonce="'.getNonce().'" type="text/javascript">
 					jQuery(document).ready(function () {
@@ -2818,18 +2831,11 @@ function dolButtonToOpenUrlInDialogPopup($name, $label, $buttonstring, $url, $di
 							 	width: \'80%\',
 							 	title: \''.dol_escape_js($label).'\',
 								open: function (event, ui) {
-									console.log("open popup name='.$name.', backtopagejsfields='.$backtopagejsfields.'");
+									console.log("open popup name='.$name.'");
 	       						},
 								close: function (event, ui) {
-									var returnedid = jQuery("#varforreturndialogid'.$name.'").text();
-									var returnedlabel = jQuery("#varforreturndialoglabel'.$name.'").text();
-									console.log("popup has been closed. returnedid (js var defined into parent page)="+returnedid+" returnedlabel="+returnedlabel);
-									if (returnedid != "" && returnedid != "div for returned id") {
-										jQuery("#'.(empty($backtopagejsfieldsid) ? "none" : $backtopagejsfieldsid).'").val(returnedid);
-									}
-									if (returnedlabel != "" && returnedlabel != "div for returned label") {
-										jQuery("#'.(empty($backtopagejsfieldslabel) ? "none" : $backtopagejsfieldslabel).'").val(returnedlabel);
-									}
+									console.log("Popup is closed, run jsonclose = '.$jsonclose.'");
+									'.(empty($jsonclose) ? '' : $jsonclose.';').'
 								}
 							});
 
@@ -4765,15 +4771,16 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  *
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
+ *  @param	int		$showname	1=Show reverse domain name instead of IP
  * 	@return string 				Formatted IP, with country if GeoIP module is enabled
  */
-function dol_print_ip($ip, $mode = 0)
+function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
-	global $conf, $langs;
+	global $conf;
 
 	$ret = '';
 	if (!isset($conf->cache['resolveips'])) {
-		$conf->cache['resolveips'] = [];
+		$conf->cache['resolveips'] = array();
 	}
 
 	if ($mode != 2) {
@@ -4792,11 +4799,14 @@ function dol_print_ip($ip, $mode = 0)
 	}
 
 	if (in_array($mode, [0, 2])) {
-		if (empty($conf->cache['resolveips'][$ip])) {
-			$domain = gethostbyaddr($ip);
-			$conf->cache['resolveips'][$ip] = $domain; // false or domain
-		} else {
-			$domain = $conf->cache['resolveips'][$ip];
+		$domain = '';
+		if ($showname) {
+			if (!array_key_exists($ip, $conf->cache['resolveips'])) {
+				$domain = gethostbyaddr($ip);
+				$conf->cache['resolveips'][$ip] = $domain; // false or domain
+			} else {
+				$domain = $conf->cache['resolveips'][$ip];
+			}
 		}
 		if ($domain) {
 			$ret .= $domain;
@@ -9934,6 +9944,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 			'__YEAR__' => (string) $tmp['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
+			'__PREVIOUS_MONTH_TEXT__' => $outputlangs->trans('Month'.sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_SHORT__' => $outputlangs->trans('MonthShort'.sprintf("%02d", $tmp3['month'])),
+			'__PREVIOUS_MONTH_TEXT_MIN__' => $outputlangs->trans('MonthVeryShort'.sprintf("%02d", $tmp3['month'])),
 			'__PREVIOUS_YEAR__' => (string) ($tmp['year'] - 1),
 			'__NEXT_DAY__' => (string) $tmp4['day'],
 			'__NEXT_MONTH__' => (string) $tmp5['month'],
@@ -10469,19 +10482,11 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = [], $style = 'ok', $
 	if ($out) {
 		if (!empty($conf->use_javascript_ajax) && !getDolGlobalString('MAIN_DISABLE_JQUERY_JNOTIFY') && empty($keepembedded)) {
 			$return = '<script nonce="'.getNonce().'">
-					$(document).ready(function() {
-						var block = '.(getDolGlobalString('MAIN_USE_JQUERY_BLOCKUI') ? "true" : "false").'
-						if (block) {
-							$.dolEventValid("","'.dol_escape_js($out).'");
-						} else {
-							/* jnotify(message, preset of message type, keepmessage) */
-							$.jnotify("'.dol_escape_js($out).'",
-							"'.($style == "ok" ? 3000 : $style).'",
-							'.($style == "ok" ? "false" : "true").',
-							{ remove: function (){} } );
-						}
-					});
-				</script>';
+				$(document).ready(function() {
+					/* jnotify(message, preset of message type, keepmessage) */
+					$.jnotify("'.dol_escape_js($out).'", "'.($style == "ok" ? 3000 : $style).'", '.($style == "ok" ? "false" : "true").',{ remove: function (){} } );
+				});
+			</script>';
 		} else {
 			$return = $out;
 		}
@@ -11116,7 +11121,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 	global $mysoc;
 	global $objectoffield;	// To allow the use of $objectoffield in computed fields
 
-	// Old variables used
+	// Old variables used (deprecated)
 	global $object;
 	global $obj; // To get $obj used into list when dol_eval() is used for computed fields and $obj is not yet $object
 
@@ -11210,8 +11215,8 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 			}
 
 			// TODO
-			// We can exclude $ char that are not:
-			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object...,
+			// We can exclude $ char that are not in dol_eval global, so that are not:
+			// $db, $langs, $leftmenu, $topmenu, $user, $langs, $objectoffield, $object, $obj, ...,
 		}
 		if (is_array($s) || $s === 'Array') {
 			if ($returnvalue) {
@@ -11221,14 +11226,16 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 				return '';
 			}
 		}
-		if (strpos($s, '::') !== false) {
+
+		if (!getDolGlobalString('MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL') && strpos($s, '::') !== false) {
 			if ($returnvalue) {
-				return 'Bad string syntax to evaluate (double : char is forbidden): '.$s;
+				return 'Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL): '.$s;
 			} else {
-				dol_syslog('Bad string syntax to evaluate (double : char is forbidden): '.$s, LOG_WARNING);
+				dol_syslog('Bad string syntax to evaluate (double : char is forbidden without setting MAIN_ALLOW_DOUBLE_COLON_IN_DOL_EVAL): '.$s, LOG_WARNING);
 				return '';
 			}
 		}
+
 		if (strpos($s, '`') !== false) {
 			if ($returnvalue) {
 				return 'Bad string syntax to evaluate (backtick char is forbidden): '.$s;
@@ -11240,7 +11247,7 @@ function dol_eval_standard($s, $returnvalue = 1, $hideerrors = 1, $onlysimplestr
 
 		// Disallow also concat
 		if (getDolGlobalString('MAIN_DISALLOW_STRING_OBFUSCATION_IN_DOL_EVAL')) {
-			if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {	// We refuse . if not between 2 numbers
+			if (preg_match('/[^0-9]+\.[^0-9]+/', $s)) {    // We refuse . if not between 2 numbers
 				if ($returnvalue) {
 					return 'Bad string syntax to evaluate (dot char is forbidden): '.$s;
 				} else {
@@ -13215,7 +13222,7 @@ function dolGetStatus($statusLabel = '', $statusLabelShort = '', $html = '', $st
 		} elseif ($displayMode === 5) {
 			$return = dolGetBadge($statusLabelShort, $html, $statusType, '', $url, $dolGetBadgeParams);
 		} else {
-			$return = dolGetBadge((empty($conf->dol_optimize_smallscreen) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
+			$return = dolGetBadge(((empty($conf->dol_optimize_smallscreen) && $displayMode != 2) ? $statusLabel : (empty($statusLabelShort) ? $statusLabel : $statusLabelShort)), $html, $statusType, '', $url, $dolGetBadgeParams);
 		}
 	}
 
@@ -13711,6 +13718,11 @@ function getElementProperties($elementType)
 		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
 		$classfile = 'account';
 		$classname = 'Account';
+	} elseif ($elementType == 'bank_line') {
+		$classpath = 'compta/bank/class';
+		$module = 'bank';	// We need $conf->bank->dir_output and not $conf->banque->dir_output
+		$classfile = 'account';
+		$classname = 'AccountLine';
 	} elseif ($elementType == 'category') {
 		$classpath = 'categories/class';
 		$module = 'categorie';
@@ -13730,7 +13742,7 @@ function getElementProperties($elementType)
 		$classpath = 'product/inventory/class';
 		$table_element = 'inventorydet';
 		$parent_element = 'inventory';
-	} elseif ($elementType == 'stock' || $elementType == 'entrepot') {
+	} elseif ($elementType == 'stock' || $elementType == 'entrepot' || $elementType == 'warehouse') {
 		$module = 'stock';
 		$classpath = 'product/stock/class';
 		$classfile = 'entrepot';
@@ -13759,6 +13771,7 @@ function getElementProperties($elementType)
 		$parent_element = 'facture';
 	} elseif ($elementType == 'facturerec') {
 		$classpath = 'compta/facture/class';
+		$classfile = 'facture-rec';
 		$module = 'facture';
 		$classname = 'FactureRec';
 	} elseif ($elementType == 'commande' || $elementType == 'order') {
@@ -13884,7 +13897,7 @@ function getElementProperties($elementType)
 		$classpath = 'opensurvey/class';
 		$module = 'opensurvey';
 		$subelement = 'opensurveysondage';
-	} elseif ($elementType == 'order_supplier' || $elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
+	} elseif ($elementType == 'order_supplier' || $elementType == 'supplier_order' ||$elementType == 'commande_fournisseur' || $elementType == 'commandefournisseur') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.commande';
@@ -13901,7 +13914,7 @@ function getElementProperties($elementType)
 		$classname = 'CommandeFournisseurLigne';
 		$table_element = 'commande_fournisseurdet';
 		$parent_element = 'commande_fournisseur';
-	} elseif ($elementType == 'invoice_supplier') {
+	} elseif ($elementType == 'invoice_supplier' || $elementType == 'supplier_invoice') {
 		$classpath = 'fourn/class';
 		$module = 'fournisseur';
 		$classfile = 'fournisseur.facture';
@@ -13943,7 +13956,7 @@ function getElementProperties($elementType)
 		$classfile = 'societeaccount';
 		$classname = 'SocieteAccount';
 		$module = 'societe';
-	} elseif ($elementType == 'websitepage') {
+	} elseif ($elementType == 'websitepage' || $elementType == 'website_page') {
 		$classpath = 'website/class';
 		$classfile = 'websitepage';
 		$classname = 'Websitepage';
@@ -13994,14 +14007,29 @@ function getElementProperties($elementType)
 		$classname = 'Ecmfiles';
 		$table_element = 'ecmfiles';
 		$subelement = '';
-	} elseif ($elementType == 'knowledgerecord') {
+	} elseif ($elementType == 'knowledgerecord' || $elementType == 'knowledgemanagement') {
 		$module = '';
 		$classpath = 'knowledgemanagement/class';
 		$classfile = 'knowledgerecord';
 		$classname = 'KnowledgeRecord';
 		$table_element = 'knowledgemanagement_knowledgerecord';
 		$subelement = '';
+	} elseif ($elementType == 'customer') {
+		$module = 'thirdparty';
+		$classpath = 'societe/class';
+		$classfile = 'client';
+		$classname = 'Client';
+		$table_element = 'societe';
+		$subelement = '';
+	} elseif ($elementType == 'fournisseur' || $elementType == 'supplier') {
+		$module = 'thirdparty';
+		$classpath = 'fourn/class';
+		$classfile = 'fournisseur';
+		$classname = 'Fournisseur';
+		$table_element = 'societe';
+		$subelement = '';
 	}
+
 
 	if (empty($classfile)) {
 		$classfile = strtolower($subelement);
@@ -15449,7 +15477,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 
 			// Title
 			$out .= ' <div class="messaging-title inline-block">';
-			//$out .= $actionstatic->getTypePicto();
+			//$out .= $actionstatic->getTypePicto();	// The type of event is already into the timeline on left.
 			if (empty($conf->dol_optimize_smallscreen) && $actionstatic->type_code != 'AC_OTH_AUTO') {
 				$out .= $labeltype.' - ';
 			}
@@ -15465,7 +15493,9 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$libelle = ($transcode != "Action".$histo[$key]['acode'] ? $transcode : $histo[$key]['alabel']);
 					$libelle = $histo[$key]['note'];
 					$actionstatic->id = $histo[$key]['id'];
-					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					if ($libelle != $labeltype) {
+						$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
+					}
 				} elseif ($histo[$key]['type'] == 'mailing') {
 					$out .= '<a href="'.DOL_URL_ROOT.'/comm/mailing/card.php?id='.$histo[$key]['id'].'">'.img_object($langs->trans("ShowEMailing"), "email").' ';
 					$transcode = $langs->transnoentitiesnoconv("Action".$histo[$key]['acode']);
@@ -15476,6 +15506,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = null, 
 					$out .= dol_escape_htmltag(dol_trunc($libelle, 120));
 				}
 			}
+			$out = preg_replace('/ - $/', '', $out);	// Remove ending ' - '
 
 			if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element'])) {
 				if (isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']]) && isset($conf->cache['elementlinkcache'][$histo[$key]['elementtype']][$histo[$key]['fk_element']])) {
@@ -15752,6 +15783,9 @@ function recordNotFound($message = '', $printheader = 1, $printfooter = 1, $show
 
 	if ($printfooter && function_exists("llxFooter")) {
 		llxFooter();
+		if (is_object($db)) {
+			$db->close();
+		}
 	}
 	exit(0);
 }

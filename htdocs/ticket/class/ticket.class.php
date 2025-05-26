@@ -2576,7 +2576,12 @@ class Ticket extends CommonObject
 				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
-			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
+			$moreinfo = array(
+				'description' => 'File saved by copyFilesForTicket',
+				'src_object_type' => $this->element,
+				'src_object_id' => $this->id,
+				'gen_or_uploaded' => 'uploaded'
+			);
 
 			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
 
@@ -2952,7 +2957,9 @@ class Ticket extends CommonObject
 								$url_public_ticket = (getDolGlobalInt('TICKET_ENABLE_PUBLIC_INTERFACE') ?
 										(getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') !== '' ? getDolGlobalString('TICKET_URL_PUBLIC_INTERFACE') . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) : dol_buildpath('/ticket/card.php', 2)).'?track_id='.urlencode($object->track_id);
 
-								$message .= '<br>'.$langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer').' : <a href="'.$url_public_ticket.'">'.$object->track_id.'</a><br>';
+								if (!getDolGlobalInt('TICKET_DO_NOT_INCLUDE_LINK_TO_CUSTOMER')) {
+									$message .= '<br>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="' . $url_public_ticket . '">' . $object->track_id . '</a><br>';
+								}
 
 								// Build final message
 								$message = $message_intro.'<br><br>'.$message;

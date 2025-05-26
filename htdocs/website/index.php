@@ -137,7 +137,7 @@ if (GETPOST('editcontent', 'alpha')) {
 if (GETPOST('exportsite', 'alpha')) {
 	$action = 'exportsite';
 }
-if (GETPOST('importsite', 'alpha')) {
+if (GETPOST('importsite')) {	// Can be a string when clicking on button "Import site"
 	$action = 'importsite';
 }
 if (GETPOST('createfromclone', 'alpha')) {
@@ -3069,20 +3069,11 @@ $arrayofjs = array(
 );
 $arrayofcss = array();
 
-$moreheadcss = '';
-$moreheadjs = '';
-
-$arrayofjs[] = 'includes/jquery/plugins/blockUI/jquery.blockUI.js';
-$arrayofjs[] = 'core/js/blockUI.js'; // Used by ecm/tpl/enabledfiletreeajax.tpl.php
 if (!getDolGlobalString('MAIN_ECM_DISABLE_JS')) {
 	$arrayofjs[] = "includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 }
 
-$moreheadjs .= '<script type="text/javascript">'."\n";
-$moreheadjs .= 'var indicatorBlockUI = \''.DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif".'\';'."\n";
-$moreheadjs .= '</script>'."\n";
-
-llxHeader($moreheadcss.$moreheadjs, $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
+llxHeader('', $langs->trans("Website").(empty($website->ref) ? '' : ' - '.$website->ref), $helpurl, '', 0, 0, $arrayofjs, $arrayofcss, '', 'mod-website page-index', '<!-- Begin div class="fiche" -->'."\n".'<div class="fichebutwithotherclass">');
 
 print "\n";
 print '<!-- Open form for all page -->'."\n";
@@ -3342,8 +3333,8 @@ if (!GETPOST('hide_websitemenu')) {
 			print dolButtonToOpenUrlInDialogPopup('file_manager', $langs->transnoentitiesnoconv("MediaFiles"), '<span class="fa fa-image"></span>', '/website/index.php?action=file_manager&website='.urlencode($website->ref).'&section_dir='.urlencode('image/'.$website->ref.'/'), $disabled);
 
 			if (isModEnabled('category')) {
-				//print '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
-				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/index.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
+				//print '<a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?leftmenu=website&dol_hide_leftmenu=1&nosearch=1&type=website_page&website='.$website->ref.'" class="button bordertransp"'.$disabled.' title="'.dol_escape_htmltag($langs->trans("Categories")).'"><span class="fa fa-tags"></span></a>';
+				print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), '<span class="fa fa-tags"></span>', '/categories/categorie_list.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
 			}
 
 			print '</span>';
@@ -3529,7 +3520,9 @@ if (!GETPOST('hide_websitemenu')) {
 					print '<span class="valignmiddle disabled opacitymedium">'.img_picto($langs->trans($text_off), 'switch_on').'</span>';
 				}
 			} else {
-				print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage', 1, 'website='.urlencode($website->ref).'&pageid='.((int) $websitepage->id));
+				if ($objectpage->type_container != 'setup') { // we do not allow to change status of setup pages
+					print ajax_object_onoff($websitepage, 'status', 'status', 'Online', 'Offline', array(), 'valignmiddle inline-block'.(empty($websitepage->id) ? ' opacitymedium disabled' : ''), 'statuswebsitepage', 1, 'website='.urlencode($website->ref).'&pageid='.((int) $websitepage->id));
+				}
 			}
 			//print '</div>';
 			print '</span>';
@@ -3683,14 +3676,21 @@ if (!GETPOST('hide_websitemenu')) {
 				print '<!-- button EditInLine and ShowSubcontainers -->'."\n";
 				print '<div class="websiteselectionsection inline-block">';
 
-				print '<div class="inline-block marginrightonly">';	// Button includes dynamic content
-				print $langs->trans("ShowSubcontainers");
-				if (!getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
-					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', 0, 0, 0, '', 'nomarginleft').'</a>';
-				} else {
-					print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', 0, 0, 0, '', 'nomarginleft').'</a>';
+				// Force to show subcontainers if we are in setup mode
+				if ($objectpage->type_container == 'setup') {
+					dolibarr_set_const($db, 'WEBSITE_SUBCONTAINERSINLINE', 1);
 				}
-				print '</div>';
+
+				if ($objectpage->type_container != 'setup') {
+					print '<div class="inline-block marginrightonly">';	// Button includes dynamic content
+					print $langs->trans("ShowSubcontainers");
+					if (!getDolGlobalString('WEBSITE_SUBCONTAINERSINLINE')) {
+						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=setshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("Off")), 'switch_off', '', 0, 0, 0, '', 'nomarginleft').'</a>';
+					} else {
+						print '<a class="nobordertransp nohoverborder marginleftonlyshort valignmiddle"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unsetshowsubcontainers&token='.newToken().'">'.img_picto($langs->trans("ShowSubContainersOnOff", $langs->transnoentitiesnoconv("On")), 'switch_on', '', 0, 0, 0, '', 'nomarginleft').'</a>';
+					}
+					print '</div>';
+				}
 
 				print '<div class="inline-block marginrightonly">';	// Button edit inline
 
@@ -4397,9 +4397,9 @@ if ($action == 'editsecurity') {
 
 	print '<input class="minwidth500 quatrevingtpercent" name="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" id="WEBSITE_'.$object->id.'_SECURITY_FORCECSP" value="'.$forceCSP.'"> <a href="#" id="btnaddcontentsecuritypolicy">'.img_picto('', 'add').'</a><br>';
 
-	print '<br>';
+	print '<br class="selectaddcontentsecuritypolicy hidden">';
 
-	print '<div id="selectaddcontentsecuritypolicy" class="hidden">';
+	print '<div id="selectaddcontentsecuritypolicy" class="hidden selectaddcontentsecuritypolicy">';
 	print $form->selectarray("select_identifier_WEBSITE_SECURITY_FORCECSP", $selectarrayCSPDirectives, "select_identifier_WEBSITE_SECURITY_FORCECSP", $langs->trans("FillCSPDirective"), 0, 0, '', 0, 0, 0, '', 'minwidth200 maxwidth350 inline-block');
 	print ' ';
 	print '<input type="hidden" id="select_source_WEBSITE_SECURITY_FORCECSP" name="select_source_WEBSITE_SECURITY_FORCECSP">';
@@ -4417,6 +4417,7 @@ if ($action == 'editsecurity') {
 
 	if (!empty($forceCSP)) {
 		// Content Security Policy list of selected rules
+		print '<br>';
 		print '<div class="div-table-responsive-no-min">';
 		print img_picto('', 'graph', 'class="pictofixedwidth"').$langs->trans("HierarchicView").'<br>';
 		print '<ul>';
@@ -4471,10 +4472,10 @@ if ($action == 'editsecurity') {
 			$("#btnaddcontentsecuritypolicy").on("click", function(){
 				if($("#selectaddcontentsecuritypolicy").is(":visible")){
 					console.log("We hide select to add Content Security Policy");
-					$("#selectaddcontentsecuritypolicy").hide();
+					$(".selectaddcontentsecuritypolicy").hide();
 				} else {
 					console.log("We show select to add Content Security Policy");
-					$("#selectaddcontentsecuritypolicy").show();
+					$(".selectaddcontentsecuritypolicy").show();
 				}
 			});
 
@@ -4537,14 +4538,14 @@ if ($action == 'createsite') {
 	$head = array();
 
 	$head[$h][0] = dol_buildpath('/website/index.php',1).'?id='.$object->id;
-	$head[$h][1] = $langs->trans("AddSite");
+	$head[$h][1] = $langs->trans("AddWebsite");
 	   $head[$h][2] = 'card';
 	$h++;
 
 	print dol_get_fiche_head($head, 'card', '', -1, 'globe');
 	*/
 	if ($action == 'createcontainer') {
-		print load_fiche_titre($langs->trans("AddSite"));
+		print load_fiche_titre($langs->trans("AddWebsite"));
 	}
 
 	print '<!-- Add site -->'."\n";
@@ -4675,7 +4676,8 @@ if ($action == 'importsite') {
 
 	print '<span class="opacitymedium">'.$langs->trans("ZipOfWebsitePackageToLoad").'</span><br><br>';
 
-	showWebsiteTemplates($website);
+	// This will scan the dir /doctemplates/websites and show all templates.
+	showWebsiteTemplates($website, GETPOSTINT('importsite') == 2 ? 1 : 0);
 
 	print dol_get_fiche_end();
 
@@ -5050,7 +5052,7 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print img_picto('', 'category', 'class="pictofixedwidth"');
 		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), 0, 0, 'minwidth200 widthcentpercentminusxx');
 
-		print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add'), '/categories/index.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
+		print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add'), '/categories/categorie_list.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
 
 		print "</td></tr>";
 	}

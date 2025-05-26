@@ -39,6 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
  * @var HookManager $hookmanager
  * @var Translate $langs
  * @var User $user
+ *
+ * @var string $conffile	defined into filefunc.inc.php
  */
 
 // If not defined, we select menu "home"
@@ -106,17 +108,16 @@ $resultboxes = FormOther::getBoxesArea($user, "0"); // Load $resultboxes (select
 
 if (getDolGlobalString('MAIN_MOTD')) {
 	$conf->global->MAIN_MOTD = preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i', '<br>', getDolGlobalString('MAIN_MOTD'));
-	if (getDolGlobalString('MAIN_MOTD')) {
-		$substitutionarray = getCommonSubstitutionArray($langs);
-		complete_substitutions_array($substitutionarray, $langs);
-		$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
 
-		print "\n<!-- Start of welcome text -->\n";
-		print '<table class="centpercent notopnoleftnoright"><tr><td>';
-		print dol_htmlentitiesbr($texttoshow);
-		print '</td></tr></table><br>';
-		print "\n<!-- End of welcome text -->\n";
-	}
+	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs);
+	$texttoshow = make_substitutions(getDolGlobalString('MAIN_MOTD'), $substitutionarray, $langs);
+
+	print "\n<!-- Start of welcome text -->\n";
+	print '<table class="centpercent notopnoleftnoright"><tr><td>';
+	print dol_htmlentitiesbr($texttoshow);
+	print '</td></tr></table><br>';
+	print "\n<!-- End of welcome text -->\n";
 }
 
 /*
@@ -147,11 +148,17 @@ if (!getDolGlobalString('MAIN_REMOVE_INSTALL_WARNING')) {
 	}
 
 	// Conf files must be in read only mode
-	if (is_writable($conffile)) {	// $conffile is defined into filefunc.inc.php
-		$langs->load("errors");
-		//$langs->load("other");
-		//if (!empty($message)) $message.='<br>';
-		$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+	if (is_writable($conffile)) {
+		// Try to remove automatically write permission
+		$currentPerm = fileperms($conffile);
+		$newPerm = $currentPerm & ~0222;
+		//print $conffile.' '.decoct($currentPerm).' '.(string) decoct($newPerm).' '.substr(decoct($newPerm), -4);
+		dolChmod($conffile, decoct($newPerm));
+		//  @phpstan-ignore-next-line
+		if (is_writable($conffile)) {
+			$langs->load("errors");
+			$message .= info_admin($langs->transnoentities("WarningConfFileMustBeReadOnly").' '.$langs->transnoentities("WarningUntilDirRemoved", DOL_DOCUMENT_ROOT."/install"), 0, 0, '1', 'clearboth');
+		}
 	}
 
 	$object = new stdClass();

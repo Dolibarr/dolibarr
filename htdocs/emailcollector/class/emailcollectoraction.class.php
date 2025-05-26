@@ -3,6 +3,7 @@
  * Copyright (C) ---Put here your own copyright and developer email---
  * Copyright (C) 2024       Frédéric France             <frederic.france@free.fr>
  * Copyright (C) 2024		MDW							<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Vincent de Grandpré			<vincent@de-grandpre.quebec>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +74,7 @@ class EmailCollectorAction extends CommonObject
 	 */
 	public $fields = array(
 		'rowid' => array('type' => 'integer', 'label' => 'TechnicalID', 'enabled' => 1, 'visible' => -1, 'position' => 1, 'notnull' => 1, 'index' => 1, 'comment' => "Id",),
-		'fk_emailcollector' => array('type' => 'integer', 'label' => 'Id of emailcollector', 'enabled' => 0, 'visible' => 0, 'foreignkey' => 'emailcollector.rowid', 'position' => 0,),
+		'fk_emailcollector' => array('type' => 'integer', 'label' => 'Id of emailcollector', 'enabled' => 1, 'visible' => 0, 'foreignkey' => 'emailcollector.rowid', 'position' => 0,),
 		'type' => array('type' => 'varchar(128)', 'label' => 'Type', 'enabled' => 1, 'visible' => 1, 'position' => 10, 'notnull' => 1, 'index' => 1),
 		'actionparam' => array('type' => 'text', 'label' => 'ParamForAction', 'enabled' => 1, 'visible' => 1, 'position' => 40, 'notnull' => -1),
 		'date_creation' => array('type' => 'datetime', 'label' => 'DateCreation', 'enabled' => 1, 'visible' => -2, 'position' => 500, 'notnull' => 1,),

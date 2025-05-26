@@ -411,7 +411,7 @@ input[type=submit], input[type=submit]:hover {
 }
 input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
-	transform: scale(1.3);
+	transform: scale(1.25);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -1013,7 +1013,7 @@ textarea.centpercent {
 	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(2px, <?php print($left == 'left' ? '' : '-'); ?>4px);
 }
 .center {
 	text-align: center;
@@ -1304,11 +1304,11 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye, .editfielda span.fa-magic,
 .editfieldlang {
 	color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover, .editfielda span.fa-magic:hover,
 .editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
@@ -2404,6 +2404,10 @@ td.showDragHandle {
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
+.bodyforlist.poslist #id-right {
+	display: block;
+}
+
 .page-modulehelp div#id-right {
 	display: flex;
 }
@@ -3945,7 +3949,7 @@ div.tabs {
 	/*padding-left: 6px;
 	padding-right: 6px;*/
 	clear:both;
-	height:100%;
+	/* height: 100%; Disabled for fix #33965 */
 }
 div.tabsElem {
 	margin-top: 1px;
@@ -4754,7 +4758,7 @@ table.hidepaginationnext .paginationnext {
 .paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
 	/* text-shadow: 0px 0px 5px #ccc; */
 	/* filter: invert(0.3); */
-	font-size: 1.07em;
+	font-size: 1.1em;
 }
 
 
@@ -5388,6 +5392,7 @@ img.boxhandle, img.boxclose {
 	font-size: 1rem;
 	cursor: pointer;
 	display: flex;
+	white-space: nowrap;
 }
 .star {
 	color: #ccc;
@@ -5468,10 +5473,10 @@ div.ok {
 }
 
 div.info, div.warning, div.error, div.green {
-	padding-top: 8px;
+	padding-top: 16px;
 	padding-left: 10px;
 	padding-right: 4px;
-	padding-bottom: 8px;
+	padding-bottom: 16px;
 	margin: 1em 0em 1em 0em;
 	border-radius: 5px;
 }
@@ -5806,6 +5811,21 @@ div#card-errors {
 	padding-top: 5px;
 	padding-bottom: 5px;
 }
+.ui-widget-header {
+	padding: 8px !important;
+	background: unset;
+	border: unset;
+	border-bottom: 1px solid #AAA;
+	margin-bottom: 12px;
+}
+button.ui-button-icon-only.ui-dialog-titlebar-close {
+	padding: 12px;
+	margin-top: -15px;
+}
+.ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
+	box-shadow: 5px 5px 20px #AAA;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */
@@ -6169,6 +6189,11 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 
 #divbodywebsite section p {
 	margin: unset;
+}
+
+#divbodywebsite #websitetemplateconfigpage{
+	max-width: 1200px;
+	margin: 50px auto 0;
 }
 
 
@@ -8064,11 +8089,11 @@ div.tabsElem a.tab {
 	border: 1px solid #888;
 }
 .publicnewmemberform div.tabBarWithBottom {
-	border: 1px solid #e8e8e8;
+	border: 2px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: var(--colorbackgrey);
-	/*box-shadow: 2px 2px 10px #ddd;*/
+	/* background-color: var(--colorbackgrey); */
+	box-shadow: 2px 2px 10px #ddd;
 }
 
 .publicnewmemberform #tablesubscribe {
@@ -8449,6 +8474,32 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
+/* For dolUIBlock() feature                                                       */
+/* ============================================================================== */
+
+#dol-block-ui {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#dol-block-ui .message {
+	padding: 15px 20px 15px 50px;
+	color: #fff;
+	background: #000 no-repeat 10px center;
+	border-radius: 10px;
+	font-family: sans-serif;
+}
+
+
+/* ============================================================================== */
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
@@ -8658,89 +8709,6 @@ table.jPicker {
 /* ============================================================================== */
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
-
-@media only screen and (max-width: 768px)
-{
-	.ai_dropdown{
-		min-width : 280px !important;
-		width: calc(100% - 50px);
-	}
-
-	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
-
-	.fiche > .listactionsfilter .table-fiche-title .col-title .titre {
-		display: none;
-	}
-
-	.navselectiondate {
-		width: 220px;
-	}
-
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(350, 'width'); ?>px;
-	}
-
-	div.tabBar {
-		padding-left: 0px;
-		padding-right: 0px;
-		border-radius: 0px;
-		border-right: none;
-		border-left: none;
-	}
-
-	td.widthpictotitle { width: 30px; }
-
-	.logopublicpayment #dolpaymentlogo {
-		max-width: 260px;
-	}
-	#tablepublicpayment {
-		width:	auto !important;
-		border: none !important;
-	}
-	.poweredbypublicpayment {
-		float: unset !important;
-		top: unset !important;
-		/* bottom: 8px; */
-		right: -10px !important;
-		position: relative !important;
-	}
-	.poweredbyimg {
-		width: 48px;
-	}
-
-	.survey_borders {
-		margin-left: 10px;
-		margin-right: 10px;
-		text-align: start;
-	}
-
-	.bookcalform.boxtable .minwidth75 {
-		min-width: auto;
-	}
-	.center.bookingtab {
-		margin-left: 6px;
-	}
-	#bookinghoursection {
-		font-size: small;
-		width: 122px;
-	}
-
-	#dolpublictable {
-		padding: 10px;
-	}
-}
-
-@media only screen and (max-width: 1024px)
-{
-	div#ecm-layout-west {
-		width: calc(100% - 4px);
-		clear: both;
-	}
-	div#ecm-layout-center {
-		width: 100%;
-	}
-}
 
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
@@ -9007,6 +8975,93 @@ table.jPicker {
 }
 <?php } ?>
 
+@media only screen and (max-width: 1024px)
+{
+	div#ecm-layout-west {
+		width: calc(100% - 4px);
+		clear: both;
+	}
+	div#ecm-layout-center {
+		width: 100%;
+	}
+}
+
+@media only screen and (max-width: 768px)
+{
+	.ai_dropdown{
+		min-width : 280px !important;
+		width: calc(100% - 50px);
+	}
+
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
+
+	.fiche > .listactionsfilter .table-fiche-title .col-title .titre {
+		display: none;
+	}
+
+	.navselectiondate {
+		width: 220px;
+	}
+
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350, 'width'); ?>px;
+	}
+
+	div.tabBar {
+		padding-left: 0px;
+		padding-right: 0px;
+		border-radius: 0px;
+		border-right: none;
+		border-left: none;
+	}
+
+	td.widthpictotitle { width: 30px; }
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+		border: none !important;
+	}
+	.poweredbypublicpayment {
+		float: unset !important;
+		top: unset !important;
+		/* bottom: 8px; */
+		right: -10px !important;
+		position: relative !important;
+	}
+	.poweredbyimg {
+		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
+	}
+
+	#dolpublictable {
+		padding: 10px;
+	}
+
+	input[type=checkbox], input[type=radio] {
+		margin: 0 5px 0 1px;
+		transform: scale(1.1);
+	}
+}
 
 @media only screen and (max-width: 320px)
 {

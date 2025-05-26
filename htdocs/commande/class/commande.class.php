@@ -42,6 +42,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 
 /**
@@ -49,6 +50,8 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
  */
 class Commande extends CommonOrder
 {
+	use CommonSubtotal;
+
 	/**
 	 * @var string ID to identify managed object
 	 */
@@ -226,9 +229,9 @@ class Commande extends CommonOrder
 	public $remise_percent;
 
 	/**
-	 * @var int
+	 * @var ?int		Order mode. How we received the sale order (by phone, by email, ...)
 	 */
-	public $source; // Order mode. How we received order (by phone, by email, ...)
+	public $source;
 
 	/**
 	 * Status of the contract (0=NoSignature, 1=SignedBySender, 2=SignedByReceiver, 9=SignedByAll)
@@ -1827,6 +1830,13 @@ class Commande extends CommonOrder
 						}
 
 						$this->lines[] = $this->line;
+					} else {
+						foreach ($this->lines as $line) {
+							if ($line->id == $origin_id) {
+								$this->line->extraparams = $line->extraparams;
+								$this->line->setExtraParameters();
+							}
+						}
 					}
 
 					$this->db->commit();

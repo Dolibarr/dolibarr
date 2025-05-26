@@ -563,7 +563,7 @@ DAV_ALLOW_PUBLIC_DIRTooltip=Le répertoire public génrique WebDav est un réper
 DAV_ALLOW_ECM_DIR=Activer le répertoire privé de la GED (répertoire racine du module GED - identification requise)
 DAV_ALLOW_ECM_DIRTooltip=Répertoire racine où tous les fichiers sont téléchargés manuellement lors de l’utilisation du module GED. Comme pour la fonctionnalité via l'interface Web, vous aurez besoin d'un identifiant / mot de passe valide avec les autorisations accordées pour y accéder.
 ##### Modules #####
-Module0Name=Utilisateurs & Groupes
+Module0Name=Utilisateurs et Groupes
 Module0Desc=Gestion des utilisateurs / employés et groupes
 Module1Name=Tiers
 Module1Desc=Gestion des tiers (clients, prospects) et contacts

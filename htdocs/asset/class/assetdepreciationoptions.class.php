@@ -107,7 +107,7 @@ class AssetDepreciationOptions extends CommonObject
 		),
 	);
 	/**
-	 * @var int
+	 * @var int		ID parent asset
 	 */
 	public $fk_asset;
 	/**

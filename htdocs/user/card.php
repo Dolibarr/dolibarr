@@ -914,7 +914,7 @@ llxHeader('', $title, $help_url, '', 0, 0, '', '', '', 'mod-user page-card');
 if ($action == 'create' || $action == 'adduserldap') {
 	print load_fiche_titre($title, '', 'user');
 
-	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc")."</span><br>\n";
+	print '<span class="opacitymedium">'.$langs->trans("CreateInternalUserDesc", $langs->trans("CreateExternalUser"))."</span><br>\n";
 	print "<br>";
 
 
@@ -1591,30 +1591,22 @@ if ($action == 'create' || $action == 'adduserldap') {
 
 		$head = user_prepare_head($object);
 
-		/*
-		 * Confirmation reinitialisation password
-		 */
+		// Confirmation reinitialisation password
 		if ($action == 'password') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("ReinitPassword"), $langs->trans("ConfirmReinitPassword", $object->login), "confirm_password", '', 0, 1);
 		}
 
-		/*
-		 * Confirmation envoi password
-		 */
+		// Confirmation envoi password
 		if ($action == 'passwordsend') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("SendNewPassword"), $langs->trans("ConfirmSendNewPassword", $object->login), "confirm_passwordsend", '', 0, 1);
 		}
 
-		/*
-		 * Confirm deactivation
-		 */
+		// Confirm deactivation
 		if ($action == 'disable') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DisableAUser"), $langs->trans("ConfirmDisableUser", $object->login), "confirm_disable", '', 0, 1);
 		}
 
-		/*
-		 * Confirm activation
-		 */
+		// Confirm activation
 		if ($action == 'enable') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("EnableAUser"), $langs->trans("ConfirmEnableUser", $object->login), "confirm_enable", '', 0, 1);
 		}
@@ -1624,17 +1616,15 @@ if ($action == 'create' || $action == 'adduserldap') {
 			print $form->formconfirm($_SERVER['PHP_SELF']."?id=$object->id", $langs->trans("DeleteAUser"), $langs->trans("ConfirmDeleteUser", $object->login), "confirm_delete", '', 0, 1);
 		}
 
-		/**
-		 * Confirmation clone
-		 */
+		// Confirmation clone
 		if (($action == 'clone' && (empty($conf->use_javascript_ajax) || !empty($conf->dol_use_jmobile)))		// Output when action = clone if jmobile or no js
 		|| (!empty($conf->use_javascript_ajax) && empty($conf->dol_use_jmobile))) {							// Always output when not jmobile nor js
 			// Define confirmation messages
 			$formquestionclone = array(
-			'text' => $langs->trans("ConfirmClone"),
-			0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'morecss' => 'width200'),
-			1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
-			2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
+				'text' => $langs->trans("ConfirmClone"),
+				0 => array('type' => 'text', 'name' => 'clone_name', 'label' => $langs->trans("NewNameUserClone"), 'morecss' => 'width200'),
+				1 => array('type' => 'checkbox', 'name' => 'clone_rights', 'label' => $langs->trans("CloneUserRights"), 'value' => 0),
+				2 => array('type' => 'checkbox', 'name' => 'clone_categories', 'label' => $langs->trans("CloneCategoriesProduct"), 'value' => 0),
 			);
 			if (getDolGlobalString('USER_MAIL_REQUIRED')) {
 				$newElement = array('type' => 'text', 'name' => 'new_email', 'label' => $langs->trans("NewEmailUserClone"), 'morecss' => 'width200');
@@ -1676,9 +1666,9 @@ if ($action == 'create' || $action == 'adduserldap') {
 				$addadmin = '';
 				if (property_exists($object, 'admin')) {
 					if (isModEnabled('multicompany') && !empty($object->admin) && empty($object->entity)) {
-						$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft"');
+						$addadmin .= img_picto($langs->trans("SuperAdministratorDesc"), "redstar", 'class="paddingleft valignmiddle"');
 					} elseif (!empty($object->admin)) {
-						$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft"');
+						$addadmin .= img_picto($langs->trans("AdministratorDesc"), "star", 'class="paddingleft valignmiddle"');
 					}
 				}
 				print showValueWithClipboardCPButton($object->login).$addadmin;
@@ -2498,7 +2488,7 @@ if ($action == 'create' || $action == 'adduserldap') {
 				print '<tr><td class="titlefieldcreate">'.$langs->trans("HierarchicalResponsible").'</td>';
 				print '<td>';
 				if ($permissiontoedit) {
-					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers($object->fk_user, 'fk_user', 1, array($object->id), 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
+					print img_picto('', 'user', 'class="pictofixedwidth"').$form->select_dolusers(GETPOSTISSET('fk_user') ? GETPOSTINT('fk_user') : $object->fk_user, 'fk_user', 1, array($object->id), 0, '', '', (string) $object->entity, 0, 0, '', 0, '', 'widthcentpercentminusx maxwidth300');
 				} else {
 					print '<input type="hidden" name="fk_user" value="'.$object->fk_user.'">';
 					$huser = new User($db);
@@ -2568,34 +2558,36 @@ if ($action == 'create' || $action == 'adduserldap') {
 					$type = $object->contact_id;
 				}
 
+				$eventsCompanyContact = array();
+				$eventsCompanyContact[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1&token='.currentToken(), 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 				if ($object->socid > 0 && !($object->contact_id > 0)) {	// external user but no link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300');
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300');
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif ($object->socid > 0 && $object->contact_id > 0) {	// external user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company($object->socid, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} elseif (!($object->socid > 0) && $object->contact_id > 0) {	// internal user with a link to a contact
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, $object->contact_id, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, $object->contact_id, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 					if ($object->ldap_sid) {
 						print ' ('.$langs->trans("DomainUser").')';
 					}
 				} else {	// $object->socid is not > 0 here
-					print img_picto('', 'company', 'class="pictofixedwidth"').$form->select_company(0, 'socid', '', '&nbsp;', 0, 0, array(), 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
+					print img_picto('', 'company', 'class="pictofixedwidth"');
+					print $form->select_company(0, 'socid', '', '&nbsp;', 0, 0, $eventsCompanyContact, 0, 'maxwidth300'); // We keep thirdparty empty, contact is already set
 					print img_picto('', 'contact', 'class="pictofixedwidth"');
-					//print $form->selectcontacts(0, 0, 'contactid', 1, '', '', 1, 'maxwidth300', false, 1);
 					print $form->select_contact(0, 0, 'contactid', 1, '', '', 1, 'minwidth100imp widthcentpercentminusxx maxwidth300', true, 1);
 				}
 			}

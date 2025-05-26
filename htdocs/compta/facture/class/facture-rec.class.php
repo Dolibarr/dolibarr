@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2003-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2019	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@inodbox.com>
@@ -37,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/factureligne.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 
 /**
@@ -44,6 +44,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
+	use CommonSubtotal;
+
 	const TRIGGER_PREFIX = 'BILLREC';
 	/**
 	 * @var string ID to identify managed object
@@ -490,6 +492,12 @@ class FactureRec extends CommonInvoice
 							}
 
 							$result = $objectline->insertExtraFields();
+							if ($result < 0) {
+								$error++;
+							}
+
+							$objectline->extraparams = $facline->extraparams;
+							$result = $objectline->setExtraParameters();
 							if ($result < 0) {
 								$error++;
 							}

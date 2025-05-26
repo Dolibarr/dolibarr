@@ -147,7 +147,10 @@ class FormWebsite
 					}*/
 					if ($obj->typecontainer != $lasttypecontainer) {
 						$out .= '<option value="0" disabled>--- ';
-						$transcodecontainer = ucfirst($obj->typecontainer);
+						$transcodecontainer = ucfirst($obj->typecontainer);	// Label of group of page type
+						if ($transcodecontainer == 'Library') {
+							$transcodecontainer = 'System';
+						}
 						if ($obj->typecontainer == 'page') {
 							$transcodecontainer = 'CompletePage';
 						} elseif ($obj->typecontainer == 'container') {

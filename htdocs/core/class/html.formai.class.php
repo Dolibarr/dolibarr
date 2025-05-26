@@ -97,9 +97,10 @@ class FormAI extends Form
 	 * @param	string		$format				Format for output ('', 'html', ...)
 	 * @param   string      $htmlContent    	HTML name of WYSIWYG field
 	 * @param	string		$onlyenhancements	Show only this enhancement features (show all if '')
+	 * @param	string		$aiprompt			Ai prompt for textgenerationextrafield function
 	 * @return 	string      					HTML code to ask AI instructions and autofill result
 	 */
-	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message', $onlyenhancements = '')
+	public function getSectionForAIEnhancement($function = 'textgeneration', $format = '', $htmlContent = 'message', $onlyenhancements = '', $aiprompt = "")
 	{
 		global $langs, $form;
 		require_once DOL_DOCUMENT_ROOT."/ai/lib/ai.lib.php";
@@ -148,6 +149,12 @@ class FormAI extends Form
 			$out .= '<div id="ai_rephraser'.$htmlContent.'" class="ai_rephraser'.$htmlContent.' paddingtop paddingbottom ai_feature">';
 			$out .= img_picto('', 'edit', 'class="pictofixedwidth paddingrightonly"');
 			$out .= $form->selectarray("ai_rephraser".$htmlContent."_select", $stylearray, 0, $langs->trans("RephraserByAI").'...', 0, 0, 'minwidth250 ai_rephraser'.$htmlContent.'_select', 1);
+			$out .= '</div>';
+		}
+
+		if (in_array($onlyenhancements, array('textgenerationextrafield'))) {
+			$out .= '<div id="ai_textgenerationextrafield'.$htmlContent.'" class="ai_textgenerationextrafield'.$htmlContent.' paddingtop paddingbottom ai_feature">';
+			$out .= '<input id="input_ai_textgenerationextrafield'.$htmlContent.'" type="hidden" class="button smallpaddingimp" data-functionai="textgenerationextrafield" value="'.$aiprompt.'"/>';
 			$out .= '</div>';
 		}
 
@@ -210,6 +217,14 @@ class FormAI extends Form
 					console.log('We change #ai_summarize".$htmlContent."_select with lang '+$(this).val());
 					if ($(this).val() != null && $(this).val() != '' && $(this).val() != '-1') {
 						prepareCallAIGenerator($(this));
+					}
+				});
+				$('#linkforaiprompt".$function."').on('click', function() {
+					//Get value aiprompt + prepare ai generator
+					elementforprompt = $('#input_ai_textgenerationextrafield".$htmlContent."');
+					aiprompt = elementforprompt.val();
+					if (aiprompt != null && aiprompt != '' && aiprompt != '-1'){
+						prepareCallAIGenerator(elementforprompt);
 					}
 				});
 
@@ -276,6 +291,8 @@ class FormAI extends Form
 					} else if (functionai == 'textrephraser') {
 						style = $('#ai_rephraser'+htmlname+'_select').val();
 						instructions = 'Rephrase the following text in a '+style+' style: ' + texttomodify;
+					} else if (functionai == 'textgenerationextrafield'){
+						instructions = $(element).val();
 					} else {
 						instructions = userprompt;
 					}
@@ -394,7 +411,7 @@ class FormAI extends Form
 						console.log('Add response into field \'#'+htmlname+'\': '+response);
 
 						jQuery('#'+htmlname).val(response);		// If #htmlcontent is a input name or textarea
-						jQuery('#'+htmlname).html(response);	// If #htmlContent is a div
+						jQuery('#'+htmlname).html(response).trigger('change');	// If #htmlContent is a div and trigger event change for extrafield update
 						//jQuery('#'+htmlname+'preview').val(response);
 
 						if (CKEDITOR.instances) {

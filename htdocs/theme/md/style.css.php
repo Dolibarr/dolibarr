@@ -258,36 +258,36 @@ if (!getDolGlobalString('THEME_ELDY_ENABLE_PERSONALIZED')) {
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
-$colorbackhmenu1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : (empty($user->conf->THEME_ELDY_TOPMENU_BACK1) ? $colorbackhmenu1 : $user->conf->THEME_ELDY_TOPMENU_BACK1);
-$colorbackvmenu1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_VERMENU_BACK1', $colorbackvmenu1) : (empty($user->conf->THEME_ELDY_VERMENU_BACK1) ? $colorbackvmenu1 : $user->conf->THEME_ELDY_VERMENU_BACK1);
-$colortopbordertitle1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TOPBORDER_TITLE1', $colortopbordertitle1) : (empty($user->conf->THEME_ELDY_TOPBORDER_TITLE1) ? $colortopbordertitle1 : $user->conf->THEME_ELDY_TOPBORDER_TITLE1);
-$colorbacktitle1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKTITLE1', $colorbacktitle1) : (empty($user->conf->THEME_ELDY_BACKTITLE1) ? $colorbacktitle1 : $user->conf->THEME_ELDY_BACKTITLE1);
-$colorbacktabcard1   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKTABCARD1', $colorbacktabcard1) : (empty($user->conf->THEME_ELDY_BACKTABCARD1) ? $colorbacktabcard1 : $user->conf->THEME_ELDY_BACKTABCARD1);
-$colorbacktabactive  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKTABACTIVE', $colorbacktabactive) : (empty($user->conf->THEME_ELDY_BACKTABACTIVE) ? $colorbacktabactive : $user->conf->THEME_ELDY_BACKTABACTIVE);
-$colorbacklineimpair1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEIMPAIR1', $colorbacklineimpair1) : (empty($user->conf->THEME_ELDY_LINEIMPAIR1) ? $colorbacklineimpair1 : $user->conf->THEME_ELDY_LINEIMPAIR1);
-$colorbacklineimpair2 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEIMPAIR2', $colorbacklineimpair2) : (empty($user->conf->THEME_ELDY_LINEIMPAIR2) ? $colorbacklineimpair2 : $user->conf->THEME_ELDY_LINEIMPAIR2);
-$colorbacklinepair1  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEPAIR1', $colorbacklinepair1) : (empty($user->conf->THEME_ELDY_LINEPAIR1) ? $colorbacklinepair1 : $user->conf->THEME_ELDY_LINEPAIR1);
-$colorbacklinepair2  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEPAIR2', $colorbacklinepair2) : (empty($user->conf->THEME_ELDY_LINEPAIR2) ? $colorbacklinepair2 : $user->conf->THEME_ELDY_LINEPAIR2);
-$colorbacklinebreak  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEBREAK', $colorbacklinebreak) : (empty($user->conf->THEME_ELDY_LINEBREAK) ? $colorbacklinebreak : $user->conf->THEME_ELDY_LINEBREAK);
-$colorbackbody       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKBODY', $colorbackbody) : (empty($user->conf->THEME_ELDY_BACKBODY) ? $colorbackbody : $user->conf->THEME_ELDY_BACKBODY);
-$colortexttitlenotab = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTTITLENOTAB', $colortexttitlenotab) : (empty($user->conf->THEME_ELDY_TEXTTITLENOTAB) ? $colortexttitlenotab : $user->conf->THEME_ELDY_TEXTTITLENOTAB);
-$colortexttitle      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTTITLE', $colortext) : (empty($user->conf->THEME_ELDY_TEXTTITLE) ? $colortexttitle : $user->conf->THEME_ELDY_TEXTTITLE);
-$colortexttitlelink  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTTITLELINK', $colortexttitlelink) : (empty($user->conf->THEME_ELDY_TEXTTITLELINK) ? $colortexttitlelink : $user->conf->THEME_ELDY_TEXTTITLELINK);
-$colortext           = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXT', $colortext) : (empty($user->conf->THEME_ELDY_TEXT) ? $colortext : $user->conf->THEME_ELDY_TEXT);
-$colortextlink       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTLINK', $colortext) : (empty($user->conf->THEME_ELDY_TEXTLINK) ? $colortextlink : $user->conf->THEME_ELDY_TEXTLINK);
+$colorbackhmenu1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1) : getDolUserString('THEME_ELDY_TOPMENU_BACK1', $colorbackhmenu1);
+$colorbackvmenu1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_VERMENU_BACK1', $colorbackvmenu1) : getDolUserString('THEME_ELDY_VERMENU_BACK1', $colorbackvmenu1);
+$colortopbordertitle1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TOPBORDER_TITLE1', $colortopbordertitle1) : getDolUserString('THEME_ELDY_TOPBORDER_TITLE1', $colortopbordertitle1);
+$colorbacktitle1     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKTITLE1', $colorbacktitle1) : getDolUserString('THEME_ELDY_BACKTITLE1', $colorbacktitle1);
+$colorbacktabcard1   = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKTABCARD1', $colorbacktabcard1) : getDolUserString('THEME_ELDY_BACKTABCARD1', $colorbacktabcard1);
+$colorbacktabactive  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKTABACTIVE', $colorbacktabactive) : getDolUserString('THEME_ELDY_BACKTABACTIVE', $colorbacktabactive);
+$colorbacklineimpair1 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEIMPAIR1', $colorbacklineimpair1) : getDolUserString('THEME_ELDY_LINEIMPAIR1', $colorbacklineimpair1);
+$colorbacklineimpair2 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEIMPAIR2', $colorbacklineimpair2) : getDolUserString('THEME_ELDY_LINEIMPAIR2', $colorbacklineimpair2);
+$colorbacklinepair1  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEPAIR1', $colorbacklinepair1) : getDolUserString('THEME_ELDY_LINEPAIR1', $colorbacklinepair1);
+$colorbacklinepair2  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEPAIR2', $colorbacklinepair2) : getDolUserString('THEME_ELDY_LINEPAIR2', $colorbacklinepair2);
+$colorbacklinebreak  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_LINEBREAK', $colorbacklinebreak) : getDolUserString('THEME_ELDY_LINEBREAK', $colorbacklinebreak);
+$colorbackbody       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BACKBODY', $colorbackbody) : getDolUserString('THEME_ELDY_BACKBODY', $colorbackbody);
+$colortexttitlenotab = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTTITLENOTAB', $colortexttitlenotab) : getDolUserString('THEME_ELDY_TEXTTITLENOTAB', $colortexttitlenotab);
+$colortexttitle      = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTTITLE', $colortext) : getDolUserString('THEME_ELDY_TEXTTITLE', $colortexttitle);
+$colortexttitlelink  = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTTITLELINK', $colortexttitlelink) : getDolUserString('THEME_ELDY_TEXTTITLELINK', $colortexttitlelink);
+$colortext           = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXT', $colortext) : getDolUserString('THEME_ELDY_TEXT', $colortext);
+$colortextlink       = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTLINK', $colortext) : getDolUserString('THEME_ELDY_TEXTLINK', $colortextlink);
 $colortextlinkHsla    = colorHexToHsl($colortextlink, false, true);
-$butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BTNACTION', $butactionbg) : (empty($user->conf->THEME_ELDY_BTNACTION) ? $butactionbg : $user->conf->THEME_ELDY_BTNACTION);
-$textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTBTNACTION', $textbutaction) : (empty($user->conf->THEME_ELDY_TEXTBTNACTION) ? $textbutaction : $user->conf->THEME_ELDY_TEXTBTNACTION);
-$fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_FONT_SIZE1', $fontsize) : (empty($user->conf->THEME_ELDY_FONT_SIZE1) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE1);
-$fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_FONT_SIZE2', $fontsize) : (empty($user->conf->THEME_ELDY_FONT_SIZE2) ? $fontsize : $user->conf->THEME_ELDY_FONT_SIZE2);
-$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (!getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '155%' : '300%') : (empty($user->conf->THEME_ELDY_USECOMOACTROW) ? '155%' : '300%');
+$butactionbg       	 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_BTNACTION', $butactionbg) : getDolUserString('THEME_ELDY_BTNACTION', $butactionbg);
+$textbutaction     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_TEXTBTNACTION', $textbutaction) : getDolUserString('THEME_ELDY_TEXTBTNACTION', $textbutaction);
+$fontsize            = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_FONT_SIZE1', $fontsize) : getDolUserString('THEME_ELDY_FONT_SIZE1', $fontsize);
+$fontsizesmaller     = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? getDolGlobalString('THEME_ELDY_FONT_SIZE2', $fontsize) : getDolUserString('THEME_ELDY_FONT_SIZE2', $fontsize);
+$heightrow			 = empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED) ? (getDolGlobalString('THEME_ELDY_USECOMOACTROW') ? '300%' : '155%') : (getDolUserString('THEME_ELDY_USECOMOACTROW') ? '300%' : '155%');
 
 // Hover color
-$colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || (string) $conf->global->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_HOVER));
-$colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || (string) $conf->global->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($conf->global->THEME_ELDY_USE_CHECKED === '1' ? 'edf4fb' : $conf->global->THEME_ELDY_USE_CHECKED));
+$colorbacklinepairhover = ((!isset($conf->global->THEME_ELDY_USE_HOVER) || getDolGlobalString('THEME_ELDY_USE_HOVER') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_HOVER')));
+$colorbacklinepairchecked = ((!isset($conf->global->THEME_ELDY_USE_CHECKED) || getDolGlobalString('THEME_ELDY_USE_CHECKED') === '255,255,255') ? '' : (getDolGlobalString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolGlobalString('THEME_ELDY_USE_CHECKED')));
 if (!empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED)) {
-	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : ($user->conf->THEME_ELDY_USE_HOVER === '1' ? 'edf4fb' : $user->conf->THEME_ELDY_USE_HOVER));
-	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : ($user->conf->THEME_ELDY_USE_CHECKED === '1' ? 'edf4fb' : $user->conf->THEME_ELDY_USE_CHECKED));
+	$colorbacklinepairhover = ((!isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '255,255,255') ? '' : (getDolUserString('THEME_ELDY_USE_HOVER') === '1' ? 'edf4fb' : getDolUserString('THEME_ELDY_USE_HOVER')));
+	$colorbacklinepairchecked = ((!isset($user->conf->THEME_ELDY_USE_CHECKED) || $user->conf->THEME_ELDY_USE_CHECKED === '255,255,255') ? '' : (getDolUserString('THEME_ELDY_USE_CHECKED') === '1' ? 'edf4fb' : getDolUserString('THEME_ELDY_USE_CHECKED')));
 }
 
 if (empty($colortopbordertitle1)) {
@@ -967,7 +967,7 @@ input:-webkit-autofill {
 
 input[type=checkbox], input[type=radio] {
 	margin: 0 5px 0 1px;
-	transform: scale(1.3);
+	transform: scale(1.25);
 }
 .kanban input.checkforselect {
 	margin-right: 0px;
@@ -1197,7 +1197,7 @@ textarea.centpercent {
 	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(2px, <?php print($left == 'left' ? '' : '-'); ?>4px);
 }
 .center {
 	text-align: center;
@@ -1483,11 +1483,11 @@ body[class*="colorblind-"] .text-success{
 	color : <?php print $textDanger; ?>
 }
 
-.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye,
+.editfielda span.fa-pencil-alt, .editfielda span.fa-pencil-ruler, .editfielda span.fa-trash, .editfielda span.fa-crop, .editfielda span.fa-eye, .editfielda span.fa-magic,
 .editfieldlang {
 	color: #ccc !important;
 }
-.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover,
+.editfielda span.fa-pencil-alt:hover, .editfielda span.fa-pencil-ruler:hover, .editfielda span.fa-trash:hover, .editfielda span.fa-crop:hover, .editfielda span.fa-magic:hover,
 .editfieldlang:hover {
 	color: var(--colortexttitle) !important;
 }
@@ -2538,6 +2538,9 @@ td.showDragHandle {
 .bodyforlist #id-right {
 	padding-bottom: 4px;
 }
+.bodyforlist.poslist #id-right {
+	padding-left: 12px;
+}
 
 /* DOL_XXX For having horizontal scroll into array (like with smartphone) */
 
@@ -2643,7 +2646,9 @@ body.sidebar-collapse .side-nav, body.sidebar-collapse .login_block_other
 	z-index: 1005;
 }
 <?php } ?>
-
+body.bodytakepos #topmenu-login-dropdown {
+	position: unset;
+}
 
 /* For smartphone (testmenuhider is on) */
 <?php if (in_array($conf->browser->layout, array('phone', 'tablet')) && !getDolGlobalString('MAIN_OPTIMIZEFORTEXTBROWSER')) { ?>
@@ -3267,6 +3272,10 @@ div.mainmenu.menu {
 
 /* To show text of top menu according to option THEME_TOPMENU_DISABLE_IMAGE */
 
+.menuhider {
+	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
+}
+
 /* Text hidden by default */
 <?php if (in_array(getDolGlobalInt('THEME_TOPMENU_DISABLE_IMAGE'), array(2, 3, 4))) { ?>
 .tmenulabel:not(.menuhider), .tmenulabel:not(.menuhider)::before {
@@ -3797,7 +3806,7 @@ a.vmenu:link, a.vmenu:visited {
 	color: var(--colortextbackvmenu);
 }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
+a.vmenu, a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vmenu, span.vsmenu {
 	font-size:<?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal;
 	color: var(--colortextbackvmenu);
 	margin: 1px 1px 1px 8px;
@@ -5369,6 +5378,7 @@ img.boxhandle, img.boxclose {
 	font-size: 1rem;
 	cursor: pointer;
 	display: flex;
+	white-space: nowrap;
 }
 .star {
 	color: #ccc;
@@ -6116,6 +6126,11 @@ span.websitebuttonsitepreviewdisabled img, a.websitebuttonsitepreviewdisabled im
 
 #divbodywebsite section p {
 	margin: unset;
+}
+
+#divbodywebsite #websitetemplateconfigpage{
+	max-width: 1200px;
+	margin: 50px auto 0;
 }
 
 
@@ -7977,11 +7992,11 @@ border-top-right-radius: 6px;
 	border: 1px solid #888;
 }
 .publicnewmemberform div.tabBarWithBottom {
-	border: 1px solid #e8e8e8;
+	border: 2px solid #e8e8e8;
 	padding: 30px;
 	border-radius: 8px;
-	background-color: #f8f8f8;
-	/*box-shadow: 2px 2px 10px #ddd;*/
+	/* background-color: #f8f8f8; */
+	box-shadow: 2px 2px 10px #ddd;
 }
 
 .publicnewmemberform #tablesubscribe {
@@ -8340,6 +8355,32 @@ div.phpdebugbar-widgets-templates a.phpdebugbar-widgets-editor-link:before
 
 
 /* ============================================================================== */
+/* For dolUIBlock() feature                                                       */
+/* ============================================================================== */
+
+#dol-block-ui {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
+	z-index: 9999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#dol-block-ui .message {
+	padding: 15px 20px 15px 50px;
+	color: #fff;
+	background: #000 no-repeat 10px center;
+	border-radius: 10px;
+	font-family: sans-serif;
+}
+
+
+/* ============================================================================== */
 /* For copy-paste feature                                                         */
 /* ============================================================================== */
 
@@ -8547,84 +8588,6 @@ table.jPicker {
 /* CSS style used for small screen                                                */
 /* ============================================================================== */
 
-@media only screen and (max-width: 767px)
-{
-	.ai_dropdown{
-		min-width : 280px !important;
-	}
-
-	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
-
-	#tooltip {
-		position: absolute;
-		width: <?php print dol_size(350, 'width'); ?>px;
-	}
-
-	div.tabBar {
-		padding-left: 8px;
-		padding-right: 8px;
-		border-radius: 0px;
-		border-right: none;
-		border-left: none;
-	}
-
-	td.widthpictotitle { width: 30px; }
-
-	.logopublicpayment #dolpaymentlogo {
-		max-width: 260px;
-	}
-	#tablepublicpayment {
-		width:	auto !important;
-		border: none !important;
-	}
-	.poweredbypublicpayment {
-		float: unset !important;
-		top: unset !important;
-		/* bottom: 8px; */
-		right: -10px !important;
-		position: relative !important;
-	}
-	.poweredbyimg {
-		width: 48px;
-	}
-
-	.survey_borders {
-		margin-left: 10px;
-		margin-right: 10px;
-		text-align: start;
-	}
-
-	.bookcalform.boxtable .minwidth75 {
-		min-width: auto;
-	}
-	.center.bookingtab {
-		margin-left: 6px;
-	}
-	#bookinghoursection {
-		font-size: small;
-		width: 122px;
-	}
-
-	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
-		padding: 10px 3px 10px;
-	}
-}
-
-@media only screen and (max-width: 1024px)
-{
-	div#ecm-layout-west {
-		width: 100%;
-		clear: both;
-	}
-	div#ecm-layout-center {
-		width: 100%;
-	}
-}
-
-.menuhider {
-	width: <?php echo $disableimages ? 'auto' : '44'; ?>px;
-}
-
 /* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize) ? $fontsize.'px' : $fontsize ?> */
 /* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
 @media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
@@ -8663,9 +8626,20 @@ table.jPicker {
 	}
 
 	div.tmenucenter {
-		max-width: <?php echo max(24, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
+		max-width: <?php echo max(34, ceil(300 / ($nbtopmenuentriesreal + 2))); ?>px;	/* size of viewport */
 		text-overflow: clip;
 	}
+	div.tmenucenter a.tmenulabel span.mainmenuaspan {
+		display: inline-block;
+		overflow: hidden;
+		max-width: 30px;
+	}
+	a.tmenulabel:link, a.tmenulabel:visited, a.tmenulabel:hover, a.tmenulabel:active {
+		padding-left: 2px;
+		padding-right: 2px;
+		max-width: 30px;
+	}
+
 	.menuhider div.tmenucenter {
 		max-width: 28px;
 	}
@@ -8677,6 +8651,12 @@ table.jPicker {
 	.topmenuimage {
 		background-size: 20px auto;
 		margin-top: 2px;
+	}
+	div.login_block a .atoploginusername {
+		display: none;
+	}
+	div.login_block_tools > div {
+		right: 53px !important;
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
@@ -8833,6 +8813,86 @@ table.jPicker {
 	}
 }
 
+@media only screen and (max-width: 767px)
+{
+	.ai_dropdown{
+		min-width : 280px !important;
+	}
+
+	.imgopensurveywizard, .imgautosize { width:95%; height: auto; }
+
+	#tooltip {
+		position: absolute;
+		width: <?php print dol_size(350, 'width'); ?>px;
+	}
+
+	div.tabBar {
+		padding-left: 8px;
+		padding-right: 8px;
+		border-radius: 0px;
+		border-right: none;
+		border-left: none;
+	}
+
+	td.widthpictotitle { width: 30px; }
+
+	.logopublicpayment #dolpaymentlogo {
+		max-width: 260px;
+	}
+	#tablepublicpayment {
+		width:	auto !important;
+		border: none !important;
+	}
+	.poweredbypublicpayment {
+		float: unset !important;
+		top: unset !important;
+		/* bottom: 8px; */
+		right: -10px !important;
+		position: relative !important;
+	}
+	.poweredbyimg {
+		width: 48px;
+	}
+
+	.survey_borders {
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: start;
+	}
+
+	.bookcalform.boxtable .minwidth75 {
+		min-width: auto;
+	}
+	.center.bookingtab {
+		margin-left: 6px;
+	}
+	#bookinghoursection {
+		font-size: small;
+		width: 122px;
+	}
+
+	a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
+		padding: 10px 3px 10px;
+	}
+}
+
+@media only screen and (max-width: 1024px)
+{
+	div#ecm-layout-west {
+		width: 100%;
+		clear: both;
+	}
+	div#ecm-layout-center {
+		width: 100%;
+	}
+
+	input[type=checkbox], input[type=radio] {
+		margin: 0 5px 0 1px;
+		transform: scale(1.1);
+	}
+}
+
+
 <?php
 if (getDolUserString('MAIN_OPTIMIZEFORTEXTBROWSER')) {
 	// Set a max height on multiselect when using multiselect
@@ -8851,7 +8911,7 @@ include dol_buildpath($path.'/theme/eldy/timeline.inc.php', 0); // actually md u
 include dol_buildpath($path.'/theme/'.$theme.'/search-input.inc.css', 0); // actually md use same style as eldy theme
 
 if (getDolGlobalString('THEME_CUSTOM_CSS')) {
-	print $conf->global->THEME_CUSTOM_CSS;
+	print getDolGlobalString('THEME_CUSTOM_CSS');
 }
 
 if (is_object($db)) {

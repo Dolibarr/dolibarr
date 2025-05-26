@@ -2748,8 +2748,7 @@ if ($action == 'create') {
 		// Payment term
 		print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 		print img_picto('', 'payment', 'class="pictofixedwidth"');
-		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1);
-
+		print $form->getSelectConditionsPaiements($cond_reglement_id, 'cond_reglement_id', -1, 1, 0, 'maxwidth200 widthcentpercentminusx');
 		print '</td></tr>';
 
 		// Due date
@@ -2984,11 +2983,7 @@ if ($action == 'create') {
 
 		$result = $object->fetch($id, $ref);
 		if ($result <= 0) {
-			$langs->load("errors");
-			print $langs->trans("ErrorRecordNotFound");
-			llxFooter();
-			$db->close();
-			exit;
+			recordNotFound('', 0);
 		}
 
 		$result = $object->fetch_thirdparty();

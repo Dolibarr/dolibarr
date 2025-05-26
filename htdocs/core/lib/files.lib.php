@@ -279,7 +279,7 @@ function dol_dir_list_in_database($path, $filter = "", $excludefilter = null, $s
 		$object = new stdClass();
 	}
 
-	$sql = " SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
+	$sql = "SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams,";
 	$sql .= " date_c, tms as date_m, fk_user_c, fk_user_m, acl, position, share";
 	if ($mode) {
 		$sql .= ", description";
@@ -374,7 +374,7 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		$object = new stdClass();
 	}
 
-	$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC, 0, '', $object);
+	$filearrayindatabase = dol_dir_list_in_database(preg_replace('/[\\/]$/', '', $relativedir), '', null, 'name', SORT_ASC, 0, '', $object);
 
 	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;
@@ -765,7 +765,8 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	dolChmod($newpathoftmpdestfile, $newmask);
 
 	// Rename
-	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase);
+	$moreinfo = array('gen_or_uploaded' => 'unknown');
+	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase, $moreinfo);
 	if (!$result) {
 		dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
 		return -3;
@@ -1145,7 +1146,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
 						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
 					} else {
-						$ecmfile->gen_or_uploaded = 'uploaded';
+						$ecmfile->gen_or_uploaded = 'unknown';	// 'generated', 'uploaded', 'api'
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
@@ -1272,7 +1273,8 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
+								$moreinfo = array('gen_or_uploaded' => 'unknown');
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase, $moreinfo);
 							}
 							if (!$res) {
 								return $result;
@@ -2918,6 +2920,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
+	} elseif ($modulepart == 'propale') {
+		$modulepart = 'propal';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
@@ -3637,7 +3641,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 					$accessallowed = 1;
 				}
 			}
-			if ($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) {
+			if (($fuser->hasRight($modulepart, $lire) || $fuser->hasRight($modulepart, $read)) || ($fuser->hasRight($modulepart, 'all', $lire) || $fuser->hasRight($modulepart, 'all', $read))) {
 				$accessallowed = 1;
 			}
 

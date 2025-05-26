@@ -14,18 +14,22 @@ if (!defined('ISLOADEDBYSTEELSHEET')) {
  * @var string $butactionbg
  * @var string $textbutaction
  * @var string $fontlist
+ * @var string $fontsize
  * @var string $left
  * @var string $right
+ * @var int<0,max> $nbtopmenuentries
  */
 '
 @phan-var-force string $butactionbg
 @phan-var-force string $colortextlink
 @phan-var-force int $dol_optimize_smallscreen
 @phan-var-force string $fontlist
+@phan-var-force string $fontsize
 @phan-var-force string $left
 @phan-var-force int $nbtopmenuentries
 @phan-var-force string $right
 @phan-var-force string $textbutaction
+@phan-var-force int<0,max> $nbtopmenuentries
 ';
 ?>
 
@@ -401,22 +405,25 @@ div.pagination .btnTitle:hover .btnTitle-label{
 	max-height: 42px;
 }
 
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?> ?> */
+/* rule to reduce top menu - 1st reduction: Reduce width of top menu icons */
+@media only screen and (max-width: <?php echo getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC1', round($nbtopmenuentries * 90, 0) + 340); ?>px)	/* reduction 1 */
+{
+	.btnTitle, a.btnTitle {
+		min-width: 40px;
+	}
+}
 
 /* rule to reduce top menu - 2nd reduction: Reduce width of top menu icons again */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC2; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC2') ? round($nbtopmenuentries * 69, 0) + 130 : getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC2'); ?>px)	/* reduction 2 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.95em;
 	}
-	.btnTitle, a.btnTitle {
-		display: inline-block;
-		padding: 4px 4px 4px 4px;
-		min-width: unset;
-	}
 }
 
 /* rule to reduce top menu - 3rd reduction: The menu for user is on left */
-@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : $conf->global->THEME_ELDY_WITDHOFFSET_FOR_REDUC3; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo !getDolGlobalString('THEME_ELDY_WITDHOFFSET_FOR_REDUC3') ? round($nbtopmenuentries * 47, 0) + 130 : getDolGlobalInt('THEME_ELDY_WITDHOFFSET_FOR_REDUC3'); ?>px)	/* reduction 3 */
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.9em;
@@ -428,6 +435,16 @@ div.pagination .btnTitle:hover .btnTitle-label{
 {
 	.butAction, .butActionRefused, .butActionDelete {
 		font-size: 0.85em;
+	}
+
+	/* for small screen, we reduce the min with of button */
+	.btnTitle, a.btnTitle {
+		display: inline-block;
+		padding: 4px 4px 4px 4px;
+		min-width: unset;	/* if we unset the min-width here, we must also unset the font-size on .paginationafterarrows a.btnTitlePlus:hover span:before to avoid page content move */
+	}
+	.paginationafterarrows a.btnTitlePlus:hover span:before, .titre_right a.btnTitlePlus:hover span:before {
+		font-size: unset !important;
 	}
 }
 

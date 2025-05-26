@@ -74,7 +74,8 @@ class Form
 	// Some properties used to return data by some methods
 	/** @var array<string,int> */
 	public $result;
-	/** @var int */
+
+	/** @var int 	Number of line returned by method to generate combo select */
 	public $num;
 
 	// Cache arrays
@@ -939,7 +940,7 @@ class Form
 	public function select_country($selected = '', $htmlname = 'country_id', $htmloption = '', $maxlength = 0, $morecss = 'minwidth300', $usecodeaskey = '', $showempty = 1, $disablefavorites = 0, $addspecialentries = 0, $exclude_country_code = array(), $hideflags = 0, $forcecombo = 0)
 	{
 		// phpcs:enable
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$langs->load("dict");
 
@@ -3753,7 +3754,7 @@ class Form
 
 			print($hidelabel ? '' : $langs->trans("RefOrLabel") . ' : ') . '<input type="text" class="'.$morecss.'" name="search_' . $htmlname . '" id="search_' . $htmlname . '" value="' . $selected_input_value . '"' . ($placeholder ? ' placeholder="' . $placeholder . '"' : '') . '>';
 		} else {
-			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, 0, $placeholder);
+			print $this->select_produits_fournisseurs_list($socid, $selected, $htmlname, $filtertype, $filtre, '', $status, 0, 0, $alsoproductwithnosupplierprice, $morecss, getDolGlobalInt('SUPPLIER_SHOW_STOCK_IN_PRODUCTS_COMBO'), $placeholder);
 		}
 	}
 
@@ -5689,7 +5690,7 @@ class Form
 						$add = '';
 					}
 
-					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth" style="color: #' . $cate_arbo[$key]['color'] . '"');
+					$labeltoshow = img_picto('', 'category', 'class="pictofixedwidth"'.(empty($cate_arbo[$key]['color']) ? '' : ' style="color: #' . $cate_arbo[$key]['color'] . '"'));
 					$labeltoshow .= dol_trunc($cate_arbo[$key]['fulllabel'], $maxlength, 'middle');
 
 					$outarray[$cate_arbo[$key]['id']] = $cate_arbo[$key]['fulllabel'];
@@ -5708,6 +5709,8 @@ class Form
 		}
 		$output .= '</select>';
 		$output .= "\n";
+
+		$this->num = count($cate_arbo);
 
 		if ($outputmode == 2) {
 			// TODO: handle error when $cate_arbo is not an array
@@ -5916,7 +5919,9 @@ class Form
 						if (!empty($input['label'])) {
 							$more .= $input['label'] . '</div><div class="tagtd">';
 						}
-						$more .= $input['value'];
+						if (!empty($input['value'])) {
+							$more .= $input['value'];
+						}
 						$more .= '</div></div>' . "\n";
 					} elseif ($input['type'] == 'onecolumn') {
 						$moreonecolumn .= '<div class="margintoponly">';
@@ -6911,7 +6916,7 @@ class Form
 	 * @param 	string 	$morecss 				More css
 	 * @return  string							HTML component
 	 */
-	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = '')
+	public function selectMultiCurrency($selected = '', $htmlname = 'multicurrency_code', $useempty = 0, $filter = '', $excludeConfCurrency = false, $morecss = 'maxwidth200 widthcentpercentminusx')
 	{
 		global $conf, $langs;
 
@@ -7499,8 +7504,12 @@ class Form
 
 				// Calendrier popup version eldy
 				if ($usecalendar == "eldy") {
+					// To have this manager working back, you must retrieve all functions showDP child found into the lib_head.js of v4 for example
+					// and use load the js so the call of showDP will works.
+
+					/*
 					// Input area to enter date manually
-					$retstring .= '<input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
+					$retstring .= '<!-- datepicker usecalendar=eldy --><input id="' . $prefix . '" name="' . $prefix . '" type="text" class="maxwidthdate center" maxlength="11" value="' . $formatted_date . '"';
 					$retstring .= ($disabled ? ' disabled' : '');
 					$retstring .= ' onChange="dpChangeDay(\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\'); "'; // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
 					$retstring .= ' autocomplete="off">';
@@ -7511,22 +7520,23 @@ class Form
 						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons"';
 						$base = DOL_URL_ROOT . '/core/';
 						$retstringbuttom .= ' onClick="showDP(\'' . dol_escape_js($base) . '\',\'' . dol_escape_js($prefix) . '\',\'' . dol_escape_js($langs->trans("FormatDateShortJavaInput")) . '\',\'' . dol_escape_js($langs->defaultlang) . '\');"';
-						$retstringbuttom .= '>' . img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink"') . '</button>';
+						$retstringbuttom .= '>' . img_object($langs->trans("SelectDate"), 'calendarday', 'class="datecallink paddingright"') . '</button>';
 					} else {
-						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink"') . '</button>';
+						$retstringbuttom = '<button id="' . $prefix . 'Button" type="button" class="dpInvisibleButtons">' . img_object($langs->trans("Disabled"), 'calendarday', 'class="datecallink paddingright"') . '</button>';
 					}
 					$retstring = $retstringbuttom . $retstring;
 
 					$retstring .= '<input type="hidden" id="' . $prefix . 'day"   name="' . $prefix . 'day"   value="' . $sday . '">' . "\n";
 					$retstring .= '<input type="hidden" id="' . $prefix . 'month" name="' . $prefix . 'month" value="' . $smonth . '">' . "\n";
 					$retstring .= '<input type="hidden" id="' . $prefix . 'year"  name="' . $prefix . 'year"  value="' . $syear . '">' . "\n";
+					*/
 				} elseif ($usecalendar == 'jquery' || $usecalendar == 'html') {
 					if (!$disabled && $usecalendar != 'html') {
 						// Output javascript for datepicker
 						$minYear = getDolGlobalInt('MIN_YEAR_SELECT_DATE', (idate('Y') - 100));
 						$maxYear = getDolGlobalInt('MAX_YEAR_SELECT_DATE', (idate('Y') + 100));
 
-						$retstring .= '<script nonce="' . getNonce() . '" type="text/javascript">';
+						$retstring .= '<!-- datepicker usecalendar=eldy --><script nonce="' . getNonce() . '" type="text/javascript">';
 						$retstring .= "$(function(){ $('#" . $prefix . "').datepicker({
 							dateFormat: '" . $langs->trans("FormatDateShortJQueryInput") . "',
 							autoclose: true,
@@ -7650,7 +7660,7 @@ class Form
 				$retstring .= '</option>';
 			}
 			$retstring .= '</select>';
-			//if ($m && empty($conf->dol_optimize_smallscreen)) $retstring .= ":";
+
 			if ($m) {
 				$retstring .= ":";
 			}
@@ -9462,13 +9472,13 @@ class Form
 	 * @param 	int<0,1> 	$translate 		Translate and encode value
 	 * @param 	int|string 	$width 			Force width of select box. May be used only when using jquery couch. Example: 250, '95%'
 	 * @param 	string 		$moreattrib 	Add more options on select component. Example: 'disabled'
-	 * @param 	string 		$elemtype 		Type of element we show ('category', ...). Will execute a formatting function on it. To use in readonly mode if js component support HTML formatting.
+	 * @param 	string 		$nu		 		Not used
 	 * @param 	string 		$placeholder 	String to use as placeholder
 	 * @param 	int<-1,1> 	$addjscombo 	Add js combo
 	 * @return 	string                      HTML multiselect string
 	 * @see selectarray(), selectArrayAjax(), selectArrayFilter()
 	 */
-	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $elemtype = '', $placeholder = '', $addjscombo = -1)
+	public static function multiselectarray($htmlname, $array, $selected = array(), $key_in_label = 0, $value_as_key = 0, $morecss = '', $translate = 0, $width = 0, $moreattrib = '', $nu = '', $placeholder = '', $addjscombo = -1)
 	{
 		global $conf, $langs;
 		$out = '';
@@ -9487,6 +9497,8 @@ class Form
 				$useenhancedmultiselect = 1;	// Use the js multiselect in one line. Possible only if $addjscombo not 0.
 			}
 		}
+
+		$out .= '<span class="multiselectarray'.$htmlname.'">';
 
 		// We need a hidden field because when using the multiselect, if we unselect all, there is no
 		// variable submitted at all, so no way to make a difference between variable not submitted and variable
@@ -9534,35 +9546,38 @@ class Form
 		}
 		$out .= '</select>' . "\n";
 
+		$out .= '</span>';
+
 		// Add code for jquery to use multiselect
 		if (!empty($conf->use_javascript_ajax) && getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') || defined('REQUIRE_JQUERY_MULTISELECT')) {
 			$out .= "\n" . '<!-- JS CODE TO ENABLE select for id ' . $htmlname . ', addjscombo=' . $addjscombo . ' -->';
 			$out .= "\n" . '<script nonce="' . getNonce() . '">' . "\n";
 			if ($addjscombo == 1) {
-				$tmpplugin = !getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : $conf->global->MAIN_USE_JQUERY_MULTISELECT;
-				$out .= 'function formatResult(record, container) {' . "\n";
+				$tmpplugin = getDolGlobalString('MAIN_USE_JQUERY_MULTISELECT', (defined('REQUIRE_JQUERY_MULTISELECT') ? constant('REQUIRE_JQUERY_MULTISELECT') : 'select2'));
+
 				// If property data-html set, we decode html entities and use this.
 				// Note that HTML content must have been sanitized from js with dol_escape_htmltag(xxx, 0, 0, '', 0, 1) when building the select option.
+				// TODO Move this into common js ?
+				$out .= 'function formatResult(record, container) {' . "\n";
 				$out .= '	if ($(record.element).attr("data-html") != undefined && typeof htmlEntityDecodeJs === "function") {';
-				//$out .= '		console.log("aaa");';
 				$out .= '		return htmlEntityDecodeJs($(record.element).attr("data-html"));';
 				$out .= '	}'."\n";
 				$out .= '	return record.text;';
 				$out .= '}' . "\n";
+
 				$out .= 'function formatSelection(record) {' . "\n";
-				if ($elemtype == 'category') {
-					$out .= 'return \'<span><img src="' . DOL_URL_ROOT . '/theme/eldy/img/object_category.png"> \'+record.text+\'</span>\';';
-				} else {
-					$out .= 'return record.text;';
-				}
+				$out .= '	return record.text;';
 				$out .= '}' . "\n";
+
+				// Load the select2 enhancer
+				//$out .= 'console.log(\'addjscombo=1 for htmlname=' . dol_escape_js($htmlname) . '\');';
 				$out .= '$(document).ready(function () {
 							$(\'#' . dol_escape_js($htmlname) . '\').' . $tmpplugin . '({';
 				if ($placeholder) {
 					$out .= '
 								placeholder: {
 								    id: \'-1\',
-								    text: \'' . dol_escape_js($placeholder) . '\'
+								    text: \''.dol_escape_js($placeholder).'\'
 								  },';
 				}
 				$out .= '		dir: \'ltr\',
@@ -9570,7 +9585,7 @@ class Form
 								dropdownCssClass: \'' . dol_escape_js($morecss) . '\',				/* Line to add class on the new <span class="select2-selection...> tag (ok with multiselect). Need full version of select2. */
 								// Specify format function for dropdown item
 								formatResult: formatResult,
-							 	templateResult: formatResult,		/* For 4.0 */
+								templateResult: formatResult,		/* For 4.0 */
 								escapeMarkup: function (markup) { return markup; }, 	// let our custom formatter work
 								// Specify format function for selected item
 								formatSelection: formatSelection,
@@ -9578,7 +9593,7 @@ class Form
 							 	language: (typeof select2arrayoflanguage === \'undefined\') ? \'en\' : select2arrayoflanguage
 							});
 
-							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are show dynamically after load, because select2 set
+							/* Add also morecss to the css .select2 that is after the #htmlname, for component that are shown dynamically after load, because select2 set
 								 the size only if component is not hidden by default on load */
 							$(\'#' . dol_escape_js($htmlname) . ' + .select2\').addClass(\'' . dol_escape_js($morecss) . '\');
 						});' . "\n";
@@ -9671,7 +9686,7 @@ class Form
 
 				// Note: $val['checked'] <> 0 means we must show the field into the combo list  @phan-suppress-next-line PhanTypePossiblyInvalidDimOffset
 				$listoffieldsforselection .= '<li><input type="checkbox" id="checkbox' . $key . '" value="' . $key . '"' . ((!array_key_exists('checked', $val) || empty($val['checked']) || $val['checked'] == '-1') ? '' : ' checked="checked"') . ' data-position="'.(empty($val['position']) ? '' : $val['position']).'" />';
-				$listoffieldsforselection .= '<label for="checkbox' . $key . '">';
+				$listoffieldsforselection .= '<label for="checkbox' . $key . '" class="paddingleft">';
 				$listoffieldsforselection .= dolPrintHTML(dol_string_nohtmltag($langs->trans($val['label'])));
 				$listoffieldsforselection .= '</label></li>';
 				$listcheckedstring .= (empty($val['checked']) ? '' : $key . ',');
@@ -10984,8 +10999,18 @@ class Form
 		}
 		$out .= '         });
         	        $(".' . $cssclass . '").change(function() {
-					$(this).closest("tr").toggleClass("highlight", this.checked);
-				});
+						console.log("We check and change the tr class highlight after a change on .'.$cssclass.'");
+						var $row = $(this).closest("tr");
+						if ($row.length) {
+	    					var anyChecked = $row.find(\'input[type="checkbox"].checkforselect:checked\').length > 0;
+							console.log(anyChecked);
+							if (!anyChecked) {
+								$row.removeClass("highlight");
+							} else {
+								$row.addClass("highlight");
+							}
+						}
+					});
 		 	});
     	</script>';
 
@@ -11996,6 +12021,8 @@ class Form
 		$ret .= '<script>
 			$(document).ready(function() {
 				$(".search_filter_field").on("change", function() {
+					console.log("We change search_filter_field");
+
 					let maybenull = 0;
 					const selectedField = $(this).find(":selected");
 					let fieldType = selectedField.data("type");
@@ -12051,6 +12078,8 @@ class Form
 				});
 
 				$("#operator-selector").on("change", function() {
+					console.log("We change operator-selector");
+
 					const selectedOperator = $(this).find(":selected").val();
 					if (selectedOperator === "IsDefined" || selectedOperator === "IsNotDefined") {
 						// Disable all value input elements
@@ -12070,6 +12099,8 @@ class Form
 				});
 
 				$(".add-filter-btn").on("click", function(event) {
+					console.log("We click on add-filter-btn");
+
 					event.preventDefault();
 
 					const field = $(".search_filter_field").val();
@@ -12078,13 +12109,11 @@ class Form
 					const fieldType = $(".search_filter_field").find(":selected").data("type");
 
 					if (["date", "datetime", "timestamp"].includes(fieldType)) {
-						const parsedDate = new Date($("#dateone").val());
-						if (!isNaN(parsedDate)) {
-							const year = parsedDate.getFullYear();
-							const month = String(parsedDate.getMonth() + 1).padStart(2, "0");
-							const day = String(parsedDate.getDate()).padStart(2, "0");
-							value = `${year}-${month}-${day}`;
-						}
+						const year = $("#dateoneyear").val().toString().padStart(4, "0");;
+						const month = $("#dateonemonth").val().toString().padStart(2, "0");
+						const day = $("#dateoneday").val().toString().padStart(2, "0");
+						value = `${year}-${month}-${day}`;
+						console.log("value="+value);
 					}
 
 					// If the selected field has an array of values then take the selected value

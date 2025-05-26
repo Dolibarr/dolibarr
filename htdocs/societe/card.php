@@ -12,7 +12,7 @@
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es.com>
- * Copyright (C) 2018-2024	Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2018-2025  Frédéric France         <frederic.france@free.fr>
  * Copyright (C) 2022-2023  George Gkantinas        <info@geowv.eu>
  * Copyright (C) 2023       Nick Fragoulis
  * Copyright (C) 2023       Alexandre Janniaux      <alexandre.janniaux@gmail.com>
@@ -1489,8 +1489,10 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					break;
 			}
 
-			$selectedprospect = (GETPOSTISSET('prospect') ? GETPOSTINT('prospect') : $selectedprospect);
-			$selectedcustomer = (GETPOSTISSET('customer') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedprospect = ((GETPOSTISSET('prospect') || $action == 'create') ? GETPOSTINT('prospect') : $selectedprospect);
+			$selectedcustomer = ((GETPOSTISSET('customer') || $action == 'create') ? GETPOSTINT('customer') : $selectedcustomer);
+			$selectedsupplier = ((GETPOSTISSET('supplier') || $action == 'create') ? GETPOSTINT('supplier') : $object->fournisseur);
+
 			print '<tr class="marginbottomlarge height50">';
 			if ($conf->browser->layout != 'phone') {
 				print '<td class="titlefieldcreate">'.$form->editfieldkey('', 'customerprospect', '', $object, 0, 'string', '', 0).'</td>';
@@ -1508,8 +1510,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))
 				|| (isModEnabled('supplier_proposal') && $user->hasRight('supplier_proposal', 'lire'))) {
 				// Supplier
-				$selected = (GETPOSTISSET('supplier') ? GETPOSTINT('supplier') : $object->fournisseur);
-				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selected ? ' checked="checked"' : '').'></label></span>';
+				print '<span id="spannature3" class="spannature vendor-back paddinglarge marginrightonly"><label for="supplierinput" class="valignmiddle">'.$langs->trans("Vendor").'<input id="supplierinput" class="flat checkforselect marginleftonly valignmiddle" type="checkbox" name="supplier" value="1"'.($selectedsupplier ? ' checked="checked"' : '').'></label></span>';
 			}
 			// Add js to manage the background of nature
 			if ($conf->use_javascript_ajax) {
@@ -2404,7 +2405,12 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				print '</td>';
 				print '</tr>';
 
-				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td colspan="3">';
+				$colspan = 0;
+				if ($conf->browser->layout == 'phone') {
+					$colspan = 3;
+				}
+
+				print '<tr><td>'.$form->editfieldkey('CustomerCode', 'customer_code', '', $object, 0).'</td><td'.($colspan ? ' colspan="'.$colspan.'"': '').'>';
 				print '<table class="nobordernopadding"><tr><td>';
 				$tmpcode = $object->code_client ?? '';
 				if (empty($tmpcode) && !empty($modCodeClient->code_auto)) {
@@ -2421,7 +2427,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					print '</tr><tr>';
 				}
 
-				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td colspan="3">';
+				print '<td>'.$form->editfieldkey('SupplierCode', 'supplier_code', '', $object, 0).'</td><td'.($colspan ? ' colspan="'.$colspan.'"': '').'>';
 
 				if ((isModEnabled("fournisseur") && $user->hasRight('fournisseur', 'lire') && !getDolGlobalString('MAIN_USE_NEW_SUPPLIERMOD')) || (isModEnabled("supplier_order") && $user->hasRight('supplier_order', 'lire')) || (isModEnabled("supplier_invoice") && $user->hasRight('supplier_invoice', 'lire'))) {
 					print '<table class="nobordernopadding"><tr><td>';
@@ -2752,7 +2758,60 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					foreach ($cats as $cat) {
 						$arrayselected[] = $cat->id;
 					}
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('custcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print img_picto('', 'category', 'class="pictofixedwidth"');
+					$categtype = Categorie::TYPE_CUSTOMER;
+					$htmlname = 'custcats';
+					print $form->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
+
+					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+						// Add html code to add the edit button and go back
+						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
+						$urltoopen = '/categories/categorie_list.php?type='.$categtype;
+
+						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
+						print $s;
+						// Add js code to add the edit button and go back
+						print '<!-- Add js code to open the popup for category/edit/add -->'."\n";
+						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
+							console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
+
+							// Call an ajax to reload values and update the select
+							// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
+
+							// Refresh select2 to take account of new values (enough for small change)
+
+					        $.ajax({
+					            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
+								data: {
+									action: \'getCategories\',
+									type: \''.dol_escape_htmltag($categtype).'\'
+								},
+					            type: \'GET\',
+					            dataType: \'json\',
+					            success: function (data) {
+					                var $select = $(\'#'.dol_escape_js($htmlname).'\');
+									var selectedValues = $select.val(); // This is an array of selected values
+									console.log(selectedValues);
+					                $select.empty();
+					                $.each(data, function (index, item) {
+					                    $select.append(\'<option value="\' + item.id + \'" data-html="\' + item.htmlforattribute + \'">\' + item.htmlforoption + \'</option>\');
+					                });
+									$select.val(selectedValues);
+					            },
+					            error: function (xhr, status, error) {
+					                alert("Error when loading ajax page : " + error);
+					            }
+					        });
+
+							$("#'.dol_escape_js($htmlname).'").trigger("change");
+							// Alternative if change in select is complex
+							/*
+							$("#'.dol_escape_js($htmlname).'").select2("destroy");
+							$("#'.dol_escape_js($htmlname).'").select2();
+							*/
+						}</script>';
+					}
+
 					print "</td></tr>";
 
 					// Supplier
@@ -2766,7 +2825,8 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 						foreach ($cats as $cat) {
 							$arrayselected[] = $cat->id;
 						}
-						print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+						print img_picto('', 'category', 'class="pictofixedwidth"');
+						print $form->multiselectarray('suppcats', $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
 						print "</td></tr>";
 					}
 				}
@@ -2908,7 +2968,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				)
 			);
 
-			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 250);
+			$formconfirm .= $form->formconfirm($_SERVER["PHP_SELF"]."?socid=".$object->id, $langs->trans("MergeThirdparties"), $langs->trans("ConfirmMergeThirdparties"), "confirm_merge", $formquestion, 'no', 1, 300);
 		}
 
 		// Clone confirmation

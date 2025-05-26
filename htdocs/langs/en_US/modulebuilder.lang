@@ -193,3 +193,5 @@ PageLinkedByAMenuEntry=Page linked by at least one menu entry
 FieldsEdit=Fields edit
 FieldsInsert=Fields insert
 FieldsView=Fields view
+AIPromptExtrafield=AI Prompt
+AIPromptExtrafieldDesc=The constants used in this field will be replaced with the corresponding value.

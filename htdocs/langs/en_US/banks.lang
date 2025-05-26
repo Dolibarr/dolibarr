@@ -23,6 +23,7 @@ BankBalanceAfter=Balance after
 BalanceMinimalAllowed=Minimum allowed balance
 BalanceMinimalDesired=Minimum desired balance
 InitialBankBalance=Initial balance
+DateInitialBalance=Date of initial balance
 EndBankBalance=End balance
 CurrentBalance=Current balance
 FutureBalance=Future balance

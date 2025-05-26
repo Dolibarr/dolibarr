@@ -126,9 +126,9 @@ pHeader('', 'step5', GETPOST('action', 'aZ09') ? GETPOST('action', 'aZ09') : 'up
 
 if (!GETPOST('action', 'aZ09') || preg_match('/upgrade/i', GETPOST('action', 'aZ09'))) {
 	print '<h3><img class="valignmiddle inline-block paddingright" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> ';
-	print '<span class="inline-block">'.$langs->trans('DataMigration').'</span></h3>';
+	print '<span class="inline-block valignmiddle">'.$langs->trans('DataMigration').'</span></h3>';
 
-	print '<table border="0" width="100%">';
+	print '<table class="centpercent">';
 
 	// If password is encoded, we decode it
 	if ((!empty($dolibarr_main_db_pass) && preg_match('/crypted:/i', $dolibarr_main_db_pass)) || !empty($dolibarr_main_db_encrypted_pass)) {

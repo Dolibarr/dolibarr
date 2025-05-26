@@ -165,7 +165,6 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 	$ret = $mc->switchEntity($key);
 }
 
-// list of  action
 $stripe = new Stripe($db);
 
 // Subject
@@ -178,6 +177,10 @@ top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
+
+
+// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
+sleep(2);
 
 
 if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
@@ -344,7 +347,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {
-	// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+	// Called when making payment with PaymentIntent method.
 	dol_syslog("object = ".var_export($event->data, true));
 	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
@@ -379,6 +382,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			if ($obj->type == 'ban') {
 				$pdid = $obj->rowid;
 				$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
+
 				if ($obj->traite == 1) {
 					// This is a direct-debit with an order (llx_bon_prelevement) ALREADY generated, so
 					// it means we received here the confirmation that payment request is finished.
@@ -484,7 +488,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'StripeSepa payment received by IPN webhook - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
 
@@ -807,7 +811,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);	// deprecated
+		$companypaymentmode->owner_name      = $db->escape($event->data->object->billing_details->name);
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;

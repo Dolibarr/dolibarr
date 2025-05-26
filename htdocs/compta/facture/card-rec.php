@@ -451,9 +451,11 @@ if (empty($reshook)) {
 	} elseif ($action == 'setmulticurrencycode' && $usercancreate) {
 		// Multicurrency Code
 		$result = $object->setMulticurrencyCode(GETPOST('multicurrency_code', 'alpha'));
+		$object->fetch($object->id);	// Reload all.
 	} elseif ($action == 'setmulticurrencyrate' && $usercancreate) {
 		// Multicurrency rate
 		$result = $object->setMulticurrencyRate(GETPOSTFLOAT('multicurrency_tx'), GETPOSTINT('calculation_mode'));
+		$object->fetch($object->id);	// Reload all.
 	} elseif ($action == 'setruleforlinesdates' && $usercancreate) {
 		$object->context['actionmsg'] = $langs->trans("FieldXModified", $langs->transnoentitiesnoconv("RuleForLinesDates"));
 		$ruleForLinesDates = GETPOSTISSET('rule_for_lines_dates') ? GETPOST('rule_for_lines_dates', 'alpha') : 'prepaid';
@@ -485,6 +487,28 @@ if (empty($reshook)) {
 		} else {
 			$db->rollback();
 			setEventMessages($line->error, $line->errors, 'errors');
+		}
+	} elseif ($action == 'confirm_delete_subtotalline' && $confirm == 'yes' && $usercancreate) {
+		// Delete line
+		$object->fetch($id);
+		$object->fetch_thirdparty();
+
+		$result = $object->deleteSubtotalLine($langs, GETPOSTINT('lineid'), (bool) GETPOST('deletecorrespondingsubtotalline'), $user);
+		if ($result > 0) {
+			$result = $object->update_price(1);
+
+			if ($result > 0) {
+				$db->commit();
+				$object->fetch($object->id); // Reload lines
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+				exit();
+			} else {
+				$db->rollback();
+				setEventMessages($db->lasterror(), null, 'errors');
+			}
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = '';
 		}
 	} elseif ($action == 'update_extras' && $permissiontoeditextra) {
 		$object->oldcopy = dol_clone($object, 2);  // @phan-suppress-current-line PhanTypeMismatchProperty
@@ -802,6 +826,74 @@ if (empty($reshook)) {
 				$action = '';
 			}
 		}
+	} elseif ($action == 'confirm_addtitleline' && $usercancreate) {
+		// Handling adding a new title line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('subtotallinedesc', 'alphanohtml');
+		$depth = GETPOSTINT('subtotallinelevel') ?? 1;
+
+		$subtotal_options = array();
+
+		foreach (FactureRec::$TITLE_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Insert line
+		$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit();
+	} elseif ($action == 'confirm_addsubtotalline' && $usercancreate) {
+		// Handling adding a new subtotal line for subtotals module
+
+		$langs->load('subtotals');
+
+		$choosen_line = GETPOST('subtotaltitleline', 'alphanohtml');
+		foreach ($object->lines as $line) {
+			if ($line->desc == $choosen_line && $line->special_code == SUBTOTALS_SPECIAL_CODE) {
+				$desc = $line->desc;
+				$depth = -$line->qty;
+			}
+		}
+
+		$subtotal_options = array();
+
+		foreach (FactureRec::$SUBTOTAL_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Insert line
+		if (isset($desc) && isset($depth)) {
+			$result = $object->addSubtotalLine($langs, $desc, (int) $depth, $subtotal_options);
+		} else {
+			$object->errors[] = $langs->trans("CorrespondingTitleNotFound");
+		}
+
+		if (isset($result) && $result >= 0) {
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		header('Location: '.$_SERVER["PHP_SELF"].'?id='.$id);
+		exit();
 	} elseif ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha')) {
 		if (!$object->fetch($id) > 0) {
 			dol_print_error($db);
@@ -1012,6 +1104,61 @@ if (empty($reshook)) {
 			} else {
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+		}
+	} elseif ($action == 'updatetitleline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
+		// Handling updating a title line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('line_desc', 'alphanohtml') ?? $langs->trans("Title");
+		$depth = GETPOSTINT('line_depth') ?? 1;
+
+		$subtotal_options = array();
+
+		foreach (Facture::$TITLE_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Update line
+		$result = $object->updateSubtotalLine($langs, GETPOSTINT('lineid'), $desc, $depth, $subtotal_options);
+
+		if ($result >= 0) {
+			if ($result == 0) {
+				setEventMessages($object->error, $object->errors, 'warnings');
+			}
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+	} elseif ($action == 'updatesubtotalline' && GETPOSTISSET("save") && $usercancreate && !GETPOST('cancel', 'alpha')) {
+		// Handling updating a subtotal line for subtotals module
+
+		$langs->load('subtotals');
+
+		$desc = GETPOST('line_desc', 'alphanohtml');
+		$depth = GETPOSTINT('line_depth');
+
+		$subtotal_options = array();
+
+		foreach (Facture::$SUBTOTAL_OPTIONS as $option) {
+			$value = GETPOST($option, 'alphanohtml');
+			if ($value) {
+				$subtotal_options[$option] = $value == 'on' ? 1 : $value;
+			}
+		}
+
+		// Update line
+		$result = $object->updateSubtotalLine($langs, GETPOSTINT('lineid'), $desc, $depth, $subtotal_options);
+
+		if ($result > 0) {
+			$ret = $object->fetch($object->id); // Reload to get new records
+			$object->fetch_thirdparty();
+		} else {
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 }
@@ -1338,6 +1485,31 @@ if ($action == 'create') {
 		if ($action == 'delete') {
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('DeleteRepeatableInvoice'), $langs->trans('ConfirmDeleteRepeatableInvoice'), 'confirm_delete', '', 'no', 1);
 		}
+		// Confirmation de la suppression d'une ligne subtotal
+		if ($action == 'ask_subtotal_deleteline') {
+			$langs->load("subtotals");
+			$title = "DeleteSubtotalLine";
+			$question = "ConfirmDeleteSubtotalLine";
+			if (GETPOST('type') == 'title') {
+				$formconfirm = array(array('type' => 'checkbox', 'name' => 'deletecorrespondingsubtotalline', 'label' => $langs->trans("DeleteCorrespondingSubtotalLine"), 'value' => 0));
+				$title = "DeleteTitleLine";
+				$question = "ConfirmDeleteTitleLine";
+			}
+			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&lineid='.$lineid, $langs->trans($title), $langs->trans($question), 'confirm_delete_subtotalline', $formconfirm, 'no', 1);
+		}
+
+		// Subtotal line form
+		if ($action == 'add_title_line') {
+			$langs->load('subtotals');
+			$type = 'title';
+			$depth_array = $object->getPossibleLevels($langs);
+			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+		} elseif ($action == 'add_subtotal_line') {
+			$langs->load('subtotals');
+			$type = 'subtotal';
+			$titles = $object->getPossibleTitles();
+			require dol_buildpath('/core/tpl/subtotal_create.tpl.php');
+		}
 
 		// Call Hook formConfirm
 		$parameters = array('formConfirm' => $formconfirm, 'lineid' => $lineid);
@@ -1551,41 +1723,135 @@ if ($action == 'create') {
 
 		print '</div>';
 		print '<div class="fichehalfright">';
-		print '<div class="underbanner clearboth"></div>';
 
+		print '<!-- amounts -->'."\n";
+		print '<div class="underbanner clearboth"></div>'."\n";
 
-		/*
-		 * Recurrence
-		 */
+		// Recurrence
 		$title = $langs->trans("Recurrence");
 
-		print '<table class="border centpercent tableforfield">';
+		print '<table class="border tableforfield centpercent">';
 
 		include DOL_DOCUMENT_ROOT.'/core/tpl/object_currency_amount.tpl.php';
 
+		$sign = 1;
+		if (getDolGlobalString('INVOICE_POSITIVE_CREDIT_NOTE_SCREEN') && $object->type == $object::TYPE_CREDIT_NOTE) {
+			$sign = -1; // We invert sign for output
+		}
+
 		// Amount (excl. tax)
-		print '<tr><td>'.$langs->trans("AmountHT").'</td>';
-		print '<td class="right">'.price($object->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
+		print '<td class="nowraponall amountcard right">'.price($sign * $object->total_ht, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			// Multicurrency Amount HT
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_ht, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
 		// Amount tax
-		print '<tr><td>'.$langs->trans("AmountVAT").'</td><td class="right">'.price($object->total_tva, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		print '<tr><td>'.$langs->trans("AmountVAT").'</td>';
+		print '<td class="nowrap amountcard right">'.price($sign * $object->total_tva, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			// Multicurrency Amount VAT
+			print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_tva, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
 		// Amount Local Taxes
 		if (($mysoc->localtax1_assuj == "1" && $mysoc->useLocalTax(1)) || $object->total_localtax1 != 0) { 	// Localtax1
-			print '<tr><td>'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
-			print '<td class="nowraponall right">'.price($object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
-		}
-		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) { 	// Localtax2
-			print '<tr><td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
-			print '<td class=nowraponall right">'.price($object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+			print '<tr>';
+			print '<td class="titlefieldmiddle">'.$langs->transcountry("AmountLT1", $mysoc->country_code).'</td>';
+			print '<td class="nowraponall amountcard right">'.price($sign * $object->total_localtax1, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				$object->multicurrency_total_localtax1 = (float) price2num($object->total_localtax1 * $object->multicurrency_tx, 'MT');
+
+				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax1, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
 		}
 
-		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td class="nowraponall right">'.price($object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (($mysoc->localtax2_assuj == "1" && $mysoc->useLocalTax(2)) || $object->total_localtax2 != 0) { 	// Localtax2
+			print '<tr>';
+			print '<td>'.$langs->transcountry("AmountLT2", $mysoc->country_code).'</td>';
+			print '<td class=nowraponall amountcard right">'.price($sign * $object->total_localtax2, 1, '', 1, - 1, - 1, $conf->currency).'</td></tr>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				$object->multicurrency_total_localtax2 = (float) price2num($object->total_localtax2 * $object->multicurrency_tx, 'MT');
+
+				print '<td class="nowraponall amountcard right">' . price($sign * $object->multicurrency_total_localtax2, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+			}
+			print '</tr>';
+		}
+
+		// Add the revenue stamp
+		/*
+		if ($selleruserevenustamp) {
+			print '<tr><td class="titlefieldmiddle">';
+			print '<table class="nobordernopadding centpercent"><tr><td>';
+			print $langs->trans('RevenueStamp');
+			print '</td>';
+			if ($action != 'editrevenuestamp' && $object->status == $object::STATUS_DRAFT && $usercancreate) {
+				print '<td class="right"><a class="editfielda" href="'.$_SERVER["PHP_SELF"].'?action=editrevenuestamp&token='.newToken().'&facid='.$object->id.'">'.img_edit($langs->trans('SetRevenuStamp'), 1).'</a></td>';
+			}
+			print '</tr></table>';
+			print '</td><td class="nowrap amountcard right">';
+			if ($action == 'editrevenuestamp') {
+				print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'" method="post">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="action" value="setrevenuestamp">';
+				print '<input type="hidden" name="revenuestamp" id="revenuestamp_val" value="'.price2num($object->revenuestamp).'">';
+				print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+				print $formother->select_revenue_stamp('', 'revenuestamp_type', $mysoc->country_code);
+				print ' &rarr; <span id="revenuestamp_span"></span>';
+				print ' <input type="submit" class="button buttongen button-save small" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+				print " <script>
+					$(document).ready(function(){
+						js_recalculate_revenuestamp();
+						$('select[name=revenuestamp_type]').on('change',function(){
+							js_recalculate_revenuestamp();
+						});
+					});
+					function js_recalculate_revenuestamp(){
+						var valselected = $('select[name=revenuestamp_type]').val();
+						console.log('Calculate revenue stamp from '+valselected);
+						var revenue = 0;
+						if (valselected.indexOf('%') == -1)
+						{
+							revenue = valselected;
+						}
+						else
+						{
+							var revenue_type = parseFloat(valselected);
+							var amount_net = ".round($object->total_ht, 2).";
+							revenue = revenue_type * amount_net / 100;
+							revenue = revenue.toFixed(2);
+						}
+						$('#revenuestamp_val').val(revenue);
+						$('#revenuestamp_span').html(revenue);
+					}
+				</script>";
+			} else {
+				print price($object->revenuestamp, 1, '', 1, -1, -1, $conf->currency);
+			}
+			print '</td></tr>';
+		}
+		*/
+
+		// Amount TTC
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td class="nowraponall amountcard right">'.price($sign * $object->total_ttc, 0, $langs, 1, -1, -1, $conf->currency).'</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			// Multicurrency Amount TTC
+			print '<td class="nowrap amountcard right">' . price($sign * $object->multicurrency_total_ttc, 0, $langs, 0, -1, -1, $object->multicurrency_code) . '</td>';
+		}
 		print '</tr>';
 
-		print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.img_picto('', 'recurring', 'class="pictofixedwidth"').$title.'</td></tr>';
+		// Recurring info
+		print '<tr class="liste_titre"><td class="liste_titre">'.img_picto('', 'recurring', 'class="pictofixedwidth"').$title.'</td>';
+		print '<td></td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td></td>';
+		}
+		print '</tr>';
 
 		// if "frequency" is empty or = 0, the recurrence is disabled
 		print '<tr><td style="width: 50%">';
@@ -1615,7 +1881,11 @@ if ($action == 'create') {
 				print '<span class="opacitymedium">'.$langs->trans("NotARecurringInvoiceTemplate").'</span>';
 			}
 		}
-		print '</td></tr>';
+		print '</td>';
+		if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+			print '<td></td>';
+		}
+		print '</tr>';
 
 		if ($object->frequency > 0) {
 			// Date when (next invoice generation)
@@ -1638,6 +1908,9 @@ if ($action == 'create') {
 				print img_info($langs->trans("MaxNumberOfGenerationReached"));
 			}
 			print '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				print '<td></td>';
+			}
 			print '</tr>';
 
 			// Max period / Rest period
@@ -1654,6 +1927,9 @@ if ($action == 'create') {
 				print '';
 			}
 			print '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				print '<td></td>';
+			}
 			print '</tr>';
 
 			// Status of auto generated invoices
@@ -1669,6 +1945,10 @@ if ($action == 'create') {
 				print $form->editfieldval($langs->trans("StatusOfAutoGeneratedInvoices"), 'auto_validate', $object->auto_validate, $object, $user->hasRight('facture', 'creer'), $select);
 			}
 			print '</td>';
+			if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+				print '<td></td>';
+			}
+			print '</tr>';
 			// Auto generate documents
 			if (getDolGlobalString('INVOICE_REC_CAN_DISABLE_DOCUMENT_FILE_GENERATION')) {
 				print '<tr>';
@@ -1685,6 +1965,9 @@ if ($action == 'create') {
 					print $form->editfieldval($langs->trans("StatusOfGeneratedDocuments"), 'generate_pdf', $object->generate_pdf, $object, $user->hasRight('facture', 'creer'), $select);
 				}
 				print '</td>';
+				if (isModEnabled("multicurrency") && ($object->multicurrency_code && $object->multicurrency_code != $conf->currency)) {
+					print '<td></td>';
+				}
 				print '</tr>';
 			} else {
 				print '<input type="hidden" name="generate_pdf" value="1">';
@@ -1739,7 +2022,11 @@ if ($action == 'create') {
 		print '<input type="hidden" name="page_y" value="">';
 
 		if (!empty($conf->use_javascript_ajax) && $object->statut == 0) {
-			include DOL_DOCUMENT_ROOT.'/core/tpl/ajaxrow.tpl.php';
+			if (isModEnabled('subtotals')) {
+				include DOL_DOCUMENT_ROOT.'/core/tpl/subtotal_ajaxrow.tpl.php';
+			} else {
+				include DOL_DOCUMENT_ROOT . '/core/tpl/ajaxrow.tpl.php';
+			}
 		}
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1787,6 +2074,31 @@ if ($action == 'create') {
 					'class' => 'classfortooltip',
 				),
 			);
+
+			// Subtotal
+			if (empty($object->suspended) && isModEnabled('subtotals') && getDolGlobalString('SUBTOTAL_TITLE_'.strtoupper($object->element))) {
+				$langs->load("subtotals");
+
+				$url_button = array();
+
+				$url_button[] = array(
+					'lang' => 'subtotals',
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'perm' => (bool) $usercancreate,
+					'label' => $langs->trans('AddTitleLine'),
+					'url' => '/compta/facture/card-rec.php?id='.$object->id.'&action=add_title_line&token='.newToken()
+				);
+
+				$url_button[] = array(
+					'lang' => 'subtotals',
+					'enabled' => (isModEnabled('invoice') && $object->status == Facture::STATUS_DRAFT),
+					'perm' => (bool) $usercancreate,
+					'label' => $langs->trans('AddSubtotalLine'),
+					'url' => '/compta/facture/card-rec.php?id='.$object->id.'&action=add_subtotal_line&token='.newToken()
+				);
+				print dolGetButtonAction('', $langs->trans('Subtotal'), 'default', $url_button, '', true);
+			}
+
 			if (empty($object->suspended)) {
 				if ($user->hasRight('facture', 'creer')) {
 					if (!empty($object->frequency) && $object->nb_gen_max > 0 && ($object->nb_gen_done >= $object->nb_gen_max)) {

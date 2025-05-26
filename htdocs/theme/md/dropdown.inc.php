@@ -251,7 +251,7 @@ div#topmenu-login-dropdown {
 	<?php if ($disableimages) { ?>
 		line-height: 35px;
 	<?php } else { ?>
-		line-height: 46px;
+		line-height: 50px;
 	<?php } ?>
 }
 a.top-menu-dropdown-link {
@@ -462,6 +462,7 @@ li.liinputsearch {
 	display: block;
 	top: 0;
 	background: var(--colorbackbody);
+	z-index: 1;
 }
 
 
@@ -511,6 +512,8 @@ li.liinputsearch {
 
 .quickadd-body.dropdown-body {
 	padding: unset;
+	padding-top: 10px;
+	padding-bottom: 10px;
 }
 
 .quickadd-item {
@@ -679,6 +682,7 @@ div.quickaddblock:focus {
 {
 	div.login_block {
 		top: unset;
+		border-right: 1px solid rgba(0, 0, 0, 0.3)
 	}
 
 	.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {

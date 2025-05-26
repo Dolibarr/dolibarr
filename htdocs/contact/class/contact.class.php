@@ -1191,7 +1191,8 @@ class Contact extends CommonObject
 
 				return $this->id;
 			} else {
-				$this->error = $langs->trans("RecordNotFound");
+				$langs->load('errors');
+				$this->error = $langs->trans("ErrorRecordNotFound");
 				return 0;
 			}
 		} else {
@@ -1611,7 +1612,7 @@ class Contact extends CommonObject
 			}
 		}
 		if ($withpicto != 2 && $withpicto != -2) {
-			$result .= '<span class="valigmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
+			$result .= '<span class="valignmiddle">'.($maxlen ? dol_trunc($this->getFullName($langs), $maxlen) : $this->getFullName($langs)).'</span>';
 		}
 
 		$result .= $linkend;

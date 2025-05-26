@@ -354,7 +354,7 @@ $rellink .= '&file='.urlencode($filepath);
 $fulllink = $urlwithroot.$rellink;
 print img_picto('', 'globe').' ';
 if ($action != 'edit') {
-	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
+	print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx small" id="downloadinternallink" name="downloadinternellink" value="'.dol_escape_htmltag($fulllink).'">';
 } else {
 	print $fulllink;
 }
@@ -389,12 +389,12 @@ if (!empty($object->share)) {
 
 		print img_picto('', 'globe').' ';
 		if ($action != 'edit') {
-			print '<input type="text" class="quatrevingtpercent nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
+			print '<input type="text" class="maxquatrevingtpercent widthcentpercentminusxx nopadding small" id="downloadlink" name="downloadexternallink" value="'.dol_escape_htmltag($fulllink).'">';
 		} else {
 			print $fulllink;
 		}
 		if ($action != 'edit') {
-			print ' <a href="'.$fulllink.'">'.$langs->trans("Download").'</a>'; // No target here
+			print ' <a href="'.$fulllink.'">'.img_picto($langs->trans("Download"), 'download', 'class="opacitymedium paddingrightonly"').'</a>'; // No target here
 		}
 	} else {
 		print '<input type="checkbox" name="shareenabled"'.($object->share ? ' checked="checked"' : '').' /> ';
