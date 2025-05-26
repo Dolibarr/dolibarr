@@ -3605,11 +3605,17 @@ class BookKeeping extends CommonObject
 							$resql = $this->db->query($sql);
 							if ($resql) {
 								while ($obj = $this->db->fetch_object($resql)) {
-									$docRef = "Duplicata de " . $obj->doc_ref;
+									$docRef = $langs->trans("CloneOf", $obj->doc_ref);
 
-									$sql_insert = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_bookkeeping (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date, fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, date_creation, journal_label, sens, montant)";
-									$sql_insert .=	" VALUES (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "', '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."'";
-									$sql_insert .= 'Bug here !!! code to forge sql_insert is not finished';
+									$sql_insert = "INSERT INTO ".$this->db->prefix()."accounting_bookkeeping";
+									$sql_insert .= " (piece_num, label_operation, numero_compte, label_compte, doc_type, code_journal, doc_date,";
+									$sql_insert .= " fk_user_author, doc_ref, fk_doc, fk_docdet, debit, credit, journal_label, sens, montant";
+									$sql_insert .= ")";
+									$sql_insert .= " VALUES (" . ((int) $pieceNumNext) . ", '" . $this->db->escape($obj->label_operation) . "', '" . $this->db->escape($obj->numero_compte) . "',";
+									$sql_insert .= " '" . $this->db->escape($obj->label_compte) . "', '" . $this->db->escape($obj->doc_type) . "', '" . $this->db->escape($code_journal) . "', '" . $this->db->idate($docdate)."',";
+									$sql_insert .= " '" . $this->db->escape($obj->fk_user_author) . "', '" . $this->db->escape($docRef) . "', " . ((int) $obj->fk_doc) . ", " . ((int) $obj->fk_docdet) . ",";
+									$sql_insert .= " " . (float) $obj->debit . ", " . (float) $obj->credit . ", '" . $this->db->escape($journal_label) . "', '" . $this->db->escape($obj->sens) . "', " . (float) $obj->montant;
+									$sql_insert .= ")";
 
 									$resqlInsert = $this->db->query($sql_insert);
 

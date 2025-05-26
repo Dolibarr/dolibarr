@@ -53,7 +53,7 @@ $langs->loadLangs(array("accountancy", "compta"));
 
 $journal_code = GETPOST('code_journal', 'alpha');
 $account = GETPOST("account", 'int');
-$massdate = (int) GETPOSTINT('massdate');
+$massdate = dol_mktime(0, 0, 0, GETPOSTINT('massdatemonth'), GETPOSTINT('massdateday'), GETPOSTINT('massdateyear'));
 
 $action = GETPOST('action', 'aZ09');
 $socid = GETPOSTINT('socid');
