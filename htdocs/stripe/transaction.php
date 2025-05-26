@@ -73,9 +73,6 @@ $result = restrictedArea($user, 'banque');
  */
 
 $form = new Form($db);
-$societestatic = new Societe($db);
-$memberstatic = new Adherent($db);
-$acc = new Account($db);
 $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
@@ -110,6 +107,8 @@ if (!$rowid) {
 	$title .= (!empty($stripeacc) ? ' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')' : ' (Stripe connection with keys from Stripe module setup)');
 
 	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+
+	$moreforfilter = '';
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
@@ -219,17 +218,18 @@ if (!$rowid) {
 			//}
 			//print "</td>\n";
 			// Date payment
-			print '<td class="center">'.dol_print_date($txn->created, 'dayhour')."</td>\n";
+			print '<td class="center">'.dol_print_date($txn->created, 'dayhour', 'gmt')." GMT</td>\n";
 			// Type
-			print '<td>'.$txn->type.'</td>';
+			print '<td>'.dolPrintHTML($txn->type).'</td>';
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($txn->amount) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
 			print '<td class="right"><span class="amount">'.price(($txn->fee) / 100, 0, '', 1, - 1, - 1, strtoupper($txn->currency))."</span></td>";
 			// Status
-			print "<td class='right'>";
+			print '<td class="center">';
+			//var_dump($txn->status);
 			if ($txn->status == 'available') {
 				print img_picto($langs->trans($txn->status), 'statut4');
-			} elseif ($txn->status == 'pending') {
+			} elseif ($txn->status == 'pending') {		// Warning, even when charge is ok on page charge, we have here 'pending'. Don't know why.
 				print img_picto($langs->trans($txn->status), 'statut7');
 			} elseif ($txn->status == 'failed') {
 				print img_picto($langs->trans($txn->status), 'statut8');

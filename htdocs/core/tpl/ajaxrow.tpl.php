@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2010-2012 Regis Houssin       <regis.houssin@inodbox.com>
- * Copyright (C) 2010-2016 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2025		MDW						<mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2010-2012 	Regis Houssin       <regis.houssin@inodbox.com>
+ * Copyright (C) 2010-2025 	Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      	Frédéric France    	<frederic.france@free.fr>
+ * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,11 @@
  *
  * @var ?string $filepath
  * @var ?string $fk_element
- * @var ?int $nboflines
+ * @var ?int 	$nboflines
  * @var ?string $tagidfortablednd
+ * @var	?string	$table_element_line
+ * @var ?array	$tasksarray
+ * @var ?string	$urltorefreshaftermove
  */
 // Protection to avoid direct call of template
 if (empty($object) || !is_object($object)) {

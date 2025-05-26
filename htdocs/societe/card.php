@@ -2751,67 +2751,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 					// Customer
 					print '<tr class="visibleifcustomer"><td>'.$form->editfieldkey('CustomersCategoriesShort', 'custcats', '', $object, 0).'</td>';
 					print '<td colspan="3">';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, '', '', 64, 0, 3);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_CUSTOMER);
-					$arrayselected = array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-					print img_picto('', 'category', 'class="pictofixedwidth"');
-					$categtype = Categorie::TYPE_CUSTOMER;
-					$htmlname = 'custcats';
-					print $form->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
-
-					if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
-						// Add html code to add the edit button and go back
-						$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
-						$urltoopen = '/categories/categorie_list.php?type='.$categtype;
-
-						$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
-						print $s;
-						// Add js code to add the edit button and go back
-						print '<!-- Add js code to open the popup for category/edit/add -->'."\n";
-						print '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
-							console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
-
-							// Call an ajax to reload values and update the select
-							// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
-
-							// Refresh select2 to take account of new values (enough for small change)
-
-					        $.ajax({
-					            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
-								data: {
-									action: \'getCategories\',
-									type: \''.dol_escape_htmltag($categtype).'\'
-								},
-					            type: \'GET\',
-					            dataType: \'json\',
-					            success: function (data) {
-					                var $select = $(\'#'.dol_escape_js($htmlname).'\');
-									var selectedValues = $select.val(); // This is an array of selected values
-									console.log(selectedValues);
-					                $select.empty();
-					                $.each(data, function (index, item) {
-					                    $select.append(\'<option value="\' + item.id + \'" data-html="\' + item.htmlforattribute + \'">\' + item.htmlforoption + \'</option>\');
-					                });
-									$select.val(selectedValues);
-					            },
-					            error: function (xhr, status, error) {
-					                alert("Error when loading ajax page : " + error);
-					            }
-					        });
-
-							$("#'.dol_escape_js($htmlname).'").trigger("change");
-							// Alternative if change in select is complex
-							/*
-							$("#'.dol_escape_js($htmlname).'").select2("destroy");
-							$("#'.dol_escape_js($htmlname).'").select2();
-							*/
-						}</script>';
-					}
-
+					print $form->selectCategories(Categorie::TYPE_CUSTOMER, 'custcats', $object);
 					print "</td></tr>";
 
 					// Supplier

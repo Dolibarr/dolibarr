@@ -5635,6 +5635,83 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
+	 * Return HTML compopent to select a category
+	 *
+	 * @param 	string			$categtype		Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
+	 * @param 	string			$htmlname 		Html name
+	 * @param 	CommonObject	$object			Object
+	 * @return	string							HTML component
+	 */
+	public function selectCategories($categtype, $htmlname, $object)
+	{
+		global $langs;
+
+		$out = '';
+
+		$cate_arbo = $this->select_all_categories($categtype, '', '', 64, 0, 3);		//
+		$c = new Categorie($this->db);
+		$cats = $c->containing($object->id, $categtype);
+		$arrayselected = array();
+		foreach ($cats as $cat) {
+			$arrayselected[] = $cat->id;
+		}
+		$out .= img_picto('', 'category', 'class="pictofixedwidth"');
+		$out .= $this->multiselectarray($htmlname, $cate_arbo, $arrayselected, 0, 0, 'minwidth100 widthcentpercentminusxx', 0, 0);
+
+		if (getDolGlobalString('CATEGORY_EDIT_IN_POPUP_NOT_IN_MENU')) {
+			// Add html code to add the edit button and go back
+			$jsonclose = 'doJsCodeAfterPopupClose'.$htmlname.'()';
+			$urltoopen = '/categories/categorie_list.php?type='.$categtype;
+
+			$s = dolButtonToOpenUrlInDialogPopup($htmlname, $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add', 'class="editfielda"'), $urltoopen, '', '', '', $jsonclose);
+			$out .= $s;
+			// Add js code to add the edit button and go back
+			$out .= '<!-- Add js code to open the popup for category/edit/add -->'."\n";
+			$out .= '<script>function doJsCodeAfterPopupClose'.$htmlname.'() {
+				console.log("doJsCodeAfterPopupClose'.$htmlname.' has been called, we refresh the combo content + refresh select2...");
+
+				// Call an ajax to reload values and update the select
+				// $("#'.dol_escape_js($htmlname).'").append(new Option("Option 4", "4"));
+
+				// Refresh select2 to take account of new values (enough for small change)
+
+		        $.ajax({
+		            url: \''.DOL_URL_ROOT.'/core/ajax/fetchCategories.php\',
+					data: {
+						action: \'getCategories\',
+						type: \''.dol_escape_htmltag($categtype).'\'
+					},
+		            type: \'GET\',
+		            dataType: \'json\',
+		            success: function (data) {
+		                var $select = $(\'#'.dol_escape_js($htmlname).'\');
+						var selectedValues = $select.val(); // This is an array of selected values
+						console.log(selectedValues);
+		                $select.empty();
+		                $.each(data, function (index, item) {
+		                    $select.append(\'<option value="\' + item.id + \'" data-html="\' + item.htmlforattribute + \'">\' + item.htmlforoption + \'</option>\');
+		                });
+						$select.val(selectedValues);
+		            },
+		            error: function (xhr, status, error) {
+		                alert("Error when loading ajax page : " + error);
+		            }
+		        });
+
+				$("#'.dol_escape_js($htmlname).'").trigger("change");
+				// Alternative if change in select is complex
+				/*
+				$("#'.dol_escape_js($htmlname).'").select2("destroy");
+				$("#'.dol_escape_js($htmlname).'").select2();
+				*/
+			}</script>';
+		}
+
+		print $out;
+	}
+
+
+	/**
 	 * Return list of categories having chosen type
 	 *
 	 * @param 	string|int 			$type 			Type of category ('customer', 'supplier', 'contact', 'product', 'member'). Old mode (0, 1, 2, ...) should be avoid and is keptfor internal use only.
@@ -6613,7 +6690,7 @@ class Form
 	public function form_multicurrency_rate($page, $rate = 0.0, $htmlname = 'multicurrency_tx', $currency = '')
 	{
 		// phpcs:enable
-		global $langs, $mysoc, $conf;
+		global $langs, $conf;
 
 		if ($htmlname != "none") {
 			print '<form method="POST" action="' . $page . '">';
@@ -6642,24 +6719,25 @@ class Form
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 
 	/**
-	 *    Show a select box with available absolute discounts
+	 * Show a select box with available absolute discounts
 	 *
-	 * @param string $page Page URL where form is shown
-	 * @param int $selected Value preselected
-	 * @param string $htmlname Name of SELECT component. If 'none', not changeable. Example 'remise_id'.
-	 * @param int $socid Third party id
-	 * @param float $amount Total amount available
-	 * @param string $filter SQL filter on discounts
-	 * @param int $maxvalue Max value for lines that can be selected
-	 * @param string $more More string to add
-	 * @param int $hidelist 1=Hide list
-	 * @param int $discount_type 0 => customer discount, 1 => supplier discount
+	 * @param string 	$page 			Page URL where form is shown
+	 * @param int 		$selected 		Value preselected
+	 * @param string 	$htmlname 		Name of SELECT component. If 'none', not changeable. Example 'remise_id'.
+	 * @param int 		$socid 			Third party id
+	 * @param float 	$amount 		Total amount available
+	 * @param string 	$filter 		SQL filter on discounts
+	 * @param int 		$maxvalue 		Max value for lines that can be selected
+	 * @param string 	$more 			More string to add
+	 * @param int 		$hidelist 		1=Hide list
+	 * @param int 		$discount_type 	0 => customer discount, 1 => supplier discount
 	 * @return    void
 	 */
 	public function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter = '', $maxvalue = 0, $more = '', $hidelist = 0, $discount_type = 0)
 	{
 		// phpcs:enable
 		global $conf, $langs;
+
 		if ($htmlname != "none") {
 			print '<form method="post" action="' . $page . '">';
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
