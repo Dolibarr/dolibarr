@@ -5033,27 +5033,9 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		$disabled = '';
 		$langs->load('categories');
 
-		$cate_arbo = array();
-		$arrayselected = array();
-		if (!GETPOSTISSET('categories')) {
-			$c = new Categorie($db);
-			$cats = $c->containing($objectpage->id, Categorie::TYPE_WEBSITE_PAGE);
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-
-			//$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', '', 0, 0, 3);
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, '', 'parent', 0, 0, 3);
-		}
-
 		print '<tr><td class="toptd">'.$form->editfieldkey('Categories', 'categories', '', $objectpage, 0).'</td><td>';
-		print img_picto('', 'category', 'class="pictofixedwidth"');
-		print $form->multiselectarray('categories', $cate_arbo, (GETPOSTISSET('categories') ? GETPOST('categories', 'array') : $arrayselected), 0, 0, 'minwidth200 widthcentpercentminusxx');
-
-		print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add'), '/categories/categorie_list.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
-
+		print $form->selectCategories(Categorie::TYPE_WEBSITE_PAGE, 'categories', $objectpage);
+		//print dolButtonToOpenUrlInDialogPopup('categories', $langs->transnoentitiesnoconv("Categories"), img_picto('', 'add'), '/categories/categorie_list.php?leftmenu=website&nosearch=1&type='.urlencode(Categorie::TYPE_WEBSITE_PAGE).'&website='.urlencode($website->ref), $disabled);
 		print "</td></tr>";
 	}
 
@@ -5216,20 +5198,27 @@ if ($action == 'editmeta' || $action == 'createcontainer') {	// Edit properties 
 		print '<label for="checkboxcreatefromfetching"><span class="opacitymediumxx">'.$langs->trans("CreateByFetchingExternalPage").'</span></label><br>';
 		print '<hr class="tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
 		print '<table class="tableforfield centpercent tablecheckboxcreatefromfetching'.$hiddenfromfetchingafterload.'">';
-		print '<tr><td class="titlefield">';
+		print '<tr><td class="titlefield tdtop">';
 		print $langs->trans("URL");
 		print '</td><td>';
-		print info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, 'warning');
-		print '<input class="flat minwidth500" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl', 'alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
-		print '<br><input class="flat paddingtop" type="checkbox" name="grabimages" value="1" checked="checked"> '.$langs->trans("GrabImagesInto");
+		print '<input class="flat minwidth500 marginbottomonly" type="text" name="externalurl" value="'.dol_escape_htmltag(GETPOST('externalurl', 'alpha')).'" placeholder="https://externalsite/pagetofetch"> ';
+		print '<br>';
+		print '<div class="paddingtop">';
+		print '<input class="flat paddingtop paddingright" type="checkbox" name="grabimages" value="1" checked="checked">';
+		print '<span class="valignmiddle">'.$langs->trans("GrabImagesInto");
 		print ' ';
 		print $langs->trans("ImagesShouldBeSavedInto").' ';
+		print '</span>';
 		$arraygrabimagesinto = array('root' => $langs->trans("WebsiteRootOfImages"), 'subpage' => $langs->trans("SubdirOfPage"));
-		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', '', 1);
-		print '<br>';
+		print $form->selectarray('grabimagesinto', $arraygrabimagesinto, GETPOSTISSET('grabimagesinto') ? GETPOST('grabimagesinto') : 'root', 0, 0, 0, '', 0, 0, 0, '', 'minwidth75 valignmiddle', 1);
+		print '</div>';
 
 		print '<input class="button small" style="margin-top: 5px" type="submit" name="fetchexternalurl" value="'.dol_escape_htmltag($langs->trans("FetchAndCreate")).'">';
 		print '<input class="button button-cancel small" type="submit" name="preview" value="'.$langs->trans("Cancel").'">';
+
+		print '<br><br>';
+
+		print info_admin($langs->trans("OnlyEditionOfSourceForGrabbedContentFuture"), 0, 0, 'warning');
 
 		print '</td></tr>';
 		print '</table>';
@@ -5449,6 +5438,7 @@ if ($mode == 'replacesite' || $massaction == 'replace') {
 		print $langs->trans("Category");
 		print '</div>';
 		print '<div class="tagtd">';
+		//print $form->selectCategories(Categorie::TYPE_WEBSITE_PAGE, 'optioncategory', $object);
 		print img_picto('', 'category', 'class="paddingrightonly"').' '.$form->select_all_categories(Categorie::TYPE_WEBSITE_PAGE, GETPOSTISSET('optioncategory') ? GETPOST('optioncategory') : '', 'optioncategory', 0, 0, 0, 0, 'minwidth125 maxwidth400 widthcentpercentminusx');
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 		print ajax_combobox('optioncategory');

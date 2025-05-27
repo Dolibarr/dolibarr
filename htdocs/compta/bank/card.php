@@ -495,17 +495,7 @@ if ($action == 'create') {
 	// Tags-Categories
 	if (isModEnabled('category')) {
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 3);
-
-		$arrayselected = array();
-		$c = new Categorie($db);
-		$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-		if (is_array($cats)) {
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-		}
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_ACCOUNT, 'categories', $object);
 		print "</td></tr>";
 	}
 
@@ -1063,17 +1053,7 @@ if ($action == 'create') {
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACCOUNT, '', 'parent', 64, 0, 3);
-
-			$arrayselected = array();
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_ACCOUNT);
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_ACCOUNT, 'categories', $object);
 			print "</td></tr>";
 		}
 

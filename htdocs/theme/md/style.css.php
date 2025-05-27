@@ -1197,7 +1197,7 @@ textarea.centpercent {
 	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(2px, <?php print($left == 'left' ? '' : '-'); ?>4px);
 }
 .center {
 	text-align: center;
@@ -2198,7 +2198,7 @@ tr.nobottom td {
 .minheight30 { min-height: 30px; }
 .minheight40 { min-height: 40px; }
 .titlefieldcreate { width: 20%; }
-.titlefield       { /* width: 25%; */ min-width: 150px; width: 25%; }
+.titlefield       { width: 25%; min-width: 150px; }
 .titlefieldmiddle { width: 50%; }
 .titlefieldmax45 { max-width: 45%; min-width: 180px; }
 .imgmaxwidth100 { max-width: 100px; }
@@ -8465,12 +8465,13 @@ div.clipboardCPValue.hidewithsize {
 }
 
 #virtualcard-iframe {
-	border: 40px solid #aaa;
+	border: 1px solid #aaa;
 	vertical-align: top;
 	width: 10%;
 	min-width: 100px;
 	border-radius: 10px;
 	aspect-ratio: 0.6;
+	box-shadow: 0 0 5px #bbb;
 }
 .nopointervent {
 	pointer-events: none;

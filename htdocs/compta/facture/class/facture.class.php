@@ -5382,11 +5382,13 @@ class Facture extends CommonInvoice
 		if ($socid > 0) {
 			$sql .= " AND f.fk_soc = ".((int) $socid);
 		}
-		$sql .= " ORDER BY f.ref";
 
 		if (getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED') > 0) {
-			$sql .= " DESC"; //order by
+			$sql .= " ORDER BY CASE WHEN f.rowid = ".((int) GETPOST('fac_avoir'))."' THEN 0 ELSE 1 END, f.ref";
+			$sql .= " DESC";
 			$sql .= " LIMIT " . getDolGlobalInt('LIST_OF_QUALIFIED_INVOICES_LIMIT_DEFINED');
+		} else {
+			$sql .= " ORDER BY f.ref";
 		}
 
 		dol_syslog(get_class($this)."::list_qualified_avoir_invoices", LOG_DEBUG);

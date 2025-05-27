@@ -1059,7 +1059,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		$morphys = array();
 		$morphys["phy"] = $langs->trans("Physical");
 		$morphys["mor"] = $langs->trans("Moral");
-		$checkednature = (GETPOSTISSET("morphy") ? GETPOST("morphy", 'alpha') : $object->morphy);
+		$checkednature = GETPOST("morphy", 'alpha');
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("MemberNature")."</td><td>\n";
 		print '<span id="spannature1" class="nonature-back spannature paddinglarge marginrightonly"><label for="phisicalinput" class="valignmiddle">'.$morphys["phy"].'<input id="phisicalinput" class="flat checkforselect marginleftonly valignmiddle" type="radio" name="morphy" value="phy"'.($checkednature == "phy" ? ' checked="checked"' : '').'></label></span>';
@@ -1200,8 +1200,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		// Categories
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, '', 'parent', 64, 0, 3);
-			print img_picto('', 'category').$form->multiselectarray('memcats', $cate_arbo, GETPOST('memcats', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_MEMBER, 'memcats', $object);
 			print "</td></tr>";
 		}
 
@@ -1460,17 +1459,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action)) {
 		if (isModEnabled('category') && $user->hasRight('categorie', 'lire')) {
 			print '<tr><td>'.$form->editfieldkey("Categories", 'memcats', '', $object, 0).'</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_MEMBER, '', '', 64, 0, 3);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_MEMBER);
-			$arrayselected = array();
-			if (is_array($cats)) {
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-			}
-			print img_picto('', 'category', 'class="pictofixedwidth"');
-			print $form->multiselectarray('memcats', $cate_arbo, $arrayselected, 0, 0, 'widthcentpercentminusx', 0, '100%');
+			print $form->selectCategories(Categorie::TYPE_MEMBER, 'memcats', $object);
 			print "</td></tr>";
 		}
 

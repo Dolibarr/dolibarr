@@ -1469,7 +1469,7 @@ class Fichinter extends CommonObject
 
 			if ($result >= 0) {
 				$this->db->commit();
-				return 1;
+				return $line->id;
 			} else {
 				$this->error = $this->db->error();
 				$this->db->rollback();
