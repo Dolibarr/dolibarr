@@ -6780,7 +6780,7 @@ abstract class CommonObject
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
-					} elseif ($value == '') {
+					} elseif ($value === '') {
 						$new_array_options[$key] = null;
 					}
 					break;
@@ -7529,6 +7529,7 @@ abstract class CommonObject
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
 		global $conf, $langs, $form;
+
 
 		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
 

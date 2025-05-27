@@ -1598,8 +1598,7 @@ if ($action == 'create') {
 	if (isModEnabled('category')) {
 		// Categories
 		print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
-		print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'minwidth300 quatrevingtpercent widthcentpercentminusx', 0, 0);
+		print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
 		print "</td></tr>";
 	}
 
@@ -2213,14 +2212,7 @@ if ($id > 0 && $action != 'create') {
 		// Tags-Categories
 		if (isModEnabled('category')) {
 			print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_ACTIONCOMM, '', 'parent', 64, 0, 3);
-			$c = new Categorie($db);
-			$cats = $c->containing($object->id, Categorie::TYPE_ACTIONCOMM);
-			$arrayselected = array();
-			foreach ($cats as $cat) {
-				$arrayselected[] = $cat->id;
-			}
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+			print $form->selectCategories(Categorie::TYPE_ACTIONCOMM, 'categories', $object);
 			print "</td></tr>";
 		}
 

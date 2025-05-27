@@ -3657,7 +3657,7 @@ parameters:
 		-
 			message: '#^Negated boolean expression is always true\.$#'
 			identifier: booleanNot.alwaysTrue
-			count: 3
+			count: 2
 			path: ../../../htdocs/comm/propal/class/propaleligne.class.php
 
 		-

@@ -4454,9 +4454,7 @@ if ($action == 'create') {
 		if (isModEnabled('category')) {
 			// Categories
 			print '<tr><td>'.$langs->trans("Categories").'</td><td colspan="3">';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
-			$arrayselected = GETPOST('categories', 'array');
-			print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
+			print $form->selectCategories(Categorie::TYPE_INVOICE, 'categories', $object);
 			print "</td></tr>";
 		}
 
@@ -5426,19 +5424,12 @@ if ($action == 'create') {
 			print '</td></tr></table>';
 			print '</td>';
 			print '<td>';
-			$cate_arbo = $form->select_all_categories(Categorie::TYPE_INVOICE, '', 'parent', 64, 0, 1);
 			if ($action == 'edittags') {
 				print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
 				print '<input type="hidden" name="action" value="settags">';
 				print '<input type="hidden" name="token" value="'.newToken().'">';
-				$c = new Categorie($db);
-				$cats = $c->containing($object->id, Categorie::TYPE_INVOICE);
-				$arrayselected = [];
-				foreach ($cats as $cat) {
-					$arrayselected[] = $cat->id;
-				}
-				print img_picto('', 'category').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, '0');
-				print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				print $form->selectCategories(Categorie::TYPE_INVOICE, 'categories', $object);
+				print '<input type="submit" class="button valignmiddle smallpaddingimp" value="'.$langs->trans("Modify").'">';
 				print '</form>';
 			} else {
 				print $form->showCategories($object->id, Categorie::TYPE_INVOICE, 1);

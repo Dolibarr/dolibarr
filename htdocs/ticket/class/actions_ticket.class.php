@@ -212,7 +212,7 @@ class ActionsTicket extends CommonHookActions
 
 		// Initial message
 		print '<div class="div-table-responsive-no-min">'; // You can use div-table-responsive-no-min if you don't need reserved height for your table
-		print '<table class="border centpercent margintable">';
+		print '<table class="border tableforfield centpercent margintable">';
 		print '<tr class="liste_titre trforfield"><td class="nowrap titlefield">';
 		print $langs->trans("InitialMessage");
 		print '</td><td>';
