@@ -6780,7 +6780,7 @@ abstract class CommonObject
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
-					} elseif ($value == '') {
+					} elseif ($value === '') {
 						$new_array_options[$key] = null;
 					}
 					break;
