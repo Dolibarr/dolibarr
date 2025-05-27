@@ -49,11 +49,15 @@ UPDATE llx_c_country SET sepa = 1 WHERE code IN ('AD','AT','BE','BG','CH','CY','
 -- fix element
 UPDATE llx_c_type_contact set element='shipping' WHERE element='expedition';
 -- Shipment / Expedition
-INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'internal', 'SALESREPFOLL',  'Representative following-up shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'internal', 'SALESREPFOLL',  'Representative following-up shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'internal', 'LOADING',		  'Loading facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'BILLING',       'Customer invoice contact', 1);
-INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'CUSTOMER',      'Customer shipping contact', 1);
-INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'SHIPPING',      'Loading facility', 1);
-INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'CUSTOMER',      'Customer contact following-up shipping', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SHIPPING',      'Customer shipping contact', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
+
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'internal', 'LOADING',		  'Loading facility', 1);
+INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'DELIVERY',      'Delivery facility', 1);
 
 ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
 ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
