@@ -1806,8 +1806,14 @@ class User extends CommonObject
 		}
 
 		// Insert into database
-		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, entity)";
-		$sql .= " VALUES('".$this->db->idate($this->datec)."', '".$this->db->escape($this->login)."', '".$this->db->escape($this->ldap_sid)."', ".((int) $this->entity).")";
+		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, entity, fk_soc)";
+		$sql .= " VALUES(";
+		$sql .= " '".$this->db->idate($this->datec)."',";
+		$sql .= " '".$this->db->escape($this->login)."',";
+		$sql .= " '".$this->db->escape($this->ldap_sid)."',";
+		$sql .= " ".((int) $this->entity).",";
+		$sql .= " ".($this->socid > 0 ? (int) $this->socid : "null");
+		$sql .= ")";
 		$result = $this->db->query($sql);
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -2271,6 +2277,7 @@ class User extends CommonObject
 		}
 		$sql .= ", default_range = ".($this->default_range > 0 ? $this->default_range : 'null');
 		$sql .= ", default_c_exp_tax_cat = ".($this->default_c_exp_tax_cat > 0 ? $this->default_c_exp_tax_cat : 'null');
+		$sql .= ", fk_soc = ".($this->socid > 0 ? (int) $this->socid : "null");
 		$sql .= ", fk_warehouse = ".($this->fk_warehouse > 0 ? $this->fk_warehouse : "null");
 		$sql .= ", fk_establishment = ".($this->fk_establishment > 0 ? $this->fk_establishment : "null");
 		$sql .= ", lang = ".($this->lang ? "'".$this->db->escape($this->lang)."'" : "null");
