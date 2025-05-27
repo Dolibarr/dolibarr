@@ -37,7 +37,7 @@
  * @var ?int 	$nboflines
  * @var ?string $tagidfortablednd
  * @var	?string	$table_element_line
- * @var ?array	$tasksarray
+ * @var ?Task[]	$tasksarray
  * @var ?string	$urltorefreshaftermove
  */
 // Protection to avoid direct call of template

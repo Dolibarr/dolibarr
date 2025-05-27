@@ -74,7 +74,7 @@ if (!isset($moreparam)) {
 }
 
 // Load translation files required by page
-$langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
+$langs->loadLangs(array('accountancy', 'companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 if (isModEnabled('accounting')) {
 	$langs->load('compta');

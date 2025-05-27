@@ -636,6 +636,7 @@ class FormWebPortal extends Form
 	 * @param string 		$morecss 		Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
+	/*
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = '')
 	{
 		global $conf, $langs;
@@ -975,6 +976,7 @@ class FormWebPortal extends Form
 
 		return $out;
 	}
+	*/
 
 	/**
 	 * Return HTML string to show a field into a page

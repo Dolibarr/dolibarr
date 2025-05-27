@@ -940,7 +940,8 @@ if ($action == 'create' || $action == 'presend') {
 		// Author
 		$createdbyshown = 0;
 		if ($object->fk_user_create > 0) {
-			$morehtmlref .= '<br>'.$langs->trans("CreatedBy").' : ';
+			$morehtmlref .= '<br>';
+			//$morehtmlref .= '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ';
 
 			$fuser = new User($db);
 			$fuser->fetch($object->fk_user_create);
@@ -961,9 +962,9 @@ if ($action == 'create' || $action == 'presend') {
 		//var_dump($object);
 		if ($createdfrompublicticket) {
 			$htmltooptip = $langs->trans("OriginEmail").': '.$object->origin_email;
-			$htmltooptip .= '<br>'.$langs->trans("IP").': '.$object->ip;
+			$htmltooptip .= '<br>'.$langs->trans("IP").': '.dol_print_ip($object->ip);
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
-			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
+			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").' </span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByPublicPortal"), $htmltooptip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		} elseif ($createdfromemailcollector) {
@@ -974,7 +975,7 @@ if ($action == 'create' || $action == 'presend') {
 			$htmltooltip .= '<br>'.$langs->trans("MailReply").': '.$object->origin_replyto;
 			$htmltooltip .= '<br>'.$langs->trans("MailReferences").': '.$object->origin_references;
 			$morehtmlref .= ($createdbyshown ? ' - ' : '<br>');
-			$morehtmlref .= ($createdbyshown ? '' : $langs->trans("CreatedBy").' : ');
+			//$morehtmlref .= ($createdbyshown ? '' : '<span class="opacitymedium">'.$langs->trans("CreatedBy").'</span> ');
 			$morehtmlref .= img_picto('', 'email', 'class="paddingrightonly"');
 			$morehtmlref .= dol_escape_htmltag($object->origin_email).' <small class="hideonsmartphone opacitymedium">- '.$form->textwithpicto($langs->trans("CreatedByEmailCollector"), $htmltooltip, 1, 'help', '', 0, 3, 'tooltip').'</small>';
 		}
@@ -985,8 +986,8 @@ if ($action == 'create' || $action == 'presend') {
 		// Thirdparty
 		if (isModEnabled("societe")) {
 			$morehtmlref .= '<br>';
-			$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
 			if ($action != 'editcustomer' && $permissiontoedit) {
+				$morehtmlref .= img_picto($langs->trans("ThirdParty"), 'company', 'class="pictofixedwidth"');
 				$morehtmlref .= '<a class="editfielda" href="'.$url_page_current.'?action=editcustomer&token='.newToken().'&track_id='.$object->track_id.'">'.img_edit($langs->transnoentitiesnoconv('SetThirdParty'), 0).'</a> ';
 			}
 			$morehtmlref .= $form->form_thirdparty($url_page_current.'?track_id='.$object->track_id, (string) $object->socid, $action == 'editcustomer' ? 'editcustomer' : 'none', '', 1, 0, 0, array(), 1);
@@ -1283,39 +1284,29 @@ if ($action == 'create' || $action == 'presend') {
 
 		// Tags/Categories
 		if (isModEnabled('category')) {
+			print '<!-- tag/categories -->'."\n";
 			print '<table class="border centpercent tableforfield">';
 			print '<tr>';
 			print '<td class="valignmiddle titlefield">';
-			print '<table class="nobordernopadding centpercent"><tr><td class="titlefield">';
+			print '<table class="nobordernopadding centpercent"><tr><td class="none">';
 			print $langs->trans("Categories");
 			if ($action != 'categories' && !$user->socid) {
-				print '<td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&amp;track_id='.$object->track_id.'">'.img_edit($langs->trans('Modify')).'</a></td>';
+				print '</td><td class="right"><a class="editfielda" href="'.$url_page_current.'?action=categories&track_id='.urlencode($object->track_id).'">'.img_edit($langs->trans('Modify')).'</a>';
 			}
+			print '</td>';
 			print '</table>';
 			print '</td>';
 
 			if ($user->hasRight('ticket', 'write') && $action == 'categories') {
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_TICKET, '', 'parent', 64, 0, 3);
-				if (is_array($cate_arbo)) {
-					// Categories
-					print '<td colspan="3">';
-					print '<form action="'.$url_page_current.'" method="POST">';
-					print '<input type="hidden" name="token" value="'.newToken().'">';
-					print '<input type="hidden" name="track_id" value="'.$track_id.'">';
-					print '<input type="hidden" name="action" value="set_categories">';
-
-					$category = new Categorie($db);
-					$cats = $category->containing($object->id, 'ticket');
-					$arrayselected = array();
-					foreach ($cats as $cat) {
-						$arrayselected[] = $cat->id;
-					}
-
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'maxwidth500 widthcentpercentminusx', 0, 0);
-					print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
-					print '</form>';
-					print "</td>";
-				}
+				print '<td colspan="3">';
+				print '<form action="'.$url_page_current.'" method="POST">';
+				print '<input type="hidden" name="token" value="'.newToken().'">';
+				print '<input type="hidden" name="track_id" value="'.$track_id.'">';
+				print '<input type="hidden" name="action" value="set_categories">';
+				print $form->selectCategories(Categorie::TYPE_TICKET, 'categories', $object);
+				print '<input type="submit" class="button button-edit smallpaddingimp" value="'.$langs->trans('Save').'">';
+				print '</form>';
+				print "</td>";
 			} else {
 				print '<td colspan="3">';
 				print $form->showCategories($object->id, Categorie::TYPE_TICKET, 1);

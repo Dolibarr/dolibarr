@@ -72,7 +72,6 @@ $result = restrictedArea($user, 'banque');
  * View
  */
 
-$form = new Form($db);
 $stripe = new Stripe($db);
 
 llxHeader('', $langs->trans("StripeTransactionList"));
@@ -111,7 +110,7 @@ if (!$rowid) {
 	$moreforfilter = '';
 
 	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.(!empty($moreforfilter) ? " listwithfilterbefore" : "").'">'."\n";
+	print '<table class="tagtable liste">'."\n";
 
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "", "", "", "", $sortfield, $sortorder);
