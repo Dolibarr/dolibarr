@@ -1052,6 +1052,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
+		$regreplace  = array();
 		$maxloop = 20;
 		$loopnb = 0; // Protection against infinite loop
 
@@ -1101,10 +1102,16 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			} elseif ($reg[1] == 'ID') {
 				$newout = '__ID__';     // We keep __ID__ we find into backtopage url
 			} else {
-				$newout = ''; // Key not found, we replace with empty string
+				$newout = 'REGREPLACE_'.$loopnb; // Key not found, we replace with temporary string to reload later
+				$regreplace[$loopnb] = $reg[0];
 			}
 			//var_dump('__'.$reg[1].'__ -> '.$newout);
 			$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
+		}
+		if (!empty($regreplace)) {
+			foreach ($regreplace as $key => $value) {
+				$out = preg_replace('/REGREPLACE_'.$key.'/', $value, $out);
+			}
 		}
 	}
 
@@ -4764,15 +4771,16 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  *
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
+ *  @param	int		$showname	1=Show reverse domain name instead of IP
  * 	@return string 				Formatted IP, with country if GeoIP module is enabled
  */
-function dol_print_ip($ip, $mode = 0)
+function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
-	global $conf, $langs;
+	global $conf;
 
 	$ret = '';
 	if (!isset($conf->cache['resolveips'])) {
-		$conf->cache['resolveips'] = [];
+		$conf->cache['resolveips'] = array();
 	}
 
 	if ($mode != 2) {
@@ -4791,11 +4799,14 @@ function dol_print_ip($ip, $mode = 0)
 	}
 
 	if (in_array($mode, [0, 2])) {
-		if (empty($conf->cache['resolveips'][$ip])) {
-			$domain = gethostbyaddr($ip);
-			$conf->cache['resolveips'][$ip] = $domain; // false or domain
-		} else {
-			$domain = $conf->cache['resolveips'][$ip];
+		$domain = '';
+		if ($showname) {
+			if (!array_key_exists($ip, $conf->cache['resolveips'])) {
+				$domain = gethostbyaddr($ip);
+				$conf->cache['resolveips'][$ip] = $domain; // false or domain
+			} else {
+				$domain = $conf->cache['resolveips'][$ip];
+			}
 		}
 		if ($domain) {
 			$ret .= $domain;

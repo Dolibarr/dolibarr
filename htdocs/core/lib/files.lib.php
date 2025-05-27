@@ -765,7 +765,8 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	dolChmod($newpathoftmpdestfile, $newmask);
 
 	// Rename
-	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase);
+	$moreinfo = array('gen_or_uploaded' => 'unknown');
+	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase, $moreinfo);
 	if (!$result) {
 		dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
 		return -3;
@@ -1145,7 +1146,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
 						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
 					} else {
-						$ecmfile->gen_or_uploaded = 'uploaded';
+						$ecmfile->gen_or_uploaded = 'unknown';	// 'generated', 'uploaded', 'api'
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
@@ -1272,7 +1273,8 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase);
+								$moreinfo = array('gen_or_uploaded' => 'unknown');
+								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase, $moreinfo);
 							}
 							if (!$res) {
 								return $result;
@@ -2918,6 +2920,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
+	} elseif ($modulepart == 'propale') {
+		$modulepart = 'propal';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;

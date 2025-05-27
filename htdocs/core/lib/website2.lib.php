@@ -374,7 +374,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$content .= '    $html .= $formSetup->generateTableOutput(true);' . "\n";
 			$content .= '' . "\n";
 			$content .= '    // Submit button' . "\n";
-			$content .= '    $html .= \'<input type="hidden" name="action" value="save">\';' . "\n";
+			$content .= '    $html .= \'<input type="hidden" name="action" value="preview">\';' . "\n";
 			$content .= '    $html .= \'<input type="hidden" name="websitetemplateconf" value="1">\';' . "\n";
 			$content .= '    $html .= \'<br>\';' . "\n";
 			$content .= '    $html .= \'<div class="form-setup-button-container center">\';' . "\n";
@@ -730,6 +730,7 @@ function showWebsiteTemplates(Website $website, int $refresh)
 	// when module is enabled.
 	$dirthemes = array('/doctemplates/websites');
 
+	$warningtoshow = '';
 	$arrayoftemplatesfound = array();
 
 	if (count($dirthemes)) {

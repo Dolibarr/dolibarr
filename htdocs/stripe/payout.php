@@ -151,18 +151,18 @@ if (!$rowid) {
 				$url = 'https://dashboard.stripe.com/'.$connect.'payouts/'.$payout->id;
 			}
 
-			print "<td><a href='".$url."' target='_stripe'>".img_picto($langs->trans('ShowInStripe'), 'globe')." ".$payout->id."</a></td>\n";
+			print '<td><a href="'.$url.'" target="_stripe">'.img_picto($langs->trans('ShowInStripe'), 'globe')." ".dolPrintHTML($payout->id)."</a></td>\n";
 
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->created, 'dayhour')."</td>\n";
 			// Date payment
 			print '<td class="center">'.dol_print_date($payout->arrival_date, 'dayhour')."</td>\n";
 			// Type
-			print '<td>'.$payout->description.'</td>';
+			print '<td>'.dolPrintHTML($payout->description).'</td>';
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($payout->amount) / 100, 0, '', 1, -1, -1, strtoupper($payout->currency))."</span></td>";
 			// Status
-			print "<td class='right'>";
+			print '<td class="center">';
 			if ($payout->status == 'paid') {
 				print img_picto($langs->trans($payout->status), 'statut4');
 			} elseif ($payout->status == 'pending') {

@@ -290,7 +290,7 @@ if (!$rowid) {
 			// Amount
 			print '<td class="right"><span class="amount">'.price(($charge->amount - $charge->amount_refunded) / 100, 0, '', 1, - 1, - 1, strtoupper($charge->currency))."</span></td>";
 			// Status
-			print '<td class="nowraponall">';
+			print '<td class="nowraponall center">';
 			print $status;
 			print "</td>\n";
 
