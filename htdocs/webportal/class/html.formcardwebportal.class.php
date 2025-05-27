@@ -711,8 +711,10 @@ class FormCardWebPortal
 
 			if (!empty($val['noteditable'])) {
 				$html .= $this->form->showOutputFieldForObject($object, $val, $key, $value, '', '', '', 0);
+				//$html .= $object->showOutputFieldForObject($object, $val, $key, $value, '', '', '', 0);
 			} else {
-				$html .= $this->form->showInputField($val, $key, $value, '', '', '', '');
+				$html .= $this->form->showInputFieldForObject($object, $val, $key, $value, '', '', '', '');
+				//$html .= $object->showInputField($val, $key, $value, '', '', '', '');
 			}
 			$html .= '</div>';
 			$html .= '</div>';

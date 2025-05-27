@@ -7530,6 +7530,7 @@ abstract class CommonObject
 	{
 		global $conf, $langs, $form;
 
+
 		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
 
 		if (!is_object($form)) {
