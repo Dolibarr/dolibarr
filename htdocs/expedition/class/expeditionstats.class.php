@@ -98,9 +98,7 @@ class ExpeditionStats extends Stats
 
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
 		$this->where .= " AND c.entity = ".$conf->entity;
-		if (!$user->hasRight('societe', 'client', 'voir')) {
-			$this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-		}
+
 		if ($this->socid) {
 			$this->where .= " AND c.fk_soc = ".((int) $this->socid);
 		}
