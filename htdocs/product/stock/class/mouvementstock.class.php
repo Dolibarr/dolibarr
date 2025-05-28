@@ -129,27 +129,6 @@ class MouvementStock extends CommonObject
 		$this->db = $db;
 	}
 
-	/**
-	 * Check if a product is a kit
-	 *
-	 * @param 	$fk_product		Product id
-	 * @return 	int				Return integer <=0 if not a virtual product or >0 if it's a virtual product
-	 * @throws 	Exception
-	 */
-	protected function isProductKit($fk_product)
-	{
-		$product = new Product($this->db);
-		$result = $product->fetch($fk_product);
-		if ($result < 0) {
-			dol_syslog(__METHOD__.' : Failed to fetch product', LOG_ERR);
-			return -1;
-		} elseif ($result == 0) {
-			return 0;
-		} else {
-			return $product->hasChildren();
-		}
-	}
-
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
 	 *	Add a movement of stock (in one direction only).
@@ -229,8 +208,8 @@ class MouvementStock extends CommonObject
 
 		// Check parameters
 		if (!($fk_product > 0)) return 0;
-		if (!($entrepot_id > 0)
-			|| (!empty($conf->global->PRODUIT_SOUSPRODUITS) && $this->isProductKit($fk_product) <= 0)
+		if ((empty($conf->global->PRODUIT_SOUSPRODUITS) && !($entrepot_id > 0))
+			|| (!empty($conf->global->PRODUIT_SOUSPRODUITS) && !($entrepot_id >= 0))
 		) {
 			return 0;
 		}
