@@ -104,9 +104,7 @@ class FactureStats extends Stats
 
 		$this->where .= ($this->where ? ' AND ' : '')." f.fk_statut >= 0";
 		$this->where .= " AND f.entity IN (".getEntity('invoice').")";
-		if (!$user->hasRight('societe', 'client', 'voir')) {
-			$this->where .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = ".((int) $user->id);
-		}
+
 		if ($mode == 'customer') {
 			$this->where .= " AND (f.fk_statut <> 3 OR f.close_code <> 'replaced')"; // Exclude replaced invoices as they are duplicated (we count closed invoices for other reasons)
 		}
