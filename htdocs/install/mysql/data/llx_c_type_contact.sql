@@ -51,6 +51,7 @@ insert into llx_c_type_contact (element, source, code, libelle, active ) values 
 
 -- Customer Invoice / Facture
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'internal', 'SALESREPFOLL',  'Responsable suivi du paiement', 1);
+insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'internal', 'LOADING',		 'Loading facility', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'BILLING',       'Contact client facturation', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'SHIPPING',      'Contact client livraison', 1);
 insert into llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'external', 'SERVICE',       'Contact client prestation', 1);
