@@ -1029,11 +1029,17 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 									if (isset($_POST['search_all']) || isset($_GET['search_all'])) {
 										// We made a search from quick search menu, do we still use default filter ?
 										if (!getDolGlobalString('MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH')) {
-											$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ";", "="); // we accept _, -, . and ,
+											$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", ";", "="); // we accept _, -, . and ,
+											if($check != 'array') {
+												array_push($forbidden_chars_to_replace,"[","]");
+											}
 											$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 										}
 									} else {
-										$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", "[", "]", ";", "="); // we accept _, -, . and ,
+										$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", ";", "="); // we accept _, -, . and ,
+										if($check != 'array') {
+											array_push($forbidden_chars_to_replace,"[","]");
+										}
 										$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 									}
 									break;
@@ -1116,18 +1122,20 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	}
 
 	// Check type of variable and make sanitization according to this
-	if (preg_match('/^array/', $check)) {	// If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
-		$tmpcheck = 'alphanohtml';
-		if (empty($out)) {
-			$out = array();
-		} elseif (!is_array($out)) {
-			$out = explode(',', $out);
-		} else {
-			$tmparray = explode(':', $check);
-			if (!empty($tmparray[1])) {
-				$tmpcheck = $tmparray[1];
+	if (preg_match('/^array/', $check)) { // If 'array' or 'array:restricthtml' or 'array:aZ09' or 'array:intcomma'
+		if (!is_array($out)) {
+			$decoded = json_decode($out, true);
+			if (is_array($decoded)) {
+				$out = $decoded;
+			} else {
+				$out = array(); // fallback
 			}
 		}
+
+		// Clean array elements
+		$tmparray = explode(':', $check);
+		$tmpcheck = !empty($tmparray[1]) ? $tmparray[1] : 'alphanohtml';
+
 		foreach ($out as $outkey => $outval) {
 			$out[$outkey] = sanitizeVal($outval, $tmpcheck, $filter, $options);
 		}
