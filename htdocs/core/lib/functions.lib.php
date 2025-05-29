@@ -1554,7 +1554,7 @@ function dol_size($size, $type = '')
  *
  * 	@see        	dol_string_nospecial(), dol_string_unaccent(), dol_sanitizePathName()
  */
-function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
+/*function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 {
 	// List of special chars for filenames in windows are defined on page https://docs.microsoft.com/en-us/windows/win32/fileio/naming-a-file
 	// Char '>' '<' '|' '$' and ';' are special chars for shells.
@@ -1567,6 +1567,10 @@ function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
 	$tmp = preg_replace('/\s+\-$/', '', $tmp);
 	$tmp = str_replace('..', '', $tmp);
 	return $tmp;
+}*/
+function dol_sanitizeFileName($str, $newstr = '_', $unaccent = 1)
+{
+return urlencode($str);
 }
 
 
