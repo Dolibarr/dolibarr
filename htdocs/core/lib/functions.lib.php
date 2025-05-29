@@ -1031,14 +1031,14 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 										if (!getDolGlobalString('MAIN_DISABLE_DEFAULT_FILTER_FOR_QUICK_SEARCH')) {
 											$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", ";", "="); // we accept _, -, . and ,
 											if ($check != 'array') {
-												array_push($forbidden_chars_to_replace,"[", "]");
+												array_push($forbidden_chars_to_replace, "[", "]");
 											}
 											$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 										}
 									} else {
 										$forbidden_chars_to_replace = array(" ", "'", "/", "\\", ":", "*", "?", "\"", "<", ">", "|", ";", "="); // we accept _, -, . and ,
 										if ($check != 'array') {
-											array_push($forbidden_chars_to_replace,"[", "]");
+											array_push($forbidden_chars_to_replace, "[", "]");
 										}
 										$out = dol_string_nospecial($user->default_values[$relativepathstring]['filters'][$defkey][$paramname], '', $forbidden_chars_to_replace);
 									}
