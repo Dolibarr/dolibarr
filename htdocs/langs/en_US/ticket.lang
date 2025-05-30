@@ -340,3 +340,6 @@ TicketCreatedToday=Ticket created today
 TicketClosedToday=Ticket closed today
 KMFoundForTicketGroup=We found topics and FAQs that may answers your question, thanks to check them before submitting the ticket
 SetTitle=Set title
+TicketSendToInternalCC=Use notification email has CC in ticket emails
+TicketSendToInternalCCHelp=Check to use email used in notification for ticket creation to be used has CC in ticket emails
+
