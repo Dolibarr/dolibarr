@@ -105,6 +105,53 @@ if ($action == 'update' && !$cancel) {
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS_TICKET", GETPOST("MAIN_MAIL_EMAIL_STARTTLS_TICKET"), 'chaine', 0, '', $conf->entity);
 	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_TICKET", GETPOST("MAIN_MAIL_EMAIL_SMTP_ALLOW_SELF_SIGNED_TICKET"), 'chaine', 0, '', $conf->entity);
 
+	include_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+
+	$notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
+	$notification_email_description = "Sender of ticket replies sent from Dolibarr";
+	if (!empty($notification_email)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
+	} else { // If an empty e-mail address is providen, use the global "FROM" since an empty field will cause other issues
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $conf->global->MAIN_MAIL_EMAIL_FROM, 'chaine', 0, $notification_email_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	// altairis : differentiate notification email FROM and TO
+	$notification_email_to = GETPOST('TICKET_NOTIFICATION_EMAIL_TO', 'alpha');
+	$notification_email_to_description = "Notified e-mail for ticket replies sent from Dolibarr";
+	if (!empty($notification_email_to)) {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, $notification_email_to_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, $notification_email_to_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'restricthtml');
+	$mail_intro_description = "Introduction text of ticket replies sent from Dolibarr";
+	if (!empty($mail_intro)) {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, $mail_intro_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', '', 'chaine', 0, $mail_intro_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
+	$mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'restricthtml');
+	$signature_description = "Signature of ticket replies sent from Dolibarr";
+	if (!empty($mail_signature)) {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, $signature_description, $conf->entity);
+	} else {
+		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', '', 'chaine', 0, $signature_description, $conf->entity);
+	}
+	if (!($res > 0)) {
+		$error++;
+	}
+
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
@@ -553,6 +600,102 @@ if ($action == 'edit') {
 
 	print '</table>';
 
+	/*
+	* Emails
+	*/
+
+	// Admin var of module
+	print load_fiche_titre($langs->trans("Emails"), '', '');
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameter").'</td>';
+	print '<td></td>';
+	print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
+		print '<tr>';
+		print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
+		print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+		print "</tr>\n";
+	}
+
+	// TODO Use module notification instead...
+
+	// Email to send notifications
+	print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
+	print '<td class="left">';
+	print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_FROM" name="TICKET_NOTIFICATION_EMAIL_FROM" value="' . getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM').'"></td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Check "Send to internal CC" on ticket send
+	print '<tr class="oddeven"><td><label for="TICKET_SEND_INTERNAL_CC" class="block">'.$langs->trans("TicketSendToInternalCC").'</label></td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_SEND_INTERNAL_CC');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_SEND_INTERNAL_CC", $arrval, getDolGlobalString('TICKET_SEND_INTERNAL_CC'));
+	}
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketSendToInternalCCHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Email for notification of TICKET_CREATE
+	print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TO" class="block">'.$langs->trans("TicketEmailNotificationTo").'</label></td>';
+	print '<td class="left">';
+	print '<input type="text" class="minwidth200" id="TICKET_NOTIFICATION_EMAIL_TO" name="TICKET_NOTIFICATION_EMAIL_TO" value="'.getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO').'"></td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Check "Notify thirdparty" on ticket creation
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
+	print '<td class="left">';
+	if ($conf->use_javascript_ajax) {
+		print ajax_constantonoff('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION');
+	} else {
+		$arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+		print $form->selectarray("TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION", $arrval, getDolGlobalString('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
+	}
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Message header
+	$mail_intro = getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
+	print '</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_INTRO', $mail_intro, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
+	$doleditor->Create();
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
+	print '</td></tr>';
+
+	// Message footer
+	$mail_signature = getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
+	print '</td><td>';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+	$doleditor = new DolEditor('TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, '100%', 90, 'dolibarr_mailings', '', false, true, getDolGlobalInt('FCKEDITOR_ENABLE_MAIL'), ROWS_2, '70');
+	$doleditor->Create();
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketMessageMailFooterHelpAdmin"), 1, 'help');
+	print '</td></tr>';
+
+	print '</table>';
+
 	print dol_get_fiche_end();
 
 	print $form->buttonsSaveCancel();
@@ -682,6 +825,87 @@ if ($action == 'edit') {
 	}
 
 	print '</table>';
+
+	/*
+	* Emails
+	*/
+
+	// Admin var of module
+	print load_fiche_titre($langs->trans("Emails"), '', '');
+
+	print '<table class="noborder centpercent">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Parameter").'</td>';
+	print '<td></td>';
+	print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+	print "</tr>\n";
+
+	if (!getDolGlobalString('FCKEDITOR_ENABLE_MAIL')) {
+		print '<tr>';
+		print '<td colspan="2"><div class="info">'.$langs->trans("TicketCkEditorEmailNotActivated").'</div></td>';
+		print '<td class="center" width="40">'.$langs->trans("ShortInfo").'</td>';
+		print "</tr>\n";
+	}
+
+	// TODO Use module notification instead...
+
+	// Email to send notifications
+	print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_FROM" class="block">'.$langs->trans("TicketEmailNotificationFrom").'</label></td>';
+	print '<td class="left">';
+	print getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketEmailNotificationFromHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Check "Send to internal CC" on ticket send
+	print '<tr class="oddeven"><td><label for="TICKET_SEND_INTERNAL_CC" class="block">'.$langs->trans("TicketSendToInternalCC").'</label></td>';
+	print '<td class="left">';
+	print yn(getDolGlobalInt('TICKET_SEND_INTERNAL_CC'));
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketSendToInternalCCHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Email for notification of TICKET_CREATE
+	print '<tr class="oddeven"><td><label for="TICKET_NOTIFICATION_EMAIL_TO" class="block">'.$langs->trans("TicketEmailNotificationTo").'</label></td>';
+	print '<td class="left">';
+	print getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO');
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketEmailNotificationToHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Check "Notify thirdparty" on ticket creation
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketAutoCheckNotifyThirdParty").'</td>';
+	print '<td class="left">';
+	print yn(getDolGlobalInt('TICKET_CHECK_NOTIFY_THIRDPARTY_AT_CREATION'));
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketAutoCheckNotifyThirdPartyHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+
+	// Message header
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailIntro");
+	print '</td><td>';
+	print getDolGlobalString('TICKET_MESSAGE_MAIL_INTRO', '');
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketMessageMailIntroHelpAdmin"), 1, 'help');
+	print '</td></tr>';
+
+	// Message footer
+	print '<tr class="oddeven"><td>'.$langs->trans("TicketMessageMailFooter").'</label>';
+	print '</td><td>';
+	print getDolGlobalString('TICKET_MESSAGE_MAIL_SIGNATURE');
+	print '</td>';
+	print '<td class="center">';
+	print $form->textwithpicto('', $langs->trans("TicketMessageMailFooterHelpAdmin"), 1, 'help');
+	print '</td></tr>';
+
+	print '</table>';
+
 	print '</div>';
 
 	print dol_get_fiche_end();

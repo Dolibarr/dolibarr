@@ -2876,6 +2876,7 @@ class Ticket extends CommonObject
 
 							// Add html link on url
 							$message .= '<br>'.$langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal').' : <a href="'.$url_internal_ticket.'">'.$object->track_id.'</a><br>';
+							$send_internal_cc = getDolGlobalInt("TICKET_SEND_INTERNAL_CC");
 
 							// Add global email address recipient
 							if (getDolGlobalString('TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS') && !array_key_exists(getDolGlobalString('TICKET_NOTIFICATION_EMAIL_TO'), $sendto)) {
@@ -2886,7 +2887,7 @@ class Ticket extends CommonObject
 
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
+								$this->sendTicketMessageByEmail($subject, $message, $send_internal_cc, $sendto, $listofpaths, $listofmimes, $listofnames);
 							}
 						}
 
@@ -2966,6 +2967,7 @@ class Ticket extends CommonObject
 
 								// Add signature
 								$message .= '<br>'.$message_signature;
+								$send_internal_cc = getDolGlobalInt("TICKET_SEND_INTERNAL_CC");
 
 								if (!empty($object->origin_replyto)) {
 									$sendto[$object->origin_replyto] = $object->origin_replyto;
@@ -2990,7 +2992,7 @@ class Ticket extends CommonObject
 
 								// Don't try to send email when no recipient
 								if (!empty($sendto)) {
-									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
+									$result = $this->sendTicketMessageByEmail($subject, $message, $send_internal_cc, $sendto, $listofpaths, $listofmimes, $listofnames);
 									if ($result) {
 										// update last_msg_sent date (for last message sent to external users)
 										$this->date_last_msg_sent = dol_now();
