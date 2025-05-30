@@ -110,46 +110,34 @@ if ($action == 'update' && !$cancel) {
 	$notification_email = GETPOST('TICKET_NOTIFICATION_EMAIL_FROM', 'alpha');
 	$notification_email_description = "Sender of ticket replies sent from Dolibarr";
 	if (!empty($notification_email)) {
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
+		dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, $notification_email_description, $conf->entity);
 	} else { // If an empty e-mail address is providen, use the global "FROM" since an empty field will cause other issues
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $conf->global->MAIN_MAIL_EMAIL_FROM, 'chaine', 0, $notification_email_description, $conf->entity);
-	}
-	if (!($res > 0)) {
-		$error++;
+		dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_FROM', $conf->global->MAIN_MAIL_EMAIL_FROM, 'chaine', 0, $notification_email_description, $conf->entity);
 	}
 
 	// altairis : differentiate notification email FROM and TO
 	$notification_email_to = GETPOST('TICKET_NOTIFICATION_EMAIL_TO', 'alpha');
 	$notification_email_to_description = "Notified e-mail for ticket replies sent from Dolibarr";
 	if (!empty($notification_email_to)) {
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, $notification_email_to_description, $conf->entity);
+		dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, $notification_email_to_description, $conf->entity);
 	} else {
-		$res = dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, $notification_email_to_description, $conf->entity);
-	}
-	if (!($res > 0)) {
-		$error++;
+		dolibarr_set_const($db, 'TICKET_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, $notification_email_to_description, $conf->entity);
 	}
 
 	$mail_intro = GETPOST('TICKET_MESSAGE_MAIL_INTRO', 'restricthtml');
 	$mail_intro_description = "Introduction text of ticket replies sent from Dolibarr";
 	if (!empty($mail_intro)) {
-		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, $mail_intro_description, $conf->entity);
+		dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', $mail_intro, 'chaine', 0, $mail_intro_description, $conf->entity);
 	} else {
-		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', '', 'chaine', 0, $mail_intro_description, $conf->entity);
-	}
-	if (!($res > 0)) {
-		$error++;
+		dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_INTRO', '', 'chaine', 0, $mail_intro_description, $conf->entity);
 	}
 
 	$mail_signature = GETPOST('TICKET_MESSAGE_MAIL_SIGNATURE', 'restricthtml');
 	$signature_description = "Signature of ticket replies sent from Dolibarr";
 	if (!empty($mail_signature)) {
-		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, $signature_description, $conf->entity);
+		dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', $mail_signature, 'chaine', 0, $signature_description, $conf->entity);
 	} else {
-		$res = dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', '', 'chaine', 0, $signature_description, $conf->entity);
-	}
-	if (!($res > 0)) {
-		$error++;
+		dolibarr_set_const($db, 'TICKET_MESSAGE_MAIL_SIGNATURE', '', 'chaine', 0, $signature_description, $conf->entity);
 	}
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
