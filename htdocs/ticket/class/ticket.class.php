@@ -2576,7 +2576,12 @@ class Ticket extends CommonObject
 				$destfile = $destdir.'/'.$pathinfo['filename'].' - '.dol_print_date($now, 'dayhourlog').'.'.$pathinfo['extension'];
 			}
 
-			$moreinfo = array('description' => 'File saved by copyFilesForTicket', 'src_object_type' => $this->element, 'src_object_id' => $this->id);
+			$moreinfo = array(
+				'description' => 'File saved by copyFilesForTicket',
+				'src_object_type' => $this->element,
+				'src_object_id' => $this->id,
+				'gen_or_uploaded' => 'uploaded'
+			);
 
 			$res = dol_move($filepath[$i], $destfile, '0', 1, 0, 1, $moreinfo);
 

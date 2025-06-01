@@ -241,7 +241,6 @@ if (isModEnabled('category')) {
 	if (is_array($cate_arbo) && is_array($cate_arbo[0])) {
 		print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), 0, 0, 'widthcentpercentminusx maxwidth300');
 	}
-
 	print '</td></tr>';
 }
 

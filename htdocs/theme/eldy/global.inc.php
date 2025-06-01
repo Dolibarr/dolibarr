@@ -1013,7 +1013,7 @@ textarea.centpercent {
 	transform: scaleX(-1) translate(<?php print($left == 'left' ? '' : '-'); ?>2px, 0);
 }
 .rotate90 {
-	transform: rotate(90deg) translate(0, <?php print($left == 'left' ? '' : '-'); ?>2px);
+	transform: rotate(90deg) translate(2px, <?php print($left == 'left' ? '' : '-'); ?>4px);
 }
 .center {
 	text-align: center;
@@ -2629,6 +2629,11 @@ div.fiche {
 		print 'margin-bottom: 12px;'."\n";
 	} ?>
 }
+.dol_openinpopup div.fiche {
+	margin-<?php print $left; ?>: <?php print(GETPOST('optioncss', 'aZ09') == 'print' ? 6 : (empty($conf->dol_optimize_smallscreen) ? '24' : '6')); ?>px;
+	margin-top: 0px;
+}
+
 .page-modulehelp div.fiche {
 	width: 100%;
 }
@@ -4541,7 +4546,7 @@ table.liste th, table.noborder th, table.noborder tr.liste_titre td, table.nobor
 td.linecoldescription {
 	padding: 6px 10px 6px 12px !important;			/* t r b l */
 }
-table.tableforfield td, .tagtr.table-border-row .tagtd {
+table.tableforfield td, .tagtr.table-border-row .tagtd, table.border.margintable .trforfield td {
 	padding: 2px 4px 2px 10px;			/* t r b l */
 }
 table.liste td, table.noborder td, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
@@ -5287,7 +5292,7 @@ span.dashboardlineko {
 }
 
 
-.fichecenter .tableforfield tr td, .tagtr.table-border-row {
+.fichecenter .tableforfield:not(.margintable) tr td, .tagtr.table-border-row {
 	background-color: var(--colorbacklineimpair2);
 }
 table.liste tr.oddeven:nth-of-type(odd) {
@@ -5825,6 +5830,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
 }
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
+}
 
 
 /* ============================================================================== */
@@ -5922,8 +5930,6 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 		max-width: 230px;
 	}
 }
-
-
 
 
 
@@ -6272,6 +6278,7 @@ td.peruser_holiday_imp {
 
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
+
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -8549,7 +8556,7 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
-/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* CSS style used for HRM skill/rank (may be we can remove this)                  */
 /* ============================================================================== */
 
 .radio_js_bloc_number {
@@ -8583,12 +8590,13 @@ div.clipboardCPValue.hidewithsize {
 }
 
 #virtualcard-iframe {
-	border: 40px solid #aaa;
+	border: 1px solid #aaa;
 	vertical-align: top;
 	width: 10%;
 	min-width: 100px;
 	border-radius: 10px;
 	aspect-ratio: 0.6;
+	box-shadow: 0 0 5px #bbb;
 }
 .nopointervent {
 	pointer-events: none;
@@ -9080,6 +9088,11 @@ table.jPicker {
 	.dropdown dd ul {
 		max-width: 230px;
 	}
+}
+
+/** For toggle Display of customer/Supplyer Invoices and Credit Notes on Payment Page */
+:where(#fourn-invoices-paiments-list,#customer-invoices-paiments-list)[data-display-all-invoices="1"] tr[data-row-type="2"]{
+	font-weight: bold;
 }
 
 <?php

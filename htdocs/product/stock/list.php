@@ -714,7 +714,6 @@ while ($i < $imaxinloop) {
 	$warehouse->setVarsFromFetchObj($obj);
 
 	$warehouse->label = $warehouse->ref;
-	$warehouse->sellvalue = $obj->sellvalue;
 
 	$object = $warehouse;
 
@@ -731,7 +730,7 @@ while ($i < $imaxinloop) {
 				$selected = 1;
 			}
 		}
-		print $object->getKanbanView('', array('selected' => $selected));
+		print $object->getKanbanView('', array('selected' => $selected, 'sellvalue' => $obj->sellvalue, 'isMultiPrices' => getDolGlobalString('PRODUIT_MULTIPRICES')));
 		if ($i == ($imaxinloop - 1)) {
 			print '</div>';
 			print '</td></tr>';

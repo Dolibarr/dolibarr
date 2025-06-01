@@ -1045,7 +1045,6 @@ if ($action == 'create') {	// aaa
 				$langs->load("errors");
 				print img_warning($langs->trans("ErrorBadMXDomain", $email));
 			}
-
 			print '</td></tr>';
 
 			// Errors to
@@ -1118,7 +1117,7 @@ if ($action == 'create') {	// aaa
 					$nbemail .= ' '.img_warning('').' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 				}
 				if ($htmltooltip) {
-					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
+					print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 				} else {
 					print $nbemail;
 				}

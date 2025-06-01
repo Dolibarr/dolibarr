@@ -30,7 +30,7 @@ if (empty($conf) || !is_object($conf)) {
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE originproductline.tpl.php -->
+<!-- BEGIN PHP TEMPLATE core/tpl/originproductline.tpl.php -->
 <?php
 '
 @phan-var-force CommonObject $this
@@ -51,6 +51,7 @@ if (defined('SUBTOTALS_SPECIAL_CODE') && $line->special_code == SUBTOTALS_SPECIA
 	return require DOL_DOCUMENT_ROOT.'/core/tpl/originsubtotalline.tpl.php';
 }
 
+// Show line using ->tpl[]
 print '<tr data-id="'.$this->tpl['id'].'" class="oddeven'.(empty($this->tpl['strike']) ? '' : ' strikefordisabled').'">';
 print '<td class="linecolref">'.$this->tpl['label'].'</td>';
 print '<td class="linecoldescription">'.$this->tpl['description'].'</td>';

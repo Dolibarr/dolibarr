@@ -5565,6 +5565,7 @@ abstract class CommonObject
 	{
 		global $langs, $hookmanager, $form, $action;
 
+		print '<!-- printOriginLinesList '.get_class($this).' -->'."\n";
 		print '<tr class="liste_titre">';
 		print '<td class="linecolref">'.$langs->trans('Ref').'</td>';
 		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
@@ -5579,7 +5580,9 @@ abstract class CommonObject
 		}
 		print '<td class="linecoldiscount right">'.$langs->trans('ReductionShort').'</td>';
 		print '<td class="linecolht right">'.$langs->trans('TotalHT').'</td>';
-		print '<td class="center">'.$form->showCheckAddButtons('checkforselect', 1).'</td>';
+		print '<td class="center">';
+		print $form->showCheckAddButtons('checkforselect', 1);
+		print '</td>';
 		print '</tr>';
 		$i = 0;
 
@@ -5640,6 +5643,7 @@ abstract class CommonObject
 			}
 		}
 
+		// Set thevalue into ->tpl[] array.
 		$this->tpl['id'] = $line->id;
 
 		$this->tpl['label'] = '';
@@ -5671,7 +5675,7 @@ abstract class CommonObject
 				$this->tpl['label'] .= get_date_range($date_start, $date_end);
 			}
 		} else {
-			$this->tpl['label'] .= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans(''), 'service') : img_object($langs->trans(''), 'product')));
+			$this->tpl['label'] .= ($line->product_type == -1 ? '&nbsp;' : ($line->product_type == 1 ? img_object($langs->trans('Service'), 'service', 'class="pictofixedwidth"') : img_object($langs->trans('Product'), 'product', 'class="pictofixedwidth"')));
 			if (!empty($line->desc)) {
 				$this->tpl['label'] .= $line->desc;
 			} else {
@@ -6780,7 +6784,7 @@ abstract class CommonObject
 					if (!is_numeric($value) && $value != '') {
 						$this->errors[] = $langs->trans("ExtraFieldHasWrongValue", $attributeLabel);
 						return -1;
-					} elseif ($value == '') {
+					} elseif ($value === '') {
 						$new_array_options[$key] = null;
 					}
 					break;
@@ -7529,6 +7533,7 @@ abstract class CommonObject
 	public function showInputField($val, $key, $value, $moreparam = '', $keysuffix = '', $keyprefix = '', $morecss = 0, $nonewbutton = 0)
 	{
 		global $conf, $langs, $form;
+
 
 		// TODO pass the current object as a parameter to give more flexibility (like disable showing input for extra fields when canAlwaysBeEdited is false and $object->status is not draft...)
 

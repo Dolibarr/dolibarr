@@ -757,7 +757,7 @@ function GETPOSTISSET($paramname)
 	if (constant('DOL_URL_ROOT')) {
 		$relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 	}
-	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	$relativepathstring = ltrim($relativepathstring, '/');
 	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 	//var_dump($relativepathstring);
 	//var_dump($user->default_values);
@@ -882,7 +882,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		if (constant('DOL_URL_ROOT')) {
 			$relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 		}
-		$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+		$relativepathstring = ltrim($relativepathstring, '/');
 		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 		//var_dump($relativepathstring);
 		//var_dump($user->default_values);
@@ -1052,6 +1052,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 	'@phan-var-force string $paramname';
 	if (!is_array($out) && empty($_POST[$paramname]) && empty($noreplace)) {
 		$reg = array();
+		$regreplace  = array();
 		$maxloop = 20;
 		$loopnb = 0; // Protection against infinite loop
 
@@ -1101,10 +1102,16 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 			} elseif ($reg[1] == 'ID') {
 				$newout = '__ID__';     // We keep __ID__ we find into backtopage url
 			} else {
-				$newout = ''; // Key not found, we replace with empty string
+				$newout = 'REGREPLACE_'.$loopnb; // Key not found, we replace with temporary string to reload later
+				$regreplace[$loopnb] = $reg[0];
 			}
 			//var_dump('__'.$reg[1].'__ -> '.$newout);
 			$out = preg_replace('/__'.preg_quote($reg[1], '/').'__/', $newout, $out);
+		}
+		if (!empty($regreplace)) {
+			foreach ($regreplace as $key => $value) {
+				$out = preg_replace('/REGREPLACE_'.$key.'/', $value, $out);
+			}
 		}
 	}
 
@@ -4764,15 +4771,16 @@ function dol_print_phone($phone, $countrycode = '', $cid = 0, $socid = 0, $addli
  *
  * 	@param	string	$ip			IP
  * 	@param	int		$mode		0=return IP + country/flag, 1=return only country/flag, 2=return only IP
+ *  @param	int		$showname	1=Show reverse domain name instead of IP
  * 	@return string 				Formatted IP, with country if GeoIP module is enabled
  */
-function dol_print_ip($ip, $mode = 0)
+function dol_print_ip($ip, $mode = 0, $showname = 0)
 {
-	global $conf, $langs;
+	global $conf;
 
 	$ret = '';
 	if (!isset($conf->cache['resolveips'])) {
-		$conf->cache['resolveips'] = [];
+		$conf->cache['resolveips'] = array();
 	}
 
 	if ($mode != 2) {
@@ -4791,11 +4799,14 @@ function dol_print_ip($ip, $mode = 0)
 	}
 
 	if (in_array($mode, [0, 2])) {
-		if (empty($conf->cache['resolveips'][$ip])) {
-			$domain = gethostbyaddr($ip);
-			$conf->cache['resolveips'][$ip] = $domain; // false or domain
-		} else {
-			$domain = $conf->cache['resolveips'][$ip];
+		$domain = '';
+		if ($showname) {
+			if (!array_key_exists($ip, $conf->cache['resolveips'])) {
+				$domain = gethostbyaddr($ip);
+				$conf->cache['resolveips'][$ip] = $domain; // false or domain
+			} else {
+				$domain = $conf->cache['resolveips'][$ip];
+			}
 		}
 		if ($domain) {
 			$ret .= $domain;
@@ -6259,7 +6270,7 @@ function img_searchclear($titlealt = 'default', $other = '')
  *	@param	string	$text				Text info
  *	@param  integer	$infoonimgalt		Info is shown only on alt of star picto, otherwise it is show on output after the star picto
  *	@param	int		$nodiv				No div
- *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'error', 'warning', 'xxx'=Other
+ *  @param  string  $admin      	    '1'=Info for admin users. '0'=Info for standard users (change only the look), 'info', 'error', 'warning', 'xxx'=Other
  *  @param	string	$morecss			More CSS ('', 'warning', 'error')
  *  @param	string	$textfordropdown	Show a text to click to dropdown the info box.
  *  @param	string	$picto				'' or 'warning'
