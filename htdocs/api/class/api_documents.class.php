@@ -311,7 +311,7 @@ class Documents extends DolibarrApi
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
 	 * @param	int		$limit			List limit
 	 * @param	int		$page			Page number
-	 * @param	string	$content-type	Filter on content-type (example 'application/pdf' or 'application/pdf,image/jpeg'))
+	 * @param	string	$content_type	Filter on content-type (example 'application/pdf' or 'application/pdf,image/jpeg'))
 	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array					Array of documents with path
 	 * @phan-return array<array<string,int|string>>
