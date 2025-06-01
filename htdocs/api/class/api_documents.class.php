@@ -639,11 +639,11 @@ class Documents extends DolibarrApi
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
-						$filearray[$i]['content-type'] = dol_mimetype($line->filename);
+						$filearray[$i]['content-type'] = dol_mimetype($filearray[$i]['name']);
 						$arraycontenttype = explode(",", $content_type);
-						if (!empty($content_type) && !in_array(dol_mimetype($line->filename), $arraycontenttype)) {
+						if (!empty($content_type) && !in_array(dol_mimetype($filearray[$i]['name']), $arraycontenttype)) {
 							unset($filearray[$i]);
-							$countarray = $countarray-1;
+							$countarray -= 1;
 						}
 					}
 				}
