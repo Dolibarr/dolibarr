@@ -757,7 +757,7 @@ function GETPOSTISSET($paramname)
 	if (constant('DOL_URL_ROOT')) {
 		$relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 	}
-	$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+	$relativepathstring = ltrim($relativepathstring, '/');
 	$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 	//var_dump($relativepathstring);
 	//var_dump($user->default_values);
@@ -882,7 +882,7 @@ function GETPOST($paramname, $check = 'alphanohtml', $method = 0, $filter = null
 		if (constant('DOL_URL_ROOT')) {
 			$relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'), '/').'/', '', $relativepathstring);
 		}
-		$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+		$relativepathstring = ltrim($relativepathstring, '/');
 		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
 		//var_dump($relativepathstring);
 		//var_dump($user->default_values);
