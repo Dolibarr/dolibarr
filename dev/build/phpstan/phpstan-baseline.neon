@@ -8461,12 +8461,6 @@ parameters:
 			path: ../../../htdocs/core/class/html.form.class.php
 
 		-
-			message: '#^Parameter \#3 \$selected of method Form\:\:multiselectarray\(\) expects array\<string\>, list\<int\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../../htdocs/core/class/html.form.class.php
-
-		-
 			message: '#^Parameter \#7 \$ajaxoptions of function ajax_autocompleter expects array\<string, array\<string\>\|string\>, array\<array\<string, array\<string, string\>\|string\>\> given\.$#'
 			identifier: argument.type
 			count: 1
