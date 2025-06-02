@@ -36,7 +36,9 @@ class ExpenseReports extends DolibarrApi
 	 * @var string[]	Mandatory fields, checked when create and update object
 	 */
 	public static $FIELDS = array(
-		'fk_user_author'
+		'fk_user_author',
+		'date_debut',
+		'date_fin',
 	);
 
 	/**
