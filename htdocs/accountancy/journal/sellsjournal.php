@@ -411,7 +411,7 @@ if (!empty($tabfac)) {
 		while ($i < $num) {
 			$obj = $db->fetch_object($resql);
 			if ($obj->nb > 0) {
-				$errorforinvoice[$obj->fk_facture_fourn] = 'somelinesarenotbound';
+				$errorforinvoice[$obj->fk_facture] = 'somelinesarenotbound';
 			}
 			$i++;
 		}
