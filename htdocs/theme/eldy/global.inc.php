@@ -5830,6 +5830,9 @@ button.ui-button-icon-only.ui-dialog-titlebar-close {
 .ui-dialog.ui-corner-all.ui-widget.ui-widget-content.ui-front.ui-dialog-buttons.ui-draggable {
 	box-shadow: 5px 5px 20px #AAA;
 }
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
+}
 
 
 /* ============================================================================== */
@@ -5927,8 +5930,6 @@ if (getDolGlobalString('THEME_DARKMODEENABLED')) {
 		max-width: 230px;
 	}
 }
-
-
 
 
 
@@ -6277,6 +6278,7 @@ td.peruser_holiday_imp {
 
 .cal_available { background: #0060d450; }
 .cal_chosen { background: #0060d4; }
+
 
 /* ============================================================================== */
 /*  Ajax - Combo list for autocompletion                                          */
@@ -8554,7 +8556,7 @@ div.clipboardCPValue.hidewithsize {
 
 
 /* ============================================================================== */
-/* CSS style used for hrm skill/rank (may be we can remove this)                  */
+/* CSS style used for HRM skill/rank (may be we can remove this)                  */
 /* ============================================================================== */
 
 .radio_js_bloc_number {
