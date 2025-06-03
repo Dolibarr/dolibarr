@@ -585,7 +585,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
+	 *  Add an entry into table llx_bank
 	 *
 	 *  @param	int	        $date					Date operation
 	 *  @param	string		$oper					'VIR','PRE','LIQ','VAD','CB','CHQ'...
@@ -600,9 +600,10 @@ class Account extends CommonObject
 	 *  @param	int			$datev					Date value
 	 *  @param  string      $num_releve     		Label of bank receipt for reconciliation
 	 *  @param	float		$amount_main_currency	Amount
+	 *  @param	string		$note_private			Note private
 	 *  @return	int									Rowid of added entry, <0 if KO
 	 */
-	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
+	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null, $note_private = '')
 	{
 		global $langs;
 
@@ -668,6 +669,7 @@ class Account extends CommonObject
 		$accline->fk_type = $oper;
 		$accline->numero_compte = $accountancycode;
 		$accline->num_releve = $num_releve;
+		$accline->note_private = $note_private;
 
 		if ($num_chq) {
 			$accline->num_chq = $num_chq;
@@ -686,7 +688,7 @@ class Account extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= ((int) $accline->id).", '".$this->db->escape((string) $categorie)."'";
+				$sql .= ((int) $accline->id).", ".((int) $categorie);
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -2321,6 +2323,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", rappro";
 		$sql .= ", numero_compte";
 		$sql .= ", num_releve";
+		$sql .= ", note";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->dateo)."'";
@@ -2337,6 +2340,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".(int) $this->rappro;
 		$sql .= ", ".($this->numero_compte ? "'".$this->db->escape($this->numero_compte)."'" : "''");
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
+		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ")";
 
 

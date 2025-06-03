@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2024 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2024-2025 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2024      Frédéric France     <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,8 +90,24 @@ if (GETPOSTISSET('template')) {
 		'__GRAY_RECTANGLE__' => 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAABkCAIAAABM5OhcAAABGklEQVR4nO3SwQ3AIBDAsNLJb3SWIEJC9gR5ZM3MB6f9twN4k7FIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIuEsUgYi4SxSBiLhLFIGIvEBtxYAkgpLmAeAAAAAElFTkSuQmCC',
 		'__LAST_NEWS__'   => $langs->trans('LastNews'),
 		'__LIST_PRODUCTS___' => $langs->trans('ListProducts'),
-		'__SUBJECT__' => GETPOST('subject')
+		'__SUBJECT__' => GETPOST('subject'),
+		// vars for company
+		'__MYCOMPANY_ADDRESS__' => $mysoc->getFullAddress(0, '<br>', 1, $langs),
+		'__MYCOMPANY_EMAIL__' => $mysoc->email,
+		'__MYCOMPANY_PHONE_PRO__' => $mysoc->phone_pro,
+		'__MYCOMPANY_PHONE_MOBILE__' => $mysoc->phone_mobile,
+		'__MYCOMPANY_FAX__' => $mysoc->fax,
+		'__MYCOMPANY_EMAIL__' => $mysoc->email,
 	);
+
+	$listsocialnetworks = '';
+	// TODO Add a column imgsrcdata into llx_c_socialnetworks to store the src data for image of the social network in black on a white background.
+	/*
+	foreach($mysoc->socialnetworks as $snkey => $snval) {
+		$listsocialnetworks .= $snkey;
+	}
+	*/
+	$specificSubstitutionArray['__MYCOMPANY_SOCIAL_NETWORKS__'] = $listsocialnetworks;
 
 	if (!empty($mysoc->logo) && dol_is_file($conf->mycompany->dir_output.'/logos/'.$mysoc->logo)) {
 		$specificSubstitutionArray['__LOGO_URL__'] = $urlwithroot.'/viewimage.php?modulepart=mycompany&file='.urlencode('logos/'.$mysoc->logo);
@@ -113,15 +129,19 @@ if (GETPOSTISSET('template')) {
 	}
 
 
-
 	// Must replace
 	// __SUBJECT__, __CONTENTOFMAILHOLDER__, __USERSIGNATURE__, __NEWS_LIST__, __PRODUCTS_LIST__
 	foreach ($specificSubstitutionArray as $key => $val) {
 		$content = str_replace($key, $val, $content);
 	}
 
-	// Parse all strings __(...)__ to replace with the translated value.
-	// TODO
+	// Parse all strings __(...)__ to replace with the translated value $langs->trans("...")
+	$langs->load("other");
+	$content = preg_replace_callback('/__\((.+)\)__/', function ($matches) {
+		global $langs;
+		return $langs->trans($matches[1]);
+	}, $content);
+
 
 	$selectedPostsStr = GETPOST('selectedPosts', 'alpha');
 	$selectedPosts = explode(',', $selectedPostsStr);

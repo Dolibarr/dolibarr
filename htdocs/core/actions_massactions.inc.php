@@ -780,7 +780,7 @@ if (!$error && $massaction == 'cancelorders') {
 			continue;
 		}
 
-		if ($cmd->statut != Commande::STATUS_VALIDATED) {
+		if ($cmd->status != Commande::STATUS_VALIDATED) {
 			$langs->load('errors');
 			setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidToBeCanceled", $cmd->ref), null, 'errors');
 			$error++;
@@ -1615,7 +1615,7 @@ if (!$error && $action == 'confirm_edit_value_extrafields' && $confirm == 'yes' 
 	}
 }
 
-if (!$error && ($massaction == 'affectcommercial' || ($action == 'affectcommercial' && $confirm == 'yes')) && $permissiontoadd) {
+if (!$error && ($massaction == 'assignsalerepresentative' || ($action == 'assignsalerepresentative' && $confirm == 'yes')) && $permissiontoadd) {
 	$db->begin();
 
 	$objecttmp = new $objectclass($db);
@@ -1714,6 +1714,8 @@ if (!$error && ($massaction == 'approveleave' || ($action == 'approveleave' && $
 
 				$objecttmp->date_valid = dol_now();
 				$objecttmp->fk_user_valid = $user->id;
+				$objecttmp->date_approval = dol_now();
+				$objecttmp->fk_user_approve = $user->id;
 				$objecttmp->status = Holiday::STATUS_APPROVED;
 				$objecttmp->statut = $objecttmp->status;	// deprecated
 

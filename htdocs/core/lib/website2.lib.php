@@ -425,7 +425,7 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 			$tplcontent .= '$tmp = preg_replace("/^<meta name=\"description\" content=\".*?\" \/>/ms", "<meta name=\"description\" content=\"" . dolPrintHTMLForAttribute(constant("__SEO_PAGE_DESC__"), 1) . "\"  />", $tmp);'."\n";
 		}
 		if (empty($objectpage->lang)) {		// We may need to use param into the canonical url
-			$tplcontent .= 'defined("__SEO_CANONICAL_URL_PARAMS__") ? ($tmp = preg_replace("/__SEO_CANONICAL_URL_PARAMS__/", dolPrintHTMLForAttributeUrl(constant("__SEO_CANONICAL_URL_PARAMS__")), $tmp)) : ($tmp = preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__\"/", "", preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__&/", "?", $tmp)));'."\n";
+			$tplcontent .= 'defined("__SEO_CANONICAL_URL_PARAMS__") ? ($tmp = preg_replace("/__SEO_CANONICAL_URL_PARAMS__/", dolPrintHTMLForAttributeUrl(constant("__SEO_CANONICAL_URL_PARAMS__")), $tmp)) : ($tmp = preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__\"/", "\"", preg_replace("/\?__SEO_CANONICAL_URL_PARAMS__&/", "?", $tmp)));'."\n";
 
 			$tmpshortlangcode = preg_replace('/[_-].*$/', '', $object->lang); // en_US or en-US -> en
 			$tplcontent .= '$tmp = preg_replace("/__SEO_CANONICAL_LANG__/", (defined("__SEO_PAGE_LANG__") ? preg_replace(\'/\[_-\].*$/\', "", constant("__SEO_PAGE_LANG__")) : (empty($weblangs->shortlang) ? "'.$tmpshortlangcode.'" : $weblangs->shortlang)), $tmp);'."\n";

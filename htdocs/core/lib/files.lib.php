@@ -259,7 +259,7 @@ function dol_dir_list($utf8_path, $types = "all", $recursive = 0, $filter = "", 
  * Scan a directory and return a list of files/directories.
  * Content for string is UTF8 and dir separator is "/".
  *
- * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'
+ * @param	string		$path        	Starting path from which to search. Example: 'produit/MYPROD' or 'produit/%'. Must not end with "/".
  * @param	string		$filter        	Regex filter to restrict list. This regex value must be escaped for '/', since this char is used for preg_match function
  * @param	string[]|null	$excludefilter  Array of Regex for exclude filter (example: array('(\.meta|_preview.*\.png)$','^\.'))
  * @param	string		$sortcriteria	Sort criteria ("","fullname","name","date","size")
@@ -374,11 +374,11 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 		$object = new stdClass();
 	}
 
-	$filearrayindatabase = dol_dir_list_in_database(preg_replace('/[\\/]$/', '', $relativedir), '', null, 'name', SORT_ASC, 0, '', $object);
+	$filearrayindatabase = dol_dir_list_in_database(rtrim($relativedir, "/\\"), '', null, 'name', SORT_ASC, 0, '', $object);
 
-	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 	global $modulepart;
 	if ($modulepart == 'produit' && getDolGlobalInt('PRODUCT_USE_OLD_PATH_FOR_PHOTO')) {
+		// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
 		global $object;
 		if (!empty($object->id)) {
 			if (isModEnabled("product")) {
@@ -388,15 +388,14 @@ function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir, $object = 
 			}
 
 			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $upload_dirold);
-			$relativedirold = preg_replace('/^[\\/]/', '', $relativedirold);
+			$relativedirold = ltrim($relativedirold, "/\\");
 
 			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
 		}
 	} elseif ($modulepart == 'ticket') {
 		foreach ($filearray as $key => $val) {
 			$rel_dir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT, '/').'/', '', $filearray[$key]['path']);
-			$rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
-			$rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+			$rel_dir = trim($rel_dir, "/\\");
 			if ($rel_dir != $relativedir) {
 				$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($rel_dir, '', null, 'name', SORT_ASC));
 			}
@@ -765,7 +764,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile = '', $newmask 
 	dolChmod($newpathoftmpdestfile, $newmask);
 
 	// Rename
-	$moreinfo = array('gen_or_uploaded' => 'dolReplaceInFile');
+	$moreinfo = array('gen_or_uploaded' => 'unknown');
 	$result = dol_move($newpathoftmpdestfile, $newpathofdestfile, $newmask, (($destfile == $srcfile) ? 1 : 0), 0, $indexdatabase, $moreinfo);
 	if (!$result) {
 		dol_syslog("files.lib.php::dolReplaceInFile failed to move tmp file to final dest", LOG_WARNING);
@@ -1146,7 +1145,7 @@ function dol_move($srcfile, $destfile, $newmask = '0', $overwriteifexists = 1, $
 					if (!empty($moreinfo) && !empty($moreinfo['gen_or_uploaded'])) {
 						$ecmfile->gen_or_uploaded = $moreinfo['gen_or_uploaded'];
 					} else {
-						$ecmfile->gen_or_uploaded = 'undefined';	// or 'generated', 'uploaded'
+						$ecmfile->gen_or_uploaded = 'unknown';	// 'generated', 'uploaded', 'api'
 					}
 					if (!empty($moreinfo) && !empty($moreinfo['description'])) {
 						$ecmfile->description = $moreinfo['description']; // indexed content
@@ -1273,7 +1272,7 @@ function dol_move_dir($srcdir, $destdir, $overwriteifexists = 1, $indexdatabase 
 							if ($file["type"] == "dir") {
 								$res = dol_move_dir($filepath.'/'.$oldname, $filepath.'/'.$newname, $overwriteifexists, $indexdatabase, $renamedircontent);
 							} else {
-								$moreinfo = array('gen_or_uploaded' => 'dol_move_dir');
+								$moreinfo = array('gen_or_uploaded' => 'unknown');
 								$res = dol_move($filepath.'/'.$oldname, $filepath.'/'.$newname, '0', $overwriteifexists, 0, $indexdatabase, $moreinfo);
 							}
 							if (!$res) {
@@ -2920,6 +2919,8 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	} elseif ($modulepart == 'expedition' && strpos($original_file, 'receipt/') === 0) {
 		// Fix modulepart delivery
 		$modulepart = 'delivery';
+	} elseif ($modulepart == 'propale') {
+		$modulepart = 'propal';
 	}
 
 	//print 'dol_check_secure_access_document modulepart='.$modulepart.' original_file='.$original_file.' entity='.$entity;
