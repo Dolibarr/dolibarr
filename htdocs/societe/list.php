@@ -1213,7 +1213,9 @@ if ($optioncss != '') {
 }
 print '<input type="hidden" name="token" value="'.newToken().'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-print '<input type="hidden" name="action" value="list">';
+if (empty($massaction)) {
+	print '<input type="hidden" name="action" value="list">';
+}
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 //print '<input type="hidden" name="page" value="'.$page.'">';
@@ -1238,6 +1240,7 @@ foreach (array(1, 2, 3, 4, 5, 6) as $key) {
 	$label = $langs->transnoentities("ProfId".$key.$mysoc->country_code);
 	$textprofid[$key] = '';
 	if ($label != "ProfId".$key.$mysoc->country_code) {	// Get only text between ()
+		$reg = array();
 		if (preg_match('/\((.*)\)/i', $label, $reg)) {
 			$label = $reg[1];
 		}

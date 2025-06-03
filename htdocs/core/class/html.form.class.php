@@ -5900,16 +5900,16 @@ class Form
 
 			$formconfirm .= '
                     resizable: false,
-                    height: "' . $height . '",
-                    width: "' . $width . '",
+                    height: \'' . ((int) $height) . '\',
+                    width: \'' . ((int) $width) . '\',
                     modal: true,
                     closeOnEscape: false,
                     buttons: {
                         "' . dol_escape_js($langs->transnoentities($labelbuttonyes)) . '": function() {
 							var options = "token=' . urlencode(newToken()) . '";
                         	var inputok = ' . json_encode($inputok) . ';	/* List of fields into form */
-							var page = "' . dol_escape_js(!empty($page) ? $page : '') . '";
-                         	var pageyes = "' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '";
+							var page = \'' . dol_escape_js(!empty($page) ? $page : '') . '\';
+                         	var pageyes = \'' . dol_escape_js(!empty($pageyes) ? $pageyes : '') . '\';
 
                          	if (inputok.length > 0) {
                          		$.each(inputok, function(i, inputname) {

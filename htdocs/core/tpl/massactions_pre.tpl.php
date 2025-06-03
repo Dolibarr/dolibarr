@@ -429,7 +429,7 @@ if ($massaction == 'presetcommercial') {
 			'name' => 'affectedcommercial',
 			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
 			'value' => $form->multiselectarray('commercial', $userlist, null, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "assignsalerepresentative", $formquestion, 1, 0, 200, 500, 1);
 }
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
