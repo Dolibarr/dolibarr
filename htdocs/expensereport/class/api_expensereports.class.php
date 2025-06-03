@@ -448,7 +448,7 @@ class ExpenseReports extends DolibarrApi
 	*/
 
 	/**
-	 * Update Expense Report general fields
+	 * Update expense report general fields
 	 *
 	 * Does not touch lines of the expense report
 	 *
@@ -458,7 +458,7 @@ class ExpenseReports extends DolibarrApi
 	 * @param	array	$request_data		Expense report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return    Object                        Updated object
+	 * @return	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
 	 * @throws  RestException	404		Expense report not found
