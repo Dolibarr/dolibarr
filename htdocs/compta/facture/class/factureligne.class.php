@@ -473,7 +473,7 @@ class FactureLigne extends CommonInvoiceLine
 
 			// If fk_remise_except is defined, the discount is linked to the invoice
 			// which flags it as "consumed".
-			if ($this->fk_remise_except) {
+			if ($this->fk_remise_except && empty($error)) {
 				$discount = new DiscountAbsolute($this->db);
 				$result = $discount->fetch($this->fk_remise_except);
 				if ($result >= 0) {
@@ -510,7 +510,7 @@ class FactureLigne extends CommonInvoiceLine
 				}
 			}
 
-			if (!$notrigger) {
+			if (!$notrigger && empty($error)) {
 				// Call trigger
 				$result = $this->call_trigger('LINEBILL_INSERT', $user);
 				if ($result < 0) {
@@ -520,8 +520,17 @@ class FactureLigne extends CommonInvoiceLine
 				// End call triggers
 			}
 
-			$this->db->commit();
-			return $this->id;
+			if (!$error) {
+				$this->db->commit();
+				return $this->id;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::insert ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+			$this->db->rollback();
+			return -3;
 		} else {
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
@@ -538,7 +547,7 @@ class FactureLigne extends CommonInvoiceLine
 	 */
 	public function update($user = null, $notrigger = 0)
 	{
-		global $user, $conf;
+		global $user;
 
 		$error = 0;
 
@@ -695,8 +704,19 @@ class FactureLigne extends CommonInvoiceLine
 				}
 				// End call triggers
 			}
-			$this->db->commit();
-			return 1;
+
+			if (!$error) {
+				$this->db->commit();
+				return 1;
+			}
+
+			foreach ($this->errors as $errmsg) {
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error .= ($this->error ? ', '.$errmsg : $errmsg);
+			}
+
+			$this->db->rollback();
+			return -3;
 		} else {
 			$this->error = $this->db->error();
 			$this->db->rollback();
