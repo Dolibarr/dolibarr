@@ -2593,7 +2593,7 @@ function pdf_getLinkedObjects(&$object, $outputlangs)
 			$outputlangs->load('orders');
 
 			if (count($objects) > 1 && count($objects) <= (getDolGlobalInt("MAXREFONDOC") ? getDolGlobalInt("MAXREFONDOC") : 10)) {
-				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects']) && !getDolGlobalString("hideLinkedObjectInPublicNotePDF")) { // Check if already appended before add to avoid repeat data
+				if (empty($object->context['DolPublicNoteAppendedGetLinkedObjects']) && !getDolGlobalString("HIDE_LINKED_OBJECTS_IN_PUBLIC_NOTE_PDF")) { // Check if already appended before add to avoid repeat data
 					$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities("RefOrder").' :');
 					foreach ($objects as $elementobject) {
 						$object->note_public = dol_concatdesc($object->note_public, $outputlangs->transnoentities($elementobject->ref).(empty($elementobject->ref_client) ? '' : ' ('.$elementobject->ref_client.')').(empty($elementobject->ref_supplier) ? '' : ' ('.$elementobject->ref_supplier.')').' ');
