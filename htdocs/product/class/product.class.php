@@ -2600,7 +2600,7 @@ class Product extends CommonObject
 				$this->fourn_multicurrency_id = $obj->fk_multicurrency;
 				$this->fourn_multicurrency_code = $obj->multicurrency_code;
 				if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-					$this->packaging = $obj->packaging;
+					$this->packaging = (float) $obj->packaging;
 				}
 				$result = $obj->fk_product;
 				return $result;
@@ -2665,7 +2665,7 @@ class Product extends CommonObject
 						$this->fourn_multicurrency_id = $obj->fk_multicurrency;
 						$this->fourn_multicurrency_code = $obj->multicurrency_code;
 						if (getDolGlobalString('PRODUCT_USE_SUPPLIER_PACKAGING')) {
-							$this->packaging = $obj->packaging;
+							$this->packaging = (float) $obj->packaging;
 						}
 						$result = $obj->fk_product;
 						return $result;
@@ -3125,7 +3125,7 @@ class Product extends CommonObject
 				$this->mandatory_period = $obj->mandatory_period;
 
 				if (getDolGlobalString('PRODUCT_USE_CUSTOMER_PACKAGING')) {
-					$this->packaging = $obj->packaging;
+					$this->packaging = (float) $obj->packaging;
 				}
 
 				$this->db->free($resql);
