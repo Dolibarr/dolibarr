@@ -1805,6 +1805,11 @@ class User extends CommonObject
 			}
 		}
 
+		// Security: prevent external users from changing third party association
+		if (!empty($user) && $user->socid > 0) {
+			$this->socid = $user->socid;
+		}
+
 		// Insert into database
 		$sql = "INSERT INTO ".$this->db->prefix()."user (datec, login, ldap_sid, entity, fk_soc)";
 		$sql .= " VALUES(";
