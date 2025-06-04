@@ -643,7 +643,7 @@ if (empty($reshook)) {
 		$object->setValueFrom('ref', GETPOST('ref'), '', null, '', '', $user, 'BILL_MODIFY');
 	} elseif ($action == 'setref_client' && $usercancreate) {
 		$object->fetch($id);
-		$object->set_ref_client(GETPOST('ref_client','alpha'));
+		$object->set_ref_client(GETPOST('ref_client', 'alpha'));
 	} elseif ($action == 'confirm_valid' && $confirm == 'yes' && $usercanvalidate) {
 		// Classify to validated
 		$idwarehouse = GETPOST('idwarehouse', 'int');
