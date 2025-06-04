@@ -202,7 +202,7 @@ if (empty($reshook)) {
 		$action = 'view';
 	}
 
-	if (($action == 'add' || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
+	if ((($action == 'add' && GETPOST('save', 'alpha')) || ($action == 'update' && $object->status < Ticket::STATUS_CLOSED)) && $permissiontoadd) {
 		$ifErrorAction = ($action == 'add' ? 'create' : 'edit');	// Test on permission not required here
 		if ($action == 'add') {		// Test on permission already done
 			$object->track_id = null;

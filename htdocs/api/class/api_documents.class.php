@@ -309,6 +309,10 @@ class Documents extends DolibarrApi
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @param	int		$limit			List limit
+	 * @param	int		$page			Page number
+	 * @param	string	$content_type	Filter on content-type (example 'application/pdf' or 'application/pdf,image/jpeg'))
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array					Array of documents with path
 	 * @phan-return array<array<string,int|string>>
 	 * @phpstan-return array<array<string,int|string>>
@@ -321,7 +325,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	500		Error while fetching object
 	 * @throws	RestException	503		Error when retrieve ecm list
 	 */
-	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
+	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '', $limit = 100, $page = 0, $content_type = '', $pagination_data = false)
 	{
 		global $conf;
 		/** @var Conf $conf */
@@ -614,6 +618,8 @@ class Documents extends DolibarrApi
 		}
 
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		$countarray = count($filearray);
+		$filearray = array_slice($filearray, $limit * $page, $limit);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
 		} else {
@@ -627,14 +633,34 @@ class Documents extends DolibarrApi
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
 						foreach ($ecmfile->lines as $line) {
+							unset($line->db);
 							if ($filearray[$i]['name'] == $line->filename) {
 								// Next line converts EcmFilesLine properties to array
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
+						if (isset($line->filename)) $filearray[$i]['content-type'] = dol_mimetype($line->filename);
+						$arraycontenttype = explode(",", $content_type);
+						if (!empty($content_type) && isset($line->filename) && !in_array(dol_mimetype($line->filename), $arraycontenttype)) {
+							unset($filearray[$i]);
+							$countarray -= 1;
+						}
 					}
 				}
 			}
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$tmp = $filearray;
+			$filearray = [];
+			$filearray['data'] = $tmp;
+			$filearray['pagination'] = [
+				'total' => (int) $countarray,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $countarray / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $filearray;

@@ -1185,7 +1185,6 @@ class BookKeeping extends CommonObject
 		$sql .= " t.date_export,";
 		$sql .= " t.date_validated as date_validation";
 		$sql .= ' FROM '.$this->db->prefix().$this->table_element.' as t';
-
 		$sql .= ' WHERE t.entity = ' . ((int) $conf->entity); // Do not use getEntity for accounting features
 		if ($showAlreadyExportMovements == 0) {
 			$sql .= " AND t.date_export IS NULL";
