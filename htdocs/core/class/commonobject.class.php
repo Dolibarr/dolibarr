@@ -11496,6 +11496,9 @@ abstract class CommonObject
 						$element = 'projet/'.dol_sanitizeFileName($this->project->ref).'/';
 					}
 					// no break
+				case 'contrat':
+					$element = 'contract';
+					break;
 				default:
 					$element = $this->element;
 			}

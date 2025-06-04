@@ -12296,7 +12296,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 2 || $mode == -2) {
-				$crit = preg_replace('/[^0-9,]/', '', $crit); // ID are always integer
+				$crit = preg_replace('/[^\-0-9,]/', '', $crit); // ID are always integer
 				$newres .= ($i2 > 0 ? ' OR ' : '').$db->sanitize($field)." ".($mode == -2 ? 'NOT ' : '');
 				$newres .= $crit ? "IN (".$db->sanitize($db->escape($crit)).")" : "IN (0)";
 				if ($mode == -2) {

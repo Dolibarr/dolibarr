@@ -2884,9 +2884,14 @@ class Ticket extends CommonObject
 								}
 							}
 
+							$sendtocc = array();
+							if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
+								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+							}
+
 							// don't try to send email if no recipient
 							if (!empty($sendto)) {
-								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
+								$this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc);
 							}
 						}
 
@@ -2988,9 +2993,14 @@ class Ticket extends CommonObject
 									}
 								}
 
+								$sendtocc = array();
+								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
+									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+								}
+
 								// Don't try to send email when no recipient
 								if (!empty($sendto)) {
-									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames);
+									$result = $this->sendTicketMessageByEmail($subject, $message, 0, $sendto, $listofpaths, $listofmimes, $listofnames, $sendtocc);
 									if ($result) {
 										// update last_msg_sent date (for last message sent to external users)
 										$this->date_last_msg_sent = dol_now();
@@ -3029,16 +3039,17 @@ class Ticket extends CommonObject
 	/**
 	 * Send ticket by email to linked contacts
 	 *
-	 * @param string	$subject          	  Email subject
-	 * @param string	$message          	  Email message
-	 * @param int<0,1>	$send_internal_cc 	  Receive a copy on internal email (getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')
-	 * @param array<string>	$array_receiver   	  Array of receiver. Example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
-	 * @param string[]	$filename_list       List of files to attach (full path of filename on file system)
-	 * @param string[]	$mimetype_list       List of MIME type of attached files
-	 * @param string[]	$mimefilename_list   List of attached file name in message
-	 * @return boolean     					True if mail sent to at least one receiver, false otherwise
+	 * @param string		$subject          	Email subject
+	 * @param string		$message          	Email message
+	 * @param int<0,1>		$send_internal_cc 	Receive a copy on internal email at getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM')
+	 * @param array<string>	$array_receiver		Array of receiver. Example array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+	 * @param string[]		$filename_list      List of files to attach (full path of filename on file system)
+	 * @param string[]		$mimetype_list      List of MIME type of attached files
+	 * @param string[]		$mimefilename_list  List of attached file name in message
+	 * @param array<string>	$array_receiver_cc	Array of receiver in CC. Example array('john@doe.com')
+	 * @return boolean     						True if mail sent to at least one receiver, false otherwise
 	 */
-	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array())
+	public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array(), $filename_list = array(), $mimetype_list = array(), $mimefilename_list = array(), $array_receiver_cc = array())
 	{
 		global $conf, $langs, $user;
 
@@ -3061,6 +3072,9 @@ class Ticket extends CommonObject
 		$sendtocc = '';
 		if ($send_internal_cc) {
 			$sendtocc = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
+		}
+		if (!empty($array_receiver_cc) && is_array($array_receiver_cc)) {
+			$sendtocc .= ($sendtocc ? ',' : '').implode(',', $array_receiver_cc);
 		}
 
 		$from = getDolGlobalString('TICKET_NOTIFICATION_EMAIL_FROM');
