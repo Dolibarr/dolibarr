@@ -54,10 +54,8 @@ INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values 
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) VALUES ('shipping', 'external', 'BILLING',       'Customer invoice contact', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'CUSTOMER',      'Customer contact following-up shipping', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'SHIPPING',      'Customer shipping contact', 1);
-INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('shipping', 'external', 'DELIVERY',      'Delivery facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('facture', 'internal', 'LOADING',		  'Loading facility', 1);
 INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'internal', 'LOADING',		  'Loading facility', 1);
-INSERT INTO llx_c_type_contact (element, source, code, libelle, active ) values ('commande', 'external', 'DELIVERY',      'Delivery facility', 1);
 
 ALTER TABLE llx_holiday_config DROP INDEX idx_holiday_config;
 ALTER TABLE llx_holiday_config ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
