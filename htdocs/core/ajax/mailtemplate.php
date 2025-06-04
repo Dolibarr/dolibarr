@@ -92,7 +92,7 @@ if (GETPOSTISSET('template')) {
 		'__LIST_PRODUCTS___' => $langs->trans('ListProducts'),
 		'__SUBJECT__' => GETPOST('subject'),
 		// vars for company
-		'__MYCOMPANY_ADDRESS__' => $mysoc->getFullAddress(0, '<br>', 1, $langs),
+		'__MYCOMPANY_ADDRESS__' => $mysoc->getFullAddress(0, '<br>', 1, ''),
 		'__MYCOMPANY_EMAIL__' => $mysoc->email,
 		'__MYCOMPANY_PHONE_PRO__' => $mysoc->phone_pro,
 		'__MYCOMPANY_PHONE_MOBILE__' => $mysoc->phone_mobile,

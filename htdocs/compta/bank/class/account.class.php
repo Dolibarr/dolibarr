@@ -597,7 +597,7 @@ class Account extends CommonObject
 	 *  @param	string		$emetteur				Name of cheque writer
 	 *  @param	string		$banque					Bank of cheque writer
 	 *  @param	string		$accountancycode		When we record a free bank entry, we must provide accounting account if accountancy module is on.
-	 *  @param	int			$datev					Date value
+	 *  @param	?int		$datev					Date value
 	 *  @param  string      $num_releve     		Label of bank receipt for reconciliation
 	 *  @param	?float		$amount_main_currency	Amount
 	 *  @param	string		$note_private			Note private
@@ -2122,7 +2122,7 @@ class AccountLine extends CommonObjectLine
 	public $amount;
 
 	/**
-	 * @var float		Amount in the currency of company if bank account use another currency
+	 * @var ?float		Amount in the currency of the main company if the bank account uses another currency
 	 */
 	public $amount_main_currency;
 
