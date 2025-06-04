@@ -58,7 +58,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 $action = GETPOST('action', 'aZ09');
 
 $module = GETPOST('module', 'aZ09arobase');
-$uploaddirname = GETPOST('uploaddirname', 'alpha');
+$uploaddirname = dol_sanitizeFileName(GETPOST('uploaddirname', 'alpha'));
 
 $flowFilename = GETPOST('flowFilename', 'alpha');
 $flowIdentifier = GETPOST('flowIdentifier', 'alpha');
