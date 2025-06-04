@@ -3466,9 +3466,9 @@ if (empty($reshook)) {
 	}
 	if (!empty($object->id) && $action == 'send') {
 		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
-		$object->getSommePaiement(0);
-		$object->getSumCreditNotesUsed(0);
-		$object->getSumDepositsUsed(0);
+		$object->getSommePaiement(-1);
+		$object->getSumCreditNotesUsed(-1);
+		$object->getSumDepositsUsed(-1);
 	}
 	$triggersendname = 'BILL_SENTBYMAIL';
 	$paramname = 'id';
