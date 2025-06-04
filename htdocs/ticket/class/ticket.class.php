@@ -2885,7 +2885,7 @@ class Ticket extends CommonObject
 							}
 
 							$sendtocc = array();
-							if (getDolGlobalInt("TICKET_SEND_INTERNAL_CC")) {
+							if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
 								$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 							}
 
@@ -2994,7 +2994,7 @@ class Ticket extends CommonObject
 								}
 
 								$sendtocc = array();
-								if (getDolGlobalInt("TICKET_SEND_INTERNAL_CC")) {
+								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
 									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
 								}
 
