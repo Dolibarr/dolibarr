@@ -144,15 +144,24 @@ class ProductFournisseur extends Product
 	 */
 	public $fourn_charges;	// when getDolGlobalString('PRODUCT_CHARGES') is set
 
+
+	/* Properties found into product_fournisseur_price */
+
 	/**
 	 * @var int		product-supplier id
 	 */
 	public $product_fourn_id;
 
 	/**
-	 * @var string
+	 * @var string	product-supplier entity
 	 */
 	public $product_fourn_entity;
+
+	/**
+	 * @var float	product-supplier step to floor quantities to next multiple for Purchases
+	 */
+	public $product_fourn_packaging;
+
 
 	/**
 	 * @var int ID user_id - user who created/updated supplier price
@@ -243,11 +252,6 @@ class ProductFournisseur extends Product
 	 * @var string - Supplier barcode type
 	 */
 	public $supplier_fk_barcode_type;
-
-	/**
-	 * @var float
-	 */
-	public $packaging;
 
 	/**
 	 * @var array<int,string>
@@ -469,8 +473,7 @@ class ProductFournisseur extends Product
 		$unitBuyPrice = (float) price2num($buyprice / $qty, 'MU');
 
 		// We can have a purchase ref that need to buy 100 min for a given price and with a packaging of 50.
-		//$packaging = price2num(((empty($this->packaging) || $this->packaging < $qty) ? $qty : $this->packaging), 'MS');
-		$packaging = price2num((empty($this->packaging) ? $qty : $this->packaging), 'MS');
+		$packaging = price2num((empty($this->product_fourn_packaging) ? $qty : $this->product_fourn_packaging), 'MS');
 
 		$error = 0;
 		$now = dol_now();

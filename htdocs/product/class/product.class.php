@@ -325,7 +325,7 @@ class Product extends CommonObject
 	public $fourn_multicurrency_code;
 
 	/**
-	 * @var ?float
+	 * @var ?float		The step to floor quantities to next multiple for Sales (Example: if packaging is 10 and quantity entered is 12, we will round to 20)
 	 */
 	public $packaging;
 

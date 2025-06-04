@@ -253,7 +253,7 @@ class ProductFournisseurPrice extends CommonObject
 	 */
 	public $fk_barcode_type;
 	/**
-	 * @var string
+	 * @var string		The step to floor quantities to next multiple for Purchases (Example: if packaging is 10 and quantity entered is 12, we will round to 20)
 	 */
 	public $packaging;
 	// END MODULEBUILDER PROPERTIES
