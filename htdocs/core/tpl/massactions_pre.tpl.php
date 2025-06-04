@@ -53,6 +53,7 @@
  * @var string $sendto
  * @var string $topicmail
  * @var string $trackid
+ * @var ?string $uploaddir
  * @var int[] $toselect
  * @var int[] $arrayofselected
  */
@@ -435,8 +436,9 @@ if ($massaction == 'presetcommercial') {
 	$formquestion[] = array('type' => 'other',
 			'name' => 'affectedcommercial',
 			'label' => $form->editfieldkey('AllocateCommercial', 'commercial_id', '', $object, 0),
-			'value' => $form->multiselectarray('commercial', $userlist, array(), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
-	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "affectcommercial", $formquestion, 1, 0, 200, 500, 1);
+			'value' => $form->multiselectarray('commercial', $userlist, array(), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1)
+	);
+	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmAllocateCommercial"), $langs->trans("ConfirmAllocateCommercialQuestion", count($toselect)), "assignsalerepresentative", $formquestion, 1, 0, 200, 500, 1);
 }
 if ($massaction == 'unsetcommercial') {
 	$formquestion = array();
@@ -444,7 +446,8 @@ if ($massaction == 'unsetcommercial') {
 	$formquestion[] = array('type' => 'other',
 		'name' => 'unassigncommercial',
 		'label' => $form->editfieldkey('UnallocateCommercial', 'commercial_id', '', $object, 0),
-		'value' => $form->multiselectarray('commercial', $userlist, array(), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1));
+		'value' => $form->multiselectarray('commercial', $userlist, array(), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0, '', '', '', 1)
+	);
 	print $form->formconfirm($_SERVER["PHP_SELF"], $langs->trans("ConfirmUnallocateCommercial"), $langs->trans("ConfirmUnallocateCommercialQuestion", count($toselect)), "unassigncommercial", $formquestion, 1, 0, 200, 500, 1);
 }
 

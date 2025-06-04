@@ -1392,6 +1392,10 @@ function getPagesFromSearchCriterias($type, $algo, $searchstring, $max = 25, $so
  */
 function getImageFromHtmlContent($htmlContent, $imageNumber = 1)
 {
+	if (empty($htmlContent)) {
+		return '';
+	}
+
 	$dom = new DOMDocument();
 
 	libxml_use_internal_errors(false);	// Avoid to fill memory with xml errors
