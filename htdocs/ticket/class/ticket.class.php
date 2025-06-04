@@ -2994,8 +2994,8 @@ class Ticket extends CommonObject
 								}
 
 								$sendtocc = array();
-								if (getDolGlobalInt("TICKET_SEND_INTERNAL_CC")) {
-									$sendtocc = explode(',', getDolGlobalString("TICKET_SEND_INTERNAL_CC"));
+								if (getDolGlobalString("TICKET_SEND_INTERNAL_CC")) {
+									$sendtocc = explode(',', getDolGlobalInt("TICKET_SEND_INTERNAL_CC"));
 								}
 
 								// Don't try to send email when no recipient
