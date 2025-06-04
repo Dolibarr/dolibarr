@@ -5778,6 +5778,10 @@ div#dialogforpopup {
 	background-color: #f8f8f8 !important;
 }
 
+.ui-dialog .ui-dialog-buttonpane {
+	padding: .5em 1em .3em .4em;
+}
+
 
 /* ============================================================================== */
 /* For content of image preview                                                   */

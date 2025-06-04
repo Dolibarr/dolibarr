@@ -454,7 +454,7 @@ if ($object->fetch($id) >= 0) {
 			$nbemail .= ' '.img_warning($langs->trans('ToAddRecipientsChooseHere'));//.' <span class="warning">'.$langs->trans("NoTargetYet").'</span>';
 		}
 		if ($htmltooltip) {
-			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'warning');
+			print $form->textwithpicto($nbemail, $htmltooltip, 1, 'info');
 		} else {
 			print $nbemail;
 		}
