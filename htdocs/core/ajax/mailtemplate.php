@@ -97,7 +97,6 @@ if (GETPOSTISSET('template')) {
 		'__MYCOMPANY_PHONE_PRO__' => $mysoc->phone_pro,
 		'__MYCOMPANY_PHONE_MOBILE__' => $mysoc->phone_mobile,
 		'__MYCOMPANY_FAX__' => $mysoc->fax,
-		'__MYCOMPANY_EMAIL__' => $mysoc->email,
 	);
 
 	$listsocialnetworks = '';
