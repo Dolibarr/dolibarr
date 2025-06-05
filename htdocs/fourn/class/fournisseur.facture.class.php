@@ -1072,8 +1072,8 @@ class FactureFournisseur extends CommonInvoice
 					$line->id = $obj->rowid;
 					$line->rowid = $obj->rowid;
 					$line->description = $obj->description;
-					$line->date_start = $obj->date_start;
-					$line->date_end = $obj->date_end;
+					$line->date_start = $this->db->jdate($obj->date_start);
+					$line->date_end = $this->db->jdate($obj->date_end);
 
 					$line->product_ref = $obj->product_ref;
 					$line->ref = $obj->product_ref;
@@ -3657,8 +3657,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->rowid = $obj->rowid;
 		$this->fk_facture_fourn = $obj->fk_facture_fourn;
 		$this->description		= $obj->description;
-		$this->date_start = $obj->date_start;
-		$this->date_end = $obj->date_end;
+		$this->date_start = $this->db->jdate($obj->date_start);
+		$this->date_end = $this->db->jdate($obj->date_end);
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
