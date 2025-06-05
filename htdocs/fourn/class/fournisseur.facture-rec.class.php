@@ -876,7 +876,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function addline($fk_product, $ref, $label, $desc, $pu_ht, $pu_ttc, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
 	{
-		global $mysoc, $user;
+		global $user;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -923,7 +923,7 @@ class FactureFournisseurRec extends CommonInvoice
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1023,7 +1023,7 @@ class FactureFournisseurRec extends CommonInvoice
 			dol_syslog(get_class($this). '::addline', LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				$lineId = $this->db->last_insert_id(MAIN_DB_PREFIX. 'facture_fourn_det_rec');
-				$this->update_price();
+				$this->update_price(0, 'none', 0, $this->thirdparty);
 				$this->id = $facid;
 				$this->db->commit();
 				return $lineId;
@@ -1068,7 +1068,7 @@ class FactureFournisseurRec extends CommonInvoice
 	 */
 	public function updateline($rowid, $fk_product, $ref, $label, $desc, $pu_ht, $qty, $remise_percent, $txtva, $txlocaltax1 = 0, $txlocaltax2 = 0, $price_base_type = 'HT', $type = 0, $date_start = 0, $date_end = 0, $info_bits = 0, $special_code = 0, $rang = -1, $fk_unit = null, $pu_ht_devise = 0)
 	{
-		global $mysoc, $user;
+		global $user;
 
 		$facid = $this->id;
 
@@ -1119,7 +1119,7 @@ class FactureFournisseurRec extends CommonInvoice
 				$txtva = preg_replace('/\s*\(.*\)/', '', $txtva); // Remove code into vatrate.
 			}
 
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $mysoc, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
 
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
@@ -1180,7 +1180,7 @@ class FactureFournisseurRec extends CommonInvoice
 			dol_syslog(get_class($this). '::updateline', LOG_DEBUG);
 			if ($this->db->query($sql)) {
 				$this->id = $facid;
-				$this->update_price();
+				$this->update_price(0, 'none', 0, $this->thirdparty);
 				return 1;
 			} else {
 				$this->error = $this->db->lasterror();

@@ -439,7 +439,7 @@ if (empty($reshook)) {
 				$fk_parent_line = $result;
 			}
 		}
-		$creditnote->update_price(1);
+		$creditnote->update_price(1, 'none', 0, $mysoc);
 
 		$constantforkey = 'CASHDESK_NO_DECREASE_STOCK'.$_SESSION["takeposterminal"];
 		if (isModEnabled('stock') && $conf->global->$constantforkey != "1") {

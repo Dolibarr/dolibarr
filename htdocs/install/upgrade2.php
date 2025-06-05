@@ -1575,7 +1575,7 @@ function migrate_price_facture($db, $langs, $conf)
 					$facture->id = $obj->facid;
 
 					if ($facture->fetch($facture->id) >= 0) {
-						if ($facture->update_price() > 0) {
+						if ($facture->update_price(0, 'none', 0, $tmpmysoc) > 0) {
 							//print $facture->id;
 						} else {
 							print "Error id=".$facture->id;
@@ -1675,7 +1675,7 @@ function migrate_price_propal($db, $langs, $conf)
 				 $propal->id=$obj->rowid;
 				 if ( $propal->fetch($propal->id) >= 0 )
 				 {
-				 if ( $propal->update_price() > 0 )
+				 if ( $propal->update_price(0, 'none', 0, $tmpmysoc) > 0 )
 				 {
 				 print ". ";
 				 }
@@ -1859,7 +1859,7 @@ function migrate_price_commande($db, $langs, $conf)
 				 $commande->id = $obj->rowid;
 				 if ( $commande->fetch($commande->id) >= 0 )
 				 {
-				 if ( $commande->update_price() > 0 )
+				 if ( $commande->update_price(0, 'none', 0, $tmpmysoc) > 0 )
 				 {
 				 print ". ";
 				 }
@@ -1969,7 +1969,7 @@ function migrate_price_commande_fournisseur($db, $langs, $conf)
 				 $commande->id = $obj->rowid;
 				 if ( $commande->fetch($commande->id) >= 0 )
 				 {
-				 if ( $commande->update_price() > 0 )
+				 if ( $commande->update_price(0, 'none', 0, $tmpmysoc) > 0 )
 				 {
 				 print ". ";
 				 }

@@ -657,7 +657,8 @@ class Delivery extends CommonObject
 			$sql .= " WHERE rowid = ".((int) $lineid);
 
 			if ($this->db->query($sql)) {
-				$this->update_price(1);
+				global $mysoc;
+				$this->update_price(1, 'none', 0, $mysoc);
 
 				return 1;
 			} else {

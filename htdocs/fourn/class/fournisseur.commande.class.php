@@ -2255,7 +2255,7 @@ class CommandeFournisseur extends CommonOrder
 			}
 
 			if ($line->delete($notrigger) > 0) {
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $this->thirdparty);
 				return 1;
 			} else {
 				$this->error = $line->error;
@@ -2769,7 +2769,7 @@ class CommandeFournisseur extends CommonOrder
 			$sql .= ", ".price2num($comclient->lines[$i]->qty, 'MS').", ".price2num($comclient->lines[$i]->tva_tx, 5).", ".price2num($comclient->lines[$i]->localtax1_tx, 5).", ".price2num($comclient->lines[$i]->localtax2_tx, 5).", ".price2num($comclient->lines[$i]->remise_percent, 3);
 			$sql .= ", '".price2num($comclient->lines[$i]->subprice, 'MT')."','0', '".$this->db->escape($ref)."');";
 			if ($this->db->query($sql)) {
-				$this->update_price(1);
+				$this->update_price(1, 'none', 0, $this->thirdparty);
 			}
 		}
 
@@ -3022,7 +3022,7 @@ class CommandeFournisseur extends CommonOrder
 
 			// Mise a jour info denormalisees au niveau facture
 			if ($result >= 0) {
-				$this->update_price('1', 'auto');
+				$this->update_price('1', 'auto', 0, $this->thirdparty);
 				$this->db->commit();
 				return $result;
 			} else {
