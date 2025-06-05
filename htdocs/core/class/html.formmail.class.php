@@ -1568,7 +1568,7 @@ class FormMail extends Form
 					$blogArray[$blog->id] = array(
 						'id' => $blog->id,
 						'label' => '['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.'] '.dol_trunc($blog->title, 40),
-						'data-html' => '<span class="opacitymedium">['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.']</span> '.dol_trunc($blog->title, 40),
+						'labelhtml' => '<span class="opacitymedium">['.$labelwebsite.' '.$blog->type_container.' '.$blog->id.']</span> '.dol_trunc($blog->title, 40),
 					);
 				}
 			}

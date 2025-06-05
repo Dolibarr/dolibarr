@@ -3464,6 +3464,12 @@ if (empty($reshook)) {
 	if (empty($id)) {
 		$id = $facid;
 	}
+	if (!empty($object->id) && $action == 'send') {
+		// load sumpayed, sumdeposit, sumcreditnote that can be used in email templates
+		$object->getSommePaiement(-1);
+		$object->getSumCreditNotesUsed(-1);
+		$object->getSumDepositsUsed(-1);
+	}
 	$triggersendname = 'BILL_SENTBYMAIL';
 	$paramname = 'id';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_INVOICE_TO';

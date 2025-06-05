@@ -3,6 +3,7 @@
  * Copyright (C) 2016   Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2020-2024  Frédéric France		<frederic.france@free.fr>
  * Copyright (C) 2025		MDW					<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025	William Mead			<william@m34d.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 
 /**
  * API class for Expense Reports
+ *
+ * @since	5.0.0	Initial implementation
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
@@ -68,12 +71,14 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Get properties of an Expense Report
+	 * Get an expense report
 	 *
 	 * Return an array with Expense Report information
 	 *
-	 * @param   int         $id         ID of Expense Report
-	 * @return  Object					Object with cleaned properties
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int		$id		ID of Expense Report
+	 * @return	Object			Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
@@ -97,21 +102,25 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * List Expense Reports
+	 * List expense reports
 	 *
 	 * Get a list of Expense Reports
 	 *
-	 * @param string	$sortfield			Sort field
-	 * @param string	$sortorder			Sort order
-	 * @param int		$limit				Limit for list
-	 * @param int		$page				Page number
-	 * @param string	$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
-	 * @param string    $sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
-	 * @param string    $properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
-	 * @param bool      $pagination_data    If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
-	 * @return  array                       Array of order objects
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	string		$sortfield			Sort field
+	 * @param	string		$sortorder			Sort order
+	 * @param	int			$limit				List limit
+	 * @param	int			$page				Page number
+	 * @param	string		$user_ids   		User ids filter field. Example: '1' or '1,2,3'          {@pattern /^[0-9,]*$/i}
+	 * @param	string		$sqlfilters 		Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
+	 * @param	string		$properties			Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 * @param	bool		$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
+	 * @return	array							Array of order objects
 	 * @phan-return ExpenseReport[]
 	 * @phpstan-return ExpenseReport[]
+	 *
+	 * @throws RestException
 	 */
 	public function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = '', $sqlfilters = '', $properties = '', $pagination_data = false)
 	{
@@ -192,12 +201,16 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Create Expense Report object
+	 * Create an expense report
 	 *
-	 * @param   array   $request_data   Request data
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	array	$request_data	Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  int                     ID of Expense Report
+	 * @return	int						ID of Expense Report
+	 *
+	 * @throws RestException
 	 */
 	public function post($request_data = null)
 	{
@@ -437,13 +450,17 @@ class ExpenseReports extends DolibarrApi
 	*/
 
 	/**
-	 * Update Expense Report general fields (won't touch lines of expensereport)
+	 * Update expense report general fields
 	 *
-	 * @param 	int   	$id             	Id of Expense Report to update
-	 * @param 	array 	$request_data   	Datas
+	 * Does not touch lines of the expense report
+	 *
+	 * @since	5.0.0	Initial implementation
+	 *
+	 * @param	int		$id					ID of Expense Report to update
+	 * @param	array	$request_data		Expense report data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return 	Object						Updated object
+	 * @return	Object						Updated object
 	 *
 	 * @throws	RestException	401		Not allowed
 	 * @throws  RestException	404		Expense report not found
@@ -491,13 +508,16 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Delete Expense Report
+	 * Delete expense report
 	 *
-	 * @param   int     $id         Expense Report ID
+	 * @since	5.0.0	Initial implementation
 	 *
-	 * @return  array
+	 * @param	int		$id		Expense Report ID
+	 * @return	array
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
+	 *
+	 * @throws RestException
 	 */
 	public function delete($id)
 	{
@@ -572,13 +592,15 @@ class ExpenseReports extends DolibarrApi
 
 
 	/**
-	 * Get the list of payments of expensereport.
+	 * Get the list of payments of an expense report
 	 *
-	 * @param string    $sortfield  Sort field
-	 * @param string    $sortorder  Sort order
-	 * @param int       $limit      Limit for list
-	 * @param int       $page       Page number
-	 * @return array                List of paymentExpenseReport objects
+	 * @since	20.0.0	Initial implementation
+	 *
+	 * @param	string	$sortfield		Sort field
+	 * @param	string	$sortorder		Sort order
+	 * @param	int		$limit			List limit
+	 * @param	int		$page			Page number
+	 * @return	array					List of paymentExpenseReport objects
 	 * @phan-return PaymentExpenseReport[]
 	 * @phpstan-return PaymentExpenseReport[]
 	 *
@@ -629,10 +651,12 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Get a given payment.
+	 * Get an expense report payment
+	 *
+	 * @since	20.0.0	Initial implementation
 	 *
 	 * @param	int		$pid	Payment ID
-	 * @return 	object 			PaymentExpenseReport object
+	 * @return	object			PaymentExpenseReport object
 	 *
 	 * @url     GET /payments/{pid}
 	 *
@@ -654,15 +678,18 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Create payment of ExpenseReport
+	 * Create a payment for an expense report
 	 *
-	 * @param 	int 	$id   							ID of expense report
-	 * @param 	array 	$request_data   {@from body}  	Request data
+	 * @since	20.0.0	Initial implementation
+	 *
+	 * @param	int		$id								ID of an expense report
+	 * @param	array	$request_data   {@from body}	Request data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return 	int 									ID of paymentExpenseReport
+	 * @return	int									ID of paymentExpenseReport
 	 *
 	 * @url     POST {id}/payments
+	 * @throws RestException
 	 */
 	public function addPayment($id, $request_data = null)
 	{
@@ -696,15 +723,18 @@ class ExpenseReports extends DolibarrApi
 	}
 
 	/**
-	 * Update a payment of ExpenseReport
+	 * Update a payment of an expense report
 	 *
-	 * @param   int     $id              ID of paymentExpenseReport
-	 * @param   array   $request_data    data
+	 * @since	20.0.0	Initial implementation
+	 *
+	 * @param	int		$id				ID of paymentExpenseReport
+	 * @param	array	$request_data	data
 	 * @phan-param ?array<string,string> $request_data
 	 * @phpstan-param ?array<string,string> $request_data
-	 * @return  object
+	 * @return	object
 	 *
 	 * @url     PUT {id}/payments
+	 * @throws RestException
 	 */
 	public function updatePayment($id, $request_data = null)
 	{

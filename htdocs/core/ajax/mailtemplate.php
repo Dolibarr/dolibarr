@@ -92,12 +92,11 @@ if (GETPOSTISSET('template')) {
 		'__LIST_PRODUCTS___' => $langs->trans('ListProducts'),
 		'__SUBJECT__' => GETPOST('subject'),
 		// vars for company
-		'__MYCOMPANY_ADDRESS__' => $mysoc->getFullAddress(0, '<br>', 1, $langs),
+		'__MYCOMPANY_ADDRESS__' => $mysoc->getFullAddress(0, '<br>', 1, ''),
 		'__MYCOMPANY_EMAIL__' => $mysoc->email,
 		'__MYCOMPANY_PHONE_PRO__' => $mysoc->phone_pro,
 		'__MYCOMPANY_PHONE_MOBILE__' => $mysoc->phone_mobile,
 		'__MYCOMPANY_FAX__' => $mysoc->fax,
-		'__MYCOMPANY_EMAIL__' => $mysoc->email,
 	);
 
 	$listsocialnetworks = '';
@@ -137,10 +136,17 @@ if (GETPOSTISSET('template')) {
 
 	// Parse all strings __(...)__ to replace with the translated value $langs->trans("...")
 	$langs->load("other");
-	$content = preg_replace_callback('/__\((.+)\)__/', function ($matches) {
-		global $langs;
-		return $langs->trans($matches[1]);
-	}, $content);
+	$content = preg_replace_callback(
+		'/__\((.+)\)__/',
+		/**
+		 * @param 	array<int,string> $matches	Array of matches
+		 * @return 	string 						Translated string for the key
+		 */
+		function ($matches) {
+			global $langs;
+			return $langs->trans($matches[1]);
+		},
+		$content);
 
 
 	$selectedPostsStr = GETPOST('selectedPosts', 'alpha');
