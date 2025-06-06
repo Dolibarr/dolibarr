@@ -251,11 +251,19 @@ class MouvementStock extends CommonObject
 		if ($product->id <= 0) {	// Can happen if database is corrupted (a product id exist in stock with product that has been removed)
 			return 0;
 		}
+		// warehouse id is mandatory when it's not a virtual product'
+		$productChildrenNb = 0;
+		if (!empty($conf->global->PRODUIT_SOUSPRODUITS)) {
+			$productChildrenNb = $product->hasChildren();
+		}
+		if ($entrepot_id == 0 && $productChildrenNb == 0) {
+			return 0;
+		}
 
 		// Define if we must make the stock change (If product type is a service or if stock is used also for services)
 		// Only record into stock tables wil be disabled by this (the rest like writing into lot table or movement of subproucts are done)
 		$movestock = 0;
-		if (($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $product->hasChildren()==0) {
+		if (($product->type != Product::TYPE_SERVICE || !empty($conf->global->STOCK_SUPPORTS_SERVICES)) && $productChildrenNb == 0) {
 			$movestock = 1;
 		}
 
@@ -1254,15 +1262,15 @@ class MouvementStock extends CommonObject
 		return $cpt;
 	}
 
-/**
-	 * Retrieve date of last stock movement for 
-	 * 
-	 * @param     int      $fk_entrepot
-	 * @param     int      $fk_product
-	 * @param     string   $batch
-	 * @return    string   date of last stock movement if found else empty string
+	/**
+	 * Retrieve date of last stock movement for
+	 *
+	 * @param		int		$fk_entrepot	Warehouse id
+	 * @param		int		$fk_product		Product id
+	 * @param		string	$batch			Batch
+	 * @return		string	Date of last stock movement if found else empty string
 	 */
-	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch) 
+	public function getDateLastMovementProductBatch($fk_entrepot, $fk_product, $batch)
 	{
 		$date = '';
 
