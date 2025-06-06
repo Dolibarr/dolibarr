@@ -133,7 +133,7 @@ print load_fiche_titre($langs->trans("LezioniArea"), '', 'lezioni.png@lezioni');
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-print '<div class="div-table-responsive">'; // You can use div-table-responsive-no-min if you dont need reserved height for your table
+print '<div class="div-table-responsive div-table-responsive-no-min">'; // Modifica per garantire una migliore responsività
 print '<table class="tagtable nobottomiftotal liste">'."\n";
 //title
 print '<tr class="liste_titre">';
