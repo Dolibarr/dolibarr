@@ -410,7 +410,7 @@ class OrderLine extends CommonOrderLine
 		}
 
 		// Check parameters
-		if ($this->product_type < 0) {
+		if ($this->product_type < 0 || empty($this->product_type)) {
 			return -1;
 		}
 
