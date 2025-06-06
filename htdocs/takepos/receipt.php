@@ -157,6 +157,7 @@ $constFreeText = 'TAKEPOS_HEADER'.(empty($_SESSION['takeposterminal']) ? '0' : $
 if (getDolGlobalString('TAKEPOS_HEADER') || getDolGlobalString($constFreeText)) {
 	$newfreetext = '';
 	$substitutionarray = getCommonSubstitutionArray($langs);
+	complete_substitutions_array($substitutionarray, $langs, $object);
 	if (getDolGlobalString('TAKEPOS_HEADER')) {
 		$newfreetext .= make_substitutions(getDolGlobalString('TAKEPOS_HEADER'), $substitutionarray);
 	}
