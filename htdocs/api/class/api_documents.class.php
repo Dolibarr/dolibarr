@@ -309,6 +309,10 @@ class Documents extends DolibarrApi
 	 * @param	string	$ref			Ref of element
 	 * @param	string	$sortfield		Sort criteria ('','fullname','relativename','name','date','size')
 	 * @param	string	$sortorder		Sort order ('asc' or 'desc')
+	 * @param	int		$limit			List limit
+	 * @param	int		$page			Page number
+	 * @param	string	$content_type	Filter on content-type (example 'application/pdf' or 'application/pdf,image/jpeg'))
+	 * @param	bool	$pagination_data	If this parameter is set to true the response will include pagination data. Default value is false. Page starts from 0*
 	 * @return	array					Array of documents with path
 	 * @phan-return array<array<string,int|string>>
 	 * @phpstan-return array<array<string,int|string>>
@@ -321,7 +325,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	500		Error while fetching object
 	 * @throws	RestException	503		Error when retrieve ecm list
 	 */
-	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '')
+	public function getDocumentsListByElement($modulepart, $id = 0, $ref = '', $sortfield = '', $sortorder = '', $limit = 100, $page = 0, $content_type = '', $pagination_data = false)
 	{
 		global $conf;
 		/** @var Conf $conf */
@@ -614,6 +618,8 @@ class Documents extends DolibarrApi
 		}
 
 		$filearray = dol_dir_list($upload_dir, $type, $recursive, '', '(\.meta|_preview.*\.png)$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
+		$countarray = count($filearray);
+		$filearray = array_slice($filearray, $limit * $page, $limit);
 		if (empty($filearray)) {
 			throw new RestException(404, 'Search for modulepart '.$modulepart.' with Id '.$object->id.(!empty($object->ref) ? ' or Ref '.$object->ref : '').' does not return any document.');
 		} else {
@@ -627,14 +633,34 @@ class Documents extends DolibarrApi
 					$count = count($filearray);
 					for ($i = 0 ; $i < $count ; $i++) {
 						foreach ($ecmfile->lines as $line) {
+							unset($line->db);
 							if ($filearray[$i]['name'] == $line->filename) {
 								// Next line converts EcmFilesLine properties to array
 								$filearray[$i] = array_merge($filearray[$i], (array) $line);
 							}
 						}
+						if (isset($line->filename)) $filearray[$i]['content-type'] = dol_mimetype($line->filename);
+						$arraycontenttype = explode(",", $content_type);
+						if (!empty($content_type) && isset($line->filename) && !in_array(dol_mimetype($line->filename), $arraycontenttype)) {
+							unset($filearray[$i]);
+							$countarray -= 1;
+						}
 					}
 				}
 			}
+		}
+
+		//if $pagination_data is true the response will contain element data with all values and element pagination with pagination data(total,page,limit)
+		if ($pagination_data) {
+			$tmp = $filearray;
+			$filearray = [];
+			$filearray['data'] = $tmp;
+			$filearray['pagination'] = [
+				'total' => (int) $countarray,
+				'page' => $page, //count starts from 0
+				'page_count' => ceil((int) $countarray / $limit),
+				'limit' => $limit
+			];
 		}
 
 		return $filearray;
@@ -667,17 +693,19 @@ class Documents extends DolibarrApi
 	 * @param   string  $filename           	Name of file to create ('FA1705-0123.txt')
 	 * @param   string  $modulepart         	Name of module or area concerned by file upload ('product', 'service', 'invoice', 'proposal', 'project', 'project_task', 'supplier_invoice', 'expensereport', 'member', ...)
 	 * @param   string  $ref                	Reference of object (This will define subdir automatically and store submitted file into it)
-	 * @param   string  $subdir       			Subdirectory (Only if ref not provided)
+	 * @param   string  $subdir       			Subdirectory (Only if $ref is not provided)
 	 * @param   string  $filecontent        	File content (string with file content. An empty file will be created if this parameter is not provided)
 	 * @param   string  $fileencoding       	File encoding (''=no encoding, 'base64'=Base 64)
 	 * @param   int 	$overwriteifexists  	Overwrite file if exists (1 by default)
 	 * @param   int 	$createdirifnotexists  	Create subdirectories if the doesn't exists (1 by default)
 	 * @param   int     $position               Position
 	 * @param   string  $cover                  Cover info
-	 * @param   array   $array_options          array of options
+	 * @param   array   $array_options          Array for extrafields of ECM index table
+	 * @param	int		$generateThumbs			1=Will generate the small and mini thumbs if applicable
+	 * @return  string
+	 *
 	 * @phan-param   array<string,string>   $array_options
 	 * @phpstan-param   array<string,string>   $array_options
-	 * @return  string
 	 *
 	 * @url POST /upload
 	 *
@@ -686,7 +714,7 @@ class Documents extends DolibarrApi
 	 * @throws	RestException	404		Object not found
 	 * @throws	RestException	500		Error on file operation
 	 */
-	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [])
+	public function post($filename, $modulepart, $ref = '', $subdir = '', $filecontent = '', $fileencoding = '', $overwriteifexists = 0, $createdirifnotexists = 1, $position = 0, $cover = '', $array_options = [], $generateThumbs = 0)
 	{
 		global $conf;
 
@@ -960,11 +988,19 @@ class Documents extends DolibarrApi
 		if (!empty($cover)) {
 			$moreinfo = array_merge($moreinfo, ["cover" => $cover]);
 		}
+		$moreinfo['gen_or_uploaded'] = 'api';
 
 		// Move the temporary file at its final emplacement
 		$result = dol_move($destfiletmp, $dest_file, '0', $overwriteifexists, 1, 1, $moreinfo);
 		if (!$result) {
 			throw new RestException(500, "Failed to move file into '".$dest_file."'");
+		}
+
+		if (is_object($object) && $generateThumbs) {
+			require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			if (image_format_supported($dest_file)) {
+				$object->addThumbs($dest_file);
+			}
 		}
 
 		return dol_basename($destfile);
@@ -989,7 +1025,7 @@ class Documents extends DolibarrApi
 	 */
 	public function delete($modulepart, $original_file)
 	{
-		global $conf, $langs;
+		global $conf;
 
 		if (empty($modulepart)) {
 			throw new RestException(400, 'bad value for parameter modulepart');

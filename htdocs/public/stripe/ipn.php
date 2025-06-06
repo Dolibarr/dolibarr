@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/stripe-php/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+
 /**
  * @var Conf $conf
  * @var DoliDB $db
@@ -165,7 +166,6 @@ if (isModEnabled('multicompany') && !empty($conf->stripeconnect->enabled) && is_
 	$ret = $mc->switchEntity($key);
 }
 
-// list of  action
 $stripe = new Stripe($db);
 
 // Subject
@@ -178,6 +178,10 @@ top_httphead();
 
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service);
 dol_syslog("***** Stripe IPN was called with event->type=".$event->type." service=".$service, LOG_DEBUG, 0, '_payment');
+
+
+// Add a delay to be sure that any Stripe action from webhooks are executed after interactive actions
+sleep(2);
 
 
 if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_PAYOUT')) {
@@ -257,21 +261,25 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			$typefrom = 'PRE';
 			$typeto = 'VIR';
 
+			$numChqOrOpe = '';	// TODO Store the po ref from $event->data
+
 			$db->begin();
 
+			// Add entry into table llx_bank
 			if (!$error) {
-				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), '', 0, $user);
+				$bank_line_id_from = $accountfrom->addline($dateo, $typefrom, $label, -1 * (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
 			}
 			if (!($bank_line_id_from > 0)) {
 				$error++;
 			}
 			if (!$error) {
-				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), '', 0, $user);
+				$bank_line_id_to = $accountto->addline($dateo, $typeto, $label, (float) price2num($amount), $numChqOrOpe, 0, $user, '', '', '', null, '', null, 'Record payout from public/stripe/ipn.php');
 			}
 			if (!($bank_line_id_to > 0)) {
 				$error++;
 			}
 
+			// Now add links of detail into llx_bank_url
 			if (!$error) {
 				$result = $accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/line.php?rowid=', '(banktransfert)', 'banktransfert');
 			}
@@ -293,16 +301,16 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			// Send email
 			if (!$error) {
-				$subject = '['.$societeName.'] - NotificationOTIFICATION] Stripe payout done';
+				$subject = '['.$societeName.'] Notification - Stripe payout done';
 				if (!empty($user->email)) {
 					$sendto = dolGetFirstLastname($user->firstname, $user->lastname)." <".$user->email.">";
 				} else {
-					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL') . '" <' . getDolGlobalString('MAIN_INFO_SOCIETE_MAIL').'>';
+					$sendto = getDolGlobalString('MAIN_INFO_SOCIETE_MAIL');
 				}
 				$replyto = $sendto;
 				$sendtocc = '';
 				if (getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL')) {
-					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL') . '" <' . getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL').'>';
+					$sendtocc = getDolGlobalString('ONLINE_PAYMENT_SENDEMAIL');
 				}
 
 				$message = "A bank transfer of ".price2num($event->data->object->amount / 100)." ".$event->data->object->currency." has been done to your account the ".dol_print_date($event->data->object->arrival_date, 'dayhour');
@@ -344,7 +352,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 	$db->query($sql);
 	$db->commit();
 } elseif ($event->type == 'payment_intent.succeeded') {
-	// Called when making payment with PaymentIntent method ($conf->global->STRIPE_USE_NEW_CHECKOUT is on).
+	// Called when making payment with PaymentIntent method.
 	dol_syslog("object = ".var_export($event->data, true));
 	dol_syslog("object = ".var_export($event->data, true), LOG_DEBUG, 0, '_payment');
 
@@ -379,6 +387,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 			if ($obj->type == 'ban') {
 				$pdid = $obj->rowid;
 				$directdebitorcreditransfer_id = $obj->fk_prelevement_bons;
+
 				if ($obj->traite == 1) {
 					// This is a direct-debit with an order (llx_bon_prelevement) ALREADY generated, so
 					// it means we received here the confirmation that payment request is finished.
@@ -484,7 +493,7 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 
 			$paiement->num_payment = '';
 			$paiement->note_public = '';
-			$paiement->note_private = 'StripeSepa payment received by IPN webhook - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
+			$paiement->note_private = 'Stripe Sepa payment received by IPN service listening webhooks - ' . dol_print_date($now, 'standard') . ' (TZ server) using servicestatus=' . $servicestatus . ($ipaddress ? ' from ip ' . $ipaddress : '') . ' - Transaction ID = ' . $TRANSACTIONID;
 			$paiement->ext_payment_id = $TRANSACTIONID.':'.$customer_id.'@'.$stripearrayofkeysbyenv[$servicestatus]['publishable_key'];		// May be we should store py_... instead of pi_... but we started with pi_... so we continue.
 			$paiement->ext_payment_site = $service;
 
@@ -807,7 +816,8 @@ if ($event->type == 'payout.created' && getDolGlobalString('STRIPE_AUTO_RECORD_P
 		$companypaymentmode->label           = '';
 		$companypaymentmode->number          = $db->escape($event->data->object->id);
 		$companypaymentmode->last_four       = $db->escape($event->data->object->card->last4);
-		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);
+		$companypaymentmode->proprio         = $db->escape($event->data->object->billing_details->name);	// deprecated
+		$companypaymentmode->owner_name      = $db->escape($event->data->object->billing_details->name);
 		$companypaymentmode->exp_date_month  = (int) $event->data->object->card->exp_month;
 		$companypaymentmode->exp_date_year   = (int) $event->data->object->card->exp_year;
 		$companypaymentmode->cvn             = null;

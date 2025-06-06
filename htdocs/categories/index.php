@@ -82,6 +82,7 @@ $arrayofcateg = array();
 foreach ($categstatic->MAP_ID as $key => $idtype) {
 	$arrayofcateg[$idtype] = array();
 	$arrayofcateg[$idtype]['key'] = $key;
+	$arrayofcateg[$idtype]['nb'] = 0;
 	$arrayofcateg[$idtype]['label'] = $langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]);
 	$arrayofcateg[$idtype]['labelwithoutaccent'] = dol_string_unaccent($langs->transnoentitiesnoconv($categstatic::$MAP_TYPE_TITLE_AREA[$key]));
 }
@@ -150,7 +151,7 @@ foreach ($arrayofcateg as $idtype => $val) {
 	print '<td class="center">';
 	print $arrayofcateg[$idtype]['nb'];
 	print '</td>';
-	print '<td class="center"><a href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
+	print '<td class="center"><a class="editfielda" href="'.DOL_URL_ROOT.'/categories/categorie_list.php?mode=hierarchy&type='.urlencode($key).'">'.img_picto('', 'edit').'</a></td>';
 	print '</tr>';
 }
 

@@ -1,10 +1,11 @@
 <?php
-/* Copyright (C) 2013-2017  Olivier Geffroy         <jeff@jeffinfo.com>
- * Copyright (C) 2013-2017  Florian Henry           <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2024  Alexandre Spangaro      <alexandre@inovea-conseil.com>
- * Copyright (C) 2017       Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2018-2024  Frédéric France         <frederic.france@free.fr>
- * Copyright (C) 2024-2025	MDW                     <mdeweerd@users.noreply.github.com>
+/* Copyright (C) 2013-2017	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2017	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2017		Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2018-2024	Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024-2025	MDW						<mdeweerd@users.noreply.github.com>
+ * Copyright (C) 2025		Nicolas Barrouillet		<nicolas@pragma-tech.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +64,7 @@ $optioncss = GETPOST('optioncss', 'aZ'); // Option for the css output (always ''
 $id = GETPOSTINT('id'); // id of record
 $mode = GETPOST('mode', 'aZ09'); // '' or '_tmp'
 $piece_num = GETPOSTINT("piece_num") ? GETPOSTINT("piece_num") : GETPOST('ref'); 	// id of transaction (several lines share the same transaction id)
+$clonedate = (int) GETPOSTINT('clonedate');
 
 $accountingaccount = new AccountingAccount($db);
 $accountingjournal = new AccountingJournal($db);
@@ -439,6 +441,59 @@ if (empty($reshook)) {
 
 			header("Location: ".DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?noreset=1');
 			exit;
+		} else {
+			$db->rollback();
+		}
+	}
+
+	if ($action == 'clonebookkeepingwriting' && $permissiontoadd) {
+		$piece_num = GETPOST('piece_num', 'alpha');
+		$formaccounting = new FormAccounting($db);
+
+		$form = new Form($db);
+		$input1 = $form->selectDate('', 'clonedate', 0, 0, 0, "create_mvt", 1, 1);
+		$input2 = $formaccounting->select_journal($journal_code, 'code_journal', 0, 0, 1, 1).'</td>';
+		$inputHidden = '<input type="hidden" name="piece_num_hidden" id="piece_num_hidden" value="'.$piece_num.'">';
+
+		$formquestion = array(
+			array(
+				'type' => 'date',
+				'name' => 'clonedate',
+				'label' => '<span class="fieldrequired">' . $langs->trans("Docdate") . '</span>',
+				'value' => $input1
+			)
+		);
+
+		if (getDolGlobalString('ACCOUNTING_CLONING_ENABLE_INPUT_JOURNAL')) {
+			$formquestion[] = array(
+				'type' => 'text',
+				'name' => 'code_journal',
+				'label' => '<span class="fieldrequired">' . $langs->trans("Codejournal") . '</span>',
+				'value' => $input2
+			);
+		}
+
+		print $form->formconfirm(
+			$_SERVER["PHP_SELF"],
+			$langs->trans("ConfirmMassCloneBookkeepingWriting"),
+			$langs->trans("ConfirmMassCloneBookkeepingWritingQuestion", count($toselect)),
+			"clonebookkeepingwriting",
+			$formquestion,
+			'', 0, 300, 1000, 1
+		);
+	}
+
+	if ($action == 'preclonebookkeepingwriting' && $confirm == "yes" && $permissiontoadd) {
+		$result = $object->newClone($piece_num, $journal_code, $clonedate);
+
+		if ($result == -1) {
+			$error++;
+		}
+
+		if (!$error) {
+			$db->commit();
+			header("Location: " . $_SERVER['PHP_SELF'] . "?piece_num=" . $object->getNextNumMvt() - 1);
+			exit();
 		} else {
 			$db->rollback();
 		}
@@ -866,6 +921,9 @@ if ($action == 'create') {
 						if (!isset($hookmanager->resArray['no_button_edit']) || $hookmanager->resArray['no_button_edit'] != 1) {
 							print dolGetButtonAction('', $langs->trans('Delete'), 'delete', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=deletebookkeepingwriting&confirm=yes&token='.newToken().'&piece_num='.((int) $object->piece_num).'&toselect='.implode(',', $tmptoselect), '', $permissiontodelete);
 						}
+					}
+					if ($permissiontoadd) {
+						print dolGetButtonAction('', $langs->trans('Clone'), 'clone', DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?action=clonebookkeepingwriting&token=' . newToken() . '&piece_num=' . ((int) $object->piece_num) . '&toselect=' . implode(',', $tmptoselect), 'action-clone', $permissiontoadd);
 					}
 				}
 

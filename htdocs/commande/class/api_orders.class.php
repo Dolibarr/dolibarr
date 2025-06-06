@@ -60,12 +60,12 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @param       int         $id            ID of order
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
 	 *
 	 * @throws	RestException
 	 */
-	public function get($id, $contact_list = 1)
+	public function get($id, $contact_list = -1)
 	{
 		return $this->_fetch($id, '', '', $contact_list);
 	}
@@ -76,14 +76,14 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @param       string		$ref			Ref of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
 	 *
 	 * @url GET    ref/{ref}
 	 *
 	 * @throws	RestException
 	 */
-	public function getByRef($ref, $contact_list = 1)
+	public function getByRef($ref, $contact_list = -1)
 	{
 		return $this->_fetch(0, $ref, '', $contact_list);
 	}
@@ -94,14 +94,14 @@ class Orders extends DolibarrApi
 	 * Return an array with order information
 	 *
 	 * @param       string		$ref_ext			External reference of object
-	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list  0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return	array|mixed data without useless information
 	 *
 	 * @url GET    ref_ext/{ref_ext}
 	 *
 	 * @throws	RestException
 	 */
-	public function getByRefExt($ref_ext, $contact_list = 1)
+	public function getByRefExt($ref_ext, $contact_list = -1)
 	{
 		return $this->_fetch(0, '', $ref_ext, $contact_list);
 	}
@@ -114,12 +114,12 @@ class Orders extends DolibarrApi
 	 * @param       int         $id				ID of order
 	 * @param		string		$ref			Ref of object
 	 * @param		string		$ref_ext		External reference of object
-	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id
+	 * @param       int         $contact_list	0: Returned array of contacts/addresses contains all properties, 1: Return array contains just id, -1: Do not return contacts/adddesses
 	 * @return		Object						Object with cleaned properties
 	 *
 	 * @throws	RestException
 	 */
-	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = 1)
+	private function _fetch($id, $ref = '', $ref_ext = '', $contact_list = -1)
 	{
 		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
 			throw new RestException(403);
@@ -134,11 +134,18 @@ class Orders extends DolibarrApi
 			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add external contacts ids
-		$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
-		if (is_array($tmparray)) {
-			$this->commande->contacts_ids = $tmparray;
+		if ($contact_list > -1) {
+			// Add external contacts ids
+			$tmparray = $this->commande->liste_contact(-1, 'external', $contact_list);
+			if (is_array($tmparray)) {
+				$this->commande->contacts_ids = $tmparray;
+			}
+			$tmparray = $this->commande->liste_contact(-1, 'internal', $contact_list);
+			if (is_array($tmparray)) {
+				$this->commande->contacts_ids_internal = $tmparray;
+			}
 		}
+
 		$this->commande->fetchObjectLinked();
 
 		// Add online_payment_url, cf #20477
@@ -361,6 +368,41 @@ class Orders extends DolibarrApi
 			array_push($result, $this->_cleanObjectDatas($line));
 		}
 		return $result;
+	}
+
+	/**
+	 * Get properties of a line of an order object by id
+	 *
+	 * @param int   $id             Id of order
+	 * @param int   $lineid         Id of line
+	 * @param string                $properties     Restrict the data returned to these properties. Ignored if empty. Comma separated list of properties names
+	 *
+	 * @url    GET {id}/lines/{lineid}
+	 *
+	 * @return Object
+	 */
+	public function getLine($id, $lineid, $properties = '')
+	{
+		if (!DolibarrApiAccess::$user->hasRight('commande', 'lire')) {
+			throw new RestException(403);
+		}
+
+		$result = $this->commande->fetch($id);
+		if (!$result) {
+			throw new RestException(404, 'Order not found');
+		}
+
+		if (!DolibarrApi::_checkAccessToResource('commande', $this->commande->id)) {
+			throw new RestException(403, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		$this->commande->fetch_lines();
+		foreach ($this->commande->lines as $line) {
+			if ($line->id == $lineid) {
+				return $this->_filterObjectProperties($this->_cleanObjectDatas($line), $properties);
+			}
+		}
+		throw new RestException(404, 'Line not found');
 	}
 
 	/**

@@ -69,11 +69,12 @@ parameters:
 	reportMagicMethods: false
 	reportMagicProperties: false
 	treatPhpDocTypesAsCertain: false
-	# if you want to exclude something, generate the baseline to do that, adding here give the opportunity to add new errors
+	# if you want to exclude something, generate the baseline to do that, add here give only pattern that does not give the opportunity to introduce new errors
 	ignoreErrors:
 		- '#.*phan-var#'
 		- '#^Expression "''…" on a separate line does not do anything\.$#'
 		- '#Empty array passed to foreach#'
+		- '#Unable to resolve the template type T#'
 	internalErrorsCountLimit: 50
 	cache:
 		# nodesByFileCountMax: 512

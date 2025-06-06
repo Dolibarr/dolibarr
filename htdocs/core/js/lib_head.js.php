@@ -148,6 +148,24 @@ if ($thousand == 'Space') {
 ?>
 // Javascript libraries for Dolibarr ERP CRM (https://www.dolibarr.org)
 
+
+// To start/stop Block UI
+function dolBlockUI(message = 'Loading...', indicatorUrl = '<?php echo DOL_URL_ROOT."/theme/".$conf->theme."/img/working.gif" ; ?>') {
+	const block = document.getElementById('dol-block-ui');
+	if (block != null) {
+		const msgDiv = block.querySelector('.message');
+		if (msgDiv != null) {
+			msgDiv.innerText = message;
+			msgDiv.style.backgroundImage = `url('${indicatorUrl}')`;
+			block.style.display = 'flex';
+		}
+	}
+}
+function dolUnblockUI() {
+	document.getElementById('dol-block-ui').style.display = 'none';
+}
+
+
 // For jQuery date picker
 var tradMonths = <?php echo json_encode($tradMonths) ?>;
 var tradMonthsShort = <?php echo json_encode($tradMonthsShort) ?>;
@@ -225,7 +243,6 @@ function getObjectFromID(id){
 // Called after the selection or typing of a date to save details into detailed fields
 function dpChangeDay(dateFieldID, format)
 {
-	//showDP.datefieldID=dateFieldID;
 	console.log("Call dpChangeDay, we save date into detailed fields from format = "+format);
 
 	var thefield = getObjectFromID(dateFieldID);
@@ -1012,8 +1029,8 @@ function newpopup(url, title) {
 }
 
 /**
- * Function show document preview. It uses the "dialog" function.
- * The a tag around the img must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
+ * Function to show a document preview popup. It uses the "dialog" function.
+ * The "a" tag around the "img" must have the src='', class='documentpreview', mime='image/xxx', target='_blank' from getAdvancedPreviewUrl().
  *
  * @param 	file 		Url
  * @param 	type 		Mime file type ("image/jpeg", "application/pdf", "text/html")
@@ -1058,7 +1075,7 @@ function document_preview(file, type, title)
 			console.log("object_height="+object_height+" window height="+height);
 			if(object_height < height){
 				console.log("Object height is small, we set height of popup according to image height.");
-				height = object_height + 80
+				height = object_height + 100
 			}
 			else
 			{
@@ -1087,6 +1104,7 @@ function document_preview(file, type, title)
 				};
 		}
 
+		$("#dialogforpopup").addClass("center");
 		$("#dialogforpopup").html(newElem);
 
 		$("#dialogforpopup").dialog({
@@ -1485,12 +1503,12 @@ jQuery(document).ready(function() {
 
 	}
 
+
 	// Code to set tooltip on search field
 	jQuery('table.liste tr.liste_titre_filter td.liste_titre input[name^="search"][type=text]:not(".maxwidthdate")').attr('title', '<?php echo dol_escape_js($langs->transnoentities("SearchSyntaxTooltipForStringOrNum")) ?>');
-});
 
 
-jQuery(document).ready(function() {
+	// Code to toggle dropdown components
 	jQuery(document).on("click", ".butAction.dropdown-toggle", function(event) {
 		console.log("Click on .butAction.dropdown-toggle");
 		let parentHolder = jQuery(event.target).parent();
@@ -1514,22 +1532,23 @@ jQuery(document).ready(function() {
 		let viewportBottom = $(window).scrollTop() + $(window).height();
 
 		// Change dropdown Up/Down orientation if dropdown is close to bottom viewport
-		if(parentHolder.hasClass('open')
+		if (parentHolder.hasClass('open')
 			&& dropDownContentBottom > viewportBottom // Check bottom of dropdown is behind viewport
 			&& dropDownContentTop - dropDownContentHeight > 0 // check if set dropdown to --up will not go over the top of document
-		){
+		) {
 			parentHolder.addClass("--up");
-		}else{
+		} else {
 			parentHolder.removeClass("--up");
 		}
 
 		// Change dropdown left/right offset if dropdown is close to left viewport
-		if(parentHolder.hasClass('open') && dropDownContentLeft < 0){
+		if (parentHolder.hasClass('open') && dropDownContentLeft < 0) {
 			parentHolder.addClass("--left");
-		}else{
+		} else {
 			parentHolder.removeClass("--left");
 		}
 	});
+
 
 	// Close drop down
 	jQuery(document).on("click", function(event) {
@@ -1543,7 +1562,37 @@ jQuery(document).ready(function() {
 			}
 		}
 	});
+
+
 });
+
+
+// Code to manage the js for combo list with dependencies (called by extrafields_view.tpl.php)
+function showOptions(child_list, parent_list) {
+		   var val = $("select[name="+parent_list+"]").val();
+		   var parentVal = parent_list + ":" + val;
+		if(val > 0) {
+			$("select[name=\""+child_list+"\"] option[parent]").hide();
+			$("select[name=\""+child_list+"\"] option[parent=\""+parentVal+"\"]").show();
+		} else {
+			$("select[name=\""+child_list+"\"] option").show();
+		}
+}
+function setListDependencies() {
+		console.log("setListDependencies");
+		jQuery("select option[parent]").parent().each(function() {
+			var child_list = $(this).attr("name");
+			var parent = $(this).find("option[parent]:first").attr("parent");
+			var infos = parent.split(":");
+			var parent_list = infos[0];
+			showOptions(child_list, parent_list);
+
+			/* Activate the handler to call showOptions on each future change */
+			$("select[name=\""+parent_list+"\"]").change(function() {
+				showOptions(child_list, parent_list);
+			});
+		});
+}
 
 
 <?php

@@ -139,6 +139,7 @@ if (empty($conf->dol_no_mouse_hover)) {
 
 print '
 	jQuery(".classfortooltiponclicktext").dialog({
+		/* title: \'No title\', */
 		closeOnEscape: true, classes: { "ui-dialog": "highlight" },
 		maxHeight: window.innerHeight-60, width: '.($conf->browser->layout == 'phone' ? max((empty($_SESSION['dol_screenwidth']) ? 0 : $_SESSION['dol_screenwidth']) - 20, 320) : 700).',
 		modal: true,

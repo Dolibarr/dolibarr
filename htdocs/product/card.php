@@ -1658,7 +1658,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Default workstation
 				print '<tr><td>'.$langs->trans("DefaultWorkstation").'</td><td>';
 				print img_picto($langs->trans("DefaultWorkstation"), 'workstation', 'class="pictofixedwidth"');
-				print $formproduct->selectWorkstations($object->fk_default_workstation, 'fk_default_workstation', 1);
+				print $formproduct->selectWorkstations((GETPOSTISSET('fk_default_workstation') ? GETPOSTINT('fk_default_workstation') : ''), 'fk_default_workstation', 1);
 				print '</td></tr>';
 			}
 
@@ -1673,7 +1673,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($object->duration_value > 0) {
 					print ' &nbsp; &nbsp; ';
 				}
-				print '<input type="checkbox" class="marginleftonly valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.($object->mandatory_period == 1 ? ' checked="checked"' : '').'>';
+				print '<input type="checkbox" class="marginleftonly valignmiddle" id="mandatoryperiod" name="mandatoryperiod"'.(GETPOSTISSET('mandatoryperiod') ? ' checked="checked"' : '').'>';
 				print '<label for="mandatoryperiod">';
 				$htmltooltip = $langs->trans("mandatoryHelper");
 				if (!getDolGlobalString('SERVICE_STRICT_MANDATORY_PERIOD')) {
@@ -1742,7 +1742,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (getDolGlobalString('PRODUCT_USE_UNITS')) {
 				print '<tr><td>'.$langs->trans('DefaultUnitToShow').'</td>';
 				print '<td>';
-				print $form->selectUnits(empty($line->fk_unit) ? getDolGlobalString('PRODUCT_USE_UNITS') : $line->fk_unit, 'units');
+				print $form->selectUnits(GETPOSTISSET('units') ? GETPOST('units', 'alpha') : (GETPOST('units', 'alpha') ?: '0'), 'units');
 				print '</td></tr>';
 			}
 
@@ -1801,8 +1801,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 			if (isModEnabled('category')) {
 				// Categories
 				print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-				$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 3);
-				print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, GETPOST('categories', 'array'), 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+				print $form->selectCategories(Categorie::TYPE_PRODUCT, 'categories', $object);
 				print "</td></tr>";
 			}
 
@@ -2438,21 +2437,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				// Tags-Categories
 				if (isModEnabled('category')) {
 					print '<tr><td>'.$langs->trans("Categories").'</td><td>';
-					$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 3);
-					$c = new Categorie($db);
-					$cats = $c->containing($object->id, Categorie::TYPE_PRODUCT);
-					$arrayselected = array();
-					if (is_array($cats)) {
-						foreach ($cats as $cat) {
-							$arrayselected[] = $cat->id;
-						}
-					}
-					if (GETPOSTISARRAY('categories')) {
-						foreach (GETPOST('categories', 'array') as $cat) {
-							$arrayselected[] = $cat;
-						}
-					}
-					print img_picto('', 'category', 'class="pictofixedwidth"').$form->multiselectarray('categories', $cate_arbo, $arrayselected, 0, 0, 'quatrevingtpercent widthcentpercentminusx', 0, 0);
+					print $form->selectCategories(Categorie::TYPE_PRODUCT, 'categories', $object);
 					print "</td></tr>";
 				}
 

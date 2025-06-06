@@ -58,7 +58,7 @@ class Ai
 	const AI_DEFAULT_PROMPT_FOR_WEBPAGE = 'You are a website editor. Return all HTML content inside a section tag. Do not add explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_TRANSLATION = 'You are a translator, give only the translation with no comment and explanation.';
 	const AI_DEFAULT_PROMPT_FOR_TEXT_SUMMARIZE = 'You are a writer, make the answer in the same language than the original text to summarize.';
-	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original to rephrase.';
+	const AI_DEFAULT_PROMPT_FOR_TEXT_REPHRASER = 'You are a writer, give only one answer with no comment and explanation and give the answer in the same language than the original text to rephrase.';
 	const AI_DEFAULT_PROMPT_FOR_EXTRAFIELD_FILLER = 'Give only one answer with no comment and explanation, I want the text to be ready to copy and paste.';
 
 	/**
@@ -104,6 +104,7 @@ class Ai
 
 		// In most cases, it is empty and we must get it from $function and $this->apiService
 		if (empty($this->apiEndpoint)) {
+			// Return the endpoint from $this->apiService.
 			if ($function == 'imagegeneration') {
 				$this->apiEndpoint = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_URL', $arrayofai[$this->apiService]['url']);
 				$this->apiEndpoint .= (preg_match('/\/$/', $this->apiEndpoint) ? '' : '/').'images/generations';
@@ -122,7 +123,7 @@ class Ai
 		// $model may be undefined or 'auto'.
 		// If this is the case, we must get it from $function and $this->apiService
 		if (empty($model) || $model == 'auto') {
-			// Return the endpoint and the model from $this->apiService.
+			// Return the model from $this->apiService.
 			if ($function == 'imagegeneration') {
 				$model = getDolGlobalString('AI_API_'.strtoupper($this->apiService).'_MODEL_IMAGE', $arrayofai[$this->apiService][$function]);
 			} elseif ($function == 'audiogeneration') {

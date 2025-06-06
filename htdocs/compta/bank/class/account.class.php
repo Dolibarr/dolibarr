@@ -585,7 +585,7 @@ class Account extends CommonObject
 	}
 
 	/**
-	 *  Add an entry into table ".MAIN_DB_PREFIX."bank
+	 *  Add an entry into table llx_bank
 	 *
 	 *  @param	int	        $date					Date operation
 	 *  @param	string		$oper					'VIR','PRE','LIQ','VAD','CB','CHQ'...
@@ -597,12 +597,13 @@ class Account extends CommonObject
 	 *  @param	string		$emetteur				Name of cheque writer
 	 *  @param	string		$banque					Bank of cheque writer
 	 *  @param	string		$accountancycode		When we record a free bank entry, we must provide accounting account if accountancy module is on.
-	 *  @param	int			$datev					Date value
+	 *  @param	?int		$datev					Date value
 	 *  @param  string      $num_releve     		Label of bank receipt for reconciliation
-	 *  @param	float		$amount_main_currency	Amount
+	 *  @param	?float		$amount_main_currency	Amount
+	 *  @param	string		$note_private			Note private
 	 *  @return	int									Rowid of added entry, <0 if KO
 	 */
-	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null)
+	public function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur = '', $banque = '', $accountancycode = '', $datev = null, $num_releve = '', $amount_main_currency = null, $note_private = '')
 	{
 		global $langs;
 
@@ -668,6 +669,7 @@ class Account extends CommonObject
 		$accline->fk_type = $oper;
 		$accline->numero_compte = $accountancycode;
 		$accline->num_releve = $num_releve;
+		$accline->note_private = $note_private;
 
 		if ($num_chq) {
 			$accline->num_chq = $num_chq;
@@ -686,7 +688,7 @@ class Account extends CommonObject
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."category_bankline(";
 				$sql .= "lineid, fk_categ";
 				$sql .= ") VALUES (";
-				$sql .= ((int) $accline->id).", '".$this->db->escape((string) $categorie)."'";
+				$sql .= ((int) $accline->id).", ".((int) $categorie);
 				$sql .= ")";
 
 				$result = $this->db->query($sql);
@@ -732,16 +734,19 @@ class Account extends CommonObject
 
 		// Check parameters
 		if (empty($this->country_id)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Country"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (empty($this->ref)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
 		}
 		if (empty($this->date_solde)) {
+			$langs->load('errors');
 			$this->error = $langs->transnoentitiesnoconv("ErrorFieldRequired", $langs->transnoentitiesnoconv("DateInitialBalance"));
 			dol_syslog(get_class($this)."::create ".$this->error, LOG_ERR);
 			return -1;
@@ -750,6 +755,7 @@ class Account extends CommonObject
 		// Load libraries to check BAN
 		$balance = $this->balance;
 		if (empty($balance) && !empty($this->solde)) {
+			dol_syslog(get_class($this)."::create solde is deprecated use balance", LOG_NOTICE);
 			$balance = $this->solde;
 		}
 		if (empty($balance)) {
@@ -853,8 +859,7 @@ class Account extends CommonObject
 
 				if ($accline->insert() < 0) {
 					$error++;
-					$this->error = $accline->error;
-					$this->errors = $accline->errors;
+					$this->setErrorsFromObject($accline);
 				}
 
 				if (!$error) {
@@ -2117,7 +2122,7 @@ class AccountLine extends CommonObjectLine
 	public $amount;
 
 	/**
-	 * @var float		Amount in the currency of company if bank account use another currency
+	 * @var ?float		Amount in the currency of the main company if the bank account uses another currency
 	 */
 	public $amount_main_currency;
 
@@ -2318,6 +2323,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", rappro";
 		$sql .= ", numero_compte";
 		$sql .= ", num_releve";
+		$sql .= ", note";
 		$sql .= ") VALUES (";
 		$sql .= "'".$this->db->idate($this->datec)."'";
 		$sql .= ", '".$this->db->idate($this->dateo)."'";
@@ -2334,6 +2340,7 @@ class AccountLine extends CommonObjectLine
 		$sql .= ", ".(int) $this->rappro;
 		$sql .= ", ".($this->numero_compte ? "'".$this->db->escape($this->numero_compte)."'" : "''");
 		$sql .= ", ".($this->num_releve ? "'".$this->db->escape($this->num_releve)."'" : "null");
+		$sql .= ", ".($this->note_private ? "'".$this->db->escape($this->note_private)."'" : "null");
 		$sql .= ")";
 
 

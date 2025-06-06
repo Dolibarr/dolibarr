@@ -452,6 +452,7 @@ if ($resql) {
 	$sql .= " FROM ".MAIN_DB_PREFIX."accounting_system as a";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON a.fk_country = c.rowid AND c.active = 1";
 	$sql .= " WHERE a.active = 1";
+	$sql .= " ORDER BY c.code, a.pcg_version";
 
 	dol_syslog("accountancy/admin/account.php sql=".$sql);
 
@@ -463,9 +464,11 @@ if ($resql) {
 		while ($i < $numbis) {
 			$obj = $db->fetch_object($resqlchart);
 			if ($obj) {
-				print '<option value="'.$obj->rowid.'"';
+				$labeltoshow = $obj->country_code.' - '.$obj->pcg_version.' - '.$obj->label;
+				$htmltoshow = picto_from_langcode($obj->country_code).' '.$obj->country_code.' - '.$obj->pcg_version.' - '.$obj->label;
+				print '<option value="'.$obj->rowid.'" data-html="'.dolPrintHTMLForAttribute($htmltoshow).'"';
 				print ($pcgver == $obj->rowid) ? ' selected' : '';
-				print '>'.$obj->pcg_version.' - '.$obj->label.' - ('.$obj->country_code.')</option>';
+				print '>'.$labeltoshow.'</option>';
 			}
 			$i++;
 		}

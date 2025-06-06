@@ -1245,6 +1245,9 @@ class ActionComm extends CommonObject
 					if (!is_array($val)) {	// For backward compatibility when val=id
 						$val = array('id' => $val);
 					}
+					if (!isset($val['id']) || !is_scalar($val['id'])) {
+						continue;
+					}
 					if (!empty($already_inserted[$val['id']])) {
 						continue;
 					}

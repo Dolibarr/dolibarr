@@ -270,8 +270,9 @@ class Categories extends DolibarrApi
 	/**
 	 * Delete category
 	 *
-	 * @param int $id   Category ID
-	 * @return array
+	 * @param 	int 	$id   Category ID
+	 * @return 	array
+	 *
 	 * @phan-return array{success:array{code:int,message:string}}
 	 * @phpstan-return array{success:array{code:int,message:string}}
 	 */
@@ -330,7 +331,11 @@ class Categories extends DolibarrApi
 			Categorie::TYPE_MEMBER,
 			Categorie::TYPE_PROJECT,
 			Categorie::TYPE_KNOWLEDGEMANAGEMENT,
-			Categorie::TYPE_ACTIONCOMM
+			Categorie::TYPE_ACTIONCOMM,
+			Categorie::TYPE_USER,
+			Categorie::TYPE_WAREHOUSE,
+			Categorie::TYPE_TICKET,
+			Categorie::TYPE_FICHINTER
 		])) {
 			throw new RestException(403);
 		}
@@ -350,6 +355,14 @@ class Categories extends DolibarrApi
 		} elseif ($type == Categorie::TYPE_KNOWLEDGEMANAGEMENT && !DolibarrApiAccess::$user->hasRight('knowledgemanagement', 'knowledgerecord', 'read')) {
 			throw new RestException(403);
 		} elseif ($type == Categorie::TYPE_ACTIONCOMM && !DolibarrApiAccess::$user->hasRight('agenda', 'allactions', 'read')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_FICHINTER && !DolibarrApiAccess::$user->hasRight('ficheinter', 'lire')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_TICKET && !DolibarrApiAccess::$user->hasRight('ticket', 'read')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_USER && !DolibarrApiAccess::$user->hasRight('user', 'lire')) {
+			throw new RestException(403);
+		} elseif ($type == Categorie::TYPE_WAREHOUSE && !DolibarrApiAccess::$user->hasRight('stock', 'lire')) {
 			throw new RestException(403);
 		}
 
@@ -452,9 +465,9 @@ class Categories extends DolibarrApi
 	/**
 	 * Link an object to a category by ref
 	 *
-	 * @param int $id  ID of category
-	 * @param string   $type Type of category ('member', 'customer', 'supplier', 'product', 'contact')
-	 * @param string   $object_ref Reference of object
+	 * @param int 		$id  		ID of category
+	 * @param string   	$type 		Type of category ('member', 'customer', 'supplier', 'product', 'contact')
+	 * @param string   	$object_ref Reference of object (product, thirdparty, member, ...)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}
@@ -616,9 +629,9 @@ class Categories extends DolibarrApi
 	/**
 	 * Unlink an object from a category by ref
 	 *
-	 * @param int      $id         ID of category
-	 * @param string   $type Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
-	 * @param string   $object_ref Reference of the object
+	 * @param int      $id         	ID of category
+	 * @param string   $type 		Type  of category ('member', 'customer', 'supplier', 'product', 'contact', 'actioncomm')
+	 * @param string   $object_ref 	Reference of the object (product, thirdparty, member, ...)
 	 *
 	 * @return array
 	 * @phan-return array{success:array{code:int,message:string}}

@@ -118,7 +118,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 	 */
 	public function info($langs)
 	{
-		global $conf, $langs;
+		global $langs;
 
 		// Load translation files required by the page
 		$langs->loadLangs(array("errors", "companies"));
@@ -160,20 +160,6 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		$texthelp .= '<br>'.$langs->trans("FollowingSubstitutionKeysCanBeUsed").'<br>';
 		$texthelp .= $langs->transnoentitiesnoconv("FullListOnOnlineDocumentation"); // This contains an url, we don't modify it
 
-		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
-			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
-			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
-			$texte .= '<textarea class="flat" cols="60" name="value1">';
-			$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
-			$texte .= '</textarea>';
-			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
-			$texte .= '<input type="submit" class="button smallpaddingimp reposition" name="modify" value="'.dol_escape_htmltag($langs->trans("Modify")).'">';
-			$texte .= '<br></div></div>';
-		} else {
-			$texte .= '<br>';
-			$texte .= '<input type="hidden" name="value1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
-		}
-
 		// Scan directories
 		$nbofiles = count($listoffiles);
 		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH')) {
@@ -193,6 +179,21 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$texte .= '<br>';
 			}
 			$texte .= '</div>';
+		}
+
+		if (!getDolGlobalString('MAIN_NO_MULTIDIR_FOR_ODT')) {
+			$texte .= '<br><br>';
+			$texte .= $form->textwithpicto($texttitle, $texthelp, 1, 'help', '', 1, 3, $this->name);
+			$texte .= '<div><div style="display: inline-block; min-width: 100px; vertical-align: middle;">';
+			$texte .= '<textarea class="flat textareafordir" spellcheck="false" cols="60" name="value1">';
+			$texte .= getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH');
+			$texte .= '</textarea>';
+			$texte .= '</div><div style="display: inline-block; vertical-align: middle;">';
+			$texte .= '<input type="submit" class="button button-edit smallpaddingimp reposition" name="modify" value="'.dolPrintHTMLForAttribute($langs->trans("Modify")).'">';
+			$texte .= '<br></div></div>';
+		} else {
+			$texte .= '<br>';
+			$texte .= '<input type="hidden" name="value1" value="MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH">';
 		}
 
 		// Add input to upload a new template file.
@@ -386,6 +387,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				//print html_entity_decode($odfHandler->__toString());
 				//print exit;
 
+				$object->fetch_optionals();
 
 				// Make substitutions into odt of freetext
 				try {

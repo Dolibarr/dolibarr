@@ -120,6 +120,7 @@ $item->cssClass = 'minwidth500';
 $item = $formSetup->newItem('MYMODULE_MYPARAM2');
 $item->defaultFieldValue = 'default value';
 $item->fieldAttr['placeholder'] = 'A placeholder here';
+$item->helpText = 'Tooltip text';
 
 // Setup conf for selection of a simple textarea input but we replace the text of field title
 $item = $formSetup->newItem('MYMODULE_MYPARAM3');

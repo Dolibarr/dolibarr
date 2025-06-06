@@ -47,13 +47,14 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonincoterm.class.php';
+require_once DOL_DOCUMENT_ROOT.'/subtotals/class/commonsubtotal.class.php';
 
 /**
  *	Class to manage proposals
  */
 class Propal extends CommonObject
 {
-	use CommonIncoterm;
+	use CommonIncoterm, CommonSubtotal;
 
 	/**
 	 * @var string code
@@ -632,8 +633,35 @@ class Propal extends CommonObject
 	 *    	@return    	int         	    			>0 if OK, <0 if KO
 	 *    	@see       	add_product()
 	 */
-	public function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1 = 0.0, $txlocaltax2 = 0.0, $fk_product = 0, $remise_percent = 0.0, $price_base_type = 'HT', $pu_ttc = 0.0, $info_bits = 0, $type = 0, $rang = -1, $special_code = 0, $fk_parent_line = 0, $fk_fournprice = 0, $pa_ht = 0, $label = '', $date_start = '', $date_end = '', $array_options = array(), $fk_unit = null, $origin = '', $origin_id = 0, $pu_ht_devise = 0, $fk_remise_except = 0, $noupdateafterinsertline = 0)
-	{
+	public function addline(
+		$desc,
+		$pu_ht,
+		$qty,
+		$txtva,
+		$txlocaltax1 = 0.0,
+		$txlocaltax2 = 0.0,
+		$fk_product = 0,
+		$remise_percent = 0.0,
+		$price_base_type = 'HT',
+		$pu_ttc = 0.0,
+		$info_bits = 0,
+		$type = 0,
+		$rang = -1,
+		$special_code = 0,
+		$fk_parent_line = 0,
+		$fk_fournprice = 0,
+		$pa_ht = 0,
+		$label = '',
+		$date_start = '',
+		$date_end = '',
+		$array_options = array(),
+		$fk_unit = null,
+		$origin = '',
+		$origin_id = 0,
+		$pu_ht_devise = 0,
+		$fk_remise_except = 0,
+		$noupdateafterinsertline = 0
+	) {
 		global $mysoc, $langs;
 
 		dol_syslog(get_class($this)."::addline propalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type, fk_remise_except=".$fk_remise_except);
@@ -841,6 +869,13 @@ class Propal extends CommonObject
 					}
 
 					$this->lines[] = $this->line;
+				} else {
+					foreach ($this->lines as $line) {
+						if ($line->id == $origin_id) {
+							$this->line->extraparams = $line->extraparams;
+							$this->line->setExtraParameters();
+						}
+					}
 				}
 
 				// Update denormalized fields at the order level

@@ -214,7 +214,7 @@ if (isModEnabled('project')) {
 	$sql .= " p.rowid as project_id, p.ref as project_ref, p.title as project_label,";
 }
 $sql .= " c.libelle as type_label, c.accountancy_code as type_accountancy_code,";
-$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos,";
+$sql .= " ba.label as blabel, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.iban_prefix as iban, ba.bic, ba.currency_code, ba.clos as status,";
 $sql .= " pay.code as payment_code";
 $sqlfields = $sql; // $sql fields to remove for count total
 
@@ -663,6 +663,7 @@ while ($i < $imaxinloop) {
 	$chargesociale_static->paye = $obj->paye;
 	$chargesociale_static->date_ech = $db->idate($obj->date_ech);		// Date of contribution
 	$chargesociale_static->period = $db->idate($obj->period, 'gmt');	// End date of period
+	$chargesociale_static->type_accountancy_code = $obj->type_accountancy_code;
 
 	if (isModEnabled('project')) {
 		$projectstatic->id = $obj->project_id;
@@ -787,7 +788,7 @@ while ($i < $imaxinloop) {
 
 		// Type
 		if (!empty($arrayfields['cs.fk_mode_reglement']['checked'])) {
-			print '<td class="tdoverflowmax150" title="'.dol_escape_htmltag($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
+			print '<td class="tdoverflowmax150" title="'.dolPrintHTMLForAttribute($langs->trans("PaymentTypeShort".$obj->payment_code)).'">';
 			if (!empty($obj->payment_code)) {
 				print $langs->trans("PaymentTypeShort".$obj->payment_code);
 			}
@@ -808,12 +809,12 @@ while ($i < $imaxinloop) {
 				$bankstatic->bic = $obj->bic;
 				$bankstatic->currency_code = $langs->trans("Currency".$obj->currency_code);
 				$bankstatic->account_number = $obj->account_number;
-				$bankstatic->clos = $obj->clos;
+				$bankstatic->status = $obj->status;
+				$bankstatic->label = $obj->blabel;
 
 				//$accountingjournal->fetch($obj->fk_accountancy_journal);
 				//$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0, 1, 1, '', 1);
 
-				$bankstatic->label = $obj->blabel;
 				print $bankstatic->getNomUrl(1);
 			}
 			print '</td>';

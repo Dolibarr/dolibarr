@@ -592,7 +592,7 @@ function pHeader($subtitle, $next, $action = 'set', $param = '', $forcejqueryurl
 
 	print '<div class="divlogoinstall" style="text-align:center">';
 	print '<img class="imglogoinstall" src="../theme/dolibarr_logo.svg" alt="Dolibarr logo" width="300px"><br>';
-	print DOL_VERSION;
+	print '<span class="opacitymedium">'.DOL_VERSION.'</span>';
 	print '</div><br>';
 
 	print '<span class="titre">';
