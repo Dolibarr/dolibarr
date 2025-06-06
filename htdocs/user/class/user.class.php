@@ -3958,10 +3958,9 @@ class User extends CommonObject
 				if (!empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
 					$sql .= " WHERE t.entity IS NOT NULL"; // Show all users
 				} else {
-					$sql .= ",".$this->db->prefix()."usergroup_user as ug";
-					$sql .= " WHERE ((ug.fk_user = t.rowid";
-					$sql .= " AND ug.entity IN (".getEntity('usergroup')."))";
-					$sql .= " OR t.entity = 0)"; // Show always superadmin
+					$sql .= " WHERE t.entity = 0 OR EXISTS (";
+					$sql .= " SELECT ug.rowid FROM " . $this->db->prefix() . "usergroup_user as ug";
+					$sql .= " WHERE ug.fk_user = t.rowid AND ug.entity IN (" . getEntity('usergroup') . "))";
 				}
 			} else {
 				$sql .= " WHERE t.entity IN (".getEntity('user').")";
