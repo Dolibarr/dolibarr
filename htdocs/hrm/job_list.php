@@ -400,6 +400,7 @@ llxHeader('', $title, $help_url, '', 0, 0, $morejs, $morecss, '', 'mod-hrm page-
 $arrayofselected = is_array($toselect) ? $toselect : array();
 
 $param = '';
+$groupby = '';
 if (!empty($mode)) {
 	$param .= '&mode='.urlencode($mode);
 }
