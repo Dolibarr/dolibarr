@@ -646,7 +646,7 @@ if (!empty($_SESSION["disablemodules"])) {
 
 // Set current modulepart
 $modulepart = explode("/", $_SERVER["PHP_SELF"]);
-if (is_array($modulepart) && count($modulepart) > 0) {
+if (is_array($modulepart) && !empty($modulepart)) {
 	foreach ($conf->modules as $module) {
 		if (in_array($module, $modulepart)) {
 			$modulepart = $module;
@@ -683,7 +683,7 @@ if (!defined('NOLOGIN')) {
 	$authmode = explode(',', $dolibarr_main_authentication);
 
 	// No authentication mode
-	if (!count($authmode)) {
+	if (empty($authmode)) {
 		$langs->load('main');
 		dol_print_error('', $langs->trans("ErrorConfigParameterNotDefined", 'dolibarr_main_authentication'));
 		exit;
@@ -958,7 +958,7 @@ if (!defined('NOLOGIN')) {
 			if (GETPOST('lang', 'aZ09')) {
 				$paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			}
-			header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
+			header('Location: '.DOL_URL_ROOT.'/index.php'.(!empty($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
 			exit;
 		} else {
 			// User is loaded, we may need to change language for him according to its choice
@@ -1042,8 +1042,8 @@ if (!defined('NOLOGIN')) {
 			if (GETPOST('lang', 'aZ09')) {
 				$paramsurl[] = 'lang='.GETPOST('lang', 'aZ09');
 			}
-							header('Location: '.DOL_URL_ROOT.'/index.php'.(count($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
-							exit;
+			header('Location: '.DOL_URL_ROOT.'/index.php'.(!empty($paramsurl) ? '?'.implode('&', $paramsurl) : ''));
+			exit;
 		} else {
 			// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 			$hookmanager->initHooks(array('main'));
@@ -3533,7 +3533,7 @@ if (!function_exists("llxFooter")) {
 			// Clean and save data
 			foreach ($user->lastsearch_values_tmp as $key => $val) {
 				unset($_SESSION['lastsearch_values_tmp_'.$key]); // Clean array to rebuild it just after
-				if (count($val) && empty($_POST['button_removefilter']) && empty($_POST['button_removefilter_x'])) {
+				if (!empty($val) && empty($_POST['button_removefilter']) && empty($_POST['button_removefilter_x'])) {
 					if (empty($val['sortfield'])) {
 						unset($val['sortfield']);
 					}

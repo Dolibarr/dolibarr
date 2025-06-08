@@ -1675,22 +1675,18 @@ function dol_escape_htmltag($stringtoescape, $keepb = 0, $keepn = 0, $noescapeta
 		if ($noescapetags) {
 			$tmparrayoftags = explode(',', $noescapetags);
 		}
-		if (count($tmparrayoftags)) {
-			foreach ($tmparrayoftags as $tagtoreplace) {
-				$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
-				$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
-				$tmp = str_ireplace('<'.$tagtoreplace.' />', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
-			}
+		foreach ($tmparrayoftags as $tagtoreplace) {
+			$tmp = str_ireplace('<'.$tagtoreplace.'>', '__BEGINTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+			$tmp = str_ireplace('</'.$tagtoreplace.'>', '__ENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
+			$tmp = str_ireplace('<'.$tagtoreplace.' />', '__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', $tmp);
 		}
 
 		$result = htmlentities($tmp, ENT_COMPAT, 'UTF-8');
 
-		if (count($tmparrayoftags)) {
-			foreach ($tmparrayoftags as $tagtoreplace) {
-				$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
-				$result = str_ireplace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
-				$result = str_ireplace('__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.' />', $result);
-			}
+		foreach ($tmparrayoftags as $tagtoreplace) {
+			$result = str_ireplace('__BEGINTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.'>', $result);
+			$result = str_ireplace('__ENDTAGTOREPLACE'.$tagtoreplace.'__', '</'.$tagtoreplace.'>', $result);
+			$result = str_ireplace('__BEGINENDTAGTOREPLACE'.$tagtoreplace.'__', '<'.$tagtoreplace.' />', $result);
 		}
 
 		return $result;
@@ -2066,10 +2062,7 @@ function dol_get_fiche_head($links = array(), $active = '', $title = '', $notab 
 	// Define max of key (max may be higher than sizeof because of hole due to module disabling some tabs).
 	$maxkey = -1;
 	if (is_array($links) && !empty($links)) {
-		$keys = array_keys($links);
-		if (count($keys)) {
-			$maxkey = max($keys);
-		}
+		$maxkey = max(array_keys($links));
 	}
 
 	// Show tabs
@@ -4000,14 +3993,12 @@ function isValidMXRecord($domain)
 			$mxhosts = array();
 			$weight = array();
 			getmxrr(idn_to_ascii($domain), $mxhosts, $weight);
-			if (count($mxhosts) > 1) {
-				return 1;
-			}
-			if (count($mxhosts) == 1 && !empty($mxhosts[0])) {
-				return 1;
+
+			if (empty($mxhosts) || empty($mxhosts[0])) {
+				return 0;
 			}
 
-			return 0;
+			return 1;
 		}
 	}
 
@@ -5332,7 +5323,7 @@ function dol_print_error_email($prefixcode, $errormessage = '', $errormessages =
 	if ($errormessage) {
 		print '<br><br>'.$errormessage;
 	}
-	if (is_array($errormessages) && count($errormessages)) {
+	if (is_array($errormessages)) {
 		foreach ($errormessages as $mesgtoshow) {
 			print '<br><br>'.$mesgtoshow;
 		}
@@ -7020,12 +7011,11 @@ function dol_mkdir($dir, $dataroot = '', $newmask = '')
 	}
 
 	$cdir = explode("/", $dir);
-	$num = count($cdir);
-	for ($i = 0; $i < $num; $i++) {
+	foreach ($cdir as $i => $d) {
 		if ($i > 0) {
-			$ccdir .= '/'.$cdir[$i];
+			$ccdir .= '/'.$d;
 		} else {
-			$ccdir .= $cdir[$i];
+			$ccdir .= $d;
 		}
 		$regs = array();
 		if (preg_match("/^.:$/", $ccdir, $regs)) {
@@ -8184,7 +8174,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey = 0, $exclude = null,
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
 
 				if ($object->fetch_optionals() > 0) {
-					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0) {
+					if (!empty($extrafields->attributes[$object->table_element]['label']) && is_array($extrafields->attributes[$object->table_element]['label'])) {
 						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 							if ($extrafields->attributes[$object->table_element]['type'][$key] == 'date') {
 								$substitutionarray['__EXTRAFIELD_'.strtoupper($key).'__'] = dol_print_date($object->array_options['options_'.$key], 'day');
@@ -8819,7 +8809,6 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 {
 	global $conf, $langs;
 
-	$ret = 0;
 	$return = '';
 	$out = '';
 	$divstart = $divend = '';
@@ -8830,20 +8819,18 @@ function get_htmloutput_mesg($mesgstring = '', $mesgarray = '', $style = 'ok', $
 		$divend = '</div>';
 	}
 
-	if ((is_array($mesgarray) && count($mesgarray)) || $mesgstring) {
+	if ((is_array($mesgarray) && !empty($mesgarray)) || $mesgstring) {
 		$langs->load("errors");
 		$out .= $divstart;
-		if (is_array($mesgarray) && count($mesgarray)) {
-			foreach ($mesgarray as $message) {
-				$ret++;
-				$out .= $langs->trans($message);
-				if ($ret < count($mesgarray)) {
+		if (is_array($mesgarray) && !empty($mesgarray)) {
+			foreach ($mesgarray as $i => $message) {
+				if ($i > 0) {
 					$out .= "<br>\n";
 				}
+				$out .= $langs->trans($message);
 			}
 		}
 		if ($mesgstring) {
-			$ret++;
 			$out .= $langs->trans($mesgstring);
 		}
 		$out .= $divend;
@@ -8904,7 +8891,7 @@ function get_htmloutput_errors($mesgstring = '', $mesgarray = array(), $keepembe
  */
 function dol_htmloutput_mesg($mesgstring = '', $mesgarray = array(), $style = 'ok', $keepembedded = 0)
 {
-	if (empty($mesgstring) && (!is_array($mesgarray) || count($mesgarray) == 0)) {
+	if (empty($mesgstring) && (!is_array($mesgarray) || empty($mesgarray))) {
 		return;
 	}
 
@@ -8995,8 +8982,7 @@ function dol_sort_array(&$array, $index, $order = 'asc', $natsort = 0, $case_sen
 	$order = strtolower($order);
 
 	if (is_array($array)) {
-		$sizearray = count($array);
-		if ($sizearray > 0) {
+		if (!empty($array)) {
 			$temp = array();
 			foreach (array_keys($array) as $key) {
 				if (is_object($array[$key])) {
@@ -9696,10 +9682,11 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 	if (isset($conf->modules_parts['tabs'][$type]) && is_array($conf->modules_parts['tabs'][$type])) {
 		foreach ($conf->modules_parts['tabs'][$type] as $value) {
 			$values = explode(':', $value);
+			$valuesCount = count($values);
 
 			$reg = array();
 			if ($mode == 'add' && !preg_match('/^\-/', $values[1])) {
-				if (count($values) == 6) {
+				if ($valuesCount == 6) {
 					// new declaration with permissions:
 					// $value='objecttype:+tabname1:Title1:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
 					// $value='objecttype:+tabname1:Title1,class,pathfile,method:langfile@mymodule:$user->rights->mymodule->read:/mymodule/mynewtab1.php?id=__ID__'
@@ -9753,7 +9740,7 @@ function complete_head_from_modules($conf, $langs, $object, &$head, &$h, $type, 
 						$head[$h][2] = str_replace('+', '', $values[1]);
 						$h++;
 					}
-				} elseif (count($values) == 5) {       // case deprecated
+				} elseif ($valuesCount == 5) {       // case deprecated
 					dol_syslog('Passing 5 values in tabs module_parts is deprecated. Please update to 6 with permissions.', LOG_WARNING);
 
 					if ($values[0] != $type) {
@@ -10010,7 +9997,7 @@ function printCommonFooter($zone = 'private')
 			print '<!-- Output debugbar data -->'."\n";
 			$renderer = $debugbar->getRenderer();
 			print $debugbar->getRenderer()->render();
-		} elseif (count($conf->logbuffer)) {    // If there is some logs in buffer to show
+		} elseif (!empty($conf->logbuffer)) {    // If there is some logs in buffer to show
 			print "\n";
 			print "<!-- Start of log output\n";
 			//print '<div class="hidden">'."\n";
@@ -10183,7 +10170,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				$i2++; // a criteria for 1 more field was added to string
 			} elseif ($mode == 3 || $mode == -3) {
 				$tmparray = explode(',', $crit);
-				if (count($tmparray)) {
+				if (!empty($tmparray)) {
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
@@ -10200,7 +10187,7 @@ function natural_search($fields, $value, $mode = 0, $nofirstand = 0)
 				}
 			} elseif ($mode == 4) {
 				$tmparray = explode(',', $crit);
-				if (count($tmparray)) {
+				if (!empty($tmparray)) {
 					$listofcodes = '';
 					foreach ($tmparray as $val) {
 						$val = trim($val);
@@ -10917,7 +10904,7 @@ function colorIsLight($stringcolor)
 	if (!empty($stringcolor)) {
 		$res = 0;
 		$tmp = explode(',', $stringcolor);
-		if (count($tmp) > 1) {   // This is a comma RGB ('255','255','255')
+		if (isset($tmp[2])) {   // This is a comma RGB ('255','255','255')
 			$r = $tmp[0];
 			$g = $tmp[1];
 			$b = $tmp[2];
@@ -12114,7 +12101,7 @@ function dolForgeDummyCriteriaCallback($matches)
 		return '';
 	}
 	$tmp = explode(':', $matches[1]);
-	if (count($tmp) < 3) {
+	if (!isset($tmp[2])) {
 		return '';
 	}
 
@@ -12138,7 +12125,7 @@ function dolForgeCriteriaCallback($matches)
 		return '';
 	}
 	$tmp = explode(':', $matches[1]);
-	if (count($tmp) < 3) {
+	if (!isset($tmp[2])) {
 		return '';
 	}
 
@@ -12833,7 +12820,7 @@ function show_actions_messaging($conf, $langs, $db, $filterobj, $objcon = '', $n
 			$footer = '';
 
 			// Contact for this action
-			if (isset($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned']) && count($histo[$key]['socpeopleassigned']) > 0) {
+			if (!empty($histo[$key]['socpeopleassigned']) && is_array($histo[$key]['socpeopleassigned'])) {
 				$contactList = '';
 				foreach ($histo[$key]['socpeopleassigned'] as $cid => $Tab) {
 					$contact = new Contact($db);
