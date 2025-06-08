@@ -185,11 +185,10 @@ if ($result < 0) {
 
 // TODO Duplicate code. This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
 
-$nbofjobs = count($object->lines);
 $nbofjobslaunchedok = 0;
 $nbofjobslaunchedko = 0;
 
-if (is_array($object->lines) && (count($object->lines) > 0)) {
+if (is_array($object->lines) && !empty($object->lines)) {
 	$savconf = dol_clone($conf);
 
 	// Loop over job
