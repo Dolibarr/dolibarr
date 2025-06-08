@@ -183,7 +183,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-		if (empty($objectpage->disable_waf)) {
+		if ($objectpage->disable_waf != 'all') {
+			if (strpos($objectpage->disable_waf, 'NOSCANAUDIOFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANAUDIOFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANIFRAMEFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANIFRAMEFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANOBJECTFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANOBJECTFORINJECTION\', 1);'."\n";
+			}
 			$tplcontent .= '	require_once DOL_DOCUMENT_ROOT.\'/waf.inc.php\';'."\n";
 		}
 		$tplcontent .= "}\n";
@@ -440,7 +449,16 @@ function dolSavePageContent($filetpl, Website $object, WebsitePage $objectpage, 
 		$tplcontent .= "if (! defined('USEDOLIBARRSERVER') && ! defined('USEDOLIBARREDITOR')) {\n";
 		$tplcontent .= '	$pathdepth = count(explode(\'/\', $_SERVER[\'SCRIPT_NAME\'])) - 2;'."\n";
 		$tplcontent .= '	require_once ($pathdepth ? str_repeat(\'../\', $pathdepth) : \'./\').\'master.inc.php\';'."\n";
-		if (empty($objectpage->disable_waf)) {
+		if ($objectpage->disable_waf != 'all') {
+			if (strpos($objectpage->disable_waf, 'NOSCANAUDIOFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANAUDIOFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANIFRAMEFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANIFRAMEFORINJECTION\', 1);'."\n";
+			}
+			if (strpos($objectpage->disable_waf, 'NOSCANOBJECTFORINJECTION') !== false) {
+				$tplcontent .= '	define(\'NOSCANOBJECTFORINJECTION\', 1);'."\n";
+			}
 			$tplcontent .= '	require_once DOL_DOCUMENT_ROOT.\'/waf.inc.php\';'."\n";
 		}
 		$tplcontent .= "}\n";

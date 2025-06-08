@@ -1187,8 +1187,6 @@ class Societe extends CommonObject
 	 */
 	public function create_individual(User $user, $no_email = 0, $tags = array(), $notrigger = 0)
 	{
-		global $conf;
-
 		$error = 0;
 
 		$this->db->begin();
@@ -1260,7 +1258,7 @@ class Societe extends CommonObject
 	 */
 	public function verify()
 	{
-		global $conf, $langs, $mysoc;
+		global $langs, $mysoc;
 
 		$error = 0;
 		$this->errors = array();

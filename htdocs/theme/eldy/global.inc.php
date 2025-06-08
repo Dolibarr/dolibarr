@@ -2843,11 +2843,11 @@ span.widthpictotitle.pictotitle {
 }
 .pictofixedwidth {
 	text-align: start;
-	width: 20px;
+	width: 1.35em;
 	/* padding-right: 0; */
 }
 img.pictofixedwidth {
-	width: 18px;
+	width: 1.2em;
 	padding-right: 2px;
 }
 
@@ -9000,6 +9000,12 @@ table.jPicker {
 
 @media only screen and (max-width: 768px)
 {
+	.pictofixedwidth {
+		text-align: start;
+		width: 1.5em;
+		/* padding-right: 0; */
+	}
+
 	.ai_dropdown{
 		min-width : 280px !important;
 		width: calc(100% - 50px);
