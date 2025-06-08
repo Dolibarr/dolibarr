@@ -39,7 +39,7 @@ class CoSousTraitant
 
 		$sumFacturedFourn = array_sum(array_column($facturesFourn, 'total_ht'));
 		$facturedMainCompanyDiff = $facture->getLastSituationCompletePrice(false) - $sumFacturedFourn;
-		$totalHtOrders = array_sum(array_column(CommandeTools::getOrdersValidatedFromProject($db, $facture->project), 'total_ht'));
+		$totalHtOrders = array_sum(array_column(CommandeTools::getOrdersValidatedFromProject($db, $facture->project, null), 'total_ht'));
 
 		return [
 			'company' => [

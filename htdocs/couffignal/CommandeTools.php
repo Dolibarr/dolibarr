@@ -10,20 +10,26 @@ require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 class CommandeTools
 {
 	/**
-	 * Get all validated orders from a project
+	 * Get validated orders linked to a project, optionally filtered by company ID
 	 *
 	 * @param DoliDB $db Database handler
 	 * @param Project $project Project object
-	 * @return array
+	 * @param int|null $socId Optional company ID to filter orders
+	 * @return array List of validated orders linked to the project
 	 */
-	public static function getOrdersValidatedFromProject(DoliDB $db, Project $project): array
+	public static function getOrdersValidatedFromProject(DoliDB $db, Project $project, ?int $socId): array
 	{
-		$listOrdersRowId = $project->get_element_list('order', 'commande');
+		$listOrdersId = $project->get_element_list('order', 'commande');
 
 		$orders = [];
-		foreach ($listOrdersRowId as $orderRowId) {
+		foreach ($listOrdersId as $orderId) {
 			$order = new Commande($db);
-			$order->fetch($orderRowId);
+			$order->fetch($orderId);
+
+			if ($socId && $order->socid != $socId) {
+				continue; // Skip orders not linked to the specified company
+			}
+
 			if (in_array($order->statut, [
 				Commande::STATUS_VALIDATED,
 				Commande::STATUS_SHIPMENTONPROCESS,
