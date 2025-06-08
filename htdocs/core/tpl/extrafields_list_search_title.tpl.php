@@ -15,7 +15,7 @@ if (!isset($disablesortlink)) {
 
 // Loop to show all columns of extrafields for the title line
 if (!empty($extrafieldsobjectkey)) {	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
-	if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
+	if (!empty($extrafields->attributes[$extrafieldsobjectkey]['label']) && is_array($extrafields->attributes[$extrafieldsobjectkey]['label'])) {
 		if (empty($extrafieldsobjectprefix)) {
 			$extrafieldsobjectprefix = 'ef.';
 		}

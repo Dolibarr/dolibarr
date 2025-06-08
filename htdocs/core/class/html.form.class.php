@@ -424,7 +424,7 @@ class Form
 			$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 		}
 
-		if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+		if (is_array($arrayoflangcode) && !empty($arrayoflangcode)) {
 			if (!is_object($extralanguages)) {
 				include_once DOL_DOCUMENT_ROOT . '/core/class/extralanguages.class.php';
 				$extralanguages = new ExtraLanguages($this->db);
@@ -827,7 +827,7 @@ class Form
 		$parameters = array();
 		$reshook = $hookmanager->executeHooks('addMoreMassActions', $parameters); // Note that $action and $object may have been modified by hook
 		// check if there is a mass action
-		if (count($arrayofaction) == 0 && empty($hookmanager->resPrint)) {
+		if (empty($arrayofaction) && empty($hookmanager->resPrint)) {
 			return;
 		}
 		if (empty($reshook)) {
@@ -999,7 +999,7 @@ class Form
 					if (empty($row['rowid'])) {
 						continue;
 					}
-					if (is_array($exclude_country_code) && count($exclude_country_code) && in_array($row['code_iso'], $exclude_country_code)) {
+					if (is_array($exclude_country_code) && !empty($exclude_country_code) && in_array($row['code_iso'], $exclude_country_code)) {
 						continue; // exclude some countries
 					}
 
@@ -1209,8 +1209,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_types_fees);
-		if ($num > 0) {
+		if (!empty($this->cache_types_fees)) {
 			return 0; // Cache already loaded
 		}
 
@@ -1474,7 +1473,7 @@ class Form
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (!empty($scrit[1])) {
 				$sql .= "(";
 			}
 			foreach ($scrit as $crit) {
@@ -1484,7 +1483,7 @@ class Form
 				$sql .= "(s.nom LIKE '" . $this->db->escape($prefix . $crit) . "%')";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (!empty($scrit[1])) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -1872,10 +1871,10 @@ class Form
 					if ($obj->statut == 1) {
 						if ($htmlname != 'none') {
 							$disabled = 0;
-							if (is_array($exclude) && count($exclude) && in_array($obj->rowid, $exclude)) {
+							if (is_array($exclude) && !empty($exclude) && in_array($obj->rowid, $exclude)) {
 								$disabled = 1;
 							}
-							if (is_array($limitto) && count($limitto) && !in_array($obj->rowid, $limitto)) {
+							if (is_array($limitto) && !empty($limitto) && !in_array($obj->rowid, $limitto)) {
 								$disabled = 1;
 							}
 							if (!empty($selected) && in_array($obj->rowid, $selected)) {
@@ -2131,7 +2130,7 @@ class Form
 					$userstatic->admin = $obj->admin;
 
 					$disableline = '';
-					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) {
+					if (is_array($enableonly) && !empty($enableonly) && !in_array($obj->rowid, $enableonly)) {
 						$disableline = ($enableonlytext ? $enableonlytext : '1');
 					}
 
@@ -2309,7 +2308,7 @@ class Form
 			}
 			// Show my availability
 			if ($showproperties) {
-				if ($ownerid == $value['id'] && is_array($listofuserid) && count($listofuserid) && in_array($ownerid, array_keys($listofuserid))) {
+				if ($ownerid == $value['id'] && is_array($listofuserid) && !empty($listofuserid) && in_array($ownerid, array_keys($listofuserid))) {
 					$out .= '<div class="myavailability inline-block">';
 					$out .= '<span class="hideonsmartphone">&nbsp;-&nbsp;<span class="opacitymedium">' . $langs->trans("Availability") . ':</span>  </span><input id="transparency" class="paddingrightonly" ' . ($action == 'view' ? 'disabled' : '') . ' type="checkbox" name="transparency"' . ($listofuserid[$ownerid]['transparency'] ? ' checked' : '') . '><label for="transparency">' . $langs->trans("Busy") . '</label>';
 					$out .= '</div>';
@@ -2639,7 +2638,7 @@ class Form
 		}
 
 		$selectFields = " p.rowid, p.ref, p.label, p.description, p.barcode, p.fk_country, p.fk_product_type, p.price, p.price_ttc, p.price_base_type, p.tva_tx, p.default_vat_code, p.duration, p.fk_price_expression";
-		if (count($warehouseStatusArray)) {
+		if (!empty($warehouseStatusArray)) {
 			$selectFieldsGrouped = ", sum(" . $this->db->ifsql("e.statut IS NULL", "0", "ps.reel") . ") as stock"; // e.statut is null if there is no record in stock
 		} else {
 			$selectFieldsGrouped = ", " . $this->db->ifsql("p.stock IS NULL", 0, "p.stock") . " AS stock";
@@ -2707,7 +2706,7 @@ class Form
 		$reshook = $hookmanager->executeHooks('selectProductsListFrom', $parameters); // Note that $action and $object may have been modified by hook
 		$sql .= $hookmanager->resPrint;
 
-		if (count($warehouseStatusArray)) {
+		if (!empty($warehouseStatusArray)) {
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "product_stock as ps on ps.fk_product = p.rowid";
 			$sql .= " LEFT JOIN " . $this->db->prefix() . "entrepot as e on ps.fk_entrepot = e.rowid AND e.entity IN (" . getEntity('stock') . ")";
 			$sql .= ' AND e.statut IN (' . $this->db->sanitize($this->db->escape(implode(',', $warehouseStatusArray))) . ')'; // Return line if product is inside the selected stock. If not, an empty line will be returned so we will count 0.
@@ -2783,7 +2782,7 @@ class Form
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (!empty($scrit[1])) {
 				$sql .= "(";
 			}
 			foreach ($scrit as $crit) {
@@ -2809,7 +2808,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (!empty($scrit[1])) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -2817,7 +2816,7 @@ class Form
 			}
 			$sql .= ')';
 		}
-		if (count($warehouseStatusArray)) {
+		if (!empty($warehouseStatusArray)) {
 			$sql .= " GROUP BY " . $selectFields;
 		}
 
@@ -3429,7 +3428,7 @@ class Form
 			// For natural search
 			$scrit = explode(' ', $filterkey);
 			$i = 0;
-			if (count($scrit) > 1) {
+			if (!empty($scrit[1])) {
 				$sql .= "(";
 			}
 			foreach ($scrit as $crit) {
@@ -3443,7 +3442,7 @@ class Form
 				$sql .= ")";
 				$i++;
 			}
-			if (count($scrit) > 1) {
+			if (!empty($scrit[1])) {
 				$sql .= ")";
 			}
 			if (isModEnabled('barcode')) {
@@ -3958,8 +3957,7 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_conditions_paiements);
-		if ($num > 0) {
+		if (!empty($this->cache_conditions_paiements)) {
 			return 0; // Cache already loaded
 		}
 
@@ -4007,8 +4005,8 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_availability);    // TODO Use $conf->cache['availability'] instead of $this->cache_availability
-		if ($num > 0) {
+		// TODO Use $conf->cache['availability'] instead of $this->cache_availability
+		if (!empty($this->cache_availability)) {
 			return 0; // Cache already loaded
 		}
 
@@ -4091,8 +4089,8 @@ class Form
 	{
 		global $langs;
 
-		$num = count($this->cache_demand_reason);    // TODO Use $conf->cache['input_reason'] instead of $this->cache_demand_reason
-		if ($num > 0) {
+		// TODO Use $conf->cache['input_reason'] instead of $this->cache_demand_reason
+		if (!empty($this->cache_demand_reason)) {
 			return 0; // Cache already loaded
 		}
 
@@ -4188,9 +4186,9 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_types_paiements);        // TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
-		if ($num > 0) {
-			return $num; // Cache already loaded
+		// TODO Use $conf->cache['payment_mode'] instead of $this->cache_types_paiements
+		if (!empty($this->cache_types_paiements)) {
+			return count($this->cache_types_paiements); // Cache already loaded
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -4399,7 +4397,7 @@ class Form
 			}
 
 			// On passe si on a demande de filtrer sur des modes de paiments particuliers
-			if (count($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
+			if (!empty($filterarray) && !in_array($arraytypes['type'], $filterarray)) {
 				continue;
 			}
 
@@ -4500,9 +4498,9 @@ class Form
 		// phpcs:enable
 		global $langs;
 
-		$num = count($this->cache_transport_mode);        // TODO Use $conf->cache['payment_mode'] instead of $this->cache_transport_mode
-		if ($num > 0) {
-			return $num; // Cache already loaded
+		// TODO Use $conf->cache['payment_mode'] instead of $this->cache_transport_mode
+		if (!empty($this->cache_transport_mode)) {
+			return count($this->cache_transport_mode); // Cache already loaded
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -5064,7 +5062,7 @@ class Form
 
 		$output = '<select class="flat' . ($morecss ? ' ' . $morecss : '') . '" name="' . $htmlname . '" id="' . $htmlname . '">';
 		if (is_array($cate_arbo)) {
-			if (!count($cate_arbo)) {
+			if (empty($cate_arbo)) {
 				$output .= '<option value="-1" disabled>' . $langs->trans("NoCategoriesDefined") . '</option>';
 			} else {
 				$output .= '<option value="-1">&nbsp;</option>';
@@ -5165,8 +5163,9 @@ class Form
 		// Set height automatically if not defined
 		if (empty($height)) {
 			$height = 220;
-			if (is_array($formquestion) && count($formquestion) > 2) {
-				$height += ((count($formquestion) - 2) * 24);
+			$formquestioncount = is_array($formquestion) ? count($formquestion) : 0;
+			if ($formquestioncount > 2) {
+				$height += ($formquestioncount - 2) * 24;
 			}
 		}
 
@@ -6268,7 +6267,7 @@ class Form
 		if (!in_array($conf->currency, $TCurrency) && !$excludeConfCurrency) {
 			$TCurrency[$conf->currency] = $conf->currency;
 		}
-		if (count($TCurrency) > 0) {
+		if (!empty($TCurrency)) {
 			foreach ($langs->cache_currencies as $code_iso => $currency) {
 				if (isset($TCurrency[$code_iso])) {
 					if (!empty($selected) && $selected == $code_iso) {
@@ -6306,9 +6305,8 @@ class Form
 		// phpcs:enable
 		global $langs, $user;
 
-		$num = count($this->cache_vatrates);
-		if ($num > 0) {
-			return $num; // Cache already loaded
+		if (!empty($this->cache_vatrates)) {
+			return count($this->cache_vatrates); // Cache already loaded
 		}
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
@@ -7338,15 +7336,18 @@ class Form
 			$prefix = empty($conf->global->TICKET_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
-			$i = 0;
-			if (count($scrit) > 1) $sql .= "(";
-			foreach ($scrit as $crit) {
-				if ($i > 0) $sql .= " AND ";
-				$sql .= "(p.ref LIKE '" . $this->db->escape($prefix . $crit) . "%' OR p.subject LIKE '" . $this->db->escape($prefix . $crit) . "%'";
-				$sql .= ")";
-				$i++;
+			if (!empty($scrit[1])) {
+				$sql .= "(";
 			}
-			if (count($scrit) > 1) $sql .= ")";
+			foreach ($scrit as $i => $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
+				$sql .= "(p.ref LIKE '" . $this->db->escape($prefix . $crit) . "%' OR p.subject LIKE '" . $this->db->escape($prefix . $crit) . "%')";
+			}
+			if (!empty($scrit[1])) {
+				$sql .= ")";
+			}
 			$sql .= ')';
 		}
 
@@ -7544,15 +7545,18 @@ class Form
 			$prefix = empty($conf->global->TICKET_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
-			$i = 0;
-			if (count($scrit) > 1) $sql .= "(";
-			foreach ($scrit as $crit) {
-				if ($i > 0) $sql .= " AND ";
-				$sql .= "p.ref LIKE '" . $this->db->escape($prefix . $crit) . "%'";
-				$sql .= "";
-				$i++;
+			if (!empty($scrit[1])) {
+				$sql .= "(";
 			}
-			if (count($scrit) > 1) $sql .= ")";
+			foreach ($scrit as $i => $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
+				$sql .= "p.ref LIKE '" . $this->db->escape($prefix . $crit) . "%'";
+			}
+			if (!empty($scrit[1])) {
+				$sql .= ")";
+			}
 			$sql .= ')';
 		}
 
@@ -7759,15 +7763,19 @@ class Form
 			$prefix = empty($conf->global->MEMBER_DONOTSEARCH_ANYWHERE) ? '%' : ''; // Can use index if PRODUCT_DONOTSEARCH_ANYWHERE is on
 			// For natural search
 			$scrit = explode(' ', $filterkey);
-			$i = 0;
-			if (count($scrit) > 1) $sql .= "(";
-			foreach ($scrit as $crit) {
-				if ($i > 0) $sql .= " AND ";
+			if (!empty($scrit[1])) {
+				$sql .= "(";
+			}
+			foreach ($scrit as $i => $crit) {
+				if ($i > 0) {
+					$sql .= " AND ";
+				}
 				$sql .= "(p.firstname LIKE '" . $this->db->escape($prefix . $crit) . "%'";
 				$sql .= " OR p.lastname LIKE '" . $this->db->escape($prefix . $crit) . "%')";
-				$i++;
 			}
-			if (count($scrit) > 1) $sql .= ")";
+			if (!empty($scrit[1])) {
+				$sql .= ")";
+			}
 			$sql .= ')';
 		}
 		if ($status != -1) {
@@ -9141,11 +9149,11 @@ class Form
 		}
 
 		if (empty($reshook)) {
-			if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 				$possiblelinks = array_merge($possiblelinks, $hookmanager->resArray);
 			}
 		} elseif ($reshook > 0) {
-			if (is_array($hookmanager->resArray) && count($hookmanager->resArray)) {
+			if (is_array($hookmanager->resArray) && !empty($hookmanager->resArray)) {
 				$possiblelinks = $hookmanager->resArray;
 			}
 		}
@@ -9520,7 +9528,7 @@ class Form
 				$arrayoflangcode[] = $conf->global->PDF_USE_ALSO_LANGUAGE_CODE;
 			}
 
-			if (is_array($arrayoflangcode) && count($arrayoflangcode)) {
+			if (is_array($arrayoflangcode) && !empty($arrayoflangcode)) {
 				if (!is_object($extralanguages)) {
 					include_once DOL_DOCUMENT_ROOT . '/core/class/extralanguages.class.php';
 					$extralanguages = new ExtraLanguages($this->db);
@@ -9903,7 +9911,7 @@ class Form
 				while ($i < $num) {
 					$obj = $this->db->fetch_object($resql);
 					$disableline = 0;
-					if (is_array($enableonly) && count($enableonly) && !in_array($obj->rowid, $enableonly)) {
+					if (is_array($enableonly) && !empty($enableonly) && !in_array($obj->rowid, $enableonly)) {
 						$disableline = 1;
 					}
 

@@ -1013,7 +1013,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 		// Get contact
 		if (getDolGlobalInt('DOC_SHOW_FIRST_SALES_REP')) {
 			$arrayidcontact = $object->getIdContact('internal', 'SALESREPFOLL');
-			if (count($arrayidcontact) > 0) {
+			if (!empty($arrayidcontact)) {
 				$usertmp = new User($this->db);
 				$usertmp->fetch($arrayidcontact[0]);
 				$posy += 4;
@@ -1073,7 +1073,7 @@ class pdf_standard_myobject extends ModelePDFMyObject
 			// If BILLING contact defined on invoice, we use it
 			$usecontact = false;
 			$arrayidcontact = $object->getIdContact('external', 'BILLING');
-			if (count($arrayidcontact) > 0) {
+			if (!empty($arrayidcontact)) {
 				$usecontact = true;
 				$result = $object->fetch_contact($arrayidcontact[0]);
 			}

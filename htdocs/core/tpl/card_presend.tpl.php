@@ -222,14 +222,14 @@ if ($action == 'presend') {
 		$fuserdest = new User($db);
 
 		$result = $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>"t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email <> ''"), 'AND', true);
-		if ($result > 0 && is_array($fuserdest->users) && count($fuserdest->users) > 0) {
+		if ($result > 0 && is_array($fuserdest->users) && !empty($fuserdest->users)) {
 			foreach ($fuserdest->users as $uuserdest) {
 				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id, 'email');
 			}
 		} elseif ($result < 0) {
 			setEventMessages(null, $fuserdest->errors, 'errors');
 		}
-		if (count($listeuser) > 0) {
+		if (!empty($listeuser)) {
 			$formmail->withtouser = $listeuser;
 			$formmail->withtoccuser = $listeuser;
 		}
@@ -333,7 +333,7 @@ if ($action == 'presend') {
 	$contactarr = array();
 	$contactarr = $tmpobject->liste_contact(-1, 'external', 0, '', 1);
 
-	if (is_array($contactarr) && count($contactarr) > 0) {
+	if (is_array($contactarr) && !empty($contactarr)) {
 		require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 		$contactstatic = new Contact($db);

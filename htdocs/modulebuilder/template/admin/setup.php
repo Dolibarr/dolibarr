@@ -80,7 +80,6 @@ $type = 'myobject';
 
 
 $error = 0;
-$setupnotempty = 0;
 
 // Set this to 1 to use the factory to manage constants. Warning, the generated module will be compatible with version v15+ only
 $useFormSetup = 1;
@@ -158,9 +157,6 @@ $item->helpText = $langs->transnoentities('AnHelpMessage');
 //$item->fieldOverride = false; // set this var to override field output will override $fieldInputOverride and $fieldOutputOverride too
 //$item->fieldInputOverride = false; // set this var to override field input
 //$item->fieldOutputOverride = false; // set this var to override field output
-
-
-$setupnotempty += count($formSetup->items);
 
 
 $dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -318,6 +314,7 @@ $myTmpObjects = array();
 // TODO Scan list of objects
 $myTmpObjects['myobject'] = array('label'=>'MyObject', 'includerefgeneration'=>0, 'includedocgeneration'=>0, 'class'=>'MyObject');
 
+$setupnotempty = 0;
 
 foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
 	if ($myTmpObjectArray['includerefgeneration']) {

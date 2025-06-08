@@ -35,11 +35,12 @@ $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("mymodule");
 
 $total = 0; $ilink = 0;
+$linkedObjectBlockCount = count($linkedObjectBlock);
 foreach ($linkedObjectBlock as $key => $objectlink) {
 	$ilink++;
 
 	$trclass = 'oddeven';
-	if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) {
+	if ($ilink == $linkedObjectBlockCount && empty($noMoreLinkedObjectBlockAfter) && $linkedObjectBlockCount <= 1) {
 		$trclass .= ' liste_sub_total';
 	}
 	?>

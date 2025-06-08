@@ -351,7 +351,7 @@ class MyObject extends CommonObject
 		}
 		// ...
 		// Clear extrafields that are unique
-		if (is_array($object->array_options) && count($object->array_options) > 0) {
+		if (is_array($object->array_options) && !empty($object->array_options)) {
 			$extrafields->fetch_name_optionals_label($this->table_element);
 			foreach ($object->array_options as $key => $option) {
 				$shortkey = preg_replace('/options_/', '', $key);
@@ -456,22 +456,20 @@ class MyObject extends CommonObject
 		}
 		// Manage filter
 		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				if ($key == 't.rowid') {
-					$sqlwhere[] = $key." = ".((int) $value);
-				} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
-					$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
-				} elseif ($key == 'customsql') {
-					$sqlwhere[] = $value;
-				} elseif (strpos($value, '%') === false) {
-					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-				} else {
-					$sqlwhere[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($value))."%'";
-				}
+		foreach ($filter as $key => $value) {
+			if ($key == 't.rowid') {
+				$sqlwhere[] = $key." = ".((int) $value);
+			} elseif (in_array($this->fields[$key]['type'], array('date', 'datetime', 'timestamp'))) {
+				$sqlwhere[] = $key." = '".$this->db->idate($value)."'";
+			} elseif ($key == 'customsql') {
+				$sqlwhere[] = $value;
+			} elseif (strpos($value, '%') === false) {
+				$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
+			} else {
+				$sqlwhere[] = $key." LIKE '%".$this->db->escapeforlike($this->db->escape($value))."%'";
 			}
 		}
-		if (count($sqlwhere) > 0) {
+		if (!empty($sqlwhere)) {
 			$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
 		}
 

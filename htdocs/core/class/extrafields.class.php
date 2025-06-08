@@ -352,10 +352,10 @@ class ExtraFields
 		}
 
 		if (!empty($attrname) && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname) && !is_numeric($attrname)) {
-			if (is_array($param) && count($param) > 0) {
+			if (is_array($param) && !empty($param)) {
 				$params = serialize($param);
-			} elseif (strlen($param) > 0) {
-				$params = trim($param);
+			} elseif (!empty($param)) {
+				$params = trim((string) $param);
 			} else {
 				$params = '';
 			}
@@ -725,12 +725,12 @@ class ExtraFields
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/", $attrname)) {
 			$this->db->begin();
 
-			if (is_array($param) && count($param) > 0) {
+			if (is_array($param) && !empty($param)) {
 				$params = serialize($param);
 			} elseif (is_array($param)) {
 				$params = '';
-			} elseif (strlen($param) > 0) {
-				$params = trim($param);
+			} elseif (!empty($param)) {
+				$params = trim((string) $param);
 			} else {
 				$params = '';
 			}
@@ -1197,20 +1197,20 @@ class ExtraFields
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
 
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+				if (!empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+				if (!empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 
 				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
+				if (!empty($InfoFieldList[5])) {
 					if ($InfoFieldList[0] == 'categorie') {
 						$filter_categorie = true;
 					}
@@ -1367,11 +1367,11 @@ class ExtraFields
 				// 6 : ids categories list separated by comma for category root
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+				if (!empty($InfoFieldList[3])) {
 					list ($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+				if (!empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
@@ -1380,7 +1380,7 @@ class ExtraFields
 				}
 
 				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
+				if (!empty($InfoFieldList[5])) {
 					if ($InfoFieldList[0] == 'categorie') {
 						$filter_categorie = true;
 					}
@@ -1690,7 +1690,7 @@ class ExtraFields
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3) {
+			if (!empty($InfoFieldList[2])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -1702,7 +1702,7 @@ class ExtraFields
 			}
 
 			$filter_categorie = false;
-			if (count($InfoFieldList) > 5) {
+			if (!empty($InfoFieldList[5])) {
 				if ($InfoFieldList[0] == 'categorie') {
 					$filter_categorie = true;
 				}
@@ -1807,7 +1807,7 @@ class ExtraFields
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3) {
+			if (!empty($InfoFieldList[2])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -1819,7 +1819,7 @@ class ExtraFields
 			}
 
 			$filter_categorie = false;
-			if (count($InfoFieldList) > 5) {
+			if (!empty($InfoFieldList[5])) {
 				if ($InfoFieldList[0] == 'categorie') {
 					$filter_categorie = true;
 				}
@@ -2000,7 +2000,7 @@ class ExtraFields
 		// Set $extrafield_collapse_display_value (do we have to collapse/expand the group after the separator)
 		$extrafield_collapse_display_value = -1;
 		$expand_display = false;
-		if (is_array($extrafield_param_list) && count($extrafield_param_list) > 0) {
+		if (is_array($extrafield_param_list) && !empty($extrafield_param_list)) {
 			$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 			$expand_display = ((isset($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) || GETPOST('ignorecollapsesetup', 'int')) ? (empty($_COOKIE['DOLCOLLAPSE_'.$object->table_element.'_extrafields_'.$key]) ? false : true) : ($extrafield_collapse_display_value == 2 ? false : true));
 		}

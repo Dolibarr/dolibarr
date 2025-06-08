@@ -255,13 +255,11 @@ class CGenericDic
 
 		// Manage filter
 		$sqlwhere = array();
-		if (count($filter) > 0) {
-			foreach ($filter as $key => $value) {
-				$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-			}
+		foreach ($filter as $key => $value) {
+			$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 		}
 
-		if (count($sqlwhere) > 0) {
+		if (!empty($sqlwhere)) {
 			$sql .= " WHERE ".implode(' '.$this->db->escape($filtermode).' ', $sqlwhere);
 		}
 		if (!empty($sortfield)) {

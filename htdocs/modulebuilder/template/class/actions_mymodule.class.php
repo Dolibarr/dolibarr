@@ -332,7 +332,6 @@ class ActionsMyModule
 		} elseif ($parameters['mode'] == 'add') {
 			$langs->load('mymodule@mymodule');
 			// used when we want to add some tabs
-			$counter = count($parameters['head']);
 			$element = $parameters['object']->element;
 			$id = $parameters['object']->id;
 			// verifier le type d'onglet comme member_stats où ça ne doit pas apparaitre
@@ -340,15 +339,19 @@ class ActionsMyModule
 			if (in_array($element, ['context1', 'context2'])) {
 				$datacount = 0;
 
-				$parameters['head'][$counter][0] = dol_buildpath('/mymodule/mymodule_tab.php', 1) . '?id=' . $id . '&amp;module='.$element;
-				$parameters['head'][$counter][1] = $langs->trans('MyModuleTab');
+				$entry = array(
+					dol_buildpath('/mymodule/mymodule_tab.php', 1) . '?id=' . $id . '&amp;module='.$element,
+					$langs->trans('MyModuleTab'),
+					'mymoduleemails'
+				);
+
 				if ($datacount > 0) {
-					$parameters['head'][$counter][1] .= '<span class="badge marginleftonlyshort">' . $datacount . '</span>';
+					$entry[1] .= '<span class="badge marginleftonlyshort">' . $datacount . '</span>';
 				}
-				$parameters['head'][$counter][2] = 'mymoduleemails';
-				$counter++;
+
+				$parameters['head'][] = $entry;
 			}
-			if ($counter > 0 && (int) DOL_VERSION < 14) {
+			if (!empty($parameters['head']) && (int) DOL_VERSION < 14) {
 				$this->results = $parameters['head'];
 				// return 1 to replace standard code
 				return 1;

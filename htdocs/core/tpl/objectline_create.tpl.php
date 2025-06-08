@@ -102,7 +102,7 @@ if (!empty($extrafields)) {
 	}
 }
 print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->\n";
-$nolinesbefore = (count($this->lines) == 0 || $forcetoshowtitlelines);
+$nolinesbefore = (empty($this->lines) || $forcetoshowtitlelines);
 if ($nolinesbefore) {
 	?>
 	<tr class="liste_titre<?php echo (($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_add_') ?> nodrag nodrop">

@@ -1505,7 +1505,7 @@ abstract class CommonObject
 			$sqlWhere[] = " tc.code='".$this->db->escape($code)."'";
 		}
 
-		if (count($sqlWhere) > 0) {
+		if (!empty($sqlWhere)) {
 			$sql .= " WHERE ".implode(' AND ', $sqlWhere);
 		}
 
@@ -4570,7 +4570,7 @@ abstract class CommonObject
 		}
 
 		// Check parameters
-		if (!isset($this->childtables) || !is_array($this->childtables) || count($this->childtables) == 0) {
+		if (empty($this->childtables) || !is_array($this->childtables)) {
 			dol_print_error('Called isObjectUsed on a class with property this->childtables not defined');
 			return -1;
 		}
@@ -5517,17 +5517,15 @@ abstract class CommonObject
 					}
 					if (is_dir($tmpdir)) {
 						$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.od(s|t)$', '', 'name', SORT_ASC, 0);
-						if (count($tmpfiles)) {
+						if (!empty($tmpfiles)) {
 							$listoffiles = array_merge($listoffiles, $tmpfiles);
 						}
 					}
 				}
 
-				if (count($listoffiles)) {
-					foreach ($listoffiles as $record) {
-						$srctemplatepath = $record['fullname'];
-						break;
-					}
+				foreach ($listoffiles as $record) {
+					$srctemplatepath = $record['fullname'];
+					break;
 				}
 			}
 
@@ -6087,7 +6085,7 @@ abstract class CommonObject
 		}
 
 		// Request to get complementary values
-		if (is_array($optionsArray) && count($optionsArray) > 0) {
+		if (is_array($optionsArray) && !empty($optionsArray)) {
 			$sql = "SELECT rowid";
 			foreach ($optionsArray as $name => $label) {
 				if (empty($extrafields->attributes[$this->table_element]['type'][$name]) || $extrafields->attributes[$this->table_element]['type'][$name] != 'separate') {
@@ -7082,20 +7080,20 @@ abstract class CommonObject
 				// 6 : ids categories list separated by comma for category root
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+				if (!empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
 						$keyList = $InfoFieldList[2].' as rowid';
 					}
 				}
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+				if (!empty($InfoFieldList[3])) {
 					list($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
 
 				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
+				if (!empty($InfoFieldList[5])) {
 					if ($InfoFieldList[0] == 'categorie') {
 						$filter_categorie = true;
 					}
@@ -7156,7 +7154,7 @@ abstract class CommonObject
 							// Several field into label (eq table:code|libelle:rowid)
 							$notrans = false;
 							$fields_label = explode('|', $InfoFieldList[1]);
-							if (count($fields_label) > 1) {
+							if (!empty($fields_label[1])) {
 								$notrans = true;
 								foreach ($fields_label as $field_toshow) {
 									$labeltoshow .= $obj->$field_toshow . ' ';
@@ -7254,11 +7252,11 @@ abstract class CommonObject
 				// 6 : ids categories list separated by comma for category root
 				$keyList = (empty($InfoFieldList[2]) ? 'rowid' : $InfoFieldList[2].' as rowid');
 
-				if (count($InfoFieldList) > 3 && !empty($InfoFieldList[3])) {
+				if (!empty($InfoFieldList[3])) {
 					list ($parentName, $parentField) = explode('|', $InfoFieldList[3]);
 					$keyList .= ', '.$parentField;
 				}
-				if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+				if (!empty($InfoFieldList[4])) {
 					if (strpos($InfoFieldList[4], 'extra.') !== false) {
 						$keyList = 'main.'.$InfoFieldList[2].' as rowid';
 					} else {
@@ -7267,7 +7265,7 @@ abstract class CommonObject
 				}
 
 				$filter_categorie = false;
-				if (count($InfoFieldList) > 5) {
+				if (!empty($InfoFieldList[5])) {
 					if ($InfoFieldList[0] == 'categorie') {
 						$filter_categorie = true;
 					}
@@ -7329,7 +7327,7 @@ abstract class CommonObject
 							$notrans = false;
 							// Several field into label (eq table:code|libelle:rowid)
 							$fields_label = explode('|', $InfoFieldList[1]);
-							if (count($fields_label) > 1) {
+							if (!empty($fields_label[1])) {
 								$notrans = true;
 								foreach ($fields_label as $field_toshow) {
 									$labeltoshow .= $obj->$field_toshow . ' ';
@@ -7648,7 +7646,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+			if (!empty($InfoFieldList[4])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -7660,7 +7658,7 @@ abstract class CommonObject
 			}
 
 			$filter_categorie = false;
-			if (count($InfoFieldList) > 5) {
+			if (!empty($InfoFieldList[5])) {
 				if ($InfoFieldList[0] == 'categorie') {
 					$filter_categorie = true;
 				}
@@ -7693,7 +7691,7 @@ abstract class CommonObject
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
 
-						if (is_array($fields_label) && count($fields_label) > 1) {
+						if (is_array($fields_label) && !empty($fields_label[1])) {
 							foreach ($fields_label as $field_toshow) {
 								$translabel = '';
 								if (!empty($obj->$field_toshow)) {
@@ -7738,9 +7736,9 @@ abstract class CommonObject
 		} elseif ($type == 'checkbox') {
 			$value_arr = explode(',', $value);
 			$value = '';
-			if (is_array($value_arr) && count($value_arr) > 0) {
+			if (!empty($value_arr)) {
 				$toprint = array();
-				foreach ($value_arr as $keyval => $valueval) {
+				foreach ($value_arr as $valueval) {
 					$toprint[] = '<li class="select2-search-choice-dolibarr noborderoncategories" style="background: #bbb">'.$param['options'][$valueval].'</li>';
 				}
 				$value = '<div class="select2-container-multi-dolibarr" style="width: 90%;"><ul class="select2-choices-dolibarr">'.implode(' ', $toprint).'</ul></div>';
@@ -7754,7 +7752,7 @@ abstract class CommonObject
 			$selectkey = "rowid";
 			$keyList = 'rowid';
 
-			if (count($InfoFieldList) >= 3) {
+			if (!empty($InfoFieldList[2])) {
 				$selectkey = $InfoFieldList[2];
 				$keyList = $InfoFieldList[2].' as rowid';
 			}
@@ -7766,7 +7764,7 @@ abstract class CommonObject
 			}
 
 			$filter_categorie = false;
-			if (count($InfoFieldList) > 5) {
+			if (!empty($InfoFieldList[5])) {
 				if ($InfoFieldList[0] == 'categorie') {
 					$filter_categorie = true;
 				}
@@ -7790,7 +7788,7 @@ abstract class CommonObject
 						// Several field into label (eq table:code|libelle:rowid)
 						$fields_label = explode('|', $InfoFieldList[1]);
 						if (is_array($value_arr) && in_array($obj->rowid, $value_arr)) {
-							if (is_array($fields_label) && count($fields_label) > 1) {
+							if (is_array($fields_label) && !empty($fields_label[1])) {
 								foreach ($fields_label as $field_toshow) {
 									$translabel = '';
 									if (!empty($obj->$field_toshow)) {
@@ -8110,7 +8108,7 @@ abstract class CommonObject
 			$value_arr = array_map(array($this->db, 'escape'), $value_arr);
 
 			$selectkey = "rowid";
-			if (count($InfoFieldList) > 4 && !empty($InfoFieldList[4])) {
+			if (!empty($InfoFieldList[4])) {
 				$selectkey = $InfoFieldList[2];
 			}
 
@@ -8167,7 +8165,7 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('showOptionals', $parameters, $this, $action); // Note that $action and $object may have been modified by hook
 
 		if (empty($reshook)) {
-			if (is_array($extrafields->attributes[$this->table_element]) && key_exists('label', $extrafields->attributes[$this->table_element]) && is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0) {
+			if (!empty($extrafields->attributes[$this->table_element]['label']) && is_array($extrafields->attributes[$this->table_element]['label'])) {
 				$out .= "\n";
 				$out .= '<!-- commonobject:showOptionals --> ';
 				$out .= "\n";
@@ -8228,7 +8226,7 @@ abstract class CommonObject
 					}
 
 					$colspan = 0;
-					if (is_array($params) && count($params) > 0 && $display_type=='card') {
+					if (is_array($params) && !empty($params) && $display_type == 'card') {
 						if (array_key_exists('cols', $params)) {
 							$colspan = $params['cols'];
 						} elseif (array_key_exists('colspan', $params)) {	// For backward compatibility. Use cols instead now.
@@ -8280,7 +8278,7 @@ abstract class CommonObject
 						if (!empty($extrafield_param) && is_array($extrafield_param)) {
 							$extrafield_param_list = array_keys($extrafield_param['options']);
 
-							if (count($extrafield_param_list) > 0) {
+							if (!empty($extrafield_param_list)) {
 								$extrafield_collapse_display_value = intval($extrafield_param_list[0]);
 
 								if ($extrafield_collapse_display_value == 1 || $extrafield_collapse_display_value == 2) {
@@ -8300,7 +8298,7 @@ abstract class CommonObject
 
 						$class = (!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 						$csstyle = '';
-						if (is_array($params) && count($params) > 0) {
+						if (is_array($params) && !empty($params)) {
 							if (array_key_exists('class', $params)) {
 								$class .= $params['class'].' ';
 							}
@@ -8747,7 +8745,7 @@ abstract class CommonObject
 
 		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
 
-		if (count($filearray)) {
+		if (!empty($filearray)) {
 			if ($sortfield && $sortorder) {
 				$filearray = dol_sort_array($filearray, $sortfield, $sortorder);
 			}
@@ -9386,15 +9384,12 @@ abstract class CommonObject
 		}
 
 		// Create lines
-		if (!empty($this->table_element_line) && !empty($this->fk_element)) {
-			$num = (is_array($this->lines) ? count($this->lines) : 0);
-			for ($i = 0; $i < $num; $i++) {
-				$line = $this->lines[$i];
-
+		if (!empty($this->table_element_line) && !empty($this->fk_element) && !empty($this->lines) && is_array($this->lines)) {
+			foreach ($this->lines as $line) {
 				$keyforparent = $this->fk_element;
 				$line->$keyforparent = $this->id;
 
-				// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
+				// Test and convert into object $line. When coming from REST API, we may still have an array
 				//if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
 				if (!is_object($line)) {
 					$line = (object) $line;
@@ -9688,7 +9683,7 @@ abstract class CommonObject
 		if (is_array($this->childtablesoncascade) && !empty($this->childtablesoncascade)) {
 			foreach ($this->childtablesoncascade as $table) {
 				$deleteFromObject = explode(':', $table);
-				if (count($deleteFromObject) >= 2) {
+				if (!empty($deleteFromObject[1])) {
 					$className = str_replace('@', '', $deleteFromObject[0]);
 					$filePath = $deleteFromObject[1];
 					$columnName = $deleteFromObject[2];
@@ -9808,18 +9803,18 @@ abstract class CommonObject
 
 			// Manage filters
 			$sqlwhere = array();
-			if (count($filter) > 0) {
-				foreach ($filter as $key => $value) {
-					if ($key == 'customsql') {
-						$sqlwhere[] = $value;
-					} elseif (strpos($value, '%') === false) {
-						$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
-					} else {
-						$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
-					}
+
+			foreach ($filter as $key => $value) {
+				if ($key == 'customsql') {
+					$sqlwhere[] = $value;
+				} elseif (strpos($value, '%') === false) {
+					$sqlwhere[] = $key." IN (".$this->db->sanitize($this->db->escape($value)).")";
+				} else {
+					$sqlwhere[] = $key." LIKE '%".$this->db->escape($value)."%'";
 				}
 			}
-			if (count($sqlwhere) > 0) {
+
+			if (!empty($sqlwhere)) {
 				$sql .= " AND (".implode(" ".$filtermode." ", $sqlwhere).")";
 			}
 

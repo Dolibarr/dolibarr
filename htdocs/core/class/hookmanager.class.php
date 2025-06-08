@@ -128,7 +128,7 @@ class HookManager
 			}
 		}
 		// Log the init of hook but only for hooks thare are declared to be managed
-		if (count($arraytolog) > 0) {
+		if (!empty($arraytolog)) {
 			dol_syslog(get_class($this)."::initHooks Loading hooks: ".join(', ', $arraytolog), LOG_DEBUG);
 		}
 
@@ -255,7 +255,7 @@ class HookManager
 						$resactiontmp = $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
 						$resaction += $resactiontmp;
 
-						if ($resactiontmp < 0 || !empty($actionclassinstance->error) || (!empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0)) {
+						if ($resactiontmp < 0 || !empty($actionclassinstance->error) || !empty($actionclassinstance->errors)) {
 							$error++;
 							$this->error = $actionclassinstance->error;
 							$this->errors = array_merge($this->errors, (array) $actionclassinstance->errors);

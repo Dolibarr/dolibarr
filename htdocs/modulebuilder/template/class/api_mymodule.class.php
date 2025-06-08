@@ -189,7 +189,7 @@ class MyModuleApi extends DolibarrApi
 		} else {
 			throw new RestException(503, 'Error when retrieving myobject list: '.$this->db->lasterror());
 		}
-		if (!count($obj_ret)) {
+		if (empty($obj_ret)) {
 			throw new RestException(404, 'No myobject found');
 		}
 		return $obj_ret;
@@ -390,13 +390,12 @@ class MyModuleApi extends DolibarrApi
 		*/
 
 		// If object has lines, remove $db property
-		if (isset($object->lines) && is_array($object->lines) && count($object->lines) > 0) {
-			$nboflines = count($object->lines);
-			for ($i = 0; $i < $nboflines; $i++) {
-				$this->_cleanObjectDatas($object->lines[$i]);
+		if (!empty($object->lines) && is_array($object->lines)) {
+			foreach ($object->lines as $line) {
+				$this->_cleanObjectDatas($line);
 
-				unset($object->lines[$i]->lines);
-				unset($object->lines[$i]->note);
+				unset($line->lines);
+				unset($line->note);
 			}
 		}
 

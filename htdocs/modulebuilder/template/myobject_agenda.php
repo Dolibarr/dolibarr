@@ -91,7 +91,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if (GETPOST('actioncode', 'array')) {
 	$actioncode = GETPOST('actioncode', 'array', 3);
-	if (!count($actioncode)) {
+	if (empty($actioncode)) {
 		$actioncode = '0';
 	}
 } else {

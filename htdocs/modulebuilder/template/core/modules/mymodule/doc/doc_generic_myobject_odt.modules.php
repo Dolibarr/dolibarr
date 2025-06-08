@@ -142,7 +142,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				$texttitle .= img_warning($langs->trans("ErrorDirNotFound", $tmpdir), 0);
 			} else {
 				$tmpfiles = dol_dir_list($tmpdir, 'files', 0, '\.(ods|odt)');
-				if (count($tmpfiles)) {
+				if (!empty($tmpfiles)) {
 					$listoffiles = array_merge($listoffiles, $tmpfiles);
 				}
 			}
@@ -166,7 +166,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 		if (getDolGlobalString('MYMODULE_MYOBJECT_ADDON_PDF_ODT_PATH')) {
 			$texte .= $langs->trans("NumberOfModelFilesFound").': <b>';
 			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
-			$texte .= count($listoffiles);
+			$texte .= $nbofiles;
 			//$texte.=$nbofiles?'</a>':'';
 			$texte .= '</b>';
 		}
@@ -313,7 +313,7 @@ class doc_generic_myobject_odt extends ModelePDFMyObject
 				// If CUSTOMER contact defined on object, we use it
 				$usecontact = false;
 				$arrayidcontact = $object->getIdContact('external', 'CUSTOMER');
-				if (count($arrayidcontact) > 0) {
+				if (!empty($arrayidcontact)) {
 					$usecontact = true;
 					$result = $object->fetch_contact($arrayidcontact[0]);
 				}

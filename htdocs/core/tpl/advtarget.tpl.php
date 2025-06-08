@@ -278,7 +278,7 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 	foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
 		if ($key != 'ts_nameextra' && $key != 'ts_payeur') {
 			print '<tr><td>'.$extrafields->attributes[$elementtype]['label'][$key];
-			if (!empty($array_query['options_'.$key]) || (is_array($array_query['options_'.$key]) && count($array_query['options_'.$key]) > 0)) {
+			if (!empty($array_query['options_'.$key])) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
 			print '</td><td>';
@@ -477,7 +477,7 @@ if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) {
 	if (!empty($extrafields->attributes[$elementtype]['label'])) {
 		foreach ($extrafields->attributes[$elementtype]['label'] as $key => $val) {
 			print '<tr><td>'.$extrafields->attributes[$elementtype]['label'][$key];
-			if ($array_query['options_'.$key.'_cnct'] != '' || (is_array($array_query['options_'.$key.'_cnct']) && count($array_query['options_'.$key.'_cnct']) > 0)) {
+			if ($array_query['options_'.$key.'_cnct'] != '' || (is_array($array_query['options_'.$key.'_cnct']) && !empty($array_query['options_'.$key.'_cnct']))) {
 				print img_picto($langs->trans('AdvTgtUse'), 'ok.png@advtargetemailing');
 			}
 			print '</td><td>';
