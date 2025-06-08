@@ -74,6 +74,7 @@ class mod_recruitmentcandidature_advanced extends ModeleNumRefRecruitmentCandida
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("RecruitmentCandidature"), $langs->transnoentities("RecruitmentCandidature"));
+		$tooltip .= $langs->trans("GenericMaskCodes1");
 		$tooltip .= $langs->trans("GenericMaskCodes2");
 		$tooltip .= $langs->trans("GenericMaskCodes3");
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("RecruitmentCandidature"), $langs->transnoentities("RecruitmentCandidature"));
