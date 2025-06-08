@@ -82,11 +82,14 @@ class mod_bookkeeping_helium extends ModeleNumRefBookkeeping
 		$texte .= '<table class="nobordernopadding centpercent">';
 
 		$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Bookkeeping"), $langs->transnoentities("Bookkeeping"));
-		$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= $langs->trans("GenericMaskCodes1");
+		//$tooltip .= $langs->trans("GenericMaskCodes2");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes3");
+		$tooltip .= '<br>';
 		$tooltip .= $langs->trans("GenericMaskCodes4a", $langs->transnoentities("Bookkeeping"), $langs->transnoentities("Bookkeeping"));
 		$tooltip .= $langs->trans("GenericMaskCodes5");
-		$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
+		//$tooltip .= '<br>'.$langs->trans("GenericMaskCodes5b");
 
 		// Parametrage du prefix
 		$texte .= '<tr><td>'.$langs->trans("Mask").':</td>';
