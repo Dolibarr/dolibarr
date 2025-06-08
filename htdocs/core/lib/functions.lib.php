@@ -6328,11 +6328,7 @@ function isOnlyOneLocalTax($local)
 
 	$valors = explode(":", $tax);
 
-	if (count($valors) > 1) {
-		return false;
-	} else {
-		return true;
-	}
+	return !array_key_exists(1, $valors);
 }
 
 /**

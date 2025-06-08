@@ -169,7 +169,7 @@ abstract class CommonDocGenerator
 			'myuser_gender'=>$user->gender,
 		);
 		// Retrieve extrafields
-		if (is_array($user->array_options) && count($user->array_options)) {
+		if (is_array($user->array_options) && !empty($user->array_options)) {
 			$array_user = $this->fill_substitutionarray_with_extrafields($user, $array_user, $extrafields, 'myuser', $outputlangs);
 		}
 		return $array_user;
@@ -215,7 +215,7 @@ abstract class CommonDocGenerator
 			'mymember_birth' => dol_print_date($member->birth, 'day', 'tzuser'),
 		);
 		// Retrieve extrafields
-		if (is_array($member->array_options) && count($member->array_options)) {
+		if (is_array($member->array_options) && !empty($member->array_options)) {
 			$array_member = $this->fill_substitutionarray_with_extrafields($member, $array_member, $extrafields, 'mymember', $outputlangs);
 		}
 		return $array_member;
@@ -338,7 +338,7 @@ abstract class CommonDocGenerator
 		);
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options)) {
+		if (is_array($object->array_options) && !empty($object->array_options)) {
 			$object->fetch_optionals();
 
 			$array_thirdparty = $this->fill_substitutionarray_with_extrafields($object, $array_thirdparty, $extrafields, $array_key, $outputlangs);
@@ -397,7 +397,7 @@ abstract class CommonDocGenerator
 		);
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options)) {
+		if (is_array($object->array_options) && !empty($object->array_options)) {
 			$object->fetch_optionals();
 
 			$array_contact = $this->fill_substitutionarray_with_extrafields($object, $array_contact, $extrafields, $array_key, $outputlangs);
@@ -592,7 +592,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Add vat by rates
-		if (is_array($object->lines) && count($object->lines) > 0) {
+		if (is_array($object->lines) && !empty($object->lines)) {
 			$totalUp = 0;
 			// Set substitution keys for different VAT rates
 			foreach ($object->lines as $line) {
@@ -632,7 +632,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options)) {
+		if (is_array($object->array_options) && !empty($object->array_options)) {
 			$object->fetch_optionals();
 
 			$resarray = $this->fill_substitutionarray_with_extrafields($object, $resarray, $extrafields, $array_key, $outputlangs);
@@ -819,7 +819,7 @@ abstract class CommonDocGenerator
 		}
 
 		// Retrieve extrafields
-		if (is_array($object->array_options) && count($object->array_options)) {
+		if (is_array($object->array_options) && !empty($object->array_options)) {
 			$object->fetch_optionals();
 
 			$array_shipment = $this->fill_substitutionarray_with_extrafields($object, $array_shipment, $extrafields, $array_key, $outputlangs);
@@ -1488,6 +1488,8 @@ abstract class CommonDocGenerator
 		}
 
 		if (!empty($fields)) {
+			$fieldsCount = count($fields);
+
 			// Sort extrafields by rank
 			uasort($fields, function ($a, $b) {
 				return  ($a->rank > $b->rank) ? 1 : -1;
@@ -1500,7 +1502,7 @@ abstract class CommonDocGenerator
 			if ($params['display'] == 'auto') {
 				$lastNnumbItems = 0;
 				foreach ($params['auto'] as $display => $numbItems) {
-					if ($lastNnumbItems <= $numbItems && count($fields) > $numbItems) {
+					if ($lastNnumbItems <= $numbItems && $fieldsCount > $numbItems) {
 						$lastNnumbItems = $numbItems;
 						$params['display'] = $display;
 					}

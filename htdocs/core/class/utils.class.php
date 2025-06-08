@@ -137,7 +137,7 @@ class Utils
 				}
 			}
 
-			if (is_array($filesarray) && count($filesarray)) {
+			if (is_array($filesarray) && !empty($filesarray)) {
 				foreach ($filesarray as $key => $value) {
 					//print "x ".$filesarray[$key]['fullname']."-".$filesarray[$key]['type']."<br>\n";
 					if ($filesarray[$key]['type'] == 'dir') {
@@ -747,7 +747,7 @@ class Utils
 		}
 
 		// Update with result
-		if (is_array($output_arr) && count($output_arr) > 0) {
+		if (is_array($output_arr) && !empty($output_arr)) {
 			foreach ($output_arr as $val) {
 				$output .= $val.($execmethod == 2 ? '' : "\n");
 			}
@@ -798,7 +798,7 @@ class Utils
 		}
 
 		$arrayversion = explode('.', $moduleobj->version, 3);
-		if (count($arrayversion)) {
+		if (!empty($arrayversion)) {
 			$FILENAMEASCII = strtolower($module).'.asciidoc';
 			$FILENAMEDOC = strtolower($module).'.html';
 			$FILENAMEDOCPDF = strtolower($module).'.pdf';
@@ -1190,22 +1190,21 @@ class Utils
 				while ($row = $db->fetch_row($result)) {
 					// For each row of data we print a line of INSERT
 					fwrite($handle, "INSERT ".$delayed.$ignore."INTO ".$table." VALUES (");
-					$columns = count($row);
-					for ($j = 0; $j < $columns; $j++) {
+					foreach ($row as &$column) {
 						// Processing each columns of the row to ensure that we correctly save the value (eg: add quotes for string - in fact we add quotes for everything, it's easier)
-						if ($row[$j] == null && !is_string($row[$j])) {
+						if ($column === null) {
 							// IMPORTANT: if the field is NULL we set it NULL
-							$row[$j] = 'NULL';
-						} elseif (is_string($row[$j]) && $row[$j] == '') {
+							$column = 'NULL';
+						} elseif ($column === '') {
 							// if it's an empty string, we set it as an empty string
-							$row[$j] = "''";
-						} elseif (is_numeric($row[$j]) && !strcmp($row[$j], $row[$j] + 0)) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
+							$column = "''";
+						} elseif (is_numeric($column) && !strcmp($column, $column + 0)) { // test if it's a numeric type and the numeric version ($nb+0) == string version (eg: if we have 01, it's probably not a number but rather a string, else it would not have any leading 0)
 							// if it's a number, we return it as-is
-							//	                    $row[$j] = $row[$j];
+							//	                    $column = $column;
 						} else { // else for all other cases we escape the value and put quotes around
-							$row[$j] = addslashes($row[$j]);
-							$row[$j] = preg_replace("#\n#", "\\n", $row[$j]);
-							$row[$j] = "'".$row[$j]."'";
+							$column = addslashes($column);
+							$column = preg_replace("#\n#", "\\n", $column);
+							$column = "'".$column."'";
 						}
 					}
 					fwrite($handle, implode(',', $row).");\n");
