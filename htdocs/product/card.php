@@ -1524,6 +1524,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($canvasdisplayactio
 				if ($status_batch !== '0') {
 					$langs->load("admin");
 					$tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
+					$tooltip .= $langs->trans("GenericMaskCodes1");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes2");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes3");
 					$tooltip .= '<br>'.$langs->trans("GenericMaskCodes4a", $langs->transnoentities("Batch"), $langs->transnoentities("Batch"));
