@@ -484,9 +484,9 @@ if ($result) {
 			print '<input type="text" class="flat maxwidth50" name="search_label" value="'.dol_escape_htmltag($search_label).'">';
 			print '</td>';
 	}
-	// date
+	// Date
 	if (!empty($arrayfields['f.datef']['checked'])) {
-			print '<td class="liste_titre center nowraponall">';
+			print '<td class="liste_titre center">';
 			print '<div class="nowrapfordate">';
 			print $form->selectDate($search_date_start ? $search_date_start : -1, 'search_date_start', 0, 0, 1, '', 1, 0, 0, '', '', '', '', 1, '', $langs->trans('From'));
 			print '</div>';
@@ -528,7 +528,7 @@ if ($result) {
 	// Country
 	if (!empty($arrayfields['co.label']['checked'])) {
 			print '<td class="liste_titre" data-key="country">';
-			print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth150', 'code2', 1, 0, 1);
+			print $form->select_country($search_country, 'search_country', '', 0, 'maxwidth125', 'code2', 1, 0, 1);
 			//print '<input type="text" class="flat maxwidth50" name="search_country" value="' . dol_escape_htmltag($search_country) . '">';
 			print '</td>';
 	}
@@ -718,7 +718,7 @@ if ($result) {
 		print '</td>';
 		*/
 		// Supplier invoice label
-		if (!empty($arrayfields['l.description']['checked'])) {
+		if (!empty($arrayfields['f.description']['checked'])) {
 			print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 			print dol_escape_htmltag($objp->invoice_label);
 			print '</td>';
