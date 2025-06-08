@@ -1255,7 +1255,7 @@ class CMailFile
 						$res = false;
 
 						if (getDolGlobalString('MAIN_MAIL_DEBUG')) {
-							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject);
+							$this->save_dump_mail_in_err('Mail smtp error '.$smtperrorcode.' with topic '.$this->subject.' - '.$this->error);
 						}
 					}
 				}
