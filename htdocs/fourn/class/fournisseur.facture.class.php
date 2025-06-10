@@ -4037,8 +4037,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		$this->description		= $obj->line_desc;
 		$this->desc				= $obj->line_desc;
-		$this->date_start = $obj->date_start;
-		$this->date_end = $obj->date_end;
+		$this->date_start = $this->db->jdate($obj->date_start);
+		$this->date_end = $this->db->jdate($obj->date_end);
 		$this->product_ref		= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->product_desc		= $obj->product_desc;
