@@ -534,7 +534,7 @@ class PropaleLigne extends CommonObjectLine
 		}
 
 		// Check parameters
-		if ((int) $this->product_type < 0) {
+		if ($this->product_type < 0) {
 			return -1;
 		}
 
@@ -555,7 +555,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
 		$sql .= " '".$this->db->escape($this->desc)."',";
 		$sql .= " ".($this->fk_product ? "'".$this->db->escape((string) $this->fk_product)."'" : "null").",";
-		$sql .= " '".$this->db->escape((string) $this->product_type)."',";
+		$sql .= " '".$this->db->escape((int) $this->product_type)."',";
 		$sql .= " ".($this->fk_remise_except ? "'".$this->db->escape((string) $this->fk_remise_except)."'" : "null").",";
 		$sql .= " ".price2num($this->qty, 'MS').",";
 		$sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
