@@ -1,12 +1,12 @@
 <?php
 /* Copyright (C) 2013-2014	Olivier Geffroy				<jeff@jeffinfo.com>
- * Copyright (C) 2013-2024	Alexandre Spangaro			<alexandre@inovea-conseil.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro			<alexandre@inovea-conseil.com>
  * Copyright (C) 2014-2015	Ari Elbaz (elarifr)			<github@accedinfo.com>
  * Copyright (C) 2013-2021	Florian Henry				<florian.henry@open-concept.pro>
  * Copyright (C) 2014		Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2016		Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2021		Gauthier VERDOL				<gauthier.verdol@atm-consulting.fr>
- * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
+ * Copyright (C) 2024		Frédéric France				<frederic.france@free.fr>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -998,7 +998,13 @@ if ($result) {
 		$i++;
 	}
 	if ($num_lines == 0) {
-		print '<tr><td colspan="'.$totalarray['nbfield'].'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
+		$colspan = 1;
+		foreach ($arrayfields as $key => $val) {
+			if (!empty($val['checked'])) {
+				$colspan++;
+			}
+		}
+		print '<tr><td colspan="'.$colspan.'"><span class="opacitymedium">'.$langs->trans("NoRecordFound").'</span></td></tr>';
 	}
 
 	$parameters = array('arrayfields' => $arrayfields, 'sql' => $sql);
