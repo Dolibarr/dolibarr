@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2013-2016  Olivier Geffroy     <jeff@jeffinfo.com>
- * Copyright (C) 2013-2024  Alexandre Spangaro  <aspangaro@easya.solutions>
- * Copyright (C) 2014-2015  Ari Elbaz (elarifr) <github@accedinfo.com>
- * Copyright (C) 2013-2016  Florian Henry       <florian.henry@open-concept.pro>
- * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
- * Copyright (C) 2024       Frédéric France         <frederic.france@free.fr>
+/* Copyright (C) 2013-2016	Olivier Geffroy			<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2025	Alexandre Spangaro		<alexandre@inovea-conseil.com>
+ * Copyright (C) 2014-2015	Ari Elbaz (elarifr)		<github@accedinfo.com>
+ * Copyright (C) 2013-2016	Florian Henry			<florian.henry@open-concept.pro>
+ * Copyright (C) 2014		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2024		Frédéric France			<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -718,7 +718,7 @@ if ($result) {
 		print '</td>';
 		*/
 		// Supplier invoice label
-		if (!empty($arrayfields['f.description']['checked'])) {
+		if (!empty($arrayfields['f.libelle']['checked'])) {
 			print '<td class="tdoverflowmax125 small" title="'.dol_escape_htmltag($objp->invoice_label).'">';
 			print dol_escape_htmltag($objp->invoice_label);
 			print '</td>';
