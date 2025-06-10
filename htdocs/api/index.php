@@ -464,10 +464,10 @@ if (Luracast\Restler\Defaults::$returnResponse) {
 }
 
 $parameters = array(
-		'url' => $url, 
-		'ip' => getUserRemoteIP(), 
-		'reponseCode' => $api->r->responseCode, 
-		'userId' => DolibarrApiAccess::$user->id, 
+		'url' => $url,
+		'ip' => getUserRemoteIP(),
+		'reponseCode' => $api->r->responseCode,
+		'userId' => DolibarrApiAccess::$user->id,
 		'data' => json_encode($api->r->getRequestData())
 	);
 $object = $api;
