@@ -2499,7 +2499,7 @@ class Setup extends DolibarrApi
 			throw new RestException(403, 'Error API open to admin users only or to the users with logins defined into constant API_LOGINS_ALLOWED_FOR_CONST_READ');
 		}
 
-		$sql = "select name, value";		
+		$sql = "select name, value";
 		$sql .= " FROM ".MAIN_DB_PREFIX."const";
 		$sql .= " WHERE entity IN (".getEntity('const').')';
 
