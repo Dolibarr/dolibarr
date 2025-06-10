@@ -534,7 +534,7 @@ class PropaleLigne extends CommonObjectLine
 		}
 
 		// Check parameters
-		if ($this->product_type < 0 || empty($this->product_type)) {
+		if ((int) $this->product_type < 0) {
 			return -1;
 		}
 
