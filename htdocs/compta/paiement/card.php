@@ -329,8 +329,8 @@ print '</td></tr>';
 
 // Payment number
 $titlefield=$langs->trans('Numero').' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-print '<tr><td>'.$form->editfieldkey($titlefield,'num_paiement',$object->num_payment,$object,$object->statut == 0 && $user->hasRight("facture", "creer")).'</td><td>';
-print $form->editfieldval($titlefield,'num_paiement',$object->num_payment,$object,$object->statut == 0 && $user->hasRight("facture", "creer"),'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+print '<tr><td>'.$form->editfieldkey($titlefield, 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("facture", "creer")).'</td><td>';
+print $form->editfieldval($titlefield, 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
 print '</td></tr>';
 
 // Amount
