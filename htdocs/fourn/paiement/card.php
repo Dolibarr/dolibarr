@@ -222,9 +222,9 @@ if ($result > 0) {
 	print '</td></tr>';
 
 	// Payment number
-	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_payment,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<tr><td>'.$form->editfieldkey("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
 	print '<td>';
-	print $form->editfieldval("Numero",'num_paiement',$object->num_payment,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"),'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+	print $form->editfieldval("Numero", 'num_paiement', $object->num_payment, $object, $object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"), 'string', '', null, $langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment numero
