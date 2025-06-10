@@ -138,3 +138,5 @@ ExcludedByFilter=Non qualifié par les filtres, mais affiché pour voir sa hiér
 UserEnabledDisabled=État de l'utilisateur modifié : %s
 AlternativeEmailForOAuth2=E-mail alternatif pour la connexion OAuth2
 ErrorUpdateCanceledDueToDuplicatedUniqueValue=Erreur, La mise à jour a été annulée, car l'une des données, qui devrait être unique, existe déjà
+MessageListViewType=Afficher la liste sous forme de tableau
+ShowAsConversation=Afficher comme liste de conversation
