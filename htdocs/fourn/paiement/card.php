@@ -5,6 +5,7 @@
  * Copyright (C) 2014      Marcos García         <marcosgdf@gmail.com>
  * Copyright (C) 2024-2025	MDW							<mdeweerd@users.noreply.github.com>
  * Copyright (C) 2024-2025  Frédéric France         <frederic.france@free.fr>
+ * Copyright (C) 2025       Lenin Rivas         	<lenin.rivas777@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,6 +219,12 @@ if ($result > 0) {
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td>';
 	print '<td>'.$labeltype;
 	print $object->num_payment ? ' - '.$object->num_payment : '';
+	print '</td></tr>';
+
+	// Payment number
+	print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->num_payment,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer")).'</td>';
+	print '<td>';
+	print $form->editfieldval("Numero",'num_paiement',$object->num_payment,$object,$object->statut == 0 && $user->hasRight("fournisseur", "facture", "creer"),'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
 	print '</td></tr>';
 
 	// Payment numero
