@@ -2482,7 +2482,9 @@ class Setup extends DolibarrApi
 	 *
 	 * Note that conf variables that stores security key or password hashes can't be loaded with API.
 	 *
-	 * @return  string							Data without useless information
+	 * @return array				List of establishments
+	 * @phan-return array<Object|false>
+	 * @phpstan-return array<Object|false>
 	 *
 	 * @url     GET conf/
 	 *
