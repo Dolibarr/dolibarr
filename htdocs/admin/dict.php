@@ -836,7 +836,7 @@ if (empty($reshook)) {
 				continue; // For a column name 'sortorder', we use the field name 'position'
 			}
 			if ($value == 'type_vat' && GETPOST('type_vat') == -1) {
-				$_POST['type_vat'] = '';  // We set value to "" to prevent add of bad value -1 in databse and block empty type vat
+				$_POST['type_vat'] = '';  // We set value to "" to prevent add of bad value -1 in database and block empty type vat
 			}
 			if ((!GETPOSTISSET($value) || GETPOST($value) == '')
 				&& (
