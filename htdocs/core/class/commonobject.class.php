@@ -5030,7 +5030,7 @@ abstract class CommonObject
 	 */
 	public function getTotalDiscount()
 	{
-		if (!empty($this->table_element_line)) {
+		if (!empty($this->table_element_line) && ($this->table_element_line != 'expeditiondet')) {
 			$total_discount = 0.00;
 
 			$sql = "SELECT subprice as pu_ht, qty, remise_percent, total_ht";

@@ -2375,7 +2375,7 @@ if ($action == 'create') {
 				print '<br><!-- Link to sign -->';
 				require_once DOL_DOCUMENT_ROOT.'/core/lib/signature.lib.php';
 
-				print showOnlineSignatureUrl('contract', $object->ref).'<br>';
+				print showOnlineSignatureUrl('contract', $object->ref, $object).'<br>';
 			}
 
 			print '</div><div class="fichehalfright">';
