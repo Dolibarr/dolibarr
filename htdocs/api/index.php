@@ -471,7 +471,7 @@ $parameters = array(
 		'data' => json_encode($api->r->getRequestData())
 	);
 $object = $api;
-$action = $api->r->responseCode;
+$action = (str) $api->r->responseCode;
 // Note that $action and $object may be modified by some hooks
 $reshook = $hookmanager->executeHooks('afterApiCall', $parameters, $object, $action);
 if ($reshook < 0) {
